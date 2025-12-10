@@ -1,0 +1,11 @@
+# Ignore everything (folders and files) on root only
+/*
+!api
+!public
+!my-app
+!cv
+!html
+!vercel.json
+!*.html
+index.cgi
+index.pl
