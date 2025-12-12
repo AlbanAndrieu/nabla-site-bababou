@@ -1,6 +1,6 @@
 <!-- markdown-link-check-disable-next-line -->
 
-# [![Nabla](https://bababou.albandrieu.com/nabla/index/assets/nabla/nabla-4.png)](https://github.com/AlbanAndrieu/nabla-site-bababou) nabla-site-bababou
+# [![Nabla](https://nabla.albandrieu.com/assets/nabla/nabla-4.png)](https://github.com/AlbanAndrieu/nabla-site-bababou) nabla-site-bababou
 
 [![License: APACHE](http://img.shields.io/:license-apache-blue.svg?style=flat-square)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
@@ -15,10 +15,11 @@ npm run start-python
 npm run start
 ```
 
-For vercel [php](https://github.com/vercel-community/php)
+For vercel	
 
 ```bash
-php -S localhost:8000 api/index.php
+vercel deploy
+vercel --prod
 ```
 
 [php-framework-symfony-microservice](https://github.com/contributte/vercel-examples/tree/master/php-framework-symfony-microservice)
