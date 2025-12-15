@@ -238,7 +238,7 @@ repos:
       - id: shfmt-docker # Docker image (requires Docker to run)
         name: "🐚 🐳 shell · Format shell scripts"
   - repo: https://github.com/detailyang/pre-commit-shell
-    rev: 1.0.5
+    rev: v1.0.6
     hooks:
       - id: shell-lint
         name: "🐚 shell · Lint shell scripts"
@@ -271,7 +271,7 @@ repos:
 
     ### SQL ###
   - repo: https://github.com/sqlfluff/sqlfluff
-    rev: 4.0.0a2
+    rev: 3.5.0
     hooks:
       - id: sqlfluff-fix
         name: "📊 SQL · Attempts to fix rule violations."
@@ -367,7 +367,7 @@ repos:
 
     ### Additional File Types ###
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v4.0.0-alpha.8
+    rev: v3.1.0
     hooks:
       - id: prettier
         name: "✨ misc-files · Format misc web files"
@@ -475,7 +475,7 @@ repos:
 
     ### Commit Message Standards ###
   - repo: https://github.com/commitizen-tools/commitizen
-    rev: v4.10.0
+    rev: v4.10.1
     hooks:
       - id: commitizen
         name: "🌳 git · Validate commit message"
