@@ -53,6 +53,10 @@ repos:
       - id: trailing-whitespace
         name: "📁 filesystem/⚙️ exec · Remove trailing whitespace"
         args: [--markdown-linebreak-ext=md]
+        exclude: >
+          (?x)^(
+              api/honeypot/.*|
+          )$
       - id: fix-byte-order-marker
         name: "📁 filesystem/⚙️ exec · Verify byte order"
       - id: mixed-line-ending
@@ -137,6 +141,8 @@ repos:
             sbom.json|
             pnpm-lock.yaml|
             public/wireframe.css|
+            public/assets/fontawesome-free-7.1.0-web/.*|
+            public/assets/fontawesome/.*|
           )$
         # ----------------------------- 🔒 Security Tools ---------------------------- #
       - id: detect-private-key
@@ -248,6 +254,7 @@ repos:
             hooks|
             tests/.*|
             .envrc|
+            scripts/run-wicked.sh|
           )$
 
   - repo: https://github.com/openstack/bashate
@@ -258,8 +265,10 @@ repos:
         args: [-i, "E003,E006"]
         exclude: >
           (?x)^(
-              trunk|
-              scripts/run-python.sh|
+            trunk|
+            scripts/run-python.sh|
+            scripts/run-wicked.sh|
+            .envrc|
           )$
 
     ### Makefile ###
@@ -341,6 +350,12 @@ repos:
           (?x)^(
               trivy-sbom.json|
               bababou-app/public/.*|
+              public/assets/fontawesome-free-7.1.0-web/.*|
+              public/assets/fontawesome/.*|
+              public/assets/.*|
+              public/arf.js|
+              public/index.js|
+              public/d3.v3.min.js|
           )$
 
   - repo: https://github.com/Lucas-C/pre-commit-hooks-nodejs
@@ -353,6 +368,10 @@ repos:
       - id: htmlhint
         name: "📝 html · Hint html"
         args: [--config, .htmlhintrc]
+        exclude: >
+          (?x)^(
+            public/monitoring_report.html|
+          )$
       - id: markdown-toc
         name: "📝 markdown · Toc markdown"
         args: [--maxdepth, "3", -i]
@@ -377,6 +396,7 @@ repos:
         exclude: >
           (?x)^(
             pnpm-lock.yaml|
+            api/honeypot/.*|
           )$
 
     ### Data & Config Validation ###
@@ -409,6 +429,10 @@ repos:
     hooks:
       - id: encryption-check
         name: "🔒 security · Detect encryption"
+        exclude: >
+          (?x)^(
+            public/assets/fontawesome-free-7.1.0-web/.*|
+          )$
   - repo: https://github.com/zricethezav/gitleaks
     rev: v8.30.0
     hooks:
