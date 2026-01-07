@@ -11,11 +11,11 @@ Default nabla files for bababou website
 
 ```bash
 npm run start-python
-# Cloudflare wrangler 
+# Cloudflare wrangler
 npm run start
 ```
 
-For vercel	
+For vercel
 
 ```bash
 vercel deploy

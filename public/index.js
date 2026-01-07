@@ -34,6 +34,6 @@ button.addEventListener("click", () => {
 
 import { inject } from "@vercel/analytics";
 
-import { injectSpeedInsights } from '@vercel/speed-insights';
+import { injectSpeedInsights } from "@vercel/speed-insights";
 
 injectSpeedInsights();
