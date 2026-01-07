@@ -1,15 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://bababou.albandrieu.com/index.html</loc>
+    <loc>https://bababou.albandrieu.com/</loc>
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>https://bababou.albandrieu.com/privacypolicy.html</loc>
+    <loc>https://bababou.albandrieu.com/policy/privacypolicy.html</loc>
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>https://bababou.albandrieu.com/termesofservice.html</loc>
+    <loc>https://bababou.albandrieu.com/policy/termesofservice.html</loc>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://bababou.albandrieu.com/policy/monitoring_report.html</loc>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://status.albandrieu.com/</loc>
     <changefreq>monthly</changefreq>
   </url>
 </urlset>
