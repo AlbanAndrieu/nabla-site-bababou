@@ -356,6 +356,7 @@ repos:
               public/arf.js|
               public/index.js|
               public/d3.v3.min.js|
+              api/hello.js|
           )$
 
   - repo: https://github.com/Lucas-C/pre-commit-hooks-nodejs
@@ -371,6 +372,8 @@ repos:
         exclude: >
           (?x)^(
             public/monitoring_report.html|
+            public/chkrootkit-report.html|
+            public/maldet-report.html|
           )$
       - id: markdown-toc
         name: "📝 markdown · Toc markdown"
@@ -397,6 +400,8 @@ repos:
           (?x)^(
             pnpm-lock.yaml|
             api/honeypot/.*|
+            public/assets/fontawesome-free-7.1.0-web/.*|
+            public/assets/fontawesome/.*|
           )$
 
     ### Data & Config Validation ###
