@@ -175,7 +175,7 @@ repos:
       - id: pyupgrade
         name: "🐍 python · Py Upgrade"
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.10
+    rev: v0.14.11
     hooks:
       - id: ruff-format
         name: "🐍 python · Format with Ruff"
@@ -205,7 +205,7 @@ repos:
     # This helps ensure cross-compatibility with people who don't wish to use uv
   - repo: https://github.com/astral-sh/uv-pre-commit
     # uv version.
-    rev: 0.9.22
+    rev: 0.9.24
     hooks:
       - id: uv-sync
         name: "⚡️ uv · Sync dependencies with uv"
@@ -273,7 +273,7 @@ repos:
 
     ### Makefile ###
   - repo: https://github.com/mrtazz/checkmake.git
-    rev: 0.2.2
+    rev: v0.3.2
     hooks:
       - id: checkmake
         name: "🐮 Makefile · Lint Makefile"
@@ -478,7 +478,7 @@ repos:
     #            .gitlab-ci.yml|
     #          )$
   - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.37.1
+    rev: v1.38.0
     hooks:
       - id: yamllint
         name: "📜 yamllint - Lint Yaml"
@@ -504,7 +504,7 @@ repos:
 
     ### Commit Message Standards ###
   - repo: https://github.com/commitizen-tools/commitizen
-    rev: v4.11.1
+    rev: v4.11.3
     hooks:
       - id: commitizen
         name: "🌳 git · Validate commit message"
