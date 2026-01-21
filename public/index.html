@@ -172,6 +172,20 @@
   <script defer src="https://cdn.vercel.sh/analytics"></script>
   <!-- Vercel Speed Insights -->
   <script defer src="https://cdn.vercel.sh/speed-insights"></script>
+
+  <!-- Google Translate -->
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'en,fr,no,de,es,it,pt,nl,sv,da,fi,pl,cs,ru,ar,ja,zh-CN',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+        autoDisplay: false
+      }, 'google_translate_element');
+    }
+  </script>
+  <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <!-- End Google Translate -->
 </head>
 <body>
 
@@ -179,6 +193,12 @@
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W7XNV7K6"
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
+
+  <!-- Google Translate Widget -->
+  <div style="position: fixed; top: 10px; right: 10px; z-index: 9999; background: white; padding: 5px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+    <div id="google_translate_element"></div>
+  </div>
+  <!-- End Google Translate Widget -->
 
   <div class="collapse bg-dark" id="navbarHeader">
     <div class="container">
