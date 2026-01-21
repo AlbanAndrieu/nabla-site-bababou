@@ -218,9 +218,31 @@
               <div class="mb-4">
                 <h3 class="text-success mb-3">💌 How to Contact Me:</h3>
                 <div class="alert alert-success" role="alert">
-                  <p class="h4 mb-2"><i class="fa fa-envelope"></i> Email me at: <a href="mailto:alban.andrieu@free.fr" class="alert-link"><strong>alban.andrieu@free.fr</strong></a></p>
+                  <p class="h4 mb-2">
+                    <i class="fa fa-envelope"></i>
+                    Email me at:
+                    <span id="contact-email"></span>
+                    <noscript>
+                      <strong>alban.andrieu [at] free [dot] fr</strong>
+                    </noscript>
+                  </p>
                   <p class="mb-0">You can contact me anytime, day or night. I promise I will respond immediately. You are safe to reach out to me.</p>
                 </div>
+                <script>
+                  (function () {
+                    var user = 'alban' + '.' + 'andrieu';
+                    var domain = 'free' + '.' + 'fr';
+                    var email = user + '@' + domain;
+                    var container = document.getElementById('contact-email');
+                    if (container) {
+                      var link = document.createElement('a');
+                      link.href = 'mailto:' + email;
+                      link.className = 'alert-link';
+                      link.textContent = email;
+                      container.appendChild(link);
+                    }
+                  })();
+                </script>
               </div>
               
               <div class="mb-4">
