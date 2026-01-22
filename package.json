@@ -1,6 +1,7 @@
 {
 	"name": "nabla-site-bababou",
 	"version": "1.0.0",
+	"type": "module",
 	"private": true,
 	"description": "Nabla bababou site - For Eléonore",
 	"main": "index.html",
@@ -33,7 +34,7 @@
 		"@vercel/analytics": "^1.5.0",
 		"@vercel/speed-insights": "^1.2.0",
 		"crypto": "^1.0.1",
-		"vercel": "^48.10.9",
+		"vercel": "^50.4.9",
 		"webdriver-manager": "^12.1.9"
 	},
 	"devDependencies": {
@@ -44,6 +45,6 @@
 		"eslint-formatter-gitlab": "^6.0.1",
 		"typescript": "^5.9.3",
 		"typescript-eslint": "^8.47.0",
-		"wrangler": "^4.53.0"
+		"wrangler": "^4.59.1"
 	}
 }

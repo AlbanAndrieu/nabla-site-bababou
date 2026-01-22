@@ -543,29 +543,29 @@ repos:
   #       name: "🌳 git · Lint in CI"
   #       args: [--debug, --commits, mybranch] # enable debug mode, lint all commits in mybranch
 
-    # ---------------------------------------------------------------------------- #
-    #                            👑 Mega linter                                    #
-    # ---------------------------------------------------------------------------- #
+  # ---------------------------------------------------------------------------- #
+  #                            👑 Mega linter                                    #
+  # ---------------------------------------------------------------------------- #
 
-    # - repo: https://github.com/oxsecurity/megalinter
-    #   rev: v9.0.1
-    #   hooks:
-    #     - id: megalinter-incremental  # Faster, less thorough
-    #       name: "👑 🐳 megalinter - All in linter"
-    #       stages:
-    #         - pre-commit
-    #       args:
-    #         - mega-linter-runner
-    #         - --containername
-    #         - "megalinter-incremental"
-    #         - --remove-container
-    #         # - --fix
-    #         # - --env
-    #         # - "'APPLY_FIXES=all'"
-    #         - --env
-    #         - "'CLEAR_REPORT_FOLDER=true'"
-    #         - --env
-    #         - "'LOG_LEVEL=warning'"
-    #         - --filesonly
-    #         - --flavor
-    #         - "python"
+  # - repo: https://github.com/oxsecurity/megalinter
+  #   rev: v9.0.1
+  #   hooks:
+  #     - id: megalinter-incremental  # Faster, less thorough
+  #       name: "👑 🐳 megalinter - All in linter"
+  #       stages:
+  #         - pre-commit
+  #       args:
+  #         - mega-linter-runner
+  #         - --containername
+  #         - "megalinter-incremental"
+  #         - --remove-container
+  #         # - --fix
+  #         # - --env
+  #         # - "'APPLY_FIXES=all'"
+  #         - --env
+  #         - "'CLEAR_REPORT_FOLDER=true'"
+  #         - --env
+  #         - "'LOG_LEVEL=warning'"
+  #         - --filesonly
+  #         - --flavor
+  #         - "python"

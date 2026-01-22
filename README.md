@@ -5,6 +5,7 @@
 [![License: APACHE](http://img.shields.io/:license-apache-blue.svg?style=flat-square)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
 # nabla-site-bababou
+
 For Eléonore
 
 Default nabla files for bababou website
@@ -79,6 +80,6 @@ For pull requests, editor preferences are available in the [editor config](.edit
 
 [Apache v2](http://www.apache.org/licenses/LICENSE-2.0.html)
 
-______________________________________________________________________
+---
 
 Alban Andrieu [linkedin](https://fr.linkedin.com/in/nabla/)
