@@ -1,6 +1,7 @@
 {
 	"name": "nabla-site-bababou",
 	"version": "1.0.0",
+	"type": "module",
 	"private": true,
 	"description": "Nabla bababou site - For Eléonore",
 	"main": "index.html",
