@@ -10,6 +10,39 @@ For Eléonore
 
 Default nabla files for bababou website
 
+## Features
+
+### Multi-Language Support
+
+The website now supports translation into multiple languages using Google Translate. Visitors can translate the entire website content into their preferred language using the translation widget located in the top-right corner of each page.
+
+**Supported Languages Include:**
+- English (default)
+- French (Français)
+- Norwegian (Norsk)
+- German (Deutsch)
+- Spanish (Español)
+- Italian (Italiano)
+- Portuguese (Português)
+- Dutch (Nederlands)
+- Swedish (Svenska)
+- Danish (Dansk)
+- Finnish (Suomi)
+- Polish (Polski)
+- Czech (Čeština)
+- Russian (Русский)
+- Arabic (العربية)
+- Japanese (日本語)
+- Chinese Simplified (简体中文)
+
+The translation feature is available on all pages including:
+- Main index page
+- Privacy Policy
+- Terms of Service
+- 404 Error page
+
+## Running the Site
+
 ```bash
 npm run start-python
 # Cloudflare wrangler
