@@ -1,7 +1,11 @@
 /**
  * Theme Toggle Script - Dark/Light Mode Switcher
  * Handles theme detection, switching, and persistence
+ * @file Browser-side script for theme management
  */
+
+/* eslint-env browser */
+/* global gtag */
 
 (function() {
 	'use strict';
@@ -154,7 +158,7 @@
 		
 		// Modern browsers
 		if (darkModeQuery.addEventListener) {
-			darkModeQuery.addEventListener('change', function(e) {
+			darkModeQuery.addEventListener('change', function() {
 				const storedTheme = getStoredTheme();
 				if (storedTheme === THEMES.AUTO) {
 					applyTheme(THEMES.AUTO);
@@ -163,7 +167,7 @@
 		}
 		// Older browsers
 		else if (darkModeQuery.addListener) {
-			darkModeQuery.addListener(function(e) {
+			darkModeQuery.addListener(function() {
 				const storedTheme = getStoredTheme();
 				if (storedTheme === THEMES.AUTO) {
 					applyTheme(THEMES.AUTO);
