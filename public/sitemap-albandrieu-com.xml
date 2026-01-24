@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://bababou.albandrieu.com/</loc>
+    <loc>https://bababou.albandrieu.com//index.html</loc>
     <changefreq>monthly</changefreq>
   </url>
   <url>
@@ -10,6 +10,10 @@
   </url>
   <url>
     <loc>https://bababou.albandrieu.com/policy/service_terms.html</loc>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://bababou.albandrieu.com/policy/gnu_general_public_license.txt</loc>
     <changefreq>monthly</changefreq>
   </url>
   <url>
