@@ -3,7 +3,8 @@
  * Shared configuration for all pages to ensure consistency
  * Note: google object is provided by the Google Translate script loaded externally
  */
-function googleTranslateElementInit() {
+/* global google */
+function _googleTranslateElementInit() {
 	new google.translate.TranslateElement(
 		{
 			pageLanguage: "en",
@@ -19,5 +20,8 @@ function googleTranslateElementInit() {
 	);
 }
 
-// Expose to global scope for Google Translate API
-window.googleTranslateElementInit = googleTranslateElementInit;
+// Export for use by HTML pages
+/* global window */
+if (typeof window !== "undefined") {
+	window._googleTranslateElementInit = _googleTranslateElementInit;
+}

@@ -211,6 +211,9 @@
 </head>
 <body>
 
+  <!-- Skip to main content link for accessibility -->
+  <a href="#main-content" class="skip-to-main">Skip to main content</a>
+
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W7XNV7K6"
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -221,8 +224,12 @@
     <div id="google_translate_element"></div>
   </div>
   <!-- End Google Translate Widget -->
+  
+  <!-- Main content area -->
+  <main id="main-content">
+    
   <!-- Special Message for Éléonore -->
-  <div class="py-5 bg-primary text-white">
+  <header class="py-5 bg-primary text-white">
     <div class="container">
       <div class="row justify-content-center">
         <div class="col-lg-10 text-center">
@@ -318,10 +325,10 @@
         </div>
       </div>
     </div>
-  </div>
+  </header>
   <!-- End Special Message -->
 
-  <div class="collapse bg-dark" id="navbarHeader">
+  <nav class="collapse bg-dark" id="navbarHeader" aria-label="Main navigation">
     <div class="container">
       <div class="row">
         <div class="col-md-7 py-4">
@@ -330,15 +337,16 @@
         </div>
       </div>
     </div>
-  </div>
-  <div class="py-4">
+  </nav>
+  
+  <!-- Main content section -->
+  <section class="py-4" aria-labelledby="main-heading">
     <div class="container">
     <!--<div style="background:transparent !important" class="jumbotron">-->
     <div class="jumbotron">
       <!--<img class="img-fluid d-block mx-auto py-2" src="assets/miss-and-love-you-quote.jpeg" width="240" alt="A heartfelt quote expressing feelings of missing and loving someone" /></h1>-->
 
-      <h1><p class="lead">For father who cannot see their child because Mother took your child and moving from country to country to escape from justice.</p>
-      </h1>
+      <h1 id="main-heading" class="lead">For father who cannot see their child because Mother took your child and moving from country to country to escape from justice.</h1>
       <div class="row align-items-end">
         <div class="col-md-auto ">
           <p class="lead">🗺 🇫🇷 France 🛫 🇳🇴 Norway 🚢 🇩🇪 Germany.</p>
@@ -413,8 +421,11 @@
     </div>
 
     </div>
-  </div>
-  <div class="py-3 bg-light" >
+  </section>
+  <!-- End main content section -->
+  
+  <!-- Footer section -->
+  <footer class="py-3 bg-light" aria-label="Site footer">
     <div class="container">
       <div class="row">
         <div class="col-md-4 p-3">
@@ -619,7 +630,12 @@
         </div>
       </div>
     </div>
-  </div>
+  </footer>
+  <!-- End footer section -->
+  
+  </main>
+  <!-- End main content area -->
+  
   <div style="display: none;"><a href="https://www.pkts.ca:443/cgi-bin/corinthianenzyme.cgi?doc_id=2561">north-puny</a></div>
 
   <script src="arf.js"></script>

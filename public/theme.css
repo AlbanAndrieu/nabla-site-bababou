@@ -61,8 +61,8 @@
 		--shadow-color: rgba(0, 0, 0, 0.3);
 		--shadow-hover: rgba(0, 0, 0, 0.5);
 
-		--link-color: #66b3ff;
-		--link-hover: #99ccff;
+		--link-color: #6db7ff;
+		--link-hover: #a3d3ff;
 		--button-bg: #0d6efd;
 		--button-hover: #0a58ca;
 		--button-text: #ffffff;
@@ -75,7 +75,7 @@
 		--alert-success-text: #9ce0bd;
 		--alert-warning-bg: #4d3d1a;
 		--alert-warning-border: #6b5423;
-		--alert-warning-text: #f4d58d;
+		--alert-warning-text: #ffdd77;
 
 		--nav-bg: #1a1a1a;
 		--nav-text: #e4e4e4;
@@ -135,8 +135,8 @@ html[data-theme="dark"] {
 	--shadow-color: rgba(0, 0, 0, 0.3);
 	--shadow-hover: rgba(0, 0, 0, 0.5);
 
-	--link-color: #66b3ff;
-	--link-hover: #99ccff;
+	--link-color: #6db7ff;
+	--link-hover: #a3d3ff;
 	--button-bg: #0d6efd;
 	--button-hover: #0a58ca;
 	--button-text: #ffffff;
@@ -149,7 +149,7 @@ html[data-theme="dark"] {
 	--alert-success-text: #9ce0bd;
 	--alert-warning-bg: #4d3d1a;
 	--alert-warning-border: #6b5423;
-	--alert-warning-text: #f4d58d;
+	--alert-warning-text: #ffdd77;
 
 	--nav-bg: #1a1a1a;
 	--nav-text: #e4e4e4;

@@ -14,7 +14,7 @@
 	"bugs": {
 		"url": "https://github.com/AlbanAndrieu/nabla-site-bababou/issues"
 	},
-	"homepage": "https://github.com/lockfale/ARF#readme",
+	"homepage": "https://github.com/AlbanAndrieu/nabla-site-bababou#readme",
 	"engines": {
 		"pnpm": "^10.22.0",
 		"node": ">=24.11.0",
@@ -33,6 +33,7 @@
 		"@datadog/browser-rum": "^6.24.1",
 		"@vercel/analytics": "^1.6.1",
 		"@vercel/speed-insights": "^1.2.0",
+		"crypto": "^1.0.1",
 		"vercel": "^50.4.10"
 	},
 	"devDependencies": {

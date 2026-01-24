@@ -10,6 +10,39 @@ For Eléonore
 
 Default nabla files for bababou website
 
+## Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+- **Node.js** >= 24.11.0
+- **npm** >= 11.6.2
+- **pnpm** ^10.22.0 (optional, for pnpm workspace features)
+- **Python** 3.12 (for local development server)
+
+You can check your versions with:
+```bash
+node --version
+npm --version
+python --version
+```
+
+## Installation
+
+Clone the repository and install dependencies:
+
+```bash
+git clone https://github.com/AlbanAndrieu/nabla-site-bababou.git
+cd nabla-site-bababou
+
+# Install dependencies (REQUIRED before any build/start)
+npm install
+
+# For the Next.js application
+cd my-app && npm install
+```
+
+The postinstall script automatically copies necessary assets to the correct locations.
+
 ## Features
 
 ### Multi-Language Support
@@ -67,6 +100,13 @@ pnpm install
 ### Development Server Options
 
 **Option 1: Cloudflare Wrangler (Recommended)**
+## Development
+
+### Running the Site Locally
+
+**Static Site (Root Project):**
+
+Using Cloudflare Workers (recommended):
 ```bash
 npm run start
 # or
@@ -76,6 +116,7 @@ wrangler dev
 ```
 
 **Option 2: Python HTTP Server**
+Using Python HTTP server (alternative):
 ```bash
 npm run start-python
 # or
@@ -85,6 +126,42 @@ python -m http.server 8001
 The site will be available at:
 - Wrangler: `http://localhost:8787`
 - Python: `http://localhost:8001`
+
+## Deployment
+
+### Vercel Deployment
+
+```bash
+```
+
+**Next.js Application (my-app):**
+```bash
+cd my-app
+npm run dev
+# Opens at http://localhost:3000
+```
+
+### Linting
+
+Always run linting before committing code:
+
+```bash
+# Root project
+npm run lint
+
+# Next.js app
+cd my-app && npm run lint
+```
+
+### Building
+
+**Next.js Application:**
+```bash
+cd my-app
+npm run build
+```
+
+Note: The root project serves static files directly from `public/` and does not require a separate build step.
 
 ## Deployment
 
@@ -136,11 +213,63 @@ nabla-site-bababou/
 └── wrangler.jsonc       # Cloudflare config
 ```
 
+Configuration files:
+- `vercel.json` - Vercel deployment settings
+- `wrangler.jsonc` - Cloudflare Workers settings
+
+## Project Structure
+
+```
+.
+├── public/           # Static assets (HTML, CSS, JS, images)
+├── my-app/           # Next.js application
+├── api/              # API functions
+├── scripts/          # Utility scripts
+├── .github/          # GitHub workflows and configurations
+├── package.json      # Root package configuration
+├── vercel.json       # Vercel deployment config
+└── wrangler.jsonc    # Cloudflare Workers config
+```
+
+## Code Quality
+
+The project uses extensive linting and pre-commit hooks:
+
+- **ESLint** for JavaScript/TypeScript
+- **MegaLinter** for multi-language linting
+- **Pre-commit hooks** for automated validation
+
+To install pre-commit hooks:
+```bash
+pre-commit install
+```
+
 ## Contributing
 
 The [issue tracker](https://github.com/AlbanAndrieu/nabla-site-bababou/issues) is the preferred channel for bug reports, features requests and submitting pull requests.
 
 For pull requests, editor preferences are available in the [.editorconfig](.editorconfig) file for easy use in common text editors. Read more and download plugins at <http://editorconfig.org>.
+
+### Commit Message Format
+
+This project uses conventional commits with emoji support. Valid commit types:
+- `feat`, `feature` - New feature
+- `fix` - Bug fix
+- `docs` - Documentation changes
+- `style` - Code style changes (formatting, etc.)
+- `refactor` - Code refactoring
+- `perf` - Performance improvements
+- `test` - Adding or updating tests
+- `build` - Build system changes
+- `ci` - CI/CD changes
+- `chore` - Other changes
+
+Example:
+```bash
+feat: add new feature
+fix(scope): fix bug in component
+🛠️  build: update dependencies
+```
 
 ## License
 
