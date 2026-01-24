@@ -1,8 +1,9 @@
 /**
  * Google Translate configuration
  * Shared configuration for all pages to ensure consistency
+ * Note: google object is provided by the Google Translate script loaded externally
  */
-function _googleTranslateElementInit() {
+function googleTranslateElementInit() {
 	new google.translate.TranslateElement(
 		{
 			pageLanguage: "en",
@@ -17,3 +18,6 @@ function _googleTranslateElementInit() {
 		"google_translate_element",
 	);
 }
+
+// Expose to global scope for Google Translate API
+window.googleTranslateElementInit = googleTranslateElementInit;

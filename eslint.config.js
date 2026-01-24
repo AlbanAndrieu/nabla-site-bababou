@@ -25,4 +25,13 @@ export default [
 		],
 	},
 	js.configs.recommended,
+	{
+		languageOptions: {
+			globals: {
+				window: 'readonly',
+				document: 'readonly',
+				google: 'readonly',
+			},
+		},
+	},
 ];
