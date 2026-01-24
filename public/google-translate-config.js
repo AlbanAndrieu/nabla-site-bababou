@@ -2,6 +2,7 @@
  * Google Translate configuration
  * Shared configuration for all pages to ensure consistency
  */
+/* global google */
 function _googleTranslateElementInit() {
 	new google.translate.TranslateElement(
 		{
@@ -16,4 +17,10 @@ function _googleTranslateElementInit() {
 		},
 		"google_translate_element",
 	);
+}
+
+// Export for use by HTML pages
+/* global window */
+if (typeof window !== "undefined") {
+	window._googleTranslateElementInit = _googleTranslateElementInit;
 }
