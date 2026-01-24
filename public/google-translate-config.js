@@ -1,6 +1,7 @@
 /**
  * Google Translate configuration
  * Shared configuration for all pages to ensure consistency
+ * Note: google object is provided by the Google Translate script loaded externally
  */
 /* global google */
 function _googleTranslateElementInit() {
