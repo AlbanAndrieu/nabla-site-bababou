@@ -2,3 +2,5 @@ Contact: mailto:alban.andrieu@free.fr
 Expires: 2026-10-12T00:00:00Z
 Canonical: https://bababou.albandrieu.com/security.txt
 Preferred-Languages: en,fr
+Acknowledgments: https://github.com/AlbanAndrieu/nabla-site-bababou#readme
+Policy: https://bababou.albandrieu.com/policy/privacy.html

@@ -65,3 +65,20 @@ typings/
 # dotenv environment variables file
 .env
 .vercel
+
+# Build artifacts and generated files
+dist/
+.next/
+out/
+build/
+.turbo/
+.cache/
+.pnpm/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.swp
+*.swo
+*~
