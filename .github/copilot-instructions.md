@@ -222,3 +222,198 @@ When exploring the codebase:
 - Build configurations: Check root-level config files (package.json, vercel.json, wrangler.jsonc)
 - Linting configs: Check `.eslintrc`, `.mega-linter.yml`, `.pre-commit-config.yaml`
 - CI/CD: Check `.github/workflows/`
+
+## HTML/CSS Best Practices
+
+### Accessibility Requirements
+
+**ALWAYS ensure accessibility standards are met when working with HTML:**
+
+1. **Semantic HTML Elements**
+   - Use semantic tags: `<main>`, `<nav>`, `<header>`, `<footer>`, `<article>`, `<section>`, `<aside>`
+   - Use proper heading hierarchy (`<h1>` to `<h6>`) - only one `<h1>` per page
+   - Use `<button>` for actions, `<a>` for navigation
+
+2. **ARIA Attributes**
+   - Add `aria-label` or `aria-labelledby` to navigation elements and sections
+   - Use `aria-hidden="true"` for decorative icons/elements
+   - Include `role` attributes when semantic HTML isn't sufficient
+   - Example landmarks already in use:
+     - `<nav aria-label="Main navigation">`
+     - `<footer aria-label="Site footer">`
+     - `<section aria-labelledby="main-heading">`
+
+3. **Skip Links**
+   - Include skip-to-content links for keyboard navigation: `<a href="#main-content" class="skip-to-main">Skip to main content</a>`
+   - Main content should have `id="main-content"` and be wrapped in `<main>` tag
+
+4. **Images and Media**
+   - All images must have meaningful `alt` text (or `alt=""` for decorative images)
+   - Use `aria-hidden="true"` for decorative images with empty alt text
+   - Ensure sufficient color contrast ratios (WCAG AA standard: 4.5:1 for normal text)
+
+5. **Forms and Inputs**
+   - Always associate labels with form inputs using `for` and `id` attributes
+   - Provide clear error messages and validation feedback
+   - Use appropriate input types (`email`, `tel`, `date`, etc.)
+
+6. **Keyboard Navigation**
+   - Ensure all interactive elements are keyboard accessible
+   - Maintain logical tab order
+   - Provide visible focus indicators (`:focus` styles)
+
+### Responsive Design Guidelines
+
+**All HTML/CSS changes must be mobile-responsive:**
+
+1. **Viewport Configuration**
+   - Always include viewport meta tag: `<meta name="viewport" content="width=device-width, initial-scale=1">`
+   - This is already configured in all HTML files
+
+2. **Mobile-First Approach**
+   - Design for mobile screens first, then enhance for larger screens
+   - Use responsive units: `rem`, `em`, `%`, `vw`, `vh` instead of fixed `px`
+   - Bootstrap 5.2.1 is included - leverage its responsive grid system
+
+3. **Responsive Images**
+   - Use `max-width: 100%` and `height: auto` for images
+   - Consider using `srcset` for different screen densities
+   - Use Bootstrap classes: `img-fluid` for responsive images
+
+4. **Media Queries**
+   - Test layouts on mobile (320px+), tablet (768px+), desktop (1024px+)
+   - Use Bootstrap breakpoints: `sm` (576px), `md` (768px), `lg` (992px), `xl` (1200px)
+
+5. **Touch Targets**
+   - Ensure clickable elements are at least 44x44 pixels for touch screens
+   - Add appropriate spacing between interactive elements
+
+### Dark/Light Mode Implementation
+
+**The project has a complete dark/light mode system:**
+
+1. **CSS Custom Properties (CSS Variables)**
+   - Located in `public/theme.css`
+   - All colors are defined as CSS variables in `:root` selector
+   - Dark mode colors defined under `[data-theme="dark"]` selector
+   - **When adding new styles, ALWAYS use CSS variables for colors:**
+     ```css
+     color: var(--text-primary);
+     background-color: var(--bg-primary);
+     border-color: var(--border-color);
+     ```
+
+2. **Available Theme Variables**
+   - **Backgrounds**: `--bg-primary`, `--bg-secondary`, `--bg-card`
+   - **Text**: `--text-primary`, `--text-secondary`, `--text-muted`
+   - **Interactive**: `--link-color`, `--link-hover`, `--button-bg`, `--button-hover`
+   - **Borders/Shadows**: `--border-color`, `--shadow-color`, `--shadow-hover`
+   - **Alerts**: `--alert-info-bg`, `--alert-success-bg`, `--alert-warning-bg`
+   - **Navigation**: `--nav-bg`, `--nav-text`
+
+3. **Theme Toggle**
+   - Implemented in `public/theme-toggle.js`
+   - Automatically detects system preference via `prefers-color-scheme`
+   - User preference persisted in `localStorage`
+   - Loads before page render to prevent flash of wrong theme
+
+4. **Best Practices**
+   - **NEVER** hardcode colors in HTML or CSS - always use CSS variables
+   - Test all new UI components in both light and dark modes
+   - Ensure sufficient contrast in both themes
+   - Icons and images should work in both themes (consider using CSS filters if needed)
+
+### Google Translate Integration
+
+**The project includes multi-language support via Google Translate:**
+
+1. **Configuration**
+   - Central config file: `public/google-translate-config.js`
+   - Widget included on all pages (positioned top-right, fixed)
+   - **Supported languages**: English (en), French (fr), Norwegian (no), German (de), Spanish (es), Italian (it), Portuguese (pt), Dutch (nl), Swedish (sv), Danish (da), Finnish (suomi), Polish (pl), Czech (cs), Russian (ru), Arabic (ar), Japanese (ja), Chinese Simplified (zh-CN)
+
+2. **Implementation Pattern**
+   - Widget placement: `<div id="google_translate_element"></div>`
+   - Styled with `.google-translate-widget` class (fixed position, top-right)
+   - Scripts loaded in HTML head:
+     ```html
+     <script type="text/javascript" src="/google-translate-config.js"></script>
+     <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+     ```
+
+3. **When Adding New Pages**
+   - Include the translate widget container in the same fixed position
+   - Import both translate scripts in the `<head>` section
+   - Ensure the widget styling matches existing pages (see `index.html` styles)
+
+4. **Content Considerations**
+   - Write clear, simple content that translates well
+   - Avoid idioms or culturally-specific references
+   - Use proper semantic HTML (helps translation accuracy)
+   - Test translated versions to ensure layout doesn't break
+
+### Testing and Validation
+
+**Before submitting HTML/CSS changes:**
+
+1. **Accessibility Testing**
+   - Run through keyboard navigation (Tab, Enter, Esc keys)
+   - Test with screen reader (NVDA, JAWS, VoiceOver)
+   - Validate HTML: Use W3C Validator or `htmllint` (configured in pre-commit hooks)
+   - Check color contrast with browser DevTools or online tools
+
+2. **Responsive Testing**
+   - Test on mobile (320px), tablet (768px), desktop (1024px+)
+   - Use browser DevTools device emulation
+   - Test in portrait and landscape orientations
+   - Verify touch targets are appropriately sized
+
+3. **Theme Testing**
+   - Toggle between light and dark modes
+   - Verify all colors use CSS variables
+   - Check that all text is readable in both themes
+   - Ensure images/icons work in both themes
+
+4. **Translation Testing**
+   - Verify Google Translate widget appears and functions
+   - Test at least 2-3 language translations
+   - Check that layout remains intact when translated
+   - Ensure widget is accessible and visible
+
+5. **Browser Compatibility**
+   - Test in Chrome, Firefox, Safari, and Edge
+   - Verify CSS custom properties are supported (all modern browsers)
+   - Check that fallbacks exist for older browsers if needed
+
+6. **Performance**
+   - Minimize CSS file sizes
+   - Optimize images (use appropriate formats and compression)
+   - Leverage browser caching
+   - Check Lighthouse scores (aim for 90+ in Accessibility)
+
+### HTML/CSS Code Quality Standards
+
+1. **Code Organization**
+   - Keep CSS modular and maintainable
+   - Use consistent naming conventions (BEM or similar)
+   - Group related styles together
+   - Add comments for complex layouts or calculations
+
+2. **CSS Best Practices**
+   - Avoid `!important` unless absolutely necessary
+   - Use CSS custom properties for repeated values
+   - Minimize specificity conflicts
+   - Prefer classes over IDs for styling
+   - Use shorthand properties when appropriate
+
+3. **HTML Best Practices**
+   - Keep markup semantic and minimal
+   - Avoid inline styles (use CSS classes)
+   - Validate HTML with linters (htmllint, htmlhint in pre-commit hooks)
+   - Use proper DOCTYPE and language declarations
+
+4. **File Structure**
+   - Main styles: `public/wireframe.css`, `public/arf.css`, `public/theme.css`
+   - Theme toggle: `public/theme-toggle.js`
+   - Translation config: `public/google-translate-config.js`
+   - Keep related assets organized in `public/` directory
