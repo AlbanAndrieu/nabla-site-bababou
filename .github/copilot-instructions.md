@@ -417,3 +417,392 @@ When exploring the codebase:
    - Theme toggle: `public/theme-toggle.js`
    - Translation config: `public/google-translate-config.js`
    - Keep related assets organized in `public/` directory
+
+### PDF Printing Support
+
+**All HTML pages must be print-friendly for PDF generation:**
+
+1. **Print Stylesheets**
+   - Located in `public/theme.css` and `public/wireframe.css`
+   - Use `@media print` queries to define print-specific styles
+   - Already implemented Bootstrap print utility classes: `.d-print-none`, `.d-print-block`, etc.
+
+2. **Print-Specific CSS Rules**
+   ```css
+   @media print {
+     /* Hide non-essential elements */
+     nav, .google-translate-widget, .theme-toggle, footer .social-links {
+       display: none !important;
+     }
+     
+     /* Optimize for print */
+     body {
+       background: white;
+       color: black;
+       font-size: 12pt;
+     }
+     
+     /* Prevent page breaks inside elements */
+     h1, h2, h3, h4, h5, h6, p, blockquote {
+       page-break-inside: avoid;
+     }
+     
+     /* Show URLs for external links in print */
+     a[href^='http']:after {
+       content: " (" attr(href) ")";
+     }
+   }
+   ```
+
+3. **Print Best Practices**
+   - Remove or hide: navigation menus, theme toggles, language selectors, decorative elements
+   - Ensure sufficient contrast (black text on white background)
+   - Use page-break properties to control pagination
+   - Set appropriate margins and padding for printed pages
+   - Test PDF generation using browser print preview (Chrome, Firefox)
+   - Verify all important content is visible and readable when printed
+
+4. **Bootstrap Print Utilities**
+   - Use `.d-print-none` to hide elements in print view
+   - Use `.d-print-block` to show elements only in print view
+   - Apply to: navigation bars, theme toggles, interactive widgets
+
+### SEO Best Practices
+
+**All HTML pages must follow SEO best practices:**
+
+1. **Required Meta Tags**
+   ```html
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <meta name="description" content="Clear, concise description (150-160 characters)">
+   <meta name="keywords" content="relevant, keywords, separated, by, commas">
+   <meta name="author" content="Author name or site name">
+   ```
+
+2. **Title Tags**
+   - Keep titles unique and descriptive (50-60 characters)
+   - Include primary keywords
+   - Format: `Primary Keyword - Secondary Keyword | Site Name`
+   - Example already in use: `Missing Child - Abducted daughter by her mother and moved from France to Norway then Germany`
+
+3. **Heading Structure**
+   - Use only ONE `<h1>` per page (main topic)
+   - Maintain logical hierarchy: `<h1>` → `<h2>` → `<h3>` (never skip levels)
+   - Include keywords naturally in headings
+
+4. **Content Optimization**
+   - Use semantic HTML5 elements (`<article>`, `<section>`, `<nav>`, `<aside>`)
+   - Write descriptive alt text for all images
+   - Use descriptive anchor text for links (avoid "click here")
+   - Keep URLs clean and descriptive
+   - Add schema.org structured data when appropriate
+
+5. **Performance & Core Web Vitals**
+   - Optimize images (use WebP format when possible)
+   - Minimize CSS and JavaScript files
+   - Use lazy loading for images below the fold
+   - Ensure fast loading times (aim for < 3 seconds)
+   - Target Lighthouse scores: Performance (90+), SEO (95+)
+
+6. **Mobile-First SEO**
+   - Ensure mobile responsiveness (Google mobile-first indexing)
+   - Test with Google Mobile-Friendly Test tool
+   - Verify touch targets are appropriately sized (48x48px minimum)
+
+### Crawler-Friendly Guidelines
+
+**Ensure search engine crawlers can effectively index the site:**
+
+1. **Robots.txt Configuration**
+   - Located at `public/robots.txt`
+   - Already configured with proper user-agent rules
+   - **When modifying robots.txt:**
+     - Allow legitimate search engine crawlers (Googlebot, Bingbot, etc.)
+     - Block AI scrapers and unwanted bots (listed in current robots.txt)
+     - Use `Crawl-delay` to prevent server overload
+     - Always reference the sitemap: `Sitemap: https://bababou.albandrieu.com/sitemap-albandrieu-com.xml`
+     - Submit sitemap via Google Search Console (recommended over deprecated ping service)
+
+2. **Sitemap Requirements**
+   - Reference current sitemap at `public/sitemap-albandrieu-com.xml`
+   - **CRITICAL: Update sitemap when adding/removing pages**
+   - Submit sitemap to Google Search Console after updates
+   - Use Google Search Console for sitemap verification and monitoring
+
+3. **Crawlability Best Practices**
+   - Use semantic HTML structure (crawlers parse it better)
+   - Avoid JavaScript-only navigation (use proper `<a>` tags)
+   - Implement proper internal linking structure
+   - Use descriptive URLs (avoid query parameters when possible)
+   - Ensure all pages are reachable within 3 clicks from homepage
+   - Create XML sitemap for all public pages
+   - Use canonical URLs to avoid duplicate content issues
+
+4. **Technical SEO**
+   - Implement proper HTTP status codes (200, 301, 404, etc.)
+   - Use 301 redirects for moved pages
+   - Create custom 404 page (already exists at `public/404.html`)
+   - Ensure HTTPS everywhere
+   - Set proper cache headers for static assets
+
+5. **Content Accessibility for Crawlers**
+   - Use clear, descriptive link text
+   - Provide alt text for all images (crawlers read these)
+   - Use heading tags to structure content
+   - Avoid hiding important content with CSS/JavaScript
+   - Make sure primary content is in HTML, not loaded via JavaScript
+
+### Sitemap Maintenance Guidelines
+
+**Keep `public/sitemap-albandrieu-com.xml` up to date:**
+
+1. **Sitemap Structure**
+   ```xml
+   <?xml version="1.0" encoding="UTF-8"?>
+   <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+     <url>
+       <loc>https://bababou.albandrieu.com/path/to/page.html</loc>
+       <changefreq>monthly</changefreq>
+       <priority>0.8</priority>
+       <lastmod>YYYY-MM-DD</lastmod>
+     </url>
+   </urlset>
+   ```
+
+2. **When to Update Sitemap**
+   - **ALWAYS** update when adding a new HTML page
+   - **ALWAYS** update when removing a page
+   - Update `<lastmod>` when making significant content changes
+   - Update `<changefreq>` based on expected update frequency
+
+3. **Sitemap Best Practices**
+   - Include all public-facing HTML pages
+   - Exclude admin pages, login pages, API endpoints
+   - Use absolute URLs (include full domain)
+   - Set appropriate `<priority>` values:
+     - Homepage: 1.0
+     - Main pages: 0.8
+     - Secondary pages: 0.5
+     - Archive pages: 0.3
+   - Use `<changefreq>` appropriately:
+     - News/blog: `daily` or `weekly`
+     - Static content: `monthly` or `yearly`
+     - Homepage: `weekly`
+
+4. **Current Sitemap Pages**
+   - `https://bababou.albandrieu.com/` (homepage - note: actual sitemap uses /index.html)
+   - `https://bababou.albandrieu.com/policy/privacy_policy.html`
+   - `https://bababou.albandrieu.com/policy/service_terms.html`
+   - `https://bababou.albandrieu.com/policy/gnu_general_public_license.txt`
+   - `https://status.albandrieu.com/` (external status page - note: typically external domains should not be in sitemap)
+   
+   **Note**: Consider updating the sitemap to use canonical URLs (remove /index.html for homepage) and evaluate whether external status page should be included.
+
+5. **Sitemap Validation**
+   - Validate XML structure before committing
+   - Test sitemap URL is accessible: `https://bababou.albandrieu.com/sitemap-albandrieu-com.xml`
+   - Submit to Google Search Console after updates
+   - Verify all URLs in sitemap return HTTP 200 status
+   - Keep sitemap size under 50MB and 50,000 URLs
+
+6. **Automated Sitemap Updates**
+   - Consider adding a script to auto-generate sitemap from HTML files
+   - Add sitemap validation to pre-commit hooks or CI/CD pipeline
+   - Document sitemap update process in CONTRIBUTING.md
+
+### Open Graph Protocol
+
+**All HTML pages must include Open Graph meta tags for social media sharing:**
+
+1. **Required Open Graph Tags**
+   ```html
+   <!-- facebook open graph tags -->
+   <meta property="og:type" content="website" />
+   <meta property="og:url" content="https://bababou.albandrieu.com" />
+   <meta property="og:title" content="Page Title - 60 characters max" />
+   <meta property="og:description" content="Clear description - 200 characters max" />
+   <meta property="og:image" content="https://bababou.albandrieu.com/path/to/image.jpg" />
+   <meta property="og:image:alt" content="Description of image for accessibility" />
+   <meta property="og:site_name" content="Site Name" />
+   <meta property="og:locale" content="en_US" />
+   ```
+
+2. **Open Graph Image Requirements**
+   - Minimum size: 1200x630 pixels (recommended)
+   - Aspect ratio: 1.91:1
+   - Max file size: 8MB
+   - Formats: JPG, PNG, WebP
+   - Use absolute URLs (include full domain)
+   - Ensure image is publicly accessible (not behind authentication)
+   - Current example: `https://bababou.albandrieu.com/nabla/assets/miss-and-love-you-quote.jpeg`
+
+3. **Twitter Card Tags**
+   ```html
+   <!-- twitter card tags additive with the og: tags -->
+   <meta name="twitter:card" content="summary_large_image">
+   <meta name="twitter:site" content="@username">
+   <meta name="twitter:title" content="Page Title">
+   <meta name="twitter:description" content="Page description">
+   <meta name="twitter:image" content="https://bababou.albandrieu.com/path/to/image.jpg">
+   ```
+
+4. **Page-Specific Open Graph**
+   - Customize `og:title` and `og:description` for each page
+   - Use unique images for different pages when possible
+   - For articles, use `og:type` = "article" and add:
+     - `<meta property="article:published_time" content="YYYY-MM-DDTHH:MM:SS+00:00">`
+     - `<meta property="article:author" content="Author Name">`
+
+5. **Testing Open Graph Tags**
+   - Use Facebook Sharing Debugger: https://developers.facebook.com/tools/debug/
+   - Use Twitter Card Validator: https://cards-dev.twitter.com/validator
+   - Use LinkedIn Post Inspector: https://www.linkedin.com/post-inspector/
+   - Verify images load correctly in social media previews
+   - Check that titles and descriptions are properly truncated
+
+6. **Best Practices**
+   - Keep `og:title` concise and compelling (60 characters max)
+   - Write engaging `og:description` (200 characters max)
+   - Use high-quality, relevant images
+   - Ensure Open Graph tags are in the `<head>` section
+   - Update Open Graph tags when page content changes
+   - Include `og:locale` for internationalization support
+
+### Code Consistency and Reusability
+
+**Maintain consistent, reusable code across the project:**
+
+1. **Component-Based Approach**
+   - Create reusable HTML snippets for common elements:
+     - Header/navigation (consistent across all pages)
+     - Footer with social links and legal info
+     - Google Translate widget integration
+     - Theme toggle button
+     - Meta tags template
+   - Use consistent class names and structure across pages
+   - Document common patterns in this file
+
+2. **CSS Architecture**
+   - Follow existing file structure:
+     - `wireframe.css` - Base layout and Bootstrap overrides
+     - `arf.css` - Custom application styles
+     - `theme.css` - Theme-specific variables and dark mode
+   - Use CSS custom properties (variables) for all colors and spacing
+   - Group related styles with clear comments
+   - Avoid duplicating styles across files
+
+3. **Naming Conventions**
+   - Use consistent class naming (BEM methodology recommended):
+     - Block: `.navigation`, `.card`, `.button`
+     - Element: `.navigation__item`, `.card__title`, `.button__icon`
+     - Modifier: `.button--primary`, `.card--featured`
+   - Use semantic class names (`.article-header` not `.red-text`)
+   - Prefix utility classes: `.u-text-center`, `.u-mb-3`
+
+4. **Documentation Standards**
+   - Add comments to complex CSS calculations or layouts
+   - Document JavaScript functions and their parameters
+   - Use consistent comment formatting:
+     ```css
+     /* ===========================================
+        Section Title
+        =========================================== */
+     
+     /* Subsection description */
+     .class-name { }
+     ```
+
+5. **DRY Principles (Don't Repeat Yourself)**
+   - Extract repeated styles into utility classes or CSS variables
+   - Create reusable JavaScript functions for common tasks
+   - Use template patterns for repeated HTML structures
+   - Consolidate similar media queries
+
+6. **Version Control Best Practices**
+   - Make atomic commits (one logical change per commit)
+   - Write clear commit messages (use commitlint format)
+   - Review changes before committing to avoid accidental inclusions
+   - Keep HTML, CSS, and JS changes in separate commits when possible
+
+7. **Cross-Page Consistency Checklist**
+   - [ ] Same header/navigation structure
+   - [ ] Same footer content and layout
+   - [ ] Same meta tags pattern (update content per page)
+   - [ ] Same Google Translate integration
+   - [ ] Same theme toggle implementation
+   - [ ] Same CSS file imports (wireframe.css, arf.css, theme.css)
+   - [ ] Same accessibility features (skip links, ARIA labels)
+   - [ ] Same print stylesheet application
+   - [ ] Same Open Graph/Twitter Card implementation
+   - [ ] Same analytics tracking code
+
+8. **Testing for Consistency**
+   - Visually compare pages side-by-side
+   - Check that theme toggle works identically across pages
+   - Verify translations work on all pages
+   - Ensure print preview looks consistent
+   - Test responsive behavior is uniform
+   - Validate all pages pass HTML/CSS linters
+
+## Additional Quality Standards
+
+### Security Considerations
+
+1. **Content Security Policy**
+   - Review third-party scripts carefully
+   - Current integrations: Google Analytics, Google Translate, Mixpanel, VWO, PostHog
+   - Only add new third-party scripts if absolutely necessary
+   - Use subresource integrity (SRI) for CDN resources when possible
+
+2. **Data Privacy**
+   - Link to privacy policy: `public/policy/privacy_policy.html`
+   - Ensure GDPR compliance for EU visitors
+   - Document cookie usage
+   - Provide opt-out mechanisms for tracking
+
+3. **External Links**
+   - Use `rel="noopener noreferrer"` for external links
+   - Verify external links periodically
+   - Ensure links open in appropriate context
+
+### Performance Optimization
+
+1. **Asset Optimization**
+   - Minify CSS and JavaScript files
+   - Optimize images (compress, use appropriate formats)
+   - Use CDN for common libraries (Bootstrap, Font Awesome)
+   - Enable browser caching via HTTP headers
+
+2. **Loading Strategy**
+   - Load critical CSS inline or in `<head>`
+   - Defer non-critical JavaScript
+   - Use `async` or `defer` attributes appropriately
+   - Already implemented: theme-toggle.js loads early to prevent flash
+
+3. **Lighthouse Performance Targets**
+   - Performance: 90+
+   - Accessibility: 95+
+   - Best Practices: 95+
+   - SEO: 95+
+
+### Maintenance and Updates
+
+1. **Regular Reviews**
+   - Review and update sitemap monthly
+   - Check for broken links quarterly
+   - Update dependencies regularly (npm, Python packages)
+   - Monitor Lighthouse scores in CI/CD
+   - Review robots.txt annually
+
+2. **Content Updates**
+   - Update `<lastmod>` in sitemap when content changes
+   - Refresh Open Graph images if content changes significantly
+   - Keep copyright year current in footer
+   - Archive old content appropriately
+
+3. **Documentation**
+   - Update this file when adding new standards
+   - Document any deviations from standards (with justification)
+   - Keep README.md current with setup instructions
+   - Update CONTRIBUTING.md with new guidelines
