@@ -528,7 +528,7 @@ When exploring the codebase:
    - Reference current sitemap at `public/sitemap-albandrieu-com.xml`
    - **CRITICAL: Update sitemap when adding/removing pages**
    - Submit sitemap to Google Search Console after updates
-   - Ping Google after updates: `curl https://www.google.com/ping?sitemap=https://bababou.albandrieu.com/sitemap-albandrieu-com.xml`
+   - Use Google Search Console for sitemap verification and monitoring
 
 3. **Crawlability Best Practices**
    - Use semantic HTML structure (crawlers parse it better)
@@ -591,11 +591,13 @@ When exploring the codebase:
      - Homepage: `weekly`
 
 4. **Current Sitemap Pages**
-   - `https://bababou.albandrieu.com/index.html` (homepage)
+   - `https://bababou.albandrieu.com/` (homepage - note: actual sitemap uses /index.html)
    - `https://bababou.albandrieu.com/policy/privacy_policy.html`
    - `https://bababou.albandrieu.com/policy/service_terms.html`
    - `https://bababou.albandrieu.com/policy/gnu_general_public_license.txt`
-   - `https://status.albandrieu.com/` (external status page)
+   - `https://status.albandrieu.com/` (external status page - note: typically external domains should not be in sitemap)
+   
+   **Note**: Consider updating the sitemap to use canonical URLs (remove /index.html for homepage) and evaluate whether external status page should be included.
 
 5. **Sitemap Validation**
    - Validate XML structure before committing
