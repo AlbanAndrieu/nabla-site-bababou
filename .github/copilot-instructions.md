@@ -447,8 +447,8 @@ When exploring the codebase:
        page-break-inside: avoid;
      }
      
-     /* Ensure links are visible in print */
-     a[href]:after {
+     /* Show URLs for external links in print */
+     a[href^='http']:after {
        content: " (" attr(href) ")";
      }
    }
@@ -522,6 +522,7 @@ When exploring the codebase:
      - Block AI scrapers and unwanted bots (listed in current robots.txt)
      - Use `Crawl-delay` to prevent server overload
      - Always reference the sitemap: `Sitemap: https://bababou.albandrieu.com/sitemap-albandrieu-com.xml`
+     - Submit sitemap via Google Search Console (recommended over deprecated ping service)
 
 2. **Sitemap Requirements**
    - Reference current sitemap at `public/sitemap-albandrieu-com.xml`
@@ -564,7 +565,7 @@ When exploring the codebase:
        <loc>https://bababou.albandrieu.com/path/to/page.html</loc>
        <changefreq>monthly</changefreq>
        <priority>0.8</priority>
-       <lastmod>2026-01-25</lastmod>
+       <lastmod>YYYY-MM-DD</lastmod>
      </url>
    </urlset>
    ```
@@ -590,7 +591,7 @@ When exploring the codebase:
      - Homepage: `weekly`
 
 4. **Current Sitemap Pages**
-   - `https://bababou.albandrieu.com//index.html` (homepage)
+   - `https://bababou.albandrieu.com/index.html` (homepage)
    - `https://bababou.albandrieu.com/policy/privacy_policy.html`
    - `https://bababou.albandrieu.com/policy/service_terms.html`
    - `https://bababou.albandrieu.com/policy/gnu_general_public_license.txt`
@@ -648,7 +649,7 @@ When exploring the codebase:
    - Customize `og:title` and `og:description` for each page
    - Use unique images for different pages when possible
    - For articles, use `og:type` = "article" and add:
-     - `<meta property="article:published_time" content="2026-01-25T00:00:00+00:00">`
+     - `<meta property="article:published_time" content="YYYY-MM-DDTHH:MM:SS+00:00">`
      - `<meta property="article:author" content="Author Name">`
 
 5. **Testing Open Graph Tags**
