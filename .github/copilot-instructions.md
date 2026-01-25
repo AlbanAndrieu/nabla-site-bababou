@@ -434,19 +434,19 @@ When exploring the codebase:
      nav, .google-translate-widget, .theme-toggle, footer .social-links {
        display: none !important;
      }
-     
+
      /* Optimize for print */
      body {
        background: white;
        color: black;
        font-size: 12pt;
      }
-     
+
      /* Prevent page breaks inside elements */
      h1, h2, h3, h4, h5, h6, p, blockquote {
        page-break-inside: avoid;
      }
-     
+
      /* Show URLs for external links in print */
      a[href^='http']:after {
        content: " (" attr(href) ")";
@@ -596,7 +596,7 @@ When exploring the codebase:
    - `https://bababou.albandrieu.com/policy/service_terms.html`
    - `https://bababou.albandrieu.com/policy/gnu_general_public_license.txt`
    - `https://status.albandrieu.com/` (external status page - note: typically external domains should not be in sitemap)
-   
+
    **Note**: Consider updating the sitemap to use canonical URLs (remove /index.html for homepage) and evaluate whether external status page should be included.
 
 5. **Sitemap Validation**
@@ -708,7 +708,7 @@ When exploring the codebase:
      /* ===========================================
         Section Title
         =========================================== */
-     
+
      /* Subsection description */
      .class-name { }
      ```

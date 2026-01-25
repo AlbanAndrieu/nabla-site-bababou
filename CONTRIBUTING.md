@@ -32,7 +32,7 @@ Please be respectful and constructive in all interactions.
    ```bash
    # Run linting
    npm run lint
-   
+
    # Test locally
    npm run start
    ```
@@ -107,7 +107,7 @@ Before submitting a PR:
    ```bash
    # Using Cloudflare Wrangler
    npm run start
-   
+
    # Or using Python
    npm run start-python
    ```
