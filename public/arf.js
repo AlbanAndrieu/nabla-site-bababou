@@ -79,7 +79,7 @@ function update(source) {
 		.attr("dy", ".35em")
 		.attr("text-anchor", (d) => (d.children || d._children ? "end" : "start"))
 		.text((d) => d.name)
-		.style("fill: rgb(0, 0, 0)", (d) => (d.free ? "black" : "#999"))
+		.style("fill: rgb(0, 0, 0)", (d) => (d.free ? "black" : "#af0c0cff"))
 		.style("fill-opacity", 1e-6);
 
 	nodeEnter.append("svg:title").text((d) => d.description);
@@ -93,7 +93,7 @@ function update(source) {
 	nodeUpdate
 		.select("circle")
 		.attr("r", 6)
-		.style("fill", (d) => (d._children ? "lightsteelblue" : "#fff"));
+		.style("fill", (d) => (d._children ? "lightsteelblue" : "#700909ff"));
 
 	nodeUpdate.select("text").style("fill-opacity", 1);
 
