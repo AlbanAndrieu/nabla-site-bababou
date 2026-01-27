@@ -28,8 +28,6 @@ This is the nabla-site-bababou repository, a static website project for "bababou
 ### Key Directories
 - `public/` - Static assets directory served by Cloudflare/Vercel (HTML, CSS, JS, JSON)
 - `my-app/` - Next.js application (separate package with its own package.json)
-- `api/` - API functions (contains `hello.js`)
-- `scripts/` - Utility scripts (e.g., `run-wicked.sh`)
 - `.github/workflows/` - CI/CD workflows (OpenCommit action)
 
 ### Configuration Files
@@ -38,7 +36,6 @@ This is the nabla-site-bababou repository, a static website project for "bababou
 - `.yamllint` - YAML linting configuration
 - `.ansible-lint` - Ansible linting configuration
 - `Pipfile` - Python dependencies (ansible-lint, gitlint)
-- `pnpm-workspace.yaml` - PNPM workspace configuration
 
 ## Build & Development Commands
 
