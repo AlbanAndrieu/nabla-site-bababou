@@ -27,7 +27,7 @@ test.describe('Google Translate Widget Tests', () => {
     
     // Check if translate config exists
     const hasConfig = await page.evaluate(() => {
-      return typeof window.googleTranslateElementInit === 'function' || 
+      return typeof (window as any).googleTranslateElementInit === 'function' || 
              typeof (window as any).googleTranslateConfig !== 'undefined';
     });
     
