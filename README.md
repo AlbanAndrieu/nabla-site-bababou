@@ -119,6 +119,37 @@ npm run lint
 cd my-app && npm run lint
 ```
 
+### Testing
+
+The project uses Playwright for end-to-end testing:
+
+```bash
+# Run all tests
+npm test
+
+# Run tests in UI mode (interactive)
+npm run test:ui
+
+# Run tests in headed mode (see browser)
+npm run test:headed
+
+# Debug tests
+npm run test:debug
+
+# View test report
+npm run test:report
+```
+
+**Test Coverage:**
+- Homepage functionality and content
+- 404 error page
+- Dark/light theme toggle
+- Google Translate widget
+- Accessibility features (ARIA labels, keyboard navigation, etc.)
+- Responsive design on mobile and desktop
+
+Tests run automatically on pull requests via GitHub Actions.
+
 ### Building
 
 **Next.js Application:**
@@ -167,11 +198,29 @@ nabla-site-bababou/
 │   ├── public/          # Next.js static assets
 │   └── package.json     # Next.js dependencies
 ├── api/                 # API functions
+├── tests/               # Playwright end-to-end tests
 ├── .github/             # GitHub workflows and configurations
+│   └── workflows/
+│       ├── playwright.yml    # Playwright test workflow
+│       └── opencommit.yml    # OpenCommit workflow
 ├── package.json         # Root package configuration
+├── playwright.config.ts # Playwright test configuration
 ├── vercel.json          # Vercel deployment config
 └── wrangler.jsonc       # Cloudflare Workers config
 ```
+
+## Continuous Integration
+
+The project uses GitHub Actions for continuous integration:
+
+### Playwright Tests Workflow
+- **Trigger**: Push to main branches, pull requests, or manual dispatch
+- **Actions**: Runs all Playwright end-to-end tests
+- **Artifacts**: Uploads test reports and results for 30 days
+- **Browser**: Runs tests on Chromium, Firefox, WebKit, and mobile viewports
+
+View workflow status in the [Actions tab](https://github.com/AlbanAndrieu/nabla-site-bababou/actions).
+
 
 ## Code Quality
 
