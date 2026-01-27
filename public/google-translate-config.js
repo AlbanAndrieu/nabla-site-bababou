@@ -4,7 +4,7 @@
  * Note: google object is provided by the Google Translate script loaded externally
  */
 /* global google */
-function _googleTranslateElementInit() {
+function googleTranslateElementInit() {
 	new google.translate.TranslateElement(
 		{
 			pageLanguage: "en",
