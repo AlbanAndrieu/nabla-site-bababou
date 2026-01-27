@@ -179,8 +179,8 @@ fix(scope): fix bug in component
 The following directories are ignored by ESLint (see `eslint.config.js`):
 - `node_modules/`, `.next/`, `out/`, `build/`, `dist/`, `.turbo/`
 - `my-app/node_modules/`, `my-app/.next/`, `.vercel/`, `.cache/`, `.pnpm/`
-- `public/**/*.min.js`, `public/d3.v3.min.js`, `public/index.js`, `public/arf.js`
-- `api/**`, `index/**`
+- `public/**/*.min.js`, `public/d3.v3.min.js`, `public/index.js`, `public/arf.js`, `public/theme-toggle.js`
+- `api/**`, `index/**` (note: index directory may not currently exist but is included for future use)
 
 ### Common Issues & Workarounds
 
