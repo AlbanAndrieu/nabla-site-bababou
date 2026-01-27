@@ -12,7 +12,7 @@ This is the nabla-site-bababou repository, a static website project for "bababou
 **Languages & Technologies:**
 - JavaScript/TypeScript (Node.js v24.11.0+, npm v11.6.2+, pnpm v10.22.0+)
 - Python 3.12 (for local development server and linting tools)
-- Next.js 16.0.7 with React 19.2.0
+- Next.js 16.0.10 with React 19.2.0
 - Cloudflare Workers (wrangler)
 - Vercel deployment platform
 
@@ -56,6 +56,7 @@ This main file provides general guidance for the entire repository. For area-spe
 ### Key Directories
 - `public/` - Static assets directory served by Cloudflare/Vercel (HTML, CSS, JS, JSON)
 - `my-app/` - Next.js application (separate package with its own package.json)
+- `api/` - API functions
 - `.github/workflows/` - CI/CD workflows (OpenCommit action)
 
 ### Configuration Files
@@ -80,10 +81,9 @@ cd my-app && pnpm install
 ```
 
 The postinstall script automatically:
-- Copies d3.min.js to index/dist/scripts/d3
-- Copies arf.js to dist/scripts/
-- Copies resources/*.json to dist/resources
-- Copies index.html and wireframe.css to dist/
+- Copies d3.min.js to a working directory for the ARF visualization
+- Copies arf.js and related resources for the application
+- Sets up necessary assets in the dist directory
 
 ### Development Servers
 
@@ -207,8 +207,8 @@ fix(scope): fix bug in component
 The following directories are ignored by ESLint (see `eslint.config.js`):
 - `node_modules/`, `.next/`, `out/`, `build/`, `dist/`, `.turbo/`
 - `my-app/node_modules/`, `my-app/.next/`, `.vercel/`, `.cache/`, `.pnpm/`
-- `public/**/*.min.js`, `public/d3.v3.min.js`, `public/index.js`, `public/arf.js`
-- `api/**`, `index/**`
+- `public/**/*.min.js`, `public/d3.v3.min.js`, `public/index.js`, `public/arf.js`, `public/theme-toggle.js`
+- `api/**`, `index/**` (note: index directory may not currently exist but is included for future use)
 
 ### Common Issues & Workarounds
 
@@ -219,7 +219,7 @@ The following directories are ignored by ESLint (see `eslint.config.js`):
 5. **Large files excluded** - Several large files are excluded from git (see `.pre-commit-config.yaml` check-added-large-files)
 
 ### Shell Script Notes
-The `scripts/run-wicked.sh` script is excluded from some linting checks (bashate, shell-lint) due to specific code patterns.
+Shell scripts in the repository may be excluded from some linting checks due to specific code patterns.
 
 ## Validation Steps
 
@@ -234,7 +234,7 @@ Before submitting a PR:
 
 - Repository: https://github.com/AlbanAndrieu/nabla-site-bababou
 - Issue Tracker: https://github.com/AlbanAndrieu/nabla-site-bababou/issues
-- License: Apache v2
+- License: Apache License 2.0
 - Vercel deployment: Configured via `vercel.json`
 - Cloudflare Workers: Configured via `wrangler.jsonc`
 
@@ -245,7 +245,7 @@ When exploring the codebase:
 - Next.js app: Look in `my-app/` directory
 - API endpoints: Look in `api/` directory
 - Build configurations: Check root-level config files (package.json, vercel.json, wrangler.jsonc)
-- Linting configs: Check `.eslintrc`, `.mega-linter.yml`, `.pre-commit-config.yaml`
+- Linting configs: Check `eslint.config.js`, `.mega-linter.yml`, `.pre-commit-config.yaml`
 - CI/CD: Check `.github/workflows/`
 
 ## HTML/CSS Best Practices

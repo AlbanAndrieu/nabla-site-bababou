@@ -2,13 +2,44 @@
 
 # [![Nabla](https://nabla.albandrieu.com/assets/nabla/nabla-4.png)](https://github.com/AlbanAndrieu/nabla-site-bababou) nabla-site-bababou
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square)](https://opensource.org/licenses/Apache-2.0)
 
-# nabla-site-bababou
+For Eléonore - Default nabla files for bababou website
 
-For Eléonore
+## Features
 
-Default nabla files for bababou website
+### Multi-Language Support
+
+The website supports translation into multiple languages using Google Translate. Visitors can translate the entire website content into their preferred language using the translation widget located in the top-right corner of each page.
+
+**Supported Languages Include:**
+- English (default)
+- French (Français)
+- Norwegian (Norsk)
+- German (Deutsch)
+- Spanish (Español)
+- Italian (Italiano)
+- Portuguese (Português)
+- Dutch (Nederlands)
+- Swedish (Svenska)
+- Danish (Dansk)
+- Finnish (Suomi)
+- Polish (Polski)
+- Czech (Čeština)
+- Russian (Русский)
+- Arabic (العربية)
+- Japanese (日本語)
+- Chinese Simplified (简体中文)
+
+The translation feature is available on all pages including:
+- Main index page
+- Privacy Policy
+- Terms of Service
+- 404 Error page
+
+### Dark Mode Support
+
+The website includes a theme toggle feature that allows users to switch between light and dark modes. The preference is persisted across sessions.
 
 ## Prerequisites
 
@@ -43,63 +74,6 @@ cd my-app && npm install
 
 The postinstall script automatically copies necessary assets to the correct locations.
 
-## Features
-
-### Multi-Language Support
-
-The website now supports translation into multiple languages using Google Translate. Visitors can translate the entire website content into their preferred language using the translation widget located in the top-right corner of each page.
-
-**Supported Languages Include:**
-- English (default)
-- French (Français)
-- Norwegian (Norsk)
-- German (Deutsch)
-- Spanish (Español)
-- Italian (Italiano)
-- Portuguese (Português)
-- Dutch (Nederlands)
-- Swedish (Svenska)
-- Danish (Dansk)
-- Finnish (Suomi)
-- Polish (Polski)
-- Czech (Čeština)
-- Russian (Русский)
-- Arabic (العربية)
-- Japanese (日本語)
-- Chinese Simplified (简体中文)
-
-The translation feature is available on all pages including:
-- Main index page
-- Privacy Policy
-- Terms of Service
-- 404 Error page
-
-### Dark Mode Support
-
-The website includes a theme toggle feature that allows users to switch between light and dark modes. The preference is persisted across sessions.
-
-## Prerequisites
-
-- Node.js >= 24.11.0
-- npm >= 11.6.2
-- pnpm ^10.22.0 (optional)
-- Python 3.x (for the Python development server)
-
-## Installation
-
-```bash
-# Install dependencies
-npm install
-
-# Or using pnpm
-pnpm install
-```
-
-## Running the Site
-
-### Development Server Options
-
-**Option 1: Cloudflare Wrangler (Recommended)**
 ## Development
 
 ### Running the Site Locally
@@ -115,7 +89,6 @@ npm run dev
 wrangler dev
 ```
 
-**Option 2: Python HTTP Server**
 Using Python HTTP server (alternative):
 ```bash
 npm run start-python
@@ -126,13 +99,6 @@ python -m http.server 8001
 The site will be available at:
 - Wrangler: `http://localhost:8787`
 - Python: `http://localhost:8001`
-
-## Deployment
-
-### Vercel Deployment
-
-```bash
-```
 
 **Next.js Application (my-app):**
 ```bash
@@ -161,7 +127,7 @@ cd my-app
 npm run build
 ```
 
-Note: The root project serves static files directly from `public/` and does not require a separate build step.
+**Note:** The root project serves static files directly from `public/` and does not require a separate build step.
 
 ## Deployment
 
@@ -183,15 +149,7 @@ npm run deploy
 wrangler deploy
 ```
 
-## Development
-
-### Linting
-
-```bash
-npm run lint
-```
-
-### Project Structure
+## Project Structure
 
 ```
 nabla-site-bababou/
@@ -202,33 +160,17 @@ nabla-site-bababou/
 │   ├── arf.css          # ARF styles
 │   ├── theme.css        # Theme styles
 │   ├── theme-toggle.js  # Dark mode toggle
-│   └── google-translate-config.js  # Translation config
+│   ├── google-translate-config.js  # Translation config
+│   └── policy/          # Legal documents
 ├── my-app/              # Next.js application
+│   ├── app/             # Next.js app directory
+│   ├── public/          # Next.js static assets
+│   └── package.json     # Next.js dependencies
 ├── api/                 # API functions
-├── scripts/             # Utility scripts
-├── .editorconfig        # Editor configuration
-├── eslint.config.js     # ESLint configuration
-├── package.json         # Project dependencies
-├── vercel.json          # Vercel config
-└── wrangler.jsonc       # Cloudflare config
-```
-
-Configuration files:
-- `vercel.json` - Vercel deployment settings
-- `wrangler.jsonc` - Cloudflare Workers settings
-
-## Project Structure
-
-```
-.
-├── public/           # Static assets (HTML, CSS, JS, images)
-├── my-app/           # Next.js application
-├── api/              # API functions
-├── scripts/          # Utility scripts
-├── .github/          # GitHub workflows and configurations
-├── package.json      # Root package configuration
-├── vercel.json       # Vercel deployment config
-└── wrangler.jsonc    # Cloudflare Workers config
+├── .github/             # GitHub workflows and configurations
+├── package.json         # Root package configuration
+├── vercel.json          # Vercel deployment config
+└── wrangler.jsonc       # Cloudflare Workers config
 ```
 
 ## Code Quality
@@ -273,7 +215,7 @@ fix(scope): fix bug in component
 
 ## License
 
-[MIT License](LICENSE)
+[Apache License 2.0](LICENSE)
 
 ---
 

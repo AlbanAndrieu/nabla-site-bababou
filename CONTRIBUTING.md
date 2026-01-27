@@ -90,7 +90,6 @@ nabla-site-bababou/
 ├── public/              # Static website files (main site)
 ├── my-app/              # Next.js application
 ├── api/                 # API functions
-├── scripts/             # Utility scripts
 └── .github/             # GitHub workflows and configurations
 ```
 
@@ -136,6 +135,6 @@ If you have questions, please:
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under the MIT License.
+By contributing, you agree that your contributions will be licensed under the Apache License 2.0.
 
 Thank you for contributing! 🎉
