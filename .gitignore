@@ -82,3 +82,8 @@ temp/
 *.swp
 *.swo
 *~
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
