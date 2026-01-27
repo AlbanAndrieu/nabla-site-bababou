@@ -16,6 +16,34 @@ This is the nabla-site-bababou repository, a static website project for "bababou
 - Cloudflare Workers (wrangler)
 - Vercel deployment platform
 
+## Specialized Instruction Files
+
+This main file provides general guidance for the entire repository. For area-specific instructions, refer to:
+
+- **[copilot-instructions-nextjs.md](copilot-instructions-nextjs.md)** - Next.js application (`my-app/`)
+  - Next.js 16, React 19, TypeScript, Tailwind CSS
+  - App Router conventions, component patterns, deployment
+
+- **[copilot-instructions-static-site.md](copilot-instructions-static-site.md)** - Static website (`public/`)
+  - HTML/CSS/JavaScript best practices
+  - Dark mode, Google Translate, SEO, accessibility
+  - Print styles, responsive design, Open Graph
+
+- **[copilot-instructions-api.md](copilot-instructions-api.md)** - API functions (`api/`)
+  - Vercel serverless functions
+  - Request handling, validation, security
+  - Environment variables, testing, deployment
+
+- **[copilot-instructions-cicd.md](copilot-instructions-cicd.md)** - CI/CD workflows (`.github/workflows/`)
+  - GitHub Actions workflows
+  - OpenCommit, Copilot setup
+  - Workflow patterns, triggers, debugging
+
+- **[copilot-instructions-python.md](copilot-instructions-python.md)** - Python tools and scripts
+  - Python 3.12, Pipenv, development server
+  - Linting tools (Ruff, Bandit, ansible-lint)
+  - Pre-commit hooks, testing, best practices
+
 ## Project Structure
 
 ### Root Directory Files
