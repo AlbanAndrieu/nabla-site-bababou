@@ -1,0 +1,1102 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>NRE — Failure to Present Child (France) | Visitation Rights</title>
+		<meta
+			name="description"
+			content="List of scheduled visitation weekends (first weekend of each month) and failures to present child (NRE). Reference: complaint TGI Valence 4 September 2023. Enforceable judgment 31 March 2017."
+		/>
+		<link rel="icon" href="favicon.ico" />
+		<link rel="stylesheet" href="modern-style.css" />
+		<link rel="stylesheet" href="wireframe.css" />
+		<link rel="stylesheet" href="theme.css" />
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.1/css/bootstrap.min.css"
+			integrity="sha512-siwe/oXMhSjGCwLn+scraPOWrJxHlUgMBMZXdPe2Tnk3I0x3ESCoLz7WZ5NTH6SZrywMY+PB1cjyqJ5jAluCOg=="
+			crossorigin="anonymous"
+			referrerpolicy="no-referrer"
+		/>
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.9.1/font/bootstrap-icons.min.css"
+			integrity="sha512-5PV92qsds/16vyYIJo3T/As4m2d8b6oWYfoqV+vtizRB6KhF1F9kYzWzQmsO6T3z3QG2Xdhrx7FQ+5R1LiQdUA=="
+			crossorigin="anonymous"
+			referrerpolicy="no-referrer"
+		/>
+		<script
+			src="https://nabla.albandrieu.com/assets/fontawesome-free-7.1.0-web/js/fontawesome.js"
+			data-auto-replace-svg="nest"
+		></script>
+		<script src="https://nabla.albandrieu.com/assets/fontawesome-free-7.1.0-web/js/solid.js"></script>
+		<script src="https://nabla.albandrieu.com/assets/fontawesome-free-7.1.0-web/js/brands.js"></script>
+		<link
+			href="https://nabla.albandrieu.com/assets/fontawesome/css/fontawesome.css"
+			rel="stylesheet"
+		/>
+		<link
+			href="https://nabla.albandrieu.com/assets/fontawesome/css/brands.css"
+			rel="stylesheet"
+		/>
+		<link
+			href="https://nabla.albandrieu.com/assets/fontawesome/css/solid.css"
+			rel="stylesheet"
+		/>
+		<link rel="stylesheet" href="print.css" />
+		<style>
+			.nre-page {
+				max-width: 900px;
+				margin: 0 auto;
+				padding: 2rem 1rem;
+			}
+			.nre-page h1 {
+				font-size: 1.75rem;
+				margin-bottom: 0.5rem;
+			}
+			.nre-page .subtitle {
+				color: var(--text-light, #6b7280);
+				margin-bottom: 2rem;
+			}
+			.nre-stats {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 1.5rem;
+				margin-bottom: 2rem;
+			}
+			.nre-stat {
+				background: var(--bg-light, #f9fafb);
+				border-radius: 8px;
+				padding: 1rem 1.5rem;
+				min-width: 180px;
+			}
+			.nre-stat .value {
+				font-size: 1.75rem;
+				font-weight: 700;
+			}
+			.nre-stat .label {
+				font-size: 0.875rem;
+				color: var(--text-light, #6b7280);
+			}
+			.nre-stat.nre-missing .value {
+				color: #dc2626;
+			}
+			.nre-stat.nre-days .value {
+				color: #059669;
+			}
+			.nre-ref {
+				margin-bottom: 2rem;
+				padding: 1rem;
+				background: #fef3c7;
+				border-radius: 8px;
+				border-left: 4px solid #f59e0b;
+			}
+			.nre-ref a {
+				font-weight: 600;
+			}
+			.timeline {
+				position: relative;
+				padding-left: 1.5rem;
+				border-left: 2px solid var(--border-color, #e5e7eb);
+				margin-bottom: 2rem;
+			}
+			.timeline-item {
+				position: relative;
+				padding-bottom: 1.25rem;
+			}
+			.timeline-item::before {
+				content: "";
+				position: absolute;
+				left: -1.5rem;
+				top: 0.35rem;
+				width: 10px;
+				height: 10px;
+				border-radius: 50%;
+				background: var(--border-color, #e5e7eb);
+			}
+			.timeline-item.nre::before {
+				background: #dc2626;
+			}
+			.timeline-item.exception::before {
+				background: #059669;
+			}
+			.timeline-item .date {
+				font-weight: 600;
+			}
+			.timeline-item .range {
+				font-size: 0.875rem;
+				color: var(--text-light, #6b7280);
+			}
+			.timeline-year {
+				margin-bottom: 1.5rem;
+			}
+			.timeline-year-title {
+				font-size: 1.1rem;
+				margin-bottom: 0.35rem;
+			}
+			.timeline-year-location {
+				font-weight: normal;
+				color: var(--text-light, #6b7280);
+				font-size: 0.9rem;
+			}
+			.timeline-year-items {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.25rem 0.75rem;
+				font-size: 0.8rem;
+			}
+			.timeline-year-items span {
+				white-space: nowrap;
+			}
+			.timeline-year-items .nre {
+				color: #dc2626;
+			}
+			.timeline-year-items .exc {
+				color: #059669;
+			}
+			.nre-locations {
+				margin-bottom: 1.5rem;
+				padding: 0.75rem 1rem;
+				background: var(--bg-light, #f9fafb);
+				border-radius: 6px;
+				font-size: 0.9rem;
+			}
+			.nre-locations strong {
+				margin-right: 0.25rem;
+			}
+			.nre-table {
+				width: 100%;
+				border-collapse: collapse;
+				margin-top: 1rem;
+			}
+			.nre-table th,
+			.nre-table td {
+				padding: 0.5rem 0.75rem;
+				text-align: left;
+				border-bottom: 1px solid var(--border-color, #e5e7eb);
+			}
+			.nre-table th {
+				font-weight: 600;
+			}
+			.nre-table .status-nre {
+				color: #dc2626;
+				font-weight: 500;
+			}
+			.nre-table .status-ok {
+				color: #059669;
+			}
+			.nre-table .status-unknown {
+				color: var(--text-light, #6b7280);
+			}
+			.nre-table .status-exception {
+				color: #059669;
+				font-weight: 500;
+			}
+			.back-link {
+				display: inline-block;
+				margin-bottom: 1.5rem;
+			}
+			.nre-exceptions {
+				margin-top: 2rem;
+				padding: 1rem;
+				background: #ecfdf5;
+				border-radius: 8px;
+				border-left: 4px solid #059669;
+			}
+			.nre-exceptions ul {
+				margin: 0.5rem 0 0 1rem;
+			}
+			.nre-exceptions li {
+				margin-bottom: 0.25rem;
+			}
+			.lang-link {
+				margin-left: 0.5rem;
+				font-size: 0.875rem;
+			}
+		</style>
+	</head>
+	<body id="top">
+		<main id="main-content" class="nre-page" role="main">
+			<a href="index.html" class="back-link">← Back to home</a>
+			<span class="lang-link"><a href="nre-fr.html">Français</a></span>
+
+			<h1>Failure to Present Child (NRE — France)</h1>
+			<p class="subtitle">
+				Visitation rights: first weekend of each month. Full list of scheduled
+				weekends and NRE (non-représentation d'enfant).
+			</p>
+
+			<div class="nre-locations" role="note">
+				<strong>Location:</strong> Since 2017 Norway, Oslo; since 2022 Germany,
+				Frankfurt.
+			</div>
+
+			<div class="nre-stats">
+				<div class="nre-stat">
+					<div class="value" id="stat-total">0</div>
+					<div class="label">Scheduled weekends (total)</div>
+				</div>
+				<div class="nre-stat nre-missing">
+					<div class="value" id="stat-nre">0</div>
+					<div class="label">NRE (visitation denied)</div>
+				</div>
+				<div class="nre-stat">
+					<div class="value" id="stat-exceptions">0</div>
+					<div class="label">Exceptions (visitation honored)</div>
+				</div>
+				<div class="nre-stat nre-days">
+					<div class="value" id="stat-days-eleonore">61</div>
+					<div class="label">Days with Éléonore (past 12 years)</div>
+				</div>
+			</div>
+
+			<div class="nre-ref" role="note">
+				<strong>Complaint reference:</strong> Complaint for failure to present a
+				child (Art.
+				<a
+					href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006418025"
+					rel="noopener noreferrer"
+					>227-5</a
+				>
+				of the French Criminal Code), filed on
+				<strong>4 September 2023</strong> in Nanterre with the Prosecutor, Court
+				of Valence (TGI Valence). List as from the enforceable judgment of 31
+				March 2017. Facts are not reproduced here; see the official document:
+				<a
+					href="assets/plainte-procureur-tgi-valence-04-08-2023-1.pdf"
+					id="pdf-ref"
+					>Complaint TGI Valence, 4 September 2023</a
+				>
+				(PDF).
+			</div>
+
+			<section aria-labelledby="timeline-heading">
+				<h2 id="timeline-heading">Timeline by year</h2>
+				<div class="timeline" id="timeline"></div>
+			</section>
+
+			<section aria-labelledby="table-heading">
+				<h2 id="table-heading">First weekend of each month</h2>
+				<p>
+					Visitation as from the enforceable judgment of 31 March 2017 (first
+					weekend of each month).
+				</p>
+				<table class="nre-table" id="nre-table">
+					<thead>
+						<tr>
+							<th scope="col">Month</th>
+							<th scope="col">Weekend (Sat – Sun)</th>
+							<th scope="col">Status</th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- 2017: enforceable judgment 31 March 2017 -->
+						<tr data-nre="true">
+							<td>March 2017</td>
+							<td>4–5 March 2017</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>April 2017</td>
+							<td>1–2 April 2017</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>May 2017</td>
+							<td>6–7 May 2017</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>June 2017</td>
+							<td>3–4 June 2017</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>July 2017</td>
+							<td>1–2 July 2017</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>August 2017</td>
+							<td>5–6 August 2017</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>September 2017</td>
+							<td>2–3 September 2017</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>October 2017</td>
+							<td>7–8 October 2017</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>November 2017</td>
+							<td>4–5 November 2017</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>December 2017</td>
+							<td>2–3 December 2017</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<!-- 2018 -->
+						<tr data-nre="true">
+							<td>January 2018</td>
+							<td>6–7 January 2018</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>February 2018</td>
+							<td>3–4 February 2018</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>March 2018</td>
+							<td>3–4 March 2018</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>April 2018</td>
+							<td>7–8 April 2018</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>May 2018</td>
+							<td>5–6 May 2018</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>June 2018</td>
+							<td>2–3 June 2018</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>July 2018</td>
+							<td>7–8 July 2018</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>August 2018</td>
+							<td>4–5 August 2018</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>September 2018</td>
+							<td>1–2 September 2018</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>October 2018</td>
+							<td>6–7 October 2018</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>November 2018</td>
+							<td>3–4 November 2018</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>December 2018</td>
+							<td>1–2 December 2018</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<!-- 2019 -->
+						<tr data-nre="true">
+							<td>January 2019</td>
+							<td>5–6 January 2019</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>February 2019</td>
+							<td>2–3 February 2019</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>March 2019</td>
+							<td>2–3 March 2019</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>April 2019</td>
+							<td>6–7 April 2019</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>May 2019</td>
+							<td>4–5 May 2019</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>June 2019</td>
+							<td>1–2 June 2019</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>July 2019</td>
+							<td>6–7 July 2019</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>August 2019</td>
+							<td>3–4 August 2019</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>September 2019</td>
+							<td>7–8 September 2019</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>October 2019</td>
+							<td>5–6 October 2019</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>November 2019</td>
+							<td>2–3 November 2019</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>December 2019</td>
+							<td>7–8 December 2019</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<!-- 2020: exception January 2020 -->
+						<tr data-exception="true">
+							<td>January 2020</td>
+							<td>4–5 January 2020</td>
+							<td class="status-exception">
+								Exception (14 days with Éléonore)
+							</td>
+						</tr>
+						<tr data-nre="true">
+							<td>February 2020</td>
+							<td>1–2 February 2020</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>March 2020</td>
+							<td>7–8 March 2020</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>April 2020</td>
+							<td>4–5 April 2020</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>May 2020</td>
+							<td>2–3 May 2020</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>June 2020</td>
+							<td>6–7 June 2020</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>July 2020</td>
+							<td>4–5 July 2020</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>August 2020</td>
+							<td>1–2 August 2020</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>September 2020</td>
+							<td>5–6 September 2020</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>October 2020</td>
+							<td>3–4 October 2020</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>November 2020</td>
+							<td>7–8 November 2020</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>December 2020</td>
+							<td>5–6 December 2020</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<!-- 2021: exceptions August, October -->
+						<tr data-nre="true">
+							<td>January 2021</td>
+							<td>2–3 January 2021</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>February 2021</td>
+							<td>6–7 February 2021</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>March 2021</td>
+							<td>6–7 March 2021</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>April 2021</td>
+							<td>3–4 April 2021</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>May 2021</td>
+							<td>1–2 May 2021</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>June 2021</td>
+							<td>5–6 June 2021</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>July 2021</td>
+							<td>3–4 July 2021</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-exception="true">
+							<td>August 2021</td>
+							<td>7–8 August 2021</td>
+							<td class="status-exception">
+								Exception (4 weeks with Éléonore)
+							</td>
+						</tr>
+						<tr data-nre="true">
+							<td>September 2021</td>
+							<td>4–5 September 2021</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-exception="true">
+							<td>October 2021</td>
+							<td>2–3 October 2021</td>
+							<td class="status-exception">Exception (7 days with Éléonore)</td>
+						</tr>
+						<tr data-nre="true">
+							<td>November 2021</td>
+							<td>6–7 November 2021</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>December 2021</td>
+							<td>4–5 December 2021</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<!-- 2022: exceptions January, March, November -->
+						<tr data-exception="true">
+							<td>January 2022</td>
+							<td>1–2 January 2022</td>
+							<td class="status-exception">
+								Exception (10 days with Éléonore)
+							</td>
+						</tr>
+						<tr data-nre="true">
+							<td>February 2022</td>
+							<td>5–6 February 2022</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-exception="true">
+							<td>March 2022</td>
+							<td>5–6 March 2022</td>
+							<td class="status-exception">
+								Exception (interrupted by German police)
+							</td>
+						</tr>
+						<tr data-nre="true">
+							<td>April 2022</td>
+							<td>2–3 April 2022</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>May 2022</td>
+							<td>7–8 May 2022</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>June 2022</td>
+							<td>4–5 June 2022</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>July 2022</td>
+							<td>2–3 July 2022</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>August 2022</td>
+							<td>6–7 August 2022</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>September 2022</td>
+							<td>3–4 September 2022</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>October 2022</td>
+							<td>1–2 October 2022</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-exception="true">
+							<td>November 2022</td>
+							<td>5–6 November 2022</td>
+							<td class="status-exception">Exception (honored)</td>
+						</tr>
+						<tr data-nre="true">
+							<td>December 2022</td>
+							<td>3–4 December 2022</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<!-- 2023: document through September -->
+						<tr data-nre="true">
+							<td>January 2023</td>
+							<td>7–8 January 2023</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>February 2023</td>
+							<td>4–5 February 2023</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>March 2023</td>
+							<td>4–5 March 2023</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>April 2023</td>
+							<td>1–2 April 2023</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>May 2023</td>
+							<td>6–7 May 2023</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>June 2023</td>
+							<td>3–4 June 2023</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>July 2023</td>
+							<td>1–2 July 2023</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>August 2023</td>
+							<td>5–6 August 2023</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>September 2023</td>
+							<td>2–3 September 2023</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<!-- Oct 2023 – present: NRE -->
+						<tr data-nre="true">
+							<td>October 2023</td>
+							<td>7–8 October 2023</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>November 2023</td>
+							<td>4–5 November 2023</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>December 2023</td>
+							<td>2–3 December 2023</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>January 2024</td>
+							<td>6–7 January 2024</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>February 2024</td>
+							<td>3–4 February 2024</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>March 2024</td>
+							<td>2–3 March 2024</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>April 2024</td>
+							<td>6–7 April 2024</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>May 2024</td>
+							<td>4–5 May 2024</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>June 2024</td>
+							<td>1–2 June 2024</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>July 2024</td>
+							<td>6–7 July 2024</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>August 2024</td>
+							<td>3–4 August 2024</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>September 2024</td>
+							<td>7–8 September 2024</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>October 2024</td>
+							<td>5–6 October 2024</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>November 2024</td>
+							<td>2–3 November 2024</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>December 2024</td>
+							<td>7–8 December 2024</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>January 2025</td>
+							<td>4–5 January 2025</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>February 2025</td>
+							<td>1–2 February 2025</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>March 2025</td>
+							<td>1–2 March 2025</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>April 2025</td>
+							<td>5–6 April 2025</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>May 2025</td>
+							<td>3–4 May 2025</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>June 2025</td>
+							<td>7–8 June 2025</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>July 2025</td>
+							<td>5–6 July 2025</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>August 2025</td>
+							<td>2–3 August 2025</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>September 2025</td>
+							<td>6–7 September 2025</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>October 2025</td>
+							<td>4–5 October 2025</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>November 2025</td>
+							<td>1–2 November 2025</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>December 2025</td>
+							<td>6–7 December 2025</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>January 2026</td>
+							<td>3–4 January 2026</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+						<tr data-nre="true">
+							<td>February 2026</td>
+							<td>7–8 February 2026</td>
+							<td class="status-nre">NRE</td>
+						</tr>
+					</tbody>
+				</table>
+			</section>
+
+			<section class="nre-exceptions" aria-labelledby="exceptions-heading">
+				<h2 id="exceptions-heading">Exceptions (visitation honored)</h2>
+				<p>
+					The six weekends below are the only exceptions documented in the
+					complaint (visitation honored or partial).
+				</p>
+				<ul>
+					<li>
+						<strong>January 2020 (4–5 Jan)</strong> — 14 days with Éléonore
+						(first holiday with my daughter).
+					</li>
+					<li>
+						<strong>August 2021 (7–8 Aug)</strong> — 4 weeks with Éléonore (Ms
+						Brooke sent her at short notice; job loss as a result).
+					</li>
+					<li>
+						<strong>October 2021 (2–3 Oct)</strong> — 7 days with Éléonore.
+					</li>
+					<li>
+						<strong>January 2022 (1–2 Jan)</strong> — 10 days with Éléonore.
+					</li>
+					<li>
+						<strong>March 2022 (5–6 Mar)</strong> — Interrupted by German police
+						(child and father arrested on Ms Brooke’s orders, despite child
+						being handed over the day before in front of witnesses).
+					</li>
+					<li>
+						<strong>November 2022 (5–6 Nov)</strong> — Visitation honored.
+					</li>
+				</ul>
+			</section>
+		</main>
+
+		<!-- association section -->
+		<div class="py-3 bg-light" aria-label="Site footer">
+			<div class="jumbotron">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="row">
+								<div class="col-md-6">
+									<div class="row">
+										<div class="col-md-4">
+											<h1>Association I support</h1>
+										</div>
+										<div class="col-md-4">
+											<a
+												href="http://paternet.fr/tag/combat-des-peres//"
+												target="_blank"
+												><img
+													class="img-fluid d-block mx-auto py-2"
+													src="assets/auction-law-svgrepo-com.svg"
+													width="70"
+													alt="Paternet - Father's rights organization"
+											/></a>
+										</div>
+										<div class="col-md-4">
+											<a href="http://www.sospapa.net/" target="_blank"
+												><img
+													class="img-fluid d-block mx-auto my-1"
+													src="assets/sos-warning-svgrepo-com.svg"
+													width="100"
+													alt="SOS Papa organization"
+											/></a>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="row">
+										<div class="col-md-4">
+											<a href="http://sos-parents-japan.org/" target="_blank"
+												><img
+													class="img-fluid d-block mx-auto py-2"
+													src="assets/japan-kanji-svgrepo-com.svg"
+													width="70"
+													alt="SOS Parents Japan organization"
+											/></a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Footer -->
+		<footer class="footer">
+			<div class="social-links">
+				<a
+					href="https://www.linkedin.com/in/nabla"
+					target="_blank"
+					class="social-link"
+					aria-label="LinkedIn"
+				>
+					<i class="fab fa-linkedin-in"></i>
+				</a>
+				<a
+					href="https://calendly.com/alban-andrieu"
+					target="_blank"
+					class="social-link"
+					aria-label="Calendly"
+				>
+					<i class="fa fa-calendar-plus"></i>
+				</a>
+				<a
+					href="https://github.com/AlbanAndrieu"
+					target="_blank"
+					class="social-link"
+					aria-label="GitHub"
+				>
+					<i class="fab fa-github"></i>
+				</a>
+				<a
+					href="https://hub.docker.com/u/nabla"
+					target="_blank"
+					class="social-link"
+					aria-label="Docker Hub"
+				>
+					<i class="fab fa-docker"></i>
+				</a>
+				<a
+					href="https://stackexchange.com/users/4652074/albanandrieu"
+					target="_blank"
+					class="social-link"
+					aria-label="Stack Exchange"
+				>
+					<i class="fab fa-stack-exchange"></i>
+				</a>
+			</div>
+
+			<div class="footer-links">
+				<a href="https://nabla.albandrieu.com/policy/service_terms.html"
+					>Terms of Use</a
+				>
+				<a
+					href="javascript:openAxeptioCookies()"
+					rel="noopener noreferrer"
+					class="text-muted"
+					>Cookies</a
+				>
+				<a href="https://nabla.albandrieu.com/policy/privacy_policy.html"
+					>Privacy Policy</a
+				>
+			</div>
+			<p class="text-md-center mt-3">
+				<a href="#top" class="btn btn-sm btn-outline-secondary">Back to top</a>
+			</p>
+
+			<p style="margin-top: 1rem; opacity: 0.7">
+				© 2025 Alban Andrieu. Independent DevSecOps Professional.
+			</p>
+		</footer>
+
+		<script>
+			(function () {
+				var rows = document.querySelectorAll("#nre-table tbody tr");
+				var total = rows.length;
+				var nreCount = 0;
+				var exceptionCount = 0;
+				var timeline = document.getElementById("timeline");
+				var byYear = {};
+
+				function shortMonthEn(monthLabel) {
+					var m = monthLabel.replace(/\s*\d{4}$/, "").trim();
+					if (m.indexOf("January") === 0) return "Jan";
+					if (m.indexOf("February") === 0) return "Feb";
+					if (m.indexOf("March") === 0) return "Mar";
+					if (m.indexOf("April") === 0) return "Apr";
+					if (m.indexOf("May") === 0) return "May";
+					if (m.indexOf("June") === 0) return "Jun";
+					if (m.indexOf("July") === 0) return "Jul";
+					if (m.indexOf("August") === 0) return "Aug";
+					if (m.indexOf("September") === 0) return "Sep";
+					if (m.indexOf("October") === 0) return "Oct";
+					if (m.indexOf("November") === 0) return "Nov";
+					if (m.indexOf("December") === 0) return "Dec";
+					return m;
+				}
+
+				rows.forEach(function (r) {
+					if (r.getAttribute("data-nre") === "true") nreCount++;
+					if (r.getAttribute("data-exception") === "true") exceptionCount++;
+					var cells = r.querySelectorAll("td");
+					var monthLabel = cells[0].textContent;
+					var yearMatch = monthLabel.match(/\d{4}/);
+					var year = yearMatch ? yearMatch[0] : "";
+					if (!byYear[year]) byYear[year] = [];
+					var cls =
+						r.getAttribute("data-nre") === "true"
+							? "nre"
+							: r.getAttribute("data-exception") === "true"
+								? "exc"
+								: "";
+					byYear[year].push({ month: shortMonthEn(monthLabel), class: cls });
+				});
+
+				var flagNorway = "\uD83C\uDDF3\uD83C\uDDF4";
+				var flagGermany = "\uD83C\uDDE9\uD83C\uDDEA";
+				var yearOrder = [
+					"2017",
+					"2018",
+					"2019",
+					"2020",
+					"2021",
+					"2022",
+					"2023",
+					"2024",
+					"2025",
+					"2026",
+				];
+				yearOrder.forEach(function (y) {
+					if (!byYear[y]) return;
+					var flag = parseInt(y, 10) >= 2022 ? flagGermany : flagNorway;
+					var block = document.createElement("div");
+					block.className = "timeline-year";
+					var title = document.createElement("h3");
+					title.className = "timeline-year-title";
+					title.innerHTML =
+						y +
+						' <span class="timeline-year-location" aria-label="' +
+						(parseInt(y, 10) >= 2022 ? "Germany, Frankfurt" : "Norway, Oslo") +
+						'">' +
+						flag +
+						"</span>";
+					block.appendChild(title);
+					var items = document.createElement("div");
+					items.className = "timeline-year-items";
+					byYear[y].forEach(function (o) {
+						var span = document.createElement("span");
+						span.className = o.class;
+						span.textContent =
+							o.month +
+							" " +
+							(o.class === "nre" ? "NRE" : o.class === "exc" ? "Exc." : "—");
+						items.appendChild(span);
+					});
+					block.appendChild(items);
+					timeline.appendChild(block);
+				});
+
+				document.getElementById("stat-total").textContent = total;
+				document.getElementById("stat-nre").textContent = nreCount;
+				document.getElementById("stat-exceptions").textContent = exceptionCount;
+			})();
+		</script>
+	</body>
+</html>
