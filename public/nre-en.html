@@ -27,21 +27,21 @@
 			referrerpolicy="no-referrer"
 		/>
 		<script
-			src="https://nabla.albandrieu.com/assets/fontawesome-free-7.1.0-web/js/fontawesome.js"
+			src="/assets/fontawesome-free-7.1.0-web/js/fontawesome.js"
 			data-auto-replace-svg="nest"
 		></script>
-		<script src="https://nabla.albandrieu.com/assets/fontawesome-free-7.1.0-web/js/solid.js"></script>
-		<script src="https://nabla.albandrieu.com/assets/fontawesome-free-7.1.0-web/js/brands.js"></script>
+		<script src="/assets/fontawesome-free-7.1.0-web/js/solid.js"></script>
+		<script src="/assets/fontawesome-free-7.1.0-web/js/brands.js"></script>
 		<link
-			href="https://nabla.albandrieu.com/assets/fontawesome/css/fontawesome.css"
+			href="/assets/fontawesome/css/fontawesome.css"
 			rel="stylesheet"
 		/>
 		<link
-			href="https://nabla.albandrieu.com/assets/fontawesome/css/brands.css"
+			href="/assets/fontawesome/css/brands.css"
 			rel="stylesheet"
 		/>
 		<link
-			href="https://nabla.albandrieu.com/assets/fontawesome/css/solid.css"
+			href="/assets/fontawesome/css/solid.css"
 			rel="stylesheet"
 		/>
 		<link rel="stylesheet" href="print.css" />
@@ -66,10 +66,16 @@
 				margin-bottom: 2rem;
 			}
 			.nre-stat {
-				background: var(--bg-light, #f9fafb);
-				border-radius: 8px;
-				padding: 1rem 1.5rem;
+				background: var(--bg-white);
+				border-radius: 12px;
+				box-shadow: 0 2px 10px var(--shadow-color);
+				padding: 1.5rem;
 				min-width: 180px;
+				transition: all 0.3s ease;
+			}
+			.nre-stat:hover {
+				transform: translateY(-5px);
+				box-shadow: 0 10px 30px var(--shadow-hover-color);
 			}
 			.nre-stat .value {
 				font-size: 1.75rem;
@@ -87,50 +93,22 @@
 			}
 			.nre-ref {
 				margin-bottom: 2rem;
-				padding: 1rem;
-				background: #fef3c7;
-				border-radius: 8px;
-				border-left: 4px solid #f59e0b;
+				padding: 2rem;
+				background: var(--bg-white);
+				border-radius: 12px;
+				box-shadow: 0 2px 10px var(--shadow-color);
+				transition: all 0.3s ease;
+				color: var(--text-dark);
+			}
+			.nre-ref:hover {
+				transform: translateY(-5px);
+				box-shadow: 0 10px 30px var(--shadow-hover-color);
 			}
 			.nre-ref a {
 				font-weight: 600;
+				color: var(--primary-color);
 			}
-			.timeline {
-				position: relative;
-				padding-left: 1.5rem;
-				border-left: 2px solid var(--border-color, #e5e7eb);
-				margin-bottom: 2rem;
-			}
-			.timeline-item {
-				position: relative;
-				padding-bottom: 1.25rem;
-			}
-			.timeline-item::before {
-				content: "";
-				position: absolute;
-				left: -1.5rem;
-				top: 0.35rem;
-				width: 10px;
-				height: 10px;
-				border-radius: 50%;
-				background: var(--border-color, #e5e7eb);
-			}
-			.timeline-item.nre::before {
-				background: #dc2626;
-			}
-			.timeline-item.exception::before {
-				background: #059669;
-			}
-			.timeline-item .date {
-				font-weight: 600;
-			}
-			.timeline-item .range {
-				font-size: 0.875rem;
-				color: var(--text-light, #6b7280);
-			}
-			.timeline-year {
-				margin-bottom: 1.5rem;
-			}
+			/* NRE timeline uses modern-style.css .timeline, .timeline-item, .timeline-marker, .timeline-content */
 			.timeline-year-title {
 				font-size: 1.1rem;
 				margin-bottom: 0.35rem;
@@ -142,18 +120,43 @@
 			}
 			.timeline-year-items {
 				display: flex;
+				flex-direction: column;
+				gap: 0.5rem;
+				margin-top: 0.75rem;
+			}
+			.timeline-year-row {
+				display: flex;
 				flex-wrap: wrap;
-				gap: 0.25rem 0.75rem;
-				font-size: 0.8rem;
+				gap: 0.5rem 0.75rem;
 			}
-			.timeline-year-items span {
+			.timeline-weekend-card {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.35rem;
+				padding: 0.45rem 0.75rem;
+				border-radius: 8px;
+				font-size: 0.85rem;
+				font-weight: 500;
 				white-space: nowrap;
+				background: var(--bg-white, #fff);
+				box-shadow: 0 2px 6px var(--shadow-color, rgba(0,0,0,0.08));
+				border: 1px solid var(--border-color, #e5e7eb);
+				transition: transform 0.2s ease, box-shadow 0.2s ease;
 			}
-			.timeline-year-items .nre {
-				color: #dc2626;
+			.timeline-weekend-card:hover {
+				transform: translateY(-2px);
+				box-shadow: 0 4px 12px var(--shadow-hover-color, rgba(0,0,0,0.12));
 			}
-			.timeline-year-items .exc {
-				color: #059669;
+			.timeline-weekend-card.nre {
+				border-left: 3px solid #dc2626;
+				color: #b91c1c;
+			}
+			.timeline-weekend-card.exc {
+				border-left: 3px solid #059669;
+				color: #047857;
+			}
+			.timeline-weekend-card:not(.nre):not(.exc) {
+				color: var(--text-light, #6b7280);
 			}
 			.nre-locations {
 				margin-bottom: 1.5rem;
@@ -197,19 +200,6 @@
 				display: inline-block;
 				margin-bottom: 1.5rem;
 			}
-			.nre-exceptions {
-				margin-top: 2rem;
-				padding: 1rem;
-				background: #ecfdf5;
-				border-radius: 8px;
-				border-left: 4px solid #059669;
-			}
-			.nre-exceptions ul {
-				margin: 0.5rem 0 0 1rem;
-			}
-			.nre-exceptions li {
-				margin-bottom: 0.25rem;
-			}
 			.lang-link {
 				margin-left: 0.5rem;
 				font-size: 0.875rem;
@@ -217,72 +207,77 @@
 		</style>
 	</head>
 	<body id="top">
-		<main id="main-content" class="nre-page" role="main">
-			<a href="index.html" class="back-link">← Back to home</a>
-			<span class="lang-link"><a href="nre-fr.html">Français</a></span>
+		<main id="main-content" role="main">
+			<section class="services-section" aria-labelledby="nre-heading">
+				<div class="container">
+					<a href="index.html" class="back-link">← Back to home</a>
+					<span class="lang-link"><a href="nre-fr.html">Français</a></span>
+					<h1 id="nre-heading" class="section-title">Failure to Present Child</h1>
+					<p class="section-subtitle">
+						Visitation rights: first weekend of each month. Full list of scheduled
+						weekends and NRE (non-représentation d'enfant).
+					</p>
 
-			<h1>Failure to Present Child (NRE — France)</h1>
-			<p class="subtitle">
-				Visitation rights: first weekend of each month. Full list of scheduled
-				weekends and NRE (non-représentation d'enfant).
-			</p>
-
-			<div class="nre-locations" role="note">
-				<strong>Location:</strong> Since 2017 Norway, Oslo; since 2022 Germany,
-				Frankfurt.
-			</div>
-
-			<div class="nre-stats">
-				<div class="nre-stat">
-					<div class="value" id="stat-total">0</div>
-					<div class="label">Scheduled weekends (total)</div>
+					<div class="nre-stats">
+						<div class="nre-stat">
+							<div class="value" id="stat-total">0</div>
+							<div class="label">Scheduled weekends (total)</div>
+						</div>
+						<div class="nre-stat nre-missing">
+							<div class="value" id="stat-nre">0</div>
+							<div class="label">NRE (visitation denied)</div>
+						</div>
+						<div class="nre-stat">
+							<div class="value" id="stat-exceptions">0</div>
+							<div class="label">Exceptions (visitation honored)</div>
+						</div>
+						<div class="nre-stat nre-days">
+							<div class="value" id="stat-days-eleonore">61</div>
+							<div class="label">Days with Éléonore (past 12 years)</div>
+						</div>
+					</div>
+					<div class="nre-ref" role="note">
+						<strong>Complaint reference:</strong> Complaint for failure to present a
+						child (Art.
+						<a
+							href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006418025"
+							rel="noopener noreferrer"
+							>227-5</a
+						>
+						of the French Criminal Code), filed on
+						<strong>4 September 2023</strong> in Nanterre with the Prosecutor, Court
+						of Valence (TGI Valence). List as from the enforceable judgment of 31
+						March 2017. Facts are not reproduced here; see the official document:
+						<a
+							href="assets/plainte-procureur-tgi-valence-04-08-2023-1.pdf"
+							id="pdf-ref"
+							>Complaint TGI Valence, 4 September 2023</a
+						>
+						(PDF).
+					</div>
 				</div>
-				<div class="nre-stat nre-missing">
-					<div class="value" id="stat-nre">0</div>
-					<div class="label">NRE (visitation denied)</div>
-				</div>
-				<div class="nre-stat">
-					<div class="value" id="stat-exceptions">0</div>
-					<div class="label">Exceptions (visitation honored)</div>
-				</div>
-				<div class="nre-stat nre-days">
-					<div class="value" id="stat-days-eleonore">61</div>
-					<div class="label">Days with Éléonore (past 12 years)</div>
-				</div>
-			</div>
-
-			<div class="nre-ref" role="note">
-				<strong>Complaint reference:</strong> Complaint for failure to present a
-				child (Art.
-				<a
-					href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006418025"
-					rel="noopener noreferrer"
-					>227-5</a
-				>
-				of the French Criminal Code), filed on
-				<strong>4 September 2023</strong> in Nanterre with the Prosecutor, Court
-				of Valence (TGI Valence). List as from the enforceable judgment of 31
-				March 2017. Facts are not reproduced here; see the official document:
-				<a
-					href="assets/plainte-procureur-tgi-valence-04-08-2023-1.pdf"
-					id="pdf-ref"
-					>Complaint TGI Valence, 4 September 2023</a
-				>
-				(PDF).
-			</div>
-
-			<section aria-labelledby="timeline-heading">
-				<h2 id="timeline-heading">Timeline by year</h2>
-				<div class="timeline" id="timeline"></div>
 			</section>
 
-			<section aria-labelledby="table-heading">
-				<h2 id="table-heading">First weekend of each month</h2>
-				<p>
-					Visitation as from the enforceable judgment of 31 March 2017 (first
-					weekend of each month).
-				</p>
-				<table class="nre-table" id="nre-table">
+			<section class="experience-section" aria-labelledby="timeline-heading">
+				<div class="container">
+					<h2 id="timeline-heading" class="section-title">Timeline by year</h2>
+					<div class="timeline" id="timeline"></div>
+				</div>
+
+				<div class="nre-locations" role="note">
+					<strong>Location:</strong>2015 France ; Since 2017 Norway, Oslo; since 2022 Germany,
+					Frankfurt.
+				</div>
+			</section>
+
+			<section class="skills-section" aria-labelledby="table-heading">
+				<div class="container">
+					<h2 id="table-heading" class="section-title">First weekend of each month</h2>
+					<p class="section-subtitle">
+						Visitation as from the enforceable judgment of 31 March 2017 (first
+						weekend of each month).
+					</p>
+					<table class="nre-table" id="nre-table">
 					<thead>
 						<tr>
 							<th scope="col">Month</th>
@@ -849,10 +844,12 @@
 						</tr>
 					</tbody>
 				</table>
+				</div>
 			</section>
 
-			<section class="nre-exceptions" aria-labelledby="exceptions-heading">
-				<h2 id="exceptions-heading">Exceptions (visitation honored)</h2>
+			<section class="education-section" aria-labelledby="exceptions-heading">
+				<div class="container">
+					<h2 id="exceptions-heading" class="section-title">Exceptions (visitation honored)</h2>
 				<p>
 					The six weekends below are the only exceptions documented in the
 					complaint (visitation honored or partial).
@@ -881,10 +878,12 @@
 						<strong>November 2022 (5–6 Nov)</strong> — Visitation honored.
 					</li>
 				</ul>
+				</div>
 			</section>
 		</main>
 
 		<!-- association section -->
+		<!--
 		<div class="py-3 bg-light" aria-label="Site footer">
 			<div class="jumbotron">
 				<div class="container">
@@ -937,6 +936,7 @@
 				</div>
 			</div>
 		</div>
+		-->
 
 		<!-- Footer -->
 		<footer class="footer">
@@ -965,22 +965,6 @@
 				>
 					<i class="fab fa-github"></i>
 				</a>
-				<a
-					href="https://hub.docker.com/u/nabla"
-					target="_blank"
-					class="social-link"
-					aria-label="Docker Hub"
-				>
-					<i class="fab fa-docker"></i>
-				</a>
-				<a
-					href="https://stackexchange.com/users/4652074/albanandrieu"
-					target="_blank"
-					class="social-link"
-					aria-label="Stack Exchange"
-				>
-					<i class="fab fa-stack-exchange"></i>
-				</a>
 			</div>
 
 			<div class="footer-links">
@@ -1002,7 +986,7 @@
 			</p>
 
 			<p style="margin-top: 1rem; opacity: 0.7">
-				© 2025 Alban Andrieu. Independent DevSecOps Professional.
+				© 2025 Alban Andrieu. Father.
 			</p>
 		</footer>
 
@@ -1014,6 +998,16 @@
 				var exceptionCount = 0;
 				var timeline = document.getElementById("timeline");
 				var byYear = {};
+
+				// Show only day range in Weekend column (month/year are in Month column)
+				rows.forEach(function (r) {
+					var cells = r.querySelectorAll("td");
+					if (cells.length >= 2) {
+						var weekendCell = cells[1];
+						var m = weekendCell.textContent.match(/(\d+)\s*[–-]\s*(\d+)/);
+						if (m) weekendCell.textContent = m[1] + "\u2013" + m[2];
+					}
+				});
 
 				function shortMonthEn(monthLabel) {
 					var m = monthLabel.replace(/\s*\d{4}$/, "").trim();
@@ -1031,12 +1025,31 @@
 					if (m.indexOf("December") === 0) return "Dec";
 					return m;
 				}
+				function monthIndexEn(monthLabel) {
+					var m = monthLabel.replace(/\s*\d{4}$/, "").trim();
+					if (m.indexOf("January") === 0) return 1;
+					if (m.indexOf("February") === 0) return 2;
+					if (m.indexOf("March") === 0) return 3;
+					if (m.indexOf("April") === 0) return 4;
+					if (m.indexOf("May") === 0) return 5;
+					if (m.indexOf("June") === 0) return 6;
+					if (m.indexOf("July") === 0) return 7;
+					if (m.indexOf("August") === 0) return 8;
+					if (m.indexOf("September") === 0) return 9;
+					if (m.indexOf("October") === 0) return 10;
+					if (m.indexOf("November") === 0) return 11;
+					if (m.indexOf("December") === 0) return 12;
+					return 0;
+				}
 
 				rows.forEach(function (r) {
 					if (r.getAttribute("data-nre") === "true") nreCount++;
 					if (r.getAttribute("data-exception") === "true") exceptionCount++;
 					var cells = r.querySelectorAll("td");
 					var monthLabel = cells[0].textContent;
+					var weekendCell = cells[1].textContent;
+					var weekendMatch = weekendCell.match(/(\d+)\s*[–-]\s*(\d+)/);
+					var weekendNum = weekendMatch ? weekendMatch[1] + "–" + weekendMatch[2] : "";
 					var yearMatch = monthLabel.match(/\d{4}/);
 					var year = yearMatch ? yearMatch[0] : "";
 					if (!byYear[year]) byYear[year] = [];
@@ -1046,7 +1059,12 @@
 							: r.getAttribute("data-exception") === "true"
 								? "exc"
 								: "";
-					byYear[year].push({ month: shortMonthEn(monthLabel), class: cls });
+					byYear[year].push({
+						month: shortMonthEn(monthLabel),
+						weekend: weekendNum,
+						class: cls,
+						monthIndex: monthIndexEn(monthLabel),
+					});
 				});
 
 				var flagNorway = "\uD83C\uDDF3\uD83C\uDDF4";
@@ -1066,8 +1084,15 @@
 				yearOrder.forEach(function (y) {
 					if (!byYear[y]) return;
 					var flag = parseInt(y, 10) >= 2022 ? flagGermany : flagNorway;
-					var block = document.createElement("div");
-					block.className = "timeline-year";
+					var item = document.createElement("div");
+					item.className = "timeline-item";
+					var marker = document.createElement("span");
+					marker.className = "timeline-marker";
+					item.appendChild(marker);
+					var content = document.createElement("div");
+					content.className = "timeline-content";
+					var header = document.createElement("div");
+					header.className = "timeline-header";
 					var title = document.createElement("h3");
 					title.className = "timeline-year-title";
 					title.innerHTML =
@@ -1077,20 +1102,31 @@
 						'">' +
 						flag +
 						"</span>";
-					block.appendChild(title);
+					header.appendChild(title);
+					content.appendChild(header);
 					var items = document.createElement("div");
 					items.className = "timeline-year-items";
-					byYear[y].forEach(function (o) {
-						var span = document.createElement("span");
-						span.className = o.class;
-						span.textContent =
-							o.month +
-							" " +
-							(o.class === "nre" ? "NRE" : o.class === "exc" ? "Exc." : "—");
-						items.appendChild(span);
+					var sorted = byYear[y].slice().sort(function (a, b) {
+						return (a.monthIndex || 0) - (b.monthIndex || 0);
 					});
-					block.appendChild(items);
-					timeline.appendChild(block);
+					var firstHalf = sorted.filter(function (o) { return o.monthIndex >= 1 && o.monthIndex <= 6; });
+					var secondHalf = sorted.filter(function (o) { return o.monthIndex >= 7 && o.monthIndex <= 12; });
+					[firstHalf, secondHalf].forEach(function (half) {
+						var row = document.createElement("div");
+						row.className = "timeline-year-row";
+						half.forEach(function (o) {
+							var card = document.createElement("div");
+							card.className = "timeline-weekend-card " + (o.class || "");
+							var text = o.month + (o.weekend ? " " + o.weekend : "");
+							var icon = o.class === "nre" ? "\u2717" : o.class === "exc" ? "\u2713" : "";
+							card.textContent = text + (icon ? " " + icon : "");
+							row.appendChild(card);
+						});
+						items.appendChild(row);
+					});
+					content.appendChild(items);
+					item.appendChild(content);
+					timeline.appendChild(item);
 				});
 
 				document.getElementById("stat-total").textContent = total;

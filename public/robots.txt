@@ -14,9 +14,7 @@ User-agent: Googlebot
 Allow: /
 Disallow: /*/document/h/*
 Disallow: /*/decision/pdf/*
-Disallow: /*/opinion/pdf/*
 Disallow: /*/other/pdf/*
-Disallow: /*/publication/pdf/*
 # deny dynamic URLs which contain a '?'
 Disallow: /*?*
 

@@ -23,5 +23,5 @@ function googleTranslateElementInit() {
 // Export for use by HTML pages
 /* global window */
 if (typeof window !== "undefined") {
-	window._googleTranslateElementInit = _googleTranslateElementInit;
+	window.googleTranslateElementInit = googleTranslateElementInit;
 }
