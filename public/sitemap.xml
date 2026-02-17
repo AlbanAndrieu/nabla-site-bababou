@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://bababou.albandrieu.com/index.html</loc>
+    <loc>https://bababou.com/index.html</loc>
     <lastmod>2026-02-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://bababou.albandrieu.com/nre-fr.html</loc>
-    <lastmod>2026-02-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://bababou.albandrieu.com/nre-en.html</loc>
+    <loc>https://bababou.com/nre-fr.html</loc>
     <lastmod>2026-02-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://bababou.albandrieu.com/policy/privacy_policy.html</loc>
+    <loc>https://bababou.com/nre-en.html</loc>
+    <lastmod>2026-02-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://bababou.com/policy/privacy_policy.html</loc>
     <lastmod>2026-01-28</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://bababou.albandrieu.com/policy/service_terms.html</loc>
+    <loc>https://bababou.com/policy/service_terms.html</loc>
     <lastmod>2026-01-28</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://bababou.albandrieu.com/policy/gnu_general_public_license.txt</loc>
+    <loc>https://bababou.com/policy/gnu_general_public_license.txt</loc>
     <lastmod>2026-01-28</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.8</priority>

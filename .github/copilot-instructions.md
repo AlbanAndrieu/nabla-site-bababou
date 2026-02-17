@@ -546,11 +546,11 @@ When exploring the codebase:
      - Allow legitimate search engine crawlers (Googlebot, Bingbot, etc.)
      - Block AI scrapers and unwanted bots (listed in current robots.txt)
      - Use `Crawl-delay` to prevent server overload
-     - Always reference the sitemap: `Sitemap: https://bababou.albandrieu.com/sitemap-albandrieu-com.xml`
+     - Always reference the sitemap: `Sitemap: https://bababou.com/sitemap.xml`
      - Submit sitemap via Google Search Console (recommended over deprecated ping service)
 
 2. **Sitemap Requirements**
-   - Reference current sitemap at `public/sitemap-albandrieu-com.xml`
+   - Reference current sitemap at `public/sitemap.xml`
    - **CRITICAL: Update sitemap when adding/removing pages**
    - Submit sitemap to Google Search Console after updates
    - Use Google Search Console for sitemap verification and monitoring
@@ -580,14 +580,14 @@ When exploring the codebase:
 
 ### Sitemap Maintenance Guidelines
 
-**Keep `public/sitemap-albandrieu-com.xml` up to date:**
+**Keep `public/sitemap.xml` up to date:**
 
 1. **Sitemap Structure**
    ```xml
    <?xml version="1.0" encoding="UTF-8"?>
    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
      <url>
-       <loc>https://bababou.albandrieu.com/path/to/page.html</loc>
+       <loc>https://bababou.com/path/to/page.html</loc>
        <changefreq>monthly</changefreq>
        <priority>0.8</priority>
        <lastmod>YYYY-MM-DD</lastmod>
@@ -616,17 +616,17 @@ When exploring the codebase:
      - Homepage: `weekly`
 
 4. **Current Sitemap Pages**
-   - `https://bababou.albandrieu.com/` (homepage - note: actual sitemap uses /index.html)
-   - `https://bababou.albandrieu.com/policy/privacy_policy.html`
-   - `https://bababou.albandrieu.com/policy/service_terms.html`
-   - `https://bababou.albandrieu.com/policy/gnu_general_public_license.txt`
+   - `https://bababou.com/` (homepage - note: actual sitemap uses /index.html)
+   - `https://bababou.com/policy/privacy_policy.html`
+   - `https://bababou.com/policy/service_terms.html`
+   - `https://bababou.com/policy/gnu_general_public_license.txt`
    - `https://status.albandrieu.com/` (external status page - note: typically external domains should not be in sitemap)
 
    **Note**: Consider updating the sitemap to use canonical URLs (remove /index.html for homepage) and evaluate whether external status page should be included.
 
 5. **Sitemap Validation**
    - Validate XML structure before committing
-   - Test sitemap URL is accessible: `https://bababou.albandrieu.com/sitemap-albandrieu-com.xml`
+   - Test sitemap URL is accessible: `https://bababou.com/sitemap.xml`
    - Submit to Google Search Console after updates
    - Verify all URLs in sitemap return HTTP 200 status
    - Keep sitemap size under 50MB and 50,000 URLs
@@ -644,10 +644,10 @@ When exploring the codebase:
    ```html
    <!-- facebook open graph tags -->
    <meta property="og:type" content="website" />
-   <meta property="og:url" content="https://bababou.albandrieu.com" />
+   <meta property="og:url" content="https://bababou.com" />
    <meta property="og:title" content="Page Title - 60 characters max" />
    <meta property="og:description" content="Clear description - 200 characters max" />
-   <meta property="og:image" content="https://bababou.albandrieu.com/path/to/image.jpg" />
+   <meta property="og:image" content="https://bababou.com/path/to/image.jpg" />
    <meta property="og:image:alt" content="Description of image for accessibility" />
    <meta property="og:site_name" content="Site Name" />
    <meta property="og:locale" content="en_US" />
@@ -660,7 +660,7 @@ When exploring the codebase:
    - Formats: JPG, PNG, WebP
    - Use absolute URLs (include full domain)
    - Ensure image is publicly accessible (not behind authentication)
-   - Current example: `https://bababou.albandrieu.com/nabla/assets/miss-and-love-you-quote.jpeg`
+   - Current example: `https://bababou.com/nabla/assets/miss-and-love-you-quote.jpeg`
 
 3. **Twitter Card Tags**
    ```html
@@ -669,7 +669,7 @@ When exploring the codebase:
    <meta name="twitter:site" content="@username">
    <meta name="twitter:title" content="Page Title">
    <meta name="twitter:description" content="Page description">
-   <meta name="twitter:image" content="https://bababou.albandrieu.com/path/to/image.jpg">
+   <meta name="twitter:image" content="https://bababou.com/path/to/image.jpg">
    ```
 
 4. **Page-Specific Open Graph**

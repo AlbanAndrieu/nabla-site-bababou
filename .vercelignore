@@ -1,11 +1,17 @@
 # Ignore everything (folders and files) on root only
 /*
+# vercel do not like .python-version
+.python-version
 !api
 !public
 !my-app
+!vue-client
 !cv
 !html
 !vercel.json
 !*.html
 index.cgi
 index.pl
+!README.md
+packages/*/test/**
+./public/others/*

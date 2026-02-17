@@ -9,7 +9,10 @@ yarn-error.log*
 .ansible/
 .vercel/
 .wrangler/
+.nuxt/
+.output/
 
+vendor/
 webalizer
 html/download
 
@@ -83,7 +86,15 @@ temp/
 *.swo
 *~
 
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.swp
+*.swo
+*~
+
 # Playwright
-test-results/
 playwright-report/
+test-results/
 playwright/.cache/

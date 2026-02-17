@@ -1,14 +1,17 @@
-# Playwright Tests for Nabla Site Bababou
+# Playwright Tests
 
 This directory contains end-to-end tests using [Playwright](https://playwright.dev/).
 
 ## Test Structure
 
-- `homepage.spec.ts` - Tests for the main index page
-- `404-page.spec.ts` - Tests for the 404 error page
+- `homepage.spec.ts` - Tests for the homepage including meta tags and basic structure
+- `404.spec.ts` - Tests for the 404 error page
 - `theme-toggle.spec.ts` - Tests for dark/light theme switching
 - `google-translate.spec.ts` - Tests for Google Translate widget functionality
-- `accessibility.spec.ts` - Tests for accessibility features (ARIA, keyboard navigation, etc.)
+
+- `accessibility.spec.ts` - Tests for accessibility features (WCAG compliance, ARIA, keyboard navigation, etc.)
+- `responsive.spec.ts` - Tests for responsive design across different viewports
+- `navigation.spec.ts` - Tests for links, navigation, and routing
 
 ## Running Tests
 
@@ -19,7 +22,7 @@ npm test
 # Run tests in UI mode (interactive)
 npm run test:ui
 
-# Run tests in headed mode (see browser)
+# Run tests in headed mode (see the browser)
 npm run test:headed
 
 # Debug tests
@@ -32,6 +35,8 @@ npm run test:report
 ## Writing New Tests
 
 ### Basic Test Structure
+
+To add new tests, create a new file with the `.spec.ts` extension in this directory:
 
 ```typescript
 import { test, expect } from '@playwright/test';
@@ -49,13 +54,14 @@ test.describe('Feature Name', () => {
 
 ### Best Practices
 
-1. **Use descriptive test names** - Describe what the test validates
-2. **Test user behavior** - Focus on what users see and do, not implementation details
-3. **Keep tests independent** - Each test should work on its own
+1. **Use descriptive test names** - Describe what the test validates, make it clear what each test is checking
+2. **Test user behavior** - Focus on what users see and interact with the site, not implementation details
+3. **Keep tests independent** - Each test should be able to run on its own
 4. **Use appropriate selectors** - Prefer accessible selectors (role, label) over CSS
 5. **Wait for elements** - Playwright auto-waits, but use `waitForLoadState` when needed
-6. **Test responsive design** - Tests run on multiple viewports (desktop and mobile)
-7. **Check accessibility** - Include ARIA labels, keyboard navigation, etc.
+6. **Use page objects for complex pages** - Extract common page interactions into reusable functions
+7. **Test responsive design** - Tests run on multiple viewports (desktop and mobile)
+8. **Check accessibility** - Ensure all features are keyboard-accessible and screen-reader friendly, include ARIA labels, keyboard navigation, etc.
 
 ### Common Patterns
 
@@ -144,7 +150,7 @@ Opens an interactive UI to run and debug tests with time-travel debugging.
 
 Tests run automatically on GitHub Actions for:
 - Pushes to main branches
-- Pull requests
+- Pull requests to main branches
 - Manual workflow dispatch
 
 See `.github/workflows/playwright.yml` for the workflow configuration.
@@ -170,6 +176,7 @@ Test reports and results are uploaded as artifacts and retained for 30 days.
 ## Resources
 
 - [Playwright Documentation](https://playwright.dev/)
-- [Best Practices](https://playwright.dev/docs/best-practices)
+- [Playwright Best Practices](https://playwright.dev/docs/best-practices)
+- [Playwright API Reference](https://playwright.dev/docs/api/class-playwright)
 - [Locators Guide](https://playwright.dev/docs/locators)
 - [Assertions](https://playwright.dev/docs/test-assertions)

@@ -28,7 +28,7 @@ The repository layout looks like this (main items):
 │   ├── 📄 test.html, 404.html
 │   ├── 📄 theme.css, modern-style.css, wireframe.css, print.css
 │   ├── 📄 theme-toggle.js, google-translate-config.js, arf.js, index.js, arf.css, arf.json
-│   ├── 📄 security.txt, robots.txt, sitemap-albandrieu-com.xml
+│   ├── 📄 security.txt, robots.txt, sitemap.xml
 │   ├── 📁 assets/                    <- Fonts, images, icons (SVGs)
 │   └── 📁 policy/                     <- privacy_policy.html, service_terms.html
 ├── 🧪 tests/                         <- Playwright tests

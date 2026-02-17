@@ -1,4 +1,4 @@
-# Contributing to nabla-site-bababou
+# Contributing to this repo
 
 Thank you for your interest in contributing to nabla-site-bababou! This document provides guidelines and instructions for contributing.
 

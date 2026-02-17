@@ -26,7 +26,7 @@ public/
 ├── modern-style.css                  # Modern styling
 ├── print.css                         # Print-specific styles
 ├── robots.txt                        # Search engine crawler rules
-├── sitemap-albandrieu-com.xml        # Site sitemap for SEO
+├── sitemap.xml        # Site sitemap for SEO
 ├── security.txt                      # Security contact information
 ├── favicon.ico                       # Site favicon
 ├── CNAME                             # Custom domain configuration
@@ -90,10 +90,10 @@ All HTML pages should follow this structure:
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://bababou.albandrieu.com/page.html">
+    <meta property="og:url" content="https://bababou.com/page.html">
     <meta property="og:title" content="Page Title">
     <meta property="og:description" content="Page description">
-    <meta property="og:image" content="https://bababou.albandrieu.com/path/to/image.jpg">
+    <meta property="og:image" content="https://bababou.com/path/to/image.jpg">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
@@ -360,7 +360,7 @@ Allow: /
 User-agent: GPTBot
 Disallow: /
 
-Sitemap: https://bababou.albandrieu.com/sitemap-albandrieu-com.xml
+Sitemap: https://bababou.com/sitemap.xml
 ```
 
 **When to update:**
@@ -370,13 +370,13 @@ Sitemap: https://bababou.albandrieu.com/sitemap-albandrieu-com.xml
 
 ### Sitemap
 
-Located at `public/sitemap-albandrieu-com.xml`:
+Located at `public/sitemap.xml`:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://bababou.albandrieu.com/index.html</loc>
+    <loc>https://bababou.com/index.html</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <lastmod>2024-01-15</lastmod>

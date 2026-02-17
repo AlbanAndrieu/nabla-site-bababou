@@ -25,14 +25,14 @@ export const metadata: Metadata = {
 	authors: [{ name: "Alban Andrieu", email: "alban.andrieu@free.fr" }],
 	openGraph: {
 		type: "website",
-		url: "https://bababou.albandrieu.com",
+		url: "https://bababou.com",
 		title: "Alban Andrieu",
 		description:
 			"My daughter was kidnapped by her Mother Rachael Brooke and moved from France to Norway then Germany.",
 		siteName: "Alban Andrieu",
 		images: [
 			{
-				url: "https://bababou.albandrieu.com/nabla/assets/miss-and-love-you-quote.jpeg",
+				url: "https://bababou.com/nabla/assets/miss-and-love-you-quote.jpeg",
 				alt: "Missing Child",
 			},
 		],
@@ -42,9 +42,7 @@ export const metadata: Metadata = {
 		title: "Éléonore - Your Father is Looking for You",
 		description:
 			"Éléonore (Bababou) - Your father Alban Andrieu is looking for you and will always be there for you. Contact: alban.andrieu@free.fr",
-		images: [
-			"https://bababou.albandrieu.com/nabla/assets/miss-and-love-you-quote.jpeg",
-		],
+		images: ["https://bababou.com/nabla/assets/miss-and-love-you-quote.jpeg"],
 	},
 	robots: {
 		index: true,

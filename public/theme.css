@@ -350,6 +350,28 @@ select:focus {
 }
 
 /* ============================================
+   Google Translate Widget
+   ============================================ */
+.google-translate-widget {
+	position: fixed;
+	top: 10px;
+	left: 10px;
+	z-index: 9999;
+	width: fit-content;
+	max-width: 100%;
+	background: var(--bg-primary);
+	padding: 5px;
+	border-radius: 5px;
+	box-shadow: 0 2px 5px var(--shadow-color);
+}
+
+/* Keep injected Google Translate content from stretching the widget */
+.google-translate-widget > div,
+.google-translate-widget iframe,
+.google-translate-widget .goog-te-combo {
+	max-width: 100%;
+}
+/* ============================================
    Responsive Design Enhancements
    ============================================ */
 
@@ -493,6 +515,142 @@ button:focus-visible {
 
 	.theme-toggle:hover {
 		transform: none;
+	}
+}
+
+/* ============================================
+   Journey timeline (country-to-country movement)
+   ============================================ */
+.journey-timeline {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	gap: 0.25rem 0.5rem;
+	margin: 1rem 0;
+	padding: 1rem 0.75rem;
+	background: var(--bg-secondary);
+	border-radius: 12px;
+	border: 1px solid var(--border-color);
+	position: relative;
+}
+
+.journey-timeline::before {
+	content: "";
+	position: absolute;
+	top: 50%;
+	left: 1.5rem;
+	right: 1.5rem;
+	height: 3px;
+	background: linear-gradient(
+		90deg,
+		var(--border-color) 0%,
+		var(--link-color) 30%,
+		var(--link-color) 70%,
+		var(--border-color) 100%
+	);
+	border-radius: 2px;
+	transform: translateY(-50%);
+	z-index: 0;
+	opacity: 0.7;
+}
+
+@media (max-width: 575.98px) {
+	.journey-timeline::before {
+		left: 0.5rem;
+		right: 0.5rem;
+	}
+}
+
+@media (max-width: 767.98px) {
+	.journey-timeline::before {
+		display: none;
+	}
+}
+
+.journey-step {
+	display: inline-flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.25rem;
+	padding: 0.5rem 0.75rem;
+	background: var(--bg-card);
+	border: 2px solid var(--border-color);
+	border-radius: 10px;
+	box-shadow: var(--shadow-color) 0 2px 6px;
+	position: relative;
+	z-index: 1;
+	min-width: 5rem;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.journey-step:focus-within,
+.journey-step:hover {
+	transform: translateY(-2px);
+	box-shadow: var(--shadow-hover) 0 4px 12px;
+	border-color: var(--link-color);
+}
+
+.journey-step-flag {
+	font-size: 1.75rem;
+	line-height: 1;
+}
+
+.journey-step-name {
+	font-weight: 600;
+	font-size: 0.95rem;
+	color: var(--text-primary);
+}
+
+.journey-step-year {
+	font-size: 0.75rem;
+	color: var(--text-muted);
+}
+
+.journey-arrow {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--text-muted);
+	font-size: 1.25rem;
+	position: relative;
+	z-index: 1;
+}
+
+.journey-step-possible .journey-step-name {
+	font-style: italic;
+	opacity: 0.85;
+}
+
+.journey-step-possible {
+	border-style: dashed;
+	opacity: 0.9;
+}
+
+.journey-caption {
+	width: 100%;
+	text-align: center;
+	font-size: 0.85rem;
+	color: var(--text-secondary);
+	margin-top: 0.5rem;
+	position: relative;
+	z-index: 1;
+}
+
+/* Subtle moving gradient on the path (respects reduced-motion) */
+@keyframes journey-pulse {
+	0%,
+	100% {
+		opacity: 0.6;
+	}
+	50% {
+		opacity: 0.9;
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.journey-timeline::before {
+		animation: journey-pulse 3s ease-in-out infinite;
 	}
 }
 
