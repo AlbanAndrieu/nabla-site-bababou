@@ -96,13 +96,13 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-      
+
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
           node-version: "25"
           cache: "npm"
-      
+
       - name: Install JavaScript dependencies
         run: npm ci
 ```
@@ -243,19 +243,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      
+
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
           node-version: "25"
           cache: "npm"
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Run ESLint
         run: npm run lint
-      
+
       - name: Run HTML Lint (if applicable)
         run: npx htmllint public/*.html
 ```
@@ -279,19 +279,19 @@ jobs:
         node-version: [24, 25]
     steps:
       - uses: actions/checkout@v6
-      
+
       - name: Set up Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Run tests
         run: npm test
-      
+
       - name: Upload coverage
         uses: codecov/codecov-action@v4
         with:
@@ -315,21 +315,21 @@ jobs:
       deployments: write
     steps:
       - uses: actions/checkout@v6
-      
+
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
           node-version: "25"
           cache: "npm"
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Build Next.js app
         run: |
           cd my-app
           npm run build
-      
+
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v25
         with:
@@ -361,7 +361,7 @@ jobs:
           cache: "npm"
       - run: npm ci
       - run: npm run lint
-  
+
   test:
     runs-on: ubuntu-latest
     needs: lint  # Wait for lint to complete
@@ -373,7 +373,7 @@ jobs:
           cache: "npm"
       - run: npm ci
       - run: npm test
-  
+
   deploy:
     runs-on: ubuntu-latest
     needs: [lint, test]  # Wait for both lint and test
@@ -517,15 +517,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      
+
       - name: Install pre-commit
         run: pip install pre-commit
-      
+
       - name: Run pre-commit
         run: pre-commit run --all-files
 ```
@@ -544,7 +544,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      
+
       - name: MegaLinter
         uses: oxsecurity/megalinter@v8
         env:

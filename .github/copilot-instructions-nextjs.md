@@ -117,7 +117,7 @@ The ESLint configuration extends `eslint-config-next` for Next.js-specific rules
      onClick: () => void;
      disabled?: boolean;
    }
-   
+
    export default function Button({ label, onClick, disabled = false }: ButtonProps) {
      // Component logic
    }
@@ -145,12 +145,12 @@ The ESLint configuration extends `eslint-config-next` for Next.js-specific rules
      // Can fetch data directly
      return <div>Content</div>;
    }
-   
+
    // Client Component (interactive)
    "use client";
-   
+
    import { useState } from "react";
-   
+
    export default function ClientComponent() {
      const [count, setCount] = useState(0);
      return <button onClick={() => setCount(count + 1)}>{count}</button>;
@@ -183,7 +183,7 @@ The ESLint configuration extends `eslint-config-next` for Next.js-specific rules
      title: 'Page Title',
      description: 'Page description',
    };
-   
+
    // Dynamic metadata
    export async function generateMetadata({ params }) {
      return {
@@ -223,7 +223,7 @@ The ESLint configuration extends `eslint-config-next` for Next.js-specific rules
 1. **Image Optimization**
    ```tsx
    import Image from 'next/image';
-   
+
    <Image
      src="/path/to/image.jpg"
      alt="Description"
@@ -241,7 +241,7 @@ The ESLint configuration extends `eslint-config-next` for Next.js-specific rules
    - Use dynamic imports for large components
    ```tsx
    import dynamic from 'next/dynamic';
-   
+
    const HeavyComponent = dynamic(() => import('./HeavyComponent'), {
      loading: () => <p>Loading...</p>,
    });
@@ -356,12 +356,12 @@ import { useState } from 'react';
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({ name: '', email: '' });
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // Handle form submission
   };
-  
+
   return (
     <form onSubmit={handleSubmit}>
       <input

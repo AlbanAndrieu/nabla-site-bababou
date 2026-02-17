@@ -873,19 +873,19 @@ When exploring the codebase:
    ```markdown
    ## What
    Brief description of the change
-   
+
    ## Why
    Problem being solved or feature being added
-   
+
    ## How
    Technical approach taken
-   
+
    ## Testing
    How the changes were tested
-   
+
    ## Screenshots
    (If UI changes) Before/After screenshots
-   
+
    ## Checklist
    - [ ] Tests added/updated
    - [ ] Documentation updated

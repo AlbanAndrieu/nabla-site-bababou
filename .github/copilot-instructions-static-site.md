@@ -82,69 +82,69 @@ All HTML pages should follow this structure:
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Page Title - Bababou</title>
-    
+
     <!-- SEO Meta Tags -->
     <meta name="description" content="Page description (150-160 chars)">
     <meta name="keywords" content="relevant, keywords">
     <meta name="author" content="Alban Andrieu">
-    
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://bababou.albandrieu.com/page.html">
     <meta property="og:title" content="Page Title">
     <meta property="og:description" content="Page description">
     <meta property="og:image" content="https://bababou.albandrieu.com/path/to/image.jpg">
-    
+
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Page Title">
     <meta name="twitter:description" content="Page description">
-    
+
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/wireframe.css">
     <link rel="stylesheet" href="/arf.css">
     <link rel="stylesheet" href="/theme.css">
     <link rel="stylesheet" href="/print.css" media="print">
-    
+
     <!-- Theme Toggle (load early to prevent flash) -->
     <script src="/theme-toggle.js"></script>
-    
+
     <!-- Google Translate -->
     <script src="/google-translate-config.js"></script>
     <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-    
+
     <link rel="icon" href="/favicon.ico">
 </head>
 <body>
     <!-- Skip to main content link (accessibility) -->
     <a href="#main-content" class="skip-to-main">Skip to main content</a>
-    
+
     <!-- Navigation -->
     <nav aria-label="Main navigation">
         <!-- Navigation content -->
     </nav>
-    
+
     <!-- Google Translate Widget -->
     <div class="google-translate-widget">
         <div id="google_translate_element"></div>
     </div>
-    
+
     <!-- Theme Toggle Button -->
     <button id="theme-toggle" aria-label="Toggle dark mode">
         <!-- Toggle icon -->
     </button>
-    
+
     <!-- Main Content -->
     <main id="main-content">
         <h1>Page Title</h1>
         <!-- Content -->
     </main>
-    
+
     <!-- Footer -->
     <footer aria-label="Site footer">
         <!-- Footer content -->
     </footer>
-    
+
     <!-- Scripts -->
     <script src="/index.js"></script>
 </body>
@@ -249,14 +249,14 @@ Print styles in `print.css` and `theme.css` `@media print`:
   nav, .google-translate-widget, .theme-toggle {
     display: none !important;
   }
-  
+
   /* Optimize for print */
   body {
     background: white;
     color: black;
     font-size: 12pt;
   }
-  
+
   /* Prevent page breaks inside elements */
   h1, h2, h3, p {
     page-break-inside: avoid;

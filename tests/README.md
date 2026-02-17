@@ -40,7 +40,7 @@ test.describe('Feature Name', () => {
   test('should do something specific', async ({ page }) => {
     // Navigate to page
     await page.goto('/');
-    
+
     // Perform actions and assertions
     await expect(page.locator('selector')).toBeVisible();
   });
@@ -85,7 +85,7 @@ expect(description).toBeTruthy();
 ```typescript
 test('should work on mobile', async ({ page, viewport }) => {
   await page.goto('/');
-  
+
   if (viewport && viewport.width < 768) {
     // Mobile-specific assertions
   }

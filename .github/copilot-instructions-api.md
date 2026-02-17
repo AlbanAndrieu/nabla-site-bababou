@@ -30,18 +30,18 @@ API functions in the `api/` directory are automatically deployed as serverless f
 export default function handler(req, res) {
   // Parse request method
   const { method } = req;
-  
+
   if (method === 'GET') {
     // Handle GET request
     return res.status(200).json({ message: 'Hello World' });
   }
-  
+
   if (method === 'POST') {
     // Handle POST request
     const body = req.body;
     return res.status(200).json({ received: body });
   }
-  
+
   // Method not allowed
   res.setHeader('Allow', ['GET', 'POST']);
   return res.status(405).json({ error: 'Method not allowed' });
@@ -104,9 +104,9 @@ export default async function handler(req, res) {
     return res.status(200).json(data);
   } catch (error) {
     console.error('API Error:', error);
-    return res.status(500).json({ 
+    return res.status(500).json({
       error: 'Internal server error',
-      message: error.message 
+      message: error.message
     });
   }
 }
@@ -122,22 +122,22 @@ export default function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
-  
+
   // Validate required fields
   const { name, email } = req.body;
   if (!name || !email) {
-    return res.status(400).json({ 
+    return res.status(400).json({
       error: 'Missing required fields',
       required: ['name', 'email']
     });
   }
-  
+
   // Validate email format
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
     return res.status(400).json({ error: 'Invalid email format' });
   }
-  
+
   // Process request
   // ...
 }
@@ -157,12 +157,12 @@ export default function handler(req, res) {
     'Access-Control-Allow-Headers',
     'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
   );
-  
+
   // Handle preflight request
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
-  
+
   // Handle actual request
   // ...
 }
@@ -181,25 +181,25 @@ export default function handler(req, res) {
   const now = Date.now();
   const limit = 100; // requests per window
   const window = 60000; // 1 minute in milliseconds
-  
+
   const userData = rateLimit.get(ip) || { count: 0, resetTime: now + window };
-  
+
   if (now > userData.resetTime) {
     userData.count = 0;
     userData.resetTime = now + window;
   }
-  
+
   userData.count++;
-  
+
   if (userData.count > limit) {
-    return res.status(429).json({ 
+    return res.status(429).json({
       error: 'Too many requests',
       retryAfter: Math.ceil((userData.resetTime - now) / 1000)
     });
   }
-  
+
   rateLimit.set(ip, userData);
-  
+
   // Process request
   // ...
 }
@@ -228,14 +228,14 @@ export default function handler(req, res) {
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
-  
+
   const token = authHeader.substring(7);
   const decoded = verifyToken(token);
-  
+
   if (!decoded) {
     return res.status(401).json({ error: 'Invalid token' });
   }
-  
+
   // Token is valid, process request
   req.user = decoded;
   // ...
@@ -263,11 +263,11 @@ JWT_SECRET=your_jwt_secret
 export default function handler(req, res) {
   const apiKey = process.env.API_KEY;
   const dbUrl = process.env.DATABASE_URL;
-  
+
   if (!apiKey) {
     return res.status(500).json({ error: 'API key not configured' });
   }
-  
+
   // Use environment variables
   // ...
 }
@@ -355,16 +355,16 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json'
       }
     });
-    
+
     if (!response.ok) {
       throw new Error(`External API error: ${response.status}`);
     }
-    
+
     const data = await response.json();
     return res.status(200).json(data);
   } catch (error) {
     console.error('External API error:', error);
-    return res.status(502).json({ 
+    return res.status(502).json({
       error: 'Failed to fetch external data',
       message: error.message
     });
@@ -462,9 +462,9 @@ describe('/api/hello', () => {
     const { req, res } = createMocks({
       method: 'GET',
     });
-    
+
     await handler(req, res);
-    
+
     expect(res._getStatusCode()).toBe(200);
     expect(JSON.parse(res._getData())).toEqual({
       message: 'Hello World'
@@ -482,7 +482,7 @@ describe('API Integration Tests', () => {
   test('GET /api/hello', async () => {
     const response = await fetch('http://localhost:3000/api/hello');
     const data = await response.json();
-    
+
     expect(response.status).toBe(200);
     expect(data.message).toBe('Hello World');
   });
@@ -502,16 +502,16 @@ export function withAuth(handler) {
     if (!token) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
-    
+
     // Verify token
     const user = verifyToken(token);
     if (!user) {
       return res.status(401).json({ error: 'Invalid token' });
     }
-    
+
     // Attach user to request
     req.user = user;
-    
+
     // Call actual handler
     return handler(req, res);
   };
@@ -522,7 +522,7 @@ import { withAuth } from '../middleware/auth';
 
 async function handler(req, res) {
   // req.user is available here
-  return res.status(200).json({ 
+  return res.status(200).json({
     message: 'Protected data',
     user: req.user
   });

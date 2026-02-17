@@ -233,11 +233,11 @@ Use type hints for better code clarity:
 def process_data(data: list[dict], count: int = 10) -> list[str]:
     """
     Process data and return results.
-    
+
     Args:
         data: List of dictionaries to process
         count: Maximum number of results
-    
+
     Returns:
         List of processed strings
     """
@@ -305,29 +305,29 @@ def main():
         description='Script description',
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    
+
     parser.add_argument(
         'input_file',
         help='Input file path'
     )
-    
+
     parser.add_argument(
         '-o', '--output',
         default='output.txt',
         help='Output file path (default: output.txt)'
     )
-    
+
     parser.add_argument(
         '-v', '--verbose',
         action='store_true',
         help='Enable verbose output'
     )
-    
+
     args = parser.parse_args()
-    
+
     if args.verbose:
         logging.getLogger().setLevel(logging.DEBUG)
-    
+
     # Use args.input_file, args.output, etc.
 
 if __name__ == '__main__':
@@ -460,10 +460,10 @@ import sys
 def run_command(cmd: list[str]) -> tuple[int, str, str]:
     """
     Run shell command and capture output.
-    
+
     Args:
         cmd: Command and arguments as list
-    
+
     Returns:
         Tuple of (return_code, stdout, stderr)
     """
