@@ -37,7 +37,7 @@
 	"dependencies": {
 		"@datadog/browser-rum": "^6.24.1",
 		"crypto": "^1.0.1",
-		"vercel": "^50.4.10"
+		"vercel": "^50.18.0"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.39.1",
