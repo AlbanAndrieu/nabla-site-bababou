@@ -7,10 +7,7 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<!-- PAGE settings -->
-		<title>
-			Missing Child - Abducted daughter by her mother and moved from France to
-			Norway then Germany
-		</title>
+		<title>Missing Child - Abducted daughter by her mother and moved from France to Norway then Germany</title>
 		<meta
 			name="description"
 			content="My daughter was kidnapped by her Mother Rachael Brooke and moved from France to Norway then Germany."
@@ -26,10 +23,7 @@
 		<!-- Open Graph / Facebook -->
 		<meta property="og:type" content="website" />
 		<meta property="og:url" content="https://bababou.com" />
-		<meta
-			property="og:title"
-			content="Missing child - kidnapped by her mother"
-		/>
+		<meta property="og:title" content="Missing child - kidnapped by her mother" />
 		<meta
 			property="og:description"
 			content="My daughter was kidnapped by her Mother Rachael Elaine Brooke and moved from France to Norway then Germany."
@@ -39,10 +33,7 @@
 		<!-- twitter card tags additive with the og: tags -->
 		<meta name="twitter:card" content="summary_large_image" />
 		<meta name="twitter:domain" value="bababou.com" />
-		<meta
-			name="twitter:title"
-			value="Éléonore - Your Father is Looking for You"
-		/>
+		<meta name="twitter:title" value="Éléonore - Your Father is Looking for You" />
 		<meta
 			name="twitter:description"
 			value="Éléonore (Bababou) - Your father Alban Andrieu is looking for you and will always be there for you. Contact: alban.andrieu@free.fr"
@@ -106,8 +97,7 @@
 				const t = document.documentElement,
 					{ connection: i } = navigator;
 				window.obs = window.obs || {};
-				const a =
-						!0 === ((window.obs && window.obs.config) || {}).observeChanges,
+				const a = !0 === ((window.obs && window.obs.config) || {}).observeChanges,
 					o = () => {
 						const e = window.obs || {},
 							i = "number" == typeof e.downlinkBucket ? e.downlinkBucket : null;
@@ -117,35 +107,20 @@
 								: "high" === e.rttCategory || (null != i && i <= 5)
 									? "weak"
 									: "moderate";
-						const a =
-							!0 === e.dataSaver ||
-							!0 === e.batteryLow ||
-							!0 === e.batteryCritical;
+						const a = !0 === e.dataSaver || !0 === e.batteryLow || !0 === e.batteryCritical;
 						e.conservationPreference = a ? "conserve" : "neutral";
-						const o =
-							"weak" === e.connectionCapability ||
-							!0 === e.dataSaver ||
-							!0 === e.batteryCritical;
-						(e.deliveryMode =
-							"strong" !== e.connectionCapability || o || a
-								? o
-									? "lite"
-									: "cautious"
-								: "rich"),
+						const o = "weak" === e.connectionCapability || !0 === e.dataSaver || !0 === e.batteryCritical;
+						(e.deliveryMode = "strong" !== e.connectionCapability || o || a ? (o ? "lite" : "cautious") : "rich"),
 							(e.canShowRichMedia = "lite" !== e.deliveryMode),
 							(e.shouldAvoidRichMedia = "lite" === e.deliveryMode),
 							["strong", "moderate", "weak"].forEach((e) => {
 								t.classList.remove(`has-connection-capability-${e}`);
 							}),
-							t.classList.add(
-								`has-connection-capability-${e.connectionCapability}`,
-							),
+							t.classList.add(`has-connection-capability-${e.connectionCapability}`),
 							["conserve", "neutral"].forEach((e) => {
 								t.classList.remove(`has-conservation-preference-${e}`);
 							}),
-							t.classList.add(
-								`has-conservation-preference-${e.conservationPreference}`,
-							),
+							t.classList.add(`has-conservation-preference-${e.conservationPreference}`),
 							["rich", "cautious", "lite"].forEach((e) => {
 								t.classList.remove(`has-delivery-mode-${e}`);
 							}),
@@ -154,24 +129,13 @@
 					n = () => {
 						if (!i) return;
 						const { saveData: e, rtt: a, downlink: n } = i;
-						(window.obs.dataSaver = !!e),
-							t.classList.toggle("has-data-saver", !!e);
-						const s = ((e) =>
-							Number.isFinite(e) ? 25 * Math.ceil(e / 25) : null)(a);
+						(window.obs.dataSaver = !!e), t.classList.toggle("has-data-saver", !!e);
+						const s = ((e) => (Number.isFinite(e) ? 25 * Math.ceil(e / 25) : null))(a);
 						null != s && (window.obs.rttBucket = s);
-						const r = ((e) =>
-							Number.isFinite(e)
-								? e < 75
-									? "low"
-									: e <= 275
-										? "medium"
-										: "high"
-								: null)(a);
+						const r = ((e) => (Number.isFinite(e) ? (e < 75 ? "low" : e <= 275 ? "medium" : "high") : null))(a);
 						r &&
 							((window.obs.rttCategory = r),
-							["low", "medium", "high"].forEach((e) =>
-								t.classList.remove(`has-latency-${e}`),
-							),
+							["low", "medium", "high"].forEach((e) => t.classList.remove(`has-latency-${e}`)),
 							t.classList.add(`has-latency-${r}`));
 						const c = ((l = n), Number.isFinite(l) ? Math.ceil(l) : null);
 						var l;
@@ -179,18 +143,12 @@
 							window.obs.downlinkBucket = c;
 							const e = c <= 5 ? "low" : c >= 8 ? "high" : "medium";
 							(window.obs.downlinkCategory = e),
-								["low", "medium", "high"].forEach((e) =>
-									t.classList.remove(`has-bandwidth-${e}`),
-								),
+								["low", "medium", "high"].forEach((e) => t.classList.remove(`has-bandwidth-${e}`)),
 								t.classList.add(`has-bandwidth-${e}`);
 						}
 						"downlinkMax" in i && (window.obs.downlinkMax = i.downlinkMax), o();
 					};
-				n(),
-					a &&
-						i &&
-						"function" == typeof i.addEventListener &&
-						i.addEventListener("change", n);
+				n(), a && i && "function" == typeof i.addEventListener && i.addEventListener("change", n);
 				const s = (e) => {
 					if (!e) return;
 					const { level: i, charging: a } = e,
@@ -198,15 +156,11 @@
 					window.obs.batteryCritical = n;
 					const s = Number.isFinite(i) ? i <= 0.2 : null;
 					(window.obs.batteryLow = s),
-						["critical", "low"].forEach((e) =>
-							t.classList.remove(`has-battery-${e}`),
-						),
+						["critical", "low"].forEach((e) => t.classList.remove(`has-battery-${e}`)),
 						s && t.classList.add("has-battery-low"),
 						n && t.classList.add("has-battery-critical");
 					const r = !!a;
-					(window.obs.batteryCharging = r),
-						t.classList.toggle("has-battery-charging", r),
-						o();
+					(window.obs.batteryCharging = r), t.classList.toggle("has-battery-charging", r), o();
 				};
 				if (
 					("getBattery" in navigator &&
@@ -216,8 +170,7 @@
 								s(e),
 									a &&
 										"function" == typeof e.addEventListener &&
-										(e.addEventListener("levelchange", () => s(e)),
-										e.addEventListener("chargingchange", () => s(e)));
+										(e.addEventListener("levelchange", () => s(e)), e.addEventListener("chargingchange", () => s(e)));
 							})
 							.catch(() => {}),
 					"deviceMemory" in navigator)
@@ -226,21 +179,10 @@
 						i = Number.isFinite(e) ? e : null;
 					window.obs.ramBucket = i;
 					const a =
-						((r = i),
-						Number.isFinite(r)
-							? r <= 1
-								? "very-low"
-								: r <= 2
-									? "low"
-									: r <= 4
-										? "medium"
-										: "high"
-							: null);
+						((r = i), Number.isFinite(r) ? (r <= 1 ? "very-low" : r <= 2 ? "low" : r <= 4 ? "medium" : "high") : null);
 					a &&
 						((window.obs.ramCategory = a),
-						["very-low", "low", "medium", "high"].forEach((e) =>
-							t.classList.remove(`has-ram-${e}`),
-						),
+						["very-low", "low", "medium", "high"].forEach((e) => t.classList.remove(`has-ram-${e}`)),
 						t.classList.add(`has-ram-${a}`));
 				}
 				var r;
@@ -248,19 +190,10 @@
 					const e = Number(navigator.hardwareConcurrency),
 						i = Number.isFinite(e) ? e : null;
 					window.obs.cpuBucket = i;
-					const a = ((e) =>
-						Number.isFinite(e)
-							? e <= 2
-								? "low"
-								: e <= 5
-									? "medium"
-									: "high"
-							: null)(i);
+					const a = ((e) => (Number.isFinite(e) ? (e <= 2 ? "low" : e <= 5 ? "medium" : "high") : null))(i);
 					a &&
 						((window.obs.cpuCategory = a),
-						["low", "medium", "high"].forEach((e) =>
-							t.classList.remove(`has-cpu-${e}`),
-						),
+						["low", "medium", "high"].forEach((e) => t.classList.remove(`has-cpu-${e}`)),
 						t.classList.add(`has-cpu-${a}`));
 				}
 				(() => {
@@ -281,11 +214,7 @@
 			//# sourceURL=obs.inline.js
 		</script>
 
-		<script
-			src="https://challenges.cloudflare.com/turnstile/v0/api.js"
-			async
-			defer
-		></script>
+		<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
 		<!-- mixpanel -->
 		<script type="text/javascript">
@@ -329,11 +258,7 @@
 								};
 							}
 							for (
-								var d = {},
-									e = ["get_group"].concat(
-										Array.prototype.slice.call(arguments, 0),
-									),
-									c = 0;
+								var d = {}, e = ["get_group"].concat(Array.prototype.slice.call(arguments, 0)), c = 0;
 								c < j.length;
 								c++
 							)
@@ -349,8 +274,7 @@
 					e.src =
 						"undefined" !== typeof MIXPANEL_CUSTOM_LIB_URL
 							? MIXPANEL_CUSTOM_LIB_URL
-							: "file:" === f.location.protocol &&
-								  "//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//)
+							: "file:" === f.location.protocol && "//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//)
 								? "https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js"
 								: "//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";
 					g = f.getElementsByTagName("script")[0];
@@ -378,23 +302,17 @@
 						cK = "_vwo_" + account_id + "_settings",
 						cc = {};
 					try {
-						var c = JSON.parse(
-							localStorage.getItem("_vwo_" + account_id + "_config"),
-						);
+						var c = JSON.parse(localStorage.getItem("_vwo_" + account_id + "_config"));
 						cc = c && typeof c === "object" ? c : {};
 					} catch (e) {}
 					var stT = cc.stT === "session" ? w.sessionStorage : w.localStorage;
 					code = {
 						nonce: v && v.nonce,
 						use_existing_jquery: function () {
-							return typeof use_existing_jquery !== "undefined"
-								? use_existing_jquery
-								: undefined;
+							return typeof use_existing_jquery !== "undefined" ? use_existing_jquery : undefined;
 						},
 						library_tolerance: function () {
-							return typeof library_tolerance !== "undefined"
-								? library_tolerance
-								: undefined;
+							return typeof library_tolerance !== "undefined" ? library_tolerance : undefined;
 						},
 						settings_tolerance: function () {
 							return cc.sT || settings_tolerance;
@@ -416,11 +334,7 @@
 								f = true;
 								var t = d.getElementById("_vis_opt_path_hides");
 								if (t) t.parentNode.removeChild(t);
-								if (e)
-									new Image().src =
-										"https://dev.visualwebsiteoptimizer.com/ee.gif?a=" +
-										account_id +
-										e;
+								if (e) new Image().src = "https://dev.visualwebsiteoptimizer.com/ee.gif?a=" + account_id + e;
 							}
 						},
 						finished: function () {
@@ -556,22 +470,15 @@
 						((p = t.createElement("script")).type = "text/javascript"),
 							(p.crossOrigin = "anonymous"),
 							(p.async = !0),
-							(p.src =
-								s.api_host.replace(".i.posthog.com", "-assets.i.posthog.com") +
-								"/static/array.js"),
-							(r = t.getElementsByTagName("script")[0]).parentNode.insertBefore(
-								p,
-								r,
-							);
+							(p.src = s.api_host.replace(".i.posthog.com", "-assets.i.posthog.com") + "/static/array.js"),
+							(r = t.getElementsByTagName("script")[0]).parentNode.insertBefore(p, r);
 						var u = e;
 						for (
 							void 0 !== a ? (u = e[a] = []) : (a = "posthog"),
 								u.people = u.people || [],
 								u.toString = function (t) {
 									var e = "posthog";
-									return (
-										"posthog" !== a && (e += "." + a), t || (e += " (stub)"), e
-									);
+									return "posthog" !== a && (e += "." + a), t || (e += " (stub)"), e;
 								},
 								u.people.toString = function () {
 									return u.toString(1) + ".people (stub)";
@@ -612,10 +519,7 @@
 		<!-- End Google Tag Manager -->
 
 		<!-- Google tag (gtag.js) -->
-		<script
-			async
-			src="https://www.googletagmanager.com/gtag/js?id=G-RHL13BHK6K"
-		></script>
+		<script async src="https://www.googletagmanager.com/gtag/js?id=G-RHL13BHK6K"></script>
 		<script>
 			window.dataLayer = window.dataLayer || [];
 			function gtag() {
@@ -637,8 +541,7 @@
 					var a = document.createElement("script");
 					(a.type = "text/javascript"),
 						(a.async = !0),
-						(a.src =
-							"https://cdn.us.heap-api.com/config/" + e + "/heap_config.js");
+						(a.src = "https://cdn.us.heap-api.com/config/" + e + "/heap_config.js");
 					var r = document.getElementsByTagName("script")[0];
 					r.parentNode.insertBefore(a, r);
 					var n = [
@@ -696,13 +599,7 @@
 				d.src = n;
 				n = o.getElementsByTagName(u)[0];
 				n.parentNode.insertBefore(d, n);
-			})(
-				window,
-				document,
-				"script",
-				"https://www.datadoghq-browser-agent.com/eu1/v6/datadog-rum.js",
-				"DD_RUM",
-			);
+			})(window, document, "script", "https://www.datadoghq-browser-agent.com/eu1/v6/datadog-rum.js", "DD_RUM");
 			window.DD_RUM.onReady(function () {
 				window.DD_RUM.init({
 					clientToken: "pub550f242796dac3c13b730eb727658279",
@@ -742,11 +639,7 @@
 		<link rel="canonical" href="https://bababou.com/" />
 
 		<!-- Ahrefs Web Analytics -->
-		<script
-			src="https://analytics.ahrefs.com/analytics.js"
-			data-key="tg3zLMS/bebJFl0LxctiCw"
-			async
-		></script>
+		<script src="https://analytics.ahrefs.com/analytics.js" data-key="tg3zLMS/bebJFl0LxctiCw" async></script>
 
 		<!-- Vercel Web Analytics -->
 		<script>
@@ -794,9 +687,7 @@
 	</head>
 	<body id="top">
 		<!-- Print Button (hidden when printing) -->
-		<button class="print-button" onclick="window.print()">
-			<i class="fas fa-print"></i> Print / Save as PDF
-		</button>
+		<button class="print-button" onclick="window.print()"><i class="fas fa-print"></i> Print / Save as PDF</button>
 
 		<!-- Google Tag Manager (noscript) -->
 		<noscript
@@ -822,8 +713,7 @@
 					<div class="jumbotron">
 						<h1 class="display-3 mb-4">
 							<span aria-hidden="true">🌟</span>
-							Éléonore (Bababou) - If you are reading this, your Papa is looking
-							for you
+							Éléonore (Bababou) - If you are reading this, your Papa is looking for you
 							<span aria-hidden="true">🌟</span>
 						</h1>
 
@@ -832,36 +722,29 @@
 								<h2 class="mb-4">My Dear Daughter,</h2>
 
 								<p class="lead mb-3">
-									<strong>I am your father, Alban Andrieu.</strong> Every single
-									day since June 6, 2015, I have been searching for you. I have
-									never stopped thinking about you, and I will never stop
-									looking for you.
+									<strong>I am your father, Alban Andrieu.</strong> Every single day since June 6, 2015, I have been
+									searching for you. I have never stopped thinking about you, and I will never stop looking for you.
 								</p>
 
 								<p class="h5 mb-3">
-									<strong>YOU ARE NOT ALONE.</strong> I am here. I am waiting. I
-									am your Papa and I love you more than anything in this world.
+									<strong>YOU ARE NOT ALONE.</strong> I am here. I am waiting. I am your Papa and I love you more than
+									anything in this world.
 								</p>
 
 								<hr class="my-4" />
 
 								<div class="mb-4">
-									<h3 class="text-primary mb-3">
-										Important Information You Should Know:
-									</h3>
+									<h3 class="text-primary mb-3">Important Information You Should Know:</h3>
 									<ul class="text-start list-unstyled">
 										<li class="mb-2">
-											✓ <strong>Your real name is Éléonore</strong> (some people
-											call you by other names, but Éléonore is who you truly
-											are)
+											✓ <strong>Your real name is Éléonore</strong> (some people call you by other names, but Éléonore
+											is who you truly are)
 										</li>
 										<li class="mb-2">
-											✓ <strong>You are French</strong> - You have a French
-											passport with ID: 14CV32249
+											✓ <strong>You are French</strong> - You have a French passport with ID: 14CV32249
 										</li>
 										<li class="mb-2">
-											✓ <strong>You have a family in France</strong> who loves
-											you and misses you every day
+											✓ <strong>You have a family in France</strong> who loves you and misses you every day
 										</li>
 										<li class="mb-2">
 											✓ <strong>Your Papa has been looking for you</strong> in
@@ -902,8 +785,8 @@
 											</noscript>
 										</p>
 										<p class="mb-0">
-											You can contact me anytime, day or night. I promise I will
-											respond immediately. You are safe to reach out to me.
+											You can contact me anytime, day or night. I promise I will respond immediately. You are safe to
+											reach out to me.
 										</p>
 									</div>
 									<script>
@@ -927,38 +810,30 @@
 									<h3 class="text-info mb-3">❤️ A Message from Your Papa:</h3>
 									<blockquote class="blockquote">
 										<p class="mb-3 h5">
-											"Bababou, wherever you are, whatever you have been told,
-											please know this:
+											"Bababou, wherever you are, whatever you have been told, please know this:
 											<strong
-												>I have never stopped loving you. I have never stopped
-												fighting for you. I will always be here for you.</strong
+												>I have never stopped loving you. I have never stopped fighting for you. I will always be here
+												for you.</strong
 											>
 										</p>
 										<p class="mb-3">
-											You might have questions, you might be confused, you might
-											not remember me well. That's okay. I understand. Just know
-											that your Papa loves you unconditionally and will be there
-											to support you whenever you're ready.
+											You might have questions, you might be confused, you might not remember me well. That's okay. I
+											understand. Just know that your Papa loves you unconditionally and will be there to support you
+											whenever you're ready.
 										</p>
 										<p class="mb-0 h5">
-											<strong
-												>I love you more than yesterday and less than tomorrow.
-												Forever.</strong
-											>
+											<strong>I love you more than yesterday and less than tomorrow. Forever.</strong>
 										</p>
 									</blockquote>
 								</div>
 
 								<div class="alert alert-warning mb-0" role="alert">
 									<p class="mb-2">
-										<strong
-											>If you are Éléonore and you found this website:</strong
-										>
+										<strong>If you are Éléonore and you found this website:</strong>
 									</p>
 									<p class="mb-0">
-										Please know that contacting me is YOUR RIGHT. No one can
-										stop you from knowing your father. I am here waiting for you
-										with open arms. 💙
+										Please know that contacting me is YOUR RIGHT. No one can stop you from knowing your father. I am
+										here waiting for you with open arms. 💙
 									</p>
 								</div>
 							</div>
@@ -966,8 +841,8 @@
 
 						<p class="text-white mb-0">
 							<small
-								>This website was created by your father to help you find him.
-								He has been searching for you since 2015.</small
+								>This website was created by your father to help you find him. He has been searching for you since
+								2015.</small
 							>
 						</p>
 					</div>
@@ -976,11 +851,7 @@
 		</header>
 		<!-- End Special Message -->
 
-		<nav
-			class="collapse bg-dark"
-			id="navbarHeader"
-			aria-label="Main navigation"
-		>
+		<nav class="collapse bg-dark" id="navbarHeader" aria-label="Main navigation">
 			<div class="container">
 				<div class="row">
 					<div class="col-md-7 py-4">
@@ -997,9 +868,8 @@
 				<div class="container">
 					<div class="jumbotron">
 						<h2 id="main-heading" class="lead">
-							For fathers who cannot see their child because the mother took
-							your child and moved from country to country to escape from
-							justice
+							For fathers who cannot see their child because the mother took your child and moved from country to
+							country to escape from justice
 						</h2>
 						<div class="row align-items-end">
 							<div class="col-12">
@@ -1034,22 +904,17 @@
 									</div>
 								</div>
 								<p class="journey-caption">
-									One child, four countries — taken far from her home and her
-									family in France.
+									One child, four countries — taken far from her home and her family in France.
 								</p>
 							</div>
 						</div>
 						<p>
-							Information for parents in difficulty: European legal framework
-							(France, Norway, Germany), international conventions, parental
-							alienation, demands for shared custody and enforcement of
-							visitation rights — and a call for international action.
+							Information for parents in difficulty: European legal framework (France, Norway, Germany), international
+							conventions, parental alienation, demands for shared custody and enforcement of visitation rights — and a
+							call for international action.
 						</p>
 						<p class="mb-0">
-							<a
-								href="for-fathers.html"
-								class="btn btn-primary btn-lg"
-								role="button"
+							<a href="for-fathers.html" class="btn btn-primary btn-lg" role="button"
 								>Read the full page: legal framework, rights &amp; resources</a
 							>
 						</p>
@@ -1072,11 +937,7 @@
 							<h5>
 								<b
 									>Abduction is
-									<a
-										href="https://en.wikipedia.org/wiki/Child_abduction"
-										target="_blank"
-										>Child Abuse</a
-									></b
+									<a href="https://en.wikipedia.org/wiki/Child_abduction" target="_blank">Child Abuse</a></b
 								>
 							</h5>
 							<p class="card-text">Why a child could not see her daddy?</p>
@@ -1086,46 +947,25 @@
 
 				<div class="col-md-4 p-3">
 					<div class="card box-shadow">
-						<img
-							class="card-img-top"
-							src="assets/alone-1.jpg"
-							alt="Image depicting loneliness and separation"
-						/>
+						<img class="card-img-top" src="assets/alone-1.jpg" alt="Image depicting loneliness and separation" />
 						<div class="card-body">
 							<h5 class="">
-								<b
-									>In my position?
-									<a href="mailto:alban.andrieu@free.fr">Contact me</a></b
-								>
+								<b>In my position? <a href="mailto:alban.andrieu@free.fr">Contact me</a></b>
 							</h5>
-							<p class="card-text">
-								Your child has been abducted in Norway or in Germany. Contact
-								me!
-							</p>
-							<p class="card-text">
-								We can share experience, how can a father fight to get contact
-								in each country.
-							</p>
+							<p class="card-text">Your child has been abducted in Norway or in Germany. Contact me!</p>
+							<p class="card-text">We can share experience, how can a father fight to get contact in each country.</p>
 						</div>
 					</div>
 				</div>
 
 				<div class="col-md-4 p-3">
 					<div class="card box-shadow">
-						<img
-							class="card-img-top"
-							src="assets/passport-fr-bababou-4.png"
-							alt="French passport illustration"
-						/>
+						<img class="card-img-top" src="assets/passport-fr-bababou-4.png" alt="French passport illustration" />
 						<div class="card-body">
 							<h5 class=""><b>Eleonore, 14CV32249 is your ID!</b></h5>
-							<p class="card-text">
-								Your mother has changed your name on other ID's.
-							</p>
+							<p class="card-text">Your mother has changed your name on other ID's.</p>
 							<p class="card-text">She changed your country.</p>
-							<p class="card-text">
-								Ask for your French passport, she was not able to change that...
-							</p>
+							<p class="card-text">Ask for your French passport, she was not able to change that...</p>
 							<p class="card-text">Your family is in France.</p>
 						</div>
 					</div>
@@ -1142,23 +982,15 @@
 						/>
 						<div class="card-body">
 							<h5 class="">
-								<b
-									>I found my Baby
-									<a
-										href="https://goo.gl/maps/6cqFXgi9ZAxntvVW9"
-										target="_blank"
-										>here</a
-									>...</b
-								>
+								<b>I found my Baby <a href="https://goo.gl/maps/6cqFXgi9ZAxntvVW9" target="_blank">here</a>...</b>
 							</h5>
 							<p class="card-text">
-								<a href="https://tortberg.kanvas.no/" target="_blank"
-									>Tørtberg Kanvas-barnehage</a
-								>, is where my daughter is kept <b>prisoner</b>
+								<a href="https://tortberg.kanvas.no/" target="_blank">Tørtberg Kanvas-barnehage</a>, is where my
+								daughter is kept <b>prisoner</b>
 							</p>
 							<p class="card-text">
-								<span title="Elin Kindem">People</span> there are
-								<b>unreachable</b>. Why norway is not willing to cooperate?
+								<span title="Elin Kindem">People</span> there are <b>unreachable</b>. Why norway is not willing to
+								cooperate?
 							</p>
 						</div>
 					</div>
@@ -1174,8 +1006,7 @@
 						<div class="card-body">
 							<h5 class=""><b>Looking for Norwegian Translator</b></h5>
 							<p class="card-text">
-								Norwegian authorities are not willing to communicate. In English
-								and even less in French!!!
+								Norwegian authorities are not willing to communicate. In English and even less in French!!!
 							</p>
 							<p class="card-text">
 								Speaking Norwegian/Swedish, please
@@ -1187,16 +1018,10 @@
 
 				<div class="col-md-4 p-3">
 					<div class="card box-shadow">
-						<img
-							class="card-img-top"
-							src="assets/hide-and-sick-quote.jpg"
-							alt="Quote about hide and seek game"
-						/>
+						<img class="card-img-top" src="assets/hide-and-sick-quote.jpg" alt="Quote about hide and seek game" />
 						<div class="card-body">
 							<h5 class=""><b>Playing hide and seek, since 2015</b></h5>
-							<p class="card-text">
-								Every time I found you. You move, and hide again!
-							</p>
+							<p class="card-text">Every time I found you. You move, and hide again!</p>
 						</div>
 					</div>
 				</div>
@@ -1214,11 +1039,7 @@
 							<h5 class="">
 								<b
 									>I now search my Baby around
-									<a
-										href="https://goo.gl/maps/xx84vB1JkaUxVAhw5"
-										target="_blank"
-										>Francfort</a
-									>...</b
+									<a href="https://goo.gl/maps/xx84vB1JkaUxVAhw5" target="_blank">Francfort</a>...</b
 								>
 							</h5>
 							<p class="card-text">Do you know german institution?</p>
@@ -1236,8 +1057,7 @@
 						<div class="card-body">
 							<h5 class=""><b>Looking for German Translator</b></h5>
 							<p class="card-text">
-								German authorities are not willing to communicate. In English
-								and even less in French!!!
+								German authorities are not willing to communicate. In English and even less in French!!!
 							</p>
 							<p class="card-text">
 								Speaking German, please
@@ -1256,15 +1076,9 @@
 						/>
 						<div class="card-body">
 							<h5 class="">
-								<b
-									>Bababou, you have to come by yourself!
-									<a href="mailto:alban.andrieu@free.fr">Contact me</a></b
-								>
+								<b>Bababou, you have to come by yourself! <a href="mailto:alban.andrieu@free.fr">Contact me</a></b>
 							</h5>
-							<p class="card-text">
-								Inaction breeds doubt and fear. Action breeds confidence and
-								courage.
-							</p>
+							<p class="card-text">Inaction breeds doubt and fear. Action breeds confidence and courage.</p>
 						</div>
 					</div>
 				</div>
@@ -1300,18 +1114,12 @@
 					<div class="col-md-8">
 						<h2 id="people-heading" class="h4 mb-2">People I contacted</h2>
 						<p class="text-muted mb-0">
-							The difficult path of reaching out to people and institutions in
-							the search — a journey through borders, administrations, and
-							silence.
+							The difficult path of reaching out to people and institutions in the search — a journey through borders,
+							administrations, and silence.
 						</p>
 					</div>
 					<div class="col-md-4 text-md-end mt-3 mt-md-0">
-						<a
-							href="people-contacted.html"
-							class="btn btn-outline-primary"
-							role="button"
-							>View page</a
-						>
+						<a href="people-contacted.html" class="btn btn-outline-primary" role="button">View page</a>
 					</div>
 				</div>
 			</div>
@@ -1330,9 +1138,7 @@
 											<h1>Association I support</h1>
 										</div>
 										<div class="col-md-4">
-											<a
-												href="http://paternet.fr/tag/combat-des-peres//"
-												target="_blank"
+											<a href="http://paternet.fr/tag/combat-des-peres//" target="_blank"
 												><img
 													class="img-fluid d-block mx-auto py-2"
 													src="assets/auction-law-svgrepo-com.svg"
@@ -1374,12 +1180,7 @@
 		<!-- Footer -->
 		<footer class="footer">
 			<div class="social-links">
-				<a
-					href="https://calendly.com/alban-andrieu"
-					target="_blank"
-					class="social-link"
-					aria-label="Calendly"
-				>
+				<a href="https://calendly.com/alban-andrieu" target="_blank" class="social-link" aria-label="Calendly">
 					<i class="fa fa-calendar-plus"></i>
 				</a>
 				<a
@@ -1394,35 +1195,19 @@
 
 			<div class="footer-links">
 				<a href="https://bababou.com/policy/service_terms.html">Terms of Use</a>
-				<a
-					href="javascript:openAxeptioCookies()"
-					rel="noopener noreferrer"
-					class="text-muted"
-					>Cookies</a
-				>
-				<a href="https://bababou.com/policy/privacy_policy.html"
-					>Privacy Policy</a
-				>
+				<a href="javascript:openAxeptioCookies()" rel="noopener noreferrer" class="text-muted">Cookies</a>
+				<a href="https://bababou.com/policy/privacy_policy.html">Privacy Policy</a>
 			</div>
 			<p class="text-md-center mt-3">
-				<a
-					href="#top"
-					class="btn btn-sm btn-outline-secondary"
-					aria-label="Back to top of page"
-					>Back to top</a
-				>
+				<a href="#top" class="btn btn-sm btn-outline-secondary" aria-label="Back to top of page">Back to top</a>
 			</p>
 
-			<p style="margin-top: 1rem; opacity: 0.7">
-				© 2026 Alban Andrieu. Father.
-			</p>
+			<p style="margin-top: 1rem; opacity: 0.7">© 2026 Alban Andrieu. Father.</p>
 		</footer>
 		<!-- End footer section -->
 
 		<div style="display: none">
-			<a href="https://www.pkts.ca:443/cgi-bin/corinthianenzyme.cgi?doc_id=2561"
-				>north-puny</a
-			>
+			<a href="https://www.pkts.ca:443/cgi-bin/corinthianenzyme.cgi?doc_id=2561">north-puny</a>
 		</div>
 
 		<script type="text/javascript" src="d3.v3.min.js"></script>
@@ -1476,11 +1261,9 @@
 			}, observerOptions);
 
 			// Observe all service cards, skill categories, and tool items
-			document
-				.querySelectorAll(".service-card, .skill-category, .tool-item")
-				.forEach((el) => {
-					observer.observe(el);
-				});
+			document.querySelectorAll(".service-card, .skill-category, .tool-item").forEach((el) => {
+				observer.observe(el);
+			});
 		</script>
 
 		<!-- Axeptio: change clientId to be your site's PROJECT ID -->
