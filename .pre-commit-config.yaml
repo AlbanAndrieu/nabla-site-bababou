@@ -190,7 +190,7 @@ repos:
     -   id: pyupgrade
         name: "🐍 python · Py Upgrade"
 -   repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.1
+    rev: v0.15.4
     hooks:
     -   id: ruff-format
         name: "🐍 python · Format with Ruff"
@@ -307,7 +307,7 @@ repos:
 
     ### Javascript & Web Tools ###
 -   repo: https://github.com/biomejs/pre-commit
-    rev: "v2.4.2"
+    rev: "v2.4.5"
     hooks:
     -   id: biome-check
         name: "🟨 javascript · Lint, format, and safe fixes with Biome"
@@ -322,6 +322,8 @@ repos:
               public/arf.js|
               public/index.js|
               public/d3.v3.min.js|
+              public/third-party-widgets.js|
+              public/smooth-scroll.js|
               api/hello.js|
           )$
 
@@ -374,7 +376,7 @@ repos:
 
     ### Data & Config Validation ###
 -   repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.36.2
+    rev: 0.37.0
     hooks:
     -   id: check-github-workflows
         name: "🧩 github-actions · Validate gh workflow files"
@@ -392,7 +394,7 @@ repos:
     # ----------------------------- 🔒 Security Tools ---------------------------- #
 
 -   repo: https://github.com/PyCQA/bandit
-    rev: 1.9.3
+    rev: 1.9.4
     hooks:
     -   id: bandit
         name: "🔒 security · Detect security issues"

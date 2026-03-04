@@ -1,0 +1,276 @@
+/* Legacy layout: only applied when body has .standalone-page (e.g. test/demo pages) */
+body.standalone-page {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background: #242d60;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+		"Helvetica Neue", "Ubuntu", sans-serif;
+	height: 100vh;
+	margin: 0;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+body.standalone-page section {
+	background: #ffffff;
+	display: flex;
+	flex-direction: column;
+	width: 400px;
+	height: 112px;
+	border-radius: 6px;
+	justify-content: space-between;
+}
+.product {
+	display: flex;
+}
+.description {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+body.standalone-page p {
+	font-style: normal;
+	font-weight: 500;
+	font-size: 14px;
+	line-height: 20px;
+	letter-spacing: -0.154px;
+	color: #242d60;
+	height: 100%;
+	width: 100%;
+	padding: 0 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+}
+body.standalone-page img {
+	border-radius: 6px;
+	margin: 10px;
+	width: 54px;
+	height: 57px;
+}
+body.standalone-page h3,
+body.standalone-page h5 {
+	font-style: normal;
+	font-weight: 500;
+	font-size: 14px;
+	line-height: 20px;
+	letter-spacing: -0.154px;
+	color: #242d60;
+	margin: 0;
+}
+body.standalone-page h5 {
+	opacity: 0.5;
+}
+body.standalone-page button {
+	height: 36px;
+	background: #556cd6;
+	color: white;
+	width: 100%;
+	font-size: 14px;
+	border: 0;
+	font-weight: 500;
+	cursor: pointer;
+	letter-spacing: 0.6;
+	border-radius: 0 0 6px 6px;
+	transition: all 0.2s ease;
+	box-shadow: 0px 4px 5.5px 0px rgba(0, 0, 0, 0.07);
+}
+body.standalone-page button:hover {
+	opacity: 0.8;
+}
+
+/* ==========================================================================
+   Special message section – same width as rest of site (.container)
+   Responsive: 576px (sm), 768px (md), 992px (lg) – card padding/type only
+   ========================================================================== */
+
+.special-message-section .special-message-container {
+	width: 100%;
+}
+
+.special-message-section .special-message-card {
+	background: var(--bg-white, #fff);
+	border-radius: 8px;
+	box-shadow: 0 4px 20px var(--shadow-color, rgba(0, 0, 0, 0.08));
+	border: 1px solid var(--border-color, #e5e7eb);
+	overflow: hidden;
+}
+
+.special-message-section .special-message-card .card-body {
+	padding: 1.25rem 1rem;
+	font-size: 1rem;
+	line-height: 1.65;
+	color: var(--text-dark, #1f2937);
+}
+
+.special-message-section .special-message-card h2 {
+	font-size: 1.25rem;
+	font-weight: 600;
+	margin-bottom: 1rem;
+	letter-spacing: -0.02em;
+}
+
+.special-message-section .special-message-card .lead {
+	font-size: 1rem;
+	line-height: 1.65;
+	margin-bottom: 1rem;
+}
+
+.special-message-section .special-message-card h3 {
+	font-size: 1rem;
+	font-weight: 600;
+	margin-top: 1.25rem;
+	margin-bottom: 0.5rem;
+	letter-spacing: -0.01em;
+}
+
+.special-message-section .special-message-list {
+	list-style: none;
+	padding-left: 0;
+	margin-bottom: 0;
+}
+
+.special-message-section .special-message-list li {
+	position: relative;
+	padding-left: 1.5rem;
+	margin-bottom: 0.75rem;
+	line-height: 1.6;
+}
+
+.special-message-section .special-message-list li::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 0.35em;
+	width: 0.5rem;
+	height: 0.5rem;
+	border-radius: 50%;
+	background: var(--primary-color, #2563eb);
+}
+
+.special-message-section .special-message-card hr {
+	border: 0;
+	height: 1px;
+	background: var(--border-color, #e5e7eb);
+	margin: 1.25rem 0;
+}
+
+.special-message-section .special-message-card .alert {
+	border-radius: 6px;
+	padding: 1rem 1.25rem;
+	border-width: 1px;
+	font-size: 0.9375rem;
+	line-height: 1.6;
+}
+
+.special-message-section .special-message-card .blockquote {
+	border-left: 4px solid var(--primary-color, #2563eb);
+	padding-left: 0.875rem;
+	margin: 0.75rem 0;
+	font-style: normal;
+}
+
+.special-message-section .special-message-card .blockquote p {
+	margin-bottom: 0.5rem;
+}
+
+.special-message-section .special-message-card a {
+	font-size: inherit;
+}
+
+.special-message-section .special-message-card .alert a {
+	min-height: 2.75rem;
+	display: inline-flex;
+	align-items: center;
+}
+
+.special-message-section .special-message-card a:focus-visible {
+	outline: 2px solid var(--primary-color, #2563eb);
+	outline-offset: 2px;
+}
+
+@media (min-width: 576px) {
+	.special-message-section .special-message-card {
+		border-radius: 10px;
+	}
+	.special-message-section .special-message-card .card-body {
+		padding: 1.5rem 1.75rem;
+		font-size: 1.0625rem;
+	}
+	.special-message-section .special-message-card h2 {
+		font-size: 1.375rem;
+		margin-bottom: 1.125rem;
+	}
+	.special-message-section .special-message-card .lead {
+		font-size: 1.0625rem;
+		margin-bottom: 1.125rem;
+	}
+	.special-message-section .special-message-card h3 {
+		font-size: 1.0625rem;
+		margin-top: 1.375rem;
+		margin-bottom: 0.625rem;
+	}
+	.special-message-section .special-message-list li {
+		padding-left: 1.75rem;
+		margin-bottom: 0.875rem;
+	}
+	.special-message-section .special-message-card hr {
+		margin: 1.5rem 0;
+	}
+	.special-message-section .special-message-card .alert {
+		padding: 1.125rem 1.5rem;
+		font-size: 1rem;
+		border-radius: 8px;
+	}
+	.special-message-section .special-message-card .blockquote {
+		padding-left: 1rem;
+		margin: 1rem 0;
+	}
+	.special-message-section .special-message-card .blockquote p {
+		margin-bottom: 0.625rem;
+	}
+}
+
+@media (min-width: 768px) {
+	.special-message-section .special-message-card {
+		border-radius: 12px;
+	}
+	.special-message-section .special-message-card .card-body {
+		padding: 1.75rem 2rem;
+		line-height: 1.7;
+	}
+	.special-message-section .special-message-card h2 {
+		font-size: 1.5rem;
+		margin-bottom: 1.25rem;
+	}
+	.special-message-section .special-message-card .lead {
+		font-size: 1.125rem;
+		line-height: 1.75;
+		margin-bottom: 1.25rem;
+	}
+	.special-message-section .special-message-card h3 {
+		font-size: 1.125rem;
+		margin-top: 1.5rem;
+		margin-bottom: 0.75rem;
+	}
+	.special-message-section .special-message-card hr {
+		margin: 1.75rem 0;
+	}
+	.special-message-section .special-message-card .alert {
+		padding: 1.25rem 1.5rem;
+	}
+	.special-message-section .special-message-card .blockquote {
+		padding-left: 1.25rem;
+		margin: 1rem 0;
+	}
+	.special-message-section .special-message-card .blockquote p {
+		margin-bottom: 0.75rem;
+	}
+}
+
+@media (min-width: 992px) {
+	.special-message-section .special-message-card .card-body {
+		padding: 2rem 2.25rem;
+	}
+}
