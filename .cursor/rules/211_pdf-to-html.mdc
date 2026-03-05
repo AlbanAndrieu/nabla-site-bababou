@@ -1,0 +1,39 @@
+---
+description: Instructions for converting PDFs to HTML pages — spelling/grammar only; French pages get -fr suffix and an English version
+globs: public/**/*.pdf,public/**/*.html
+alwaysApply: false
+---
+
+# PDF to HTML conversion
+
+When transforming a PDF into an HTML page in this project, follow these rules.
+
+## 1. Content changes: spelling and grammar only
+
+- **Only** fix spelling and grammar in the extracted text.
+- Do **not** change structure, meaning, or wording beyond corrections.
+- Preserve paragraphs, lists, and logical sections when building the HTML.
+- Respect project rules: anonymization (200_anonymization-legal.mdc), privacy (306_privacy-personal-data.mdc).
+
+## 2. Language and filenames
+
+- **If the PDF content is in French:**
+  - Keep the French text (with spelling/grammar fixes) in an HTML page whose filename ends with **`-fr`** (e.g. `document-name-fr.html`).
+  - **Also** create an **English translated version** of the same page (e.g. `document-name.html` or `document-name-en.html`). Prefer the same base name without `-fr` for the English version when there is only one language pair.
+- **If the PDF content is in another language** (e.g. English only): produce a single HTML page with spelling/grammar fixes; no `-fr` suffix. Add an English version only if an official or existing French version exists elsewhere and you are mirroring that pattern.
+
+## 3. HTML structure and consistency
+
+- Use the same page chrome as the rest of the site: theme toggle, Google Translate widget, print button, nav (back to home), main content, footer. See **120_page-chrome-consistency.mdc**.
+- Set `<html lang="fr">` for French pages and `<html lang="en">` for English pages.
+- Reuse existing CSS and layout patterns from `public/` (e.g. `demande-explications-autorites-competentes.html`, `people-contacted.html`).
+- Add the new URLs to `public/sitemap.xml` and use canonical links where appropriate.
+
+## 4. Naming summary
+
+| Source language | French HTML file      | English HTML file   |
+|-----------------|-----------------------|----------------------|
+| French          | `something-fr.html`   | `something.html` or `something-en.html` |
+| English only    | —                     | `something.html`    |
+
+When in doubt, prefer one French file (`-fr`) and one English file (no suffix or `-en`) per document.

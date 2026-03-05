@@ -33,17 +33,17 @@
 	}
 
 	/**
-	 * Get stored theme preference or default to auto
+	 * Get stored theme preference or default to dark
 	 */
 	function getStoredTheme() {
 		try {
 			const stored = localStorage.getItem(STORAGE_KEY);
 			return stored && Object.values(THEMES).includes(stored)
 				? stored
-				: THEMES.AUTO;
+				: THEMES.DARK;
 		} catch (e) {
 			console.warn("Unable to access localStorage:", e);
-			return THEMES.AUTO;
+			return THEMES.DARK;
 		}
 	}
 
