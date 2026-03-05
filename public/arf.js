@@ -36,7 +36,7 @@ d3.json("arf.json", (json) => {
       toggle(d);
     }
   } */
-	root.children.forEach(collapse);
+	// Start with all nodes expanded (do not collapse on load).
 	update(root);
 });
 

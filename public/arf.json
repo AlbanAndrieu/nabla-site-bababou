@@ -57,6 +57,27 @@
 							"end": "law",
 							"type": "url",
 							"url": "https://www.skatteetaten.no/en/person/national-registry/"
+						},
+						{
+							"name": "Social Welfare Service",
+							"comment": "Norwegian social welfare / municipal services",
+							"end": "nowhere",
+							"type": "url",
+							"url": "https://www.regjeringen.no/en/dep/asd/topics/child-welfare-services/id834/"
+						},
+						{
+							"name": "Ombudsman-Barneombudet",
+							"comment": "See Ombudsman-Barneombudet-18_01586-2.pdf for more",
+							"end": "nowhere",
+							"type": "url",
+							"url": "ca/Ombudsman-Barneombudet-18_01586-2.pdf"
+						},
+						{
+							"name": "sivilombudsmannen",
+							"comment": "See sivilombudsmannen-3019-19-09-2018.pdf for more",
+							"end": "nowhere",
+							"type": "url",
+							"url": "ca/sivilombudsmannen-3019-19-09-2018.pdf"
 						}
 					],
 					"name": "Authorities",
@@ -128,18 +149,26 @@
 						{
 							"children": [
 								{
-									"name": "Asnieres-sur-Seine",
+									"name": "Asnieres-sur-Seine, Ile de France",
 									"comment": "ignoring me, the first year, but registered the abduction after complaining to IGN",
 									"end": "nowhere",
 									"type": "url",
-									"url": "https://TODO"
+									"url": "https://lannuaire.service-public.fr/ile-de-france/hauts-de-seine/99bff3d7-8d86-4780-933d-6e4b6945f0b8"
 								},
 								{
-									"name": "Nanterre",
+									"name": "Nanterre, Ile de France",
 									"comment": "Registered quickly the abuse and registered (NRE) that the mother is not sowing up with kid",
 									"end": "nowhere",
 									"type": "url",
-									"url": "https://TODO"
+									"url": "https://lannuaire.service-public.fr/ile-de-france/hauts-de-seine/fbf74d86-d1e3-42e5-b3f5-a9e4550a44e4",
+									"email": "commissariat-nanterre@interieur.gouv.fr"
+								},
+								{
+									"name": "Crest, Drôme",
+									"comment": "ignoring me, the first year, but registered the abduction after complaining to IGN",
+									"end": "nowhere",
+									"type": "url",
+									"url": "https://www.masecurite.interieur.gouv.fr/en/local-informations/gendarmerie-drome"
 								},
 								{
 									"name": "IGPN",
@@ -147,6 +176,13 @@
 									"end": "nowhere",
 									"type": "url",
 									"url": "https://www.police-nationale.interieur.gouv.fr/Organisation/Inspection-generale-de-la-Police-nationale/Signalement-IGPN"
+								},
+								{
+									"name": "IGGN",
+									"comment": "ignoring me, did nothing",
+									"end": "nowhere",
+									"type": "url",
+									"url": "https://www.gendarmerie.interieur.gouv.fr/notre-institution/notre-organisation/l-inspection-generale-de-la-gendarmerie-nationale-iggn"
 								}
 							],
 							"name": "Police",
@@ -188,7 +224,7 @@
 						},
 						{
 							"name": "Collectif La Grue Jaune",
-							"email": "TODO",
+							"email": "https://www.facebook.com/lagruejaune/",
 							"comment": "association",
 							"end": "psychological support",
 							"type": "url",
@@ -196,7 +232,7 @@
 						},
 						{
 							"name": "Paternet",
-							"email": "TODO",
+							"email": "http://paternet.fr/",
 							"comment": "association",
 							"end": "newsletter",
 							"type": "url",
@@ -248,7 +284,7 @@
 									"url": "https://k.polizei.hessen.de/"
 								}
 							],
-							"name": "Justice",
+							"name": "Police",
 							"type": "folder"
 						},
 						{
@@ -269,7 +305,22 @@
 							"comment": "checked, no entry",
 							"end": "nowhere",
 							"type": "url",
-							"url": "TODO"
+							"url": "https://frankfurt.de/service-und-rathaus/verwaltung/aemter-und-institutionen/buergeramt-statistik-und-wahlen/buergeraemter",
+							"email": "buergeramt@stadt-frankfurt.de"
+						},
+						{
+							"name": "Social Service Welfare of Frankfurt",
+							"comment": "Frankfurt youth welfare / social services",
+							"end": "nowhere",
+							"type": "url",
+							"url": "https://www.frankfurt.de/sixcms/detail.php?id=2828"
+						},
+						{
+							"name": "Jugendamt court",
+							"comment": "Court in matters involving Jugendamt (youth welfare office)",
+							"end": "nowhere",
+							"type": "url",
+							"url": "https://www.gerichte.hessen.de/"
 						}
 					],
 					"name": "Auhtorities",
@@ -318,86 +369,59 @@
 				{
 					"children": [
 						{
-							"children": [
-								{
-									"children": [
-										{
-											"name": "TODO",
-											"comment": "Never gathered any evidences in Norways, ignored French evidences",
-											"end": "abduction trial, asked ransom and refused appealing",
-											"type": "url",
-											"url": "https://TODO"
-										}
-									],
-									"name": "Norwegian Hague Convention",
-									"type": "folder"
-								}
-							],
-							"name": "Norway",
-							"type": "folder"
-						},
-						{
-							"children": [
-								{
-									"children": [
-										{
-											"name": "Bureau d entraide civile internationale",
-											"email": "entraide-civile-internationale@justice.gouv.f",
-											"comment": "BDIP/38DE2016 NORVEGE : No power",
-											"end": "nowhere",
-											"type": "url",
-											"url": "http://www.justice.gouv.fr/justice-civile-11861/enlevement-parental-12063/lautorite-centrale-21099.html"
-										}
-									],
-									"name": "French Hague Convention",
-									"type": "folder"
-								}
-							],
-							"name": "France",
-							"type": "folder"
-						},
-						{
-							"children": [
-								{
-									"children": [
-										{
-											"name": "TODO",
-											"comment": "Never gathered any evidences in Germany",
-											"end": "todo",
-											"type": "url",
-											"url": "https://TODO"
-										}
-									],
-									"name": "German Hague Convention",
-									"type": "folder"
-								}
-							],
-							"name": "Germany",
-							"type": "folder"
+							"name": "Norwegian Central Authority",
+							"comment": "The Royal Ministry of Justice and Public Security, Department of Civil Affairs. Contact: Ingrid Skogsholm.",
+							"end": "follow-ups and relances",
+							"type": "url",
+							"url": "https://www.regjeringen.no/en/sub/child-abduction/id468120/"
 						}
 					],
-					"name": "Hague Convention",
+					"name": "Norway",
 					"type": "folder"
 				},
 				{
 					"children": [
 						{
-							"children": [
-								{
-									"name": "Conseil Europeen",
-									"email": "TODO",
-									"comment": "Answered quickly that Norway is not under their responsability",
-									"end": "nowhere",
-									"type": "url",
-									"url": "https://TODO"
-								}
-							],
-							"name": "France",
-							"type": "folder"
+							"name": "French Central Authority",
+							"email": "entraide-civile-internationale@justice.gouv.fr",
+							"comment": "Bureau du droit de l'Union, du droit international privé et de l'entraide civile — ENTRAIDE-CIVILE-INTERNATIONALE. BDIP/38DE2016 NORVEGE : No power.",
+							"end": "follow-ups and relances",
+							"type": "url",
+							"url": "https://www.enlevement-parental.justice.gouv.fr/"
+						},
+						{
+							"name": "Bureau d entraide civile internationale",
+							"email": "entraide-civile-internationale@justice.gouv.fr",
+							"comment": "BDIP/38DE2016 NORVEGE : No power",
+							"end": "nowhere",
+							"type": "url",
+							"url": "http://www.justice.gouv.fr/justice-civile-11861/enlevement-parental-12063/lautorite-centrale-21099.html"
 						}
 					],
-					"name": "European council",
+					"name": "France",
 					"type": "folder"
+				},
+				{
+					"children": [
+						{
+							"name": "German Central Authority",
+							"comment": "Bundesamt für Justiz (Federal Office of Justice). Contact and follow-ups (case 38DE2016, France–Norway–Germany).",
+							"end": "follow-ups and relances",
+							"type": "url",
+							"url": "https://www.bundesjustizamt.de/EN/Home/home_node.html",
+							"email": "poststelle@bfj.bund.de"
+						}
+					],
+					"name": "Germany",
+					"type": "folder"
+				},
+				{
+					"name": "Conseil Europeen",
+					"email": "https://www.coe.int/en/web/portal/contacts",
+					"comment": "Answered quickly that Norway is not under their responsability",
+					"end": "nowhere",
+					"type": "url",
+					"url": "https://www.coe.int/en/web/portal/contacts"
 				}
 			],
 			"name": "International",
@@ -431,7 +455,7 @@
 				},
 				{
 					"name": "Collectif La Grue Jaune",
-					"email": "TODO",
+					"email": "https://www.facebook.com/lagruejaune/",
 					"comment": "association",
 					"end": "psychological support",
 					"type": "url",
@@ -439,7 +463,7 @@
 				},
 				{
 					"name": "Paternet",
-					"email": "TODO",
+					"email": "http://paternet.fr/",
 					"comment": "association",
 					"end": "newsletter",
 					"type": "url",
