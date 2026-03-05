@@ -158,6 +158,7 @@ repos:
             public/assets/fontawesome/.*|
             public/assets/.*.png|
             public/other/.*.png|
+            public/.*.pdf|
           )$
         # ----------------------------- 🔒 Security Tools ---------------------------- #
     -   id: detect-private-key
