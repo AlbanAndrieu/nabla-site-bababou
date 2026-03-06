@@ -31,12 +31,15 @@ When creating or editing HTML pages in `public/`, ensure the following. **Do not
 
 ## 4. Modern style and layout
 
+- **Prefer the site’s default dark, modern style** for all content pages:
+  - Use **`class="page-dark"`** on `<body>` (e.g. `<body id="top" class="page-dark">`). This applies the shared dark background (#0f172a with blue gradients), nav, cards, and light-theme overrides defined in `theme.css`. The theme toggle (default: dark) still lets users switch to light or auto.
+  - Do **not** add page-specific inline styles that duplicate the page-dark look; add any new shared patterns to `theme.css` under `.page-dark` instead.
 - Use **modern-style.css** (and existing wireframe/theme/print CSS as on other pages):
-  - `<link rel="stylesheet" href="modern-style.css" />` (use `../modern-style.css` from `public/policy/`).
+  - `<link rel="stylesheet" href="modern-style.css" />` (use `../modern-style.css` from `public/policy/`, or `../../theme.css` etc. from deeper `ca/` paths).
   - Keep `theme.css`, `wireframe.css`, `print.css` where already used so theme toggle and print work.
 - Use **section and card** structure when it fits the content:
   - Wrap major content blocks in `<section class="py-4" aria-labelledby="…">` with a heading id for accessibility.
-  - Use Bootstrap-style cards where appropriate: `<div class="card …">`, `<div class="card-body">`, `card-text`, etc., consistent with `index.html` and `people-contacted.html`.
+  - Use Bootstrap-style cards where appropriate: `<div class="card …">`, `<div class="card-body">`, `card-text`, etc., consistent with `index.html` and `abduction-norway.html`.
 
 ## 5. Footer consistency
 
@@ -64,7 +67,8 @@ When creating or editing HTML pages in `public/`, ensure the following. **Do not
 
 ## Reference files
 
-- Theme + Translate + Print + sections/cards + footer: `public/index.html`, `public/people-contacted.html`, `public/for-fathers.html`.
+- Theme + Translate + Print + **page-dark** + sections/cards + footer: `public/index.html`, `public/abduction-norway.html`, `public/people-contacted.html`, `public/for-fathers.html`.
+- Shared page-dark styles: `public/theme.css` (`.page-dark` section).
 - Back link pattern: `public/people-contacted.html` (nav with “Back to home”), `public/for-fathers.html`, `public/nre-fr.html` / `public/nre-en.html` (back link).
 - Footer markup: `public/index.html` (lines ~1375–1419), `public/people-contacted.html` (footer block).
 - **Exclusion**: `public/404.html` — no theme toggle, no Google Translate, no print button, no shared footer; it keeps its dedicated 404 layout and only a simple “Home” link.

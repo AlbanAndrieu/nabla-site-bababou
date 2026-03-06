@@ -137,6 +137,13 @@
 					],
 					"name": "Associations",
 					"type": "folder"
+				},
+				{
+					"name": "Norwegian King (Royal House)",
+					"comment": "King Harald V — contact for petitions and correspondence",
+					"end": "nowhere",
+					"type": "url",
+					"url": "https://www.royalcourt.no/contact"
 				}
 			],
 			"name": "Norway",

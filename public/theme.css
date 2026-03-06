@@ -379,8 +379,37 @@ select:focus {
    Responsive Design Enhancements
    ============================================ */
 
+/* Base: prevent horizontal overflow on all viewports */
+html {
+	overflow-x: hidden;
+}
+
+body {
+	overflow-x: hidden;
+}
+
 /* Mobile First - Base styles for mobile */
 @media (max-width: 575.98px) {
+	/* Prevent horizontal overflow: row negative margins cause content to extend past viewport */
+	.container .row,
+	.row {
+		margin-left: 0;
+		margin-right: 0;
+	}
+
+	.container .row > [class*="col-"],
+	.row > [class*="col-"] {
+		padding-left: 0.75rem;
+		padding-right: 0.75rem;
+	}
+
+	/* Keep container within viewport */
+	.container {
+		max-width: 100%;
+		padding-left: 0.75rem;
+		padding-right: 0.75rem;
+	}
+
 	/* Reduce padding on mobile */
 	.py-5 {
 		padding-top: 2rem;
@@ -433,6 +462,41 @@ select:focus {
 		min-height: 44px;
 		display: inline-flex;
 		align-items: center;
+	}
+
+	/* Allow long headings and text to wrap within viewport */
+	#main-content h1,
+	#main-content h2,
+	#main-content h3,
+	.display-3,
+	.lead,
+	.special-message-card .blockquote p,
+	.special-message-card .card-body,
+	.jumbotron .lead {
+		word-wrap: break-word;
+		overflow-wrap: break-word;
+	}
+
+	/* Prevent flex/grid children from overflowing */
+	.special-message-container,
+	.special-message-card .card-body,
+	.card-body {
+		min-width: 0;
+	}
+
+	.footer-links {
+		gap: 1rem;
+		padding: 0 0.5rem;
+	}
+
+	.services-section .row {
+		margin-left: 0;
+		margin-right: 0;
+	}
+
+	.services-section .btn {
+		width: 100%;
+		max-width: 100%;
 	}
 }
 
@@ -729,6 +793,23 @@ html[data-theme="light"] .page-dark .email {
 	.journey-timeline::before {
 		left: 0.5rem;
 		right: 0.5rem;
+	}
+
+	.journey-step {
+		min-width: 4rem;
+		padding: 0.35rem 0.5rem;
+	}
+
+	.journey-step-name {
+		font-size: 0.8rem;
+	}
+
+	.journey-step-year {
+		font-size: 0.65rem;
+	}
+
+	.journey-arrow {
+		font-size: 1rem;
 	}
 }
 
