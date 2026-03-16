@@ -28,6 +28,7 @@ When transforming a PDF into an HTML page in this project, follow these rules.
 - Set `<html lang="fr">` for French pages and `<html lang="en">` for English pages.
 - Reuse existing CSS and layout patterns from `public/` (e.g. `demande-explications-autorites-competentes.html`, `people-contacted.html`).
 - Add the new URLs to `public/sitemap.xml` and use canonical links where appropriate.
+- **Documents generated from PDFs inside the `ca` directory:** use `<meta name="robots" content="noindex, nofollow" />` so that these pages are not indexed and links to them are not followed by search engines. Do **not** use `content="index, follow"` for such pages.
 
 ## 4. Naming summary
 

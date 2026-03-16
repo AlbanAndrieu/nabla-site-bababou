@@ -16,7 +16,6 @@
 		<link rel="stylesheet" href="modern-style.css" />
 		<link rel="stylesheet" href="wireframe.css" />
 		<link rel="stylesheet" href="theme.css" />
-		<link rel="stylesheet" href="style.css" />
 		<link rel="stylesheet" href="print.css" />
 		<link rel="stylesheet" href="arf.css" />
 
@@ -52,8 +51,45 @@
 			type="text/javascript"
 			src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
 		></script>
+
+		<style>
+			.page-nav {
+				background: var(--bg-light, #f9fafb);
+				border-bottom: 1px solid var(--border-color, #e5e7eb);
+				padding: 0.75rem 0;
+			}
+			.people-hero {
+				display: flex;
+				flex-wrap: wrap;
+				align-items: center;
+				gap: 2rem;
+				padding: 2rem 0;
+			}
+			.people-hero__image {
+				flex: 0 0 auto;
+			}
+			.people-hero__content {
+				flex: 1 1 18rem;
+			}
+			.people-card-flag {
+				font-size: 1.25rem;
+				line-height: 1;
+			}
+			.people-card-icon {
+				color: var(--bs-secondary, #6c757d);
+				font-size: 1rem;
+			}
+			.people-by-country > .h5 {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.5rem;
+			}
+			.people-country-flag {
+				font-size: 1.25rem;
+			}
+		</style>
 	</head>
-	<body id="top" class="page-dark">
+	<body id="top">
 		<a href="#main-content" class="visually-hidden-focusable skip-link">Skip to main content</a>
 
 		<button class="print-button" onclick="window.print()" aria-label="Print or save as PDF">
@@ -91,7 +127,7 @@
 						<div class="people-hero__content">
 							<div class="card border-0 shadow-sm bg-light">
 								<div class="card-body p-4">
-									<div id="arf-viz-header">Click on node names below for more information.</div>
+									<div id="header" class="text-dark">I tried.</div>
 									<hr class="my-3" />
 									<p class="card-text text-muted mb-0">
 										This page documents the difficult path of reaching out to people and institutions in the search for
@@ -117,6 +153,21 @@
 								not intervene. I am deeply grateful for that courtesy.
 							</p>
 						</div>
+					</div>
+				</div>
+			</section>
+
+			<!--
+			People-contacted page instructions (this page only):
+			- Use arf.json to fill the section "People and institutions contacted". people-cards.js fetches arf.json, flattens the tree (by country: Norway, France, Germany, International, Associations; by type: Authorities, Police, Justice, School, Lawyers, Associations), and renders one card per leaf into #people-cards-root.
+			- Second icon (people-card-icon): use the card heading (entry.name) to choose the icon. people-cards.js applies keyword matching on the card title (e.g. Police/School/association names), then falls back to the institution icon, then fa-building. Do not drive the second icon by institution alone; the card main heading takes precedence.
+			-->
+			<section class="py-4" aria-labelledby="people-cards-heading">
+				<div class="container">
+					<div class="mx-auto">
+						<h2 id="people-cards-heading" class="h4 mb-3">People and institutions contacted</h2>
+						<p class="text-muted mb-4">Below, a few people and institutions contacted since 2015.</p>
+						<div id="people-cards-root"></div>
 					</div>
 				</div>
 			</section>
@@ -199,9 +250,6 @@
 				<a href="policy/service_terms.html">Terms of Use</a>
 				<a href="javascript:openAxeptioCookies()" rel="noopener noreferrer" class="text-muted">Cookies</a>
 				<a href="policy/privacy_policy.html">Privacy Policy</a>
-				<a href="policy/impressum.html">Impressum</a>
-				<a href="policy/accessibility_statement.html">Accessibility</a>
-				<a href="policy/cookie_policy.html">Cookie Policy</a>
 			</div>
 			<p class="text-md-center mt-3">
 				<a href="./index.html" class="btn btn-sm btn-outline-secondary">Return to home</a>
@@ -212,6 +260,7 @@
 
 		<script type="text/javascript" src="d3.v3.min.js"></script>
 		<script src="arf.js"></script>
+		<script src="people-cards.js"></script>
 		<script
 			src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"
 			integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8"

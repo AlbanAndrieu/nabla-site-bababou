@@ -6,7 +6,8 @@ body {
 		"Segoe UI Symbol";
 }
 
-#body {
+#body,
+#arf-viz-body {
 	margin: 0 auto;
 	position: relative;
 }

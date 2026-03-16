@@ -1,0 +1,39 @@
+---
+description: Add links to mentioned legal documents, conventions, laws and jurisprudence; search project first then internet; use only reputable official sources.
+globs: public/**/*.html,public/**/*.md
+alwaysApply: false
+---
+# Legal document and law links
+
+When creating or editing content that mentions **conventions, laws, regulations or jurisprudence**, review the page and **add links** to the mentioned instruments. This improves traceability and helps readers verify sources.
+
+## Workflow
+
+1. **Review the page** — Identify every mention of a treaty, convention, law, regulation, article number or case (e.g. “Convention de La Haye 1980”, “article 21”, “Bruxelles II bis”, “CEDH article 8”, “barneloven”).
+2. **Search the project first** — Check whether the project already links to or hosts the document (e.g. `public/ca/convention/`, `public/ca/abduction/oslo/Lawyers/`, or existing HCCH/Legifrance/Lovdata links).
+3. **Search the internet** — If no project link exists, look up the official text on **reputable websites only** (see below).
+4. **Add the link** — Use `<a href="…" rel="noopener noreferrer">` with descriptive link text (e.g. “Convention of 25 October 1980 (HCCH)” or “Article 8 CEDH”).
+
+## Allowed (reputable) sources
+
+Link **only** to official or widely recognised legal sources, for example:
+
+- **HCCH (Hague Conference on Private International Law)** — Conventions (1980 child abduction, 1996 child protection, etc.):
+  https://www.hcch.net/
+  - Full text of conventions: https://www.hcch.net/en/instruments/conventions/full-text/?cid=24 (1980), etc.
+- **France — Légifrance** — French legislation, codes, treaties, case law:
+  https://www.legifrance.gouv.fr/
+- **Norway — Lovdata** — Norwegian legislation, regulations, treaties, case law:
+  https://lovdata.no/
+
+For other countries (e.g. Germany, EU), prefer government or official legal portals (e.g. EUR-Lex for EU law). Do not link to unofficial blogs, commercial sites or social media as primary sources for law.
+
+## Examples
+
+- “Convention de La Haye du 25 octobre 1980” → link to HCCH full text (cid=24).
+- “article 8 CEDH” / “article 8 de la Convention européenne des droits de l’homme” → link to official CEDH text (e.g. Council of Europe or Legifrance if published there).
+- “barneloven” / Norwegian Children Act → link to Lovdata.
+- French Code civil / Code de procédure civile → link to Legifrance.
+- “Règlement Bruxelles II bis” → link to EUR-Lex or official EU source.
+
+Apply this when adding new legal content or when asked to “review all pages” for missing links to mentioned documents or laws.

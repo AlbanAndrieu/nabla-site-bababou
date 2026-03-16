@@ -7,28 +7,28 @@
 						{
 							"children": [
 								{
-									"name": "Central",
+									"name": "Police - Oslo Central",
 									"comment": "ignoring me",
 									"end": "nowhere",
 									"type": "url",
 									"url": "https://www.politiet.no/en/om/organisasjonen/police-districts/oslo-politidistrikt/"
 								},
 								{
-									"name": "Greenland Police Station",
+									"name": "Police - Greenland Police Station",
 									"comment": "ignoring me",
 									"end": "nowhere",
 									"type": "url",
 									"url": "https://www.politiet.no/en/om/organisasjonen/police-districts/oslo-politidistrikt/gronland-politistasjon/"
 								},
 								{
-									"name": "Oslo Airport Police Station",
+									"name": "Police - Oslo Airport Police Station",
 									"comment": "ignoring me",
 									"end": "nowhere",
 									"type": "url",
 									"url": "https://www.politiet.no/en/om/organisasjonen/police-districts/oslo-politidistrikt/"
 								},
 								{
-									"name": "Majorstuen Police Station",
+									"name": "Police - Majorstuen Police Station",
 									"comment": "ignoring me",
 									"end": "nowhere",
 									"type": "url",
@@ -53,7 +53,7 @@
 						},
 						{
 							"name": "Norwegian population registry",
-							"comment": "made a complaint, ignoring me, but change law",
+							"comment": "I made a complaint, ignoring me, but change law a few years later to avoid mother to register herself with full parental responsibility without the father's consent!",
 							"end": "law",
 							"type": "url",
 							"url": "https://www.skatteetaten.no/en/person/national-registry/"
@@ -73,7 +73,7 @@
 							"url": "ca/Ombudsman-Barneombudet-18_01586-2.pdf"
 						},
 						{
-							"name": "sivilombudsmannen",
+							"name": "Sivilombudsmannen",
 							"comment": "See sivilombudsmannen-3019-19-09-2018.pdf for more",
 							"end": "nowhere",
 							"type": "url",
@@ -87,21 +87,21 @@
 					"children": [
 						{
 							"name": "Norwegian Directorate for Children, Youth and Family Affairs",
-							"comment": "calling police to arrest me, ignoring me",
+							"comment": "They call the police to arrest me, upon the mother's request, then after ignored me",
 							"end": "nowhere",
 							"type": "url",
 							"url": "https://www.domstol.no/en/Enkelt-domstol/Oslo-District-Court/"
 						},
 						{
-							"name": "Oslo Stallen barnehage",
-							"comment": "ignoring me",
+							"name": "School - Oslo Stallen barnehage",
+							"comment": "Children's school, ignoring me",
 							"end": "nowhere",
 							"type": "url",
 							"url": "https://www.oslo.kommune.no/barnehage/finn-barnehage-i-oslo/stallen-barnehage/"
 						},
 						{
-							"name": "Oslo Lycée Français",
-							"comment": "ignoring me",
+							"name": "School - AEFE - Oslo Lycée Français",
+							"comment": "Children's school, ignoring me",
 							"end": "nowhere",
 							"type": "url",
 							"url": "https://lfo.no/"
@@ -115,7 +115,7 @@
 						{
 							"name": "Christian A. Kramer",
 							"email": "ck@frykmankramer.no",
-							"comment": "did not ask to judge abuse/kidnapping/custody , refusing appealing, ignoring me",
+							"comment": "He did not ask to judge abuse/kidnapping/custody! Then he ignoring me later when I reported he did not ask to appeal!",
 							"end": "30000 euro lost for 2 fakes trials",
 							"type": "url",
 							"url": "http://www.frykmankramer.no/~frykmank/about-us"
@@ -139,8 +139,8 @@
 					"type": "folder"
 				},
 				{
-					"name": "Norwegian King (Royal House)",
-					"comment": "King Harald V — contact for petitions and correspondence",
+					"name": "Norwegian King Harald V (Royal House)",
+					"comment": "I asked for help — he did not help! But answered me.",
 					"end": "nowhere",
 					"type": "url",
 					"url": "https://www.royalcourt.no/contact"
@@ -156,14 +156,14 @@
 						{
 							"children": [
 								{
-									"name": "Asnieres-sur-Seine, Ile de France",
+									"name": "Police - Asnieres-sur-Seine, Ile de France",
 									"comment": "ignoring me, the first year, but registered the abduction after complaining to IGN",
 									"end": "nowhere",
 									"type": "url",
 									"url": "https://lannuaire.service-public.fr/ile-de-france/hauts-de-seine/99bff3d7-8d86-4780-933d-6e4b6945f0b8"
 								},
 								{
-									"name": "Nanterre, Ile de France",
+									"name": "Police - Nanterre, Ile de France",
 									"comment": "Registered quickly the abuse and registered (NRE) that the mother is not sowing up with kid",
 									"end": "nowhere",
 									"type": "url",
@@ -171,42 +171,42 @@
 									"email": "commissariat-nanterre@interieur.gouv.fr"
 								},
 								{
-									"name": "Crest, Drôme",
-									"comment": "ignoring me, the first year, but registered the abduction after complaining to IGN",
+									"name": "Gendarmerie - Crest, Drôme",
+									"comment": "Arrest my daughter and moved her to Germany without my consent and without court order (or law) to do so, upon the mother request!",
 									"end": "nowhere",
 									"type": "url",
 									"url": "https://www.masecurite.interieur.gouv.fr/en/local-informations/gendarmerie-drome"
 								},
 								{
 									"name": "IGPN",
-									"comment": "ignoring me, did nothing",
+									"comment": "I reported the many refusal of French policy to register abduction, locate my child and later register NRE! ignoring me, did nothing. ",
 									"end": "nowhere",
 									"type": "url",
 									"url": "https://www.police-nationale.interieur.gouv.fr/Organisation/Inspection-generale-de-la-Police-nationale/Signalement-IGPN"
 								},
 								{
 									"name": "IGGN",
-									"comment": "ignoring me, did nothing",
+									"comment": "I reported abusive arrestation by French Gendarmerie. ignoring me, did nothing",
 									"end": "nowhere",
 									"type": "url",
 									"url": "https://www.gendarmerie.interieur.gouv.fr/notre-institution/notre-organisation/l-inspection-generale-de-la-gendarmerie-nationale-iggn"
 								}
 							],
-							"name": "Police",
+							"name": "Police and Gendarmerie",
 							"type": "folder"
 						},
 						{
 							"children": [
 								{
 									"name": "Procureur de la république de Nanterre",
-									"comment": "ignoring me, did nothing",
+									"comment": "I reported everything, hoping he/she would do something. ignoring me, did nothing",
 									"end": "nowhere",
 									"type": "url",
 									"url": "https://demarchesadministratives.fr/tgi-grande-instance/nanterre-92000"
 								},
 								{
 									"name": "Bureau du droit de l'Union, du droit international privé et de l'entraide civile",
-									"comment": "Help for abduction contact",
+									"comment": "Supposed to help to reach central authority for abduction contact, but did nothing for years!",
 									"end": "trial",
 									"type": "url",
 									"url": "http://www.justice.gouv.fr/justice-civile-11861/enlevement-parental-12063/lautorite-centrale-21099.html"
@@ -251,7 +251,7 @@
 							"comment": "useless",
 							"end": "psychological support",
 							"type": "url",
-							"url": "https://www.justice-familiale.fr/"
+							"url": "https://egalite-parentale.com/"
 						},
 						{
 							"name": "Paternites imposees",
@@ -260,6 +260,14 @@
 							"end": "psychological support",
 							"type": "url",
 							"url": "https://www.justice-familiale.fr/"
+						},
+						{
+							"name": "Exclusion parentale",
+							"email": "sosexclusionparentale@gmail.com",
+							"comment": "association, mythe grec de Médée",
+							"end": "psychological support",
+							"type": "url",
+							"url": "https://www.facebook.com/sosexclusionparentale/"
 						}
 					],
 					"name": "Associations",
@@ -277,7 +285,7 @@
 							"children": [
 								{
 									"name": "Frankfurt Police (Polizeipräsidium)",
-									"comment": "help me once to see eleonore 2h, did nothing",
+									"comment": "Help me once to see my daughter for 2 hours, but then did nothing",
 									"end": "nowhere",
 									"type": "url",
 									"url": "https://ppffm.polizei.hessen.de/Startseite/"
@@ -285,7 +293,7 @@
 								{
 									"name": "Frankfurt Police of police (k12)",
 									"email": "k12.ppfm@polizei.hessen.de",
-									"comment": "did nothing",
+									"comment": "I reported abusive arrestation in Germany, but they did nothing",
 									"end": "nowhere",
 									"type": "url",
 									"url": "https://k.polizei.hessen.de/"
@@ -309,7 +317,7 @@
 						},
 						{
 							"name": "Frankfurt population registry",
-							"comment": "checked, no entry",
+							"comment": "Took me years to reach them they answered there is no entry for my daughter, but I think they lied!",
 							"end": "nowhere",
 							"type": "url",
 							"url": "https://frankfurt.de/service-und-rathaus/verwaltung/aemter-und-institutionen/buergeramt-statistik-und-wahlen/buergeraemter",
@@ -317,14 +325,14 @@
 						},
 						{
 							"name": "Social Service Welfare of Frankfurt",
-							"comment": "Frankfurt youth welfare / social services",
+							"comment": "Frankfurt youth welfare / social services, ignoring me until I asked to apply the Hague convention! Their answered was empty, no evidence that my daughter was located, safe and well! They never testify that the mother violence stopped!",
 							"end": "nowhere",
 							"type": "url",
 							"url": "https://www.frankfurt.de/sixcms/detail.php?id=2828"
 						},
 						{
 							"name": "Jugendamt court",
-							"comment": "Court in matters involving Jugendamt (youth welfare office)",
+							"comment": "Court in matters involving Jugendamt (youth welfare office), ignoring me for years to help mother to hide, get custody and alieante my daughter!",
 							"end": "nowhere",
 							"type": "url",
 							"url": "https://www.gerichte.hessen.de/"
@@ -336,15 +344,15 @@
 				{
 					"children": [
 						{
-							"name": "AEFE",
-							"comment": "complaint, ignoring me",
+							"name": "School - AEFE",
+							"comment": "Complaint made for helping mother to move child from France to Norway without my consent, ignoring me",
 							"end": "nowhere",
 							"type": "url",
 							"url": "https://www.aefe.fr/"
 						},
 						{
-							"name": "Frankfurt Lycée Français Victor Hugo",
-							"comment": "ignoring me",
+							"name": "School - AEFE - Frankfurt Lycée Français Victor Hugo",
+							"comment": "Complaint made for having registered my daughter in a school without my consent, ignoring me",
 							"end": "nowhere",
 							"type": "url",
 							"url": "https://www.lfvh.net//"
@@ -397,7 +405,7 @@
 							"url": "https://www.enlevement-parental.justice.gouv.fr/"
 						},
 						{
-							"name": "Bureau d entraide civile internationale",
+							"name": "Bureau d'entraide civile internationale",
 							"email": "entraide-civile-internationale@justice.gouv.fr",
 							"comment": "BDIP/38DE2016 NORVEGE : No power",
 							"end": "nowhere",
@@ -425,7 +433,7 @@
 				{
 					"name": "Conseil Europeen",
 					"email": "https://www.coe.int/en/web/portal/contacts",
-					"comment": "Answered quickly that Norway is not under their responsability",
+					"comment": "Answered quickly that Norway is not under their responsability, but did nothing to help!",
 					"end": "nowhere",
 					"type": "url",
 					"url": "https://www.coe.int/en/web/portal/contacts"
@@ -435,73 +443,8 @@
 			"type": "folder"
 		},
 		{
-			"children": [
-				{
-					"name": "Mannsforum",
-					"email": "https://www.facebook.com/mannsforum.no/about",
-					"comment": "association",
-					"end": "psychological support",
-					"type": "url",
-					"url": "https://mannsforum.no/"
-				},
-				{
-					"name": "Väter ohne Rechte",
-					"email": "https://www.facebook.com/groups/vaeterohnerechte/about",
-					"comment": "association",
-					"end": "psychological support",
-					"type": "url",
-					"url": "https://www.vaeter-ohne-rechte.at/"
-				},
-				{
-					"name": "SOS Papa",
-					"email": "delegation67@sospapa.net",
-					"comment": "association",
-					"end": "psychological support",
-					"type": "url",
-					"url": "https://sospapa.net/delegations-sos-papa"
-				},
-				{
-					"name": "Collectif La Grue Jaune",
-					"email": "https://www.facebook.com/lagruejaune/",
-					"comment": "association",
-					"end": "psychological support",
-					"type": "url",
-					"url": "https://www.facebook.com/lagruejaune/"
-				},
-				{
-					"name": "Paternet",
-					"email": "http://paternet.fr/",
-					"comment": "association",
-					"end": "newsletter",
-					"type": "url",
-					"url": "http://paternet.fr/"
-				},
-				{
-					"name": "Marche egalite parentale",
-					"email": "contact@marche-egalite-parentale.com",
-					"comment": "useless",
-					"end": "psychological support",
-					"type": "url",
-					"url": "https://www.justice-familiale.fr/"
-				},
-				{
-					"name": "Paternites imposees",
-					"email": "paternitesimposees@hotmail.fr",
-					"comment": "association",
-					"end": "psychological support",
-					"type": "url",
-					"url": "https://www.justice-familiale.fr/"
-				},
-				{
-					"name": "Exclusion parentale",
-					"email": "sosexclusionparentale@gmail.com",
-					"comment": "association, mythe grec de Médée",
-					"end": "psychological support",
-					"type": "url",
-					"url": "https://www.facebook.com/sosexclusionparentale/"
-				}
-			],
-			"name": "Associations",
+			"children": [],
+			"name": "Others",
 			"type": "folder"
 		}
 	]

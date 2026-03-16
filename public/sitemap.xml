@@ -1,24 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!--
   <url>
-    <loc>https://bababou.com/ca/index.html</loc>
+    <loc>https://bababou.com/ca/gmail-clarifications-maintien-demande-fr.html</loc>
     <lastmod>2026-03-06</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://bababou.com/ca/demande-explications-autorites-competentes-fr.html</loc>
-    <lastmod>2026-03-05</lastmod>
+    <loc>https://bababou.com/ca/gmail-clarifications-maintien-demande-en.html</loc>
+    <lastmod>2026-03-06</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://bababou.com/ca/demande-explications-autorites-competentes.html</loc>
-    <lastmod>2026-03-05</lastmod>
+    <loc>https://bababou.com/ca/gmail-transmission-dossier-rappels-retour-fr.html</loc>
+    <lastmod>2026-03-06</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.5</priority>
   </url>
-  <!--
+  <url>
+    <loc>https://bababou.com/ca/gmail-transmission-dossier-rappels-retour-en.html</loc>
+    <lastmod>2026-03-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://bababou.com/ca/gmail-follow-up-hague-status-fr.html</loc>
+    <lastmod>2026-03-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://bababou.com/ca/gmail-follow-up-hague-status-en.html</loc>
+    <lastmod>2026-03-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://bababou.com/ca/gmail-absence-reponse-proposition-fr.html</loc>
+    <lastmod>2026-03-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://bababou.com/ca/gmail-absence-reponse-proposition-en.html</loc>
+    <lastmod>2026-03-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://bababou.com/ca/gmail-deplacement-enfant-france-norvege-allemagne-fr.html</loc>
+    <lastmod>2026-03-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://bababou.com/ca/gmail-deplacement-enfant-france-norvege-allemagne-en.html</loc>
+    <lastmod>2026-03-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
   <url>
     <loc>https://bababou.com/ca/nabla-mail-38de2016-fr.html</loc>
     <lastmod>2026-03-05</lastmod>
@@ -255,11 +297,31 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://bababou.com/ca/index.html</loc>
+    <lastmod>2026-03-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://bababou.com/ca/demande-explications-autorites-competentes-fr.html</loc>
+    <lastmod>2026-03-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://bababou.com/ca/demande-explications-autorites-competentes.html</loc>
+    <lastmod>2026-03-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <!--
+  <url>
     <loc>https://bababou.com/abduction-norway-lawyers.html</loc>
     <lastmod>2026-03-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
+  -->
   <url>
     <loc>https://bababou.com/nre-fr.html</loc>
     <lastmod>2026-02-16</lastmod>
@@ -270,37 +332,37 @@
     <loc>https://bababou.com/policy/privacy_policy.html</loc>
     <lastmod>2026-01-28</lastmod>
     <changefreq>yearly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.3</priority>
   </url>
   <url>
     <loc>https://bababou.com/policy/service_terms.html</loc>
     <lastmod>2026-01-28</lastmod>
     <changefreq>yearly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.3</priority>
   </url>
   <url>
     <loc>https://bababou.com/policy/impressum.html</loc>
     <lastmod>2026-02-20</lastmod>
     <changefreq>yearly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.3</priority>
   </url>
   <url>
     <loc>https://bababou.com/policy/accessibility_statement.html</loc>
     <lastmod>2026-02-20</lastmod>
     <changefreq>yearly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.3</priority>
   </url>
   <url>
     <loc>https://bababou.com/policy/cookie_policy.html</loc>
     <lastmod>2026-02-20</lastmod>
     <changefreq>yearly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.3</priority>
   </url>
   <url>
     <loc>https://bababou.com/policy/gnu_general_public_license.txt</loc>
     <lastmod>2026-01-28</lastmod>
     <changefreq>yearly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.3</priority>
   </url>
   <url>
     <loc>https://status.albandrieu.com/</loc>
