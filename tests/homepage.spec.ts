@@ -14,20 +14,18 @@ test.describe("Homepage Tests", () => {
 	test("should display the main heading", async ({ page }) => {
 		await page.goto("/");
 
-		// Check for the main heading
+		// Check for the main heading (Bababou / Éléonore and Papa looking for you)
 		const heading = page.locator("h1");
 		await expect(heading).toBeVisible();
-		await expect(heading).toContainText(
-			/Éléonore (Bababou) - If you are reading this, your Papa is looking for you'/i,
-		);
+		await expect(heading).toContainText(/Bababou.*Éléonore|Éléonore.*Bababou/i);
+		await expect(heading).toContainText(/your Papa is looking for you/i);
 	});
 
 	test("should have navigation elements", async ({ page }) => {
 		await page.goto("/");
 
-		// Check for navigation
-		const nav = page.locator("nav");
-		await expect(nav).toBeVisible();
+		// At least one nav must be visible (e.g. page-nav at top)
+		await expect(page.locator("nav").first()).toBeVisible();
 	});
 
 	test("should have footer with social links", async ({ page }) => {
@@ -84,10 +82,8 @@ test.describe("Homepage Tests", () => {
 	test("should have proper ARIA labels", async ({ page }) => {
 		await page.goto("/");
 
-		// Check for ARIA labels on navigation
-		const nav = page.locator("nav[aria-label]");
-		if ((await nav.count()) > 0) {
-			await expect(nav).toBeVisible();
-		}
+		// At least one nav with aria-label must be present and visible
+		const navWithLabel = page.locator("nav[aria-label]");
+		await expect(navWithLabel.first()).toBeVisible();
 	});
 });

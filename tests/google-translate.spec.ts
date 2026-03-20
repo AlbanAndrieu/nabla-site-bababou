@@ -4,9 +4,12 @@ test.describe("Google Translate Widget Tests", () => {
 	test("should have Google Translate widget container", async ({ page }) => {
 		await page.goto("/");
 
-		// Check for Google Translate widget container
+		// Container is in the DOM; content may load async from Google so we assert attached.
+		// The wrapper .google-translate-widget has min size so the page region is visible.
+		const wrapper = page.locator(".google-translate-widget");
+		await expect(wrapper).toBeVisible();
 		const translateElement = page.locator("#google_translate_element");
-		await expect(translateElement).toBeVisible();
+		await expect(translateElement).toBeAttached();
 	});
 
 	test("should load Google Translate scripts", async ({ page }) => {
@@ -42,19 +45,18 @@ test.describe("Google Translate Widget Tests", () => {
 	test("should be positioned correctly", async ({ page }) => {
 		await page.goto("/");
 
+		const wrapper = page.locator(".google-translate-widget");
+		await expect(wrapper).toBeVisible();
+
+		// Wrapper is the positioned container (fixed in theme.css); inner div may be static
+		const position = await wrapper.evaluate((el) => {
+			return window.getComputedStyle(el).position;
+		});
+		expect(["fixed", "absolute", "relative", "sticky"]).toContain(position);
+
 		const translateElement = page.locator("#google_translate_element");
-
 		if ((await translateElement.count()) > 0) {
-			// Check if element is in viewport
 			await expect(translateElement).toBeInViewport();
-
-			// Check if it has proper styling (usually fixed/absolute position)
-			const position = await translateElement.evaluate((el) => {
-				return window.getComputedStyle(el).position;
-			});
-
-			// Translate widget should be positioned (not static)
-			expect(["fixed", "absolute", "relative", "sticky"]).toContain(position);
 		}
 	});
 

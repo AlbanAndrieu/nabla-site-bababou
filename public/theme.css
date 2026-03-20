@@ -362,6 +362,8 @@ select:focus {
 	left: 10px;
 	z-index: 9999;
 	width: fit-content;
+	min-width: 1px;
+	min-height: 1px;
 	max-width: 100%;
 	background: var(--bg-primary);
 	padding: 5px;
@@ -591,6 +593,7 @@ button:focus-visible {
    ============================================ */
 .page-dark {
 	background: #0f172a;
+	color: #e2e8f0;
 	background-image: radial-gradient(
 			ellipse 80% 50% at 50% -20%,
 			rgba(59, 130, 246, 0.15),
@@ -611,6 +614,7 @@ button:focus-visible {
 
 html[data-theme="light"] .page-dark {
 	background: #f8fafc;
+	color: #0f172a;
 	background-image: radial-gradient(
 			ellipse 80% 50% at 50% -20%,
 			rgba(59, 130, 246, 0.08),

@@ -141,15 +141,21 @@ test.describe("Navigation and Links Tests", () => {
 	test("should handle link hover states", async ({ page }) => {
 		await page.goto("/");
 
-		// Get first visible link
-		const link = page.locator("a[href]").first();
+		// Use a link in main content so it is not under fixed widgets
+		const link = page.locator("main a[href]").first();
+		await expect(link).toHaveCount(1);
+		await link.scrollIntoViewIfNeeded();
 
-		if (await link.isVisible()) {
-			// Hover over the link
+		const width = page.viewportSize()?.width ?? 1024;
+		const isCoarsePointer = width < 768;
+
+		if (isCoarsePointer) {
+			// Mobile Safari: hover is not reliable; focus exercises keyboard/pointer target without navigating
+			await link.focus();
+		} else {
 			await link.hover();
-
-			// Check that link is still visible after hover
-			await expect(link).toBeVisible();
 		}
+
+		await expect(link).toBeVisible();
 	});
 });
