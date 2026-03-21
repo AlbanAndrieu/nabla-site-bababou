@@ -12,6 +12,11 @@ jobs:
     name: Run Playwright Tests
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    # publish-unit-test-result-action POSTs check-runs; default token is often read-only.
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
 
     steps:
       - name: Checkout code

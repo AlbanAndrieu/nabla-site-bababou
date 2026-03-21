@@ -1,4 +1,4 @@
-Contact: mailto:alban.andrieu@free.fr
+Contact: mailto:security@albandrieu.com
 Expires: 2026-10-12T00:00:00Z
 Canonical: https://bababou.com/security.txt
 Preferred-Languages: en,fr

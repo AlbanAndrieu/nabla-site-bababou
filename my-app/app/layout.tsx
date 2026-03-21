@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 		"My daughter was kidnapped by her Mother Rachael Brooke and moved from France to Norway then Germany.",
 	keywords:
 		"Father alban andrieu the mother brooke rachael child abuse abduction kidnapping france norway germany",
-	authors: [{ name: "Alban Andrieu", email: "alban.andrieu@free.fr" }],
+	authors: [{ name: "Alban Andrieu", email: "alban.andrieu@bababou.com" }],
 	openGraph: {
 		type: "website",
 		url: "https://bababou.com",
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
 		card: "summary_large_image",
 		title: "Éléonore - Your Father is Looking for You",
 		description:
-			"Éléonore (Bababou) - Your father Alban Andrieu is looking for you and will always be there for you. Contact: alban.andrieu@free.fr",
+			"Éléonore (Bababou) - Your father Alban Andrieu is looking for you and will always be there for you. Contact: alban.andrieu@bababou.com",
 		images: ["https://bababou.com/nabla/assets/miss-and-love-you-quote.jpeg"],
 	},
 	robots: {
