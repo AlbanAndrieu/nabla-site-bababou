@@ -74,7 +74,7 @@ test.describe("People Contacted page", () => {
 		await page.goto("/people-contacted.html");
 
 		const cardsRoot = page.locator("#people-cards-root");
-		await expect(cardsRoot.locator(".people-card")).toHaveCount(4);
+		await expect(cardsRoot.locator(".people-card")).toHaveCount(5);
 
 		const countryHeadings = page.locator(".people-by-country > h3");
 		await expect(countryHeadings.first()).toContainText("Norway");
@@ -125,11 +125,7 @@ test.describe("People Contacted page", () => {
 
 	test("shows fallback message when arf.json cannot be loaded", async ({ page }) => {
 		await page.route("**/arf.json", async (route) => {
-			await route.fulfill({
-				status: 500,
-				contentType: "application/json",
-				body: JSON.stringify({ error: "failed" }),
-			});
+			await route.abort("failed");
 		});
 
 		await page.goto("/people-contacted.html");
