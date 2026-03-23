@@ -1,9 +1,0 @@
----
-description: Do not disclose home address; mask last 2 digits of private phone in outputs
-globs:
-alwaysApply: true
----
-# Privacy — Personal data
-
-- **Home address**: Never output or suggest the real home address (11 Terrasse de l'université, 9200 Nanterre, or similar). Use the substitute: **"Located in Paris area"**, or the old one: **"10 Rue du Chemin Vert, 92600 Asnières-sur-Seine, France"**.
-- **Private phone**: When showing or suggesting the user's private phone number, never expose the full number. Use **+33 6 95 43 XX XX** (last two digits masked). Do not write or repeat the full +33 6 95 43 53 53 in generated content or suggestions.

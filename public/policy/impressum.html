@@ -4,23 +4,13 @@
 		<meta charset="UTF-8" />
 		<title>Impressum (Legal Notice) | Bababou</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<script src="../theme-toggle.js"></script>
-
-		<!-- Google Translate -->
-		<script type="text/javascript" src="/google-translate-config.js"></script>
-		<script
-			type="text/javascript"
-			src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
-		></script>
-		<!-- End Google Translate -->
-
 		<meta
 			name="description"
 			content="Impressum (legal notice) for bababou.com. Publisher information and contact details as required for websites."
 		/>
 		<meta name="keywords" content="impressum, legal notice, mentions légales, publisher, bababou" />
 		<meta name="robots" content="index, follow" />
-		<link rel="canonical" href="https://bababou.com/policy/impressum.html" />
+		<link rel="canonical" href="/policy/impressum.html" />
 
 		<!-- Open Graph meta tags for social media sharing -->
 		<meta property="og:type" content="website" />
@@ -41,10 +31,15 @@
 		/>
 		<meta name="twitter:url" content="https://bababou.com/policy/impressum.html" />
 		<link rel="icon" href="../favicon.ico" />
-		<link rel="stylesheet" href="../modern-style.css" />
-		<link rel="stylesheet" href="../wireframe.css" />
-		<link rel="stylesheet" href="../theme.css" />
-		<link rel="stylesheet" href="../style.css" />
+
+		<!-- Font Awesome -->
+		<script src="/assets/fontawesome-free-7.1.0-web/js/fontawesome.js" data-auto-replace-svg="nest"></script>
+		<script src="/assets/fontawesome-free-7.1.0-web/js/solid.js"></script>
+		<script src="/assets/fontawesome-free-7.1.0-web/js/brands.js"></script>
+
+		<!-- Theme toggle script - load early to prevent flash -->
+		<script src="../theme-toggle.js"></script>
+		<!-- CSS: vendor → wireframe/arf/theme/style → page sheets → print last -->
 		<link
 			rel="stylesheet"
 			href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.1/css/bootstrap.min.css"
@@ -59,16 +54,21 @@
 			crossorigin="anonymous"
 			referrerpolicy="no-referrer"
 		/>
-		<script
-			src="https://nabla.albandrieu.com/assets/fontawesome-free-7.1.0-web/js/fontawesome.js"
-			data-auto-replace-svg="nest"
-		></script>
-		<script src="https://nabla.albandrieu.com/assets/fontawesome-free-7.1.0-web/js/solid.js"></script>
-		<script src="https://nabla.albandrieu.com/assets/fontawesome-free-7.1.0-web/js/brands.js"></script>
-		<link href="https://nabla.albandrieu.com/assets/fontawesome/css/fontawesome.css" rel="stylesheet" />
-		<link href="https://nabla.albandrieu.com/assets/fontawesome/css/brands.css" rel="stylesheet" />
-		<link href="https://nabla.albandrieu.com/assets/fontawesome/css/solid.css" rel="stylesheet" />
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/fontawesome.min.css"
+			type="text/css"
+		/>
+		<link href="/assets/fontawesome/css/fontawesome.css" rel="stylesheet" />
+		<link href="/assets/fontawesome/css/brands.css" rel="stylesheet" />
+		<link href="/assets/fontawesome/css/solid.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../wireframe.css" />
+		<link rel="stylesheet" href="../arf.css" />
+		<link rel="stylesheet" href="../theme.css" />
+		<link rel="stylesheet" href="../style.css" />
+		<link rel="stylesheet" href="../landing-sections.css" />
 		<link rel="stylesheet" href="../print.css" />
+		<script src="../site-widgets.js" data-axeptio data-coffee-fab data-print-pdf></script>
 	</head>
 	<body id="top" class="page-dark">
 		<!-- Google Translate Widget -->
@@ -76,11 +76,6 @@
 			<div id="google_translate_element"></div>
 		</div>
 		<!-- End Google Translate Widget -->
-
-		<!-- Print Button (hidden when printing) -->
-		<button class="print-button" onclick="window.print()" aria-label="Print or save as PDF">
-			🖨️ Print / Save as PDF
-		</button>
 
 		<main id="main-content" class="container py-4" role="main">
 			<h1>Impressum (Legal Notice)</h1>
@@ -225,9 +220,10 @@
 			</div>
 			<p class="text-md-center mt-3">
 				<a href="../index.html" class="btn btn-sm btn-outline-secondary">Return to home</a>
-				<a href="#top" class="btn btn-sm btn-outline-secondary">Back to top</a>
+				<a href="#top" class="btn btn-sm btn-outline-secondary" aria-label="Back to top of page">Back to top</a>
 			</p>
 			<p style="margin-top: 1rem; opacity: 0.7">© 2025 Alban Andrieu. Independent DevSecOps Professional.</p>
 		</footer>
+		<script defer src="../site-analytics.js"></script>
 	</body>
 </html>

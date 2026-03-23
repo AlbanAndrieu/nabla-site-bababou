@@ -1,4 +1,410 @@
+/* Modern Landing Page Styles */
+
+:root {
+	--contact-card-accent: #4f46e5;
+	--contact-note-bg: #eef2ff;
+	--contact-note-border: #c7d2fe;
+	--contact-note-text: #3730a3;
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+	:root {
+		--contact-card-accent: #818cf8;
+		--contact-note-bg: #312e81;
+		--contact-note-border: #4338ca;
+		--contact-note-text: #c7d2fe;
+	}
+}
+
+/* Coffee + back-to-top: centered pair at bottom, side by side with a gap */
+:root {
+	--fab-pair-gap: 0.75rem;
+	--fab-coffee-size: 56px;
+	--fab-back-size: 56px;
+}
+
+/* Coffee FAB - same style/behavior as blog.stephane-robert.info coffee-fab */
+#coffee-fab {
+	position: fixed;
+	left: calc(50% - var(--fab-coffee-size) - var(--fab-pair-gap) / 2);
+	right: auto;
+	bottom: 1.5rem;
+	width: var(--fab-coffee-size);
+	height: var(--fab-coffee-size);
+	border-radius: 50%;
+	background: var(--button-bg, #007bff);
+	color: var(--button-text, #fff);
+	border: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 4px 12px var(--shadow-color, rgba(0, 0, 0, 0.15));
+	cursor: pointer;
+	z-index: 1040;
+	transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+	text-decoration: none;
+}
+#coffee-fab:hover {
+	background: var(--button-hover, #0056b3);
+	color: var(--button-text, #fff);
+	box-shadow: 0 6px 16px var(--shadow-hover, rgba(0, 0, 0, 0.2));
+	animation: coffee-hover-wiggle 1s ease-in-out infinite;
+}
+#coffee-fab:focus {
+	outline: 2px solid var(--link-color);
+	outline-offset: 2px;
+}
+#coffee-fab i {
+	font-size: 1.4rem;
+}
+/* Coffee FAB: steam + inner wrapper (reusable across pages) */
+.coffee-fab-inner {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+#coffee-fab .steam {
+	position: absolute;
+	bottom: 100%;
+	left: 50%;
+	width: 24px;
+	height: 16px;
+	margin-left: -12px;
+	margin-bottom: 2px;
+	pointer-events: none;
+}
+#coffee-fab .steam span {
+	position: absolute;
+	bottom: 0;
+	width: 5px;
+	height: 6px;
+	background: rgba(255, 255, 255, 0.55);
+	border-radius: 50%;
+	animation: steam-rise 2.2s ease-in-out infinite;
+}
+#coffee-fab .steam span:nth-child(1) {
+	left: 0;
+	animation-delay: 0s;
+}
+#coffee-fab .steam span:nth-child(2) {
+	left: 50%;
+	margin-left: -2.5px;
+	animation-delay: 0.35s;
+}
+#coffee-fab .steam span:nth-child(3) {
+	right: 0;
+	left: auto;
+	animation-delay: 0.7s;
+}
+@keyframes steam-rise {
+	0% {
+		opacity: 0;
+		transform: translateY(0) scale(0.85);
+	}
+	35% {
+		opacity: 0.6;
+	}
+	100% {
+		opacity: 0;
+		transform: translateY(-12px) scale(1.15);
+	}
+}
+@keyframes coffee-hover-wiggle {
+	0%,
+	100% {
+		transform: scale(1.05) rotate(0deg);
+	}
+	25% {
+		transform: scale(1.08) rotate(-5deg);
+	}
+	75% {
+		transform: scale(1.08) rotate(5deg);
+	}
+}
+@media (max-width: 768px) {
+	:root {
+		--fab-coffee-size: 48px;
+		--fab-back-size: 48px;
+	}
+	#coffee-fab {
+		bottom: 1rem;
+	}
+	#coffee-fab i {
+		font-size: 1.2rem;
+	}
+}
+
+@media print {
+	.back-to-top,
+	#coffee-fab,
+	#coffeeModal {
+		display: none !important;
+	}
+}
+
+/* Back-to-top FAB - same style/behavior as blog.stephane-robert.info */
+.back-to-top {
+	position: fixed;
+	left: calc(50% + var(--fab-pair-gap) / 2);
+	right: auto;
+	bottom: 1.5rem;
+	width: var(--fab-back-size);
+	height: var(--fab-back-size);
+	border-radius: 50%;
+	background: var(--button-bg, #007bff);
+	color: var(--button-text, #fff);
+	border: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 4px 12px var(--shadow-color, rgba(0, 0, 0, 0.15));
+	cursor: pointer;
+	z-index: 1040;
+	transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+	text-decoration: none;
+}
+.back-to-top:hover {
+	background: var(--button-hover, #0056b3);
+	color: var(--button-text, #fff);
+	transform: scale(1.05);
+	box-shadow: 0 6px 16px var(--shadow-hover, rgba(0, 0, 0, 0.2));
+}
+.back-to-top:focus {
+	outline: 2px solid var(--link-color);
+	outline-offset: 2px;
+}
+.back-to-top i {
+	font-size: 1.4rem;
+}
+
+/* No coffee button: single FAB stays visually centered */
+body:not(:has(#coffee-fab)) .back-to-top {
+	left: calc(50% - var(--fab-back-size) / 2);
+}
+
+@media (max-width: 768px) {
+	.back-to-top {
+		bottom: 1rem;
+	}
+	.back-to-top i {
+		font-size: 1.2rem;
+	}
+}
+
+/* Best Practices (ai.html, nabla.html) — scoped so hero/resource/footer do not affect other pages */
+body.page-nabla-best-practices {
+	--primary-color: #007bff;
+	--secondary-color: #6610f2;
+	--success-color: #28a745;
+	--info-color: #17a2b8;
+	--warning-color: #ffc107;
+	--danger-color: #dc3545;
+	--dark-color: #343a40;
+	--light-color: #f8f9fa;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+		"Helvetica Neue", Arial, sans-serif;
+	line-height: 1.6;
+	color: var(--text-primary);
+	background-color: var(--bg-primary);
+}
+
+body.page-nabla-best-practices .hero-section {
+	text-align: center;
+	padding: 4rem 2rem;
+	min-height: 0;
+	display: block;
+	background: linear-gradient(
+		135deg,
+		var(--primary-color) 0%,
+		var(--secondary-color) 100%
+	);
+	color: #fff;
+	position: relative;
+	overflow: hidden;
+}
+
+body.page-nabla-best-practices .hero-section::before {
+	display: none;
+}
+
+body.page-nabla-best-practices .hero-title {
+	font-size: 3rem;
+	font-weight: 700;
+	margin-bottom: 0.5rem;
+	animation: none;
+}
+
+body.page-nabla-best-practices .hero-subtitle {
+	font-size: 1.5rem;
+	margin-bottom: 1rem;
+	opacity: 0.95;
+	animation: none;
+}
+
+body.page-nabla-best-practices .hero-description {
+	font-size: 1.1rem;
+	max-width: 800px;
+	margin: 0 auto 2rem;
+	line-height: 1.6;
+	opacity: 0.95;
+	animation: none;
+}
+
+body.page-nabla-best-practices .content-section {
+	padding: 4rem 2rem;
+	max-width: 1200px;
+	margin: 0 auto;
+}
+
+body.page-nabla-best-practices .resource-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+	gap: 2rem;
+	margin-bottom: 3rem;
+}
+
+body.page-nabla-best-practices .resource-card {
+	background: var(--bg-card);
+	border-radius: 12px;
+	padding: 2rem;
+	box-shadow: 0 4px 12px var(--shadow-color);
+	transition: transform 0.3s ease, box-shadow 0.3s ease;
+	border: 1px solid var(--border-color);
+	border-left: 4px solid var(--primary-color);
+}
+
+body.page-nabla-best-practices .resource-card:hover {
+	transform: translateY(-5px);
+	box-shadow: 0 8px 24px var(--shadow-hover);
+}
+
+body.page-nabla-best-practices .resource-card h3 {
+	font-size: 1.5rem;
+	margin-bottom: 1rem;
+	color: var(--primary-color);
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+body.page-nabla-best-practices .resource-card-icon {
+	font-size: 2rem;
+	color: var(--primary-color);
+}
+
+body.page-nabla-best-practices .resource-card p {
+	color: var(--text-secondary);
+	margin-bottom: 1rem;
+	line-height: 1.6;
+}
+
+body.page-nabla-best-practices .resource-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	color: var(--link-color);
+	text-decoration: none;
+	font-weight: 600;
+	transition: color 0.3s ease;
+}
+
+body.page-nabla-best-practices .resource-link:hover {
+	color: var(--link-hover);
+	text-decoration: underline;
+}
+
+body.page-nabla-best-practices .resource-link i {
+	font-size: 1rem;
+}
+
+body.page-nabla-best-practices .footer {
+	background: var(--nav-bg);
+	color: var(--nav-text);
+	padding: 3rem 2rem 2rem;
+	text-align: center;
+}
+
+body.page-nabla-best-practices .footer-links a {
+	color: rgba(255, 255, 255, 0.8);
+	text-decoration: none;
+	opacity: 1;
+}
+
+body.page-nabla-best-practices .footer-links a:hover {
+	color: #fff;
+}
+
+body.page-nabla-best-practices .intro-section {
+	background: var(--bg-secondary);
+	border-radius: 12px;
+	padding: 2rem;
+	margin-bottom: 3rem;
+}
+
+body.page-nabla-best-practices .intro-section p {
+	font-size: 1.1rem;
+	line-height: 1.8;
+	color: var(--text-secondary);
+	margin-bottom: 1rem;
+}
+
+body.page-nabla-best-practices .intro-section p:last-child {
+	margin-bottom: 0;
+}
+
+body.page-nabla-best-practices .intro-section__heading {
+	color: var(--primary-color);
+	margin-bottom: 1rem;
+}
+
+body.page-nabla-best-practices .intro-section__list {
+	font-size: 1.1rem;
+	line-height: 1.8;
+	color: var(--text-secondary);
+}
+
+/* Beats print.css @media screen .print-button (later sheet, lower specificity) */
+body.page-nabla-best-practices .print-button {
+	position: fixed;
+	bottom: 5rem;
+	right: 2rem;
+	z-index: 999;
+	background: #28a745;
+	color: #fff;
+	border: none;
+	padding: 0.75rem 1.5rem;
+	border-radius: 25px;
+	cursor: pointer;
+	box-shadow: 0 2px 10px var(--shadow-color, rgba(0, 0, 0, 0.1));
+	transition: background 0.3s ease;
+	transform: none;
+	font-size: inherit;
+	font-weight: 600;
+}
+
+body.page-nabla-best-practices .print-button:hover {
+	background: #17a2b8;
+	transform: none;
+}
+
+@media (max-width: 768px) {
+	body.page-nabla-best-practices .hero-title {
+		font-size: 2rem;
+	}
+
+	body.page-nabla-best-practices .hero-subtitle {
+		font-size: 1.2rem;
+	}
+
+	body.page-nabla-best-practices .resource-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
 /* Legacy layout: only applied when body has .standalone-page (e.g. test/demo pages) */
+/*
 body.standalone-page {
 	display: flex;
 	justify-content: center;
@@ -79,6 +485,7 @@ body.standalone-page button {
 body.standalone-page button:hover {
 	opacity: 0.8;
 }
+*/
 
 /* ==========================================================================
    Special message section – same width as rest of site (.container)
@@ -90,7 +497,7 @@ body.standalone-page button:hover {
 }
 
 .special-message-section .special-message-card {
-	background: var(--bg-white, #fff);
+	background: var(--bg-primary, #fff);
 	border-radius: 8px;
 	box-shadow: 0 4px 20px var(--shadow-color, rgba(0, 0, 0, 0.08));
 	border: 1px solid var(--border-color, #e5e7eb);
@@ -101,7 +508,7 @@ body.standalone-page button:hover {
 	padding: 1.25rem 1rem;
 	font-size: 1rem;
 	line-height: 1.65;
-	color: var(--text-dark, #1f2937);
+	color: var(--text-primary, #1f2937);
 }
 
 .special-message-section .special-message-card h2 {
@@ -273,4 +680,92 @@ body.standalone-page button:hover {
 	.special-message-section .special-message-card .card-body {
 		padding: 2rem 2.25rem;
 	}
+}
+
+/* Contact me card (special message / CTA) – no green/yellow */
+.contact-me-card {
+	display: block;
+	background: var(--bg-secondary);
+	border: 1px solid var(--border-color);
+	border-radius: 12px;
+	padding: 1.5rem 1.5rem 1.5rem 1.25rem;
+	box-shadow: 0 4px 14px var(--shadow-color);
+	position: relative;
+	overflow: hidden;
+}
+.contact-me-card::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	width: 4px;
+	background: linear-gradient(
+		180deg,
+		var(--contact-card-accent),
+		var(--primary-color)
+	);
+	border-radius: 4px 0 0 4px;
+}
+.contact-me-card__title {
+	font-size: 1.125rem;
+	font-weight: 600;
+	color: var(--text-primary);
+	margin-bottom: 1rem;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+.contact-me-card__title .fa {
+	color: var(--contact-card-accent);
+	font-size: 1.25rem;
+}
+.contact-me-card__lead {
+	font-size: 1.125rem;
+	font-weight: 600;
+	margin-bottom: 0.5rem;
+	color: var(--text-primary);
+}
+.contact-me-card__link {
+	color: var(--primary-color);
+	text-decoration: none;
+	font-weight: 600;
+	border-bottom: 2px solid var(--primary-color);
+	transition: color 0.2s ease, border-color 0.2s ease;
+	display: inline-block;
+	min-height: 2.75rem;
+	line-height: 2.75rem;
+}
+.contact-me-card__link:hover {
+	color: var(--secondary-color);
+	border-bottom-color: var(--secondary-color);
+}
+.contact-me-card__link:focus-visible {
+	outline: 2px solid var(--primary-color);
+	outline-offset: 2px;
+}
+.contact-me-card__reassurance {
+	font-size: 0.9375rem;
+	color: var(--text-secondary);
+	margin-bottom: 0;
+	line-height: 1.5;
+}
+.contact-me-note {
+	background: var(--contact-note-bg);
+	border: 1px solid var(--contact-note-border);
+	color: var(--contact-note-text);
+	border-radius: 10px;
+	padding: 1.25rem 1.5rem;
+	font-size: 0.9375rem;
+	line-height: 1.6;
+}
+.contact-me-note strong {
+	color: inherit;
+}
+html[data-theme="dark"] .contact-me-note,
+html[data-theme="dark"] .contact-me-card {
+	--contact-note-bg: #312e81;
+	--contact-note-border: #4338ca;
+	--contact-note-text: #c7d2fe;
+	--contact-card-accent: #818cf8;
 }

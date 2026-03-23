@@ -17,7 +17,9 @@ test.describe("Theme Toggle Tests", () => {
 		await page.goto("/");
 
 		const themeToggle = page
-			.locator('button[aria-label*="theme" i], .theme-toggle, #theme-toggle-btn')
+			.locator(
+				'button[aria-label*="theme" i], .theme-toggle, #theme-toggle-btn',
+			)
 			.first();
 
 		await expect(themeToggle).toHaveCount(1);
@@ -72,14 +74,20 @@ test.describe("Theme Toggle Tests", () => {
 		await page.goto("/");
 
 		const themeToggle = page
-			.locator('button[aria-label*="theme" i], .theme-toggle, #theme-toggle-btn')
+			.locator(
+				'button[aria-label*="theme" i], .theme-toggle, #theme-toggle-btn',
+			)
 			.first();
 		await expect(themeToggle).toHaveCount(1);
 
 		const htmlElement = page.locator("html");
 
 		// Cycle to light theme (avoid relying on "auto" which may match system = dark on WebKit)
-		for (let i = 0; i < 5 && (await htmlElement.getAttribute("data-theme")) !== "light"; i++) {
+		for (
+			let i = 0;
+			i < 5 && (await htmlElement.getAttribute("data-theme")) !== "light";
+			i++
+		) {
 			await themeToggle.click();
 			await page.waitForTimeout(350);
 		}
@@ -90,7 +98,11 @@ test.describe("Theme Toggle Tests", () => {
 		});
 
 		// Cycle to dark theme
-		for (let i = 0; i < 5 && (await htmlElement.getAttribute("data-theme")) !== "dark"; i++) {
+		for (
+			let i = 0;
+			i < 5 && (await htmlElement.getAttribute("data-theme")) !== "dark";
+			i++
+		) {
 			await themeToggle.click();
 			await page.waitForTimeout(350);
 		}

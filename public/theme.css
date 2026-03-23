@@ -44,6 +44,11 @@
 	--toggle-bg: #343a40;
 	--toggle-text: #ffffff;
 	--toggle-border: #495057;
+
+	/* Landing / section accents (modern-style, special-message, contact card) */
+	--primary-color: #2563eb;
+	--secondary-color: #1e40af;
+	--accent-color: #f59e0b;
 }
 
 /* ============================================
@@ -165,6 +170,7 @@ html[data-theme="dark"] {
 body {
 	background-color: var(--bg-primary);
 	color: var(--text-primary);
+	line-height: 1.6;
 	transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -384,6 +390,7 @@ select:focus {
 /* Base: prevent horizontal overflow on all viewports */
 html {
 	overflow-x: hidden;
+	scroll-behavior: smooth;
 }
 
 body {
@@ -909,12 +916,134 @@ html[data-theme="light"] .page-dark .email {
 	}
 }
 
+/* Ko-fi FAB (injected by site-widgets.js when data-coffee-fab is set) */
+.coffee-fab-btn {
+	position: fixed;
+	right: 1.25rem;
+	bottom: 5.75rem;
+	z-index: 1040;
+	width: 3.25rem;
+	height: 3.25rem;
+	padding: 0;
+	border: none;
+	border-radius: 50%;
+	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+	background: #ff5e5b;
+	color: #fff;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.coffee-fab-btn:hover,
+.coffee-fab-btn:focus-visible {
+	transform: scale(1.06);
+	box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+	outline: 2px solid #fff;
+	outline-offset: 2px;
+}
+
+.coffee-fab-btn__icon {
+	font-size: 1.35rem;
+	line-height: 1;
+}
+
+.coffee-fab-iframe {
+	width: 100%;
+	height: min(70vh, 520px);
+	min-height: 360px;
+	border: 0;
+	display: block;
+}
+
+/* ============================================
+   Site footer (shared across pages; was modern-style.css)
+   ============================================ */
+.footer {
+	background: #0f172a;
+	color: white;
+	padding: 2rem;
+	text-align: center;
+}
+
+.footer-copyright {
+	margin-top: 1rem;
+	opacity: 0.7;
+}
+
+@media (prefers-color-scheme: dark) {
+	.footer {
+		background: #020617;
+	}
+}
+
+html[data-theme="dark"] .footer {
+	background: #020617;
+}
+
+html[data-theme="light"] .footer {
+	background: #0f172a;
+}
+
+.footer-links {
+	display: flex;
+	gap: 2rem;
+	justify-content: center;
+	margin-bottom: 1rem;
+	flex-wrap: wrap;
+}
+
+.footer-links a {
+	color: white;
+	text-decoration: none;
+	opacity: 0.8;
+	transition: opacity 0.3s ease;
+}
+
+.footer-links a:hover {
+	opacity: 1;
+}
+
+.social-links {
+	display: flex;
+	gap: 1.5rem;
+	justify-content: center;
+	margin: 1.5rem 0;
+}
+
+.social-link {
+	display: inline-block;
+	width: 40px;
+	height: 40px;
+	line-height: 40px;
+	text-align: center;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.1);
+	color: white;
+	text-decoration: none;
+	transition: all 0.3s ease;
+}
+
+.social-link:hover {
+	background: var(--primary-color);
+	transform: translateY(-3px);
+}
+
 /* ============================================
    Print Styles
    ============================================ */
 @media print {
-	.theme-toggle {
-		display: none;
+	.theme-toggle,
+	.google-translate-widget,
+	.print-button {
+		display: none !important;
+	}
+
+	.coffee-fab-btn,
+	#coffeeModal {
+		display: none !important;
 	}
 
 	body {

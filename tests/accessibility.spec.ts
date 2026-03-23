@@ -108,9 +108,11 @@ test.describe("Accessibility Tests", () => {
 			function looksLikeThirdPartyWidget(el: HTMLInputElement): boolean {
 				if (el.closest(thirdPartySelector)) return true;
 				const name = (el.getAttribute("name") || "").toLowerCase();
-				if (/turnstile|cf-turnstile|g-recaptcha|__hstc|__utm/.test(name)) return true;
+				if (/turnstile|cf-turnstile|g-recaptcha|__hstc|__utm/.test(name))
+					return true;
 				const pid = (el.id || "").toLowerCase();
-				if (/turnstile|recaptcha|goog-te|goog-gt|gtm-|vwo_|mixpanel/.test(pid)) return true;
+				if (/turnstile|recaptcha|goog-te|goog-gt|gtm-|vwo_|mixpanel/.test(pid))
+					return true;
 				return false;
 			}
 
@@ -149,7 +151,14 @@ test.describe("Accessibility Tests", () => {
 	test("should be keyboard navigable", async ({ page }) => {
 		await page.goto("/");
 
-		const interactive = ["a", "button", "input", "select", "textarea", "iframe"];
+		const interactive = [
+			"a",
+			"button",
+			"input",
+			"select",
+			"textarea",
+			"iframe",
+		];
 
 		const hasFocusable = await page.evaluate(() => {
 			return (
@@ -163,7 +172,9 @@ test.describe("Accessibility Tests", () => {
 		let tag: string | null = null;
 		for (let i = 0; i < 40; i++) {
 			await page.keyboard.press("Tab");
-			tag = await page.evaluate(() => document.activeElement?.tagName?.toLowerCase() ?? null);
+			tag = await page.evaluate(
+				() => document.activeElement?.tagName?.toLowerCase() ?? null,
+			);
 			if (tag && interactive.includes(tag)) break;
 		}
 
@@ -175,7 +186,9 @@ test.describe("Accessibility Tests", () => {
 				)
 				.first();
 			await first.focus();
-			tag = await page.evaluate(() => document.activeElement?.tagName?.toLowerCase() ?? null);
+			tag = await page.evaluate(
+				() => document.activeElement?.tagName?.toLowerCase() ?? null,
+			);
 		}
 
 		expect(tag).toBeTruthy();

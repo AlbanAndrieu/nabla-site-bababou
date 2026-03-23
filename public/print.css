@@ -3,7 +3,7 @@
  */
 
 @media print {
-	/* Page Setup */
+	/* Page Setup - no running header/footer; disable "Headers and footers" in print dialog for clean PDF */
 	@page {
 		size: A4;
 		margin: 1.5cm 1cm;
@@ -30,7 +30,7 @@
 		color: black !important;
 	}
 
-	/* Hide elements not needed in print */
+	/* Hide elements not needed in print (PDF) */
 	nav,
 	.navbar,
 	.nav,
@@ -42,6 +42,8 @@
 	.social-links,
 	.theme-toggle,
 	button,
+	.print-menu-container,
+	.back-link,
 	#navbarHeader,
 	.collapse,
 	[role="navigation"],
@@ -49,6 +51,8 @@
 	.social-media-icons,
 	.contact-methods,
 	.back-to-top,
+	#coffee-fab,
+	#coffeeModal,
 	[href="#"],
 	script,
 	noscript {
@@ -396,7 +400,7 @@
 	}
 }
 
-/* Print button styles - visible on screen only */
+/* Print and Markdown button styles - visible on screen only */
 @media screen {
 	.print-button {
 		position: fixed;
@@ -413,6 +417,14 @@
 		box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 		z-index: 1000;
 		transition: all 0.3s ease;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.print-button__icon {
+		margin-right: 8px;
+		flex-shrink: 0;
 	}
 
 	.print-button:hover {
@@ -422,6 +434,32 @@
 	}
 
 	.print-button i {
+		margin-right: 8px;
+	}
+	.markdown-button {
+		position: fixed;
+		bottom: 80px;
+		right: 20px;
+		padding: 12px 24px;
+		background-color: #10b981;
+		color: white;
+		border: none;
+		border-radius: 8px;
+		font-size: 16px;
+		font-weight: 600;
+		cursor: pointer;
+		box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+		z-index: 1000;
+		transition: all 0.3s ease;
+	}
+
+	.markdown-button:hover {
+		background-color: #059669;
+		transform: translateY(-2px);
+		box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+	}
+
+	.markdown-button i {
 		margin-right: 8px;
 	}
 
@@ -459,5 +497,94 @@
 
 	.print-link i {
 		margin-right: 6px;
+	}
+
+	/* Combined Print Menu Button with Dropdown */
+	.print-menu-container {
+		position: fixed;
+		bottom: 20px;
+		right: 20px;
+		z-index: 1000;
+	}
+
+	.print-menu-button {
+		display: flex;
+		align-items: center;
+		padding: 12px 24px;
+		background-color: #2563eb;
+		color: white;
+		border: none;
+		border-radius: 8px;
+		font-size: 16px;
+		font-weight: 600;
+		cursor: pointer;
+		box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+		transition: all 0.3s ease;
+		gap: 8px;
+	}
+
+	.print-menu-button:hover {
+		background-color: #1d4ed8;
+		box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+	}
+
+	.print-menu-button i {
+		margin-right: 4px;
+	}
+
+	.print-menu-button .dropdown-arrow {
+		margin-left: 4px;
+		font-size: 12px;
+		transition: transform 0.3s ease;
+	}
+
+	.print-menu-dropdown {
+		display: none;
+		position: absolute;
+		bottom: 100%;
+		right: 0;
+		margin-bottom: 8px;
+		background-color: white;
+		border-radius: 8px;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+		min-width: 220px;
+		overflow: hidden;
+	}
+
+	.print-menu-dropdown button {
+		display: flex;
+		align-items: center;
+		width: 100%;
+		padding: 12px 16px;
+		background-color: white;
+		color: #1f2937;
+		border: none;
+		text-align: left;
+		font-size: 14px;
+		font-weight: 500;
+		cursor: pointer;
+		transition: background-color 0.2s ease;
+		gap: 10px;
+	}
+
+	.print-menu-dropdown button:hover {
+		background-color: #f3f4f6;
+	}
+
+	.print-menu-dropdown button i {
+		width: 20px;
+		color: #6b7280;
+	}
+
+	.print-menu-dropdown button.primary-option {
+		border-bottom: 1px solid #e5e7eb;
+	}
+
+	.print-menu-dropdown button.primary-option i {
+		color: #2563eb;
+	}
+
+	.print-menu-dropdown button.secondary-option i {
+		color: #10b981;
 	}
 }

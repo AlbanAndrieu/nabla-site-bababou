@@ -26,8 +26,8 @@ The repository layout looks like this (main items):
 ├── 📁 public/                        <- Static site root (served as web root)
 │   ├── 📄 index.html                 <- Homepage
 │   ├── 📄 test.html, 404.html
-│   ├── 📄 theme.css, modern-style.css, wireframe.css, print.css
-│   ├── 📄 theme-toggle.js, google-translate-config.js, arf.js, index.js, arf.css, arf.json
+│   ├── 📄 theme.css, landing-sections.css (optional), wireframe.css, print.css
+│   ├── 📄 theme-toggle.js, site-google-translate.js, arf.js, index.js, arf.css, arf.json
 │   ├── 📄 security.txt, robots.txt, sitemap.xml
 │   ├── 📁 assets/                    <- Fonts, images, icons (SVGs)
 │   └── 📁 policy/                     <- privacy_policy.html, service_terms.html
@@ -62,7 +62,7 @@ The repository layout looks like this (main items):
 
 ## Best practices for improving static HTML content
 
-- **Iterate on existing code**: Prefer reusing and extending current patterns (e.g. `public/theme.css`, `public/modern-style.css`, `theme-toggle.js`) instead of introducing new ones.
+- **Iterate on existing code**: Prefer reusing and extending current patterns (e.g. `public/theme.css`, `public/landing-sections.css` where needed, `theme-toggle.js`) instead of introducing new ones.
 - **Avoid duplication**: Reuse shared CSS, scripts, and structure; check for similar markup before adding new blocks.
 - **Keep it simple**: Prefer small, clear changes; avoid new frameworks or patterns unless necessary.
 - **Scope changes**: Only modify code relevant to the task; leave unrelated files and logic untouched.
@@ -72,7 +72,7 @@ The repository layout looks like this (main items):
 
 ## UI, UX, accessibility and responsive design
 
-- **Professional and readable**: Clear typography, sufficient contrast (see `public/theme.css`, `public/modern-style.css`), consistent spacing and alignment. Prefer existing CSS variables and theme tokens for colors and spacing.
+- **Professional and readable**: Clear typography, sufficient contrast (see `public/theme.css`, `public/landing-sections.css` on landing pages), consistent spacing and alignment. Prefer existing CSS variables and theme tokens for colors and spacing.
 - **Accessibility (WCAG-oriented)**:
   - **Images**: Every `img` must have an `alt` attribute (empty `alt=""` only for decorative images).
   - **Forms**: Every `input` (text, email, password, search) and `textarea` in main content must have an accessible name: either a `<label for="id">` matching the input `id`, or `aria-label` / `aria-labelledby`.
@@ -83,6 +83,6 @@ The repository layout looks like this (main items):
   - Use mobile-first, fluid layouts; test at narrow (e.g. 320px) and wide viewports.
   - Use existing responsive patterns (e.g. Bootstrap grid in `public/`, or flex/grid in custom CSS) rather than introducing new breakpoint systems.
   - Touch targets and tap areas should be large enough on small screens; avoid hover-only critical actions.
-- **Theme**: The site supports light/dark via `theme-toggle.js` and `data-theme` on `<html>`. New UI should respect theme variables so it works in both modes. Content pages use the **page-dark** style (body class `page-dark`) for a default dark background and modern look; see `theme.css` and `.cursor/rules/120_page-chrome-consistency.mdc`.
+- **Theme**: The site supports light/dark via `theme-toggle.js` and `data-theme` on `<html>`. New UI should respect theme variables so it works in both modes. Content pages use **`<body id="top" class="page-dark">`** for scroll target + default dark layout; see `theme.css` and `.cursor/rules/120_page-chrome-consistency.mdc`.
 
 When changing HTML or CSS, preserve existing accessibility and responsive behavior; fix any new issues (e.g. missing labels, low contrast) as part of the change.

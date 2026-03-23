@@ -50,170 +50,47 @@
 		<!-- Favicon -->
 		<link rel="icon" href="favicon.ico" />
 
-		<!-- Custom CSS -->
-		<link rel="stylesheet" href="modern-style.css" />
-
 		<!-- Font Awesome -->
+		<script src="/assets/fontawesome-free-7.1.0-web/js/fontawesome.js" data-auto-replace-svg="nest"></script>
+		<script src="/assets/fontawesome-free-7.1.0-web/js/solid.js"></script>
+		<script src="/assets/fontawesome-free-7.1.0-web/js/brands.js"></script>
+
+		<!-- Theme toggle script - load early to prevent flash -->
+		<script src="theme-toggle.js"></script>
+		<!-- CSS: vendor → wireframe/arf/theme/style → page sheets → print last -->
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.1/css/bootstrap.min.css"
+			integrity="sha512-siwe/oXMhSjGCwLn+scraPOWrJxHlUgMBMZXdPe2Tnk3I0x3ESCoLz7WZ5NTH6SZrywMY+PB1cjyqJ5jAluCOg=="
+			crossorigin="anonymous"
+			referrerpolicy="no-referrer"
+		/>
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.9.1/font/bootstrap-icons.min.css"
+			integrity="sha512-5PV92qsds/16vyYIJo3T/As4m2d8b6oWYfoqV+vtizRB6KhF1F9kYzWzQmsO6T3z3QG2Xdhrx7FQ+5R1LiQdUA=="
+			crossorigin="anonymous"
+			referrerpolicy="no-referrer"
+		/>
 		<link
 			rel="stylesheet"
 			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/fontawesome.min.css"
 			type="text/css"
 		/>
-
-		<script
-			src="https://bababou.com/assets/fontawesome-free-7.1.0-web/js/fontawesome.js"
-			data-auto-replace-svg="nest"
-		></script>
-		<script src="https://bababou.com/assets/fontawesome-free-7.1.0-web/js/solid.js"></script>
-		<script src="https://bababou.com/assets/fontawesome-free-7.1.0-web/js/brands.js"></script>
-
-		<!-- our project is using icons from Solid, Sharp Thin, Sharp Duotone Thin + Brands -->
-		<link href="assets/fontawesome/css/fontawesome.css" rel="stylesheet" />
-		<link href="assets/fontawesome/css/brands.css" rel="stylesheet" />
-		<link href="assets/fontawesome/css/solid.css" rel="stylesheet" />
-
-		<!-- Theme toggle script - load early to prevent flash -->
-		<script src="theme-toggle.js"></script>
-
+		<link href="/assets/fontawesome/css/fontawesome.css" rel="stylesheet" />
+		<link href="/assets/fontawesome/css/brands.css" rel="stylesheet" />
+		<link href="/assets/fontawesome/css/solid.css" rel="stylesheet" />
 		<link rel="stylesheet" href="wireframe.css" />
 		<link rel="stylesheet" href="arf.css" />
 		<link rel="stylesheet" href="theme.css" />
 		<link rel="stylesheet" href="style.css" />
-		<!-- Print Styles for PDF Export -->
+		<link rel="stylesheet" href="landing-sections.css" />
 		<link rel="stylesheet" href="print.css" />
 
-		<!-- Obs Optimization https://github.com/csswizardry/Obs.js -->
-		<script>
-			/*! Obs.js 0.2.1 | (c) Harry Roberts, csswizardry.com | MIT */
-			(() => {
-				const e = document.currentScript;
-				if (
-					(!e || e.src || (e.type && "module" === e.type.toLowerCase())) &&
-					!1 === /^(localhost|127\.0\.0\.1|::1)$/.test(location.hostname)
-				)
-					return void console.warn(
-						"[Obs.js] Skipping: must be an inline, classic <script> in <head>.",
-						e ? (e.src ? "src=" + e.src : "type=" + e.type) : "type=module",
-					);
-				const t = document.documentElement,
-					{ connection: i } = navigator;
-				window.obs = window.obs || {};
-				const a = !0 === ((window.obs && window.obs.config) || {}).observeChanges,
-					o = () => {
-						const e = window.obs || {},
-							i = "number" == typeof e.downlinkBucket ? e.downlinkBucket : null;
-						e.connectionCapability =
-							"low" === e.rttCategory && null != i && i >= 8
-								? "strong"
-								: "high" === e.rttCategory || (null != i && i <= 5)
-									? "weak"
-									: "moderate";
-						const a = !0 === e.dataSaver || !0 === e.batteryLow || !0 === e.batteryCritical;
-						e.conservationPreference = a ? "conserve" : "neutral";
-						const o = "weak" === e.connectionCapability || !0 === e.dataSaver || !0 === e.batteryCritical;
-						(e.deliveryMode = "strong" !== e.connectionCapability || o || a ? (o ? "lite" : "cautious") : "rich"),
-							(e.canShowRichMedia = "lite" !== e.deliveryMode),
-							(e.shouldAvoidRichMedia = "lite" === e.deliveryMode),
-							["strong", "moderate", "weak"].forEach((e) => {
-								t.classList.remove(`has-connection-capability-${e}`);
-							}),
-							t.classList.add(`has-connection-capability-${e.connectionCapability}`),
-							["conserve", "neutral"].forEach((e) => {
-								t.classList.remove(`has-conservation-preference-${e}`);
-							}),
-							t.classList.add(`has-conservation-preference-${e.conservationPreference}`),
-							["rich", "cautious", "lite"].forEach((e) => {
-								t.classList.remove(`has-delivery-mode-${e}`);
-							}),
-							t.classList.add(`has-delivery-mode-${e.deliveryMode}`);
-					},
-					n = () => {
-						if (!i) return;
-						const { saveData: e, rtt: a, downlink: n } = i;
-						(window.obs.dataSaver = !!e), t.classList.toggle("has-data-saver", !!e);
-						const s = ((e) => (Number.isFinite(e) ? 25 * Math.ceil(e / 25) : null))(a);
-						null != s && (window.obs.rttBucket = s);
-						const r = ((e) => (Number.isFinite(e) ? (e < 75 ? "low" : e <= 275 ? "medium" : "high") : null))(a);
-						r &&
-							((window.obs.rttCategory = r),
-							["low", "medium", "high"].forEach((e) => t.classList.remove(`has-latency-${e}`)),
-							t.classList.add(`has-latency-${r}`));
-						const c = ((l = n), Number.isFinite(l) ? Math.ceil(l) : null);
-						var l;
-						if (null != c) {
-							window.obs.downlinkBucket = c;
-							const e = c <= 5 ? "low" : c >= 8 ? "high" : "medium";
-							(window.obs.downlinkCategory = e),
-								["low", "medium", "high"].forEach((e) => t.classList.remove(`has-bandwidth-${e}`)),
-								t.classList.add(`has-bandwidth-${e}`);
-						}
-						"downlinkMax" in i && (window.obs.downlinkMax = i.downlinkMax), o();
-					};
-				n(), a && i && "function" == typeof i.addEventListener && i.addEventListener("change", n);
-				const s = (e) => {
-					if (!e) return;
-					const { level: i, charging: a } = e,
-						n = Number.isFinite(i) ? i <= 0.05 : null;
-					window.obs.batteryCritical = n;
-					const s = Number.isFinite(i) ? i <= 0.2 : null;
-					(window.obs.batteryLow = s),
-						["critical", "low"].forEach((e) => t.classList.remove(`has-battery-${e}`)),
-						s && t.classList.add("has-battery-low"),
-						n && t.classList.add("has-battery-critical");
-					const r = !!a;
-					(window.obs.batteryCharging = r), t.classList.toggle("has-battery-charging", r), o();
-				};
-				if (
-					("getBattery" in navigator &&
-						navigator
-							.getBattery()
-							.then((e) => {
-								s(e),
-									a &&
-										"function" == typeof e.addEventListener &&
-										(e.addEventListener("levelchange", () => s(e)), e.addEventListener("chargingchange", () => s(e)));
-							})
-							.catch(() => {}),
-					"deviceMemory" in navigator)
-				) {
-					const e = Number(navigator.deviceMemory),
-						i = Number.isFinite(e) ? e : null;
-					window.obs.ramBucket = i;
-					const a =
-						((r = i), Number.isFinite(r) ? (r <= 1 ? "very-low" : r <= 2 ? "low" : r <= 4 ? "medium" : "high") : null);
-					a &&
-						((window.obs.ramCategory = a),
-						["very-low", "low", "medium", "high"].forEach((e) => t.classList.remove(`has-ram-${e}`)),
-						t.classList.add(`has-ram-${a}`));
-				}
-				var r;
-				if ("hardwareConcurrency" in navigator) {
-					const e = Number(navigator.hardwareConcurrency),
-						i = Number.isFinite(e) ? e : null;
-					window.obs.cpuBucket = i;
-					const a = ((e) => (Number.isFinite(e) ? (e <= 2 ? "low" : e <= 5 ? "medium" : "high") : null))(i);
-					a &&
-						((window.obs.cpuCategory = a),
-						["low", "medium", "high"].forEach((e) => t.classList.remove(`has-cpu-${e}`)),
-						t.classList.add(`has-cpu-${a}`));
-				}
-				(() => {
-					const e = window.obs || {},
-						i = e.ramCategory,
-						a = e.cpuCategory;
-					let o = "moderate";
-					("high" !== i && "medium" !== i) || "high" !== a
-						? ("very-low" === i || "low" === i || "low" === a) && (o = "weak")
-						: (o = "strong"),
-						(e.deviceCapability = o),
-						["strong", "moderate", "weak"].forEach((e) => {
-							t.classList.remove(`has-device-capability-${e}`);
-						}),
-						t.classList.add(`has-device-capability-${o}`);
-				})();
-			})();
-			//# sourceURL=obs.inline.js
-		</script>
+		<script src="site-widgets.js" data-axeptio data-coffee-fab data-print-pdf></script>
+
+		<!-- Obs.js connection hints: obs-connection.js (https://github.com/csswizardry/Obs.js) -->
+		<script src="obs-connection.js"></script>
 
 		<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
@@ -621,23 +498,9 @@
 		<!-- End Datadog RUM -->
 
 		<!-- Cloudflare -->
-		<link
-			rel="stylesheet"
-			href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.1/css/bootstrap.min.css"
-			integrity="sha512-siwe/oXMhSjGCwLn+scraPOWrJxHlUgMBMZXdPe2Tnk3I0x3ESCoLz7WZ5NTH6SZrywMY+PB1cjyqJ5jAluCOg=="
-			crossorigin="anonymous"
-			referrerpolicy="no-referrer"
-		/>
-		<link
-			rel="stylesheet"
-			href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.9.1/font/bootstrap-icons.min.css"
-			integrity="sha512-5PV92qsds/16vyYIJo3T/As4m2d8b6oWYfoqV+vtizRB6KhF1F9kYzWzQmsO6T3z3QG2Xdhrx7FQ+5R1LiQdUA=="
-			crossorigin="anonymous"
-			referrerpolicy="no-referrer"
-		/>
 
-		<link rel="alternate" hreflang="x-default" href="https://bababou.com/" />
-		<link rel="canonical" href="https://bababou.com/" />
+		<link rel="alternate" hreflang="x-default" href="/" />
+		<link rel="canonical" href="/" />
 
 		<!-- Ahrefs Web Analytics -->
 		<script src="https://analytics.ahrefs.com/analytics.js" data-key="tg3zLMS/bebJFl0LxctiCw" async></script>
@@ -646,15 +509,6 @@
 		<script src="analytics-stubs.js"></script>
 		<script defer src="/_vercel/insights/script.js"></script>
 		<script defer src="/_vercel/speed-insights/script.js"></script>
-
-		<!-- Google Translate -->
-		<script type="text/javascript" src="/google-translate-config.js"></script>
-		<script
-			type="text/javascript"
-			src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
-		></script>
-		<!-- End Google Translate -->
-
 		<!-- JSON-LD Structured Data for SEO and Crawlers -->
 		<script type="application/ld+json">
 			{
@@ -673,14 +527,7 @@
 		</script>
 	</head>
 	<body id="top" class="page-dark">
-		<!-- Print Button (hidden when printing) -->
-		<button class="print-button" onclick="window.print()"><i class="fas fa-print"></i> Print / Save as PDF</button>
-
-		<nav class="page-nav" aria-label="Page navigation">
-			<a href="#main-content">Skip to main content</a>
-			<span class="ms-2">|</span>
-			<a href="#top" class="ms-2">Back to top</a>
-		</nav>
+		<a href="#main-content" class="visually-hidden-focusable skip-link">Skip to main content</a>
 
 		<!-- Google Tag Manager (noscript) -->
 		<noscript
@@ -1192,14 +1039,15 @@
 			</div>
 
 			<div class="footer-links">
-				<a href="https://bababou.com/policy/service_terms.html">Terms of Use</a>
+				<a href="/policy/service_terms.html">Terms of Use</a>
 				<a href="javascript:openAxeptioCookies()" rel="noopener noreferrer" class="text-muted">Cookies</a>
-				<a href="https://bababou.com/policy/privacy_policy.html">Privacy Policy</a>
-				<a href="https://bababou.com/policy/impressum.html">Impressum</a>
-				<a href="https://bababou.com/policy/accessibility_statement.html">Accessibility</a>
-				<a href="https://bababou.com/policy/cookie_policy.html">Cookie Policy</a>
+				<a href="/policy/privacy_policy.html">Privacy Policy</a>
+				<a href="/policy/impressum.html">Impressum</a>
+				<a href="/policy/accessibility_statement.html">Accessibility</a>
+				<a href="/policy/cookie_policy.html">Cookie Policy</a>
 			</div>
 			<p class="text-md-center mt-3">
+				<a href="index.html" class="btn btn-sm btn-outline-secondary">Return to home</a>
 				<a href="#top" class="btn btn-sm btn-outline-secondary" aria-label="Back to top of page">Back to top</a>
 			</p>
 
@@ -1231,13 +1079,13 @@
 			crossorigin="anonymous"
 		></script>
 
-		<script src="smooth-scroll.js"></script>
-		<script src="third-party-widgets.js"></script>
 		<script
 			src="https://uptime.betterstack.com/widgets/announcement.js"
 			data-id="150620"
 			async="async"
 			type="text/javascript"
 		></script>
+
+		<script defer src="site-analytics.js"></script>
 	</body>
 </html>

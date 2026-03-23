@@ -9,10 +9,15 @@
 			content="Liste des week-ends de droit de visite (premier week-end de chaque mois) et des non-représentations d'enfant (NRE). Référence : plainte TGI Valence 4 septembre 2023. Jugement exécutoire 31 mars 2017."
 		/>
 		<link rel="icon" href="favicon.ico" />
-		<link rel="stylesheet" href="modern-style.css" />
-		<link rel="stylesheet" href="wireframe.css" />
-		<link rel="stylesheet" href="theme.css" />
-		<link rel="stylesheet" href="style.css" />
+
+		<!-- Font Awesome -->
+		<script src="/assets/fontawesome-free-7.1.0-web/js/fontawesome.js" data-auto-replace-svg="nest"></script>
+		<script src="/assets/fontawesome-free-7.1.0-web/js/solid.js"></script>
+		<script src="/assets/fontawesome-free-7.1.0-web/js/brands.js"></script>
+
+		<!-- Theme toggle script - load early to prevent flash -->
+		<script src="theme-toggle.js"></script>
+		<!-- CSS: vendor → wireframe/arf/theme/style → page sheets → print last -->
 		<link
 			rel="stylesheet"
 			href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.1/css/bootstrap.min.css"
@@ -27,14 +32,22 @@
 			crossorigin="anonymous"
 			referrerpolicy="no-referrer"
 		/>
-		<script src="/assets/fontawesome-free-7.1.0-web/js/fontawesome.js" data-auto-replace-svg="nest"></script>
-		<script src="/assets/fontawesome-free-7.1.0-web/js/solid.js"></script>
-		<script src="/assets/fontawesome-free-7.1.0-web/js/brands.js"></script>
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/fontawesome.min.css"
+			type="text/css"
+		/>
 		<link href="/assets/fontawesome/css/fontawesome.css" rel="stylesheet" />
 		<link href="/assets/fontawesome/css/brands.css" rel="stylesheet" />
 		<link href="/assets/fontawesome/css/solid.css" rel="stylesheet" />
+		<link rel="stylesheet" href="wireframe.css" />
+		<link rel="stylesheet" href="arf.css" />
+		<link rel="stylesheet" href="theme.css" />
+		<link rel="stylesheet" href="style.css" />
+		<link rel="stylesheet" href="landing-sections.css" />
+		<link rel="stylesheet" href="nre.css" />
 		<link rel="stylesheet" href="print.css" />
-		<link rel="stylesheet" href="custom.css" />
+		<script src="site-widgets.js" data-axeptio data-coffee-fab data-print-pdf></script>
 	</head>
 	<body id="top" class="page-dark">
 		<main id="main-content" role="main">
@@ -784,7 +797,7 @@
 			</div>
 			<p class="text-md-center mt-3">
 				<a href="./index.html" class="btn btn-sm btn-outline-secondary">Return to home</a>
-				<a href="#top" class="btn btn-sm btn-outline-secondary">Back to top</a>
+				<a href="#top" class="btn btn-sm btn-outline-secondary" aria-label="Back to top of page">Back to top</a>
 			</p>
 
 			<p style="margin-top: 1rem; opacity: 0.7">© 2025 Alban Andrieu. Papa.</p>
@@ -906,5 +919,6 @@
 				document.getElementById("stat-exceptions").textContent = exceptionCount;
 			})();
 		</script>
+		<script defer src="site-analytics.js"></script>
 	</body>
 </html>

@@ -219,7 +219,7 @@ repos:
 
     ### Shell ###
 -   repo: https://github.com/scop/pre-commit-shfmt
-    rev: v3.12.0-2
+    rev: v3.13.0-1
     hooks:
       # Choose one of:
       # - id: shfmt         # native (requires Go to build)
@@ -240,6 +240,7 @@ repos:
             docs/Makefile|
             .envrc|
             scripts/run-wicked.sh|
+            scripts/convert.*|
           )$
 
 -   repo: https://github.com/openstack/bashate
@@ -253,6 +254,7 @@ repos:
             trunk|
             scripts/run-python.sh|
             scripts/run-wicked.sh|
+            scripts/convert.*|
             .envrc|
           )$
 
@@ -323,9 +325,13 @@ repos:
               public/arf.js|
               public/index.js|
               public/d3.v3.min.js|
-              public/third-party-widgets.js|
-              public/smooth-scroll.js|
+              public/obs-connection.js|
+              public/nre-timeline.js|
               public/people-cards.js|
+              public/analytics-stubs.js|
+              public/site-analytics.js|
+              public/site-widgets.js|
+              tests/.*|
               api/hello.js|
           )$
 

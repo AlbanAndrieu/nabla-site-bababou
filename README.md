@@ -191,7 +191,7 @@ nabla-site-bababou/
 │   ├── arf.css          # ARF styles
 │   ├── theme.css        # Theme styles
 │   ├── theme-toggle.js  # Dark mode toggle
-│   ├── google-translate-config.js  # Translation config
+│   ├── site-google-translate.js   # Google Translate widget loader
 │   └── policy/          # Legal documents
 ├── my-app/              # Next.js application
 │   ├── app/             # Next.js app directory

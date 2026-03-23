@@ -6,40 +6,18 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="robots" content="noindex, nofollow" />
 
 		<!-- Favicon -->
 		<link rel="icon" href="favicon.ico" />
 
-		<!-- Custom CSS -->
-		<link rel="stylesheet" href="modern-style.css" />
-
 		<!-- Font Awesome -->
-		<link
-			rel="stylesheet"
-			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/fontawesome.min.css"
-			type="text/css"
-		/>
-
 		<script src="/assets/fontawesome-free-7.1.0-web/js/fontawesome.js" data-auto-replace-svg="nest"></script>
 		<script src="/assets/fontawesome-free-7.1.0-web/js/solid.js"></script>
 		<script src="/assets/fontawesome-free-7.1.0-web/js/brands.js"></script>
 
-		<!-- our project is using icons from Solid, Sharp Thin, Sharp Duotone Thin + Brands -->
-		<link href="/assets/fontawesome/css/fontawesome.css" rel="stylesheet" />
-		<link href="/assets/fontawesome/css/brands.css" rel="stylesheet" />
-		<link href="/assets/fontawesome/css/solid.css" rel="stylesheet" />
-
 		<!-- Theme toggle script - load early to prevent flash -->
 		<script src="theme-toggle.js"></script>
-
-		<link rel="stylesheet" href="wireframe.css" />
-		<link rel="stylesheet" href="arf.css" />
-		<link rel="stylesheet" href="theme.css" />
-		<link rel="stylesheet" href="style.css" />
-		<!-- Print Styles for PDF Export -->
-		<link rel="stylesheet" href="print.css" />
-
-		<title>ARF Visualization Test</title>
 
 		<!-- Cloudflare -->
 		<link
@@ -56,26 +34,44 @@
 			crossorigin="anonymous"
 			referrerpolicy="no-referrer"
 		/>
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/fontawesome.min.css"
+			type="text/css"
+		/>
+		<link href="/assets/fontawesome/css/fontawesome.css" rel="stylesheet" />
+		<link href="/assets/fontawesome/css/brands.css" rel="stylesheet" />
+		<link href="/assets/fontawesome/css/solid.css" rel="stylesheet" />
 
-		<link rel="alternate" hreflang="x-default" href="https://bababou.com/" />
-		<link rel="canonical" href="https://bababou.com/" />
+		<!-- CSS: vendor → wireframe/arf/theme/style → page sheets → print last -->
+		<link rel="stylesheet" href="wireframe.css" />
+		<link rel="stylesheet" href="arf.css" />
+		<link rel="stylesheet" href="theme.css" />
+		<link rel="stylesheet" href="style.css" />
+		<link rel="stylesheet" href="landing-sections.css" />
+		<link rel="stylesheet" href="print.css" />
 
-		<!-- Ahrefs Web Analytics -->
-		<script src="https://analytics.ahrefs.com/analytics.js" data-key="tg3zLMS/bebJFl0LxctiCw" async></script>
-		<!-- #nosec allow:gitleaks -->
+		<script
+			src="site-widgets.js"
+			defer
+			data-scroll-reveal=".service-card,.skill-category,.tool-item"
+			data-reveal-effect="animation"
+			data-reveal-animation="fadeInUp 0.6s ease forwards"
+			data-axeptio
+			data-print-pdf
+			data-coffee-fab
+		></script>
 
-		<!-- Vercel Analytics & Speed Insights -->
-		<script src="analytics-stubs.js"></script>
-		<script defer src="/_vercel/insights/script.js"></script>
-		<script defer src="/_vercel/speed-insights/script.js"></script>
+		<title>ARF Visualization Test</title>
+
+		<link rel="alternate" hreflang="x-default" href="/" />
+		<link rel="canonical" href="/" />
 
 		<!-- Google Translate -->
-		<script type="text/javascript" src="/google-translate-config.js"></script>
-		<script
-			type="text/javascript"
-			src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
-		></script>
+		<script src="/site-google-translate.js" defer></script>
 		<!-- End Google Translate -->
+
+		<script src="/site-analytics.js" data-analytics-mode="vercel" data-ahrefs-key="tg3zLMS/bebJFl0LxctiCw"></script>
 	</head>
 	<body id="top" class="page-dark">
 		<!-- Skip to main content link for accessibility -->
@@ -170,7 +166,7 @@
 		</div>
 
 		<!-- Footer -->
-		<footer class="footer">
+		<footer class="footer" role="contentinfo">
 			<div class="social-links">
 				<a href="https://www.linkedin.com/in/nabla" target="_blank" class="social-link" aria-label="LinkedIn"
 					><i class="fab fa-linkedin-in"></i
@@ -183,26 +179,24 @@
 				></a>
 			</div>
 			<div class="footer-links">
-				<a href="https://bababou.com/policy/service_terms.html">Terms of Use</a>
+				<a href="/policy/service_terms.html">Terms of Use</a>
 				<a href="javascript:openAxeptioCookies()" rel="noopener noreferrer" class="text-muted">Cookies</a>
-				<a href="https://bababou.com/policy/privacy_policy.html">Privacy Policy</a>
-				<a href="https://bababou.com/policy/impressum.html">Impressum</a>
-				<a href="https://bababou.com/policy/accessibility_statement.html">Accessibility</a>
-				<a href="https://bababou.com/policy/cookie_policy.html">Cookie Policy</a>
+				<a href="/policy/privacy_policy.html">Privacy Policy</a>
+				<a href="/policy/impressum.html">Impressum</a>
+				<a href="/policy/accessibility_statement.html">Accessibility</a>
+				<a href="/policy/cookie_policy.html">Cookie Policy</a>
 			</div>
 			<p class="text-md-center mt-3">
-				<a href="./index.html" class="btn btn-sm btn-outline-secondary">Return to home</a>
-				<a href="#top" class="btn btn-sm btn-outline-secondary">Back to top</a>
+				<a href="index.html" class="btn btn-sm btn-outline-secondary">Back to Home</a>
+				<a href="#top" class="btn btn-sm btn-outline-secondary" aria-label="Back to top of page">Back to top</a>
 			</p>
-			<p style="margin-top: 1rem; opacity: 0.7">© 2025 Alban Andrieu. Father.</p>
+			<p class="footer-copyright">© 2026 Alban Andrieu. Father.</p>
 		</footer>
 		<!-- End footer section -->
 
 		<script type="text/javascript" src="d3.v3.min.js"></script>
 		<script src="arf.js"></script>
 		<script src="index.js"></script>
-		<script src="smooth-scroll.js"></script>
-		<script src="third-party-widgets.js"></script>
 		<script
 			src="https://uptime.betterstack.com/widgets/announcement.js"
 			data-id="150620"

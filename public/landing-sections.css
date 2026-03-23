@@ -1,52 +1,8 @@
-/* Modern Landing Page Styles */
-
-:root {
-	--primary-color: #2563eb;
-	--secondary-color: #1e40af;
-	--accent-color: #6366f1;
-	--text-dark: #1f2937;
-	--text-light: #6b7280;
-	--bg-light: #f9fafb;
-	--bg-white: #ffffff;
-	--border-color: #e5e7eb;
-	--shadow-color: rgba(0, 0, 0, 0.08);
-	--shadow-hover-color: rgba(0, 0, 0, 0.15);
-	--contact-card-accent: #4f46e5;
-	--contact-note-bg: #eef2ff;
-	--contact-note-border: #c7d2fe;
-	--contact-note-text: #3730a3;
-}
-
-/* Dark Mode Support */
-@media (prefers-color-scheme: dark) {
-	:root {
-		--text-dark: #f9fafb;
-		--text-light: #d1d5db;
-		--bg-light: #1f2937;
-		--bg-white: #111827;
-		--border-color: #374151;
-		--shadow-color: rgba(0, 0, 0, 0.3);
-		--shadow-hover-color: rgba(0, 0, 0, 0.5);
-		--contact-card-accent: #818cf8;
-		--contact-note-bg: #312e81;
-		--contact-note-border: #4338ca;
-		--contact-note-text: #c7d2fe;
-	}
-}
-
-* {
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
-}
-
-body {
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-		"Helvetica Neue", Arial, sans-serif;
-	color: var(--text-dark);
-	line-height: 1.6;
-	overflow-x: hidden;
-}
+/**
+ * Landing-style sections: hero, services, skills, tools, contact, experience timeline,
+ * education, opensource, CTA buttons. Link only from pages that use these patterns.
+ * Tokens, footer, theme: theme.css. Widgets / page variants: style.css.
+ */
 
 /* Hero Section */
 .hero-section {
@@ -178,7 +134,7 @@ body {
 /* Services Section */
 .services-section {
 	padding: 5rem 2rem;
-	background: var(--bg-white);
+	background: var(--bg-primary);
 }
 
 .section-title {
@@ -186,13 +142,13 @@ body {
 	font-size: 2.5rem;
 	font-weight: 700;
 	margin-bottom: 1rem;
-	color: var(--text-dark);
+	color: var(--text-primary);
 }
 
 .section-subtitle {
 	text-align: center;
 	font-size: 1.2rem;
-	color: var(--text-light);
+	color: var(--text-secondary);
 	margin-bottom: 3rem;
 	max-width: 700px;
 	margin-left: auto;
@@ -208,7 +164,7 @@ body {
 }
 
 .service-card {
-	background: var(--bg-white);
+	background: var(--bg-primary);
 	padding: 2rem;
 	border-radius: 12px;
 	box-shadow: 0 2px 10px var(--shadow-color);
@@ -218,7 +174,7 @@ body {
 
 .service-card:hover {
 	transform: translateY(-5px);
-	box-shadow: 0 10px 30px var(--shadow-hover-color);
+	box-shadow: 0 10px 30px var(--shadow-hover);
 }
 
 .service-icon {
@@ -230,18 +186,18 @@ body {
 .service-card h3 {
 	font-size: 1.5rem;
 	margin-bottom: 1rem;
-	color: var(--text-dark);
+	color: var(--text-primary);
 }
 
 .service-card p {
-	color: var(--text-light);
+	color: var(--text-secondary);
 	line-height: 1.6;
 }
 
 /* Skills Section */
 .skills-section {
 	padding: 5rem 2rem;
-	background: var(--bg-light);
+	background: var(--bg-secondary);
 }
 
 .skills-container {
@@ -256,7 +212,7 @@ body {
 }
 
 .skill-category {
-	background: var(--bg-white);
+	background: var(--bg-primary);
 	padding: 1.5rem;
 	border-radius: 8px;
 	box-shadow: 0 2px 8px var(--shadow-color);
@@ -276,17 +232,17 @@ body {
 }
 
 .skill-tag {
-	background: var(--bg-light);
+	background: var(--bg-secondary);
 	padding: 0.4rem 0.8rem;
 	border-radius: 20px;
 	font-size: 0.9rem;
-	color: var(--text-dark);
+	color: var(--text-primary);
 }
 
 /* Contact Section */
 .contact-section {
 	padding: 5rem 2rem;
-	background: var(--bg-white);
+	background: var(--bg-primary);
 }
 
 .contact-container {
@@ -308,11 +264,11 @@ body {
 	align-items: center;
 	gap: 1rem;
 	padding: 1.5rem;
-	background: var(--bg-light);
+	background: var(--bg-secondary);
 	border-radius: 8px;
 	transition: all 0.3s ease;
 	text-decoration: none;
-	color: var(--text-dark);
+	color: var(--text-primary);
 }
 
 .contact-method:hover {
@@ -337,156 +293,10 @@ body {
 	opacity: 0.8;
 }
 
-/* Contact me card (special message / CTA) – no green/yellow */
-.contact-me-card {
-	display: block;
-	background: var(--bg-light);
-	border: 1px solid var(--border-color);
-	border-radius: 12px;
-	padding: 1.5rem 1.5rem 1.5rem 1.25rem;
-	box-shadow: 0 4px 14px var(--shadow-color);
-	position: relative;
-	overflow: hidden;
-}
-.contact-me-card::before {
-	content: "";
-	position: absolute;
-	left: 0;
-	top: 0;
-	bottom: 0;
-	width: 4px;
-	background: linear-gradient(
-		180deg,
-		var(--contact-card-accent),
-		var(--primary-color)
-	);
-	border-radius: 4px 0 0 4px;
-}
-.contact-me-card__title {
-	font-size: 1.125rem;
-	font-weight: 600;
-	color: var(--text-dark);
-	margin-bottom: 1rem;
-	display: flex;
-	align-items: center;
-	gap: 0.5rem;
-}
-.contact-me-card__title .fa {
-	color: var(--contact-card-accent);
-	font-size: 1.25rem;
-}
-.contact-me-card__lead {
-	font-size: 1.125rem;
-	font-weight: 600;
-	margin-bottom: 0.5rem;
-	color: var(--text-dark);
-}
-.contact-me-card__link {
-	color: var(--primary-color);
-	text-decoration: none;
-	font-weight: 600;
-	border-bottom: 2px solid var(--primary-color);
-	transition: color 0.2s ease, border-color 0.2s ease;
-	display: inline-block;
-	min-height: 2.75rem;
-	line-height: 2.75rem;
-}
-.contact-me-card__link:hover {
-	color: var(--secondary-color);
-	border-bottom-color: var(--secondary-color);
-}
-.contact-me-card__link:focus-visible {
-	outline: 2px solid var(--primary-color);
-	outline-offset: 2px;
-}
-.contact-me-card__reassurance {
-	font-size: 0.9375rem;
-	color: var(--text-light);
-	margin-bottom: 0;
-	line-height: 1.5;
-}
-.contact-me-note {
-	background: var(--contact-note-bg);
-	border: 1px solid var(--contact-note-border);
-	color: var(--contact-note-text);
-	border-radius: 10px;
-	padding: 1.25rem 1.5rem;
-	font-size: 0.9375rem;
-	line-height: 1.6;
-}
-.contact-me-note strong {
-	color: inherit;
-}
-html[data-theme="dark"] .contact-me-note,
-html[data-theme="dark"] .contact-me-card {
-	--contact-note-bg: #312e81;
-	--contact-note-border: #4338ca;
-	--contact-note-text: #c7d2fe;
-	--contact-card-accent: #818cf8;
-}
-
-/* Footer */
-.footer {
-	background: #0f172a;
-	color: white;
-	padding: 2rem;
-	text-align: center;
-}
-
-@media (prefers-color-scheme: dark) {
-	.footer {
-		background: #020617;
-	}
-}
-
-.footer-links {
-	display: flex;
-	gap: 2rem;
-	justify-content: center;
-	margin-bottom: 1rem;
-	flex-wrap: wrap;
-}
-
-.footer-links a {
-	color: white;
-	text-decoration: none;
-	opacity: 0.8;
-	transition: opacity 0.3s ease;
-}
-
-.footer-links a:hover {
-	opacity: 1;
-}
-
-.social-links {
-	display: flex;
-	gap: 1.5rem;
-	justify-content: center;
-	margin: 1.5rem 0;
-}
-
-.social-link {
-	display: inline-block;
-	width: 40px;
-	height: 40px;
-	line-height: 40px;
-	text-align: center;
-	border-radius: 50%;
-	background: rgba(255, 255, 255, 0.1);
-	color: white;
-	text-decoration: none;
-	transition: all 0.3s ease;
-}
-
-.social-link:hover {
-	background: var(--primary-color);
-	transform: translateY(-3px);
-}
-
 /* Tools Section */
 .tools-section {
 	padding: 5rem 2rem;
-	background: var(--bg-light);
+	background: var(--bg-secondary);
 }
 
 .tools-grid {
@@ -533,7 +343,7 @@ html[data-theme="dark"] .contact-me-card {
 
 .tool-item h4 {
 	font-size: 1rem;
-	color: var(--text-dark);
+	color: var(--text-primary);
 }
 
 /* Responsive Design */
@@ -565,11 +375,6 @@ html[data-theme="dark"] .contact-me-card {
 	}
 }
 
-/* Smooth Scrolling */
-html {
-	scroll-behavior: smooth;
-}
-
 /* Loading Animation */
 @keyframes pulse {
 	0%,
@@ -584,17 +389,21 @@ html {
 /* Experience Section */
 .experience-section {
 	padding: 5rem 2rem;
-	background: var(--bg-white);
+	background: var(--bg-primary);
 }
 
-.timeline {
+/*
+ * CV / NRE year timeline — scoped under .experience-section so Bootstrap/legal
+ * .timeline-item blocks (e.g. central-authorities.html) are not affected.
+ */
+.experience-section .timeline {
 	max-width: 900px;
 	margin: 0 auto;
 	position: relative;
 	padding-left: 50px;
 }
 
-.timeline::before {
+.experience-section .timeline::before {
 	content: "";
 	position: absolute;
 	left: 20px;
@@ -604,13 +413,16 @@ html {
 	background: var(--primary-color);
 }
 
-.timeline-item {
+.experience-section .timeline-item {
 	position: relative;
 	margin-bottom: 3rem;
 	padding-bottom: 2rem;
+	/* Override theme.css prose .timeline-item (legal pages) */
+	border-left: none;
+	padding-left: 0;
 }
 
-.timeline-marker {
+.experience-section .timeline-marker {
 	position: absolute;
 	left: -35px;
 	top: 0;
@@ -618,60 +430,60 @@ html {
 	height: 12px;
 	border-radius: 50%;
 	background: var(--primary-color);
-	border: 3px solid var(--bg-white);
+	border: 3px solid var(--bg-primary);
 	box-shadow: 0 0 0 3px var(--primary-color);
 }
 
-.timeline-content {
-	background: var(--bg-light);
+.experience-section .timeline-content {
+	background: var(--bg-secondary);
 	padding: 2rem;
 	border-radius: 12px;
 	box-shadow: 0 2px 10px var(--shadow-color);
 	transition: all 0.3s ease;
 }
 
-.timeline-content:hover {
+.experience-section .timeline-content:hover {
 	transform: translateX(5px);
-	box-shadow: 0 5px 20px var(--shadow-hover-color);
+	box-shadow: 0 5px 20px var(--shadow-hover);
 }
 
-.timeline-header {
+.experience-section .timeline-header {
 	margin-bottom: 1rem;
 }
 
-.timeline-header h3 {
+.experience-section .timeline-header h3 {
 	font-size: 1.5rem;
-	color: var(--text-dark);
+	color: var(--text-primary);
 	margin-bottom: 0.5rem;
 }
 
-.timeline-company {
+.experience-section .timeline-company {
 	display: inline-block;
 	font-weight: 600;
 	color: var(--primary-color);
 	margin-right: 1rem;
 }
 
-.timeline-date {
-	color: var(--text-light);
+.experience-section .timeline-date {
+	color: var(--text-secondary);
 	font-size: 0.95rem;
 }
 
-.timeline-description {
-	color: var(--text-light);
+.experience-section .timeline-description {
+	color: var(--text-secondary);
 	line-height: 1.7;
 	margin-bottom: 1rem;
 }
 
-.timeline-achievements {
+.experience-section .timeline-achievements {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 0.5rem;
 	margin-top: 1rem;
 }
 
-.achievement-tag {
-	background: var(--bg-white);
+.experience-section .achievement-tag {
+	background: var(--bg-primary);
 	padding: 0.4rem 0.8rem;
 	border-radius: 20px;
 	font-size: 0.85rem;
@@ -682,7 +494,7 @@ html {
 /* Education Section */
 .education-section {
 	padding: 5rem 2rem;
-	background: var(--bg-light);
+	background: var(--bg-secondary);
 }
 
 .education-grid {
@@ -694,7 +506,7 @@ html {
 }
 
 .education-card {
-	background: var(--bg-white);
+	background: var(--bg-primary);
 	padding: 2rem;
 	border-radius: 12px;
 	box-shadow: 0 2px 10px var(--shadow-color);
@@ -704,7 +516,7 @@ html {
 
 .education-card:hover {
 	transform: translateY(-5px);
-	box-shadow: 0 10px 30px var(--shadow-hover-color);
+	box-shadow: 0 10px 30px var(--shadow-hover);
 }
 
 .education-icon {
@@ -715,7 +527,7 @@ html {
 
 .education-card h3 {
 	font-size: 1.3rem;
-	color: var(--text-dark);
+	color: var(--text-primary);
 	margin-bottom: 0.5rem;
 }
 
@@ -726,7 +538,7 @@ html {
 }
 
 .education-details {
-	color: var(--text-light);
+	color: var(--text-secondary);
 	line-height: 1.6;
 	font-size: 0.95rem;
 }
@@ -734,7 +546,7 @@ html {
 /* Open Source Section */
 .opensource-section {
 	padding: 5rem 2rem;
-	background: var(--bg-white);
+	background: var(--bg-primary);
 }
 
 .opensource-grid {
@@ -746,7 +558,7 @@ html {
 }
 
 .opensource-card {
-	background: var(--bg-light);
+	background: var(--bg-secondary);
 	padding: 2rem;
 	border-radius: 12px;
 	box-shadow: 0 2px 10px var(--shadow-color);
@@ -757,7 +569,7 @@ html {
 
 .opensource-card:hover {
 	transform: translateY(-5px);
-	box-shadow: 0 10px 30px var(--shadow-hover-color);
+	box-shadow: 0 10px 30px var(--shadow-hover);
 }
 
 .opensource-icon {
@@ -768,12 +580,12 @@ html {
 
 .opensource-card h3 {
 	font-size: 1.5rem;
-	color: var(--text-dark);
+	color: var(--text-primary);
 	margin-bottom: 1rem;
 }
 
 .opensource-card p {
-	color: var(--text-light);
+	color: var(--text-secondary);
 	line-height: 1.6;
 	margin-bottom: 1.5rem;
 	flex-grow: 1;
@@ -799,28 +611,28 @@ html {
 
 /* Responsive Adjustments for New Sections */
 @media (max-width: 768px) {
-	.timeline {
+	.experience-section .timeline {
 		padding-left: 30px;
 	}
 
-	.timeline::before {
+	.experience-section .timeline::before {
 		left: 10px;
 	}
 
-	.timeline-marker {
+	.experience-section .timeline-marker {
 		left: -25px;
 	}
 
-	.timeline-content {
+	.experience-section .timeline-content {
 		padding: 1.5rem;
 	}
 
-	.timeline-header h3 {
+	.experience-section .timeline-header h3 {
 		font-size: 1.3rem;
 	}
 
-	.timeline-company,
-	.timeline-date {
+	.experience-section .timeline-company,
+	.experience-section .timeline-date {
 		display: block;
 		margin-bottom: 0.5rem;
 	}
