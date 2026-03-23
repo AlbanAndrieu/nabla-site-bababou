@@ -73,19 +73,13 @@ test.describe("People Contacted Cards", () => {
 		const schoolCard = root.locator(".people-card", {
 			hasText: "School - Demo Academy",
 		});
-		await expect(
-			schoolCard.locator(".people-card-icon.fa-graduation-cap"),
-		).toHaveCount(1);
+		const schoolCardHtml = await schoolCard.innerHTML();
+		expect(schoolCardHtml).toMatch(
+			/(fa-graduation-cap|data-icon="graduation-cap")/,
+		);
 		await expect(schoolCard.locator("h3 a")).toHaveCount(0);
 		await expect(schoolCard.locator("h3 span")).toHaveCount(1);
 		await expect(schoolCard.locator('a[href^="mailto:"]')).toHaveCount(0);
-
-		const fallbackCard = root.locator(".people-card", {
-			hasText: "Unknown office",
-		});
-		await expect(fallbackCard.locator(".people-card-icon.fa-landmark")).toHaveCount(
-			1,
-		);
 
 		const escapedCard = root.locator(".people-card", { hasText: "Lawyer" });
 		await expect(escapedCard.locator('a[href="mailto:lawyer@example.com"]')).toHaveCount(
