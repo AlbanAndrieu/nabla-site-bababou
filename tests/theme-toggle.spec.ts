@@ -24,26 +24,28 @@ test.describe("Theme Toggle Tests", () => {
 
 		await expect(themeToggle).toHaveCount(1);
 
-		const htmlElement = page.locator("html");
-		const initialTheme = await htmlElement.getAttribute("data-theme");
+		// data-theme on <html> is the *effective* scheme; "auto" can match the same value as "dark".
+		// Missing/invalid localStorage matches app default (dark); toggles always write a string, never back to null.
+		const readPref = () =>
+			page.evaluate(() => localStorage.getItem("site-theme-preference"));
+		const raw = await readPref();
+		const initialPref =
+			raw === "light" || raw === "dark" || raw === "auto" ? raw : "dark";
 
-		// Theme cycles: light → dark → auto → light. Click once and assert change.
 		await themeToggle.click();
 		await page.waitForTimeout(350);
 
-		const newTheme = await htmlElement.getAttribute("data-theme");
-		expect(newTheme).not.toBe(initialTheme);
+		const newPref = await readPref();
+		expect(newPref).not.toBe(initialPref);
 
-		// Cycle until we're back to initial (at most 2 more clicks for 3-state cycle)
-		for (let i = 0; i < 3; i++) {
-			const current = await htmlElement.getAttribute("data-theme");
-			if (current === initialTheme) break;
+		for (let i = 0; i < 4; i++) {
+			const current = await readPref();
+			if (current === initialPref) break;
 			await themeToggle.click();
 			await page.waitForTimeout(350);
 		}
 
-		const finalTheme = await htmlElement.getAttribute("data-theme");
-		expect(finalTheme).toBe(initialTheme);
+		expect(await readPref()).toBe(initialPref);
 	});
 
 	test("should persist theme preference", async ({ page, context }) => {

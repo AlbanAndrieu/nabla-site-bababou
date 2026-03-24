@@ -21,11 +21,12 @@ test.describe("Homepage Tests", () => {
 		await expect(heading).toContainText(/your Papa is looking for you/i);
 	});
 
-	test("should have navigation elements", async ({ page }) => {
+	test("should have header and main landmarks", async ({ page }) => {
 		await page.goto("/");
 
-		// At least one nav must be visible (e.g. page-nav at top)
-		await expect(page.locator("nav").first()).toBeVisible();
+		// Homepage no longer uses a top nav; header + main provide structure
+		await expect(page.locator("header").first()).toBeVisible();
+		await expect(page.locator("main").first()).toBeVisible();
 	});
 
 	test("should have footer with social links", async ({ page }) => {
@@ -72,18 +73,18 @@ test.describe("Homepage Tests", () => {
 	test("should have accessible skip link", async ({ page }) => {
 		await page.goto("/");
 
-		// Check for skip to main content link (accessibility feature)
+		// Skip link must exist and target main content; visually hidden until focus (not in viewport)
 		const skipLink = page.locator('a.skip-to-main, a[href="#main-content"]');
-		if ((await skipLink.count()) > 0) {
-			await expect(skipLink).toBeInViewport({ ratio: 0 });
-		}
+		await expect(skipLink).toHaveCount(1);
+		await expect(skipLink).toHaveAttribute("href", "#main-content");
+		await expect(skipLink).not.toBeInViewport();
 	});
 
-	test("should have proper ARIA labels", async ({ page }) => {
+	test("should have labeled regions for accessibility", async ({ page }) => {
 		await page.goto("/");
 
-		// At least one nav with aria-label must be present and visible
-		const navWithLabel = page.locator("nav[aria-label]");
-		await expect(navWithLabel.first()).toBeVisible();
+		// Sections tied to headings (e.g. aria-labelledby) remain the primary a11y pattern
+		const labeledSection = page.locator("section[aria-labelledby]").first();
+		await expect(labeledSection).toBeVisible();
 	});
 });

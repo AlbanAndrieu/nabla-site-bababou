@@ -1,5 +1,5 @@
 ---
-description: Page chrome — body id/class, theme toggle, Google Translate, print, modern style, sections/cards, footer, back link, sitemap. Partial 404 exclusions.
+description: Page chrome — body class, top anchor, theme toggle, Google Translate, print, modern style, sections/cards, footer, back link, sitemap. Partial 404 exclusions.
 globs: public/**/*.html
 alwaysApply: false
 ---
@@ -10,8 +10,8 @@ When creating or editing HTML pages in `public/`, follow the rules below. **`pub
 
 ## Body element (every page, including 404)
 
-- Open the document body exactly as: **`<body id="top" class="page-dark">`** on **every** HTML file under `public/`, including **`404.html`** and generated templates (e.g. `scripts/pdf-to-html-ca.py`).
-- **`id="top"`** — scroll target for the back-to-top control from `site-widgets.js` and any `#top` links.
+- Open the document body as **`<body class="page-dark">`** on **every** HTML file under `public/`, including **`404.html`** and generated templates (e.g. `scripts/pdf-to-html-ca.py`). Immediately inside `<body>`, add **`<a name="top"></a>`** as the first line of content (before skip link, GTM, styles, etc.) so **`#top`** remains a valid scroll target.
+- **`name="top"`** on that anchor — scroll target for the back-to-top control from `site-widgets.js` and any `#top` links.
 - **`class="page-dark"`** — shared dark layout and theme-toggle behavior from `theme.css` when that stylesheet is linked (required for consistency even if a page loads extra inline CSS).
 
 ## 1. Theme toggle, Font Awesome JS, Google Translate, and widgets (`site-widgets.js`)
@@ -29,14 +29,14 @@ When creating or editing HTML pages in `public/`, follow the rules below. **`pub
 ## 3. Print / Save as PDF (and Markdown when relevant)
 
 - Provide **Print / Save as PDF** via **`site-widgets.js`**, not inline buttons: on the **`site-widgets.js`** tag add **`data-print-pdf`** (empty attribute is OK). The script injects `#nabla-print-pdf-btn` with class `print-button` and calls `window.print()`. Labels follow `document.documentElement.lang` (French vs English) unless overridden with `data-print-pdf-lang` or `data-print-pdf-label`.
-- **Back to top:** `site-widgets.js` injects **`#nabla-back-to-top`** with class **`back-to-top`** (styled in **`style.css`**, bottom-center pair with **`#coffee-fab`**). Disable with **`data-no-back-to-top`** if needed. Optional **`data-back-to-top-label`** / **`data-back-to-top-aria`**. **`id="top"`** on `<body>` is required site-wide (see **§ Body element**).
+- **Back to top:** `site-widgets.js` injects **`#nabla-back-to-top`** with class **`back-to-top`** (styled in **`style.css`**, bottom-center pair with **`#coffee-fab`**). Disable with **`data-no-back-to-top`** if needed. Optional **`data-back-to-top-label`** / **`data-back-to-top-aria`**. **`<a name="top"></a>`** at the start of `<body>` is required site-wide (see **§ Body element**).
 - Include **`print.css`** in `<head>` so on-screen button placement and print layout stay correct.
 - When the page is meant to be exported as markdown, keep structure and semantics suitable for that (headings, lists, clear sections).
 
 ## 4. Modern style and layout
 
 - **Prefer the site’s default dark, modern style** for all content pages:
-  - Use **`class="page-dark"`** on `<body>` (e.g. `<body id="top" class="page-dark">`). This applies the shared dark background (#0f172a with blue gradients), nav, cards, and light-theme overrides defined in `theme.css`. The theme toggle (default: dark) still lets users switch to light or auto.
+  - Use **`class="page-dark"`** on `<body>` (e.g. `<body class="page-dark">` plus **`<a name="top"></a>`** as the first child). This applies the shared dark background (#0f172a with blue gradients), nav, cards, and light-theme overrides defined in `theme.css`. The theme toggle (default: dark) still lets users switch to light or auto.
   - Do **not** add page-specific inline styles that duplicate the page-dark look; add any new shared patterns to `theme.css` under `.page-dark` instead.
 - All content pages use the same stack as `index.html` / `test.html`: **wireframe.css**, **arf.css**, **theme.css**, **style.css**, **landing-sections.css**, **print.css** (plus Font Awesome JS/CSS and Bootstrap as on those files). Paths adjust by folder depth.
   - Typical order: Bootstrap → Bootstrap Icons → Font Awesome (CDN + `/assets/fontawesome/css/`) → wireframe → arf → theme → style → landing-sections → page CSS (e.g. `nre.css`, `email-style.css`) → **print.css last**. After bulk `<head>` edits, run `python3 scripts/sync-head-fontawesome-css.py` and/or `python3 scripts/normalize-html-css-order.py`.

@@ -212,9 +212,9 @@ test.describe("Accessibility Tests", () => {
 		const main = await page.locator('main, [role="main"]').count();
 		expect(main).toBeGreaterThan(0);
 
-		// Check for navigation landmark
-		const nav = await page.locator('nav, [role="navigation"]').count();
-		expect(nav).toBeGreaterThan(0);
+		// Header landmark (homepage has no persistent top nav)
+		const header = await page.locator("header").count();
+		expect(header).toBeGreaterThan(0);
 	});
 
 	test("should have focus indicators", async ({ page }) => {

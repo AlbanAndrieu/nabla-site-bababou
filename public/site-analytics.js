@@ -2,11 +2,11 @@
  * Site analytics (Vercel, optional VWO / PostHog / Heap / Datadog RUM, Google Tag Manager, gtag).
  * Load in <head> without async/defer so VWO anti-flicker can run early (home/full/marketing).
  *
- * data-analytics-mode (optional; omit attribute for default Vercel-only mode):
+ * data-analytics-mode:
  *   - "vercel" (default): Vercel Web Analytics + Speed Insights only
  *   - "full": GTM + gtag, then VWO, PostHog, Heap, Datadog RUM, then Vercel
  *   - "marketing": GTM + gtag, then VWO, PostHog, Heap, then Vercel (no Datadog)
- *   - "home": Mixpanel loader, GTM + gtag, then same as "full"
+ *   - "home": Mixpanel loader, GTM + gtag, then same as "full" (use this instead of a duplicate Mixpanel inline snippet in HTML)
  *
  * Optional: data-ahrefs-key="…" — loads Ahrefs Web Analytics (any mode).
  * Optional: data-gtm-id, data-ga-measurement-id — override default GTM container and GA4 id.

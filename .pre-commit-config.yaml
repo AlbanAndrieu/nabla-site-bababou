@@ -330,7 +330,10 @@ repos:
               public/people-cards.js|
               public/analytics-stubs.js|
               public/site-analytics.js|
+              public/google-translate-config.js|
+              public/site-google-translate.js|
               public/site-widgets.js|
+              public/theme-toggle.js|
               tests/.*|
               api/hello.js|
           )$

@@ -83,6 +83,6 @@ The repository layout looks like this (main items):
   - Use mobile-first, fluid layouts; test at narrow (e.g. 320px) and wide viewports.
   - Use existing responsive patterns (e.g. Bootstrap grid in `public/`, or flex/grid in custom CSS) rather than introducing new breakpoint systems.
   - Touch targets and tap areas should be large enough on small screens; avoid hover-only critical actions.
-- **Theme**: The site supports light/dark via `theme-toggle.js` and `data-theme` on `<html>`. New UI should respect theme variables so it works in both modes. Content pages use **`<body id="top" class="page-dark">`** for scroll target + default dark layout; see `theme.css` and `.cursor/rules/120_page-chrome-consistency.mdc`.
+- **Theme**: The site supports light/dark via `theme-toggle.js` and `data-theme` on `<html>`. New UI should respect theme variables so it works in both modes. Content pages use **`<body class="page-dark">`** with **`<a name="top"></a>`** as the first in-body node for the `#top` scroll target + default dark layout; see `theme.css` and `.cursor/rules/120_page-chrome-consistency.mdc`.
 
 When changing HTML or CSS, preserve existing accessibility and responsive behavior; fix any new issues (e.g. missing labels, low contrast) as part of the change.
