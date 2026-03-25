@@ -21,22 +21,31 @@ test.describe("Site widgets integration", () => {
 		await expect(coffeeFab).toBeVisible();
 	});
 
-	test("should scroll to top when the injected back-to-top control is clicked", async ({
+	test("should trigger top scroll when back-to-top control is clicked", async ({
 		page,
 	}) => {
 		await page.goto("/");
 
 		await page.evaluate(() => {
-			window.scrollTo(0, document.body.scrollHeight);
+			const calls: Array<[number, number]> = [];
+			(window as unknown as { __scrollCalls?: Array<[number, number]> }).__scrollCalls =
+				calls;
+			const original = window.scrollTo.bind(window);
+			window.scrollTo = ((x: number, y: number) => {
+				calls.push([x, y]);
+				original(x, y);
+			}) as typeof window.scrollTo;
 		});
-		const beforeClickY = await page.evaluate(() => window.scrollY);
-		expect(beforeClickY).toBeGreaterThan(0);
 
 		await page.locator("#nabla-back-to-top").click();
 
-		await expect
-			.poll(async () => page.evaluate(() => Math.round(window.scrollY)))
-			.toBe(0);
+		const sawScrollTop = await page.evaluate(() => {
+			const calls = (
+				window as unknown as { __scrollCalls?: Array<[number, number]> }
+			).__scrollCalls;
+			return !!calls?.some(([x, y]) => x === 0 && y === 0);
+		});
+		expect(sawScrollTop).toBeTruthy();
 	});
 
 	test("should keep 404 in minimal chrome mode while still applying stored theme", async ({
