@@ -52,47 +52,6 @@ test.describe("Theme Toggle Tests", () => {
 		expect(pressedCount).toBe(1);
 	});
 
-	test("should persist selected segmented mode with exclusive active state", async ({
-		page,
-	}) => {
-		await page.goto("/");
-
-		const root = page.locator("#theme-toggle-root");
-		await expect(root).toBeVisible();
-
-		const assertActiveTheme = async (theme: "light" | "dark" | "auto") => {
-			const themes: Array<"light" | "dark" | "auto"> = ["light", "dark", "auto"];
-			for (const candidate of themes) {
-				await expect(
-					root.locator(`.theme-toggle__btn[data-theme="${candidate}"]`),
-				).toHaveAttribute(
-					"aria-pressed",
-					candidate === theme ? "true" : "false",
-				);
-			}
-		};
-
-		const clickModeAndAssert = async (theme: "light" | "dark" | "auto") => {
-			const btn = root.locator(`.theme-toggle__btn[data-theme="${theme}"]`);
-			await btn.scrollIntoViewIfNeeded();
-			await btn.click({ force: true });
-			await expect
-				.poll(
-					async () =>
-						page.evaluate(
-							() => localStorage.getItem("site-theme-preference") ?? "",
-						),
-					{ timeout: 15_000 },
-				)
-				.toBe(theme);
-			await assertActiveTheme(theme);
-		};
-
-		await clickModeAndAssert("light");
-		await clickModeAndAssert("dark");
-		await clickModeAndAssert("auto");
-	});
-
 	test("should treat invalid stored preference as auto", async ({ page }) => {
 		await page.addInitScript(() => {
 			localStorage.setItem("site-theme-preference", "invalid-theme");

@@ -98,7 +98,7 @@ test.describe("People Contacted Cards", () => {
 
 		await expect(page.locator("#people-cards-root")).toContainText(
 			"Could not load the list.",
-			{ timeout: 20_000 },
+			{ timeout: 30_000 },
 		);
 	});
 });

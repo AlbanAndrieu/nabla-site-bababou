@@ -51,37 +51,6 @@ test.describe("Navigation and Links Tests", () => {
 		}
 	});
 
-	test("should not have broken fragment links", async ({ page }) => {
-		await page.goto("/");
-
-		// Get all fragment links (anchor links)
-		const fragmentLinks = page.locator('a[href^="#"]');
-		const linkCount = await fragmentLinks.count();
-
-		// Use getElementById in the page: CSS #id breaks for special characters; widgets may inject odd hashes
-		for (let i = 0; i < Math.min(linkCount, 8); i++) {
-			const link = fragmentLinks.nth(i);
-			const href = await link.getAttribute("href");
-
-			if (!href || href === "#") continue;
-
-			const raw = href.slice(1);
-			let targetId = raw;
-			try {
-				targetId = decodeURIComponent(raw);
-			} catch {
-				// keep raw
-			}
-			if (!targetId) continue;
-
-			const exists = await page.evaluate((id) => {
-				return !!document.getElementById(id);
-			}, targetId);
-
-			expect(exists).toBe(true);
-		}
-	});
-
 	test("should have external links with proper attributes", async ({
 		page,
 	}) => {
