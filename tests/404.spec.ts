@@ -39,6 +39,26 @@ test.describe("404 Error Page Tests", () => {
 		}
 	});
 
+	test("should keep minimal chrome widgets disabled", async ({ page }) => {
+		await page.goto("/404.html");
+
+		await expect(page.locator("#theme-toggle-btn")).toHaveCount(0);
+		await expect(page.locator("#google_translate_element")).toHaveCount(0);
+		await expect(page.locator(".google-translate-widget")).toHaveCount(0);
+		await expect(page.locator("#nabla-print-pdf-btn")).toHaveCount(0);
+		await expect(page.locator("#nabla-back-to-top")).toHaveCount(0);
+		await expect(
+			page.locator('script[src*="translate.google.com/translate_a/element.js"]'),
+		).toHaveCount(0);
+	});
+
+	test("should still apply a theme attribute on html", async ({ page }) => {
+		await page.goto("/404.html");
+
+		const appliedTheme = await page.locator("html").getAttribute("data-theme");
+		expect(appliedTheme).toMatch(/^(light|dark)$/);
+	});
+
 	test("should be accessible on mobile", async ({ page, viewport }) => {
 		await page.goto("/404.html");
 
