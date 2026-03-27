@@ -220,18 +220,16 @@ test.describe("Accessibility Tests", () => {
 	test("should have focus indicators", async ({ page }) => {
 		await page.goto("/");
 
-		// Find first interactive element
-		const firstLink = page.locator("a, button").first();
+		// Skip link / first `a` in DOM is often not focusable the same way in WebKit; use a visible control
+		const focusTarget = page.locator(
+			'#theme-toggle-root .theme-toggle__btn[data-theme="light"]',
+		);
+		await expect(focusTarget).toBeVisible();
+		await focusTarget.focus();
 
-		if ((await firstLink.count()) > 0) {
-			await firstLink.focus();
-
-			// Check if element has focus
-			const hasFocus = await firstLink.evaluate((el) => {
-				return document.activeElement === el;
-			});
-
-			expect(hasFocus).toBeTruthy();
-		}
+		const hasFocus = await focusTarget.evaluate((el) => {
+			return document.activeElement === el;
+		});
+		expect(hasFocus).toBeTruthy();
 	});
 });

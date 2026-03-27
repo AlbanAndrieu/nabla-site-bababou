@@ -14,7 +14,7 @@ test.describe("Navigation and Links Tests", () => {
 		const linksToCheck = Math.min(linkCount, 12);
 		for (let i = 0; i < linksToCheck; i++) {
 			const href = await internalLinks.nth(i).getAttribute("href");
-			expect(href, `internal link #${i}`).toBeTruthy();
+			expect(href).toBeTruthy();
 			expect(href!.trim().length).toBeGreaterThan(0);
 		}
 	});
@@ -58,21 +58,27 @@ test.describe("Navigation and Links Tests", () => {
 		const fragmentLinks = page.locator('a[href^="#"]');
 		const linkCount = await fragmentLinks.count();
 
-		// Check first few fragment links
-		for (let i = 0; i < Math.min(linkCount, 5); i++) {
+		// Use getElementById in the page: CSS #id breaks for special characters; widgets may inject odd hashes
+		for (let i = 0; i < Math.min(linkCount, 8); i++) {
 			const link = fragmentLinks.nth(i);
 			const href = await link.getAttribute("href");
 
-			if (href && href !== "#") {
-				// Extract the ID from the href (remove #)
-				const targetId = href.substring(1);
+			if (!href || href === "#") continue;
 
-				// Check if element with that ID exists
-				const target = page.locator(`#${targetId}`);
-				const targetCount = await target.count();
-
-				expect(targetCount).toBeGreaterThan(0);
+			const raw = href.slice(1);
+			let targetId = raw;
+			try {
+				targetId = decodeURIComponent(raw);
+			} catch {
+				// keep raw
 			}
+			if (!targetId) continue;
+
+			const exists = await page.evaluate((id) => {
+				return !!document.getElementById(id);
+			}, targetId);
+
+			expect(exists).toBe(true);
 		}
 	});
 

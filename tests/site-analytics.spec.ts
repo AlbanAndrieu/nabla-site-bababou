@@ -14,11 +14,12 @@ test.describe("Site analytics loader regression tests", () => {
 			})
 			.toBe("function");
 
+		// Browsers may normalize script src to an absolute URL; match by path suffix
 		await expect(
-			page.locator('script[src="/_vercel/insights/script.js"]'),
+			page.locator('script[src*="/_vercel/insights/script.js"]'),
 		).toHaveCount(1);
 		await expect(
-			page.locator('script[src="/_vercel/speed-insights/script.js"]'),
+			page.locator('script[src*="/_vercel/speed-insights/script.js"]'),
 		).toHaveCount(1);
 	});
 

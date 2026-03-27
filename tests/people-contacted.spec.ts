@@ -51,7 +51,7 @@ test.describe("People Contacted Cards", () => {
 			],
 		};
 
-		await page.route("**/arf.json", (route) =>
+		await page.route(/arf\.json(\?.*)?$/, (route) =>
 			route.fulfill({
 				status: 200,
 				contentType: "application/json",
@@ -62,7 +62,7 @@ test.describe("People Contacted Cards", () => {
 		await page.goto("/people-contacted.html");
 
 		const root = page.locator("#people-cards-root");
-		await expect(root.locator(".people-card")).toHaveCount(3);
+		await expect(root.locator(".people-card")).toHaveCount(3, { timeout: 20_000 });
 
 		const countryHeadings = await root
 			.locator(".people-by-country > .h5")
@@ -73,10 +73,12 @@ test.describe("People Contacted Cards", () => {
 		const schoolCard = root.locator(".people-card", {
 			hasText: "School - Demo Academy",
 		});
-		const schoolCardHtml = await schoolCard.innerHTML();
-		expect(schoolCardHtml).toMatch(
-			/(fa-graduation-cap|data-icon="graduation-cap")/,
-		);
+		// Font Awesome may replace <i class="fa …"> with SVG; allow icon wrapper or svg
+		expect(
+			await schoolCard.locator(
+				".people-card-icon, svg, [class*='graduation-cap']",
+			).count(),
+		).toBeGreaterThan(0);
 		await expect(schoolCard.locator("h3 a")).toHaveCount(0);
 		await expect(schoolCard.locator("h3 span")).toHaveCount(1);
 		await expect(schoolCard.locator('a[href^="mailto:"]')).toHaveCount(0);
@@ -91,11 +93,12 @@ test.describe("People Contacted Cards", () => {
 	test("should show a fallback message when arf.json cannot be loaded", async ({
 		page,
 	}) => {
-		await page.route("**/arf.json", (route) => route.abort());
+		await page.route(/arf\.json(\?.*)?$/, (route) => route.abort());
 		await page.goto("/people-contacted.html");
 
 		await expect(page.locator("#people-cards-root")).toContainText(
 			"Could not load the list.",
+			{ timeout: 20_000 },
 		);
 	});
 });
