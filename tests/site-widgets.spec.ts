@@ -107,4 +107,29 @@ test.describe("Site widgets integration", () => {
 		await expect(page.locator(".google-translate-widget")).toHaveCount(0);
 
 	});
+
+	test("uses French default labels for print and back-to-top controls", async ({
+		page,
+	}) => {
+		await page.goto("/nre-fr.html");
+
+		const printButton = page.locator("#nabla-print-pdf-btn");
+		await expect(printButton).toBeVisible();
+		await expect(printButton).toHaveAttribute(
+			"title",
+			"Imprimer / Enregistrer en PDF",
+		);
+		await expect(printButton).toHaveAttribute(
+			"aria-label",
+			"Imprimer ou enregistrer en PDF",
+		);
+
+		const backToTop = page.locator("#nabla-back-to-top");
+		await expect(backToTop).toBeVisible();
+		await expect(backToTop).toHaveAttribute("title", "Retour en haut");
+		await expect(backToTop).toHaveAttribute(
+			"aria-label",
+			"Retour en haut de page",
+		);
+	});
 });
