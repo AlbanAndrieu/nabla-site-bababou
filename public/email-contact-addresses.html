@@ -39,6 +39,7 @@
 		<link rel="stylesheet" href="style.css" />
 		<link rel="stylesheet" href="print.css" />
 
+		<link rel="stylesheet" href="site-content-page.css" />
 		<link
 			rel="stylesheet"
 			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/fontawesome.min.css"
@@ -64,6 +65,14 @@
 			referrerpolicy="no-referrer"
 		/>
 
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.9.1/font/bootstrap-icons.min.css"
+			integrity="sha512-5PV92qsds/16vyYIJo3T/As4m2d8b6oWYfoqV+vtizRB6KhF1F9kYzWzQmsO6T3z3QG2Xdhrx7FQ+5R1LiQdUA=="
+			crossorigin="anonymous"
+			referrerpolicy="no-referrer"
+		/>
+
 		<script src="/site-google-translate.js" defer></script>
 		<script src="/site-analytics.js" data-analytics-mode="vercel"></script>
 
@@ -82,14 +91,13 @@
 			}
 		</script>
 	</head>
-	<body class="page-dark">
+	<body class="site-content-page page-dark">
 		<a name="top"></a>
 		<a href="#main-content" class="skip-to-main">Skip to main content</a>
 
 		<nav class="page-nav container py-3" aria-label="Breadcrumb">
 			<a href="index.html" class="text-decoration-none"><i class="fas fa-home" aria-hidden="true"></i> Back to home</a>
 			<span class="text-muted mx-2" aria-hidden="true">·</span>
-			<a href="contact.html" class="text-decoration-none">Contact</a>
 		</nav>
 
 		<main id="main-content" role="main" class="container py-4 pb-5">
@@ -141,6 +149,18 @@
 					<div class="col-md-6">
 						<div class="card h-100 bg-body-secondary border-secondary">
 							<div class="card-body">
+								<h3 class="h6 card-title">Invoices</h3>
+								<p class="card-text mb-0">
+									For all invoice-related matters (billing, payment questions, VAT or purchase orders), use
+									<a href="mailto:invoice@dr-alban.com">invoice@dr-alban.com</a>
+									— do not send invoices to the job or general contact addresses above.
+								</p>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="card h-100 bg-body-secondary border-secondary">
+							<div class="card-body">
 								<h3 class="h6 card-title">Other topics</h3>
 								<p class="card-text mb-0">
 									<a href="mailto:contact@albandrieu.com">contact@albandrieu.com</a>
@@ -175,6 +195,7 @@
 							<li><a href="mailto:no-reply@bababou.com">no-reply@bababou.com</a></li>
 							<li><a href="mailto:openclaw@albandrieu.com">openclaw@albandrieu.com</a></li>
 							<li><a href="mailto:assistant@albandrieu.com">assistant@albandrieu.com</a></li>
+							<li><a href="mailto:invoice@dr-alban.com">invoice@dr-alban.com</a></li>
 						</ul>
 					</div>
 				</div>
@@ -235,7 +256,9 @@
 				<a href="/policy/privacy_policy.html">Privacy Policy</a>
 			</div>
 			<p class="text-md-center mt-3">
-				<a href="index.html" class="btn btn-sm btn-outline-secondary">Back to Home</a>
+				<a href="index.html" class="text-decoration-none"
+					><i class="fas fa-home" aria-hidden="true"></i> Back to home</a
+				>
 				<a href="#top" class="btn btn-sm btn-outline-secondary" aria-label="Back to top of page">Back to top</a>
 			</p>
 			<p class="footer-copyright">© 2026 Alban Andrieu. Independent DevSecOps Architect.</p>

@@ -20,15 +20,15 @@
 			wrap.classList.toggle("is-open", open);
 			toggle.setAttribute("aria-expanded", open ? "true" : "false");
 		}
-		toggle.addEventListener("click", (e) => {
+		toggle.addEventListener("click", function (e) {
 			e.stopPropagation();
 			setOpen(!wrap.classList.contains("is-open"));
 		});
-		document.addEventListener("click", (e) => {
+		document.addEventListener("click", function (e) {
 			var t = e.target;
 			if (t instanceof Node && !wrap.contains(t)) setOpen(false);
 		});
-		document.addEventListener("keydown", (e) => {
+		document.addEventListener("keydown", function (e) {
 			if (e.key === "Escape") setOpen(false);
 		});
 	}

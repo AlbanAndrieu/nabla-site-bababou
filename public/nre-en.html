@@ -51,11 +51,17 @@
 	</head>
 	<body class="page-dark">
 		<a name="top"></a>
+		<a href="#main-content" class="skip-to-main">Skip to main content</a>
+
+		<nav class="page-nav container py-3" aria-label="Breadcrumb">
+			<a href="index.html" class="text-decoration-none"><i class="fas fa-home" aria-hidden="true"></i> Back to home</a>
+			<span class="mx-2 text-muted">|</span>
+			<span class="ms-3"><a href="nre-fr.html" hreflang="fr">Français</a></span>
+		</nav>
+
 		<main id="main-content" role="main">
 			<section class="services-section" aria-labelledby="nre-heading">
 				<div class="container">
-					<a href="index.html" class="back-link">← Back to home</a>
-					<span class="lang-link"><a href="nre-fr.html">Français</a></span>
 					<h1 id="nre-heading" class="section-title">Failure to Present Child</h1>
 					<p class="section-subtitle">
 						Visitation rights: first weekend of each month. Full list of scheduled weekends and NRE (non-représentation
@@ -96,34 +102,36 @@
 				</div>
 			</section>
 
-			<section class="experience-section" aria-labelledby="timeline-heading">
-				<div class="nre-ref nre-reflection" role="note">
-					<h3 class="reflection-heading">A note</h3>
-					<p>
-						It is said that we are born equal, but we certainly do not give birth equally. The mother has every right to
-						choose where to give birth, without the father’s consent.
-					</p>
-					<p>
-						She knows that whatever she does, she will have sole parental authority, exclusive custody, and the
-						possibility to manipulate the child and use them to obtain rights, power, and money—without ever being held
-						to account.
-					</p>
-					<p>
-						I advise any father against involving social services and filing a complaint against a violent and abusive
-						mother. The result will be that you will never be able to protect your child and they will grow up without
-						you.
-					</p>
-				</div>
-
-				<div class="container">
-					<h2 id="timeline-heading" class="section-title">Timeline by year</h2>
-					<div class="timeline" id="timeline"></div>
-				</div>
-
-				<div class="nre-locations" role="note">
-					<strong>Location:</strong>2015 France ; Since 2017 Norway, Oslo; since 2022 Germany, Frankfurt.
+			<section class="py-3" aria-labelledby="note-heading">
+				<div class="card border-warning mb-4">
+					<div class="card-body">
+						<h2 id="note-heading" class="h5 card-title">Note</h2>
+						<p class="card-text mb-0">
+							It is said that we are born equal, but we certainly do not give birth equally. The mother has every right
+							to choose where to give birth, without the father’s consent.
+						</p>
+						<p>
+							She knows that whatever she does, she will have sole parental authority, exclusive custody, and the
+							possibility to manipulate the child and use them to obtain rights, power, and money—without ever being
+							held to account.
+						</p>
+						<p>
+							I advise any father against involving social services and filing a complaint against a violent and abusive
+							mother. The result will be that you will never be able to protect your child and they will grow up without
+							you.
+						</p>
+					</div>
 				</div>
 			</section>
+
+			<div class="container">
+				<h2 id="timeline-heading" class="section-title">Timeline by year</h2>
+				<div class="timeline" id="timeline"></div>
+			</div>
+
+			<div class="nre-locations" role="note">
+				<strong>Location:</strong>2015 France ; Since 2017 Norway, Oslo; since 2022 Germany, Frankfurt.
+			</div>
 
 			<section class="skills-section" aria-labelledby="table-heading">
 				<div class="container">
@@ -796,7 +804,9 @@
 				<a href="https://nabla.albandrieu.com/policy/cookie_policy.html">Cookie Policy</a>
 			</div>
 			<p class="text-md-center mt-3">
-				<a href="./index.html" class="btn btn-sm btn-outline-secondary">Return to home</a>
+				<a href="index.html" class="text-decoration-none"
+					><i class="fas fa-home" aria-hidden="true"></i> Back to home</a
+				>
 				<a href="#top" class="btn btn-sm btn-outline-secondary" aria-label="Back to top of page">Back to top</a>
 			</p>
 
