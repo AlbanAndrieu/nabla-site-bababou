@@ -16,7 +16,7 @@
 		<script src="/assets/fontawesome-free-7.1.0-web/js/brands.js"></script>
 
 		<!-- Theme toggle script - load early to prevent flash -->
-		<script src="theme-toggle.js"></script>
+
 		<!-- CSS: vendor → wireframe/arf/theme/style → page sheets → print last -->
 		<link
 			rel="stylesheet"
@@ -47,7 +47,10 @@
 		<link rel="stylesheet" href="landing-sections.css" />
 		<link rel="stylesheet" href="nre.css" />
 		<link rel="stylesheet" href="print.css" />
-		<script src="site-widgets.js" data-axeptio data-coffee-fab data-print-pdf></script>
+
+		<script src="theme-toggle.js"></script>
+		<script src="/site-google-translate.js" defer></script>
+		<script src="/site-analytics.js" data-ahrefs-key="tg3zLMS/bebJFl0LxctiCw"></script>
 	</head>
 	<body class="page-dark">
 		<a name="top"></a>
@@ -804,13 +807,11 @@
 				<a href="https://nabla.albandrieu.com/policy/cookie_policy.html">Cookie Policy</a>
 			</div>
 			<p class="text-md-center mt-3">
-				<a href="index.html" class="text-decoration-none"
-					><i class="fas fa-home" aria-hidden="true"></i> Back to home</a
-				>
+				<a href="index.html" class="btn btn-sm btn-outline-secondary">Back to Home</a>
 				<a href="#top" class="btn btn-sm btn-outline-secondary" aria-label="Back to top of page">Back to top</a>
 			</p>
 
-			<p style="margin-top: 1rem; opacity: 0.7">© 2025 Alban Andrieu. Father.</p>
+			<p class="footer-copyright"></p>
 		</footer>
 
 		<script>
@@ -946,6 +947,7 @@
 				document.getElementById("stat-exceptions").textContent = exceptionCount;
 			})();
 		</script>
-		<script defer src="site-analytics.js"></script>
+
+		<script src="/site-widgets.js" defer data-print-pdf data-coffee-fab></script>
 	</body>
 </html>

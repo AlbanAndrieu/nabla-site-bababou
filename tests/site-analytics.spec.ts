@@ -31,7 +31,7 @@ test.describe("Site analytics loader regression tests", () => {
 	test("should load default vercel analytics scripts and expose API", async ({
 		page,
 	}) => {
-		await page.goto("/people-contacted.html");
+		await page.goto("/");
 
 		await expect
 			.poll(async () => {
@@ -51,7 +51,7 @@ test.describe("Site analytics loader regression tests", () => {
 	});
 
 	test("should keep GTM and gtag init idempotent", async ({ page }) => {
-		await page.goto("/people-contacted.html");
+		await page.goto("/");
 
 		await expect
 			.poll(async () => {

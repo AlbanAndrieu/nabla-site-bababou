@@ -65,7 +65,7 @@ test.describe("Site widgets integration", () => {
 		await expect(page.locator("#nabla-back-to-top")).toHaveCount(0);
 		await expect(page.locator("#coffee-fab")).toHaveCount(0);
 	});
-  
+
 	test("injects print and back-to-top controls on homepage", async ({ page }) => {
 		await page.goto("/");
 

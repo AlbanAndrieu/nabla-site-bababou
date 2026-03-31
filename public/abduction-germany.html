@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<script src="site-widgets.js" data-axeptio data-coffee-fab data-print-pdf></script>
+
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 		<!-- Font Awesome -->
@@ -11,7 +11,7 @@
 		<script src="/assets/fontawesome-free-7.1.0-web/js/brands.js"></script>
 
 		<!-- Theme toggle script - load early to prevent flash -->
-		<script src="theme-toggle.js"></script>
+
 		<!-- CSS: vendor → wireframe/arf/theme/style → page sheets → print last -->
 		<link
 			rel="stylesheet"
@@ -47,10 +47,13 @@
 			content="Discussion gathered from the document Gmail - Demande d'explications écrites des autorités compétentes: request for written explanations from the competent authorities in the context of child abduction in Germany."
 		/>
 		<meta name="robots" content="index, follow" />
+		<script src="theme-toggle.js"></script>
+		<script src="/site-google-translate.js" defer></script>
+		<script src="/site-analytics.js" data-ahrefs-key="tg3zLMS/bebJFl0LxctiCw"></script>
 	</head>
 	<body class="page-dark">
 		<a name="top"></a>
-		<a href="#main-content" class="visually-hidden-focusable skip-link">Aller au contenu</a>
+		<a href="#main-content" class="skip-to-main">Skip to main content</a>
 
 		<nav class="page-nav container py-3" aria-label="Breadcrumb">
 			<div class="container">
@@ -395,13 +398,11 @@
 				<a href="policy/cookie_policy.html">Cookie Policy</a>
 			</div>
 			<p class="text-md-center mt-3">
-				<a href="index.html" class="text-decoration-none"
-					><i class="fas fa-home" aria-hidden="true"></i> Back to home</a
-				>
+				<a href="index.html" class="btn btn-sm btn-outline-secondary">Back to Home</a>
 				<a href="#top" class="btn btn-sm btn-outline-secondary" aria-label="Back to top of page">Back to top</a>
 				<a href="central-authorities.html" class="btn btn-sm btn-outline-secondary">Central Authorities</a>
 			</p>
-			<p style="margin-top: 1rem; opacity: 0.7">© 2026 Alban Andrieu. Father.</p>
+			<p class="footer-copyright"></p>
 		</footer>
 
 		<script
@@ -410,6 +411,6 @@
 			crossorigin="anonymous"
 		></script>
 
-		<script defer src="site-analytics.js"></script>
+		<script src="/site-widgets.js" defer data-print-pdf data-coffee-fab></script>
 	</body>
 </html>

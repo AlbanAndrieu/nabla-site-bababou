@@ -17,7 +17,6 @@
 		<script src="/assets/fontawesome-free-7.1.0-web/js/brands.js"></script>
 
 		<!-- Theme toggle script - load early to prevent flash -->
-		<script src="theme-toggle.js"></script>
 
 		<!-- Cloudflare -->
 		<link
@@ -53,16 +52,6 @@
 		<link rel="stylesheet" href="print.css" />
 
 		<link rel="stylesheet" href="site-content-page.css" />
-		<script
-			src="site-widgets.js"
-			defer
-			data-scroll-reveal=".service-card,.skill-category,.tool-item"
-			data-reveal-effect="animation"
-			data-reveal-animation="fadeInUp 0.6s ease forwards"
-			data-axeptio
-			data-print-pdf
-			data-coffee-fab
-		></script>
 
 		<title>ARF Visualization Test</title>
 
@@ -70,10 +59,12 @@
 		<link rel="canonical" href="https://bababou.com/" />
 
 		<!-- Google Translate -->
-		<script src="/site-google-translate.js" defer></script>
+
 		<!-- End Google Translate -->
 
-		<script src="/site-analytics.js" data-analytics-mode="vercel" data-ahrefs-key="tg3zLMS/bebJFl0LxctiCw"></script>
+		<script src="theme-toggle.js"></script>
+		<script src="/site-google-translate.js" defer></script>
+		<script src="/site-analytics.js" data-ahrefs-key="tg3zLMS/bebJFl0LxctiCw"></script>
 	</head>
 	<body class="site-content-page page-dark">
 		<a name="top"></a>
@@ -190,12 +181,10 @@
 				<a href="/policy/cookie_policy.html">Cookie Policy</a>
 			</div>
 			<p class="text-md-center mt-3">
-				<a href="index.html" class="text-decoration-none"
-					><i class="fas fa-home" aria-hidden="true"></i> Back to home</a
-				>
+				<a href="index.html" class="btn btn-sm btn-outline-secondary">Back to Home</a>
 				<a href="#top" class="btn btn-sm btn-outline-secondary" aria-label="Back to top of page">Back to top</a>
 			</p>
-			<p class="footer-copyright">© 2026 Alban Andrieu. Father.</p>
+			<p class="footer-copyright"></p>
 		</footer>
 		<!-- End footer section -->
 
@@ -217,5 +206,6 @@
 			async="async"
 			type="text/javascript"
 		></script>
+		<script src="/site-widgets.js" defer data-print-pdf data-coffee-fab></script>
 	</body>
 </html>
