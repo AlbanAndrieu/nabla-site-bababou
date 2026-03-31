@@ -16,6 +16,18 @@ async function injectSiteAnalytics(
 }
 
 test.describe("Site analytics loader regression tests", () => {
+	async function injectAnalyticsScript(
+		page: import("@playwright/test").Page,
+		mode: string,
+	) {
+		await page.evaluate((analyticsMode) => {
+			const s = document.createElement("script");
+			s.src = "/site-analytics.js";
+			s.setAttribute("data-analytics-mode", analyticsMode);
+			document.head.appendChild(s);
+		}, mode);
+	}
+
 	test("should load default vercel analytics scripts and expose API", async ({
 		page,
 	}) => {
@@ -93,6 +105,49 @@ test.describe("Site analytics loader regression tests", () => {
 		await expect(ahrefs).toHaveAttribute("data-key", "tg3zLMS/bebJFl0LxctiCw");
 	});
 
+	test("should load marketing integrations but skip Datadog in marketing mode", async ({
+		page,
+	}) => {
+		await page.goto("/404.html");
+		await injectAnalyticsScript(page, "marketing");
+
+		await expect(
+			page.locator('script[src*="googletagmanager.com/gtm.js?id="]'),
+		).toHaveCount(1);
+		await expect(
+			page.locator('script[src*="googletagmanager.com/gtag/js?id="]'),
+		).toHaveCount(1);
+		await expect(
+			page.locator('link[rel="preconnect"][href="https://dev.visualwebsiteoptimizer.com"]'),
+		).toHaveCount(1);
+		await expect(
+			page.locator('script[src*="-assets.i.posthog.com/static/array.js"]'),
+		).toHaveCount(1);
+		await expect(
+			page.locator('script[src="https://cdn.us.heap-api.com/config/724068705/heap_config.js"]'),
+		).toHaveCount(1);
+		await expect(
+			page.locator(
+				'script[src="https://www.datadoghq-browser-agent.com/eu1/v6/datadog-rum.js"]',
+			),
+		).toHaveCount(0);
+		await expect(
+			page.locator('script[src*="/_vercel/insights/script.js"]'),
+		).toHaveCount(1);
+		await expect(
+			page.locator('script[src*="/_vercel/speed-insights/script.js"]'),
+		).toHaveCount(1);
+	});
+
+	test("should load Datadog RUM in full mode", async ({ page }) => {
+		await page.goto("/404.html");
+		await injectAnalyticsScript(page, "full");
+
+		await expect(
+			page.locator(
+				'script[src="https://www.datadoghq-browser-agent.com/eu1/v6/datadog-rum.js"]',
+			),
+		).toHaveCount(1);
 	test("should honor marketing mode ids and not load Datadog", async ({
 		page,
 	}) => {
