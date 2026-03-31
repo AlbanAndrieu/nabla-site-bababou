@@ -1,4 +1,19 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+
+async function injectSiteAnalytics(
+	page: Page,
+	attrs: Record<string, string> = {},
+) {
+	await page.evaluate((injectedAttrs) => {
+		const script = document.createElement("script");
+		script.src = "/site-analytics.js";
+		script.setAttribute("data-test-injected", "true");
+		Object.entries(injectedAttrs).forEach(([name, value]) => {
+			script.setAttribute(name, value);
+		});
+		document.head.appendChild(script);
+	}, attrs);
+}
 
 test.describe("Site analytics loader regression tests", () => {
 	test("should load default vercel analytics scripts and expose API", async ({
@@ -76,5 +91,84 @@ test.describe("Site analytics loader regression tests", () => {
 		);
 		await expect(ahrefs).toHaveCount(1);
 		await expect(ahrefs).toHaveAttribute("data-key", "tg3zLMS/bebJFl0LxctiCw");
+	});
+
+	test("should honor marketing mode ids and not load Datadog", async ({
+		page,
+	}) => {
+		await page.goto("/404.html");
+		await injectSiteAnalytics(page, {
+			"data-analytics-mode": "marketing",
+			"data-gtm-id": "GTM-MARKETING123",
+			"data-ga-measurement-id": "G-MARKETING123",
+		});
+
+		await expect
+			.poll(async () => {
+				return page
+					.locator('script[src*="googletagmanager.com/gtm.js?id=GTM-MARKETING123"]')
+					.count();
+			})
+			.toBe(1);
+		await expect
+			.poll(async () => {
+				return page
+					.locator('script[src*="googletagmanager.com/gtag/js?id=G-MARKETING123"]')
+					.count();
+			})
+			.toBe(1);
+		await expect(
+			page.locator('script[src*="datadoghq-browser-agent.com"]'),
+		).toHaveCount(0);
+	});
+
+	test("should load full mode heavy vendors including Datadog", async ({
+		page,
+	}) => {
+		await page.goto("/404.html");
+		await injectSiteAnalytics(page, { "data-analytics-mode": "full" });
+
+		await expect
+			.poll(async () => {
+				return page
+					.locator('script[src*="datadoghq-browser-agent.com/eu1/v6/datadog-rum.js"]')
+					.count();
+			})
+			.toBe(1);
+		await expect(
+			page.locator(
+				'link[rel="preconnect"][href="https://dev.visualwebsiteoptimizer.com"]',
+			),
+		).toHaveCount(1);
+		await expect(
+			page.locator('script[src*="posthog.com/static/array.js"]'),
+		).toHaveCount(1);
+		await expect(
+			page.locator('script[src*="cdn.us.heap-api.com/config/724068705/heap_config.js"]'),
+		).toHaveCount(1);
+	});
+
+	test("should load Mixpanel and Datadog in home mode", async ({ page }) => {
+		await page.goto("/404.html");
+		await injectSiteAnalytics(page, { "data-analytics-mode": "home" });
+
+		await expect
+			.poll(async () => {
+				return page
+					.locator('script[src*="cdn.mxpnl.com/libs/mixpanel-2-latest.min.js"]')
+					.count();
+			})
+			.toBe(1);
+		await expect(
+			page.locator('script[src*="datadoghq-browser-agent.com/eu1/v6/datadog-rum.js"]'),
+		).toHaveCount(1);
+
+		await expect
+			.poll(async () => {
+				return page.evaluate(
+					() => typeof (window as any).mixpanel?.init,
+				);
+			})
+			.toBe("function");
 	});
 });
