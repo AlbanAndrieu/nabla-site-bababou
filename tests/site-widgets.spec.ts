@@ -107,4 +107,21 @@ test.describe("Site widgets integration", () => {
 		await expect(page.locator(".google-translate-widget")).toHaveCount(0);
 
 	});
+
+	test("should localize default widget labels in french pages", async ({ page }) => {
+		await page.goto("/nre-fr.html");
+
+		const printBtn = page.locator("#nabla-print-pdf-btn");
+		await expect(printBtn).toBeVisible();
+		await expect(printBtn).toHaveAttribute(
+			"aria-label",
+			"Imprimer ou enregistrer en PDF",
+		);
+		await expect(printBtn).toHaveAttribute("title", "Imprimer / Enregistrer en PDF");
+
+		const backToTop = page.locator("#nabla-back-to-top");
+		await expect(backToTop).toBeVisible();
+		await expect(backToTop).toHaveAttribute("aria-label", "Retour en haut de page");
+		await expect(backToTop).toHaveAttribute("title", "Retour en haut");
+	});
 });
