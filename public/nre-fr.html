@@ -14,10 +14,23 @@
 		<script src="/assets/fontawesome-free-7.1.0-web/js/fontawesome.js" data-auto-replace-svg="nest"></script>
 		<script src="/assets/fontawesome-free-7.1.0-web/js/solid.js"></script>
 		<script src="/assets/fontawesome-free-7.1.0-web/js/brands.js"></script>
-
-		<!-- Theme toggle script - load early to prevent flash -->
-
-		<!-- CSS: vendor → wireframe/arf/theme/style → page sheets → print last -->
+		<!-- CSS: FA → landing → wireframe → arf → theme → style → print → page → Bootstrap -->
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/fontawesome.min.css"
+			type="text/css"
+		/>
+		<link href="/assets/fontawesome/css/fontawesome.css" rel="stylesheet" />
+		<link href="/assets/fontawesome/css/brands.css" rel="stylesheet" />
+		<link href="/assets/fontawesome/css/solid.css" rel="stylesheet" />
+		<link rel="stylesheet" href="landing-sections.css" />
+		<link rel="stylesheet" href="wireframe.css" />
+		<link rel="stylesheet" href="arf.css" />
+		<link rel="stylesheet" href="theme.css" />
+		<link rel="stylesheet" href="style.css" />
+		<link rel="stylesheet" href="print.css" />
+		<link rel="stylesheet" href="experience.css" />
+		<link rel="stylesheet" href="nre.css" />
 		<link
 			rel="stylesheet"
 			href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.1/css/bootstrap.min.css"
@@ -32,24 +45,11 @@
 			crossorigin="anonymous"
 			referrerpolicy="no-referrer"
 		/>
-		<link
-			rel="stylesheet"
-			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/fontawesome.min.css"
-			type="text/css"
-		/>
-		<link href="/assets/fontawesome/css/fontawesome.css" rel="stylesheet" />
-		<link href="/assets/fontawesome/css/brands.css" rel="stylesheet" />
-		<link href="/assets/fontawesome/css/solid.css" rel="stylesheet" />
-		<link rel="stylesheet" href="wireframe.css" />
-		<link rel="stylesheet" href="arf.css" />
-		<link rel="stylesheet" href="theme.css" />
-		<link rel="stylesheet" href="style.css" />
-		<link rel="stylesheet" href="landing-sections.css" />
-		<link rel="stylesheet" href="nre.css" />
-		<link rel="stylesheet" href="print.css" />
-		<link rel="stylesheet" href="experience-section.css" />
+
+		<!-- Theme toggle script - load early to prevent flash -->
 
 		<script src="theme-toggle.js"></script>
+
 		<script src="/site-google-translate.js" defer></script>
 		<script src="/site-analytics.js" data-ahrefs-key="tg3zLMS/bebJFl0LxctiCw"></script>
 	</head>
@@ -65,15 +65,19 @@
 			<span class="ms-3"><a href="nre-en.html" hreflang="en">Anglais</a></span>
 		</nav>
 
-		<main id="main-content" role="main">
-			<section class="services-section" aria-labelledby="nre-heading">
+		<main id="main-content" class="py-4" role="main">
+			<section class="nre-hero" aria-labelledby="nre-heading">
 				<div class="container">
-					<span class="lang-link"><a href="nre-en.html">English</a></span>
-					<h1 id="nre-heading" class="section-title">Non-représentation d'enfant (NRE)</h1>
-					<p class="section-subtitle">
+					<h1 id="nre-heading" class="nre-hero__title display-6">Non-représentation d'enfant (NRE)</h1>
+					<p class="nre-hero__lead">
 						Droit de visite : premier week-end de chaque mois. Liste exhaustive des week-ends prévus et des NRE.
 					</p>
+				</div>
+			</section>
 
+			<section class="nre-content-section" aria-labelledby="nre-stats-heading">
+				<div class="container">
+					<h2 id="nre-stats-heading" class="section-title visually-hidden">Synthèse chiffrée</h2>
 					<div class="nre-stats">
 						<div class="nre-stat">
 							<div class="value" id="stat-total">0</div>
@@ -89,56 +93,75 @@
 						</div>
 						<div class="nre-stat nre-days">
 							<div class="value" id="stat-days-eleonore">61</div>
-							<div class="label">Jours avec Éléonore (12 dernières années)</div>
+							<div class="label">Jours avec Bababou (12 dernières années)</div>
 						</div>
 					</div>
-					<div class="nre-ref" role="note">
-						<strong>Référence plainte :</strong> Plainte pour non représentation d'enfant (art.
-						<a href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006418025" rel="noopener noreferrer"
-							>227-5</a
-						>
-						du Code pénal), déposée le <strong>4 septembre 2023</strong> à Nanterre auprès du procureur de la
-						République, TGI Valence. Liste à compter du jugement exécutoire du 31 mars 2017. Les faits ne sont pas
-						reproduits ici ; voir le document officiel :
-						<a href="assets/plainte-procureur-tgi-valence-04-08-2023-1.pdf" id="pdf-ref"
-							>Plainte TGI Valence, 4 septembre 2023</a
-						>
-						(PDF).
+					<div class="card border-0 shadow-sm mt-4 nre-ref-card" role="note">
+						<div class="card-body p-4">
+							<strong>Référence plainte :</strong> Plainte pour non représentation d'enfant (art.
+							<a href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006418025" rel="noopener noreferrer"
+								>227-5</a
+							>
+							du Code pénal), déposée le <strong>4 septembre 2023</strong> à Nanterre auprès du procureur de la
+							République, TGI Valence. Liste à compter du jugement exécutoire du 31 mars 2017. Les faits ne sont pas
+							reproduits ici ; voir le document officiel :
+							<a href="assets/plainte-procureur-tgi-valence-04-08-2023-1.pdf" id="pdf-ref"
+								>Plainte TGI Valence, 4 septembre 2023</a
+							>
+							(PDF).
+						</div>
 					</div>
 				</div>
 			</section>
 
-			<section class="py-3" aria-labelledby="note-heading">
-				<div class="card border-warning mb-4">
-					<div class="card-body">
-						<h2 id="note-heading" class="h5 card-title">Note</h2>
-						<p class="card-text mb-0">
-							Il paraîtrait que l’on naisse égaux, mais certainement on ne donne pas naissance également. La mère a tous
-							les droits : choisir de donner naissance où elle veut, sans demander l’accord du père.
-						</p>
-						<p>
-							Elle sait que quoi qu’elle fasse, elle aura l’autorité parentale seule, la garde exclusive, la possibilité
-							de manipuler l’enfant et de l’utiliser pour obtenir des droits, du pouvoir, de l’argent. Sans jamais
-							rendre de comptes.
-						</p>
-						<p>
-							Je déconseille à tout père de saisir les services sociaux et de porter plainte contre une mère violente et
-							maltraitante. Le résultat sera que jamais vous ne pourrez protéger votre enfant et il grandira sans vous.
-						</p>
+			<section class="nre-note-section py-4" aria-labelledby="note-heading">
+				<div class="container">
+					<div class="row justify-content-center">
+						<div class="col-12 col-lg-10 col-xl-8">
+							<div class="card border-warning shadow-sm">
+								<div class="card-body p-4">
+									<h2 id="note-heading" class="h5 card-title mb-3">Note</h2>
+									<p class="card-text mb-3">
+										Il paraîtrait que l’on naisse égaux, mais certainement on ne donne pas naissance également. La mère
+										a tous les droits : choisir de donner naissance où elle veut, sans demander l’accord du père.
+									</p>
+									<p class="card-text mb-3">
+										Elle sait que quoi qu’elle fasse, elle aura l’autorité parentale seule, la garde exclusive, la
+										possibilité de manipuler l’enfant et de l’utiliser pour obtenir des droits, du pouvoir, de l’argent.
+										Sans jamais rendre de comptes.
+									</p>
+									<p class="card-text mb-0">
+										Je déconseille à tout père de saisir les services sociaux et de porter plainte contre une mère
+										violente et maltraitante. Le résultat sera que jamais vous ne pourrez protéger votre enfant et il
+										grandira sans vous.
+									</p>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</section>
 
-			<div class="container">
-				<h2 id="timeline-heading" class="section-title">Chronologie par année</h2>
-				<div class="timeline" id="timeline"></div>
-			</div>
+			<section class="experience-section py-4" aria-labelledby="timeline-heading">
+				<div class="container">
+					<h2 id="timeline-heading" class="section-title">Chronologie par année</h2>
+					<p class="section-subtitle mb-4">Week-ends prévus et statut par année civile.</p>
+					<div class="timeline" id="timeline"></div>
+				</div>
+			</section>
 
-			<div class="nre-locations" role="note">
-				<strong>Lieu :</strong>2015 France ; Depuis 2017 Norvège, Oslo ; depuis 2022 Allemagne, Frankfurt.
-			</div>
+			<section class="py-4" aria-labelledby="location-heading">
+				<div class="container">
+					<h2 id="location-heading" class="visually-hidden">Localisation</h2>
+					<div class="nre-location-wrap">
+						<div class="nre-locations nre-locations--centered" role="note">
+							<strong>Lieu :</strong> 2015 France ; depuis 2017 Norvège, Oslo ; depuis 2022 Allemagne, Frankfurt.
+						</div>
+					</div>
+				</div>
+			</section>
 
-			<section class="skills-section" aria-labelledby="table-heading">
+			<section class="skills-section py-4" aria-labelledby="table-heading">
 				<div class="container">
 					<h2 id="table-heading" class="section-title">Liste des premiers week-ends du mois</h2>
 					<p class="section-subtitle">

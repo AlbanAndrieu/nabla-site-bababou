@@ -83,8 +83,8 @@ To bulk-fix placement and paths, run from repo root: `node scripts/sync-html-pag
 - **Prefer the site’s default dark, modern style** for all content pages:
   - Use **`class="page-dark"`** on `<body>`. On standard pages, follow with **`<a name="top"></a>`** on the next line. This applies the shared dark background (#0f172a with blue gradients), nav, cards, and light-theme overrides defined in `theme.css`. The theme toggle (default: dark) still lets users switch to light or auto. **Minimal / error pages** use `page-dark` but **no** top anchor.
   - Do **not** add page-specific inline styles that duplicate the page-dark look; add any new shared patterns to `theme.css` under `.page-dark` instead.
-- All content pages use the same stack as `index.html` / `test.html`: **wireframe.css**, **arf.css**, **theme.css**, **style.css**, **landing-sections.css**, **print.css** (plus Font Awesome JS/CSS and Bootstrap as on those files). Paths adjust by folder depth.
-  - Typical order: Bootstrap → Bootstrap Icons → Font Awesome (CDN + `/assets/fontawesome/css/`) → wireframe → arf → theme → style → landing-sections → page CSS (e.g. `nre.css`, `email-style.css`) → **print.css last**. After bulk `<head>` edits, run `python3 scripts/sync-head-fontawesome-css.py` and/or `python3 scripts/normalize-html-css-order.py`.
+- All content pages use the same stack as `index.html` / `test.html`: **Font Awesome** (CDN + `/assets/fontawesome/css/`), **landing-sections.css**, **wireframe.css**, **arf.css** (where used), **theme.css**, **style.css**, **print.css**, page CSS, then **Bootstrap** and **Bootstrap Icons** last (same cascade as [dr-alban.com](https://www.dr-alban.com/)). Paths adjust by folder depth.
+  - After bulk `<head>` edits, run `python3 scripts/sync-head-fontawesome-css.py` and/or `python3 scripts/normalize-html-css-order.py`.
   - `<link rel="stylesheet" href="landing-sections.css" />` (use `../landing-sections.css` from `public/policy/`, or `../../theme.css` etc. from deeper `ca/` paths).
   - Keep `theme.css`, `wireframe.css`, `print.css` where already used so theme toggle and print work.
 - Use **section and card** structure when it fits the content:
