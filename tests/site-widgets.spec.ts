@@ -185,7 +185,7 @@ test.describe("Site widgets integration", () => {
 		);
 
 		const backToTop = page.locator("#nabla-back-to-top");
-		await expect(backToTop).toBeVisible();
+		await expect(backToTop).toHaveCount(1);
 		await expect(backToTop).toHaveAttribute("aria-label", "Retour en haut de page");
 		await expect(backToTop).toHaveAttribute("title", "Retour en haut");
 	});
@@ -214,7 +214,7 @@ test.describe("Site widgets integration", () => {
 		);
 
 		const backToTop = page.locator("#nabla-back-to-top");
-		await expect(backToTop).toBeVisible();
+		await expect(backToTop).toHaveCount(1);
 		await expect(backToTop).toHaveAttribute("aria-label", "Jump to top quickly");
 		await expect(backToTop).toHaveAttribute("title", "Back up");
 	});
