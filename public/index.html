@@ -56,10 +56,24 @@
 		<script src="/assets/fontawesome-free-7.1.0-web/js/fontawesome.js" data-auto-replace-svg="nest"></script>
 		<script src="/assets/fontawesome-free-7.1.0-web/js/solid.js"></script>
 		<script src="/assets/fontawesome-free-7.1.0-web/js/brands.js"></script>
-
-		<!-- Theme toggle script - load early to prevent flash -->
-		<script src="theme-toggle.js"></script>
-		<!-- CSS: vendor → wireframe/arf/theme/style → page sheets → print last -->
+		<!-- CSS: FA → landing → wireframe → arf → theme → style → print → page → Bootstrap -->
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/fontawesome.min.css"
+			type="text/css"
+		/>
+		<link href="/assets/fontawesome/css/fontawesome.css" rel="stylesheet" />
+		<link href="/assets/fontawesome/css/brands.css" rel="stylesheet" />
+		<link href="/assets/fontawesome/css/solid.css" rel="stylesheet" />
+		<link rel="stylesheet" href="landing-sections.css" />
+		<link rel="stylesheet" href="wireframe.css" />
+		<link rel="stylesheet" href="arf.css" />
+		<link rel="stylesheet" href="theme.css" />
+		<link rel="stylesheet" href="style.css" />
+		<link rel="stylesheet" href="print.css" />
+		<link rel="stylesheet" href="bababou.css" />
+		<link rel="stylesheet" href="contact-me.css" />
+		<link rel="stylesheet" href="special-message.css" />
 		<link
 			rel="stylesheet"
 			href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.1/css/bootstrap.min.css"
@@ -74,443 +88,19 @@
 			crossorigin="anonymous"
 			referrerpolicy="no-referrer"
 		/>
-		<link
-			rel="stylesheet"
-			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/fontawesome.min.css"
-			type="text/css"
-		/>
-		<link href="/assets/fontawesome/css/fontawesome.css" rel="stylesheet" />
-		<link href="/assets/fontawesome/css/brands.css" rel="stylesheet" />
-		<link href="/assets/fontawesome/css/solid.css" rel="stylesheet" />
-		<link rel="stylesheet" href="wireframe.css" />
-		<link rel="stylesheet" href="arf.css" />
-		<link rel="stylesheet" href="theme.css" />
-		<link rel="stylesheet" href="style.css" />
-		<link rel="stylesheet" href="landing-sections.css" />
-		<link rel="stylesheet" href="print.css" />
 
-		<script src="site-widgets.js" data-axeptio data-coffee-fab data-print-pdf></script>
+		<!-- Theme toggle script - load early to prevent flash -->
 
 		<!-- Obs.js connection hints: obs-connection.js (https://github.com/csswizardry/Obs.js) -->
 		<script src="obs-connection.js"></script>
 
 		<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
-		<!-- mixpanel -->
-		<script type="text/javascript">
-			(function (f, b) {
-				if (!b.__SV) {
-					var e, g, i, h;
-					window.mixpanel = b;
-					b._i = [];
-					b.init = function (e, f, c) {
-						function g(a, d) {
-							var b = d.split(".");
-							2 == b.length && ((a = a[b[0]]), (d = b[1]));
-							a[d] = function () {
-								a.push([d].concat(Array.prototype.slice.call(arguments, 0)));
-							};
-						}
-						var a = b;
-						"undefined" !== typeof c ? (a = b[c] = []) : (c = "mixpanel");
-						a.people = a.people || [];
-						a.toString = function (a) {
-							var d = "mixpanel";
-							"mixpanel" !== c && (d += "." + c);
-							a || (d += " (stub)");
-							return d;
-						};
-						a.people.toString = function () {
-							return a.toString(1) + ".people (stub)";
-						};
-						i =
-							"disable time_event track track_pageview track_links track_forms track_with_groups add_group set_group remove_group register register_once alias unregister identify name_tag set_config reset opt_in_tracking opt_out_tracking has_opted_in_tracking has_opted_out_tracking clear_opt_in_out_tracking start_batch_senders people.set people.set_once people.unset people.increment people.append people.union people.track_charge people.clear_charges people.delete_user people.remove".split(
-								" ",
-							);
-						for (h = 0; h < i.length; h++) g(a, i[h]);
-						var j = "set set_once union unset remove delete".split(" ");
-						a.get_group = function () {
-							function b(c) {
-								d[c] = function () {
-									call2_args = arguments;
-									call2 = [c].concat(Array.prototype.slice.call(call2_args, 0));
-									a.push([e, call2]);
-								};
-							}
-							for (
-								var d = {}, e = ["get_group"].concat(Array.prototype.slice.call(arguments, 0)), c = 0;
-								c < j.length;
-								c++
-							)
-								b(j[c]);
-							return d;
-						};
-						b._i.push([e, f, c]);
-					};
-					b.__SV = 1.2;
-					e = f.createElement("script");
-					e.type = "text/javascript";
-					e.async = !0;
-					e.src =
-						"undefined" !== typeof MIXPANEL_CUSTOM_LIB_URL
-							? MIXPANEL_CUSTOM_LIB_URL
-							: "file:" === f.location.protocol && "//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//)
-								? "https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js"
-								: "//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";
-					g = f.getElementsByTagName("script")[0];
-					g.parentNode.insertBefore(e, g);
-				}
-			})(document, window.mixpanel || []);
-		</script>
-
-		<!-- Start VWO Async SmartCode -->
-		<link rel="preconnect" href="https://dev.visualwebsiteoptimizer.com" />
-		<script type="text/javascript" data-cfasync="false" id="vwoCode">
-			window._vwo_code ||
-				(function () {
-					var account_id = 1040791,
-						version = 2.1,
-						settings_tolerance = 2000,
-						hide_element = "body",
-						hide_element_style =
-							"opacity:0 !important;filter:alpha(opacity=0) !important;background:none !important;transition:none !important;",
-						/* DO NOT EDIT BELOW THIS LINE */
-						f = false,
-						w = window,
-						d = document,
-						v = d.querySelector("#vwoCode"),
-						cK = "_vwo_" + account_id + "_settings",
-						cc = {};
-					try {
-						var c = JSON.parse(localStorage.getItem("_vwo_" + account_id + "_config"));
-						cc = c && typeof c === "object" ? c : {};
-					} catch (e) {}
-					var stT = cc.stT === "session" ? w.sessionStorage : w.localStorage;
-					code = {
-						nonce: v && v.nonce,
-						use_existing_jquery: function () {
-							return typeof use_existing_jquery !== "undefined" ? use_existing_jquery : undefined;
-						},
-						library_tolerance: function () {
-							return typeof library_tolerance !== "undefined" ? library_tolerance : undefined;
-						},
-						settings_tolerance: function () {
-							return cc.sT || settings_tolerance;
-						},
-						hide_element_style: function () {
-							return "{" + (cc.hES || hide_element_style) + "}";
-						},
-						hide_element: function () {
-							if (performance.getEntriesByName("first-contentful-paint")[0]) {
-								return "";
-							}
-							return typeof cc.hE === "string" ? cc.hE : hide_element;
-						},
-						getVersion: function () {
-							return version;
-						},
-						finish: function (e) {
-							if (!f) {
-								f = true;
-								var t = d.getElementById("_vis_opt_path_hides");
-								if (t) t.parentNode.removeChild(t);
-								if (e) new Image().src = "https://dev.visualwebsiteoptimizer.com/ee.gif?a=" + account_id + e;
-							}
-						},
-						finished: function () {
-							return f;
-						},
-						addScript: function (e) {
-							var t = d.createElement("script");
-							t.type = "text/javascript";
-							if (e.src) {
-								t.src = e.src;
-							} else {
-								t.text = e.text;
-							}
-							v && t.setAttribute("nonce", v.nonce);
-							d.getElementsByTagName("head")[0].appendChild(t);
-						},
-						load: function (e, t) {
-							var n = this.getSettings(),
-								i = d.createElement("script"),
-								r = this;
-							t = t || {};
-							if (n) {
-								i.textContent = n;
-								d.getElementsByTagName("head")[0].appendChild(i);
-								if (!w.VWO || VWO.caE) {
-									stT.removeItem(cK);
-									r.load(e);
-								}
-							} else {
-								var o = new XMLHttpRequest();
-								o.open("GET", e, true);
-								o.withCredentials = !t.dSC;
-								o.responseType = t.responseType || "text";
-								o.onload = function () {
-									if (t.onloadCb) {
-										return t.onloadCb(o, e);
-									}
-									if (o.status === 200 || o.status === 304) {
-										_vwo_code.addScript({ text: o.responseText });
-									} else {
-										_vwo_code.finish("&e=loading_failure:" + e);
-									}
-								};
-								o.onerror = function () {
-									if (t.onerrorCb) {
-										return t.onerrorCb(e);
-									}
-									_vwo_code.finish("&e=loading_failure:" + e);
-								};
-								o.send();
-							}
-						},
-						getSettings: function () {
-							try {
-								var e = stT.getItem(cK);
-								if (!e) {
-									return;
-								}
-								e = JSON.parse(e);
-								if (Date.now() > e.e) {
-									stT.removeItem(cK);
-									return;
-								}
-								return e.s;
-							} catch (e) {
-								return;
-							}
-						},
-						init: function () {
-							if (d.URL.indexOf("__vwo_disable__") > -1) return;
-							var e = this.settings_tolerance();
-							w._vwo_settings_timer = setTimeout(function () {
-								_vwo_code.finish();
-								stT.removeItem(cK);
-							}, e);
-							var t;
-							if (this.hide_element() !== "body") {
-								t = d.createElement("style");
-								var n = this.hide_element(),
-									i = n ? n + this.hide_element_style() : "",
-									r = d.getElementsByTagName("head")[0];
-								t.setAttribute("id", "_vis_opt_path_hides");
-								v && t.setAttribute("nonce", v.nonce);
-								t.setAttribute("type", "text/css");
-								if (t.styleSheet) t.styleSheet.cssText = i;
-								else t.appendChild(d.createTextNode(i));
-								r.appendChild(t);
-							} else {
-								t = d.getElementsByTagName("head")[0];
-								var i = d.createElement("div");
-								i.style.cssText =
-									"z-index: 2147483647 !important;position: fixed !important;left: 0 !important;top: 0 !important;width: 100% !important;height: 100% !important;background: white !important;display: block !important;";
-								i.setAttribute("id", "_vis_opt_path_hides");
-								i.classList.add("_vis_hide_layer");
-								t.parentNode.insertBefore(i, t.nextSibling);
-							}
-							var o = window._vis_opt_url || d.URL,
-								s =
-									"https://dev.visualwebsiteoptimizer.com/j.php?a=" +
-									account_id +
-									"&u=" +
-									encodeURIComponent(o) +
-									"&vn=" +
-									version;
-							if (w.location.search.indexOf("_vwo_xhr") !== -1) {
-								this.addScript({ src: s });
-							} else {
-								this.load(s + "&x=true");
-							}
-						},
-					};
-					w._vwo_code = code;
-					code.init();
-				})();
-		</script>
-		<!-- End VWO Async SmartCode -->
-
-		<!-- Start PostHog -->
-		<script>
-			!(function (t, e) {
-				var o, n, p, r;
-				e.__SV ||
-					((window.posthog = e),
-					(e._i = []),
-					(e.init = function (i, s, a) {
-						function g(t, e) {
-							var o = e.split(".");
-							2 == o.length && ((t = t[o[0]]), (e = o[1])),
-								(t[e] = function () {
-									t.push([e].concat(Array.prototype.slice.call(arguments, 0)));
-								});
-						}
-						((p = t.createElement("script")).type = "text/javascript"),
-							(p.crossOrigin = "anonymous"),
-							(p.async = !0),
-							(p.src = s.api_host.replace(".i.posthog.com", "-assets.i.posthog.com") + "/static/array.js"),
-							(r = t.getElementsByTagName("script")[0]).parentNode.insertBefore(p, r);
-						var u = e;
-						for (
-							void 0 !== a ? (u = e[a] = []) : (a = "posthog"),
-								u.people = u.people || [],
-								u.toString = function (t) {
-									var e = "posthog";
-									return "posthog" !== a && (e += "." + a), t || (e += " (stub)"), e;
-								},
-								u.people.toString = function () {
-									return u.toString(1) + ".people (stub)";
-								},
-								o =
-									"init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug getPageViewId captureTraceFeedback captureTraceMetric".split(
-										" ",
-									),
-								n = 0;
-							n < o.length;
-							n++
-						)
-							g(u, o[n]);
-						e._i.push([i, s, a]);
-					}),
-					(e.__SV = 1));
-			})(document, window.posthog || []);
-			posthog.init("phc_IeJIEt7g86e7IWXUfcfXqhtSCxRq04PQDarTOJ9So48", {
-				api_host: "https://eu.i.posthog.com",
-				person_profiles: "identified_only", // or 'always' to create profiles for anonymous users as well
-			});
-		</script>
-		<!-- End VWO PostHog -->
-
-		<!-- Google Tag Manager -->
-		<script>
-			(function (w, d, s, l, i) {
-				w[l] = w[l] || [];
-				w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
-				var f = d.getElementsByTagName(s)[0],
-					j = d.createElement(s),
-					dl = l != "dataLayer" ? "&l=" + l : "";
-				j.async = true;
-				j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
-				f.parentNode.insertBefore(j, f);
-			})(window, document, "script", "dataLayer", "GTM-W7XNV7K6");
-		</script>
-		<!-- End Google Tag Manager -->
-
-		<!-- Google tag (gtag.js) -->
-		<script async src="https://www.googletagmanager.com/gtag/js?id=G-RHL13BHK6K"></script>
-		<script>
-			window.dataLayer = window.dataLayer || [];
-			function gtag() {
-				dataLayer.push(arguments);
-			}
-			gtag("js", new Date());
-
-			gtag("config", "G-RHL13BHK6K");
-		</script>
-
-		<!-- Start Heap prod -->
-		<script type="text/javascript">
-			(window.heapReadyCb = window.heapReadyCb || []),
-				(window.heap = window.heap || []),
-				(heap.load = function (e, t) {
-					(window.heap.envId = e),
-						(window.heap.clientConfig = t = t || {}),
-						(window.heap.clientConfig.shouldFetchServerConfig = !1);
-					var a = document.createElement("script");
-					(a.type = "text/javascript"),
-						(a.async = !0),
-						(a.src = "https://cdn.us.heap-api.com/config/" + e + "/heap_config.js");
-					var r = document.getElementsByTagName("script")[0];
-					r.parentNode.insertBefore(a, r);
-					var n = [
-							"init",
-							"startTracking",
-							"stopTracking",
-							"track",
-							"resetIdentity",
-							"identify",
-							"getSessionId",
-							"getUserId",
-							"getIdentity",
-							"addUserProperties",
-							"addEventProperties",
-							"removeEventProperty",
-							"clearEventProperties",
-							"addAccountProperties",
-							"addAdapter",
-							"addTransformer",
-							"addTransformerFn",
-							"onReady",
-							"addPageviewProperties",
-							"removePageviewProperty",
-							"clearPageviewProperties",
-							"trackPageview",
-						],
-						i = function (e) {
-							return function () {
-								var t = Array.prototype.slice.call(arguments, 0);
-								window.heapReadyCb.push({
-									name: e,
-									fn: function () {
-										heap[e] && heap[e].apply(heap, t);
-									},
-								});
-							};
-						};
-					for (var p = 0; p < n.length; p++) heap[n[p]] = i(n[p]);
-				});
-			heap.load("1210018410");
-		</script>
-		<!-- End Heap prod -->
-
-		<!-- Start Datadog RUM -->
-		<script>
-			(function (h, o, u, n, d) {
-				h = h[d] = h[d] || {
-					q: [],
-					onReady: function (c) {
-						h.q.push(c);
-					},
-				};
-				d = o.createElement(u);
-				d.async = 1;
-				d.src = n;
-				n = o.getElementsByTagName(u)[0];
-				n.parentNode.insertBefore(d, n);
-			})(window, document, "script", "https://www.datadoghq-browser-agent.com/eu1/v6/datadog-rum.js", "DD_RUM");
-			window.DD_RUM.onReady(function () {
-				window.DD_RUM.init({
-					clientToken: "pub550f242796dac3c13b730eb727658279",
-					applicationId: "7308f250-2cea-49a1-b308-9a55f64375d7",
-					// `site` refers to the Datadog site parameter of your organization
-					// see https://docs.datadoghq.com/getting_started/site/
-					site: "datadoghq.eu",
-					service: "bababou",
-					env: "prod",
-					// Specify a version number to identify the deployed version of your application in Datadog
-					version: "1.0.0",
-					sessionSampleRate: 100,
-					sessionReplaySampleRate: 20,
-					defaultPrivacyLevel: "allow",
-				});
-			});
-		</script>
-		<!-- End Datadog RUM -->
-
 		<!-- Cloudflare -->
 
-		<link rel="alternate" hreflang="x-default" href="/" />
-		<link rel="canonical" href="/" />
+		<link rel="alternate" hreflang="x-default" href="https://bababou.com/" />
+		<link rel="canonical" href="https://bababou.com/" />
 
-		<!-- Ahrefs Web Analytics -->
-		<script src="https://analytics.ahrefs.com/analytics.js" data-key="tg3zLMS/bebJFl0LxctiCw" async></script>
-
-		<!-- Vercel Analytics & Speed Insights (stubs load before script tags) -->
-		<script src="analytics-stubs.js"></script>
-		<script defer src="/_vercel/insights/script.js"></script>
-		<script defer src="/_vercel/speed-insights/script.js"></script>
 		<!-- JSON-LD Structured Data for SEO and Crawlers -->
 		<script type="application/ld+json">
 			{
@@ -527,166 +117,141 @@
 				"inLanguage": "en"
 			}
 		</script>
+
+		<script src="theme-toggle.js"></script>
+		<script src="/site-google-translate.js" defer></script>
+		<script src="/site-analytics.js" data-ahrefs-key="tg3zLMS/bebJFl0LxctiCw"></script>
 	</head>
 	<body class="page-dark">
 		<a name="top"></a>
-		<a href="#main-content" class="visually-hidden-focusable skip-link skip-to-main">Skip to main content</a>
+		<a href="#main-content" class="skip-to-main">Skip to main content</a>
 
-		<!-- Google Tag Manager (noscript) -->
-		<noscript
-			><iframe
-				src="https://www.googletagmanager.com/ns.html?id=GTM-W7XNV7K6"
-				height="0"
-				width="0"
-				style="display: none; visibility: hidden"
-			></iframe
-		></noscript>
-		<!-- End Google Tag Manager (noscript) -->
+		<!-- Main content area -->
+		<main id="main-content" role="main">
+			<!-- Special Message for Éléonore -->
+			<header id="bababou-content">
+				<section class="py-4 special-message-section" aria-labelledby="main-heading">
+					<div class="special-message-container">
+						<div class="container">
+							<h1 id="main-heading" class="display-3 mb-4">
+								Bababou (Éléonore) — If you are reading this, your Papa is looking for you
+							</h1>
 
-		<!-- Google Translate Widget -->
-		<div class="google-translate-widget">
-			<div id="google_translate_element"></div>
-		</div>
-		<!-- End Google Translate Widget -->
+							<div class="card p-4 mb-4 special-message-card">
+								<div class="card-body">
+									<h2 class="mb-4">My Dear Daughter,</h2>
 
-		<!-- Special Message for Éléonore -->
-		<header id="bababou-content">
-			<section class="py-4 special-message-section" aria-labelledby="main-heading">
-				<div class="special-message-container">
-					<div class="container">
-						<h1 id="main-heading" class="display-3 mb-4">
-							Bababou (Éléonore) — If you are reading this, your Papa is looking for you
-						</h1>
-
-						<div class="card p-4 mb-4 special-message-card">
-							<div class="card-body">
-								<h2 class="mb-4">My Dear Daughter,</h2>
-
-								<p class="lead mb-3">
-									<strong>I am your father, Alban Andrieu.</strong> Every single day since June 6, 2015, I have been
-									searching for you. I have never stopped thinking about you, and I will never stop looking for you.
-								</p>
-
-								<p class="h5 mb-3">
-									<strong>YOU ARE NOT ALONE.</strong> I am here. I am waiting. I am your Papa and I love you more than
-									anything in this world.
-								</p>
-
-								<hr class="my-4" />
-
-								<div class="mb-4">
-									<h3 class="text-primary mb-3">Important Information You Should Know:</h3>
-									<ul class="text-start special-message-list">
-										<li>
-											<strong>Your real name is Éléonore</strong> (some people call you by other names, but Éléonore is
-											who you truly are)
-										</li>
-										<li><strong>You are French</strong> — You have a French passport with ID: 14CV32249</li>
-										<li><strong>You have a family in France</strong> who loves you and misses you every day</li>
-										<li>
-											<strong>Your Papa has been looking for you</strong> in
-											<a href="people-contacted.html" class="text-muted" title="People contacted — all over europe">
-												France, Norway, and Germany</a
-											>
-										</li>
-										<li>
-											<strong>I have never abandoned you</strong> — I am
-											<a href="nre-en.html" class="text-muted" title="NRE — failure to present child (EN)">forced</a>
-											to be separated from you.
-										</li>
-									</ul>
-								</div>
-
-								<hr class="my-4" />
-
-								<div class="mb-4 contact-me-card" role="region" aria-labelledby="contact-me-heading">
-									<h3 id="contact-me-heading" class="contact-me-card__title">
-										<i class="fa fa-envelope" aria-hidden="true"></i>
-										How to contact me
-									</h3>
-									<p class="contact-me-card__lead">
-										Email me at:
-										<span id="contact-email"></span>
-										<noscript>
-											<strong>alban.andrieu [at] free [dot] fr</strong>
-										</noscript>
+									<p class="lead mb-3">
+										<strong>I am your father, Alban Andrieu.</strong> Every single day since June 6, 2015, I have been
+										searching for you. I have never stopped thinking about you, and I will never stop looking for you.
 									</p>
-									<p class="contact-me-card__reassurance">
-										You can contact me anytime, day or night. I promise I will respond immediately. You are safe to
-										reach out to me.
-									</p>
-									<script>
-										(function () {
-											var user = "alban" + "." + "andrieu";
-											var domain = "free" + "." + "fr";
-											var email = user + "@" + domain;
-											var container = document.getElementById("contact-email");
-											if (container) {
-												var link = document.createElement("a");
-												link.href = "mailto:" + email;
-												link.className = "contact-me-card__link";
-												link.textContent = email;
-												container.appendChild(link);
-											}
-										})();
-									</script>
-								</div>
 
-								<div class="mb-4">
-									<h3 class="text-info mb-3">A Message from Your Papa:</h3>
-									<blockquote class="blockquote">
-										<p class="mb-3 h5">
-											"Bababou, wherever you are, whatever you have been told, please know this:
-											<strong
-												>I have never stopped loving you. I have never stopped fighting for you. I will always be here
-												for you.</strong
-											>
+									<p class="h5 mb-3">
+										<strong>YOU ARE NOT ALONE.</strong> I am here. I am waiting. I am your Papa and I love you more than
+										anything in this world.
+									</p>
+
+									<hr class="my-4" />
+
+									<div class="mb-4">
+										<h3 class="text-primary mb-3">Important Information You Should Know:</h3>
+										<ul class="text-start special-message-list">
+											<li>
+												<strong>Your real name is Éléonore</strong> (some people call you by other names, but Éléonore
+												is who you truly are)
+											</li>
+											<li><strong>You are French</strong> — You have a French passport with ID: 14CV32249</li>
+											<li><strong>You have a family in France</strong> who loves you and misses you every day</li>
+											<li>
+												<strong>Your Papa has been looking for you</strong> in
+												<a href="people-contacted.html" class="text-muted" title="People contacted — all over europe">
+													France, Norway, and Germany</a
+												>
+											</li>
+											<li>
+												<strong>I have never abandoned you</strong> — I am
+												<a href="nre-en.html" class="text-muted" title="NRE — failure to present child (EN)">forced</a>
+												to be separated from you.
+											</li>
+										</ul>
+									</div>
+
+									<hr class="my-4" />
+
+									<div class="mb-4 contact-me-card" role="region" aria-labelledby="contact-me-heading">
+										<h3 id="contact-me-heading" class="contact-me-card__title">
+											<i class="fa fa-envelope" aria-hidden="true"></i>
+											How to contact me
+										</h3>
+										<p class="contact-me-card__lead">
+											Email me at:
+											<span id="contact-email"></span>
+											<noscript>
+												<strong>alban.andrieu [at] bababou [dot] com</strong>
+											</noscript>
 										</p>
-										<p class="mb-3">
-											You might have questions, you might be confused, you might not remember me well. That's okay. I
-											understand. Just know that your Papa loves you unconditionally and will be there to support you
-											whenever you're ready.
+										<p class="contact-me-card__reassurance">
+											You can contact me anytime, day or night. I promise I will respond immediately. You are safe to
+											reach out to me.
 										</p>
-										<p class="mb-0 h5">
-											<strong>I love you more than yesterday and less than tomorrow. Forever.</strong>
-										</p>
-									</blockquote>
-								</div>
+									</div>
 
-								<div class="contact-me-note mb-0" role="alert">
-									<p class="mb-2">
-										<strong>If you are Éléonore and you found this website:</strong>
-									</p>
-									<p class="mb-0">
-										Please know that contacting me is YOUR RIGHT. No one can stop you from knowing your father. I am
-										here waiting for you with open arms. 💙
-									</p>
+									<div class="mb-4">
+										<h3 class="text-info mb-3">A Message from Your Papa:</h3>
+										<blockquote class="blockquote">
+											<p class="mb-3 h5">
+												"Bababou, wherever you are, whatever you have been told, please know this:
+												<strong
+													>I have never stopped loving you. I have never stopped fighting for you. I will always be here
+													for you.</strong
+												>
+											</p>
+											<p class="mb-3">
+												You might have questions, you might be confused, you might not remember me well. That's okay. I
+												understand. Just know that your Papa loves you unconditionally and will be there to support you
+												whenever you're ready.
+											</p>
+											<p class="mb-0 h5">
+												<strong>I love you more than yesterday and less than tomorrow. Forever.</strong>
+											</p>
+										</blockquote>
+									</div>
+
+									<div class="contact-me-note mb-0" role="alert" aria-labelledby="found-website-heading">
+										<p class="mb-2" id="found-website-heading">
+											<strong>If you are Éléonore and you found this website:</strong>
+										</p>
+										<p class="mb-0">
+											Please know that contacting me is YOUR RIGHT. No one can stop you from knowing your father. I am
+											here waiting for you with open arms. 💙
+										</p>
+									</div>
 								</div>
 							</div>
+
+							<p class="special-message-footer-tagline mb-0">
+								<small
+									>This website was created by your father to help you find him. He has been searching for you since
+									2015.</small
+								>
+							</p>
 						</div>
+					</div>
+				</section>
+			</header>
+			<!-- End Special Message -->
 
-						<p class="text-white mb-0">
-							<small
-								>This website was created by your father to help you find him. He has been searching for you since
-								2015.</small
-							>
-						</p>
+			<nav class="collapse bg-dark" id="navbarHeader" aria-label="Main navigation">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-7 py-4">
+							<h4 id="about-heading">About</h4>
+							<p class="text-info">INDEX for albandrieu.com</p>
+						</div>
 					</div>
 				</div>
-			</section>
-		</header>
-		<!-- End Special Message -->
-
-		<nav class="collapse bg-dark" id="navbarHeader" aria-label="Main navigation">
-			<div class="container">
-				<div class="row">
-					<div class="col-md-7 py-4">
-						<h4 id="about-heading">About</h4>
-						<p class="text-info">INDEX for albandrieu.com</p>
-					</div>
-				</div>
-			</div>
-		</nav>
+			</nav>
+		</main>
 
 		<!-- Main content area -->
 		<main id="second-content">
@@ -742,9 +307,14 @@
 							call for international action.
 						</p>
 						<p class="mb-0">
-							<a href="for-fathers.html" class="btn btn-primary btn-lg" role="button"
-								>Read the full page: legal framework, rights &amp; resources</a
-							>
+							<a href="for-fathers.html" class="btn btn-primary homepage-cta-legal" role="button">
+								<span class="homepage-cta-legal__label homepage-cta-legal__label--compact d-md-none"
+									>Fathers: laws, rights &amp; resources — full page</span
+								>
+								<span class="homepage-cta-legal__label homepage-cta-legal__label--full d-none d-md-inline"
+									>Read the full page: legal framework, rights &amp; resources</span
+								>
+							</a>
 						</p>
 					</div>
 				</div>
@@ -825,14 +395,21 @@
 				</div>
 
 				<div class="col-md-4 p-3">
-					<div class="card box-shadow">
-						<img
-							class="img-fluid d-block mx-auto py-2"
-							src="assets/flag-french-norway-simple.png"
-							alt="Combined French and Norwegian flags"
-						/>
+					<div class="card box-shadow translator-recruit-card">
+						<div class="translator-recruit-visual">
+							<img
+								class="translator-recruit-visual__flags"
+								src="assets/flag-french-norway-simple.svg"
+								alt=""
+								loading="lazy"
+								decoding="async"
+							/>
+							<span class="translator-recruit-visual__badge" title="Translation needed" aria-hidden="true">
+								<i class="fa-solid fa-language" aria-hidden="true"></i>
+							</span>
+						</div>
 						<div class="card-body">
-							<h5 class=""><b>Looking for Norwegian Translator</b></h5>
+							<h5 class="translator-recruit-card__title"><b>Looking for Norwegian Translator</b></h5>
 							<p class="card-text">
 								Norwegian authorities are not willing to communicate. In English and even less in French!!!
 							</p>
@@ -876,14 +453,21 @@
 				</div>
 
 				<div class="col-md-4 p-3">
-					<div class="card box-shadow">
-						<img
-							class="img-fluid d-block mx-auto py-2"
-							src="assets/flag-french-germany.svg"
-							alt="Combined French and German flags"
-						/>
+					<div class="card box-shadow translator-recruit-card">
+						<div class="translator-recruit-visual">
+							<img
+								class="translator-recruit-visual__flags"
+								src="assets/flag-french-germany.svg"
+								alt=""
+								loading="lazy"
+								decoding="async"
+							/>
+							<span class="translator-recruit-visual__badge" title="Translation needed" aria-hidden="true">
+								<i class="fa-solid fa-language" aria-hidden="true"></i>
+							</span>
+						</div>
 						<div class="card-body">
-							<h5 class=""><b>Looking for German Translator</b></h5>
+							<h5 class="translator-recruit-card__title"><b>Looking for German Translator</b></h5>
 							<p class="card-text">
 								German authorities are not willing to communicate. In English and even less in French!!!
 							</p>
@@ -946,8 +530,8 @@
 							administrations, and silence.
 						</p>
 					</div>
-					<div class="col-md-4 text-md-end mt-3 mt-md-0">
-						<a href="people-contacted.html" class="btn btn-outline-primary me-2" role="button">People contacted</a>
+					<div class="col-md-4 text-md-end mt-3 mt-md-0 homepage-services-ctas">
+						<a href="people-contacted.html" class="btn btn-outline-primary" role="button">People contacted</a>
 						<a href="central-authorities.html" class="btn btn-outline-secondary" role="button">Central Authorities</a>
 					</div>
 				</div>
@@ -1050,11 +634,10 @@
 				<a href="/policy/cookie_policy.html">Cookie Policy</a>
 			</div>
 			<p class="text-md-center mt-3">
-				<a href="index.html" class="btn btn-sm btn-outline-secondary">Return to home</a>
 				<a href="#top" class="btn btn-sm btn-outline-secondary" aria-label="Back to top of page">Back to top</a>
 			</p>
 
-			<p style="margin-top: 1rem; opacity: 0.7">© 2026 Alban Andrieu. Father.</p>
+			<p class="footer-copyright"></p>
 		</footer>
 		<!-- End footer section -->
 
@@ -1064,7 +647,6 @@
 
 		<script type="text/javascript" src="d3.v3.min.js"></script>
 		<script src="arf.js"></script>
-		<!--<script src="index.js"></script> -->
 
 		<script
 			src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
@@ -1089,6 +671,6 @@
 			type="text/javascript"
 		></script>
 
-		<script defer src="site-analytics.js"></script>
+		<script src="/site-widgets.js" defer data-print-pdf data-coffee-fab></script>
 	</body>
 </html>

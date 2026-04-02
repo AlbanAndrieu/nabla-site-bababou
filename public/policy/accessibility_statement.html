@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 	<head>
-		<meta charset="UTF-8" />
+		<meta charset="utf-8" />
 		<title>Accessibility Statement | Bababou</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<meta
@@ -12,6 +12,7 @@
 		<meta name="robots" content="index, follow" />
 		<link rel="canonical" href="/policy/accessibility_statement.html" />
 
+		<!-- Open Graph meta tags for social media sharing -->
 		<meta property="og:type" content="website" />
 		<meta property="og:url" content="https://bababou.com/policy/accessibility_statement.html" />
 		<meta property="og:title" content="Accessibility Statement | Bababou" />
@@ -21,6 +22,7 @@
 		/>
 		<meta property="og:site_name" content="Bababou" />
 
+		<!-- Twitter Card meta tags -->
 		<meta name="twitter:card" content="summary" />
 		<meta name="twitter:title" content="Accessibility Statement | Bababou" />
 		<meta
@@ -28,16 +30,20 @@
 			content="Accessibility statement for bababou.com. Our commitment to digital accessibility."
 		/>
 		<meta name="twitter:url" content="https://bababou.com/policy/accessibility_statement.html" />
-		<link rel="icon" href="../favicon.ico" />
 
-		<!-- Font Awesome -->
-		<script src="/assets/fontawesome-free-7.1.0-web/js/fontawesome.js" data-auto-replace-svg="nest"></script>
-		<script src="/assets/fontawesome-free-7.1.0-web/js/solid.js"></script>
-		<script src="/assets/fontawesome-free-7.1.0-web/js/brands.js"></script>
+		<link rel="icon" href="../assets/nabla/nabla-4.svg" />
 
-		<!-- Theme toggle script - load early to prevent flash -->
 		<script src="../theme-toggle.js"></script>
-		<!-- CSS: vendor → wireframe/arf/theme/style → page sheets → print last -->
+		<!-- CSS: FA → landing → wireframe → arf → theme → style → print → page → Bootstrap -->
+		<link href="/assets/fontawesome/css/fontawesome.css" rel="stylesheet" />
+		<link href="/assets/fontawesome/css/brands.css" rel="stylesheet" />
+		<link href="/assets/fontawesome/css/solid.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../landing-sections.css" />
+		<link rel="stylesheet" href="../wireframe.css" />
+		<link rel="stylesheet" href="../theme.css" />
+		<link rel="stylesheet" href="../style.css" />
+		<link rel="stylesheet" href="../print.css" />
+		<link rel="stylesheet" href="../site-content-page.css" />
 		<link
 			rel="stylesheet"
 			href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.1/css/bootstrap.min.css"
@@ -52,29 +58,14 @@
 			crossorigin="anonymous"
 			referrerpolicy="no-referrer"
 		/>
-		<link
-			rel="stylesheet"
-			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/fontawesome.min.css"
-			type="text/css"
-		/>
-		<link href="/assets/fontawesome/css/fontawesome.css" rel="stylesheet" />
-		<link href="/assets/fontawesome/css/brands.css" rel="stylesheet" />
-		<link href="/assets/fontawesome/css/solid.css" rel="stylesheet" />
-		<link rel="stylesheet" href="../wireframe.css" />
-		<link rel="stylesheet" href="../arf.css" />
-		<link rel="stylesheet" href="../theme.css" />
-		<link rel="stylesheet" href="../style.css" />
-		<link rel="stylesheet" href="../landing-sections.css" />
-		<link rel="stylesheet" href="../print.css" />
-		<script src="../site-widgets.js" data-axeptio data-coffee-fab data-print-pdf></script>
-	</head>
-	<body class="page-dark">
-		<a name="top"></a>
-		<div class="google-translate-widget">
-			<div id="google_translate_element"></div>
-		</div>
 
-		<main id="main-content" class="container py-4" role="main">
+		<script src="../site-google-translate.js" defer></script>
+		<script src="../site-analytics.js"></script>
+	</head>
+	<body class="site-content-page policy-legal">
+		<a name="top"></a>
+		<a href="#main-content" class="skip-to-main">Skip to main content</a>
+		<main id="main-content" role="main" class="container py-4">
 			<h1>Accessibility Statement</h1>
 			<p><strong>Last updated:</strong> 2026-02-20</p>
 
@@ -134,6 +125,7 @@
 			<p>This statement may be updated. The date at the top indicates the last revision.</p>
 		</main>
 
+		<!-- association section -->
 		<div class="py-3 association-section" aria-label="Site footer">
 			<div class="jumbotron">
 				<div class="container">
@@ -183,23 +175,19 @@
 			</div>
 		</div>
 
-		<footer class="footer">
+		<!-- Footer -->
+		<footer class="footer" role="contentinfo">
 			<div class="social-links">
-				<a href="https://www.linkedin.com/in/nabla" target="_blank" class="social-link" aria-label="LinkedIn"
-					><i class="fab fa-linkedin-in"></i
-				></a>
 				<a href="https://calendly.com/alban-andrieu" target="_blank" class="social-link" aria-label="Calendly"
 					><i class="fa fa-calendar-plus"></i
 				></a>
 				<a href="https://github.com/AlbanAndrieu" target="_blank" class="social-link" aria-label="GitHub"
 					><i class="fab fa-github"></i
 				></a>
-				<a href="https://hub.docker.com/u/nabla" target="_blank" class="social-link" aria-label="Docker Hub"
-					><i class="fab fa-docker"></i
-				></a>
 				<a
 					href="https://stackexchange.com/users/4652074/albanandrieu"
 					target="_blank"
+					rel="noopener noreferrer"
 					class="social-link"
 					aria-label="Stack Exchange"
 					><i class="fab fa-stack-exchange"></i
@@ -214,11 +202,12 @@
 				<a href="cookie_policy.html">Cookie Policy</a>
 			</div>
 			<p class="text-md-center mt-3">
-				<a href="../index.html" class="btn btn-sm btn-outline-secondary">Return to home</a>
+				<a href="../index.html" class="btn btn-sm btn-outline-secondary">Back to Home</a>
 				<a href="#top" class="btn btn-sm btn-outline-secondary" aria-label="Back to top of page">Back to top</a>
 			</p>
-			<p style="margin-top: 1rem; opacity: 0.7">© 2025 Alban Andrieu. Independent DevSecOps Professional.</p>
+			<p class="footer-copyright"></p>
 		</footer>
-		<script defer src="../site-analytics.js"></script>
+
+		<script src="../site-widgets.js" defer data-axeptio data-print-pdf data-coffee-fab></script>
 	</body>
 </html>

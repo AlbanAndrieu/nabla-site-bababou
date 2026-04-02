@@ -14,10 +14,23 @@
 		<script src="/assets/fontawesome-free-7.1.0-web/js/fontawesome.js" data-auto-replace-svg="nest"></script>
 		<script src="/assets/fontawesome-free-7.1.0-web/js/solid.js"></script>
 		<script src="/assets/fontawesome-free-7.1.0-web/js/brands.js"></script>
-
-		<!-- Theme toggle script - load early to prevent flash -->
-		<script src="theme-toggle.js"></script>
-		<!-- CSS: vendor → wireframe/arf/theme/style → page sheets → print last -->
+		<!-- CSS: FA → landing → wireframe → arf → theme → style → print → page → Bootstrap -->
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/fontawesome.min.css"
+			type="text/css"
+		/>
+		<link href="/assets/fontawesome/css/fontawesome.css" rel="stylesheet" />
+		<link href="/assets/fontawesome/css/brands.css" rel="stylesheet" />
+		<link href="/assets/fontawesome/css/solid.css" rel="stylesheet" />
+		<link rel="stylesheet" href="landing-sections.css" />
+		<link rel="stylesheet" href="wireframe.css" />
+		<link rel="stylesheet" href="arf.css" />
+		<link rel="stylesheet" href="theme.css" />
+		<link rel="stylesheet" href="style.css" />
+		<link rel="stylesheet" href="print.css" />
+		<link rel="stylesheet" href="experience.css" />
+		<link rel="stylesheet" href="nre.css" />
 		<link
 			rel="stylesheet"
 			href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.1/css/bootstrap.min.css"
@@ -32,36 +45,36 @@
 			crossorigin="anonymous"
 			referrerpolicy="no-referrer"
 		/>
-		<link
-			rel="stylesheet"
-			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/fontawesome.min.css"
-			type="text/css"
-		/>
-		<link href="/assets/fontawesome/css/fontawesome.css" rel="stylesheet" />
-		<link href="/assets/fontawesome/css/brands.css" rel="stylesheet" />
-		<link href="/assets/fontawesome/css/solid.css" rel="stylesheet" />
-		<link rel="stylesheet" href="wireframe.css" />
-		<link rel="stylesheet" href="arf.css" />
-		<link rel="stylesheet" href="theme.css" />
-		<link rel="stylesheet" href="style.css" />
-		<link rel="stylesheet" href="landing-sections.css" />
-		<link rel="stylesheet" href="nre.css" />
-		<link rel="stylesheet" href="print.css" />
-		<script src="site-widgets.js" data-axeptio data-coffee-fab data-print-pdf></script>
+
+		<script src="theme-toggle.js"></script>
+
+		<script src="/site-google-translate.js" defer></script>
+		<script src="/site-analytics.js" data-ahrefs-key="tg3zLMS/bebJFl0LxctiCw"></script>
 	</head>
 	<body class="page-dark">
 		<a name="top"></a>
-		<main id="main-content" role="main">
-			<section class="services-section" aria-labelledby="nre-heading">
+		<a href="#main-content" class="skip-to-main">Skip to main content</a>
+
+		<nav class="page-nav container py-3" aria-label="Breadcrumb">
+			<a href="index.html" class="text-decoration-none"><i class="fas fa-home" aria-hidden="true"></i> Back to home</a>
+			<span class="mx-2 text-muted">|</span>
+			<span class="ms-3"><a href="nre-fr.html" hreflang="fr">Français</a></span>
+		</nav>
+
+		<main id="main-content" class="py-4" role="main">
+			<section class="nre-hero" aria-labelledby="nre-heading">
 				<div class="container">
-					<a href="index.html" class="back-link">← Back to home</a>
-					<span class="lang-link"><a href="nre-fr.html">Français</a></span>
-					<h1 id="nre-heading" class="section-title">Failure to Present Child</h1>
-					<p class="section-subtitle">
+					<h1 id="nre-heading" class="nre-hero__title display-6">Failure to present child (NRE)</h1>
+					<p class="nre-hero__lead">
 						Visitation rights: first weekend of each month. Full list of scheduled weekends and NRE (non-représentation
 						d'enfant).
 					</p>
+				</div>
+			</section>
 
+			<section class="nre-content-section" aria-labelledby="nre-stats-heading">
+				<div class="container">
+					<h2 id="nre-stats-heading" class="section-title visually-hidden">Summary statistics</h2>
 					<div class="nre-stats">
 						<div class="nre-stat">
 							<div class="value" id="stat-total">0</div>
@@ -77,55 +90,75 @@
 						</div>
 						<div class="nre-stat nre-days">
 							<div class="value" id="stat-days-eleonore">61</div>
-							<div class="label">Days with Éléonore (past 12 years)</div>
+							<div class="label">Days with Bababou (past 12 years)</div>
 						</div>
 					</div>
-					<div class="nre-ref" role="note">
-						<strong>Complaint reference:</strong> Complaint for failure to present a child (Art.
-						<a href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006418025" rel="noopener noreferrer"
-							>227-5</a
-						>
-						of the French Criminal Code), filed on
-						<strong>4 September 2023</strong> in Nanterre with the Prosecutor, Court of Valence (TGI Valence). List as
-						from the enforceable judgment of 31 March 2017. Facts are not reproduced here; see the official document:
-						<a href="assets/plainte-procureur-tgi-valence-04-08-2023-1.pdf" id="pdf-ref"
-							>Complaint TGI Valence, 4 September 2023</a
-						>
-						(PDF).
+					<div class="card border-0 shadow-sm mt-4 nre-ref-card" role="note">
+						<div class="card-body p-4">
+							<strong>Complaint reference:</strong> Complaint for failure to present a child (Art.
+							<a href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006418025" rel="noopener noreferrer"
+								>227-5</a
+							>
+							of the French Criminal Code), filed on
+							<strong>4 September 2023</strong> in Nanterre with the Prosecutor, Court of Valence (TGI Valence). List as
+							from the enforceable judgment of 31 March 2017. Facts are not reproduced here; see the official document:
+							<a href="assets/plainte-procureur-tgi-valence-04-08-2023-1.pdf" id="pdf-ref"
+								>Complaint TGI Valence, 4 September 2023</a
+							>
+							(PDF).
+						</div>
 					</div>
 				</div>
 			</section>
 
-			<section class="experience-section" aria-labelledby="timeline-heading">
-				<div class="nre-ref nre-reflection" role="note">
-					<h3 class="reflection-heading">A note</h3>
-					<p>
-						It is said that we are born equal, but we certainly do not give birth equally. The mother has every right to
-						choose where to give birth, without the father’s consent.
-					</p>
-					<p>
-						She knows that whatever she does, she will have sole parental authority, exclusive custody, and the
-						possibility to manipulate the child and use them to obtain rights, power, and money—without ever being held
-						to account.
-					</p>
-					<p>
-						I advise any father against involving social services and filing a complaint against a violent and abusive
-						mother. The result will be that you will never be able to protect your child and they will grow up without
-						you.
-					</p>
-				</div>
-
+			<section class="nre-note-section py-4" aria-labelledby="note-heading">
 				<div class="container">
-					<h2 id="timeline-heading" class="section-title">Timeline by year</h2>
-					<div class="timeline" id="timeline"></div>
-				</div>
-
-				<div class="nre-locations" role="note">
-					<strong>Location:</strong>2015 France ; Since 2017 Norway, Oslo; since 2022 Germany, Frankfurt.
+					<div class="row justify-content-center">
+						<div class="col-12 col-lg-10 col-xl-8">
+							<div class="card border-warning shadow-sm">
+								<div class="card-body p-4">
+									<h2 id="note-heading" class="h5 card-title mb-3">Note</h2>
+									<p class="card-text mb-3">
+										It is said that we are born equal, but we certainly do not give birth equally. The mother has every
+										right to choose where to give birth, without the father’s consent.
+									</p>
+									<p class="card-text mb-3">
+										She knows that whatever she does, she will have sole parental authority, exclusive custody, and the
+										possibility to manipulate the child and use them to obtain rights, power, and money—without ever
+										being held to account.
+									</p>
+									<p class="card-text mb-0">
+										I advise any father against involving social services and filing a complaint against a violent and
+										abusive mother. The result will be that you will never be able to protect your child and they will
+										grow up without you.
+									</p>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</section>
 
-			<section class="skills-section" aria-labelledby="table-heading">
+			<section class="experience-section py-4" aria-labelledby="timeline-heading">
+				<div class="container">
+					<h2 id="timeline-heading" class="section-title">Timeline by year</h2>
+					<p class="section-subtitle mb-4">Scheduled weekends and status by calendar year.</p>
+					<div class="timeline" id="timeline"></div>
+				</div>
+			</section>
+
+			<section class="py-4" aria-labelledby="location-heading">
+				<div class="container">
+					<h2 id="location-heading" class="visually-hidden">Location context</h2>
+					<div class="nre-location-wrap">
+						<div class="nre-locations nre-locations--centered" role="note">
+							<strong>Location:</strong> 2015 France; since 2017 Norway, Oslo; since 2022 Germany, Frankfurt.
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="skills-section py-4" aria-labelledby="table-heading">
 				<div class="container">
 					<h2 id="table-heading" class="section-title">First weekend of each month</h2>
 					<p class="section-subtitle">
@@ -796,11 +829,11 @@
 				<a href="https://nabla.albandrieu.com/policy/cookie_policy.html">Cookie Policy</a>
 			</div>
 			<p class="text-md-center mt-3">
-				<a href="./index.html" class="btn btn-sm btn-outline-secondary">Return to home</a>
+				<a href="index.html" class="btn btn-sm btn-outline-secondary">Back to Home</a>
 				<a href="#top" class="btn btn-sm btn-outline-secondary" aria-label="Back to top of page">Back to top</a>
 			</p>
 
-			<p style="margin-top: 1rem; opacity: 0.7">© 2025 Alban Andrieu. Father.</p>
+			<p class="footer-copyright"></p>
 		</footer>
 
 		<script>
@@ -936,6 +969,7 @@
 				document.getElementById("stat-exceptions").textContent = exceptionCount;
 			})();
 		</script>
-		<script defer src="site-analytics.js"></script>
+
+		<script src="/site-widgets.js" defer data-print-pdf data-coffee-fab></script>
 	</body>
 </html>

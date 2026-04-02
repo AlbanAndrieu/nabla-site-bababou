@@ -205,12 +205,16 @@ test.describe("Accessibility Tests", () => {
 		expect(viewportMeta).toContain("width=device-width");
 	});
 
-	test("should have landmark regions", async ({ page }) => {
+	test("should have landmark main", async ({ page }) => {
 		await page.goto("/");
 
 		// Check for main landmark
 		const main = await page.locator('main, [role="main"]').count();
 		expect(main).toBeGreaterThan(0);
+	});
+
+	test("should have landmark header", async ({ page }) => {
+		await page.goto("/");
 
 		// Header landmark (homepage has no persistent top nav)
 		const header = await page.locator("header").count();

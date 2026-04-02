@@ -3,12 +3,6 @@
  * Used by demande-explications-autorites-competentes-*.html and other ca/ email pages.
  */
 
-.page-nav {
-	background: var(--bg-light, #f9fafb);
-	border-bottom: 1px solid var(--border-color, #e5e7eb);
-	padding: 0.75rem 0;
-}
-
 .email-block {
 	margin-bottom: 2rem;
 	border-radius: 0.5rem;

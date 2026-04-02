@@ -1,4 +1,46 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+
+type WidgetHostOptions = {
+	htmlLang?: string;
+	bodyHtml?: string;
+	scriptAttrs?: Record<string, string | true>;
+};
+
+function escapeAttribute(value: string) {
+	return value.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+}
+
+async function gotoWidgetsHost(
+	page: Page,
+	{ htmlLang = "en", bodyHtml = '<a name="top"></a>', scriptAttrs = {} }: WidgetHostOptions = {},
+) {
+	const extraAttrs = Object.entries(scriptAttrs)
+		.map(([name, value]) =>
+			value === true ? name : `${name}="${escapeAttribute(String(value))}"`,
+		)
+		.join(" ");
+
+	await page.route("**/widgets-test-host.html", async (route) => {
+		await route.fulfill({
+			status: 200,
+			contentType: "text/html",
+			body: `<!doctype html>
+<html lang="${htmlLang}">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+	</head>
+	<body class="page-dark">
+		${bodyHtml}
+		<script src="/site-widgets.js" defer data-no-font-awesome data-no-google-translate ${extraAttrs}></script>
+	</body>
+</html>`,
+		});
+	});
+
+	await page.goto("/widgets-test-host.html");
+	await page.waitForLoadState("domcontentloaded");
+}
 
 test.describe("Site widgets integration", () => {
 
@@ -65,7 +107,7 @@ test.describe("Site widgets integration", () => {
 		await expect(page.locator("#nabla-back-to-top")).toHaveCount(0);
 		await expect(page.locator("#coffee-fab")).toHaveCount(0);
 	});
-  
+
 	test("injects print and back-to-top controls on homepage", async ({ page }) => {
 		await page.goto("/");
 
@@ -108,28 +150,72 @@ test.describe("Site widgets integration", () => {
 
 	});
 
-	test("uses French default labels for print and back-to-top controls", async ({
+	test("should honor no-* widget flags over matching enable flags", async ({ page }) => {
+		await gotoWidgetsHost(page, {
+			scriptAttrs: {
+				"data-print-pdf": true,
+				"data-no-print-pdf": true,
+				"data-coffee-fab": true,
+				"data-no-coffee-fab": true,
+				"data-no-back-to-top": true,
+			},
+		});
+
+		await expect(page.locator("#nabla-print-pdf-btn")).toHaveCount(0);
+		await expect(page.locator("#coffee-fab")).toHaveCount(0);
+		await expect(page.locator("#nabla-back-to-top")).toHaveCount(0);
+	});
+
+	test("should use french default labels for print and back-to-top controls", async ({
 		page,
 	}) => {
-		await page.goto("/nre-fr.html");
+		await gotoWidgetsHost(page, {
+			htmlLang: "fr",
+			scriptAttrs: { "data-print-pdf": true },
+		});
 
 		const printButton = page.locator("#nabla-print-pdf-btn");
 		await expect(printButton).toBeVisible();
 		await expect(printButton).toHaveAttribute(
-			"title",
-			"Imprimer / Enregistrer en PDF",
-		);
-		await expect(printButton).toHaveAttribute(
 			"aria-label",
 			"Imprimer ou enregistrer en PDF",
 		);
+		await expect(printButton.locator(".print-button__label")).toHaveText(
+			"Imprimer / Enregistrer en PDF",
+		);
 
 		const backToTop = page.locator("#nabla-back-to-top");
-		await expect(backToTop).toBeVisible();
+		await expect(backToTop).toHaveCount(1);
+		await expect(backToTop).toHaveAttribute("aria-label", "Retour en haut de page");
 		await expect(backToTop).toHaveAttribute("title", "Retour en haut");
-		await expect(backToTop).toHaveAttribute(
-			"aria-label",
-			"Retour en haut de page",
+	});
+
+	test("should remove legacy back-to-top and apply explicit custom labels", async ({
+		page,
+	}) => {
+		await gotoWidgetsHost(page, {
+			bodyHtml: '<a name="top"></a><a id="legacy-back-to-top" class="back-to-top" href="#top">Legacy</a>',
+			scriptAttrs: {
+				"data-print-pdf": true,
+				"data-print-pdf-label": "Save this page as PDF",
+				"data-print-pdf-aria": "Print this page to PDF",
+				"data-back-to-top-label": "Back up",
+				"data-back-to-top-aria": "Jump to top quickly",
+			},
+		});
+
+		await expect(page.locator("#legacy-back-to-top")).toHaveCount(0);
+
+		const printButton = page.locator("#nabla-print-pdf-btn");
+		await expect(printButton).toBeVisible();
+		await expect(printButton).toHaveAttribute("aria-label", "Print this page to PDF");
+		await expect(printButton.locator(".print-button__label")).toHaveText(
+			"Save this page as PDF",
 		);
+
+		const backToTop = page.locator("#nabla-back-to-top");
+		await expect(backToTop).toHaveCount(1);
+		await expect(backToTop).toHaveAttribute("aria-label", "Jump to top quickly");
+		await expect(backToTop).toHaveAttribute("title", "Back up");
 	});
 });
