@@ -105,6 +105,21 @@ test.describe("Site analytics loader regression tests", () => {
 		await expect(ahrefs).toHaveAttribute("data-key", "tg3zLMS/bebJFl0LxctiCw");
 	});
 
+	test("should honor preset GTM and GA override IDs", async ({ page }) => {
+		await page.addInitScript(() => {
+			(window as any).NABLA_ANALYTICS_PRESET = {
+				gtmContainerId: "GTM-OVERRIDE123",
+				gaMeasurementId: "G-OVERRIDE123",
+			};
+		});
+
+		await page.goto("/people-contacted.html");
+		await page.evaluate(() => {
+			const api = (window as any).NABLA_SITE_ANALYTICS;
+			api.initGtm();
+			api.initGtag();
+  });
+    
 	test("should load marketing integrations but skip Datadog in marketing mode", async ({
 		page,
 	}) => {
