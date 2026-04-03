@@ -218,4 +218,85 @@ test.describe("Site widgets integration", () => {
 		await expect(backToTop).toHaveAttribute("aria-label", "Jump to top quickly");
 		await expect(backToTop).toHaveAttribute("title", "Back up");
 	});
+
+	test("falls back to safe default Ko-fi user when configured value is invalid", async ({
+		page,
+	}) => {
+		await page.addInitScript(() => {
+			(window as unknown as { __openCalls: string[] }).__openCalls = [];
+			window.open = ((url?: string | URL) => {
+				(window as unknown as { __openCalls: string[] }).__openCalls.push(
+					String(url ?? ""),
+				);
+				return null;
+			}) as typeof window.open;
+		});
+
+		await gotoWidgetsHost(page, {
+			scriptAttrs: {
+				"data-coffee-fab": true,
+				"data-coffee-kofi-user": "not a valid/user?",
+			},
+		});
+
+		await page.locator("#coffee-fab").click();
+
+		const openCalls = await page.evaluate(
+			() => (window as unknown as { __openCalls: string[] }).__openCalls,
+		);
+		expect(openCalls).toHaveLength(1);
+		expect(openCalls[0]).toBe("https://ko-fi.com/albandrieu");
+	});
+
+	test("uses delegated smooth-scroll for fragments and top shortcut", async ({
+		page,
+	}) => {
+		await page.addInitScript(() => {
+			(window as unknown as { __scrollCalls: Array<[number, number]> }).__scrollCalls =
+				[];
+			(window as unknown as { __scrollIntoViewCalls: number }).__scrollIntoViewCalls =
+				0;
+
+			window.scrollTo = ((x: number, y: number) => {
+				(
+					window as unknown as { __scrollCalls: Array<[number, number]> }
+				).__scrollCalls.push([x, y]);
+			}) as typeof window.scrollTo;
+
+			Element.prototype.scrollIntoView = function () {
+				(
+					window as unknown as { __scrollIntoViewCalls: number }
+				).__scrollIntoViewCalls += 1;
+			};
+		});
+
+		await gotoWidgetsHost(page, {
+			bodyHtml:
+				'<a name="top"></a><a id="jump-target" href="#target">Jump target</a><a id="jump-top" href="#top">Jump top</a><section id="target">Target</section>',
+		});
+
+		await page.locator("#jump-target").click();
+
+		const afterTargetClick = await page.evaluate(() => ({
+			scrollIntoViewCalls: (
+				window as unknown as { __scrollIntoViewCalls: number }
+			).__scrollIntoViewCalls,
+			scrollCalls: (
+				window as unknown as { __scrollCalls: Array<[number, number]> }
+			).__scrollCalls.slice(),
+		}));
+		expect(afterTargetClick.scrollIntoViewCalls).toBeGreaterThan(0);
+		const topCallsBeforeTopClick = afterTargetClick.scrollCalls.filter(
+			([x, y]) => x === 0 && y === 0,
+		).length;
+
+		await page.locator("#jump-top").click();
+
+		const topCallsAfterTopClick = await page.evaluate(() => {
+			return (
+				window as unknown as { __scrollCalls: Array<[number, number]> }
+			).__scrollCalls.filter(([x, y]) => x === 0 && y === 0).length;
+		});
+		expect(topCallsAfterTopClick).toBeGreaterThan(topCallsBeforeTopClick);
+	});
 });
