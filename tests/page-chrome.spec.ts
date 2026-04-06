@@ -7,9 +7,36 @@ type StandardPageCase = {
 
 const STANDARD_PAGES: StandardPageCase[] = [
 	{ path: "/", label: "homepage" },
+	{ path: "/abduction-germany.html", label: "abduction germany page" },
+	{ path: "/abduction-norway.html", label: "abduction norway page" },
+	{
+		path: "/ca/demande-explications-autorites-competentes-fr.html",
+		label: "ca demande explications page",
+	},
 	{ path: "/people-contacted.html", label: "people-contacted page" },
-	{ path: "/policy/privacy_policy.html", label: "privacy policy page" },
 	{ path: "/ca/index.html", label: "central authorities index page" },
+	{
+		path: "/central-authorities-failures.html",
+		label: "central authorities failures page",
+	},
+	{ path: "/central-authorities.html", label: "central authorities page" },
+	{
+		path: "/email-contact-addresses.html",
+		label: "email contact addresses page",
+	},
+	{ path: "/for-fathers.html", label: "for fathers page" },
+	{ path: "/nre-en.html", label: "nre english page" },
+	{ path: "/nre-fr.html", label: "nre french page" },
+	{ path: "/policy/privacy_policy.html", label: "privacy policy page" },
+	{
+		path: "/policy/accessibility_statement.html",
+		label: "accessibility statement page",
+	},
+	{ path: "/policy/cookie_policy.html", label: "cookie policy page" },
+	{ path: "/policy/impressum.html", label: "impressum page" },
+	{ path: "/policy/legal.html", label: "legal page" },
+	{ path: "/policy/service_terms.html", label: "service terms page" },
+	{ path: "/test.html", label: "test page" },
 ];
 
 async function fetchHtml(path: string, request: APIRequestContext) {
