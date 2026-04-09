@@ -166,6 +166,7 @@ npm run build
 
 ```bash
 # Preview deployment
+vercel dev
 vercel deploy
 
 # Production deployment

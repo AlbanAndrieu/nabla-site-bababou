@@ -1,0 +1,130 @@
+/* Homepage: legal CTA — readable on narrow screens (avoids oversized btn-lg text) */
+.homepage-cta-legal {
+	white-space: normal;
+	text-align: center;
+	max-width: 100%;
+	line-height: 1.35;
+}
+
+.homepage-cta-legal__label {
+	display: inline-block;
+}
+
+@media (max-width: 767.98px) {
+	.homepage-cta-legal {
+		font-size: 0.9rem;
+		padding: 0.45rem 0.85rem;
+		width: 100%;
+	}
+
+	.homepage-cta-legal__label--compact {
+		max-width: 22rem;
+		margin-left: auto;
+		margin-right: auto;
+	}
+}
+
+@media (min-width: 768px) {
+	.homepage-cta-legal {
+		font-size: 1.05rem;
+		padding: 0.5rem 1.15rem;
+	}
+}
+
+/* Homepage: People / Central Authorities — stack on small viewports */
+.homepage-services-ctas {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	justify-content: flex-start;
+}
+
+@media (min-width: 768px) {
+	.homepage-services-ctas {
+		justify-content: flex-end;
+	}
+
+	.homepage-services-ctas .btn-outline-primary {
+		margin-right: 0.25rem;
+	}
+}
+
+/* Translator recruit cards: framed flag art + language cue */
+.translator-recruit-card .translator-recruit-visual {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 7.5rem;
+	padding: 0.85rem 1rem;
+	background: linear-gradient(
+		165deg,
+		rgba(30, 41, 59, 0.55) 0%,
+		rgba(15, 23, 42, 0.9) 100%
+	);
+	border-bottom: 1px solid var(--border-color);
+	overflow: hidden;
+}
+
+html[data-theme="light"]
+	.page-dark
+	.translator-recruit-card
+	.translator-recruit-visual {
+	background: linear-gradient(
+		165deg,
+		rgba(241, 245, 249, 0.95) 0%,
+		rgba(226, 232, 240, 0.85) 100%
+	);
+}
+
+.translator-recruit-visual__flags {
+	width: auto;
+	max-width: min(100%, 14rem);
+	max-height: 5.5rem;
+	height: auto;
+	object-fit: contain;
+	display: block;
+	filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
+}
+
+html[data-theme="light"] .page-dark .translator-recruit-visual__flags {
+	filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
+}
+
+.translator-recruit-visual__badge {
+	position: absolute;
+	right: 0.65rem;
+	bottom: 0.55rem;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.25rem;
+	height: 2.25rem;
+	border-radius: 50%;
+	background: rgba(37, 99, 235, 0.92);
+	color: #fff;
+	font-size: 1.05rem;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.translator-recruit-card__title {
+	font-size: 1rem;
+	line-height: 1.3;
+	margin-bottom: 0.5rem;
+}
+
+@media (min-width: 576px) {
+	.translator-recruit-card .translator-recruit-visual {
+		min-height: 8.5rem;
+		padding: 1rem 1.15rem;
+	}
+
+	.translator-recruit-visual__flags {
+		max-width: min(100%, 16rem);
+		max-height: 6.25rem;
+	}
+
+	.translator-recruit-card__title {
+		font-size: 1.1rem;
+	}
+}
