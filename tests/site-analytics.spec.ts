@@ -16,18 +16,6 @@ async function injectSiteAnalytics(
 }
 
 test.describe("Site analytics loader regression tests", () => {
-	async function injectAnalyticsScript(
-		page: import("@playwright/test").Page,
-		mode: string,
-	) {
-		await page.evaluate((analyticsMode) => {
-			const s = document.createElement("script");
-			s.src = "/site-analytics.js";
-			s.setAttribute("data-analytics-mode", analyticsMode);
-			document.head.appendChild(s);
-		}, mode);
-	}
-
 	test("should load default vercel analytics scripts and expose API", async ({
 		page,
 	}) => {
@@ -113,18 +101,32 @@ test.describe("Site analytics loader regression tests", () => {
 			};
 		});
 
-		await page.goto("/people-contacted.html");
+		await page.goto("/404.html");
+		await injectSiteAnalytics(page);
+
 		await page.evaluate(() => {
 			const api = (window as any).NABLA_SITE_ANALYTICS;
 			api.initGtm();
 			api.initGtag();
-  });
-    
+		});
+
+		await expect(
+			page.locator(
+				'script[src*="googletagmanager.com/gtm.js?id=GTM-OVERRIDE123"]',
+			),
+		).toHaveCount(1);
+		await expect(
+			page.locator(
+				'script[src*="googletagmanager.com/gtag/js?id=G-OVERRIDE123"]',
+			),
+		).toHaveCount(1);
+	});
+
 	test("should load marketing integrations but skip Datadog in marketing mode", async ({
 		page,
 	}) => {
 		await page.goto("/404.html");
-		await injectAnalyticsScript(page, "marketing");
+		await injectSiteAnalytics(page, { "data-analytics-mode": "marketing" });
 
 		await expect(
 			page.locator('script[src*="googletagmanager.com/gtm.js?id="]'),
@@ -156,13 +158,15 @@ test.describe("Site analytics loader regression tests", () => {
 
 	test("should load Datadog RUM in full mode", async ({ page }) => {
 		await page.goto("/404.html");
-		await injectAnalyticsScript(page, "full");
+		await injectSiteAnalytics(page, { "data-analytics-mode": "full" });
 
 		await expect(
 			page.locator(
 				'script[src="https://www.datadoghq-browser-agent.com/eu1/v6/datadog-rum.js"]',
 			),
 		).toHaveCount(1);
+	});
+
 	test("should honor marketing mode ids and not load Datadog", async ({
 		page,
 	}) => {
