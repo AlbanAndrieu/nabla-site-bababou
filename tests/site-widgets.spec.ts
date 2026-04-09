@@ -299,4 +299,48 @@ test.describe("Site widgets integration", () => {
 		});
 		expect(topCallsAfterTopClick).toBeGreaterThan(topCallsBeforeTopClick);
 	});
+
+	test("loads Axeptio only when explicitly enabled", async ({ page }) => {
+		await gotoWidgetsHost(page, {
+			scriptAttrs: {
+				"data-axeptio": true,
+				"data-axeptio-client-id": "client-override-123",
+				"data-axeptio-cookies-version": "cookies-v2",
+			},
+		});
+
+		await expect(
+			page.locator('script[src*="static.axept.io/sdk.js"]'),
+		).toHaveCount(1);
+		await expect
+			.poll(async () => {
+				return page.evaluate(() => {
+					return (window as unknown as { axeptioSettings?: unknown })
+						.axeptioSettings;
+				});
+			})
+			.toEqual({
+				clientId: "client-override-123",
+				cookiesVersion: "cookies-v2",
+			});
+	});
+
+	test("does not load Axeptio in minimal chrome mode", async ({ page }) => {
+		await gotoWidgetsHost(page, {
+			scriptAttrs: {
+				"data-minimal-chrome": true,
+				"data-axeptio": true,
+			},
+		});
+
+		await expect(
+			page.locator('script[src*="static.axept.io/sdk.js"]'),
+		).toHaveCount(0);
+		const hasSettings = await page.evaluate(() => {
+			return Boolean(
+				(window as unknown as { axeptioSettings?: unknown }).axeptioSettings,
+			);
+		});
+		expect(hasSettings).toBeFalsy();
+	});
 });
