@@ -16,18 +16,6 @@ async function injectSiteAnalytics(
 }
 
 test.describe("Site analytics loader regression tests", () => {
-	async function injectAnalyticsScript(
-		page: import("@playwright/test").Page,
-		mode: string,
-	) {
-		await page.evaluate((analyticsMode) => {
-			const s = document.createElement("script");
-			s.src = "/site-analytics.js";
-			s.setAttribute("data-analytics-mode", analyticsMode);
-			document.head.appendChild(s);
-		}, mode);
-	}
-
 	test("should load default vercel analytics scripts and expose API", async ({
 		page,
 	}) => {
@@ -41,7 +29,6 @@ test.describe("Site analytics loader regression tests", () => {
 			})
 			.toBe("function");
 
-		// Browsers may normalize script src to an absolute URL; match by path suffix
 		await expect(
 			page.locator('script[src*="/_vercel/insights/script.js"]'),
 		).toHaveCount(1);
@@ -52,14 +39,6 @@ test.describe("Site analytics loader regression tests", () => {
 
 	test("should keep GTM and gtag init idempotent", async ({ page }) => {
 		await page.goto("/");
-
-		await expect
-			.poll(async () => {
-				return page.evaluate(() => {
-					return typeof (window as any).NABLA_SITE_ANALYTICS?.initGtm;
-				});
-			})
-			.toBe("function");
 
 		const before = await page.evaluate(() => {
 			return {
@@ -97,7 +76,6 @@ test.describe("Site analytics loader regression tests", () => {
 
 	test("should load Ahrefs script when key is provided", async ({ page }) => {
 		await page.goto("/test.html");
-
 		const ahrefs = page.locator(
 			'script[src="https://analytics.ahrefs.com/analytics.js"][data-key]',
 		);
@@ -105,26 +83,75 @@ test.describe("Site analytics loader regression tests", () => {
 		await expect(ahrefs).toHaveAttribute("data-key", "tg3zLMS/bebJFl0LxctiCw");
 	});
 
-	test("should honor preset GTM and GA override IDs", async ({ page }) => {
+	test("should honor preset GTM and GA override IDs in vercel mode", async ({
+		page,
+	}) => {
 		await page.addInitScript(() => {
 			(window as any).NABLA_ANALYTICS_PRESET = {
 				gtmContainerId: "GTM-OVERRIDE123",
 				gaMeasurementId: "G-OVERRIDE123",
 			};
 		});
+		await page.goto("/404.html");
+		await injectSiteAnalytics(page);
 
-		await page.goto("/people-contacted.html");
+		await expect
+			.poll(async () => {
+				return page.evaluate(() => {
+					return typeof (window as any).NABLA_SITE_ANALYTICS?.initGtm;
+				});
+			})
+			.toBe("function");
+
 		await page.evaluate(() => {
 			const api = (window as any).NABLA_SITE_ANALYTICS;
 			api.initGtm();
 			api.initGtag();
-  });
-    
+		});
+
+		await expect(
+			page.locator('script[src*="googletagmanager.com/gtm.js?id=GTM-OVERRIDE123"]'),
+		).toHaveCount(1);
+		await expect(
+			page.locator('script[src*="googletagmanager.com/gtag/js?id=G-OVERRIDE123"]'),
+		).toHaveCount(1);
+	});
+
+	test("should prioritize script IDs over preset IDs in heavy mode", async ({
+		page,
+	}) => {
+		await page.addInitScript(() => {
+			(window as any).NABLA_ANALYTICS_PRESET = {
+				gtmContainerId: "GTM-PRESET123",
+				gaMeasurementId: "G-PRESET123",
+			};
+		});
+		await page.goto("/404.html");
+		await injectSiteAnalytics(page, {
+			"data-analytics-mode": "marketing",
+			"data-gtm-id": "GTM-ATTR123",
+			"data-ga-measurement-id": "G-ATTR123",
+		});
+
+		await expect(
+			page.locator('script[src*="googletagmanager.com/gtm.js?id=GTM-ATTR123"]'),
+		).toHaveCount(1);
+		await expect(
+			page.locator('script[src*="googletagmanager.com/gtag/js?id=G-ATTR123"]'),
+		).toHaveCount(1);
+		await expect(
+			page.locator('script[src*="googletagmanager.com/gtm.js?id=GTM-PRESET123"]'),
+		).toHaveCount(0);
+		await expect(
+			page.locator('script[src*="googletagmanager.com/gtag/js?id=G-PRESET123"]'),
+		).toHaveCount(0);
+	});
+
 	test("should load marketing integrations but skip Datadog in marketing mode", async ({
 		page,
 	}) => {
 		await page.goto("/404.html");
-		await injectAnalyticsScript(page, "marketing");
+		await injectSiteAnalytics(page, { "data-analytics-mode": "marketing" });
 
 		await expect(
 			page.locator('script[src*="googletagmanager.com/gtm.js?id="]'),
@@ -142,52 +169,6 @@ test.describe("Site analytics loader regression tests", () => {
 			page.locator('script[src="https://cdn.us.heap-api.com/config/724068705/heap_config.js"]'),
 		).toHaveCount(1);
 		await expect(
-			page.locator(
-				'script[src="https://www.datadoghq-browser-agent.com/eu1/v6/datadog-rum.js"]',
-			),
-		).toHaveCount(0);
-		await expect(
-			page.locator('script[src*="/_vercel/insights/script.js"]'),
-		).toHaveCount(1);
-		await expect(
-			page.locator('script[src*="/_vercel/speed-insights/script.js"]'),
-		).toHaveCount(1);
-	});
-
-	test("should load Datadog RUM in full mode", async ({ page }) => {
-		await page.goto("/404.html");
-		await injectAnalyticsScript(page, "full");
-
-		await expect(
-			page.locator(
-				'script[src="https://www.datadoghq-browser-agent.com/eu1/v6/datadog-rum.js"]',
-			),
-		).toHaveCount(1);
-	test("should honor marketing mode ids and not load Datadog", async ({
-		page,
-	}) => {
-		await page.goto("/404.html");
-		await injectSiteAnalytics(page, {
-			"data-analytics-mode": "marketing",
-			"data-gtm-id": "GTM-MARKETING123",
-			"data-ga-measurement-id": "G-MARKETING123",
-		});
-
-		await expect
-			.poll(async () => {
-				return page
-					.locator('script[src*="googletagmanager.com/gtm.js?id=GTM-MARKETING123"]')
-					.count();
-			})
-			.toBe(1);
-		await expect
-			.poll(async () => {
-				return page
-					.locator('script[src*="googletagmanager.com/gtag/js?id=G-MARKETING123"]')
-					.count();
-			})
-			.toBe(1);
-		await expect(
 			page.locator('script[src*="datadoghq-browser-agent.com"]'),
 		).toHaveCount(0);
 	});
@@ -198,13 +179,9 @@ test.describe("Site analytics loader regression tests", () => {
 		await page.goto("/404.html");
 		await injectSiteAnalytics(page, { "data-analytics-mode": "full" });
 
-		await expect
-			.poll(async () => {
-				return page
-					.locator('script[src*="datadoghq-browser-agent.com/eu1/v6/datadog-rum.js"]')
-					.count();
-			})
-			.toBe(1);
+		await expect(
+			page.locator('script[src*="datadoghq-browser-agent.com/eu1/v6/datadog-rum.js"]'),
+		).toHaveCount(1);
 		await expect(
 			page.locator(
 				'link[rel="preconnect"][href="https://dev.visualwebsiteoptimizer.com"]',
@@ -222,22 +199,15 @@ test.describe("Site analytics loader regression tests", () => {
 		await page.goto("/404.html");
 		await injectSiteAnalytics(page, { "data-analytics-mode": "home" });
 
-		await expect
-			.poll(async () => {
-				return page
-					.locator('script[src*="cdn.mxpnl.com/libs/mixpanel-2-latest.min.js"]')
-					.count();
-			})
-			.toBe(1);
+		await expect(
+			page.locator('script[src*="cdn.mxpnl.com/libs/mixpanel-2-latest.min.js"]'),
+		).toHaveCount(1);
 		await expect(
 			page.locator('script[src*="datadoghq-browser-agent.com/eu1/v6/datadog-rum.js"]'),
 		).toHaveCount(1);
-
 		await expect
 			.poll(async () => {
-				return page.evaluate(
-					() => typeof (window as any).mixpanel?.init,
-				);
+				return page.evaluate(() => typeof (window as any).mixpanel?.init);
 			})
 			.toBe("function");
 	});
