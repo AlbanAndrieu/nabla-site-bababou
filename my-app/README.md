@@ -40,7 +40,8 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+You can start editing localized content by modifying `app/[locale]/page.tsx` and
+`messages/en.json`. The page auto-updates as you edit files.
 
 ## Building
 
@@ -64,17 +65,71 @@ Run ESLint to check code quality:
 npm run lint
 ```
 
+## Internationalization
+
+This app uses route-based i18n with `next-intl` and two locales:
+
+- `en` (default locale, served without URL prefix)
+- `fr` (served with `/fr` prefix)
+
+Translations are stored in:
+
+- `messages/en.json`
+- `messages/fr.json`
+
+Routing and middleware are defined in:
+
+- `i18n/routing.ts`
+- `i18n/request.ts`
+- `proxy.ts`
+
+### Weblate integration
+
+Repository-level Weblate CLI defaults are configured in `../.weblate` for `wlc`.
+
+Available commands:
+
+```bash
+npm run weblate:pull
+npm run weblate:commit
+npm run weblate:push
+```
+
+For CI/local usage without a local config, use:
+
+- `WLC_URL` (for example `https://hosted.weblate.org/api/`)
+- `WLC_KEY` (API key)
+
+### LibreTranslate bootstrap for French
+
+You can prefill `messages/fr.json` from `messages/en.json` with LibreTranslate:
+
+```bash
+npm run i18n:bootstrap:fr
+```
+
+Optional environment variables:
+
+- `LIBRETRANSLATE_URL` (default: `https://libretranslate.com/translate`)
+- `LIBRETRANSLATE_API_KEY`
+
 ## Project Structure
 
 ```
 my-app/
 ├── app/                 # Next.js App Router directory
-│   ├── page.tsx        # Main page component
+│   ├── [locale]/       # Localized routes
+│   │   ├── layout.tsx
+│   │   └── page.tsx
 │   ├── layout.tsx      # Root layout
 │   └── globals.css     # Global styles
+├── i18n/               # next-intl routing/request helpers
+├── messages/           # Translation catalogs (en/fr)
+├── scripts/            # Translation automation scripts
 ├── public/             # Static assets
 ├── eslint.config.mjs   # ESLint configuration
 ├── next.config.ts      # Next.js configuration
+├── proxy.ts            # next-intl locale middleware
 ├── postcss.config.mjs  # PostCSS configuration
 ├── tsconfig.json       # TypeScript configuration
 └── package.json        # Dependencies and scripts

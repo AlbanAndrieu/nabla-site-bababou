@@ -1,0 +1,16 @@
+{
+	"Metadata": {
+		"title": "Missing child - Information and contact page",
+		"description": "Support page with verified context and contact channels to protect the child."
+	},
+	"Home": {
+		"eyebrow": "Internationalized with next-intl",
+		"languageSwitcherLabel": "Language",
+		"languageEnglish": "English",
+		"languageFrench": "French",
+		"title": "Every child deserves to be found and heard",
+		"description": "This page now runs with Next.js and next-intl. English is the default language and French is available as a dedicated translation.",
+		"ctaPrimary": "Contact the father",
+		"ctaSecondary": "Read child protection information"
+	}
+}
