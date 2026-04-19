@@ -147,7 +147,10 @@ test.describe("Google Translate widget regression coverage", () => {
 			).google.translate.TranslateElement.InlineLayout = { SIMPLE: "SIMPLE" };
 		});
 
-		await gotoTranslateHost(page);
+		await gotoTranslateHost(page, {
+			bodyHtml:
+				'<script src="/mock/translate.google.com/translate_a/element.js"></script><main id="main-content">content</main>',
+		});
 
 		const initStatus = await page.evaluate(() => {
 			const win = window as {
