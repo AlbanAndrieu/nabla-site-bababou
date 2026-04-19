@@ -299,4 +299,96 @@ test.describe("Site widgets integration", () => {
 		});
 		expect(topCallsAfterTopClick).toBeGreaterThan(topCallsBeforeTopClick);
 	});
+
+	test("initializes contact email link and footer copyright text", async ({
+		page,
+	}) => {
+		const year = new Date().getFullYear();
+		await gotoWidgetsHost(page, {
+			bodyHtml:
+				'<a name="top"></a><div id="contact-email">placeholder</div><p class="footer-copyright"></p><p class="footer-copyright" data-copyright-tail="All rights reserved"></p>',
+		});
+
+		const contactLink = page.locator("#contact-email a.contact-me-card__link");
+		await expect(contactLink).toHaveCount(1);
+		await expect(contactLink).toHaveText("alban.andrieu@bababou.com");
+		await expect(contactLink).toHaveAttribute(
+			"href",
+			"mailto:alban.andrieu@bababou.com",
+		);
+
+		const footerLines = page.locator(".footer-copyright");
+		await expect(footerLines.nth(0)).toHaveText(`© ${year} Bababou.`);
+		await expect(footerLines.nth(1)).toHaveText(
+			`© ${year} Bababou. All rights reserved`,
+		);
+	});
+
+	test("loads Axeptio with explicit overrides when enabled", async ({ page }) => {
+		await gotoWidgetsHost(page, {
+			scriptAttrs: {
+				"data-axeptio": true,
+				"data-axeptio-client-id": "client-123",
+				"data-axeptio-cookies-version": "version-xyz",
+			},
+		});
+
+		await expect
+			.poll(async () => {
+				return page.locator('script[src*="static.axept.io/sdk.js"]').count();
+			})
+			.toBe(1);
+
+		const axeptioSettings = await page.evaluate(() => {
+			return (
+				window as unknown as {
+					axeptioSettings?: { clientId: string; cookiesVersion: string };
+				}
+			).axeptioSettings;
+		});
+		expect(axeptioSettings).toEqual({
+			clientId: "client-123",
+			cookiesVersion: "version-xyz",
+		});
+	});
+
+	test("reuses existing Intercom function when app id is configured", async ({
+		page,
+	}) => {
+		await page.addInitScript(() => {
+			const calls: unknown[][] = [];
+			const stub = ((...args: unknown[]) => {
+				calls.push(args);
+			}) as ((...args: unknown[]) => void) & { __calls?: unknown[][] };
+			stub.__calls = calls;
+			(window as unknown as { Intercom?: typeof stub }).Intercom = stub;
+		});
+
+		await gotoWidgetsHost(page, {
+			scriptAttrs: { "data-intercom-app-id": "app123" },
+		});
+
+		const intercomState = await page.evaluate(() => {
+			const win = window as unknown as {
+				Intercom?: ((...args: unknown[]) => void) & { __calls?: unknown[][] };
+				intercomSettings?: { api_base?: string; app_id?: string };
+			};
+			return {
+				calls: win.Intercom?.__calls ?? [],
+				settings: win.intercomSettings ?? null,
+				widgetScriptCount: document.querySelectorAll(
+					'script[src*="widget.intercom.io/widget/"]',
+				).length,
+			};
+		});
+
+		expect(intercomState.settings).toEqual({
+			api_base: "https://api-iam.intercom.io",
+			app_id: "app123",
+		});
+		expect(intercomState.calls).toHaveLength(2);
+		expect(intercomState.calls[0]?.[0]).toBe("reattach_activator");
+		expect(intercomState.calls[1]?.[0]).toBe("update");
+		expect(intercomState.widgetScriptCount).toBe(0);
+	});
 });
