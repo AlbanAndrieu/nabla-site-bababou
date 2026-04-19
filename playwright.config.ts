@@ -35,7 +35,7 @@ export default defineConfig({
 		/* Base URL to use in actions like `await page.goto('/')`. Must match webServer url when using webServer. */
 		baseURL: process.env.BASE_URL || "http://localhost:8001",
 
-		/* Heavy pages + parallel tests against python http.server; keep below global `timeout` */
+		/* Heavy pages + parallel tests against Next.js dev server; keep below global `timeout` */
 		navigationTimeout: 30_000,
 
 		/* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
@@ -80,7 +80,7 @@ export default defineConfig({
 
 	/* Run your local dev server before starting the tests */
 	webServer: {
-		command: "npm run start-python",
+		command: "npm run dev:test",
 		url: "http://localhost:8001",
 		reuseExistingServer: !process.env.CI,
 		timeout: 120 * 1000,

@@ -118,8 +118,24 @@ test.describe("Site analytics loader regression tests", () => {
 			const api = (window as any).NABLA_SITE_ANALYTICS;
 			api.initGtm();
 			api.initGtag();
-  });
-    
+		});
+
+		await expect
+			.poll(async () => {
+				return page
+					.locator('script[src*="googletagmanager.com/gtm.js?id=GTM-OVERRIDE123"]')
+					.count();
+			})
+			.toBe(1);
+		await expect
+			.poll(async () => {
+				return page
+					.locator('script[src*="googletagmanager.com/gtag/js?id=G-OVERRIDE123"]')
+					.count();
+			})
+			.toBe(1);
+	});
+
 	test("should load marketing integrations but skip Datadog in marketing mode", async ({
 		page,
 	}) => {
@@ -163,6 +179,8 @@ test.describe("Site analytics loader regression tests", () => {
 				'script[src="https://www.datadoghq-browser-agent.com/eu1/v6/datadog-rum.js"]',
 			),
 		).toHaveCount(1);
+	});
+
 	test("should honor marketing mode ids and not load Datadog", async ({
 		page,
 	}) => {
