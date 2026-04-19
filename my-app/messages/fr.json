@@ -1,0 +1,16 @@
+{
+	"Metadata": {
+		"title": "Enfant disparu - page d'informations et de contact",
+		"description": "Page de soutien avec contexte vérifié et moyens de contact pour protéger l'enfant."
+	},
+	"Home": {
+		"eyebrow": "Internationalisé avec next-intl",
+		"languageSwitcherLabel": "Langue",
+		"languageEnglish": "Anglais",
+		"languageFrench": "Français",
+		"title": "Chaque enfant mérite d'être retrouvé et entendu",
+		"description": "Cette page fonctionne maintenant avec Next.js et next-intl. L'anglais est la langue par défaut et le français est disponible comme traduction dédiée.",
+		"ctaPrimary": "Contacter le père",
+		"ctaSecondary": "Lire les informations de protection de l'enfant"
+	}
+}
