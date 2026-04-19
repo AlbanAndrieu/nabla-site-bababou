@@ -7,8 +7,8 @@ test.describe("Homepage Tests", () => {
 		// Check page title
 		await expect(page).toHaveTitle(/Missing Child/);
 
-		// Check that the main content is visible
-		await expect(page.locator("main")).toBeVisible();
+		// Check that the primary main content landmark is visible
+		await expect(page.locator("#main-content")).toBeVisible();
 	});
 
 	test("should display the main heading", async ({ page }) => {
