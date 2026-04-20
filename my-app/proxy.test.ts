@@ -1,6 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 
-const createMiddlewareMock = vi.fn(() => "middleware-handler");
+const { createMiddlewareMock } = vi.hoisted(() => ({
+	createMiddlewareMock: vi.fn(() => "middleware-handler"),
+}));
 
 vi.mock("next-intl/middleware", () => ({
 	default: createMiddlewareMock,

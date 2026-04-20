@@ -1,7 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const getRequestConfigMock = vi.fn((factory) => factory);
-const hasLocaleMock = vi.fn();
+const { getRequestConfigMock, hasLocaleMock } = vi.hoisted(() => ({
+	getRequestConfigMock: vi.fn((factory) => factory),
+	hasLocaleMock: vi.fn(),
+}));
 
 vi.mock("next-intl/server", () => ({
 	getRequestConfig: getRequestConfigMock,
