@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
 
 type WidgetHostOptions = {
 	htmlLang?: string;
@@ -12,7 +12,11 @@ function escapeAttribute(value: string) {
 
 async function gotoWidgetsHost(
 	page: Page,
-	{ htmlLang = "en", bodyHtml = '<a name="top"></a>', scriptAttrs = {} }: WidgetHostOptions = {},
+	{
+		htmlLang = "en",
+		bodyHtml = '<a name="top"></a>',
+		scriptAttrs = {},
+	}: WidgetHostOptions = {},
 ) {
 	const extraAttrs = Object.entries(scriptAttrs)
 		.map(([name, value]) =>
@@ -43,7 +47,6 @@ async function gotoWidgetsHost(
 }
 
 test.describe("Site widgets integration", () => {
-
 	test("should inject print, back-to-top and coffee controls on homepage", async ({
 		page,
 	}) => {
@@ -71,8 +74,9 @@ test.describe("Site widgets integration", () => {
 
 		await page.evaluate(() => {
 			const calls: Array<[number, number]> = [];
-			(window as unknown as { __scrollCalls?: Array<[number, number]> }).__scrollCalls =
-				calls;
+			(
+				window as unknown as { __scrollCalls?: Array<[number, number]> }
+			).__scrollCalls = calls;
 			const original = window.scrollTo.bind(window);
 			window.scrollTo = ((x: number, y: number) => {
 				calls.push([x, y]);
@@ -108,7 +112,9 @@ test.describe("Site widgets integration", () => {
 		await expect(page.locator("#coffee-fab")).toHaveCount(0);
 	});
 
-	test("injects print and back-to-top controls on homepage", async ({ page }) => {
+	test("injects print and back-to-top controls on homepage", async ({
+		page,
+	}) => {
 		await page.goto("/");
 
 		const printBtn = page.locator("#nabla-print-pdf-btn");
@@ -140,17 +146,20 @@ test.describe("Site widgets integration", () => {
 		expect(printCalls).toBe(1);
 	});
 
-	test("minimal chrome page does not inject optional widgets", async ({ page }) => {
+	test("minimal chrome page does not inject optional widgets", async ({
+		page,
+	}) => {
 		await page.goto("/404.html");
 
 		await expect(page.locator("#theme-toggle-root")).toHaveCount(0);
 		await expect(page.locator("#nabla-print-pdf-btn")).toHaveCount(0);
 		await expect(page.locator("#nabla-back-to-top")).toHaveCount(0);
 		await expect(page.locator(".google-translate-widget")).toHaveCount(0);
-
 	});
 
-	test("should honor no-* widget flags over matching enable flags", async ({ page }) => {
+	test("should honor no-* widget flags over matching enable flags", async ({
+		page,
+	}) => {
 		await gotoWidgetsHost(page, {
 			scriptAttrs: {
 				"data-print-pdf": true,
@@ -186,7 +195,10 @@ test.describe("Site widgets integration", () => {
 
 		const backToTop = page.locator("#nabla-back-to-top");
 		await expect(backToTop).toHaveCount(1);
-		await expect(backToTop).toHaveAttribute("aria-label", "Retour en haut de page");
+		await expect(backToTop).toHaveAttribute(
+			"aria-label",
+			"Retour en haut de page",
+		);
 		await expect(backToTop).toHaveAttribute("title", "Retour en haut");
 	});
 
@@ -194,7 +206,8 @@ test.describe("Site widgets integration", () => {
 		page,
 	}) => {
 		await gotoWidgetsHost(page, {
-			bodyHtml: '<a name="top"></a><a id="legacy-back-to-top" class="back-to-top" href="#top">Legacy</a>',
+			bodyHtml:
+				'<a name="top"></a><a id="legacy-back-to-top" class="back-to-top" href="#top">Legacy</a>',
 			scriptAttrs: {
 				"data-print-pdf": true,
 				"data-print-pdf-label": "Save this page as PDF",
@@ -208,14 +221,20 @@ test.describe("Site widgets integration", () => {
 
 		const printButton = page.locator("#nabla-print-pdf-btn");
 		await expect(printButton).toBeVisible();
-		await expect(printButton).toHaveAttribute("aria-label", "Print this page to PDF");
+		await expect(printButton).toHaveAttribute(
+			"aria-label",
+			"Print this page to PDF",
+		);
 		await expect(printButton.locator(".print-button__label")).toHaveText(
 			"Save this page as PDF",
 		);
 
 		const backToTop = page.locator("#nabla-back-to-top");
 		await expect(backToTop).toHaveCount(1);
-		await expect(backToTop).toHaveAttribute("aria-label", "Jump to top quickly");
+		await expect(backToTop).toHaveAttribute(
+			"aria-label",
+			"Jump to top quickly",
+		);
 		await expect(backToTop).toHaveAttribute("title", "Back up");
 	});
 
@@ -252,10 +271,12 @@ test.describe("Site widgets integration", () => {
 		page,
 	}) => {
 		await page.addInitScript(() => {
-			(window as unknown as { __scrollCalls: Array<[number, number]> }).__scrollCalls =
-				[];
-			(window as unknown as { __scrollIntoViewCalls: number }).__scrollIntoViewCalls =
-				0;
+			(
+				window as unknown as { __scrollCalls: Array<[number, number]> }
+			).__scrollCalls = [];
+			(
+				window as unknown as { __scrollIntoViewCalls: number }
+			).__scrollIntoViewCalls = 0;
 
 			window.scrollTo = ((x: number, y: number) => {
 				(
@@ -263,7 +284,7 @@ test.describe("Site widgets integration", () => {
 				).__scrollCalls.push([x, y]);
 			}) as typeof window.scrollTo;
 
-			Element.prototype.scrollIntoView = function () {
+			Element.prototype.scrollIntoView = () => {
 				(
 					window as unknown as { __scrollIntoViewCalls: number }
 				).__scrollIntoViewCalls += 1;

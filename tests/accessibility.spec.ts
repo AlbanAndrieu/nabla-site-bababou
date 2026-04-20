@@ -44,7 +44,7 @@ test.describe("Accessibility Tests", () => {
 			const headingLevels = await Promise.all(
 				headings.map(async (h) => {
 					const tagName = await h.evaluate((el) => el.tagName.toLowerCase());
-					return Number.parseInt(tagName.replace("h", ""));
+					return Number.parseInt(tagName.replace("h", ""), 10);
 				}),
 			);
 

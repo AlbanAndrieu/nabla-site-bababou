@@ -5,8 +5,9 @@
  */
 
 body.site-content-page {
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-		"Helvetica Neue", Arial, sans-serif;
+	font-family:
+		-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+		Arial, sans-serif;
 	color: var(--text-dark);
 	line-height: 1.6;
 	overflow-x: hidden;

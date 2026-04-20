@@ -1,4 +1,4 @@
-import { expect, test, type APIRequestContext } from "@playwright/test";
+import { type APIRequestContext, expect, test } from "@playwright/test";
 
 type StandardPageCase = {
 	path: string;
@@ -98,15 +98,11 @@ test.describe("Page chrome structure regression coverage", () => {
 
 			await test.step(pageCase.label, async () => {
 				expect(html).toContain('a name="top"');
-				expect(html).toMatch(
-					/<script[^>]+theme-toggle\.js[^>]*><\/script>/i,
-				);
+				expect(html).toMatch(/<script[^>]+theme-toggle\.js[^>]*><\/script>/i);
 				expect(html).toMatch(
 					/<script[^>]+site-google-translate\.js[^>]*defer[^>]*><\/script>/i,
 				);
-				expect(html).toMatch(
-					/<script[^>]+site-analytics\.js[^>]*><\/script>/i,
-				);
+				expect(html).toMatch(/<script[^>]+site-analytics\.js[^>]*><\/script>/i);
 				expect(html).toMatch(
 					/<script[^>]+site-widgets\.js[^>]*data-print-pdf[^>]*><\/script>/i,
 				);
@@ -133,15 +129,11 @@ test.describe("Page chrome structure regression coverage", () => {
 		expect(html).not.toMatch(
 			/<script[^>]+site-widgets\.js[^>]*data-coffee-fab[^>]*><\/script>/i,
 		);
-		expect(html).not.toMatch(
-			/<script[^>]+theme-toggle\.js[^>]*><\/script>/i,
-		);
+		expect(html).not.toMatch(/<script[^>]+theme-toggle\.js[^>]*><\/script>/i);
 		expect(html).not.toMatch(
 			/<script[^>]+site-google-translate\.js[^>]*><\/script>/i,
 		);
-		expect(html).not.toMatch(
-			/<script[^>]+site-analytics\.js[^>]*><\/script>/i,
-		);
+		expect(html).not.toMatch(/<script[^>]+site-analytics\.js[^>]*><\/script>/i);
 	});
 
 	test("checkout and contact pages keep explicit chrome contracts", async ({

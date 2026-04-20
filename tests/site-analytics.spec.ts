@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
 
 async function injectSiteAnalytics(
 	page: Page,
@@ -119,7 +119,7 @@ test.describe("Site analytics loader regression tests", () => {
 			api.initGtm();
 			api.initGtag();
   });
-    
+
 	test("should load marketing integrations but skip Datadog in marketing mode", async ({
 		page,
 	}) => {

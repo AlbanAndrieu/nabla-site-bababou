@@ -22,10 +22,10 @@ d3.json("arf.json", (json) => {
 	root.x0 = height / 2;
 	root.y0 = 0;
 
-	function collapse(d) {
+	function _collapse(d) {
 		if (d.children) {
 			d._children = d.children;
-			d._children.forEach(collapse);
+			d._children.forEach(_collapse);
 			d.children = null;
 		}
 	}
