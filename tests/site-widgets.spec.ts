@@ -373,6 +373,52 @@ test.describe("Site widgets integration", () => {
 		});
 	});
 
+	test("bootstraps Intercom loader when no global Intercom exists", async ({
+		page,
+	}) => {
+		await gotoWidgetsHost(page, {
+			scriptAttrs: { "data-intercom-app-id": "app123" },
+		});
+
+		const intercomBeforeLoad = await page.evaluate(() => {
+			const win = window as unknown as {
+				Intercom?: unknown;
+				intercomSettings?: { api_base?: string; app_id?: string };
+			};
+			return {
+				hasIntercomFn: typeof win.Intercom === "function",
+				hasQueue: Array.isArray(
+					(
+						win.Intercom as
+							| (((...args: unknown[]) => void) & { q?: unknown[][] })
+							| undefined
+					)?.q,
+				),
+				settings: win.intercomSettings ?? null,
+				widgetScriptCount: document.querySelectorAll(
+					'script[src*="widget.intercom.io/widget/"]',
+				).length,
+			};
+		});
+
+		expect(intercomBeforeLoad.hasIntercomFn).toBeTruthy();
+		expect(intercomBeforeLoad.hasQueue).toBeTruthy();
+		expect(intercomBeforeLoad.settings).toEqual({
+			api_base: "https://api-iam.intercom.io",
+			app_id: "app123",
+		});
+		expect(intercomBeforeLoad.widgetScriptCount).toBe(0);
+
+		await page.waitForLoadState("load");
+		await expect
+			.poll(async () => {
+				return page
+					.locator('script[src*="widget.intercom.io/widget/app123"]')
+					.count();
+			})
+			.toBe(1);
+	});
+
 	test("reuses existing Intercom function when app id is configured", async ({
 		page,
 	}) => {
