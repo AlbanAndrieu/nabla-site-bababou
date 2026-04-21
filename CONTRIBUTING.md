@@ -88,7 +88,7 @@ We follow the [Conventional Commits](https://www.conventionalcommits.org/) speci
 ```
 nabla-site-bababou/
 ├── public/              # Static website files (main site)
-├── my-app/              # Next.js application
+├── app/                 # Next.js application
 ├── api/                 # API functions
 └── .github/             # GitHub workflows and configurations
 ```

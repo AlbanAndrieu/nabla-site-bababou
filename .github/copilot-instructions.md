@@ -5,7 +5,7 @@
 This is the nabla-site-bababou repository, a static website project for "bababou" created for Eléonore. The repository contains:
 
 - A static website in the `public/` directory
-- A Next.js application in the `my-app/` directory
+- A Next.js application in the `app/` directory
 - Cloudflare Workers configuration for deployment
 - Vercel deployment configuration
 
@@ -20,7 +20,7 @@ This is the nabla-site-bababou repository, a static website project for "bababou
 
 This main file provides general guidance for the entire repository. For area-specific instructions, refer to:
 
-- **[copilot-instructions-nextjs.md](copilot-instructions-nextjs.md)** - Next.js application (`my-app/`)
+- **[copilot-instructions-nextjs.md](copilot-instructions-nextjs.md)** - Next.js application (`app/`)
   - Next.js 16, React 19, TypeScript, Tailwind CSS
   - App Router conventions, component patterns, deployment
 
@@ -55,7 +55,7 @@ This main file provides general guidance for the entire repository. For area-spe
 
 ### Key Directories
 - `public/` - Static assets directory served by Cloudflare/Vercel (HTML, CSS, JS, JSON)
-- `my-app/` - Next.js application (separate package with its own package.json)
+- `app/` - Next.js application (separate package with its own package.json)
 - `api/` - API functions
 - `.github/workflows/` - CI/CD workflows (OpenCommit action)
 
@@ -76,8 +76,8 @@ pnpm install
 # OR
 npm install
 
-# For my-app Next.js project
-cd my-app && pnpm install
+# For app Next.js project
+cd app && pnpm install
 ```
 
 The postinstall script automatically:
@@ -102,9 +102,9 @@ npm run start-python
 python -m http.server 8001
 ```
 
-**Next.js App (my-app/):**
+**Next.js App (app/):**
 ```bash
-cd my-app
+cd app
 npm run dev
 # Opens at http://localhost:3000
 ```
@@ -115,8 +115,8 @@ npm run dev
 # Root project ESLint
 npm run lint
 
-# my-app ESLint
-cd my-app && npm run lint
+# app ESLint
+cd app && npm run lint
 ```
 
 The project has extensive pre-commit hooks configured in `.pre-commit-config.yaml` that run automatically on commit, including:
@@ -130,7 +130,7 @@ The project has extensive pre-commit hooks configured in `.pre-commit-config.yam
 
 **Next.js App:**
 ```bash
-cd my-app
+cd app
 npm run build
 ```
 
@@ -206,7 +206,7 @@ fix(scope): fix bug in component
 ### ESLint Ignores
 The following directories are ignored by ESLint (see `eslint.config.js`):
 - `node_modules/`, `.next/`, `out/`, `build/`, `dist/`, `.turbo/`
-- `my-app/node_modules/`, `my-app/.next/`, `.vercel/`, `.cache/`, `.pnpm/`
+- `app/node_modules/`, `app/.next/`, `.vercel/`, `.cache/`, `.pnpm/`
 - `public/**/*.min.js`, `public/d3.v3.min.js`, `public/index.js`, `public/arf.js`, `public/theme-toggle.js`
 - `api/**`, `index/**` (note: index directory may not currently exist but is included for future use)
 
@@ -226,7 +226,7 @@ Shell scripts in the repository may be excluded from some linting checks due to 
 Before submitting a PR:
 1. Run `pnpm install` to ensure dependencies are up to date
 2. Run `npm run lint` to check for linting errors
-3. For Next.js changes: `cd my-app && npm run build` to verify builds successfully
+3. For Next.js changes: `cd app && npm run build` to verify builds successfully
 4. Test locally with `npm run start` (Cloudflare) or `npm run start-python` (Python server)
 5. Verify pre-commit hooks pass (if installed)
 
@@ -242,7 +242,7 @@ Before submitting a PR:
 
 When exploring the codebase:
 - Static site files: Look in `public/` directory
-- Next.js app: Look in `my-app/` directory
+- Next.js app: Look in `app/` directory
 - API endpoints: Look in `api/` directory
 - Build configurations: Check root-level config files (package.json, vercel.json, wrangler.jsonc)
 - Linting configs: Check `eslint.config.js`, `.mega-linter.yml`, `.pre-commit-config.yaml`

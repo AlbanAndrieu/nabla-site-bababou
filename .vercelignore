@@ -4,7 +4,7 @@
 .python-version
 !api
 !public
-!my-app
+!app
 !vue-client
 !cv
 !html

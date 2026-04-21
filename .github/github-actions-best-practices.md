@@ -215,15 +215,15 @@ For repository operations, prefer `GITHUB_TOKEN` over personal access tokens:
     cache: 'npm'  # Automatically caches npm dependencies
 ```
 
-**Manual caching**:
+**Manual caching (example: Next.js under `app/`)**:
 ```yaml
-- name: Cache Hugo
+- name: Cache Next.js build
   uses: actions/cache@v4
   with:
-    path: ~/.cache/hugo
-    key: ${{ runner.os }}-hugo-${{ hashFiles('hugo.toml') }}
+    path: app/.next/cache
+    key: ${{ runner.os }}-next-${{ hashFiles('app/package-lock.json') }}
     restore-keys: |
-      ${{ runner.os }}-hugo-
+      ${{ runner.os }}-next-
 ```
 
 **Cache Best Practices**:
@@ -269,11 +269,18 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - run: hugo --minify
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - name: Build Next app
+        working-directory: app
+        run: npm ci && npm run build
       - uses: actions/upload-artifact@v4
         with:
-          name: site-build
-          path: public/
+          name: next-build
+          path: app/.next
           retention-days: 7
 
   deploy:
@@ -282,8 +289,8 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: site-build
-          path: public/
+          name: next-build
+          path: app/.next
       - run: ./deploy.sh
 ```
 
@@ -692,26 +699,22 @@ updates:
 ### 3. Workflow Naming and Documentation
 
 ```yaml
-name: Hugo Build and Deploy  # Clear, descriptive name
+name: Next.js verify  # Clear, descriptive name
 
 on:
-  push:
-    branches: [main, master, develop]
-  pull_request:
-    branches: [main, master, develop]
+  workflow_dispatch:
 
 # Document workflow purpose at the top
 # This workflow:
-# 1. Builds the Hugo site
-# 2. Runs tests
-# 3. Deploys to Vercel (main/master only)
+# 1. Installs dependencies under app/
+# 2. Runs next build
 
 jobs:
   build:
-    name: Build Hugo Site  # Clear job name
+    name: Build Next app
     runs-on: ubuntu-24.04
     steps:
-      - name: Checkout code  # Clear step name
+      - name: Checkout code
         uses: actions/checkout@v4
 ```
 
@@ -733,19 +736,17 @@ jobs:
 
 ## Examples and Templates
 
-### Example 1: Hugo Build and Deploy (Current Project)
+### Example 1: Next.js build verification (this repository)
 
-See `.github/workflows/hugo-deploy.yml` for a complete example following these best practices.
+See `.github/workflows/weblate-sync.yml` (workflow name: **Next.js app verify**) for a minimal `cd app && npm ci && npm run build` job.
 
 Key features:
+
 - ✅ Pinned action versions
 - ✅ Minimal permissions
-- ✅ Caching (npm)
-- ✅ Build-deploy separation
-- ✅ Conditional production deployment
-- ✅ Artifact management
+- ✅ npm cache via `actions/setup-node`
 
-### Example 2: Linting Workflow
+### Example 2: Linting workflow
 
 ```yaml
 name: Lint Code

@@ -1,30 +1,18 @@
 @import "tailwindcss";
 
-/* Accessibility-first CSS Variables with WCAG AA compliant contrast ratios */
+/* Accessibility-first CSS variables (Next-handled routes only; static HTML uses its own CSS) */
 :root {
-	/* Light mode - default */
 	--background: #ffffff;
 	--foreground: #171717;
-	/* Link colors with sufficient contrast */
 	--link-color: #0066cc;
 	--link-hover: #004499;
-	/* Focus outline color */
 	--focus-color: #0066cc;
 }
 
-@theme inline {
-	--color-background: var(--background);
-	--color-foreground: var(--foreground);
-	--font-sans: var(--font-geist-sans);
-	--font-mono: var(--font-geist-mono);
-}
-
-/* Dark mode with improved contrast ratios */
 @media (prefers-color-scheme: dark) {
 	:root {
 		--background: #0a0a0a;
 		--foreground: #ededed;
-		/* Enhanced link colors for better dark mode contrast */
 		--link-color: #6db7ff;
 		--link-hover: #a3d3ff;
 		--focus-color: #6db7ff;
@@ -37,7 +25,6 @@ body {
 	font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Smooth transitions for theme changes (respects reduced motion) */
 @media (prefers-reduced-motion: no-preference) {
 	body {
 		transition:
@@ -46,7 +33,6 @@ body {
 	}
 }
 
-/* Accessible links with proper contrast */
 a {
 	color: var(--link-color);
 	text-decoration: underline;
@@ -58,7 +44,6 @@ a:focus {
 	color: var(--link-hover);
 }
 
-/* Enhanced focus states for keyboard navigation */
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
@@ -68,7 +53,6 @@ select:focus-visible {
 	outline-offset: 2px;
 }
 
-/* Skip to main content link for screen readers */
 .skip-to-main {
 	position: absolute;
 	top: -40px;
@@ -85,7 +69,6 @@ select:focus-visible {
 	top: 0;
 }
 
-/* Reduced motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
 	*,
 	*::before,
@@ -97,7 +80,6 @@ select:focus-visible {
 	}
 }
 
-/* High contrast mode support */
 @media (prefers-contrast: high) {
 	a {
 		text-decoration: underline;

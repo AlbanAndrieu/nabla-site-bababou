@@ -137,7 +137,7 @@
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:53.3333px;line-height:1.25;font-family:'Latin Modern Mono Caps';-inkscape-font-specification:'Latin Modern Mono Caps, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;white-space:pre;shape-inside:url(#rect902);opacity:0.99600006;fill:#000000;fill-opacity:1;stroke:none;"
        id="text900"
        xml:space="preserve"
-       inkscape:export-filename="/var/www/nabla-site-apache/index/assets/nabla-3.png"><tspan
+       inkscape:export-filename="/var/www/nabla-site-bababou/index/assets/nabla-3.png"><tspan
          x="305.85742"
          y="166.97638"><tspan>p</tspan></tspan></text>
     <text
@@ -150,14 +150,14 @@
        x="405.75262"
        style="font-size:212.782px;line-height:1.25;font-family:'Latin Modern Mono Caps';-inkscape-font-specification:'Latin Modern Mono Caps, Normal';opacity:0.99600006;fill:url(#linearGradient926);fill-opacity:1;stroke-width:0.654897;"
        xml:space="preserve"
-       inkscape:export-filename="/var/www/nabla-site-apache/index/assets/nabla-3.png"><tspan
+       inkscape:export-filename="/var/www/nabla-site-bababou/index/assets/nabla-3.png"><tspan
          style="fill:url(#linearGradient926);fill-opacity:1;stroke-width:0.654897;"
          y="168.38681"
          x="405.75262"
          id="tspan919"
          sodipodi:role="line">-</tspan></text>
     <text
-       inkscape:export-filename="/var/www/nabla-site-apache/index/assets/nabla-3.png"
+       inkscape:export-filename="/var/www/nabla-site-bababou/index/assets/nabla-3.png"
        xml:space="preserve"
        id="text900-3"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:53.3333px;line-height:1.25;font-family:'Latin Modern Mono Caps';-inkscape-font-specification:'Latin Modern Mono Caps, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;white-space:pre;shape-inside:url(#rect902-4);display:inline;opacity:0.99600006;fill:#000000;fill-opacity:1;stroke:none;"
@@ -168,7 +168,7 @@
          x="305.85742"
          y="166.97638"><tspan>SOS-P</tspan></tspan></text>
     <g
-       inkscape:export-filename="/var/www/nabla-site-apache/index/assets/nabla-3.png"
+       inkscape:export-filename="/var/www/nabla-site-bababou/index/assets/nabla-3.png"
        transform="translate(459.17111,-26.194476)"
        style="display:inline;opacity:0.99600006;mix-blend-mode:normal;fill:#00aad4;fill-opacity:1"
        id="g44-8"
@@ -182,7 +182,7 @@
          style="display:inline;fill:#00aad4;fill-opacity:1" />
     </g>
     <text
-       inkscape:export-filename="/var/www/nabla-site-apache/index/assets/nabla-3.png"
+       inkscape:export-filename="/var/www/nabla-site-bababou/index/assets/nabla-3.png"
        xml:space="preserve"
        style="font-size:212.782px;line-height:1.25;font-family:'Latin Modern Mono Caps';-inkscape-font-specification:'Latin Modern Mono Caps, Normal';display:inline;opacity:0.99600006;fill:url(#linearGradient926-0);fill-opacity:1;stroke-width:0.654897;"
        x="965.35187"
@@ -204,7 +204,7 @@
        id="g44-8-7"
        style="display:inline;opacity:0.99600006;mix-blend-mode:normal;fill:#00aad4;fill-opacity:1"
        transform="translate(98.15758,-26.375672)"
-       inkscape:export-filename="/var/www/nabla-site-apache/index/assets/nabla-3.png">
+       inkscape:export-filename="/var/www/nabla-site-bababou/index/assets/nabla-3.png">
       <path
          style="display:inline;fill:#00aad4;fill-opacity:1"
          d="M 195.21375,297.25 C 192.87931,295.21533 105.503,134.11439 103.28891,127.76268 99.784564,117.70952 103.96223,107.191 113.3094,102.53311 L 118.39269,100 h 66.80365 c 36.74201,0 66.79427,0.3375 66.7828,0.75 -0.0115,0.4125 -4.42784,8.85 -9.81414,18.75 l -9.79328,18 -39.39766,0.2618 c -21.66871,0.14399 -39.71783,0.59399 -40.10915,1 -0.9908,1.02799 45.54091,86.68334 47.2486,86.975 0.89873,0.1535 13.2946,-21.92147 35.23633,-62.75 L 269.19968,100 h 5.53414 c 16.18887,0 34.7107,-19.428434 22.25627,25.05228 -40.06844,72.29068 -68.18971,129.48403 -91.25218,171.69772 -1.77256,3.29646 -7.66978,2.98786 -10.52416,0.5 z"

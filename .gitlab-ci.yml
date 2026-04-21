@@ -693,10 +693,10 @@ netlify:
     - netlify --version
     - netlify status
     - echo "Deploying to site $NETLIFY_SITE_ID"
-    - netlify deploy -dir my-app/public --json | tee deploy-result.json
+    - netlify deploy -dir public --json | tee deploy-result.json
     - REVIEW_URL=$(jq -r '.deploy_url' deploy-result.json)
     - echo ${REVIEW_URL}
-    - curl ${REVIEW_URL} | grep 'World'
+    - curl ${REVIEW_URL} | grep -i 'bababou'
     - echo "REVIEW_URL=$REVIEW_URL" > deploy.env
   artifacts:
     reports:
@@ -719,8 +719,8 @@ netlify:
     - netlify --version
     - netlify status
     - echo "Deploying to site $NETLIFY_SITE_ID"
-    - netlify deploy --alias staging -dir my-app/public
-    - curl $CI_ENVIRONMENT_URL | grep 'World'
+    - netlify deploy --alias staging -dir public
+    - curl $CI_ENVIRONMENT_URL | grep -i 'bababou'
   rules:
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
   allow_failure: true
@@ -731,7 +731,7 @@ netlify:
   when: manual
   environment:
     name: production
-    url: https://my-app.bababou.workers.dev/'
+    url: https://bababou.workers.dev/'
   before_script:
     - npm install -g netlify-cli
     - apk add curl
@@ -739,7 +739,7 @@ netlify:
     - netlify --version
     - netlify status
     - echo "Deploying to site $NETLIFY_SITE_ID"
-    - netlify deploy --prod -dir my-app/public
-    - curl 'https://my-app.bababou.workers.dev/' | grep 'World'
+    - netlify deploy --prod -dir public
+    - curl 'https://bababou.workers.dev/' | grep -i 'bababou'
   rules:
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH

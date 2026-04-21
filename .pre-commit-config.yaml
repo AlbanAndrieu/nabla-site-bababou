@@ -146,7 +146,7 @@ repos:
           (?x)^(
             .pnp.cjs|
             package-lock.json|
-            my-app/package-lock.json|
+            app/package-lock.json|
             npm-shrinkwrap.json|
             poetry.lock|
             Pipfile.lock|
@@ -318,7 +318,7 @@ repos:
         exclude: >
           (?x)^(
               trivy-sbom.json|
-              my-app/public/.*|
+              app/public/.*|
               public/assets/fontawesome-free-7.1.0-web/.*|
               public/assets/fontawesome/.*|
               public/assets/.*|
@@ -376,7 +376,7 @@ repos:
         exclude: >
           (?x)^(
             trivy-sbom.json|
-            my-app/public/.*|
+            app/public/.*|
             pnpm-lock.yaml|
             public/reports/.*|
             api/honeypot/.*|

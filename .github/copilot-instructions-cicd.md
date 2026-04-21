@@ -180,7 +180,7 @@ Enable caching to speed up workflows:
     path: |
       ~/.npm
       node_modules
-      my-app/node_modules
+      app/node_modules
     key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
     restore-keys: |
       ${{ runner.os }}-node-
@@ -327,7 +327,7 @@ jobs:
 
       - name: Build Next.js app
         run: |
-          cd my-app
+          cd app
           npm run build
 
       - name: Deploy to Vercel

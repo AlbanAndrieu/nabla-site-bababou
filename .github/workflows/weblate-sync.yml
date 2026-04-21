@@ -1,15 +1,15 @@
-name: Weblate Sync
+name: Next.js app verify
 
 on:
   workflow_dispatch:
 
 jobs:
-  pull-translations:
-    name: Pull translations from Weblate
+  build:
+    name: Build Next.js app
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
-      contents: write
+      contents: read
 
     steps:
       - name: Checkout code
@@ -20,27 +20,8 @@ jobs:
         with:
           node-version: "24"
           cache: "npm"
-          cache-dependency-path: my-app/package-lock.json
+          cache-dependency-path: app/package-lock.json
 
-      - name: Install my-app dependencies
-        working-directory: my-app
-        run: npm ci
-
-      - name: Pull translations using Weblate CLI
-        env:
-          WLC_URL: ${{ secrets.WEBLATE_URL }}
-          WLC_KEY: ${{ secrets.WEBLATE_API_KEY }}
-        working-directory: my-app
-        run: npm run weblate:pull
-
-      - name: Commit translation updates
-        run: |
-          if git diff --quiet; then
-            echo "No translation updates to commit."
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add my-app/messages
-          git commit -m "chore(i18n): sync translations from weblate"
-          git push
+      - name: Install and build
+        working-directory: app
+        run: npm ci && npm run build

@@ -32,7 +32,9 @@
 		"test:ui": "playwright test --ui",
 		"test:headed": "playwright test --headed",
 		"test:debug": "playwright test --debug",
-		"test:report": "playwright show-report"
+		"test:report": "playwright show-report",
+		"oco": "node scripts/run-opencommit.mjs",
+		"opencommit": "node scripts/run-opencommit.mjs"
 	},
 	"dependencies": {
 		"@astrojs/vercel": "^10.0.2",
