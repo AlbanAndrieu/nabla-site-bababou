@@ -69,7 +69,7 @@ cd nabla-site-bababou
 npm install
 
 # For the Next.js application
-cd my-app && npm install
+cd app && npm install
 ```
 
 The postinstall script automatically copies necessary assets to the correct locations.
@@ -100,11 +100,11 @@ The site will be available at:
 - Wrangler: `http://localhost:8787`
 - Python: `http://localhost:8001`
 
-**Next.js Application (my-app):**
+**Next.js application (`app/`):**
 ```bash
-cd my-app
+cd app
 npm run dev
-# Opens at http://localhost:3000
+# Opens at http://localhost:3000 — serves the same static tree as `public/` (symlinked into the Next app).
 ```
 
 ### Linting
@@ -116,7 +116,7 @@ Always run linting before committing code:
 npm run lint
 
 # Next.js app
-cd my-app && npm run lint
+cd app && npm run lint
 ```
 
 ### Testing
@@ -152,13 +152,13 @@ Tests run automatically on pull requests via GitHub Actions.
 
 ### Building
 
-**Next.js Application:**
+**Next.js application:**
 ```bash
-cd my-app
+cd app
 npm run build
 ```
 
-**Note:** The root project serves static files directly from `public/` and does not require a separate build step.
+**Note:** The canonical static site lives in the repository `public/` folder. The Next app uses `app/public` → `../public` so Vercel can run Next while URLs match the static layout. The root project can still serve files directly from `public/` (for example Wrangler) without a Next build.
 
 ## Deployment
 
@@ -194,9 +194,8 @@ nabla-site-bababou/
 │   ├── theme-toggle.js  # Dark mode toggle
 │   ├── site-google-translate.js   # Google Translate widget loader
 │   └── policy/          # Legal documents
-├── my-app/              # Next.js application
-│   ├── app/             # Next.js app directory
-│   ├── public/          # Next.js static assets
+├── app/                 # Next.js application (public → ../public)
+│   ├── app/             # Next.js App Router
 │   └── package.json     # Next.js dependencies
 ├── api/                 # API functions
 ├── tests/               # Playwright end-to-end tests

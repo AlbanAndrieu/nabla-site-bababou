@@ -14,8 +14,8 @@ NPROC := $(shell echo "$(NUMPROC)/2"|bc)
 NPROC := 1
 
 # Image
-APP_NAME     = nabla-site-apache
-OCI_REGISTRY = github.com/AlbanAndrieu/nabla-site-apache
+APP_NAME     = nabla-site-bababou
+OCI_REGISTRY = github.com/AlbanAndrieu/nabla-site-bababou
 AWS_REGION   = eu-west-3
 OCI_IMAGE := $(OCI_REGISTRY)/$(APP_NAME)
 OCI_TAG := $${OCI_TAG:-"1.2.3"}

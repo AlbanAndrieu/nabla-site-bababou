@@ -1,6 +1,8 @@
 {
 	"$schema": "https://openapi.vercel.sh/vercel.json",
-	"outputDirectory": "public",
+	"version": 2,
+	"devCommand": "npm run dev",
+	"regions": ["fra1"],
 	"github": {
 		"silent": true,
 		"autoJobCancelation": true

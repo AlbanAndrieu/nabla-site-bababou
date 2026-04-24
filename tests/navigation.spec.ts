@@ -110,9 +110,9 @@ test.describe("Navigation and Links Tests", () => {
 	test("should handle link hover states", async ({ page }) => {
 		await page.goto("/");
 
-		// Homepage has one in-main CTA (may use role="button"); keep it in main to avoid fixed chrome
-		const inMain = page.locator("main a[href]");
-		await expect(inMain).toHaveCount(1);
+		// Scope to primary main: index.html has two <main> blocks (#main-content, #second-content)
+		const inMain = page.locator("#main-content a[href]");
+		await expect(inMain.first()).toBeVisible();
 		const link = inMain.first();
 		await expect(link).toBeVisible();
 		await link.scrollIntoViewIfNeeded();

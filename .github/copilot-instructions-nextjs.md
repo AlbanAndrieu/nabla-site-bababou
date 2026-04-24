@@ -1,10 +1,10 @@
-# Copilot Instructions for Next.js Application (my-app/)
+# Copilot Instructions for Next.js Application (app/)
 
-This file provides specific guidance for working with the Next.js application located in the `my-app/` directory.
+This file provides specific guidance for working with the Next.js application located in the `app/` directory.
 
 ## Overview
 
-The `my-app/` directory contains a Next.js 16.0.10 application built with React 19.2.0 and TypeScript. It uses Tailwind CSS for styling and includes Vercel Analytics and Speed Insights.
+The `app/` directory contains a Next.js 16.0.10 application built with React 19.2.0 and TypeScript. It uses Tailwind CSS for styling and includes Vercel Analytics and Speed Insights.
 
 ## Technology Stack
 
@@ -18,7 +18,7 @@ The `my-app/` directory contains a Next.js 16.0.10 application built with React 
 ## Project Structure
 
 ```
-my-app/
+app/
 ├── app/                    # Next.js App Router directory
 │   ├── layout.tsx          # Root layout component
 │   ├── page.tsx            # Homepage
@@ -53,7 +53,7 @@ nvm use
 **ALWAYS install dependencies before development:**
 
 ```bash
-cd my-app
+cd app
 npm install
 # OR
 pnpm install
@@ -62,7 +62,7 @@ pnpm install
 ### Development Server
 
 ```bash
-cd my-app
+cd app
 npm run dev
 ```
 
@@ -73,7 +73,7 @@ The application will be available at `http://localhost:3000`.
 ### Building
 
 ```bash
-cd my-app
+cd app
 npm run build
 ```
 
@@ -82,7 +82,7 @@ This creates an optimized production build in `.next/` directory.
 ### Production Server
 
 ```bash
-cd my-app
+cd app
 npm run start
 ```
 
@@ -93,7 +93,7 @@ Starts the production server (requires build first).
 **ALWAYS run linting before committing:**
 
 ```bash
-cd my-app
+cd app
 npm run lint
 ```
 
@@ -266,13 +266,13 @@ Both are already configured in the root layout. No additional setup needed.
 
 1. **Lint the code:**
    ```bash
-   cd my-app
+   cd app
    npm run lint
    ```
 
 2. **Build verification:**
    ```bash
-   cd my-app
+   cd app
    npm run build
    ```
 
@@ -397,7 +397,7 @@ export async function POST(request: Request) {
 ### Common Issues
 
 1. **"Cannot find module" errors**
-   - Run `npm install` in `my-app/` directory
+   - Run `npm install` in `app/` directory
    - Check TypeScript paths in `tsconfig.json`
 
 2. **Build errors**

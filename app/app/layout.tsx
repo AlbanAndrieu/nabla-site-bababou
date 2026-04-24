@@ -1,20 +1,11 @@
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
-const geistSans = Geist({
-	variable: "--font-geist-sans",
-	subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-	variable: "--font-geist-mono",
-	subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
 	title: "Bababou",
-	description: "Internationalized site built with Next.js and next-intl.",
+	description: "Bababou site — static content served via Next.js.",
 };
 
 export default function RootLayout({
@@ -24,13 +15,13 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en" suppressHydrationWarning>
-			<body
-				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-			>
+			<body className="antialiased">
 				<a className="skip-to-main" href="#main-content">
 					Skip to main content
 				</a>
 				{children}
+				<Analytics />
+				<SpeedInsights />
 			</body>
 		</html>
 	);

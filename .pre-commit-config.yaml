@@ -146,7 +146,7 @@ repos:
           (?x)^(
             .pnp.cjs|
             package-lock.json|
-            my-app/package-lock.json|
+            app/package-lock.json|
             npm-shrinkwrap.json|
             poetry.lock|
             Pipfile.lock|
@@ -165,7 +165,7 @@ repos:
         name: "🔒 security · Detect private keys"
 
 -   repo: https://github.com/pre-commit/pre-commit.git
-    rev: v4.5.1
+    rev: v4.6.0
     hooks:
     -   id: validate_manifest
         name: "🤖 manifest · Validate manifest scripts"
@@ -314,11 +314,11 @@ repos:
     hooks:
     -   id: biome-check
         name: "🟨 javascript · Lint, format, and safe fixes with Biome"
-        additional_dependencies: ["@biomejs/biome@1.9.4"]
+        additional_dependencies: ["@biomejs/biome@2.4.12"]
         exclude: >
           (?x)^(
               trivy-sbom.json|
-              my-app/public/.*|
+              app/public/.*|
               public/assets/fontawesome-free-7.1.0-web/.*|
               public/assets/fontawesome/.*|
               public/assets/.*|
@@ -376,7 +376,7 @@ repos:
         exclude: >
           (?x)^(
             trivy-sbom.json|
-            my-app/public/.*|
+            app/public/.*|
             pnpm-lock.yaml|
             public/reports/.*|
             api/honeypot/.*|
