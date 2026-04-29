@@ -3,8 +3,12 @@
 # vercel do not like .python-version
 .python-version
 !api
-!public
+!lib
 !app
+!components
+!messages
+!i18n
+!public
 !vue-client
 !cv
 !html
