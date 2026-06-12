@@ -1,4 +1,3 @@
-  
 # RÉSUMÉ EXÉCUTIF INTERNATIONAL
 
 ## Protection d'Eléonore Céleste Andrieu et rétablissement de la relation père-enfant
