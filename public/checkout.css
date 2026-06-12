@@ -164,6 +164,45 @@ main.checkout-page.payment-options .payment-options-intro h1 {
 	gap: 1rem;
 }
 
+/* Stripe Payment Link / Buy Button embed (e.g. checkout-tjm.html) */
+.checkout-page .checkout-stripe-buy {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	padding: 0.25rem 0 0;
+	box-sizing: border-box;
+}
+
+.checkout-page .checkout-stripe-buy stripe-buy-button {
+	display: block;
+	width: 100%;
+	max-width: min(100%, 400px);
+	margin-inline: auto;
+}
+
+/* QR (assets/stripe/tjm-stripe.png) on checkout pages */
+.checkout-page .checkout-qr {
+	margin: 1.25rem 0 0;
+	text-align: center;
+}
+
+.checkout-page .checkout-qr img {
+	display: block;
+	max-width: min(100%, 280px);
+	width: 100%;
+	height: auto;
+	margin-inline: auto;
+	border-radius: 8px;
+}
+
+.checkout-page .checkout-qr .checkout-qr-caption {
+	margin: 0.5rem 0 0;
+	font-size: 0.8125rem;
+	color: var(--text-secondary);
+	line-height: 1.4;
+}
 .checkout-page .description {
 	display: flex;
 	flex-direction: column;
