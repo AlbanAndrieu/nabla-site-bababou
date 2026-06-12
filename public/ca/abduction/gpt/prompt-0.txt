@@ -1,0 +1,337 @@
+
+# PROMPT N°0 — RECONSTITUTION FACTUELLE COMPLÈTE
+
+## DOSSIER ALBAN ANDRIEU / ELÉONORE
+
+### France – Norvège – Allemagne (2013–2026)
+
+## OBJECTIF
+
+Analyser l'intégralité des documents du dossier afin de produire une reconstitution factuelle exhaustive, neutre et vérifiable.
+
+Cette étape précède toute rédaction :
+
+* de plainte pénale ;
+* de requête civile ;
+* de demande d'exequatur ;
+* de recours devant les juridictions allemandes ;
+* de recours devant la Cour européenne des droits de l'homme.
+
+Le document produit doit distinguer :
+
+* les faits établis ;
+* les faits allégués ;
+* les faits contestés ;
+* les faits non documentés.
+
+Aucune conclusion juridique définitive ne doit être tirée à ce stade.
+
+---
+
+# QUESTION CENTRALE
+
+Reconstituer précisément :
+
+* où l'enfant a vécu ;
+* avec qui ;
+* sous quelle autorité parentale ;
+* quelles juridictions ont statué ;
+* quelles juridictions ont refusé de statuer ;
+* quelles décisions ont été exécutées ;
+* quelles décisions n'ont jamais été exécutées ;
+* quels recours ont été introduits ;
+* quels recours semblent avoir été perdus, ignorés ou déclarés tardifs.
+
+---
+
+# PARTIE I — CHRONOLOGIE DES RÉSIDENCES
+
+Établir pour chaque période :
+
+* adresse connue ;
+* pays ;
+* durée ;
+* preuve documentaire.
+
+## Vérifier notamment
+
+### France
+
+Décembre 2013
+
+* installation familiale en France.
+
+### Juin 2014
+
+* départ de la mère du domicile familial.
+
+Déterminer :
+
+* l'enfant résidait-elle encore en France ?
+* jusqu'à quelle date ?
+
+### Juin 2014 – Septembre 2015
+
+Identifier :
+
+* hébergement chez amie ;
+* hébergement dans le Périgord ;
+* autres résidences.
+
+### Norvège
+
+Identifier :
+
+* date réelle d'arrivée.
+
+Vérifier :
+
+* inscription en crèche.
+
+Document clé :
+
+"Nabla Mail - Eleonore at the creche - october.pdf"
+
+Point à établir :
+
+Le document indiquant :
+
+"My daughter shall start going in this kindergarten 01/10/2015"
+
+constitue-t-il la première preuve objective d'installation durable en Norvège ?
+
+### Allemagne
+
+Identifier :
+
+* date exacte du transfert depuis la Norvège ;
+* première adresse allemande connue ;
+* première scolarisation connue.
+
+---
+
+# PARTIE II — AUTORITÉ PARENTALE
+
+Reconstituer année par année.
+
+## France
+
+Identifier :
+
+* textes applicables ;
+* actes de reconnaissance ;
+* exercice effectif.
+
+## Norvège
+
+Identifier :
+
+* position des juridictions ;
+* position des services sociaux ;
+* position des écoles.
+
+## Allemagne
+
+Identifier :
+
+* position des juridictions ;
+* position du Jugendamt ;
+* position de l'autorité centrale allemande.
+
+---
+
+# QUESTIONS À TRANCHER
+
+Existe-t-il :
+
+* une décision accordant explicitement l'autorité parentale exclusive à la mère ?
+* une décision retirant explicitement l'autorité parentale au père ?
+
+Si oui :
+
+* juridiction ;
+* date ;
+* motivation ;
+* notification.
+
+Si non :
+
+* identifier les administrations qui ont néanmoins agi comme si l'autorité parentale était exclusive.
+
+---
+
+# PARTIE III — PROCÉDURE DE RETOUR (HAGUE 1980)
+
+Analyser :
+
+"Kjennelse i sivil sak - judgement-return-english-2016.pdf"
+
+Identifier :
+
+* demandes formulées ;
+* arguments retenus ;
+* arguments rejetés ;
+* définition retenue de la résidence habituelle ;
+* analyse de l'autorité parentale.
+
+---
+
+# PARTIE IV — APPEL CONTRE LE REFUS DE RETOUR
+
+Analyser :
+
+* ABDUCTION_CASE_APPEALING_REFUSAL-2598_001.pdf
+* Nabla Mail - Regarding the abduction case (Vår ref_ DL-1155).pdf
+* Nabla Mail - Decision in French translation (Vår ref_ CK-1161).pdf
+
+Déterminer :
+
+* si le père a demandé un appel ;
+* si l'avocat a accepté ;
+* si l'appel a été introduit ;
+* si l'appel a été rejeté ;
+* si l'appel a été déclaré tardif.
+
+Établir une chronologie précise.
+
+---
+
+# PARTIE V — JUGEMENT NORVÉGIEN 2017
+
+Analyser :
+
+* judgement-visit-french-2017.pdf
+* judgement-visit-german-2017.pdf
+
+Identifier précisément :
+
+* nombre de visites prévues ;
+* fréquence ;
+* Skype ;
+* FaceTime ;
+* modalités d'exécution.
+
+---
+
+# QUESTION CLÉ
+
+Pour chaque mesure ordonnée :
+
+Indiquer :
+
+* exécutée ;
+* partiellement exécutée ;
+* jamais exécutée.
+
+---
+
+# PARTIE VI — NON-REPRÉSENTATION D'ENFANT
+
+Reconstituer :
+
+2017 → 2026
+
+Identifier :
+
+* toutes les plaintes ;
+* tous les signalements ;
+* tous les refus.
+
+Documents :
+
+* plainte-procureur-tgi-nanterre-24-04-2021-#1-all.pdf
+* plainte-procureur-doyen-23-09-2023-#1.pdf
+* relances associées.
+
+---
+
+# PARTIE VII — PROTECTION DE L'ENFANT
+
+Identifier :
+
+* violences signalées ;
+* violences constatées ;
+* signalements médicaux ;
+* signalements sociaux ;
+* expertises psychologiques ;
+* expertises psychiatriques.
+
+---
+
+# QUESTION CENTRALE
+
+Quels éléments permettent aujourd'hui de vérifier :
+
+* l'état physique de l'enfant ;
+* l'état psychologique de l'enfant ;
+* les mesures de protection mises en place ?
+
+---
+
+# PARTIE VIII — REFUS DE COMMUNICATION
+
+Créer un tableau :
+
+| Date | Autorité | Document demandé | Réponse |
+| ---- | -------- | ---------------- | ------- |
+
+Inclure :
+
+* écoles ;
+* juridictions ;
+* Jugendamt ;
+* services sociaux ;
+* autorités centrales.
+
+---
+
+# PARTIE IX — ALLEMAGNE
+
+Analyser :
+
+* abduction-francfort-08-03-2022.jpg
+* frankfurt-police-complaint-07-03-2022-#2.pdf
+* familiengericht-2023-10-10 fr.pdf
+* reponse-familiengericht-oberlandesgerichts-francfort-03-11-2024-#5.pdf
+* appeal-familiengericht-oberlandesgerichts-francfort-2026-06-08-#5.pdf
+
+Identifier :
+
+* décisions rendues ;
+* décisions non communiquées ;
+* expertises demandées ;
+* expertises obtenues ;
+* motifs invoqués pour suspendre les visites.
+
+---
+
+# PARTIE X — ACCÈS AU JUGE
+
+Ne jamais présumer une faute.
+
+Établir uniquement :
+
+* délais ;
+* absences de réponse ;
+* appels ;
+* notifications ;
+* refus de communication.
+
+---
+
+# LIVRABLE FINAL
+
+Produire :
+
+1. Chronologie consolidée.
+2. Cartographie des résidences.
+3. Cartographie de l'autorité parentale.
+4. Cartographie des recours.
+5. Cartographie des visites.
+6. Cartographie des plaintes pénales.
+7. Cartographie des refus de communication.
+8. Liste des pièces manquantes.
+9. Liste des incohérences documentaires.
+10. Liste des points nécessitant une décision judiciaire explicite.
+
+Le document final doit permettre de reconstruire intégralement le dossier sans connaissance préalable du litige.
