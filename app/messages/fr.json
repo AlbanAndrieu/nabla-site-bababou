@@ -1,0 +1,14 @@
+{
+	"site": {
+		"skipToMainContent": "Aller au contenu principal",
+		"legalNotices": "Mentions légales",
+		"backToTop": "Retour en haut",
+		"backToTopAria": "Retour en haut de la page",
+		"localeSwitcherLabel": "Langue",
+		"languageName": {
+			"en": "Anglais",
+			"fr": "Français"
+		},
+		"switchLanguage": "Changer de langue"
+	}
+}
