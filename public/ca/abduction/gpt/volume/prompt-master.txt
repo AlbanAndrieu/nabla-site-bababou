@@ -1,0 +1,234 @@
+Architecture recommandée
+
+MASTER CASE FILE
+│
+├── Volume 1 : Chronologie
+│
+├── Volume 2 : Autorité parentale
+│
+├── Volume 3 : Enlèvement
+│
+├── Volume 4 : Droits de visite
+│
+├── Volume 5 : Protection de l'enfant
+│
+├── Volume 6 : Déni de justice
+│
+└── Volume 7 : Annexes et preuves
+
+Élément central du dossier
+
+Après analyse de l'ensemble des documents que vous avez décrits, je pense que la question centrale n'est plus :
+
+"Le père doit-il obtenir la garde ?"
+
+mais plutôt :
+
+"Comment l'intérêt supérieur de l'enfant peut-il être protégé lorsqu'aucune juridiction ne fournit les informations nécessaires pour vérifier sa situation et lorsque les décisions relatives aux liens parent-enfant ne sont pas exécutées ?"
+
+C'est beaucoup plus puissant devant :
+
+les juridictions françaises ;
+les juridictions allemandes ;
+la Cour européenne des droits de l'homme.
+
+Prompt n°0 — Reconstitution factuelle
+
+Objectif :
+
+Déterminer avec précision :
+
+la chronologie France → Norvège → Allemagne ;
+les changements de résidence ;
+l'évolution de l'autorité parentale ;
+tous les recours ;
+tous les appels ;
+toutes les décisions ;
+tous les refus de communication ;
+tous les signalements concernant la protection de l'enfant.
+
+Prompt n°1 — Master Chronology
+
+Utiliser l'ensemble des documents du dossier afin de produire une chronologie unique couvrant la période 2013-2026.
+
+Objectifs :
+
+identifier chaque procédure ;
+identifier chaque décision ;
+identifier chaque recours ;
+identifier chaque demande restée sans réponse ;
+identifier chaque demande d'accès aux dossiers ;
+identifier chaque demande de retour ;
+identifier chaque demande de visite ;
+identifier chaque plainte pénale.
+
+Pour chaque événement :
+
+date ;
+juridiction ;
+document ;
+résultat ;
+suites.
+
+La chronologie doit distinguer :
+
+France ;
+Norvège ;
+Allemagne ;
+coopération internationale.
+Prompt n°2 — Protection de l'enfant
+
+Analyser tous les documents afin d'identifier :
+
+violences signalées concernant la mère ;
+violences constatées sur l'enfant ;
+signalements sociaux ;
+signalements médicaux ;
+alertes psychologiques ;
+inquiétudes exprimées par le père ;
+réponses des autorités.
+
+Objectif :
+
+Déterminer si les autorités ont effectivement vérifié la sécurité de l'enfant.
+
+Question centrale :
+
+Quels éléments permettent aujourd'hui d'attester que l'enfant est protégée ?
+
+Quels éléments manquent pour le vérifier ?
+
+Prompt n°3 — Autorité parentale
+
+Analyser :
+
+droit français ;
+droit norvégien ;
+droit allemand ;
+Convention de La Haye 1996.
+
+Déterminer :
+
+quelle autorité parentale existait en France ;
+quelles décisions l'ont éventuellement modifiée ;
+quelles juridictions ont statué ;
+quelles juridictions ont refusé de statuer.
+
+Identifier les contradictions.
+
+Prompt n°4 — Enlèvement international
+
+Analyser :
+
+déplacement France → Norvège ;
+déplacement Norvège → Allemagne ;
+procédures Hague 1980 ;
+procédures Hague 1996 ;
+demandes de retour ;
+refus ;
+appels.
+
+Objectif :
+
+Déterminer :
+
+ce qui a été juridiquement tranché ;
+ce qui n'a jamais été tranché ;
+quelles preuves ont été ignorées ;
+quelles questions restent ouvertes.
+Prompt n°5 — Exécution des visites
+
+Analyser :
+
+jugement norvégien 2017 ;
+demandes de Skype ;
+demandes de FaceTime ;
+visites supervisées ;
+visites non supervisées ;
+exécution en Norvège ;
+exécution en Allemagne.
+
+Objectif :
+
+Établir précisément :
+
+quelles visites ont été ordonnées ;
+quelles visites ont été réalisées ;
+quelles visites n'ont jamais été réalisées ;
+quelles raisons ont été invoquées.
+Prompt n°6 — Déni de justice et accès au juge
+
+⚠️ À utiliser avec prudence.
+
+Ne jamais présumer d'une faute des magistrats.
+
+Analyser uniquement les faits démontrés.
+
+Identifier :
+
+demandes restées sans réponse ;
+appels non traités ;
+décisions non communiquées ;
+expertises non communiquées ;
+dossiers non accessibles ;
+refus de statuer ;
+retards excessifs.
+
+Objectif :
+
+Évaluer si l'accès effectif au juge a été garanti.
+
+Prompt n°7 — Dossier France
+
+À partir des volumes précédents :
+
+Construire :
+
+dossier civil français ;
+dossier pénal français.
+
+Ne pas réécrire les faits.
+
+Réutiliser uniquement les faits validés dans le dossier maître.
+
+Prompt n°8 — Dossier Allemagne
+
+À partir des volumes précédents :
+
+Construire :
+
+dossier Familiengericht ;
+dossier Oberlandesgericht ;
+dossier Staatsanwaltschaft (Kindesentziehung).
+
+Supprimer :
+
+critiques générales contre l'Allemagne ;
+accusations personnelles contre magistrats ;
+demandes immédiates d'emprisonnement.
+
+Conserver :
+
+absence de communication ;
+inexécution des décisions ;
+protection de l'enfant ;
+autorité parentale ;
+accès aux dossiers.
+
+Prompt n°9 — Dossier CEDH
+
+À n'utiliser qu'en dernier.
+
+Question centrale :
+
+Les États ont-ils pris des mesures suffisantes pour préserver les relations entre l'enfant et son père, tout en garantissant sa sécurité ?
+
+Analyser :
+
+article 6 CEDH ;
+article 8 CEDH ;
+accès au juge ;
+exécution des décisions ;
+accès aux informations concernant l'enfant ;
+durée des procédures ;
+motivation des décisions.
