@@ -56,7 +56,8 @@ const nextConfig = {
 	allowedDevOrigins: ["172.17.0.57"],
 	/** Parent `package-lock.json` exists; pin app root so Turbopack does not infer the wrong workspace. */
 	turbopack: {
-		root: __dirname,
+		// We set the root to the directory where next.config.ts is located (__dirname)
+		root: path.join(__dirname),
 	},
 	async redirects() {
 		return marketingHtmlRedirects;
