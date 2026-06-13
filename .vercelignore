@@ -1,5 +1,5 @@
 # Ignore everything (folders and files) on root only
-# /*
+/*
 .vc-config.json
 node_modules
 .next
@@ -10,8 +10,8 @@ ts
 .DS_Store
 tsconfig.js
 server.cjs
-/vendor
-/.idea
+#vendor
+.idea
 # vercel do not like .python-version
 .python-version
 #!api
