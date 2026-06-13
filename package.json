@@ -29,7 +29,7 @@
 		"dev:v": "vercel",
 		"dev:cf": "wrangler dev",
 		"deploy": "wrangler deploy",
-		"build": "vercel build",
+		"build:v": "vercel build",
 		"start": "vercel deploy",
 		"build:app": "npm run build --prefix app",
 		"start:app": "npm run start --prefix app",
