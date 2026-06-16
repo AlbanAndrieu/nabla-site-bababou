@@ -56,6 +56,11 @@
 		);
 	}
 
+	/** Next.js App Router shell (see app/[locale]/layout.tsx); use next-intl instead of Google Translate. */
+	function isNextIntlAppShell() {
+		return document.documentElement.getAttribute("data-nabla-app") === "next-intl";
+	}
+
 	// ----- Theme (aligned with theme-toggle.js) -----
 	(() => {
 		const THEMES = {
@@ -329,6 +334,7 @@
 	function initGoogleTranslate() {
 		if (minimalChrome()) return;
 		if (widgetsScriptTag()?.hasAttribute("data-no-google-translate")) return;
+		if (isNextIntlAppShell()) return;
 		if (preset.noGoogleTranslate) return;
 		if (window.__NABLA_GOOGLE_TRANSLATE_STARTED) return;
 		window.__NABLA_GOOGLE_TRANSLATE_STARTED = true;
@@ -438,6 +444,7 @@
 
 		window.googleTranslateElementInit = () => {
 			if (minimalChrome()) return;
+			if (isNextIntlAppShell()) return;
 			if (window.__NABLA_GOOGLE_TRANSLATE_READY) return;
 			if (
 				!window.google ||
@@ -801,29 +808,6 @@
 		return { aria: "Back to top of page", title: "Back to top" };
 	}
 
-	function scrollToTopOfPage() {
-		/* Instant + window + html + body + scrollingElement: fragment #top / overflow-x on
-		   html leave scrollingElement.scrollTo(smooth) ineffective in common WebKit/Chromium cases. */
-		try {
-			window.scrollTo(0, 0);
-		} catch (_e) {
-			/* ignore */
-		}
-		if (document.documentElement) {
-			document.documentElement.scrollTop = 0;
-			document.documentElement.scrollLeft = 0;
-		}
-		if (document.body) {
-			document.body.scrollTop = 0;
-			document.body.scrollLeft = 0;
-		}
-		var se = document.scrollingElement;
-		if (se) {
-			se.scrollTop = 0;
-			se.scrollLeft = 0;
-		}
-	}
-
 	function removeLegacyBackToTopFabs() {
 		document
 			.querySelectorAll("a.back-to-top, button.back-to-top")
@@ -840,18 +824,24 @@
 
 		var labels = backToTopLabels();
 		var link = document.createElement("a");
-		link.href = "#top";
+		link.setAttribute("href", "#top");
 		link.id = BACK_TO_TOP_BTN_ID;
 		link.className = "back-to-top";
 		link.setAttribute("aria-label", labels.aria);
 		link.title = labels.title;
 		link.innerHTML = '<i class="fa-solid fa-arrow-up" aria-hidden="true"></i>';
-		link.addEventListener("click", (e) => {
+
+		link.addEventListener('click', (e) => {
 			e.preventDefault();
-			scrollToTopOfPage();
+			window.scrollTo({ top: 0, behavior: 'smooth' });
+			document.body.scrollTo({ top: 0, behavior: 'smooth' });
+			// Also target documentElement for cross-browser compatibility
+			document.documentElement.scrollTo({ top: 0, behavior: 'smooth' });
 		});
+
 		document.body.appendChild(link);
 	}
+
 	function initAxeptio() {
 		if (minimalChrome()) return;
 		var wTag = widgetsScriptTag();

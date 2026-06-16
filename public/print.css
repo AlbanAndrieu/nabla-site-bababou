@@ -20,6 +20,7 @@
 	}
 
 	/* Body and basic elements */
+	/* Reset backgrounds and colors for print */
 	html,
 	body {
 		width: 100%;
@@ -41,6 +42,7 @@
 	body > footer,
 	.skip-to-main,
 	.page-nav,
+	.hero-section::before,
 	.hero-section,
 	.contact-section,
 	.google-translate-widget,
@@ -51,9 +53,10 @@
 	.cta-buttons,
 	.social-links,
 	.theme-toggle,
+	.locale-switcher,
 	button,
 	.print-menu-container,
-	.back-link,
+	a.back-link,
 	#navbarHeader,
 	.collapse,
 	[role="navigation"],
@@ -67,16 +70,6 @@
 	script,
 	noscript {
 		display: none;
-	}
-
-	/* Show important content */
-	main,
-	article,
-	section,
-	.content,
-	.main-content {
-		display: block;
-		width: 100%;
 	}
 
 	/* Typography */
@@ -239,13 +232,6 @@
 		width: 100%;
 		float: none;
 		display: block;
-	}
-
-	/* CV Specific Styles */
-	.list-group-item {
-		border: 1px solid #ddd;
-		padding: 8pt;
-		margin-bottom: 2pt;
 	}
 
 	.badge {

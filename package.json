@@ -29,8 +29,10 @@
 		"dev:v": "vercel",
 		"dev:cf": "wrangler dev",
 		"deploy": "wrangler deploy",
-		"build": "npm run build --prefix app",
-		"start": "npm run start --prefix app",
+		"build:v": "vercel build",
+		"start": "vercel deploy",
+		"build:app": "npm run build --prefix app",
+		"start:app": "npm run start --prefix app",
 		"start:test": "npm run start --prefix app -- -p 8001",
 		"start:wrangler": "wrangler dev",
 		"start-python": "python3 -m http.server 8001 --directory public",
@@ -43,15 +45,15 @@
 		"opencommit": "node scripts/run-opencommit.mjs"
 	},
 	"dependencies": {
-		"@vercel/analytics": "^1.5.0",
-		"@vercel/speed-insights": "^1.2.0",
 		"@astrojs/vercel": "^10.0.2",
 		"@datadog/browser-rum": "^6.24.1",
+		"@vercel/analytics": "^1.5.0",
+		"@vercel/speed-insights": "^1.2.0",
 		"crypto": "^1.0.1",
 		"lodash-es": "^4.18.1",
 		"next": "^16.2.3",
 		"next-intl": "^4.9.1",
-		"vercel": "^50.41.0",
+		"vercel": "^54.13.0",
 		"webdriver-manager": "^12.1.9"
 	},
 	"devDependencies": {
