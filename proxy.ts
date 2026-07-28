@@ -12,6 +12,10 @@ export default function proxy(request: NextRequest) {
 		return new NextResponse(null, { status: 204 });
 	}
 
+	if (request.nextUrl.pathname === "/") {
+		return NextResponse.rewrite(new URL("/index.html", request.url));
+	}
+
 	if (defaultLocaleRewriteTargets.has(request.nextUrl.pathname)) {
 		return NextResponse.next();
 	}
