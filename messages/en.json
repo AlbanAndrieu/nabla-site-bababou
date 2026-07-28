@@ -1,0 +1,52 @@
+{
+	"404": {
+		"title": "404",
+		"heading": "We can't find that page",
+		"message": "We're fairly sure that page used to be here, but seems to have gone missing. We do apologise on its behalf.",
+		"backHome": "Back to home"
+	},
+	"site": {
+		"skipToMainContent": "Skip to main content",
+		"backHome": "Back to home",
+		"backToTop": "Back to top",
+		"localeSwitcherLabel": "Language",
+		"languageName": { "en": "English", "fr": "French" },
+		"switchLanguage": "Switch language"
+	},
+	"contactPage": {
+		"meta": {
+			"title": "Contact Alban Andrieu — DevSecOps Cloud Architect",
+			"description": "Contact Alban Andrieu for cloud architecture, DevSecOps, AI infrastructure and security consulting."
+		},
+		"role": "DevSecOps Cloud Architect | Independent Consultant",
+		"intro": "I am open to challenges around AI integration, MLOps, cloud platforms and security.",
+		"hero": {
+			"contactCta": "Get in touch"
+		},
+		"information": {
+			"title": "Contact information",
+			"subtitle": "Choose the most convenient way to reach me."
+		},
+		"methods": {
+			"email": {
+				"title": "Email",
+				"value": "job@albandrieu.com"
+			},
+			"linkedin": {
+				"title": "LinkedIn",
+				"value": "Connect with me"
+			},
+			"github": {
+				"title": "GitHub",
+				"value": "View my work"
+			}
+		},
+		"social": {
+			"title": "Connect on social media",
+			"channels": {
+				"linkedin": "Professional network",
+				"github": "Code repositories"
+			}
+		}
+	}
+}

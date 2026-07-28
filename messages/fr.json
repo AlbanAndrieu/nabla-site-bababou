@@ -1,0 +1,52 @@
+{
+	"404": {
+		"title": "404",
+		"heading": "Page introuvable",
+		"message": "Nous sommes presque certains que cette page existait, mais elle semble avoir disparu. Veuillez nous excuser pour ce désagrément.",
+		"backHome": "Retour à l'accueil"
+	},
+	"site": {
+		"skipToMainContent": "Aller au contenu principal",
+		"backHome": "Retour à l’accueil",
+		"backToTop": "Retour en haut",
+		"localeSwitcherLabel": "Langue",
+		"languageName": { "en": "Anglais", "fr": "Français" },
+		"switchLanguage": "Changer de langue"
+	},
+	"contactPage": {
+		"meta": {
+			"title": "Contacter Alban Andrieu — Architecte Cloud DevSecOps",
+			"description": "Contactez Alban Andrieu pour des missions DevSecOps, cloud, IA, sécurité."
+		},
+		"role": "Architecte Cloud DevSecOps | Consultant indépendant",
+		"intro": "Disponible pour des problématiques d’intégration IA, de MLOps, de plateformes cloud et de sécurité.",
+		"hero": {
+			"contactCta": "Me contacter"
+		},
+		"information": {
+			"title": "Coordonnées",
+			"subtitle": "Choisissez le moyen de contact qui vous convient."
+		},
+		"methods": {
+			"email": {
+				"title": "E-mail",
+				"value": "job@albandrieu.com"
+			},
+			"linkedin": {
+				"title": "LinkedIn",
+				"value": "Contact LinkedIn"
+			},
+			"github": {
+				"title": "GitHub",
+				"value": "Voir mon GitHub"
+			}
+		},
+		"social": {
+			"title": "Réseaux sociaux",
+			"channels": {
+				"linkedin": "Réseau professionnel",
+				"github": "Code open source"
+			}
+		}
+	}
+}
