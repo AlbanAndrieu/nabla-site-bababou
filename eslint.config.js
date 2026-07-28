@@ -4,6 +4,7 @@ export default [
 	{
 		ignores: [
 			"node_modules/**",
+			".wrangler/**",
 			".venv/**",
 			".next/**",
 			"out/**",
@@ -20,6 +21,7 @@ export default [
 			".cache/**",
 			".pnpm/**",
 			"public/**/*.min.js",
+			"public/**",
 			"public/d3.v3.min.js",
 			"public/index.js",
 			"public/arf.js",

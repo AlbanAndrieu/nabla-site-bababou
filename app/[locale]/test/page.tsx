@@ -13,14 +13,18 @@ const translations = {
 	},
 };
 
-export default function TestPage({ params }: { params: { locale: string } }) {
-	const locale = params?.locale;
-	const t = translations[locale] || translations.fr;
+export default async function TestPage({
+	params,
+}: {
+	params: Promise<{ locale: string }>;
+}) {
+	const { locale } = await params;
 
-	// Optionally, if locale isn't supported, show a 404
-	if (!translations[locale]) {
+	if (!(locale in translations)) {
 		notFound();
 	}
+
+	const t = translations[locale as keyof typeof translations];
 
 	return (
 		<main
@@ -36,7 +40,7 @@ export default function TestPage({ params }: { params: { locale: string } }) {
 			<p>{t.message}</p>
 			<hr />
 			<p style={{ fontStyle: "italic", color: "#666" }}>{t.info}</p>
-			<button
+			<div
 				style={{
 					marginTop: "2rem",
 					padding: "0.5rem 1.25rem",
@@ -46,10 +50,9 @@ export default function TestPage({ params }: { params: { locale: string } }) {
 					color: "#fff",
 					border: "none",
 				}}
-				onClick={() => alert("Test réussi (" + t.title + ")")}
 			>
-				Test Alert
-			</button>
+				Test réussi ({t.title})
+			</div>
 		</main>
 	);
 }

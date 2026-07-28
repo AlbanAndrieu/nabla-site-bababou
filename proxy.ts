@@ -1,6 +1,24 @@
-// Empty proxy handler for compatibility with Next.js 16+ minimal setup
+import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
+import createMiddleware from "next-intl/middleware";
 
-export default function proxy() {
-	return NextResponse.next();
+import { routing } from "@/i18n/routing";
+
+const intlMiddleware = createMiddleware(routing);
+const defaultLocaleRewriteTargets = new Set([`/${routing.defaultLocale}`]);
+
+export default function proxy(request: NextRequest) {
+	if (request.method === "OPTIONS") {
+		return new NextResponse(null, { status: 204 });
+	}
+
+	if (defaultLocaleRewriteTargets.has(request.nextUrl.pathname)) {
+		return NextResponse.next();
+	}
+
+	return intlMiddleware(request);
 }
+
+export const config = {
+	matcher: ["/((?!api|_next|_vercel|.*\\..*).*)"],
+};
