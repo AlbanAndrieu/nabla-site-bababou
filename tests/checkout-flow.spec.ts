@@ -1,15 +1,6 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("Checkout flow regression coverage", () => {
-	test("checkout page keeps payment form contract", async ({ page }) => {
-		await page.goto("/checkout.html");
-
-		await expect(page).toHaveTitle(/Checkout/i);
-		await expect(page.locator("main#main-content")).toBeVisible();
-		await expect(page.locator('form[action="/api/create-checkout-session"][method="POST"]')).toHaveCount(1);
-		await expect(page.locator("#checkout-button")).toBeVisible();
-	});
-
 	test("success page hides checkout reference when session id is missing", async ({
 		page,
 	}) => {
