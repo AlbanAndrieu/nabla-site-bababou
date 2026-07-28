@@ -2,9 +2,9 @@ name: Playwright Tests
 
 on:
   push:
-    branches: [main, master, dev, development]
+    branches: [main, master, develop]
   pull_request:
-    branches: [main, master, dev, development]
+    branches: [main, master, develop]
   workflow_dispatch:
 
 jobs:
@@ -35,7 +35,7 @@ jobs:
         run: npm ci && npm ci --prefix app
 
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+        run: npx playwright install --with-deps chromium firefox webkit
 
       - name: Build Next.js app
         run: npm run build

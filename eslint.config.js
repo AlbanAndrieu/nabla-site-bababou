@@ -4,10 +4,14 @@ export default [
 	{
 		ignores: [
 			"node_modules/**",
+			".venv/**",
 			".next/**",
 			"out/**",
 			"build/**",
 			"dist/**",
+			"coverage/**",
+			"playwright-report/**",
+			"test-results/**",
 			"*.tsbuildinfo",
 			".turbo/**",
 			"app/node_modules/**",
@@ -22,15 +26,20 @@ export default [
 			"public/theme-toggle.js",
 			"api/**",
 			"index/**",
+			"vendor/**",
 		],
 	},
 	js.configs.recommended,
 	{
+		files: ["scripts/**/*.{cjs,mjs}", "*.config.{cjs,js,mjs}", "server.cjs"],
 		languageOptions: {
 			globals: {
-				window: "readonly",
-				document: "readonly",
-				google: "readonly",
+				__dirname: "readonly",
+				console: "readonly",
+				fetch: "readonly",
+				module: "readonly",
+				process: "readonly",
+				require: "readonly",
 			},
 		},
 	},

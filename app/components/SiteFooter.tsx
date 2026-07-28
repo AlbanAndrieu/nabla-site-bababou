@@ -60,9 +60,12 @@ export default function SiteFooter() {
 					onClick={() => {
 						if (
 							typeof window !== "undefined" &&
-							(window as any).openAxeptioCookies
+							typeof (window as { openAxeptioCookies?: () => void })
+								.openAxeptioCookies === "function"
 						) {
-							(window as any).openAxeptioCookies();
+							(
+								window as { openAxeptioCookies?: () => void }
+							).openAxeptioCookies?.();
 						}
 					}}
 					className="btn btn-link text-muted p-0 border-0 align-baseline text-decoration-none"

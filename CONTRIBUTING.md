@@ -11,7 +11,7 @@ Please be respectful and constructive in all interactions.
 1. **Fork the repository** on GitHub
 2. **Clone your fork** locally:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/nabla-site-bababou.git
+   git clone https://github.com/AlbanAndrieu/nabla-site-bababou.git
    cd nabla-site-bababou
    ```
 3. **Install dependencies**:

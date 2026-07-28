@@ -1,76 +1,21 @@
 {
 	"name": "nabla-site-bababou",
 	"version": "1.0.0",
-	"type": "module",
 	"private": true,
-	"description": "Bababou site - For Eléonore",
-	"main": "index.html",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/AlbanAndrieu/nabla-site-bababou.git"
-	},
-	"author": "Alban Andrieu (aandrieu)",
-	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/AlbanAndrieu/nabla-site-bababou/issues"
-	},
-	"homepage": "https://github.com/AlbanAndrieu/nabla-site-bababou#readme",
-	"engines": {
-		"pnpm": "^10.22.0",
-		"node": ">=24.11.0",
-		"npm": ">=11.6.2"
-	},
 	"scripts": {
-		"postinstall": "copyfiles -f ./node_modules/d3/d3.min.js ./index/dist/scripts/d3 && copyfiles -f ./app/scripts/arf.js ./dist/scripts/ && copyfiles -f ./app/resources/*.json ./dist/resources && copyfiles -f ./index.html ./dist/ && copyfiles -f ./wireframe.css ./dist/",
-		"lint": "eslint --format gitlab .",
-		"audit": "npm audit --audit-level=moderate",
-		"dev": "npm run dev --prefix app",
-		"dev:test": "npm run dev --prefix app -- -p 8001",
-		"dev:v": "vercel",
-		"dev:cf": "wrangler dev",
-		"deploy": "wrangler deploy",
-		"build:n": "npm run build --prefix app",
-		"start:n": "npm run start --prefix app",
-		"build:v": "vercel build",
-		"start:v": "vercel deploy",
-		"build:app": "npm run build --prefix app",
-		"start:app": "npm run start --prefix app",
-		"start:test": "npm run start --prefix app -- -p 8001",
-		"start:wrangler": "wrangler dev",
-		"start-python": "python3 -m http.server 8001 --directory public",
-		"test": "playwright test",
-		"test:ui": "playwright test --ui",
-		"test:headed": "playwright test --headed",
-		"test:debug": "playwright test --debug",
-		"test:report": "playwright show-report",
-		"oco": "node scripts/run-opencommit.mjs",
-		"opencommit": "node scripts/run-opencommit.mjs"
+		"dev": "next dev",
+		"build": "next build",
+		"start": "next start",
+		"lint": "next lint"
 	},
 	"dependencies": {
-		"@astrojs/vercel": "^10.0.2",
-		"@datadog/browser-rum": "^6.24.1",
-		"@vercel/analytics": "^1.5.0",
-		"@vercel/speed-insights": "^1.2.0",
-		"crypto": "^1.0.1",
-		"lodash-es": "^4.18.1",
-		"next": "^16.2.3",
-		"next-intl": "^4.9.1",
-		"vercel": "^54.13.0",
-		"webdriver-manager": "^12.1.9"
+		"next": "latest",
+		"react": "latest",
+		"react-dom": "latest"
 	},
 	"devDependencies": {
-		"@commitlint/config-conventional": "^20.3.1",
-		"@eslint/js": "^9.39.1",
-		"@playwright/test": "^1.58.0",
-		"@types/react": "^19.2.14",
-		"copyfiles": "2.4.1",
-		"d3": "7.9.0",
-		"eslint": "^9.39.1",
-		"eslint-formatter-gitlab": "^6.0.1",
-		"opencommit": "^3.2.10",
-		"playwright": "^1.58.0",
-		"typescript": "^5.9.3",
-		"typescript-eslint": "^8.47.0",
-		"wrangler": "^4.59.1"
+		"@types/node": "26.1.2",
+		"@types/react": "19.2.17",
+		"typescript": "latest"
 	}
 }

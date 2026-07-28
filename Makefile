@@ -100,7 +100,7 @@ fmt: ## Run formating
 .PHONY: build-docker
 build-docker:  ## Build container with docker
 	@echo "=> Building image..."
-	docker build --secret id=CI_JOB_TOKEN,env=CI_PIP_GITLABJUSMUNDI_TOKEN --secret id=read-npm-token,env=CI_JOB_TOKEN --build-arg ENV=dev -t $(IMAGE) .
+	docker build --secret id=CI_JOB_TOKEN,env=CI_PIP_NABLA_TOKEN --secret id=read-npm-token,env=CI_JOB_TOKEN --build-arg ENV=dev -t $(IMAGE) .
 
 ## —— Pdf 🤖 ————————————————————————————————————————————————————————————————
 .PHONY: build-pdf
@@ -147,8 +147,8 @@ ruff: ## Linter ruff
 .PHONY: debug
 debug: ## Enter container
 	@echo "=> Debuging image..."
-	@echo "docker run -it -u 0 --entrypoint /bin/bash --env CI_PIP_GITLABJUSMUNDI_TOKEN=$${CI_PIP_GITLABJUSMUNDI_TOKEN} --env CI_JOB_TOKEN=$${CI_JOB_TOKEN} $(IMAGE)"
-	docker run -it --entrypoint /bin/bash --env CI_PIP_GITLABJUSMUNDI_TOKEN=$${CI_PIP_GITLABJUSMUNDI_TOKEN} --env CI_JOB_TOKEN=$${CI_JOB_TOKEN} $(IMAGE)
+	@echo "docker run -it -u 0 --entrypoint /bin/bash --env CI_PIP_NABLA_TOKEN=$${CI_PIP_NABLA_TOKEN} --env CI_JOB_TOKEN=$${CI_JOB_TOKEN} $(IMAGE)"
+	docker run -it --entrypoint /bin/bash --env CI_PIP_NABLA_TOKEN=$${CI_PIP_NABLA_TOKEN} --env CI_JOB_TOKEN=$${CI_JOB_TOKEN} $(IMAGE)
 
 ## —— Project 🐝🐳 ———————————————————————————————————————————————————————————————
 .PHONY: start
