@@ -772,8 +772,9 @@ img {
 /* Skip to main content link */
 .skip-to-main {
 	position: absolute;
-	top: -40px;
+	top: 0;
 	left: 0;
+	transform: translateY(-100%);
 	/*background: var(--button-bg);*/
 	color: var(--button-text);
 	padding: 8px;
@@ -782,7 +783,7 @@ img {
 }
 
 .skip-to-main:focus {
-	top: 0;
+	transform: translateY(0);
 }
 
 /* Focus visible for keyboard navigation */
