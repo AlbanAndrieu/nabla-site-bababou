@@ -211,7 +211,7 @@ For repository operations, prefer `GITHUB_TOKEN` over personal access tokens:
 - name: Setup Node.js
   uses: actions/setup-node@v4
   with:
-    node-version: '20'
+    node-version: '24'
     cache: 'npm'  # Automatically caches npm dependencies
 ```
 
@@ -472,7 +472,7 @@ runs:
   steps:
     - uses: actions/setup-node@v4
       with:
-        node-version: '20'
+        node-version: '24'
         cache: 'npm'
     - run: npm ci
       shell: bash
@@ -767,7 +767,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'npm'
 
       - run: npm ci
@@ -805,7 +805,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'npm'
 
       - run: npm ci
