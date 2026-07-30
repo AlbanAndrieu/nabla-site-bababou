@@ -1,9 +1,11 @@
 # Structure minimale Next.js avec localisation
 
 [![CI](https://github.com/AlbanAndrieu/nabla-site-bababou/actions/workflows/ci.yml/badge.svg)](https://github.com/AlbanAndrieu/nabla-site-bababou/actions/workflows/ci.yml)
-[![Coverage Status](https://codecov.io/gh/AlbanAndrieu/nabla-site-bababou/branch/master/graph/badge.svg)](https://codecov.io/gh/AlbanAndrieu/nabla-site-bababou)
+[![Coverage Status](https://codecov.io/gh/AlbanAndrieu/nabla-site-bababou/branch/main/graph/badge.svg)](https://codecov.io/gh/AlbanAndrieu/nabla-site-bababou)
 [![Vercel](https://vercel.com/api/v1/badges/)](https://vercel.com/albandrieu-nabla-site-bababou)
 [![Known Vulnerabilities](https://snyk.io/test/github/AlbanAndrieu/nabla-site-bababou/badge.svg)](https://snyk.io/test/github/AlbanAndrieu/nabla-site-bababou)
+[![Changelog](https://img.shields.io/badge/changelog-md-blue)](CHANGELOG.md)
+
 
 Ce dépôt utilise Next.js, avec les pages localisées sous app/[locale]/.
 
