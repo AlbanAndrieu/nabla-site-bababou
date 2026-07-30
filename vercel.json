@@ -1,10 +1,10 @@
 {
-	"$schema": "https://openapi.vercel.sh/vercel.json",
-	"version": 2,
-	"regions": ["fra1"],
-	"framework": "nextjs",
-	"github": {
-		"silent": true,
-		"autoJobCancelation": true
-	}
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "version": 2,
+  "regions": ["fra1"],
+  "framework": "nextjs",
+  "github": {
+    "silent": true,
+    "autoJobCancelation": true
+  }
 }

@@ -39,8 +39,7 @@ export default async function LinkPage({
     getTranslations("site"),
     getTranslations("linkPage"),
   ]);
-  
-  
+
   return (
     <div className="site-content-page page-dark">
       <TopAnchor />

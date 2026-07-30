@@ -88,7 +88,7 @@ export default async function LocaleLayout({
     legalNotices: string;
     rssFeedAria: string;
   };
-  
+
   const configuredAnalyticsMode = process.env.NEXT_PUBLIC_ANALYTICS_MODE;
   const analyticsMode = ["full", "home", "showcase", "vercel"].includes(
     configuredAnalyticsMode ?? "",
@@ -133,8 +133,6 @@ export default async function LocaleLayout({
             backToTopAria={site.backToTopAria}
             legalNotices={site.legalNotices}
             locale={locale}
-            
-            
           />
         </NextIntlClientProvider>
         <Script
