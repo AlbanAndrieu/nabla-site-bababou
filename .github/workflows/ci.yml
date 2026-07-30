@@ -1,16 +1,24 @@
-name: CI (Quality, Build, Test, Coverage, Snyk)
+name: CI (Quality and Security)
 
-on: [push, pull_request]
+on:
+  pull_request:
+  workflow_dispatch:
 
-env:
-  CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-  SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   quality:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -19,26 +27,24 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --no-audit --no-fund
 
-      - name: Run code quality check
-        run: npm run check
+      - name: Lint JavaScript and TypeScript
+        run: npm run lint
 
-      - name: Run pre-commit hooks
-        run: |
-          python -m pip install pre-commit
-          pre-commit run --all-files --show-diff-on-failure
+      - name: Lint CSS
+        run: npm run lint:css
 
-      - name: Upload coverage to Codecov
-        if: env.CODECOV_TOKEN != ''
-        uses: codecov/codecov-action@v4
-        with:
-          token: ${{ env.CODECOV_TOKEN }}
+      - name: Type-check
+        run: npm run typecheck
+
+      - name: Run unit tests
+        run: npm run test:unit
 
       - name: Run Snyk vulnerability scan
-        if: env.SNYK_TOKEN != ''
-        uses: snyk/actions/node@v3
+        if: ${{ secrets.SNYK_TOKEN != '' }}
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           command: test
-        env:
-          SNYK_TOKEN: ${{ env.SNYK_TOKEN }}
