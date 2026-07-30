@@ -53,13 +53,13 @@ export default function TestPage() {
 						your project.
 					</p>
 					<div className="contact-methods">
-						<a href="mailto:job@albandrieu.com" className="contact-method">
+						<a href="mailto:aa@bababou.com" className="contact-method">
 							<div className="contact-icon">
 								<i className="fas fa-envelope"></i>
 							</div>
 							<div className="contact-info">
 								<h4>Email</h4>
-								<p>job@albandrieu.com</p>
+								<p>aa@bababou.com</p>
 							</div>
 						</a>
 						<a
