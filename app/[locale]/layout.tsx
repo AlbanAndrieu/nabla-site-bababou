@@ -80,10 +80,7 @@ export default async function LocaleLayout({
   if (!hasLocale(routing.locales, locale)) notFound();
 
   setRequestLocale(locale);
-  const [messages, siteTranslations] = await Promise.all([
-    getMessages(),
-    getTranslations("site"),
-  ]);
+  const messages = await getMessages();
   const site = messages.site as {
     backHome: string;
     backToTop: string;
@@ -91,9 +88,7 @@ export default async function LocaleLayout({
     legalNotices: string;
     rssFeedAria: string;
   };
-  const copyright = siteTranslations("copyright", {
-    year: String(new Date().getUTCFullYear()),
-  });
+  
   const configuredAnalyticsMode = process.env.NEXT_PUBLIC_ANALYTICS_MODE;
   const analyticsMode = ["full", "home", "showcase", "vercel"].includes(
     configuredAnalyticsMode ?? "",
@@ -138,8 +133,8 @@ export default async function LocaleLayout({
             backToTopAria={site.backToTopAria}
             legalNotices={site.legalNotices}
             locale={locale}
-            rssFeedAria={site.rssFeedAria}
-            copyright={copyright}
+            
+            
           />
         </NextIntlClientProvider>
         <Script

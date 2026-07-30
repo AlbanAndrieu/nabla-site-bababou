@@ -81,12 +81,6 @@ html[data-theme="dark"] {
 #coffee-fab i {
   font-size: 1.4rem;
 }
-.back-to-top i {
-  font-size: 1.4rem;
-}
-.back-to-top i {
-  font-size: 1.4rem;
-}
 /* Coffee FAB: steam + inner wrapper (reusable across pages) */
 .coffee-fab-inner {
   position: relative;
@@ -206,9 +200,6 @@ html[data-theme="dark"] {
 .back-to-top:focus {
   outline: 2px solid var(--link-color);
   outline-offset: 2px;
-}
-.back-to-top i {
-  font-size: 1.4rem;
 }
 
 /* No coffee button: single FAB stays visually centered */

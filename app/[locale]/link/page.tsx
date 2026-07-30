@@ -39,8 +39,8 @@ export default async function LinkPage({
     getTranslations("site"),
     getTranslations("linkPage"),
   ]);
-  const homeHref = locale === "fr" ? "/fr" : "/";
-  const nablaHref = canonicalPagePath("nabla", locale);
+  
+  
   return (
     <div className="site-content-page page-dark">
       <TopAnchor />
