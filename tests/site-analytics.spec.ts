@@ -27,6 +27,18 @@ async function injectAnalyticsScript(
 	}, mode);
 }
 
+async function gotoAnalyticsHost(page: Page) {
+	await page.route("**/analytics-test-host.html", async (route) => {
+		await route.fulfill({
+			status: 200,
+			contentType: "text/html",
+			body: "<!doctype html><html><head></head><body></body></html>",
+		});
+	});
+
+	await page.goto("/analytics-test-host.html?nablaEnableThirdParty=1");
+}
+
 test.describe("Site analytics loader regression tests", () => {
 
 	test("should load default vercel analytics scripts and expose API", async ({
@@ -138,7 +150,7 @@ test.describe("Site analytics loader regression tests", () => {
 	test("should load marketing integrations but skip Datadog in marketing mode", async ({
 		page,
 	}) => {
-		await page.goto("/404.html?nablaEnableThirdParty=1");
+		await gotoAnalyticsHost(page);
 		await injectAnalyticsScript(page, "marketing");
 
 		await expect(
@@ -170,7 +182,7 @@ test.describe("Site analytics loader regression tests", () => {
 	});
 
 	test("should load Datadog RUM in full mode", async ({ page }) => {
-		await page.goto("/404.html");
+		await gotoAnalyticsHost(page);
 		await injectAnalyticsScript(page, "full");
 
 		await expect(
@@ -181,7 +193,7 @@ test.describe("Site analytics loader regression tests", () => {
 	});
 
 	test("should honor marketing mode ids and not load Datadog", async ({ page }) => {
-		await page.goto("/404.html");
+		await gotoAnalyticsHost(page);
 		await injectSiteAnalytics(page, {
 			"data-analytics-mode": "marketing",
 			"data-gtm-id": "GTM-MARKETING123",
@@ -210,7 +222,7 @@ test.describe("Site analytics loader regression tests", () => {
 	test("should load full mode heavy vendors including Datadog", async ({
 		page,
 	}) => {
-		await page.goto("/404.html");
+		await gotoAnalyticsHost(page);
 		await injectSiteAnalytics(page, { "data-analytics-mode": "full" });
 
 		await expect
@@ -234,7 +246,7 @@ test.describe("Site analytics loader regression tests", () => {
 	});
 
 	test("should load Mixpanel and Datadog in home mode", async ({ page }) => {
-		await page.goto("/404.html");
+		await gotoAnalyticsHost(page);
 		await injectSiteAnalytics(page, { "data-analytics-mode": "home" });
 
 		await expect

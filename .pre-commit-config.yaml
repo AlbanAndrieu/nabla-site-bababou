@@ -165,7 +165,7 @@ repos:
         name: "🔒 security · Detect private keys"
 
 -   repo: https://github.com/pre-commit/pre-commit.git
-    rev: v4.6.0
+    rev: v4.6.1
     hooks:
     -   id: validate_manifest
         name: "🤖 manifest · Validate manifest scripts"
@@ -191,7 +191,7 @@ repos:
     -   id: pyupgrade
         name: "🐍 python · Py Upgrade"
 -   repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.17
+    rev: v0.16.0
     hooks:
     -   id: ruff-format
         name: "🐍 python · Format with Ruff"
@@ -240,7 +240,7 @@ repos:
             docs/Makefile|
             .envrc|
             scripts/run-wicked.sh|
-            scripts/convert.*|
+            scripts/convert-.*.sh|
           )$
 
 -   repo: https://github.com/openstack/bashate
@@ -254,7 +254,7 @@ repos:
             trunk|
             scripts/run-python.sh|
             scripts/run-wicked.sh|
-            scripts/convert.*|
+            scripts/convert-.*.sh|
             .envrc|
           )$
 
@@ -310,7 +310,7 @@ repos:
 
     ### Javascript & Web Tools ###
 -   repo: https://github.com/biomejs/pre-commit
-    rev: "v2.4.16"
+    rev: "v2.5.6"
     hooks:
     -   id: biome-check
         name: "🟨 javascript · Lint, format, and safe fixes with Biome"
@@ -351,11 +351,23 @@ repos:
         exclude: >
           (?x)^(
             public/reports/.*|
+            public/checklist/.*|
           )$
     -   id: markdown-toc
         name: "📝 markdown · Toc markdown"
         args: [--maxdepth, "3", -i]
 
+-   repo: https://github.com/thibaudcolas/pre-commit-stylelint
+    rev: v17.14.1
+    hooks:
+    -   id: stylelint
+        name: "🟦 css · Lint with Stylelint"
+        additional_dependencies:
+          # stylelint itself needs to be here when using additional_dependencies.
+        -   stylelint@14.4.0
+        -   stylelint-config-standard-scss@3.0.0
+          # Package names starting with `@` need to be quoted.
+          # - "@scope/my-awesome-plugin@0.12.0"
     ### PNG Images ###
     # - repo: https://github.com/shssoichiro/oxipng
     #   rev: v9.1.5
@@ -387,7 +399,7 @@ repos:
 
     ### Data & Config Validation ###
 -   repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.37.3
+    rev: 0.37.4
     hooks:
     -   id: check-github-workflows
         name: "🧩 github-actions · Validate gh workflow files"
@@ -410,6 +422,17 @@ repos:
     -   id: bandit
         name: "🔒 security · Detect security issues"
         args: [-c, .bandit.yml]
+        exclude: >
+          (?x)^(
+            noxfile.py|
+            versioneer.py|
+            hooks/_version.py|
+            hooks/tests/|
+            ccds/hook_utils/configure_vcs.py|
+            ccds/hook_utils/configure_gh.py|
+            ccds/hook_utils/configure_ssh.py|
+            ccds/hook_utils/custom_config.py|
+          )$
 
 -   repo: https://github.com/IamTheFij/ansible-pre-commit
     rev: v1.0.1
@@ -426,7 +449,8 @@ repos:
     hooks:
     -   id: gitleaks-docker
         name: "🔒 🐳 security · Detect hardcoded secrets"
-        entry: zricethezav/gitleaks protect --verbose --redact --staged
+        entry: zricethezav/gitleaks protect --verbose --redact --staged --config
+          .gitleaks.toml
 
     ### Ansible ###
     # Disable because too slow

@@ -493,6 +493,10 @@
 	var DEFAULT_REVEAL_SELECTORS =
 		".service-card, .skill-category, .tool-item, .contact-card, .social-card, .js-animate-on-scroll, [data-animate-on-scroll]";
 
+	function scrollToTopOfPage() {
+		window.scrollTo(0, 0);
+	}
+
 	function initSmoothScroll() {
 		/* Delegation: catches footer / late links; one listener vs every anchor */
 		document.addEventListener(
@@ -833,10 +837,7 @@
 
 		link.addEventListener('click', (e) => {
 			e.preventDefault();
-			window.scrollTo({ top: 0, behavior: 'smooth' });
-			document.body.scrollTo({ top: 0, behavior: 'smooth' });
-			// Also target documentElement for cross-browser compatibility
-			document.documentElement.scrollTo({ top: 0, behavior: 'smooth' });
+			scrollToTopOfPage();
 		});
 
 		document.body.appendChild(link);

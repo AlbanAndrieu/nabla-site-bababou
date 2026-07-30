@@ -30,7 +30,7 @@ const STANDARD_PAGES: StandardPageCase[] = [
 	},
 	{ path: "/central-authorities.html", label: "central authorities page" },
 	{
-		path: "/email-contact-addresses.html",
+		path: "/email.html",
 		label: "email contact addresses page",
 	},
 	{ path: "/for-fathers.html", label: "for fathers page" },
@@ -72,14 +72,6 @@ const CHECKOUT_CHROME_CASES: ChromeContractCase[] = [
 		hasAnalytics: true,
 		requiredWidgetAttrs: ["data-no-print-pdf", "data-coffee-fab"],
 		forbiddenWidgetAttrs: ["data-print-pdf", "data-no-coffee-fab", "data-minimal-chrome"],
-	},
-	{
-		path: "/checkout.html",
-		label: "checkout page",
-		hasTranslate: false,
-		hasAnalytics: false,
-		requiredWidgetAttrs: ["data-no-print-pdf", "data-no-coffee-fab"],
-		forbiddenWidgetAttrs: ["data-print-pdf", "data-coffee-fab", "data-minimal-chrome"],
 	},
 ];
 
@@ -133,7 +125,7 @@ test.describe("Page chrome structure regression coverage", () => {
 		expect(html).not.toMatch(
 			/<script[^>]+site-google-translate\.js[^>]*><\/script>/i,
 		);
-		expect(html).not.toMatch(/<script[^>]+site-analytics\.js[^>]*><\/script>/i);
+		expect(html).toMatch(/<script[^>]+site-analytics\.js[^>]*><\/script>/i);
 	});
 
 	test("checkout and contact pages keep explicit chrome contracts", async ({

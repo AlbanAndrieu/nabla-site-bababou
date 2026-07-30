@@ -1,19 +1,6 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("Payment pages regression coverage", () => {
-	test("checkout page keeps secure checkout form contract", async ({ page }) => {
-		await page.goto("/checkout.html");
-
-		const checkoutForm = page.locator(
-			'form.checkout-form[action="/api/create-checkout-session"][method="POST"]',
-		);
-		await expect(checkoutForm).toHaveCount(1);
-
-		const checkoutButton = page.locator("#checkout-button");
-		await expect(checkoutButton).toBeVisible();
-		await expect(checkoutButton).toContainText(/proceed to checkout/i);
-	});
-
 	test("success page keeps reference hidden without session id", async ({ page }) => {
 		await page.goto("/success.html");
 

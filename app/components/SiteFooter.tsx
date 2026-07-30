@@ -55,13 +55,23 @@ export default function SiteFooter() {
 			</div>
 			<div className="footer-links">
 				<Link href="/policy/legal">{t("legalNotices")}</Link>
-				<Link
-					href="javascript:openAxeptioCookies()"
-					rel="noopener noreferrer"
-					className="text-muted"
+				<button
+					type="button"
+					onClick={() => {
+						if (
+							typeof window !== "undefined" &&
+							typeof (window as { openAxeptioCookies?: () => void })
+								.openAxeptioCookies === "function"
+						) {
+							(
+								window as { openAxeptioCookies?: () => void }
+							).openAxeptioCookies?.();
+						}
+					}}
+					className="btn btn-link text-muted p-0 border-0 align-baseline text-decoration-none"
 				>
 					Cookies
-				</Link>
+				</button>
 			</div>
 			<p className="text-md-center mt-3">
 				<a href="/" className="btn btn-sm btn-outline-secondary">
@@ -75,7 +85,7 @@ export default function SiteFooter() {
 					{t("backToTop")}
 				</a>
 			</p>
-			<p className="footer-copyright" />
+			<p className="footer-copyright">© {new Date().getFullYear()} Bababou.</p>
 		</footer>
 	);
 }
