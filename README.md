@@ -1,7 +1,7 @@
 # Structure minimale Next.js avec localisation
 
 [![CI](https://github.com/AlbanAndrieu/nabla-site-bababou/actions/workflows/ci.yml/badge.svg)](https://github.com/AlbanAndrieu/nabla-site-bababou/actions/workflows/ci.yml)
-[![Coverage Status](https://codecov.io/gh/AlbanAndrieu/nabla-site-bababou/branch/main/graph/badge.svg)](https://codecov.io/gh/AlbanAndrieu/nabla-site-bababou)
+[![Coverage Status](https://codecov.io/gh/AlbanAndrieu/nabla-site-bababou/branch/master/graph/badge.svg)](https://codecov.io/gh/AlbanAndrieu/nabla-site-bababou)
 [![Vercel](https://vercel.com/api/v1/badges/)](https://vercel.com/albandrieu-nabla-site-bababou)
 [![Known Vulnerabilities](https://snyk.io/test/github/AlbanAndrieu/nabla-site-bababou/badge.svg)](https://snyk.io/test/github/AlbanAndrieu/nabla-site-bababou)
 
