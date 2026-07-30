@@ -38,7 +38,7 @@ jobs:
       - name: Install Node.Js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
 
       - name: Install npm package
         run: npm install -g markdown-toc@latest secretlint@latest

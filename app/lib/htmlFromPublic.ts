@@ -21,7 +21,7 @@ export const HOME_JSON_LD = {
 	description:
 		"Freelance DevSecOps engineer and cloud architect (AWS, Azure, OVH). Cloud security consultant for AI-driven and security-critical products; ISO 27001, SOC 2, GDPR-aligned delivery.",
 	url: "https://albandrieu.com/",
-	email: "job@albandrieu.com",
+	email: "aa@bababou.com",
 	sameAs: [
 		"https://www.linkedin.com/in/nabla/",
 		"https://twitter.com/AlbanAndrieu",
