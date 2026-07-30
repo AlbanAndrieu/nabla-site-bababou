@@ -17,6 +17,8 @@
 		color: #000;
 		box-shadow: none;
 		text-shadow: none;
+		animation: none;
+		transition: none;
 	}
 
 	/* Body and basic elements */
@@ -296,12 +298,6 @@
 	}
 
 	/* Remove animations and transitions */
-	*,
-	*::before,
-	*::after {
-		animation: none;
-		transition: none;
-	}
 
 	/* Contact info */
 	.contact-method {

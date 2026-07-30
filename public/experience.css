@@ -1,12 +1,6 @@
 /* Experience Section */
 .experience-section {
 	padding: 5rem 2rem;
-	background: var(--bg-white);
-}
-
-/* Experience Section */
-.experience-section {
-	padding: 5rem 2rem;
 	background: var(--bg-primary);
 }
 

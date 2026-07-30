@@ -1,0 +1,14 @@
+interface:
+  display_name: Protection des données familiales
+  short_description: Protège les données privées avant publication
+  default_prompt: Utilise $protect-family-privacy pour auditer ce contenu et caviarder
+    les données qui ne doivent pas être publiées.
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

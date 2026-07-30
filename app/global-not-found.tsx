@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+
+import sanitizeHtml from "sanitize-html";
 import { loadPublicHtmlFragment } from "@/lib/htmlFromPublic";
 
 export const metadata: Metadata = {
@@ -10,12 +12,11 @@ export const metadata: Metadata = {
 };
 
 export default async function GlobalNotFound() {
-	// Uses english 404 for both locales; you can adjust for locale if desired
-	const staticBody = await loadPublicHtmlFragment("404.html", "body");
-	const staticMarkup = staticBody.replace(
-		/<script\b[^>]*>[\s\S]*?<\/script>/gi,
-		"",
-	);
+	const staticBody = await loadPublicHtmlFragment("404.html", "body", "en");
+	const staticMarkup = sanitizeHtml(staticBody, {
+		allowedTags: sanitizeHtml.defaults.allowedTags,
+		allowedAttributes: false,
+	});
 	return (
 		<html
 			lang="en"

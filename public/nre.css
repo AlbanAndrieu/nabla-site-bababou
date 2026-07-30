@@ -237,9 +237,6 @@ html[data-theme="light"] .page-dark .nre-locations {
 	border-radius: 6px;
 	font-size: 0.9rem;
 }
-.nre-locations strong {
-	margin-right: 0.25rem;
-}
 
 .nre-table {
 	width: 100%;
