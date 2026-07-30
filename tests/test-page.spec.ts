@@ -21,7 +21,7 @@ test.describe("Localized test page (/en/test)", () => {
       page.getByRole("heading", { name: "Let's Work Together" })
     ).toBeVisible();
     await expect(
-      page.getByText("job@albandrieu.com")
+      page.getByText("aa@bababou.com")
     ).toBeVisible();
     await expect(
       page.getByText("Connect with me")
