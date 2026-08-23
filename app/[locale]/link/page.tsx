@@ -8,9 +8,13 @@ import TopAnchor from "@/components/TopAnchor";
 import { routing } from "@/i18n/routing";
 import { canonicalPagePath } from "@/lib/sitePageCatalog";
 
+type LinkPageProps = {
+  params: Promise<{ locale: string }>;
+};
+
 export async function generateMetadata({
   params,
-}: PageProps<"/[locale]/link">): Promise<Metadata> {
+}: LinkPageProps): Promise<Metadata> {
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) return {};
   const t = await getTranslations({ locale, namespace: "linkPage" });
@@ -28,9 +32,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function LinkPage({
-  params,
-}: PageProps<"/[locale]/link">) {
+export default async function LinkPage({ params }: LinkPageProps) {
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
 
