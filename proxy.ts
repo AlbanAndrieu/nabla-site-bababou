@@ -10,10 +10,19 @@ const defaultLocalePrefix = `/${routing.defaultLocale}`;
 /**
  * Next.js 16+ uses the `proxy` convention (formerly `middleware`).
  * CORS preflight `OPTIONS` is not handled by next-intl routing; forwarding it avoids 400s in dev.
+ *
+ * During the incremental Next.js migration, keep the legacy static homepage as
+ * the public root. This rewrite runs before next-intl so `/` deterministically
+ * serves `public/index.html` while already-migrated Next routes continue to use
+ * the App Router.
  */
 export default function proxy(request: NextRequest) {
   if (request.method === "OPTIONS") {
     return new NextResponse(null, { status: 204 });
+  }
+
+  if (request.nextUrl.pathname === "/") {
+    return NextResponse.rewrite(new URL("/index.html", request.url));
   }
 
   /*
