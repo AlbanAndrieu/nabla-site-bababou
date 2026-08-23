@@ -4,18 +4,21 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import type { ChangeEvent } from "react";
+import { routing } from "@/i18n/routing";
 
 export const ROUTE_HEADER_LANGUAGE_SWITCHER_ENABLED =
   process.env.NEXT_PUBLIC_ENABLE_LOCALE_SWITCHER !== "false";
 
 function routeParts(pathname: string) {
   const parts = pathname.split("/").filter(Boolean);
-  if (parts[0] === "en" || parts[0] === "fr") parts.shift();
+  if (routing.locales.some((locale) => locale === parts[0])) parts.shift();
   return parts.map((part) => part.replace(/\.html$/, ""));
 }
 
 function localizedPath(locale: string, parts: string[]) {
-  return `/${locale}${parts.length ? `/${parts.join("/")}` : ""}`;
+  const prefix = locale === routing.defaultLocale ? "" : `/${locale}`;
+  const suffix = parts.length ? `/${parts.join("/")}` : "";
+  return `${prefix}${suffix}` || "/";
 }
 
 function parentLabel(segment: string, locale: string) {
