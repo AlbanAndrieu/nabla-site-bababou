@@ -2,6 +2,19 @@ name: CI (Quality and Security)
 
 on:
   pull_request:
+    paths:
+      - "app/**"
+      - "components/**"
+      - "i18n/**"
+      - "lib/**"
+      - "messages/**"
+      - "public/**"
+      - "scripts/**"
+      - "tests/**"
+      - "unit-tests/**"
+      - "*.{js,cjs,mjs,ts,tsx,json}"
+      - "package-lock.json"
+      - ".github/workflows/ci.yml"
   workflow_dispatch:
 
 permissions:
@@ -20,10 +33,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: "24"
           cache: npm
@@ -36,6 +49,9 @@ jobs:
 
       - name: Lint CSS
         run: npm run lint:css
+
+      - name: Generate Next.js route types
+        run: npx next typegen
 
       - name: Type-check
         run: npm run typecheck
