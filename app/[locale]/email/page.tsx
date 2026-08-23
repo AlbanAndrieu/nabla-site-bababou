@@ -7,6 +7,10 @@ import TopAnchor from "@/components/TopAnchor";
 import { routing } from "@/i18n/routing";
 import { canonicalPagePath } from "@/lib/sitePageCatalog";
 
+type EmailPageProps = {
+  params: Promise<{ locale: string }>;
+};
+
 type EmailCard = {
   title: string;
   email: string;
@@ -16,7 +20,7 @@ type EmailCard = {
 
 export async function generateMetadata({
   params,
-}: PageProps<"/[locale]/email">): Promise<Metadata> {
+}: EmailPageProps): Promise<Metadata> {
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) return {};
   const t = await getTranslations({ locale, namespace: "email" });
@@ -34,9 +38,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function EmailPage({
-  params,
-}: PageProps<"/[locale]/email">) {
+export default async function EmailPage({ params }: EmailPageProps) {
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
@@ -53,46 +55,39 @@ export default async function EmailPage({
         {tSite("skipToMainContent")}
       </a>
       <main id="main-content" className="container py-4 pb-5">
-        <section className="py-3" aria-labelledby="preferred-addresses-heading">
-          <h2 id="preferred-addresses-heading" className="h4 mb-3">
-            {t("useTheseAddresses")}
-          </h2>
-          <div className="row g-3">
+        <div className="content-shell">
+          <header className="content-hero text-center mb-5">
+            <p className="eyebrow">{t("eyebrow")}</p>
+            <h1>{t("title")}</h1>
+            <p className="lead">{t("lead")}</p>
+          </header>
+
+          <div className="row g-4">
             {cards.map((card) => (
-              <div key={card.title} className="col-md-6">
-                <div className="card h-100 bg-body-secondary border-secondary">
-                  <div className="card-body">
-                    <h3 className="h6 card-title">{card.title}</h3>
-                    <p className="card-text mb-0">
-                      {card.descriptionBefore}
-                      <a href={`mailto:${card.email}`}>{card.email}</a>
-                      {card.descriptionAfter}
-                    </p>
-                  </div>
+              <article className="col-lg-6" key={card.email}>
+                <div className="content-card h-100">
+                  <h2>{card.title}</h2>
+                  <p>
+                    {card.descriptionBefore}{" "}
+                    <a href={`mailto:${card.email}`}>{card.email}</a>{" "}
+                    {card.descriptionAfter}
+                  </p>
                 </div>
-              </div>
+              </article>
             ))}
           </div>
-        </section>
-        <section className="py-3" aria-labelledby="automated-senders-heading">
-          <h2 id="automated-senders-heading" className="h4 mb-3">
-            {t("automatedHeading")}
-          </h2>
-          <div className="card border-warning bg-body-secondary">
-            <div className="card-body">
-              <p className="mb-2">{t("automatedDesc")}</p>
-              <ul className="mb-0">
-                {automatedList.map((email) => (
-                  <li key={email}>
-                    <a href={`mailto:${email}`}>{email}</a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </section>
+
+          <section className="content-card mt-4">
+            <h2>{t("automatedTitle")}</h2>
+            <ul>
+              {automatedList.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </div>
       </main>
-      <SiteWidgetsScript printPdf coffeeFab />
+      <SiteWidgetsScript />
     </div>
   );
 }
