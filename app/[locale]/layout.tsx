@@ -3,11 +3,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Script from "next/script";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
-import {
-  getMessages,
-  getTranslations,
-  setRequestLocale,
-} from "next-intl/server";
+import { getMessages, setRequestLocale } from "next-intl/server";
 import Footer from "@/app/components/Footer";
 import RouteHeader from "@/components/RouteHeader";
 import { routing } from "@/i18n/routing";
@@ -21,6 +17,24 @@ type LocaleMetadataProps = {
   params: Promise<{ locale: string }>;
 };
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://bababou.com";
+const SITE_METADATA = {
+  fr: {
+    title: "Bababou — Site familial",
+    description:
+      "Un espace familial dédié à Bababou pour préserver des souvenirs, partager des messages et faciliter la reprise de contact.",
+  },
+  en: {
+    title: "Bababou — Family site",
+    description:
+      "A family space dedicated to Bababou, preserving memories, sharing messages and making it easier to reconnect.",
+  },
+} as const;
+
+function localizedCanonical(locale: string): string {
+  return locale === routing.defaultLocale ? "/" : `/${locale}`;
+}
+
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
@@ -31,52 +45,46 @@ export async function generateMetadata({
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) return {};
 
-  const t = await getTranslations({ locale, namespace: "home.meta" });
-  const canonical = locale === "fr" ? "/fr" : "/";
-  const title = t("title");
-  const description = t("description");
+  const metadata = SITE_METADATA[locale];
+  const canonical = localizedCanonical(locale);
+  const languages = Object.fromEntries(
+    routing.locales.map((supportedLocale) => [
+      supportedLocale,
+      localizedCanonical(supportedLocale),
+    ]),
+  );
 
   return {
-    metadataBase: new URL("https://albanandrieu.com"),
-    title: { absolute: title },
-    description,
-    keywords: [
-      "DevSecOps engineer",
-      "cloud architect",
-      "cloud security consultant",
-      "AWS",
-      "Azure",
-      "OVHcloud",
-      "AI infrastructure",
-      "ISO 27001",
-      "SOC 2",
-    ],
-    authors: [{ name: "Alban Andrieu", url: "/" }],
+    metadataBase: new URL(SITE_URL),
+    title: { absolute: metadata.title },
+    description: metadata.description,
+    keywords: ["Bababou", "family", "family memories"],
+    authors: [{ name: "Alban Andrieu" }],
     creator: "Alban Andrieu",
     referrer: "origin-when-cross-origin",
     alternates: {
       canonical,
-      languages: { en: "/", fr: "/fr" },
+      languages,
     },
     openGraph: {
-      type: "profile",
-      title,
-      description,
+      type: "website",
+      title: metadata.title,
+      description: metadata.description,
       url: canonical,
-      locale,
-      siteName: "Alban Andrieu",
+      locale: locale === "fr" ? "fr_FR" : "en_US",
+      siteName: "Bababou",
       images: [
         {
-          url: "/assets/nabla/nabla-4.png",
-          alt: title,
+          url: "/assets/miss-and-love-you-quote.png",
+          alt: metadata.title,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title,
-      description,
-      images: ["/assets/nabla/nabla-4.png"],
+      title: metadata.title,
+      description: metadata.description,
+      images: ["/assets/miss-and-love-you-quote.png"],
     },
   };
 }
