@@ -3,278 +3,276 @@
  * Depends on theme.css + experience.css for .experience-section / .timeline layout.
  */
 
+.nre-reflection p {
+  margin: 0 0 0.5rem 0;
+}
+.nre-reflection p:last-child {
+  margin-bottom: 0;
+}
+
 /* Compact page hero (page-dark; not full-viewport landing hero) */
 .nre-hero {
-	padding: 2.25rem 1rem 2rem;
-	text-align: center;
-	border-bottom: 1px solid rgba(71, 85, 105, 0.4);
-	background: rgba(30, 41, 59, 0.35);
+  padding: 2.25rem 1rem 2rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(71, 85, 105, 0.4);
+  background: rgba(30, 41, 59, 0.35);
 }
 
 html[data-theme="light"] .page-dark .nre-hero {
-	background: rgba(241, 245, 249, 0.6);
-	border-bottom-color: var(--border-color, #e2e8f0);
+  background: rgba(241, 245, 249, 0.6);
+  border-bottom-color: var(--border-color, #e2e8f0);
 }
 
 .nre-hero .nre-hero__title {
-	font-weight: 700;
-	letter-spacing: -0.02em;
-	color: var(--text-primary, #e2e8f0);
-	margin-bottom: 0.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary, #e2e8f0);
+  margin-bottom: 0.75rem;
 }
 
 .nre-hero .nre-hero__lead {
-	font-size: 1.1rem;
-	line-height: 1.55;
-	color: var(--text-secondary, #94a3b8);
-	max-width: 40rem;
-	margin: 0 auto;
+  font-size: 1.1rem;
+  line-height: 1.55;
+  color: var(--text-secondary, #94a3b8);
+  max-width: 40rem;
+  margin: 0 auto;
 }
 
 /* Centered contextual blocks (Note, location strip) */
 .nre-note-section .card-body {
-	text-align: center;
+  text-align: center;
 }
 
 .nre-note-section .card-body p {
-	text-align: center;
+  text-align: center;
 }
 
 .nre-location-wrap {
-	display: flex;
-	justify-content: center;
-	width: 100%;
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
 .nre-locations.nre-locations--centered {
-	text-align: center;
-	max-width: 42rem;
-	margin-bottom: 0;
+  text-align: center;
+  max-width: 42rem;
+  margin-bottom: 0;
 }
 
 .page-dark .nre-locations {
-	background: rgba(30, 41, 59, 0.65);
-	border: 1px solid rgba(71, 85, 105, 0.45);
-	color: var(--text-primary, #e2e8f0);
+  background: rgba(30, 41, 59, 0.65);
+  border: 1px solid rgba(71, 85, 105, 0.45);
+  color: var(--text-primary, #e2e8f0);
 }
 
 html[data-theme="light"] .page-dark .nre-locations {
-	background: rgba(241, 245, 249, 0.95);
-	border: 1px solid var(--border-color, #e2e8f0);
-	color: var(--text-primary, #0f172a);
+  background: rgba(241, 245, 249, 0.95);
+  border: 1px solid var(--border-color, #e2e8f0);
+  color: var(--text-primary, #0f172a);
 }
 
 .nre-locations strong {
-	margin-right: 0.35rem;
+  margin-right: 0.35rem;
 }
 
 /* Section rhythm aligned with abduction-norway / skills-section */
 .nre-content-section {
-	padding-top: 2rem;
-	padding-bottom: 2rem;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
 }
 
 .page-dark .nre-content-section .section-title,
 .page-dark .experience-section .section-title,
 .page-dark .skills-section .section-title {
-	color: var(--text-primary, #e2e8f0);
+  color: var(--text-primary, #e2e8f0);
 }
 
 .page-dark .nre-content-section .section-subtitle,
 .page-dark .experience-section .section-subtitle,
 .page-dark .skills-section .section-subtitle {
-	color: var(--text-secondary, #94a3b8);
+  color: var(--text-secondary, #94a3b8);
 }
 
 /* NRE-only: landing defaults use large CV-style padding */
 .page-dark main .experience-section,
 .page-dark main .skills-section {
-	padding-top: 2rem;
-	padding-bottom: 2rem;
-	padding-left: 0;
-	padding-right: 0;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 .nre-page {
-	max-width: 900px;
-	margin: 0 auto;
-	padding: 2rem 1rem;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
 }
 .nre-page h1 {
-	font-size: 1.75rem;
-	margin-bottom: 0.5rem;
+  font-size: 1.75rem;
+  margin-bottom: 0.5rem;
 }
 .nre-page .subtitle {
-	color: var(--text-secondary, #6b7280);
-	margin-bottom: 2rem;
+  color: var(--text-secondary, #6b7280);
+  margin-bottom: 2rem;
 }
 
 .nre-stats {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 1.5rem;
-	margin-bottom: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
 }
 .nre-stat {
-	background: var(--bg-primary);
-	border-radius: 12px;
-	box-shadow: 0 2px 10px var(--shadow-color);
-	padding: 1.5rem;
-	min-width: 180px;
-	transition: all 0.3s ease;
+  background: var(--bg-primary);
+  border-radius: 12px;
+  box-shadow: 0 2px 10px var(--shadow-color);
+  padding: 1.5rem;
+  min-width: 180px;
+  transition: all 0.3s ease;
 }
 .nre-stat:hover {
-	transform: translateY(-5px);
-	box-shadow: 0 10px 30px var(--shadow-hover);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px var(--shadow-hover);
 }
 .nre-stat .value {
-	font-size: 1.75rem;
-	font-weight: 700;
+  font-size: 1.75rem;
+  font-weight: 700;
 }
 .nre-stat .label {
-	font-size: 0.875rem;
-	color: var(--text-secondary, #6b7280);
+  font-size: 0.875rem;
+  color: var(--text-secondary, #6b7280);
 }
 .nre-stat.nre-missing .value {
-	color: #dc2626;
+  color: #dc2626;
 }
 .nre-stat.nre-days .value {
-	color: #059669;
+  color: #059669;
 }
 
 .nre-ref {
-	margin-bottom: 2rem;
-	padding: 2rem;
-	background: var(--bg-primary);
-	border-radius: 12px;
-	box-shadow: 0 2px 10px var(--shadow-color);
-	transition: all 0.3s ease;
-	color: var(--text-primary);
+  margin-bottom: 2rem;
+  padding: 2rem;
+  background: var(--bg-primary);
+  border-radius: 12px;
+  box-shadow: 0 2px 10px var(--shadow-color);
+  transition: all 0.3s ease;
+  color: var(--text-primary);
 }
 .nre-ref:hover {
-	transform: translateY(-5px);
-	box-shadow: 0 10px 30px var(--shadow-hover);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px var(--shadow-hover);
 }
 .nre-ref a,
 .nre-ref-card .card-body a {
-	font-weight: 600;
-	color: var(--primary-color);
+  font-weight: 600;
+  color: var(--primary-color);
 }
 .nre-ref-card .card-body {
-	color: var(--text-primary, inherit);
+  color: var(--text-primary, inherit);
 }
 .nre-reflection {
-	margin-top: 1.5rem;
+  margin-top: 1.5rem;
 }
 .nre-reflection .reflection-heading {
-	font-size: 1.1rem;
-	margin: 0 0 0.75rem 0;
-}
-.nre-reflection p {
-	margin: 0 0 0.5rem 0;
-}
-.nre-reflection p:last-child {
-	margin-bottom: 0;
+  font-size: 1.1rem;
+  margin: 0 0 0.75rem 0;
 }
 
 /* NRE year timeline: layout in landing-sections.css under .experience-section .timeline* */
 .timeline-year-title {
-	font-size: 1.1rem;
-	margin-bottom: 0.35rem;
+  font-size: 1.1rem;
+  margin-bottom: 0.35rem;
 }
 .timeline-year-location {
-	font-weight: normal;
-	color: var(--text-secondary, #6b7280);
-	font-size: 0.9rem;
+  font-weight: normal;
+  color: var(--text-secondary, #6b7280);
+  font-size: 0.9rem;
 }
 .timeline-year-items {
-	display: flex;
-	flex-direction: column;
-	gap: 0.5rem;
-	margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
 }
 .timeline-year-row {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 0.5rem 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
 }
 .timeline-weekend-card {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.35rem;
-	padding: 0.45rem 0.75rem;
-	border-radius: 8px;
-	font-size: 0.85rem;
-	font-weight: 500;
-	white-space: nowrap;
-	background: var(--bg-primary, #fff);
-	box-shadow: 0 2px 6px var(--shadow-color, rgba(0, 0, 0, 0.08));
-	border: 1px solid var(--border-color, #e5e7eb);
-	transition:
-		transform 0.2s ease,
-		box-shadow 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  white-space: nowrap;
+  background: var(--bg-primary, #fff);
+  box-shadow: 0 2px 6px var(--shadow-color, rgba(0, 0, 0, 0.08));
+  border: 1px solid var(--border-color, #e5e7eb);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 .timeline-weekend-card:hover {
-	transform: translateY(-2px);
-	box-shadow: 0 4px 12px var(--shadow-hover, rgba(0, 0, 0, 0.12));
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--shadow-hover, rgba(0, 0, 0, 0.12));
 }
 .timeline-weekend-card.nre {
-	border-left: 3px solid #dc2626;
-	color: #b91c1c;
+  border-left: 3px solid #dc2626;
+  color: #b91c1c;
 }
 .timeline-weekend-card.exc {
-	border-left: 3px solid #059669;
-	color: #047857;
+  border-left: 3px solid #059669;
+  color: #047857;
 }
 .timeline-weekend-card:not(.nre):not(.exc) {
-	color: var(--text-secondary, #6b7280);
+  color: var(--text-secondary, #6b7280);
 }
 
 .nre-locations {
-	margin-bottom: 1.5rem;
-	padding: 0.75rem 1rem;
-	background: var(--bg-secondary, #f9fafb);
-	border-radius: 6px;
-	font-size: 0.9rem;
-}
-.nre-locations strong {
-	margin-right: 0.25rem;
+  margin-bottom: 1.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg-secondary, #f9fafb);
+  border-radius: 6px;
+  font-size: 0.9rem;
 }
 
 .nre-table {
-	width: 100%;
-	border-collapse: collapse;
-	margin-top: 1rem;
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
 }
 .nre-table th,
 .nre-table td {
-	padding: 0.5rem 0.75rem;
-	text-align: left;
-	border-bottom: 1px solid var(--border-color, #e5e7eb);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color, #e5e7eb);
 }
 .nre-table th {
-	font-weight: 600;
+  font-weight: 600;
 }
 .nre-table .status-nre {
-	color: #dc2626;
-	font-weight: 500;
+  color: #dc2626;
+  font-weight: 500;
 }
 .nre-table .status-ok {
-	color: #059669;
+  color: #059669;
 }
 .nre-table .status-unknown {
-	color: var(--text-secondary, #6b7280);
+  color: var(--text-secondary, #6b7280);
 }
 .nre-table .status-exception {
-	color: #059669;
-	font-weight: 500;
+  color: #059669;
+  font-weight: 500;
 }
 
 .back-link {
-	display: inline-block;
-	margin-bottom: 1.5rem;
+  display: inline-block;
+  margin-bottom: 1.5rem;
 }
 .lang-link {
-	margin-left: 0.5rem;
-	font-size: 0.875rem;
+  margin-left: 0.5rem;
+  font-size: 0.875rem;
 }
