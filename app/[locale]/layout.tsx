@@ -12,13 +12,22 @@ import Footer from "@/app/components/Footer";
 import RouteHeader from "@/components/RouteHeader";
 import { routing } from "@/i18n/routing";
 
+type LocaleLayoutProps = {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+};
+
+type LocaleMetadataProps = {
+  params: Promise<{ locale: string }>;
+};
+
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
 export async function generateMetadata({
   params,
-}: LayoutProps<"/[locale]">): Promise<Metadata> {
+}: LocaleMetadataProps): Promise<Metadata> {
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) return {};
 
@@ -75,7 +84,7 @@ export async function generateMetadata({
 export default async function LocaleLayout({
   children,
   params,
-}: LayoutProps<"/[locale]">) {
+}: LocaleLayoutProps) {
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
 
