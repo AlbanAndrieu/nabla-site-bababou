@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import type { ChangeEvent } from "react";
+
 import { routing } from "@/i18n/routing";
 
 export const ROUTE_HEADER_LANGUAGE_SWITCHER_ENABLED =
@@ -21,15 +22,10 @@ function localizedPath(locale: string, parts: string[]) {
   return `${prefix}${suffix}` || "/";
 }
 
-function parentLabel(segment: string, locale: string) {
-  const labels: Record<string, { en: string; fr: string }> = {
-    cv: { en: "CV", fr: "CV" },
-    jm: { en: "Jus Mundi", fr: "Jus Mundi" },
-  };
-  return (
-    labels[segment]?.[locale === "fr" ? "fr" : "en"] ??
-    segment.replace(/-/g, " ").replace(/^./, (letter) => letter.toUpperCase())
-  );
+function parentLabel(segment: string) {
+  return segment
+    .replace(/-/g, " ")
+    .replace(/^./, (letter) => letter.toUpperCase());
 }
 
 export default function RouteHeader() {
@@ -81,7 +77,7 @@ export default function RouteHeader() {
               </span>
               <Link className="route-header__parent" href={parentHref}>
                 <i className="fas fa-arrow-left" aria-hidden="true" />
-                <span>{parentLabel(parentSegment, locale)}</span>
+                <span>{parentLabel(parentSegment)}</span>
               </Link>
             </>
           ) : null}
@@ -97,8 +93,11 @@ export default function RouteHeader() {
             aria-label={t("switchLanguage")}
             className="form-select form-select-sm"
           >
-            <option value="en">{t("languageName.en")}</option>
-            <option value="fr">{t("languageName.fr")}</option>
+            {routing.locales.map((supportedLocale) => (
+              <option key={supportedLocale} value={supportedLocale}>
+                {t(`languageName.${supportedLocale}`)}
+              </option>
+            ))}
           </select>
         </label>
       ) : null}
