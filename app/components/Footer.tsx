@@ -1,3 +1,7 @@
+import BackToTopButton from "@/components/BackToTopButton";
+import ActionLink, { actionClassName } from "@/components/ui/ActionLink";
+import styles from "./Footer.module.css";
+
 type FooterProps = {
   backHome: string;
   backToTop: string;
@@ -14,8 +18,9 @@ export default function Footer({
   locale,
 }: FooterProps) {
   const homeHref = locale === "fr" ? "/fr" : "/";
+
   return (
-    <footer className="footer" role="contentinfo">
+    <footer className="footer text-center" role="contentinfo">
       <div className="social-links">
         <a
           href="https://www.linkedin.com/in/nabla"
@@ -70,22 +75,21 @@ export default function Footer({
           <i className="fa fa-rss" aria-hidden="true"></i>
         </a>
       </div>
-      <div className="footer-links">
+      <div className="footer-links text-center">
         <a href="/policy/legal.html">{legalNotices}</a>
       </div>
-      <p className="text-md-center mt-3">
-        <a href={homeHref} className="btn btn-sm btn-outline-secondary">
-          {backHome}
-        </a>
-        <a
-          href="#top"
-          className="btn btn-sm btn-outline-secondary ms-2"
-          aria-label={backToTopAria}
-        >
-          {backToTop}
-        </a>
-      </p>
-      <p className="footer-copyright">
+      <nav className={styles.actions} aria-label="Footer navigation">
+        <ActionLink href={homeHref}>
+          <i className="fas fa-home" aria-hidden="true"></i>
+          <span>{backHome}</span>
+        </ActionLink>
+        <BackToTopButton
+          label={backToTop}
+          ariaLabel={backToTopAria}
+          className={actionClassName("secondary")}
+        />
+      </nav>
+      <p className="footer-copyright text-center">
         © {new Date().getFullYear()} Alban Andrieu. Independent DevSecOps
         Professional.
       </p>
