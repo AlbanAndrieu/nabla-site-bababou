@@ -7,10 +7,6 @@ import ContactHero from "@/components/ContactHero";
 import { routing } from "@/i18n/routing";
 import { canonicalPagePath } from "@/lib/sitePageCatalog";
 
-type ContactPageProps = {
-  params: Promise<{ locale: string }>;
-};
-
 const socials = [
   [
     "linkedin",
@@ -58,7 +54,7 @@ const socials = [
 
 export async function generateMetadata({
   params,
-}: ContactPageProps): Promise<Metadata> {
+}: PageProps<"/[locale]/contact">): Promise<Metadata> {
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) return {};
   const t = await getTranslations({ locale, namespace: "contactPage" });
@@ -75,7 +71,9 @@ export async function generateMetadata({
   };
 }
 
-export default async function ContactPage({ params }: ContactPageProps) {
+export default async function ContactPage({
+  params,
+}: PageProps<"/[locale]/contact">) {
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
@@ -103,6 +101,22 @@ export default async function ContactPage({ params }: ContactPageProps) {
         <div className="contact-methods">
           <a
             className="contact-method"
+            href={canonicalPagePath("contact", locale)}
+          >
+            {/* The Bababou repo intentionally reuses the canonical contact QR asset. */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="https://www.albanandrieu.com/assets/nabla/signature/qr_albanandrieu_contact_logo.png"
+              width="120"
+              height="120"
+              alt={t("allInfoAlt")}
+            />
+            <div className="contact-info">
+              <h3>{t("allInfo")}</h3>
+            </div>
+          </a>
+          <a
+            className="contact-method"
             href="mailto:job@albandrieu.com?Subject=DevSecOps%20Inquiry"
           >
             <div className="contact-icon">
@@ -122,9 +136,57 @@ export default async function ContactPage({ params }: ContactPageProps) {
               <p>{t("methods.phone.value")}</p>
             </div>
           </div>
+          <a
+            className="contact-method"
+            href="https://calendly.com/alban-andrieu"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="contact-icon">
+              <i className="fas fa-calendar-plus" />
+            </div>
+            <div className="contact-info">
+              <h3>{t("methods.calendar.title")}</h3>
+              <p>{t("methods.calendar.value")}</p>
+            </div>
+          </a>
         </div>
       </section>
-
+      <section className="proof-section container">
+        <h2 className="section-title">{t("cv.title")}</h2>
+        <p>{t("cv.description")}</p>
+        <div className="cv-page-links">
+          <a className="btn btn-primary" href={`/${locale}/cv`}>
+            {t("cv.cta")}
+          </a>
+          {["full", "medium", "small"].map((size) => (
+            <a
+              className="btn btn-outline-primary"
+              href={`/cv/cv-${size}-${locale}.html`}
+              target="_blank"
+              key={size}
+              rel="noopener"
+            >
+              {t(`cv.${size}`)}
+            </a>
+          ))}
+        </div>
+        <a
+          className="cv-page-qr"
+          href="https://www.linkedin.com/in/nabla/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="https://www.albanandrieu.com/assets/nabla/signature/qr-code-linkedin-nabla.jpg"
+            width="120"
+            height="125"
+            alt={t("linkedinQrAlt")}
+          />
+          <strong>LinkedIn</strong>
+        </a>
+      </section>
       <section className="contact-section container">
         <h2 className="section-title">{t("social.title")}</h2>
         <p className="section-subtitle">{t("social.subtitle")}</p>

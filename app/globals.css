@@ -81,6 +81,54 @@
   }
 }
 
+.cv-page-identity {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  text-align: left;
+}
+.cv-page-section {
+  padding-block: 2.5rem;
+}
+.cv-page-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-block: 1rem;
+}
+.cv-page-qr-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+.cv-page-qr {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+}
+.cv-page-qr img {
+  background: #fff;
+  border-radius: 0.5rem;
+}
+.page-cv .cv-contact-qr {
+  display: flex;
+  width: fit-content;
+  margin-inline: auto;
+  text-align: center;
+}
+.cv-page-format-row {
+  margin-top: 1.25rem;
+}
+@media (max-width: 640px) {
+  .cv-page-identity {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
 /* Contact page: App Router-compatible version of the original blue hero. */
 :is(.page-contact, .page-cv) .contact-hero {
   padding: 4rem 2rem;
