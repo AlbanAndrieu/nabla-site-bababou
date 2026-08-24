@@ -1,31 +1,47 @@
-# Ignore everything (folders and files) on root only
-# /*
+# Local/build artifacts
 .vc-config.json
 node_modules
 .next
-.gitignore
-ts
-#*
 .env
 .DS_Store
-tsconfig.js
-server.cjs
-/vendor
-/.idea
-# vercel do not like .python-version
+/.idea/
+/.vscode/
+/vendor/
 .python-version
-#!api
-api
-!lib
-!app
-!components
-!messages
-!i18n
-!public
-!vercel.json
-!tsconfig.tsbuildinfo
-!package.json
-!package-lock.json
-!*.html
-!README.md
+playwright-report/
+test-results/
+
+# Repository-only content that is not required by the Next.js production build.
+/.github/
+/docs/
+/tests/
+/unit-tests/
+
+# AI/editor instruction trees are repository tooling, not application runtime.
+/.agents/
+/.claude/
+/.cursor/
+/.adal/
+/.aider-desk/
+/.augment/
+/.autohand/
+/.bob/
+/.codeartsdoer/
+/.codebuddy/
+/.codemaker/
+
+# Non-Next root tooling artifacts. Keep globs root-scoped so legacy assets under
+# public/ can never be dropped accidentally during the hybrid migration.
+/requirements*.txt
+/Pipfile*
+/*.yml
+/*.yaml
+/.ansible-lint
+/.bandit.yml
+/wrangler.jsonc
+
+# Package test fixtures.
 packages/*/test/**
+
+# IMPORTANT: do not ignore app/, components/, i18n/, messages/, lib/, scripts/
+# or public/. public/ still contains production legacy pages during migration.

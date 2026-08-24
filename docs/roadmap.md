@@ -11,8 +11,9 @@
 - Les locales de premier rang sont `fr`, `en`, puis `de` et `no`. Google Translate reste un complément, pas une source de routes canonicales.
 - Les données familiales sensibles doivent être auditées et assainies avant toute copie du HTML legacy vers JSX, messages i18n, metadata, JSON-LD ou artefacts générés.
 - Les PR de migration doivent rester petites et supprimer une dette legacy mesurable plutôt que créer une seconde implémentation durable.
+- Respecter autant que possible la structure et le nommage stabilisés dans `nabla-site-alban` ; documenter explicitement les divergences nécessaires au mode hybride Bababou.
 
-## État de référence — 2026-08-23
+## État de référence — 2026-08-24
 
 ### Terminé
 
@@ -27,26 +28,28 @@
 - [x] Playwright Preview utilise le SHA et l'URL de déploiement exacts, le bypass Vercel et un fallback OIDC.
 - [x] CI Next génère les types de routes avant le typecheck et conserve `public/**` comme source runtime pendant la phase hybride.
 - [x] Script `scripts/vercel-ignore-build.sh` ajouté pour réduire les déploiements inutiles.
+- [x] Sélecteur de langue généré depuis `routing.locales` au lieu d'options FR/EN maintenues à la main (#101).
 
 ### Blocages opérationnels actuels
 
-- [ ] Rétablir la capacité de build Vercel : le dernier `master` est actuellement refusé pour `build-rate-limit`.
 - [ ] Configurer dans Vercel l'Ignored Build Step sur `bash scripts/vercel-ignore-build.sh` si ce n'est pas déjà fait.
 - [ ] Vérifier le binding DNS/domaine de `bababou.com` et le rattachement au projet Vercel ; le domaine doit résoudre publiquement avant validation de production.
-- [ ] Dès qu'un Preview peut être créé, vérifier `/`, `/index.html`, `/en`, les routes Next déjà migrées et Playwright Preview.
+- [ ] Vérifier `/`, `/index.html`, `/en`, les routes Next déjà migrées et Playwright Preview sur le SHA exact après chaque changement de routage/runtime.
 
 ## P1 — Stabiliser et simplifier le runtime
 
-Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-alban`.
+Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-alban`, sans casser le runtime legacy encore requis.
 
-- [ ] Remplacer la version preview de Next.js par la version stable validée dans le repo de référence.
+- [ ] Remplacer la version preview de Next.js par la version stable validée dans le repo de référence (`16.3.1` au 2026-08-24).
 - [ ] Aligner `next` et `eslint-config-next` sur des versions compatibles et régénérer proprement `package-lock.json`.
 - [ ] Borner les engines Node/npm sur le major supporté par CI/Vercel (`Node 24`, `npm 11`) au lieu de bornes uniquement minimales.
 - [ ] Supprimer `express` et `@types/express` s'ils restent sans consommateur.
 - [ ] Retirer Wrangler et `wrangler.jsonc` une fois confirmé qu'aucun déploiement Cloudflare Workers n'est encore requis.
-- [ ] Supprimer `copyfiles` et l'ancien `postinstall` de copie vers `dist/` lorsque tous les assets nécessaires sont servis depuis `public/` ou importés par Next.
-- [ ] Supprimer les scripts redondants `build:n`, `start:n`, `build:v`, `start:v`, `dev:wrangler`, `start:wrangler`, `deploy:wrangler` après retrait de leurs runtimes.
-- [ ] Conserver un seul couple nominal `build: next build` / `start: next start`.
+- [ ] Auditer les consommateurs de `dist/`, `index/dist/` et les assets copiés par `postinstall`.
+- [ ] **Conserver le `postinstall` actuel et `copyfiles` tant que cet audit n'est pas terminé.** Leur retrait doit être atomique avec la migration des consommateurs correspondants.
+- [ ] Supprimer les scripts redondants `build:n`, `start:n`, `build:v`, `start:v`, `dev:wrangler`, `start:wrangler`, `deploy:wrangler` seulement après retrait vérifié de leurs runtimes.
+- [ ] Conserver à terme un seul couple nominal `build: next build` / `start: next start`.
+- [x] Exécuter explicitement `next build` dans la CI GitHub de qualité afin de ne pas dépendre uniquement de Vercel pour valider la compilation (#100).
 - [ ] Mesurer l'impact sur taille d'installation/cache et durée de build.
 
 Critères de sortie :
@@ -59,7 +62,8 @@ Critères de sortie :
 ## P2 — Finaliser l'architecture i18n
 
 - [ ] Nettoyer les derniers textes/labels copiés du site `nabla-site-alban`.
-- [ ] Générer le sélecteur de langue depuis `routing.locales` au lieu de maintenir les options à la main.
+- [x] Générer le sélecteur de langue depuis `routing.locales` au lieu de maintenir les options à la main.
+- [ ] Conserver la structure de référence `messages/{locale}.json` chargée directement par `i18n/request.ts` ; éviter les catalogues parallèles de migration.
 - [ ] Stabiliser FR et EN avant d'ajouter de nouvelles locales.
 - [ ] Ajouter `de` et `no` à `routing.locales` avec des catalogues complets et validés.
 - [ ] Cibles : `/` = FR, `/en` = EN, `/de` = DE, `/no` = NO.
@@ -119,8 +123,9 @@ Pour chaque page :
 
 ## Découpage des prochaines PR
 
-- [ ] **Migration 2 / P1** — runtime cleanup + Next stable + roadmap consolidée.
-- [ ] **Migration 3 / P2** — i18n FR/EN propre + préparation DE/NO.
+- [ ] **Migration 2 / P1 — PR #100** : rebase sur le `master` courant, CI `next build`, contrats E2E Next/Vercel et nettoyage du contexte Vercel ; conserver le `postinstall` jusqu'à l'audit `dist/`.
+- [ ] **Migration 2b / P1** — Next stable + engines bornés + régénération atomique du lockfile.
+- [ ] **Migration 3 / P2** — i18n FR/EN propre + préparation DE/NO dans `messages/{locale}.json`.
 - [ ] **Migration 4 / P3** — home Next progressive et privacy gate.
 - [ ] **Migration 5 / P4a** — contact/email/link + redirects legacy.
 - [ ] **Migration 6 / P4b** — autres pages publiques.
