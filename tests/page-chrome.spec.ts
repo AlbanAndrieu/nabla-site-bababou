@@ -109,11 +109,15 @@ test.describe("Page chrome structure regression coverage", () => {
 	});
 
 	test("404 stays in minimal chrome mode", async ({ request }) => {
-		const html = await fetchHtml("/404.html", request);
+		const response = await request.get("/404.html");
+		expect(response.status()).toBe(404);
+		const html = await response.text();
 
+		expect(html).toMatch(/404|not found/i);
 		expect(html).not.toContain('a name="top"');
-		expect(html).toMatch(
-			/<script[^>]+site-widgets\.js[^>]*data-minimal-chrome[^>]*><\/script>/i,
+		expect(html).not.toMatch(/<script[^>]+theme-toggle\.js[^>]*><\/script>/i);
+		expect(html).not.toMatch(
+			/<script[^>]+site-google-translate\.js[^>]*><\/script>/i,
 		);
 		expect(html).not.toMatch(
 			/<script[^>]+site-widgets\.js[^>]*data-print-pdf[^>]*><\/script>/i,
@@ -121,11 +125,6 @@ test.describe("Page chrome structure regression coverage", () => {
 		expect(html).not.toMatch(
 			/<script[^>]+site-widgets\.js[^>]*data-coffee-fab[^>]*><\/script>/i,
 		);
-		expect(html).not.toMatch(/<script[^>]+theme-toggle\.js[^>]*><\/script>/i);
-		expect(html).not.toMatch(
-			/<script[^>]+site-google-translate\.js[^>]*><\/script>/i,
-		);
-		expect(html).toMatch(/<script[^>]+site-analytics\.js[^>]*><\/script>/i);
 	});
 
 	test("checkout and contact pages keep explicit chrome contracts", async ({

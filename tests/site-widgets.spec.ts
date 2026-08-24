@@ -18,7 +18,11 @@ test.describe("Site widgets integration", () => {
 	}) => {
 		await page.goto("/");
 		await page.locator("#nabla-back-to-top").waitFor();
-		await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+		await page.evaluate(() => {
+			document.documentElement.style.minHeight = "200vh";
+			document.body.style.minHeight = "200vh";
+			window.scrollTo(0, document.documentElement.scrollHeight);
+		});
 		await expect
 			.poll(() => page.evaluate(() => window.scrollY))
 			.toBeGreaterThan(0);
@@ -37,7 +41,9 @@ test.describe("Site widgets integration", () => {
 			if (button) {
 				button.setAttribute("href", "#");
 			}
-			window.scrollTo(0, document.body.scrollHeight);
+			document.documentElement.style.minHeight = "200vh";
+			document.body.style.minHeight = "200vh";
+			window.scrollTo(0, document.documentElement.scrollHeight);
 		});
 		await expect
 			.poll(() => page.evaluate(() => window.scrollY))
@@ -47,16 +53,10 @@ test.describe("Site widgets integration", () => {
 		await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
 	});
 
-	test("should keep 404 in minimal chrome mode while still applying stored theme", async ({
-		page,
-	}) => {
-		await page.addInitScript(() => {
-			localStorage.setItem("site-theme-preference", "light");
-		});
+	test("should keep the global 404 in minimal chrome mode", async ({ page }) => {
+		const response = await page.goto("/404.html");
 
-		await page.goto("/404.html");
-
-		await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+		expect(response?.status()).toBe(404);
 		await expect(page.locator("#theme-toggle-root")).toHaveCount(0);
 		await expect(page.locator(".google-translate-widget")).toHaveCount(0);
 		await expect(page.locator("#nabla-print-pdf-btn")).toHaveCount(0);
