@@ -29,6 +29,8 @@
 - [x] CI Next génère les types de routes avant le typecheck et conserve `public/**` comme source runtime pendant la phase hybride.
 - [x] Script `scripts/vercel-ignore-build.sh` ajouté pour réduire les déploiements inutiles.
 - [x] Sélecteur de langue généré depuis `routing.locales` au lieu d'options FR/EN maintenues à la main (#101).
+- [x] PR #100 rebased sur `master` `fde4265…` et validée sur le head `5430510…` : CI qualité, `next build`, Vercel Preview et Playwright Preview E2E verts.
+- [x] Structure i18n réalignée sur `nabla-site-alban` : `i18n/request.ts` charge directement `messages/{locale}.json`, sans catalogue parallèle `messages/migration/*`.
 
 ### Blocages opérationnels actuels
 
@@ -44,9 +46,15 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 - [ ] Aligner `next` et `eslint-config-next` sur des versions compatibles et régénérer proprement `package-lock.json`.
 - [ ] Borner les engines Node/npm sur le major supporté par CI/Vercel (`Node 24`, `npm 11`) au lieu de bornes uniquement minimales.
 - [ ] Supprimer `express` et `@types/express` s'ils restent sans consommateur.
+  - [x] Audit du code versionné : aucun import ESM, `require()` ou appel `express()` trouvé.
+  - [ ] Retrait effectif à faire avec régénération atomique du lockfile dans Migration 2b.
 - [ ] Retirer Wrangler et `wrangler.jsonc` une fois confirmé qu'aucun déploiement Cloudflare Workers n'est encore requis.
 - [ ] Auditer les consommateurs de `dist/`, `index/dist/` et les assets copiés par `postinstall`.
-- [ ] **Conserver le `postinstall` actuel et `copyfiles` tant que cet audit n'est pas terminé.** Leur retrait doit être atomique avec la migration des consommateurs correspondants.
+  - [x] Audit initial du dépôt : `app/scripts/arf.js`, `app/resources/`, `dist/` et `index/dist/` ne sont pas versionnés sur la branche courante.
+  - [x] `npm ci` exécute néanmoins le `postinstall` sans erreur dans la CI #100.
+  - [ ] Vérifier les consommateurs externes/legacy et la génération attendue hors Git avant toute suppression.
+- [x] **Conserver le `postinstall` actuel et `copyfiles` dans la PR #100 tant que l'audit n'est pas terminé.** Leur retrait doit être atomique avec la migration des consommateurs correspondants.
+- [x] Ajouter un test de régression qui verrouille le `postinstall` legacy et la structure directe `messages/{locale}.json` pendant cette phase hybride (#100).
 - [ ] Supprimer les scripts redondants `build:n`, `start:n`, `build:v`, `start:v`, `dev:wrangler`, `start:wrangler`, `deploy:wrangler` seulement après retrait vérifié de leurs runtimes.
 - [ ] Conserver à terme un seul couple nominal `build: next build` / `start: next start`.
 - [x] Exécuter explicitement `next build` dans la CI GitHub de qualité afin de ne pas dépendre uniquement de Vercel pour valider la compilation (#100).
@@ -63,7 +71,7 @@ Critères de sortie :
 
 - [ ] Nettoyer les derniers textes/labels copiés du site `nabla-site-alban`.
 - [x] Générer le sélecteur de langue depuis `routing.locales` au lieu de maintenir les options à la main.
-- [ ] Conserver la structure de référence `messages/{locale}.json` chargée directement par `i18n/request.ts` ; éviter les catalogues parallèles de migration.
+- [x] Conserver la structure de référence `messages/{locale}.json` chargée directement par `i18n/request.ts` ; éviter les catalogues parallèles de migration.
 - [ ] Stabiliser FR et EN avant d'ajouter de nouvelles locales.
 - [ ] Ajouter `de` et `no` à `routing.locales` avec des catalogues complets et validés.
 - [ ] Cibles : `/` = FR, `/en` = EN, `/de` = DE, `/no` = NO.
@@ -123,9 +131,9 @@ Pour chaque page :
 
 ## Découpage des prochaines PR
 
-- [ ] **Migration 2 / P1 — PR #100** : rebase sur le `master` courant, CI `next build`, contrats E2E Next/Vercel et nettoyage du contexte Vercel ; conserver le `postinstall` jusqu'à l'audit `dist/`.
-- [ ] **Migration 2b / P1** — Next stable + engines bornés + régénération atomique du lockfile.
-- [ ] **Migration 3 / P2** — i18n FR/EN propre + préparation DE/NO dans `messages/{locale}.json`.
+- [ ] **Migration 2 / P1 — PR #100** : rebase sur le `master` courant, CI `next build`, contrats E2E Next/Vercel, invariants hybrides et nettoyage du contexte Vercel ; conserver le `postinstall` jusqu'à l'audit `dist/`.
+- [ ] **Migration 2b / P1** — Next stable + engines bornés + suppression des dépendances confirmées orphelines + régénération atomique du lockfile.
+- [ ] **Migration 3 / P2** — i18n FR/EN propre + préparation DE/NO directement dans `messages/{locale}.json`.
 - [ ] **Migration 4 / P3** — home Next progressive et privacy gate.
 - [ ] **Migration 5 / P4a** — contact/email/link + redirects legacy.
 - [ ] **Migration 6 / P4b** — autres pages publiques.
