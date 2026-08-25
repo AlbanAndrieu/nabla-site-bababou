@@ -55,4 +55,12 @@ test.describe("native Next SEO locale metadata", () => {
       });
     });
   }
+
+  test("technical test route renders noindex and nofollow", async ({ page }) => {
+    await page.goto("/en/test");
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+      "content",
+      /noindex.*nofollow|nofollow.*noindex/i,
+    );
+  });
 });
