@@ -2,18 +2,12 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import SiteWidgetsScript from "@/components/SiteWidgetsScript";
 import SkipToMainContent from "@/components/SkipToMainContent";
 import TopAnchor from "@/components/TopAnchor";
 import { routing } from "@/i18n/routing";
 import { pageAlternates } from "@/lib/sitePageCatalog";
 
-type EmailCard = {
-  title: string;
-  email: string;
-  descriptionBefore: string;
-  descriptionAfter: string;
-};
+const PUBLIC_CONTACT_EMAIL = "aa@bababou.com";
 
 export async function generateMetadata({
   params,
@@ -36,54 +30,39 @@ export default async function EmailPage({
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
   const t = await getTranslations("email");
-  const cards = t.raw("cards") as EmailCard[];
-  const automatedList: string[] = t.raw("automatedList") as string[];
+  const mailto = `mailto:${PUBLIC_CONTACT_EMAIL}`;
 
   return (
     <div className="site-content-page page-dark">
       <TopAnchor />
       <SkipToMainContent />
       <main id="main-content" className="container py-4 pb-5">
-        <section className="py-3" aria-labelledby="preferred-addresses-heading">
-          <h2 id="preferred-addresses-heading" className="h4 mb-3">
-            {t("useTheseAddresses")}
-          </h2>
-          <div className="row g-3">
-            {cards.map((card) => (
-              <div key={card.title} className="col-md-6">
-                <div className="card h-100 bg-body-secondary border-secondary">
-                  <div className="card-body">
-                    <h3 className="h6 card-title">{card.title}</h3>
-                    <p className="card-text mb-0">
-                      {card.descriptionBefore}
-                      <a href={`mailto:${card.email}`}>{card.email}</a>
-                      {card.descriptionAfter}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-        <section className="py-3" aria-labelledby="automated-senders-heading">
-          <h2 id="automated-senders-heading" className="h4 mb-3">
-            {t("automatedHeading")}
-          </h2>
-          <div className="card border-warning bg-body-secondary">
+        <header className="mb-4">
+          <h1 className="h2 mb-2">{t("title")}</h1>
+          <p className="lead text-secondary mb-0">{t("intro")}</p>
+        </header>
+
+        <section className="py-3" aria-labelledby="public-email-heading">
+          <div className="card bg-body-secondary border-secondary">
             <div className="card-body">
-              <p className="mb-2">{t("automatedDesc")}</p>
-              <ul className="mb-0">
-                {automatedList.map((email) => (
-                  <li key={email}>
-                    <a href={`mailto:${email}`}>{email}</a>
-                  </li>
-                ))}
-              </ul>
+              <h2 id="public-email-heading" className="h4 card-title">
+                {t("contactTitle")}
+              </h2>
+              <p className="card-text">{t("contactDescription")}</p>
+              <a className="btn btn-primary" href={mailto}>
+                {t("contactCta")}
+              </a>
             </div>
           </div>
         </section>
+
+        <section className="py-3" aria-labelledby="email-privacy-heading">
+          <h2 id="email-privacy-heading" className="h4 mb-3">
+            {t("privacyTitle")}
+          </h2>
+          <p>{t("privacyDescription")}</p>
+        </section>
       </main>
-      <SiteWidgetsScript printPdf coffeeFab />
     </div>
   );
 }
