@@ -13,14 +13,33 @@ test("keeps the legacy postinstall until the dist consumers are audited", async 
   assert.equal(packageJson.scripts?.postinstall, EXPECTED_LEGACY_POSTINSTALL);
 });
 
-test("keeps first-class base catalogs under messages/{locale}.json", async () => {
-  const [requestConfig, englishMessages, frenchMessages] = await Promise.all([
-    readFile(new URL("../i18n/request.ts", import.meta.url), "utf8"),
-    readFile(new URL("../messages/en.json", import.meta.url), "utf8"),
-    readFile(new URL("../messages/fr.json", import.meta.url), "utf8"),
-  ]);
+test("keeps base catalogs and composes migrated domain catalogs explicitly", async () => {
+  const [requestConfig, messageLoader, englishMessages, frenchMessages] =
+    await Promise.all([
+      readFile(new URL("../i18n/request.ts", import.meta.url), "utf8"),
+      readFile(new URL("../i18n/messages.ts", import.meta.url), "utf8"),
+      readFile(new URL("../messages/en.json", import.meta.url), "utf8"),
+      readFile(new URL("../messages/fr.json", import.meta.url), "utf8"),
+    ]);
 
-  assert.doesNotMatch(requestConfig, /messages\/migration/);
+  assert.match(requestConfig, /loadMessages/);
+  assert.match(messageLoader, /BASE_LOADERS/);
+  assert.match(messageLoader, /CONTACT_LOADERS/);
+  assert.match(messageLoader, /MIGRATED_BASE_NAMESPACES/);
+  assert.doesNotMatch(`${requestConfig}\n${messageLoader}`, /messages\/migration/);
   assert.doesNotThrow(() => JSON.parse(englishMessages));
   assert.doesNotThrow(() => JSON.parse(frenchMessages));
+});
+
+test("contact domain catalogs have matching top-level namespace ownership", async () => {
+  const [englishContact, frenchContact] = await Promise.all([
+    readFile(new URL("../messages/contact/en.json", import.meta.url), "utf8"),
+    readFile(new URL("../messages/contact/fr.json", import.meta.url), "utf8"),
+  ]);
+
+  const en = JSON.parse(englishContact) as Record<string, unknown>;
+  const fr = JSON.parse(frenchContact) as Record<string, unknown>;
+
+  assert.deepEqual(Object.keys(en), ["contactPage"]);
+  assert.deepEqual(Object.keys(fr), ["contactPage"]);
 });
