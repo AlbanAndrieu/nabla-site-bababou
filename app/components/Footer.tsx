@@ -8,6 +8,7 @@ type FooterProps = {
   backHome: string;
   backToTop: string;
   backToTopAria: string;
+  contactLabel: string;
   copyright: string;
   legalNotices: string;
   locale: AppLocale;
@@ -18,6 +19,7 @@ export default function Footer({
   backHome,
   backToTop,
   backToTopAria,
+  contactLabel,
   copyright,
   legalNotices,
   locale,
@@ -29,11 +31,7 @@ export default function Footer({
   return (
     <footer className="footer text-center" role="contentinfo">
       <div className="social-links">
-        <a
-          href={contactHref}
-          className="social-link"
-          aria-label={legalNotices === "Legal notices" ? "Contact" : "Contact"}
-        >
+        <a href={contactHref} className="social-link" aria-label={contactLabel}>
           <i className="fas fa-envelope" aria-hidden="true"></i>
         </a>
         <a href="/feed.xml" className="social-link" aria-label={rssFeedAria}>
