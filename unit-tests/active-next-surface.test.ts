@@ -44,3 +44,14 @@ test("technical test route stays explicitly non-indexable", async () => {
   assert.match(source, /robots:\s*NON_INDEXABLE_ROBOTS/);
   assert.match(source, /PageProps<"\/\[locale\]\/test">/);
 });
+
+test("localized home placeholder cannot escape before P3 migration", async () => {
+  const [homePage, routeHeader] = await Promise.all([
+    readFile(new URL("../app/[locale]/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/RouteHeader.tsx", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(homePage, /redirect\("\/"\)/);
+  assert.doesNotMatch(homePage, /Bienvenue|Welcome/i);
+  assert.match(routeHeader, /canonicalPagePath\("index", locale\)/);
+});
