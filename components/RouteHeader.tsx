@@ -5,7 +5,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import type { ChangeEvent } from "react";
 
-import { routing } from "@/i18n/routing";
+import { type AppLocale, routing } from "@/i18n/routing";
+import { canonicalPagePath } from "@/lib/sitePageCatalog";
 
 export const ROUTE_HEADER_LANGUAGE_SWITCHER_ENABLED =
   process.env.NEXT_PUBLIC_ENABLE_LOCALE_SWITCHER !== "false";
@@ -29,7 +30,7 @@ function parentLabel(segment: string) {
 }
 
 export default function RouteHeader() {
-  const locale = useLocale();
+  const locale = useLocale() as AppLocale;
   const t = useTranslations("site");
   const pathname = usePathname();
   const router = useRouter();
@@ -41,7 +42,7 @@ export default function RouteHeader() {
 
   const parentParts = parts.slice(0, -1);
   const parentSegment = parentParts.at(-1);
-  const homeHref = localizedPath(locale, []);
+  const homeHref = canonicalPagePath("index", locale);
   const parentHref = parentParts.length
     ? localizedPath(locale, parentParts)
     : null;
