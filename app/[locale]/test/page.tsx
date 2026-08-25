@@ -1,9 +1,18 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import SkipToMainContent from "@/components/SkipToMainContent";
 import TopAnchor from "@/components/TopAnchor";
 import { routing } from "@/i18n/routing";
-import { canonicalPagePath } from "@/lib/sitePageCatalog";
+import {
+  canonicalPagePath,
+  NON_INDEXABLE_ROBOTS,
+} from "@/lib/sitePageCatalog";
+
+export const metadata: Metadata = {
+  title: "Bababou migration test surface",
+  robots: NON_INDEXABLE_ROBOTS,
+};
 
 export default async function TestPage({
   params,
