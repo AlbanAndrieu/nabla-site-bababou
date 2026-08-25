@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 import type { MetadataRoute } from "next";
 
 import { routing } from "@/i18n/routing";
@@ -8,8 +10,71 @@ import {
 } from "@/lib/sitePageCatalog";
 
 const SITE_URL = "https://bababou.com";
+const MIGRATED_LEGACY_PATHS = new Set([
+  "/contact.html",
+  "/email.html",
+  "/link.html",
+]);
+const CHANGE_FREQUENCIES = new Set([
+  "always",
+  "hourly",
+  "daily",
+  "weekly",
+  "monthly",
+  "yearly",
+  "never",
+]);
 
-export default function sitemap(): MetadataRoute.Sitemap {
+type SitemapEntry = MetadataRoute.Sitemap[number];
+type ChangeFrequency = NonNullable<SitemapEntry["changeFrequency"]>;
+
+function textTag(block: string, tag: string) {
+  return block.match(new RegExp(`<${tag}>([\\s\\S]*?)</${tag}>`, "i"))?.[1].trim();
+}
+
+function normalizeLegacyLocation(location: string) {
+  const url = new URL(location);
+  if (url.origin !== SITE_URL) return null;
+
+  if (MIGRATED_LEGACY_PATHS.has(url.pathname)) return null;
+  if (url.pathname === "/index.html") url.pathname = "/";
+
+  return url.href;
+}
+
+function parseLegacySitemap(xml: string): MetadataRoute.Sitemap {
+  const activeXml = xml.replace(/<!--[\\s\\S]*?-->/g, "");
+  const entries: MetadataRoute.Sitemap = [];
+
+  for (const match of activeXml.matchAll(/<url>([\\s\\S]*?)<\/url>/gi)) {
+    const block = match[1];
+    const location = textTag(block, "loc");
+    if (!location) continue;
+
+    const url = normalizeLegacyLocation(location);
+    if (!url) continue;
+
+    const lastModified = textTag(block, "lastmod");
+    const rawChangeFrequency = textTag(block, "changefreq");
+    const rawPriority = textTag(block, "priority");
+    const parsedPriority = rawPriority ? Number(rawPriority) : undefined;
+    const changeFrequency =
+      rawChangeFrequency && CHANGE_FREQUENCIES.has(rawChangeFrequency)
+        ? (rawChangeFrequency as ChangeFrequency)
+        : undefined;
+
+    entries.push({
+      url,
+      ...(lastModified ? { lastModified } : {}),
+      ...(changeFrequency ? { changeFrequency } : {}),
+      ...(Number.isFinite(parsedPriority) ? { priority: parsedPriority } : {}),
+    });
+  }
+
+  return entries;
+}
+
+function nextSitemapEntries(): MetadataRoute.Sitemap {
   return SEO_PAGE_SLUGS.map((slug) => {
     const primaryPath = canonicalPagePath(slug, routing.defaultLocale);
     const settings = seoSettings(slug);
@@ -28,4 +93,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
       alternates: { languages },
     };
   });
+}
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const legacyXml = await readFile(
+    path.join(process.cwd(), "public", "sitemap.xml"),
+    "utf8",
+  );
+  const combined = [...parseLegacySitemap(legacyXml), ...nextSitemapEntries()];
+  const unique = new Map(combined.map((entry) => [entry.url, entry]));
+
+  return [...unique.values()];
 }
