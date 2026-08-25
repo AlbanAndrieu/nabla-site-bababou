@@ -4,7 +4,9 @@ import test from "node:test";
 import {
   canonicalPagePath,
   isNextCanonicalSlug,
+  isSeoPageSlug,
   pageAlternates,
+  SEO_PAGE_SLUGS,
 } from "../lib/sitePageCatalog.ts";
 
 test("native Next routes use the French default locale without a prefix", () => {
@@ -36,4 +38,13 @@ test("alternates follow routing locales and use French as x-default", () => {
       "x-default": "/contact",
     },
   });
+});
+
+test("the Next sitemap does not index inherited portfolio-only slugs", () => {
+  assert.deepEqual(SEO_PAGE_SLUGS, ["index", "contact", "link", "email"]);
+  assert.equal(isSeoPageSlug("expertise"), false);
+  assert.equal(isSeoPageSlug("security"), false);
+  assert.equal(isSeoPageSlug("truenas"), false);
+  assert.equal(isSeoPageSlug("cv"), false);
+  assert.equal(isSeoPageSlug("jm"), false);
 });
