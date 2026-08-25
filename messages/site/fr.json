@@ -1,0 +1,19 @@
+{
+  "site": {
+    "skipToMainContent": "Aller au contenu principal",
+    "legalNotices": "Mentions légales",
+    "backHome": "Retour à l’accueil",
+    "home": "Accueil",
+    "breadcrumbLabel": "Fil d’Ariane",
+    "backToTop": "Retour en haut",
+    "backToTopAria": "Retour en haut de la page",
+    "localeSwitcherLabel": "Langue",
+    "languageName": {
+      "en": "Anglais",
+      "fr": "Français"
+    },
+    "switchLanguage": "Changer de langue",
+    "rssFeedAria": "Flux RSS de ce site",
+    "copyright": "© {year} Bababou."
+  }
+}

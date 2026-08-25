@@ -1,0 +1,13 @@
+{
+  "email": {
+    "title": "Adresse e-mail du site",
+    "metadataTitle": "Contact par e-mail — Bababou",
+    "metadataDescription": "Adresse e-mail publique dédiée au site Bababou et informations de contact respectueuses de la vie privée.",
+    "intro": "Pour écrire au parent à l’origine de ce site, utilisez l’adresse publique dédiée ci-dessous.",
+    "contactTitle": "E-mail public",
+    "contactDescription": "Cette adresse est destinée aux messages liés à Bababou et à une reprise de contact.",
+    "contactCta": "Écrire un e-mail",
+    "privacyTitle": "Pourquoi une adresse dédiée ?",
+    "privacyDescription": "Une adresse publique dédiée évite de publier ou de réutiliser des coordonnées privées inutiles."
+  }
+}

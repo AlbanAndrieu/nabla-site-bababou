@@ -1,0 +1,34 @@
+{
+  "contactPage": {
+    "meta": {
+      "title": "Contact Bababou",
+      "description": "Public, privacy-conscious contact methods for this family site."
+    },
+    "hero": {
+      "title": "Stay in touch",
+      "subtitle": "A simple and safe way to contact the parent behind this site.",
+      "intro": "This site keeps only the public information that is useful for reconnecting, without publishing unnecessary private contact details.",
+      "profileAlt": "Portrait of Alban Andrieu",
+      "contactCta": "Send an email"
+    },
+    "information": {
+      "title": "Public contact",
+      "subtitle": "Please use the email address dedicated to this site."
+    },
+    "methods": {
+      "email": {
+        "title": "Email",
+        "value": "aa@bababou.com"
+      }
+    },
+    "location": {
+      "title": "General location",
+      "value": "Paris area",
+      "description": "To protect family privacy, no precise residential address or real-time location is published here."
+    },
+    "privacy": {
+      "title": "Privacy protection",
+      "description": "Private contact details, official identifiers, and medical or psychological information are not part of this site's public contact information."
+    }
+  }
+}

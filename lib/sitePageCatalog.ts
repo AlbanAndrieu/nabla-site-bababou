@@ -21,16 +21,13 @@ type SitePageDefinition = {
  * Single source of truth for the purpose and indexability of public pages.
  * Object order defines sitemap order: strongest visibility pages come first.
  *
- * During the hybrid migration, only routes that actually exist in Bababou's
- * current public runtime are indexable here. Portfolio slugs inherited from
- * nabla-site-alban remain catalogued only where transitional code still
- * references them; they must not leak into Bababou's sitemap.
+ * During the hybrid migration, only routes that actually exist as stable
+ * localized Next surfaces are indexable here. The homepage remains legacy-only
+ * at `/` until P3 is complete; `/en` and `/fr` must not be advertised as
+ * localized homepages while they are only App Router implementation routes.
  */
 export const SITE_PAGES = {
-  index: {
-    category: "primaryVisibility",
-    seo: { priority: 1, changeFrequency: "monthly" },
-  },
+  index: { category: "primaryVisibility" },
   expertise: { category: "primaryVisibility" },
   contact: {
     category: "primaryVisibility",
@@ -100,7 +97,6 @@ export const SEO_PAGE_SLUGS = sitePageEntries
 
 const seoPageSlugs = new Set<SitePageSlug>(SEO_PAGE_SLUGS);
 const nextCanonicalSlugs = new Set<SitePageSlug>([
-  "index",
   "contact",
   "email",
   "link",
@@ -128,17 +124,19 @@ function nextLocalePrefix(locale: AppLocale) {
 
 /**
  * Canonical public URL policy during the hybrid migration:
- * - French is Bababou's default locale and stays unprefixed for native Next
+ * - The homepage is still the single legacy surface at `/` for every locale.
+ *   Localized homepage URLs are introduced only when P3 cuts the home to Next.
+ * - French is Bababou's default locale and stays unprefixed for migrated Next
  *   routes (`/contact`). Other first-class locales are prefixed (`/en/contact`).
  * - Native Next canonical URLs never expose implementation extensions.
  * - Legacy page URL semantics stay frozen until each page is explicitly
- *   migrated and validated; changing them implicitly would break the static
- *   fallback that still lives under public/.
+ *   migrated and validated.
  */
 export function canonicalPagePath(slug: SitePageSlug, locale: AppLocale) {
+  if (slug === "index") return "/";
+
   if (isNextCanonicalSlug(slug)) {
     const prefix = nextLocalePrefix(locale);
-    if (slug === "index") return prefix || "/";
     return `${prefix}/${slug}`;
   }
 

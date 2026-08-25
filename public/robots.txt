@@ -3,8 +3,7 @@
 # www.robotstxt.org/
 # www.google.com/support/webmasters/bin/answer.py?hl=en&answer=156449
 
-# If you wish to crawl this website, please obtain explicit permission first.
-# Contact us via email at a@bababou.com for authorization.
+# For contact about this site, use the public /contact route.
 
 User-agent: 008
 Disallow: /
@@ -151,18 +150,18 @@ User-agent: Timpibot
 User-agent: VelenPublicWebCrawler
 User-agent: Webzio-Extended
 User-agent: YouBot
-Allow: /nabla/index.html
+Allow: /
 Crawl-delay: 10
 
-# Other User-agent : Allow all execpt
+# Other user agents: allow public content except dynamic/technical routes.
 User-agent: *
-allow: /
+Allow: /
 Disallow: /*?*
-
 Disallow: /cdn-cgi/
 Disallow: /wp-admin/
 Disallow: /api/
-Disallow: /test/
+Disallow: /test
+Disallow: /*/test
 Crawl-delay: 10
 
 # Disallow technical signup pages
@@ -170,10 +169,8 @@ Allow: /login/$
 Allow: /signup/$
 Disallow: /login/*
 Disallow: /signup/*
-
 Disallow: /*/?*
 Crawl-delay: 20
 
 # sitemap index
 Sitemap: https://bababou.com/sitemap.xml
-# curl https://www.google.com/ping?sitemap=https://bababou.com/sitemap.xml

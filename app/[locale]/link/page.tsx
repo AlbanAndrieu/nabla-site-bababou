@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import SiteWidgetsScript from "@/components/SiteWidgetsScript";
 import SkipToMainContent from "@/components/SkipToMainContent";
 import TopAnchor from "@/components/TopAnchor";
 import { routing } from "@/i18n/routing";
-import { pageAlternates } from "@/lib/sitePageCatalog";
+import { canonicalPagePath, pageAlternates } from "@/lib/sitePageCatalog";
 
 export async function generateMetadata({
   params,
@@ -31,6 +29,24 @@ export default async function LinkPage({
 
   setRequestLocale(locale);
   const t = await getTranslations("linkPage");
+  const items = [
+    {
+      key: "home",
+      href: canonicalPagePath("index", locale),
+      icon: "fas fa-home",
+    },
+    {
+      key: "contact",
+      href: canonicalPagePath("contact", locale),
+      icon: "fas fa-envelope",
+    },
+    {
+      key: "email",
+      href: canonicalPagePath("email", locale),
+      icon: "fas fa-at",
+    },
+    { key: "rss", href: "/feed.xml", icon: "fas fa-rss" },
+  ] as const;
 
   return (
     <div className="site-content-page page-dark">
@@ -39,55 +55,26 @@ export default async function LinkPage({
       <main id="main-content" className="container py-4 pb-5">
         <header className="mb-4 text-center">
           <h1 className="h2 mb-2">{t("title")}</h1>
+          <p className="lead text-secondary">{t("intro")}</p>
         </header>
 
-        <section className="py-2" aria-labelledby="profiles-grid-heading">
-          <h2 id="profiles-grid-heading" className="visually-hidden">
-            {t("profilesHeading")}
+        <section className="py-2" aria-labelledby="site-links-heading">
+          <h2 id="site-links-heading" className="visually-hidden">
+            {t("title")}
           </h2>
           <div className="tools-grid">
-            <div className="tool-item">
-              <a
-                href="https://github.com/AlbanAndrieu"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Image
-                  src="/assets/logo-github-simple.png"
-                  alt="GitHub"
-                  width={220}
-                  height={220}
-                />
-                <h4>GitHub</h4>
-              </a>
-            </div>
-          </div>
-        </section>
-
-        <section className="py-4 mt-2" aria-labelledby="freelance-refs-heading">
-          <h2 id="freelance-refs-heading" className="h4 text-center mb-4">
-            {t("freelanceHeading")}
-          </h2>
-          <div className="tools-grid">
-            <div className="tool-item">
-              <a
-                href="https://www.linkedin.com/in/nabla/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Image
-                  src="/assets/fontawesome-free-7.1.0-web/svgs/brands/linkedin-in.svg"
-                  alt="LinkedIn"
-                  width={448}
-                  height={512}
-                />
-                <h4>LinkedIn</h4>
-              </a>
-            </div>
+            {items.map((item) => (
+              <div className="tool-item" key={item.key}>
+                <a href={item.href}>
+                  <i className={item.icon} aria-hidden="true" />
+                  <h3>{t(`items.${item.key}.title`)}</h3>
+                  <p>{t(`items.${item.key}.description`)}</p>
+                </a>
+              </div>
+            ))}
           </div>
         </section>
       </main>
-      <SiteWidgetsScript printPdf coffeeFab axeptio />
     </div>
   );
 }
