@@ -12,8 +12,10 @@
 - Les données familiales sensibles doivent être auditées et assainies avant toute copie du HTML legacy vers JSX, messages i18n, metadata, JSON-LD ou artefacts générés.
 - Les PR de migration doivent rester petites et supprimer une dette legacy mesurable plutôt que créer une seconde implémentation durable.
 - Respecter autant que possible la structure et le nommage stabilisés dans `nabla-site-alban` ; documenter explicitement les divergences nécessaires au mode hybride Bababou.
+- Suivre les patterns du `master` courant de `nabla-site-alban`, pas un ancien snapshot : helpers partagés, types de routes Next natifs, ownership i18n par les composants et tests de contrat doivent être portés lorsqu'ils s'appliquent à Bababou.
+- Ne pas recopier aveuglément les politiques propres au repo de référence : `nabla-site-alban` a l'anglais à la racine, alors que Bababou conserve le français comme `defaultLocale` non préfixée.
 
-## État de référence — 2026-08-24
+## État de référence — 2026-08-25
 
 ### Terminé
 
@@ -29,8 +31,9 @@
 - [x] CI Next génère les types de routes avant le typecheck et conserve `public/**` comme source runtime pendant la phase hybride.
 - [x] Script `scripts/vercel-ignore-build.sh` ajouté pour réduire les déploiements inutiles.
 - [x] Sélecteur de langue généré depuis `routing.locales` au lieu d'options FR/EN maintenues à la main (#101).
-- [x] PR #100 rebased sur `master` `fde4265…` et validée sur le head `5430510…` : CI qualité, `next build`, Vercel Preview et Playwright Preview E2E verts.
+- [x] Migration 2 / P1 intégrée à `master` : CI qualité, `next build`, Vercel Preview et contrats E2E stabilisés (#100/#102).
 - [x] Structure i18n réalignée sur `nabla-site-alban` : `i18n/request.ts` charge directement `messages/{locale}.json`, sans catalogue parallèle `messages/migration/*`.
+- [x] Test de structure protégeant le `postinstall` legacy et le chargement direct des catalogues i18n pendant la phase hybride.
 
 ### Blocages opérationnels actuels
 
@@ -42,7 +45,7 @@
 
 Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-alban`, sans casser le runtime legacy encore requis.
 
-- [ ] Remplacer la version preview de Next.js par la version stable validée dans le repo de référence (`16.3.1` au 2026-08-24).
+- [ ] Remplacer la version preview de Next.js par la version stable validée dans le repo de référence (`16.3.1` au 2026-08-25).
 - [ ] Aligner `next` et `eslint-config-next` sur des versions compatibles et régénérer proprement `package-lock.json`.
 - [ ] Borner les engines Node/npm sur le major supporté par CI/Vercel (`Node 24`, `npm 11`) au lieu de bornes uniquement minimales.
 - [ ] Supprimer `express` et `@types/express` s'ils restent sans consommateur.
@@ -51,13 +54,13 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 - [ ] Retirer Wrangler et `wrangler.jsonc` une fois confirmé qu'aucun déploiement Cloudflare Workers n'est encore requis.
 - [ ] Auditer les consommateurs de `dist/`, `index/dist/` et les assets copiés par `postinstall`.
   - [x] Audit initial du dépôt : `app/scripts/arf.js`, `app/resources/`, `dist/` et `index/dist/` ne sont pas versionnés sur la branche courante.
-  - [x] `npm ci` exécute néanmoins le `postinstall` sans erreur dans la CI #100.
+  - [x] `npm ci` exécute néanmoins le `postinstall` sans erreur dans la CI de Migration 2.
   - [ ] Vérifier les consommateurs externes/legacy et la génération attendue hors Git avant toute suppression.
-- [x] **Conserver le `postinstall` actuel et `copyfiles` dans la PR #100 tant que l'audit n'est pas terminé.** Leur retrait doit être atomique avec la migration des consommateurs correspondants.
-- [x] Ajouter un test de régression qui verrouille le `postinstall` legacy et la structure directe `messages/{locale}.json` pendant cette phase hybride (#100).
+- [x] **Conserver le `postinstall` actuel et `copyfiles` tant que l'audit n'est pas terminé.** Leur retrait doit être atomique avec la migration des consommateurs correspondants.
+- [x] Ajouter un test de régression qui verrouille le `postinstall` legacy et la structure directe `messages/{locale}.json` pendant cette phase hybride.
 - [ ] Supprimer les scripts redondants `build:n`, `start:n`, `build:v`, `start:v`, `dev:wrangler`, `start:wrangler`, `deploy:wrangler` seulement après retrait vérifié de leurs runtimes.
 - [ ] Conserver à terme un seul couple nominal `build: next build` / `start: next start`.
-- [x] Exécuter explicitement `next build` dans la CI GitHub de qualité afin de ne pas dépendre uniquement de Vercel pour valider la compilation (#100).
+- [x] Exécuter explicitement `next build` dans la CI GitHub de qualité afin de ne pas dépendre uniquement de Vercel pour valider la compilation.
 - [ ] Mesurer l'impact sur taille d'installation/cache et durée de build.
 
 Critères de sortie :
@@ -67,17 +70,31 @@ Critères de sortie :
 - Preview Vercel opérationnel ;
 - aucun changement de rendu legacy non intentionnel.
 
-## P2 — Finaliser l'architecture i18n
+## P2 — Finaliser l'architecture i18n et routing
 
 - [ ] Nettoyer les derniers textes/labels copiés du site `nabla-site-alban`.
 - [x] Générer le sélecteur de langue depuis `routing.locales` au lieu de maintenir les options à la main.
 - [x] Conserver la structure de référence `messages/{locale}.json` chargée directement par `i18n/request.ts` ; éviter les catalogues parallèles de migration.
+- [x] Introduire un skip-link Next partagé dont le composant possède directement la traduction `site.skipToMainContent`, suivant le pattern récent de `nabla-site-alban`.
+- [x] Remplacer les types locaux de props de `email` et `link` par `PageProps<...>` généré par Next.
+- [x] Centraliser la politique canonical des routes Next déjà natives : `/`, `/contact`, `/email`, `/link` pour FR et `/en/...` pour EN, sans extension `.html`.
+- [x] Geler explicitement les semantics d'URL des pages encore legacy ; leur extension/prefixe ne change qu'au moment de leur migration vérifiée.
+- [x] Générer les alternates de `email` et `link` depuis `routing.locales` avec `fr` comme `x-default`.
+- [ ] Étendre la génération d'alternates depuis `routing.locales` aux autres routes Next au fur et à mesure de leur refactor.
 - [ ] Stabiliser FR et EN avant d'ajouter de nouvelles locales.
 - [ ] Ajouter `de` et `no` à `routing.locales` avec des catalogues complets et validés.
 - [ ] Cibles : `/` = FR, `/en` = EN, `/de` = DE, `/no` = NO.
-- [ ] Générer alternates/hreflang depuis la configuration de routing.
 - [ ] Ajouter des tests de canonical, locale switcher et absence de boucles de redirection.
+  - [x] Tests unitaires : canonical FR/EN des routes Next natives, absence de `.html`, `x-default` français et gel des URLs legacy.
+  - [ ] Tests E2E : metadata canonical/hreflang rendues et absence de boucles sur chaque locale.
 - [ ] Garder Google Translate uniquement pour les langues hors locales de premier rang.
+
+### Règles i18n reprises du repo de référence
+
+- Un composant serveur focalisé doit charger son namespace avec `getTranslations()` lorsqu'il peut posséder sa copy, plutôt que recevoir de nombreux textes localisés par props.
+- Ne pas créer de dictionnaires de traduction locaux dans les composants ; les messages restent dans `messages/{locale}.json` ou dans des catalogues modulaires composés explicitement si leur taille le justifie plus tard.
+- Conserver les noms propres, noms de produits et identifiants canoniques non traduisibles comme tels ; ajouter des tests lorsqu'une valeur doit être identique entre locales.
+- Les helpers de navigation, metadata et accessibilité communs doivent être partagés plutôt que dupliqués route par route.
 
 ## P3 — Migrer la page d'accueil
 
@@ -94,6 +111,7 @@ Critères de sortie :
 - [ ] Déplacer les textes localisables vers `messages/{locale}.json`.
 - [ ] Utiliser temporairement `PublicHtmlFragment` uniquement pour les sections auditées et non encore converties.
 - [ ] Retirer chaque section legacy du fragment dès que son composant React atteint la parité.
+- [ ] Préférer des composants serveur qui possèdent leurs traductions ; isoler en composants client uniquement les interactions nécessitant réellement le navigateur.
 - [ ] Vérifier responsive/mobile, accessibilité, liens, assets, metadata et SEO.
 - [ ] Faire passer les E2E sur le Preview exact.
 - [ ] Une fois la page native prête, retirer le rewrite temporaire de `/`.
@@ -131,9 +149,10 @@ Pour chaque page :
 
 ## Découpage des prochaines PR
 
-- [ ] **Migration 2 / P1 — PR #100** : rebase sur le `master` courant, CI `next build`, contrats E2E Next/Vercel, invariants hybrides et nettoyage du contexte Vercel ; conserver le `postinstall` jusqu'à l'audit `dist/`.
+- [x] **Migration 2 / P1 — PR #100/#102** : rebase, CI `next build`, contrats E2E Next/Vercel, invariants hybrides et nettoyage du contexte Vercel ; `postinstall` conservé jusqu'à l'audit `dist/`.
 - [ ] **Migration 2b / P1** — Next stable + engines bornés + suppression des dépendances confirmées orphelines + régénération atomique du lockfile.
-- [ ] **Migration 3 / P2** — i18n FR/EN propre + préparation DE/NO directement dans `messages/{locale}.json`.
+- [ ] **Migration 3a / P2** — fondations routing/i18n : canonical hybride correct, alternates pilotés par `routing`, `PageProps` Next et primitives d'accessibilité partagées.
+- [ ] **Migration 3b / P2** — i18n FR/EN propre + préparation DE/NO directement dans `messages/{locale}.json` ; appliquer progressivement l'ownership des traductions par composants.
 - [ ] **Migration 4 / P3** — home Next progressive et privacy gate.
 - [ ] **Migration 5 / P4a** — contact/email/link + redirects legacy.
 - [ ] **Migration 6 / P4b** — autres pages publiques.
