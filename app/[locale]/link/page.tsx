@@ -4,17 +4,14 @@ import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import SiteWidgetsScript from "@/components/SiteWidgetsScript";
+import SkipToMainContent from "@/components/SkipToMainContent";
 import TopAnchor from "@/components/TopAnchor";
 import { routing } from "@/i18n/routing";
-import { canonicalPagePath } from "@/lib/sitePageCatalog";
-
-type LinkPageProps = {
-  params: Promise<{ locale: string }>;
-};
+import { pageAlternates } from "@/lib/sitePageCatalog";
 
 export async function generateMetadata({
   params,
-}: LinkPageProps): Promise<Metadata> {
+}: PageProps<"/[locale]/link">): Promise<Metadata> {
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) return {};
   const t = await getTranslations({ locale, namespace: "linkPage" });
@@ -22,32 +19,23 @@ export async function generateMetadata({
   return {
     title: t("metadataTitle"),
     description: t("metadataDescription"),
-    alternates: {
-      canonical: canonicalPagePath("link", locale),
-      languages: {
-        en: canonicalPagePath("link", "en"),
-        fr: canonicalPagePath("link", "fr"),
-      },
-    },
+    alternates: pageAlternates("link", locale),
   };
 }
 
-export default async function LinkPage({ params }: LinkPageProps) {
+export default async function LinkPage({
+  params,
+}: PageProps<"/[locale]/link">) {
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
 
   setRequestLocale(locale);
-  const [site, t] = await Promise.all([
-    getTranslations("site"),
-    getTranslations("linkPage"),
-  ]);
+  const t = await getTranslations("linkPage");
 
   return (
     <div className="site-content-page page-dark">
       <TopAnchor />
-      <a href="#main-content" className="skip-to-main">
-        {site("skipToMainContent")}
-      </a>
+      <SkipToMainContent />
       <main id="main-content" className="container py-4 pb-5">
         <header className="mb-4 text-center">
           <h1 className="h2 mb-2">{t("title")}</h1>

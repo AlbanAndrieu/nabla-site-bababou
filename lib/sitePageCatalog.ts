@@ -1,3 +1,5 @@
+import { type AppLocale, routing } from "@/i18n/routing";
+
 export type PageCategory =
   | "primaryVisibility"
   | "discoverability"
@@ -18,36 +20,26 @@ type SitePageDefinition = {
 /**
  * Single source of truth for the purpose and indexability of public pages.
  * Object order defines sitemap order: strongest visibility pages come first.
+ *
+ * During the hybrid migration, only routes that actually exist in Bababou's
+ * current public runtime are indexable here. Portfolio slugs inherited from
+ * nabla-site-alban remain catalogued only where transitional code still
+ * references them; they must not leak into Bababou's sitemap.
  */
 export const SITE_PAGES = {
   index: {
     category: "primaryVisibility",
     seo: { priority: 1, changeFrequency: "monthly" },
   },
-  expertise: {
-    category: "primaryVisibility",
-    seo: { priority: 0.95, changeFrequency: "monthly" },
-  },
+  expertise: { category: "primaryVisibility" },
   contact: {
     category: "primaryVisibility",
     seo: { priority: 0.9, changeFrequency: "monthly" },
   },
-  security: {
-    category: "editorialShowcase",
-    seo: { priority: 0.85, changeFrequency: "monthly" },
-  },
-  ai: {
-    category: "editorialShowcase",
-    seo: { priority: 0.8, changeFrequency: "monthly" },
-  },
-  ciso: {
-    category: "editorialShowcase",
-    seo: { priority: 0.8, changeFrequency: "weekly" },
-  },
-  truenas: {
-    category: "editorialShowcase",
-    seo: { priority: 0.75, changeFrequency: "monthly" },
-  },
+  security: { category: "editorialShowcase" },
+  ai: { category: "editorialShowcase" },
+  ciso: { category: "editorialShowcase" },
+  truenas: { category: "editorialShowcase" },
   link: {
     category: "discoverability",
     seo: { priority: 0.65, changeFrequency: "monthly" },
@@ -58,19 +50,10 @@ export const SITE_PAGES = {
   },
   ctid: { category: "editorialShowcase" },
   freenas: { category: "editorialShowcase" },
-  nabla: {
-    category: "editorialShowcase",
-    seo: { priority: 0.7, changeFrequency: "monthly" },
-  },
+  nabla: { category: "editorialShowcase" },
   workstation: { category: "editorialShowcase" },
-  cv: {
-    category: "portfolioEvidence",
-    seo: { priority: 0.7, changeFrequency: "monthly" },
-  },
-  jm: {
-    category: "portfolioEvidence",
-    seo: { priority: 0.65, changeFrequency: "monthly" },
-  },
+  cv: { category: "portfolioEvidence" },
+  jm: { category: "portfolioEvidence" },
   startup: { category: "technicalFlow" },
   "startup-thanks": { category: "technicalFlow" },
   pricing: { category: "technicalFlow" },
@@ -116,11 +99,21 @@ export const SEO_PAGE_SLUGS = sitePageEntries
   .map(([slug]) => slug) as SeoPageSlug[];
 
 const seoPageSlugs = new Set<SitePageSlug>(SEO_PAGE_SLUGS);
+const nextCanonicalSlugs = new Set<SitePageSlug>([
+  "index",
+  "contact",
+  "email",
+  "link",
+]);
 
 export const NON_INDEXABLE_ROBOTS = { index: false, follow: false } as const;
 
 export function isSeoPageSlug(slug: string): slug is SeoPageSlug {
   return seoPageSlugs.has(slug as SitePageSlug);
+}
+
+export function isNextCanonicalSlug(slug: SitePageSlug) {
+  return nextCanonicalSlugs.has(slug);
 }
 
 export function seoSettings(slug: SeoPageSlug): SeoSettings {
@@ -129,22 +122,47 @@ export function seoSettings(slug: SeoPageSlug): SeoSettings {
   return settings;
 }
 
-export function canonicalPagePath(slug: SeoPageSlug, locale: "en" | "fr") {
-  if (slug === "index") return locale === "fr" ? "/fr" : "/";
+function nextLocalePrefix(locale: AppLocale) {
+  return locale === routing.defaultLocale ? "" : `/${locale}`;
+}
+
+/**
+ * Canonical public URL policy during the hybrid migration:
+ * - French is Bababou's default locale and stays unprefixed for native Next
+ *   routes (`/contact`). Other first-class locales are prefixed (`/en/contact`).
+ * - Native Next canonical URLs never expose implementation extensions.
+ * - Legacy page URL semantics stay frozen until each page is explicitly
+ *   migrated and validated; changing them implicitly would break the static
+ *   fallback that still lives under public/.
+ */
+export function canonicalPagePath(slug: SitePageSlug, locale: AppLocale) {
+  if (isNextCanonicalSlug(slug)) {
+    const prefix = nextLocalePrefix(locale);
+    if (slug === "index") return prefix || "/";
+    return `${prefix}/${slug}`;
+  }
+
+  // Preserve the pre-existing legacy URL policy until that route is migrated.
   if (slug === "cv" || slug === "jm") {
     return `${locale === "fr" ? "/fr" : ""}/${slug}`;
   }
   return `${locale === "fr" ? "/fr" : ""}/${slug}.html`;
 }
 
-export function pageAlternates(slug: SeoPageSlug, locale: "en" | "fr") {
-  const englishPath = canonicalPagePath(slug, "en");
+export function pageAlternates(slug: SitePageSlug, locale: AppLocale) {
+  const languages = Object.fromEntries(
+    routing.locales.map((supportedLocale) => [
+      supportedLocale,
+      canonicalPagePath(slug, supportedLocale),
+    ]),
+  );
+  const defaultPath = canonicalPagePath(slug, routing.defaultLocale);
+
   return {
     canonical: canonicalPagePath(slug, locale),
     languages: {
-      en: englishPath,
-      fr: canonicalPagePath(slug, "fr"),
-      "x-default": englishPath,
+      ...languages,
+      "x-default": defaultPath,
     },
   };
 }
