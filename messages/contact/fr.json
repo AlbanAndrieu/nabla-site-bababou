@@ -1,0 +1,34 @@
+{
+  "contactPage": {
+    "meta": {
+      "title": "Contacter Bababou",
+      "description": "Moyens de contact publics et respectueux de la vie privée pour ce site familial."
+    },
+    "hero": {
+      "title": "Rester en contact",
+      "subtitle": "Un moyen simple et sûr de contacter le parent à l’origine de ce site.",
+      "intro": "Ce site conserve uniquement les informations publiques utiles pour permettre une reprise de contact, sans publier de coordonnées privées inutiles.",
+      "profileAlt": "Portrait d’Alban Andrieu",
+      "contactCta": "Écrire par e-mail"
+    },
+    "information": {
+      "title": "Contact public",
+      "subtitle": "Privilégiez l’adresse e-mail dédiée au site."
+    },
+    "methods": {
+      "email": {
+        "title": "E-mail",
+        "value": "aa@bababou.com"
+      }
+    },
+    "location": {
+      "title": "Localisation générale",
+      "value": "Région parisienne",
+      "description": "Pour protéger la vie privée familiale, aucune adresse résidentielle précise ni localisation en temps réel n’est publiée ici."
+    },
+    "privacy": {
+      "title": "Protection de la vie privée",
+      "description": "Les coordonnées privées, identifiants officiels et informations médicales ou psychologiques ne font pas partie des informations de contact publiques du site."
+    }
+  }
+}
