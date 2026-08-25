@@ -20,18 +20,18 @@ const LINK_LOADERS = {
   en: () => import("@/messages/link/en.json"),
 } as const;
 
-const MIGRATED_BASE_NAMESPACES = new Set([
-  "contactPage",
-  "email",
-  "linkPage",
-]);
+// The hybrid Next runtime only needs shared chrome from the legacy base
+// catalogs. Page-specific namespaces are owned by focused domain catalogs.
+// Keeping this allowlist narrow also prevents unused portfolio copy inherited
+// from the reference site from being serialized through NextIntlClientProvider.
+const BASE_RUNTIME_NAMESPACES = new Set(["site"]);
 
-function withoutMigratedNamespaces<T extends Record<string, unknown>>(catalog: T) {
-  const filtered = { ...catalog } as Record<string, unknown>;
-  for (const namespace of MIGRATED_BASE_NAMESPACES) {
-    delete filtered[namespace];
-  }
-  return filtered;
+function selectRuntimeBaseNamespaces<T extends Record<string, unknown>>(catalog: T) {
+  return Object.fromEntries(
+    Object.entries(catalog).filter(([namespace]) =>
+      BASE_RUNTIME_NAMESPACES.has(namespace),
+    ),
+  );
 }
 
 function assertUniqueTopLevelNamespaces(
@@ -65,8 +65,8 @@ export async function loadMessages(locale: AppLocale) {
     LINK_LOADERS[locale](),
   ]);
 
-  const legacyBase = withoutMigratedNamespaces(base);
-  const catalogs = [legacyBase, contact, email, link];
+  const runtimeBase = selectRuntimeBaseNamespaces(base);
+  const catalogs = [runtimeBase, contact, email, link];
   assertUniqueTopLevelNamespaces(catalogs);
 
   return Object.assign({}, ...catalogs);
