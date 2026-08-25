@@ -43,10 +43,10 @@ function normalizeLegacyLocation(location: string) {
 }
 
 function parseLegacySitemap(xml: string): MetadataRoute.Sitemap {
-  const activeXml = xml.replace(/<!--[\\s\\S]*?-->/g, "");
+  const activeXml = xml.replace(/<!--[\s\S]*?-->/g, "");
   const entries: MetadataRoute.Sitemap = [];
 
-  for (const match of activeXml.matchAll(/<url>([\\s\\S]*?)<\/url>/gi)) {
+  for (const match of activeXml.matchAll(/<url>([\s\S]*?)<\/url>/gi)) {
     const block = match[1];
     const location = textTag(block, "loc");
     if (!location) continue;
