@@ -6,6 +6,7 @@ const EXPECTED_LEGACY_POSTINSTALL =
   "copyfiles -f ./node_modules/d3/d3.min.js ./index/dist/scripts/d3 && copyfiles -f ./app/scripts/arf.js ./dist/scripts/ && copyfiles -f ./app/resources/*.json ./dist/resources && copyfiles -f ./index.html ./dist/ && copyfiles -f ./wireframe.css ./dist/";
 
 const DOMAIN_CATALOGS = [
+  ["site", "site"],
   ["contact", "contactPage"],
   ["email", "email"],
   ["link", "linkPage"],
@@ -19,7 +20,7 @@ test("keeps the legacy postinstall until the dist consumers are audited", async 
   assert.equal(packageJson.scripts?.postinstall, EXPECTED_LEGACY_POSTINSTALL);
 });
 
-test("keeps base catalogs but serializes only shared runtime chrome", async () => {
+test("keeps legacy base catalogs versioned but does not load them at runtime", async () => {
   const [requestConfig, messageLoader, englishMessages, frenchMessages] =
     await Promise.all([
       readFile(new URL("../i18n/request.ts", import.meta.url), "utf8"),
@@ -29,12 +30,12 @@ test("keeps base catalogs but serializes only shared runtime chrome", async () =
     ]);
 
   assert.match(requestConfig, /loadMessages/);
-  assert.match(messageLoader, /BASE_LOADERS/);
+  assert.match(messageLoader, /SITE_LOADERS/);
   assert.match(messageLoader, /CONTACT_LOADERS/);
   assert.match(messageLoader, /EMAIL_LOADERS/);
   assert.match(messageLoader, /LINK_LOADERS/);
-  assert.match(messageLoader, /BASE_RUNTIME_NAMESPACES/);
-  assert.match(messageLoader, /new Set\(\["site"\]\)/);
+  assert.doesNotMatch(messageLoader, /BASE_LOADERS/);
+  assert.doesNotMatch(messageLoader, /@\/messages\/(?:en|fr)\.json/);
   assert.doesNotMatch(`${requestConfig}\n${messageLoader}`, /messages\/migration/);
   assert.doesNotThrow(() => JSON.parse(englishMessages));
   assert.doesNotThrow(() => JSON.parse(frenchMessages));
