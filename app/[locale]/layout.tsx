@@ -9,15 +9,6 @@ import Footer from "@/app/components/Footer";
 import RouteHeader from "@/components/RouteHeader";
 import { routing } from "@/i18n/routing";
 
-type LocaleLayoutProps = {
-  children: React.ReactNode;
-  params: Promise<{ locale: string }>;
-};
-
-type LocaleMetadataProps = {
-  params: Promise<{ locale: string }>;
-};
-
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://bababou.com";
 const SITE_METADATA = {
   fr: {
@@ -42,7 +33,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({
   params,
-}: LocaleMetadataProps): Promise<Metadata> {
+}: LayoutProps<"/[locale]">): Promise<Metadata> {
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) return {};
 
@@ -93,19 +84,27 @@ export async function generateMetadata({
 export default async function LocaleLayout({
   children,
   params,
-}: LocaleLayoutProps) {
+}: LayoutProps<"/[locale]">) {
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
 
   setRequestLocale(locale);
-  const messages = await getMessages();
+  const messages = await getMessages({ locale });
   const site = messages.site as {
     backHome: string;
     backToTop: string;
     backToTopAria: string;
+    copyright: string;
     legalNotices: string;
     rssFeedAria: string;
   };
+  const contactPage = messages.contactPage as {
+    information: { title: string };
+  };
+  const copyright = site.copyright.replace(
+    "{year}",
+    String(new Date().getUTCFullYear()),
+  );
 
   const configuredAnalyticsMode = process.env.NEXT_PUBLIC_ANALYTICS_MODE;
   const analyticsMode = ["full", "home", "showcase", "vercel"].includes(
@@ -149,8 +148,11 @@ export default async function LocaleLayout({
             backHome={site.backHome}
             backToTop={site.backToTop}
             backToTopAria={site.backToTopAria}
+            contactLabel={contactPage.information.title}
+            copyright={copyright}
             legalNotices={site.legalNotices}
             locale={locale}
+            rssFeedAria={site.rssFeedAria}
           />
         </NextIntlClientProvider>
         <Script
