@@ -1,3 +1,5 @@
+import { type AppLocale, routing } from "@/i18n/routing";
+
 export type PageCategory =
   | "primaryVisibility"
   | "discoverability"
@@ -116,11 +118,21 @@ export const SEO_PAGE_SLUGS = sitePageEntries
   .map(([slug]) => slug) as SeoPageSlug[];
 
 const seoPageSlugs = new Set<SitePageSlug>(SEO_PAGE_SLUGS);
+const nextCanonicalSlugs = new Set<SeoPageSlug>([
+  "index",
+  "contact",
+  "email",
+  "link",
+]);
 
 export const NON_INDEXABLE_ROBOTS = { index: false, follow: false } as const;
 
 export function isSeoPageSlug(slug: string): slug is SeoPageSlug {
   return seoPageSlugs.has(slug as SitePageSlug);
+}
+
+export function isNextCanonicalSlug(slug: SeoPageSlug) {
+  return nextCanonicalSlugs.has(slug);
 }
 
 export function seoSettings(slug: SeoPageSlug): SeoSettings {
@@ -129,22 +141,47 @@ export function seoSettings(slug: SeoPageSlug): SeoSettings {
   return settings;
 }
 
-export function canonicalPagePath(slug: SeoPageSlug, locale: "en" | "fr") {
-  if (slug === "index") return locale === "fr" ? "/fr" : "/";
+function nextLocalePrefix(locale: AppLocale) {
+  return locale === routing.defaultLocale ? "" : `/${locale}`;
+}
+
+/**
+ * Canonical public URL policy during the hybrid migration:
+ * - French is Bababou's default locale and stays unprefixed for native Next
+ *   routes (`/contact`). Other first-class locales are prefixed (`/en/contact`).
+ * - Native Next canonical URLs never expose implementation extensions.
+ * - Legacy page URL semantics stay frozen until each page is explicitly
+ *   migrated and validated; changing them implicitly would break the static
+ *   fallback that still lives under public/.
+ */
+export function canonicalPagePath(slug: SeoPageSlug, locale: AppLocale) {
+  if (isNextCanonicalSlug(slug)) {
+    const prefix = nextLocalePrefix(locale);
+    if (slug === "index") return prefix || "/";
+    return `${prefix}/${slug}`;
+  }
+
+  // Preserve the pre-existing legacy URL policy until that route is migrated.
   if (slug === "cv" || slug === "jm") {
     return `${locale === "fr" ? "/fr" : ""}/${slug}`;
   }
   return `${locale === "fr" ? "/fr" : ""}/${slug}.html`;
 }
 
-export function pageAlternates(slug: SeoPageSlug, locale: "en" | "fr") {
-  const englishPath = canonicalPagePath(slug, "en");
+export function pageAlternates(slug: SeoPageSlug, locale: AppLocale) {
+  const languages = Object.fromEntries(
+    routing.locales.map((supportedLocale) => [
+      supportedLocale,
+      canonicalPagePath(slug, supportedLocale),
+    ]),
+  );
+  const defaultPath = canonicalPagePath(slug, routing.defaultLocale);
+
   return {
     canonical: canonicalPagePath(slug, locale),
     languages: {
-      en: englishPath,
-      fr: canonicalPagePath(slug, "fr"),
-      "x-default": englishPath,
+      ...languages,
+      "x-default": defaultPath,
     },
   };
 }
