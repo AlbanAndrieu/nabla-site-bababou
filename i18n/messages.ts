@@ -10,7 +10,21 @@ const CONTACT_LOADERS = {
   en: () => import("@/messages/contact/en.json"),
 } as const;
 
-const MIGRATED_BASE_NAMESPACES = new Set(["contactPage"]);
+const EMAIL_LOADERS = {
+  fr: () => import("@/messages/email/fr.json"),
+  en: () => import("@/messages/email/en.json"),
+} as const;
+
+const LINK_LOADERS = {
+  fr: () => import("@/messages/link/fr.json"),
+  en: () => import("@/messages/link/en.json"),
+} as const;
+
+const MIGRATED_BASE_NAMESPACES = new Set([
+  "contactPage",
+  "email",
+  "linkPage",
+]);
 
 function withoutMigratedNamespaces<T extends Record<string, unknown>>(catalog: T) {
   const filtered = { ...catalog } as Record<string, unknown>;
@@ -39,16 +53,21 @@ function assertUniqueTopLevelNamespaces(
 }
 
 export async function loadMessages(locale: AppLocale) {
-  const [{ default: base }, { default: contact }] = await Promise.all([
+  const [
+    { default: base },
+    { default: contact },
+    { default: email },
+    { default: link },
+  ] = await Promise.all([
     BASE_LOADERS[locale](),
     CONTACT_LOADERS[locale](),
+    EMAIL_LOADERS[locale](),
+    LINK_LOADERS[locale](),
   ]);
 
   const legacyBase = withoutMigratedNamespaces(base);
-  assertUniqueTopLevelNamespaces([legacyBase, contact]);
+  const catalogs = [legacyBase, contact, email, link];
+  assertUniqueTopLevelNamespaces(catalogs);
 
-  return {
-    ...legacyBase,
-    ...contact,
-  };
+  return Object.assign({}, ...catalogs);
 }
