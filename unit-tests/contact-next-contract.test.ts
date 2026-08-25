@@ -28,13 +28,16 @@ test("contact route uses shared Next routing and accessibility primitives", asyn
   }
 });
 
-test("contact hero owns its localized copy", async () => {
+test("contact hero owns and renders its localized copy", async () => {
   const hero = await readFile(
     new URL("../components/ContactHero.tsx", import.meta.url),
     "utf8",
   );
 
   assert.match(hero, /getTranslations\("contactPage\.hero"\)/);
+  for (const key of ["profileAlt", "title", "subtitle", "intro", "contactCta"]) {
+    assert.match(hero, new RegExp(`t\\("${key}"\\)`));
+  }
   assert.match(hero, /contactHref: string/);
   assert.doesNotMatch(hero, /cvHref|experience: string|role: string|profileAlt: string/);
 });
