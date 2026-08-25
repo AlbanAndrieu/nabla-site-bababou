@@ -1,0 +1,19 @@
+{
+  "site": {
+    "skipToMainContent": "Skip to main content",
+    "legalNotices": "Legal notices",
+    "backHome": "Back to home",
+    "home": "Home",
+    "breadcrumbLabel": "Breadcrumb",
+    "backToTop": "Back to top",
+    "backToTopAria": "Back to top of page",
+    "localeSwitcherLabel": "Language",
+    "languageName": {
+      "en": "English",
+      "fr": "French"
+    },
+    "switchLanguage": "Switch language",
+    "rssFeedAria": "RSS feed for this site",
+    "copyright": "© {year} Bababou."
+  }
+}
