@@ -29,17 +29,11 @@ async function expectAlternates(
 test.describe("native Next SEO locale metadata", () => {
   for (const route of ROUTES) {
     test(`${route} renders French default canonical and hreflang`, async ({
-      context,
       page,
     }) => {
-      await context.addCookies([
-        {
-          name: "NEXT_LOCALE",
-          value: "fr",
-          url: page.url() === "about:blank" ? "http://localhost:3000" : page.url(),
-        },
-      ]).catch(() => undefined);
-
+      await page.setExtraHTTPHeaders({
+        "Accept-Language": "fr-FR,fr;q=0.9,en;q=0.8",
+      });
       await page.goto(`/${route}`);
       await expectAlternates(page, {
         canonical: `/${route}`,
