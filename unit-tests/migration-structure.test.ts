@@ -13,12 +13,14 @@ test("keeps the legacy postinstall until the dist consumers are audited", async 
   assert.equal(packageJson.scripts?.postinstall, EXPECTED_LEGACY_POSTINSTALL);
 });
 
-test("loads first-class locale messages directly without a migration catalog", async () => {
-  const requestConfig = await readFile(
-    new URL("../i18n/request.ts", import.meta.url),
-    "utf8",
-  );
+test("keeps first-class base catalogs under messages/{locale}.json", async () => {
+  const [requestConfig, englishMessages, frenchMessages] = await Promise.all([
+    readFile(new URL("../i18n/request.ts", import.meta.url), "utf8"),
+    readFile(new URL("../messages/en.json", import.meta.url), "utf8"),
+    readFile(new URL("../messages/fr.json", import.meta.url), "utf8"),
+  ]);
 
-  assert.match(requestConfig, /\.\.\/messages\/\$\{locale as AppLocale\}\.json/);
   assert.doesNotMatch(requestConfig, /messages\/migration/);
+  assert.doesNotThrow(() => JSON.parse(englishMessages));
+  assert.doesNotThrow(() => JSON.parse(frenchMessages));
 });
