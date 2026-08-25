@@ -1,77 +1,42 @@
 import BackToTopButton from "@/components/BackToTopButton";
 import ActionLink, { actionClassName } from "@/components/ui/ActionLink";
+import type { AppLocale } from "@/i18n/routing";
+import { canonicalPagePath } from "@/lib/sitePageCatalog";
 import styles from "./Footer.module.css";
 
 type FooterProps = {
   backHome: string;
   backToTop: string;
   backToTopAria: string;
+  copyright: string;
   legalNotices: string;
-  locale: string;
+  locale: AppLocale;
+  rssFeedAria: string;
 };
 
 export default function Footer({
   backHome,
   backToTop,
   backToTopAria,
+  copyright,
   legalNotices,
   locale,
+  rssFeedAria,
 }: FooterProps) {
-  const homeHref = locale === "fr" ? "/fr" : "/";
+  const homeHref = canonicalPagePath("index", locale);
+  const contactHref = canonicalPagePath("contact", locale);
 
   return (
     <footer className="footer text-center" role="contentinfo">
       <div className="social-links">
         <a
-          href="https://www.linkedin.com/in/nabla"
-          target="_blank"
-          rel="noopener noreferrer"
+          href={contactHref}
           className="social-link"
-          aria-label="LinkedIn"
+          aria-label={legalNotices === "Legal notices" ? "Contact" : "Contact"}
         >
-          <i className="fab fa-linkedin-in"></i>
+          <i className="fas fa-envelope" aria-hidden="true"></i>
         </a>
-        <a
-          href="https://calendly.com/alban-andrieu"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="social-link"
-          aria-label="Calendly"
-        >
-          <i className="fa fa-calendar-plus"></i>
-        </a>
-        <a
-          href="https://github.com/AlbanAndrieu"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="social-link"
-          aria-label="GitHub"
-        >
-          <i className="fab fa-github"></i>
-        </a>
-        <a
-          href="https://hub.docker.com/u/nabla"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="social-link"
-          aria-label="Docker Hub"
-        >
-          <i className="fab fa-docker"></i>
-        </a>
-        <a
-          href="https://stackexchange.com/users/4652074/albanandrieu"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="social-link"
-          aria-label="Stack Exchange"
-        >
-          <i className="fab fa-stack-exchange"></i>
-        </a>
-        <a
-          href="/feed.xml"
-          className="social-link"
-          aria-label="RSS feed for this site"
-        >
+        <a href="/feed.xml" className="social-link" aria-label={rssFeedAria}>
           <i className="fa fa-rss" aria-hidden="true"></i>
         </a>
       </div>
@@ -89,10 +54,7 @@ export default function Footer({
           className={actionClassName("secondary")}
         />
       </nav>
-      <p className="footer-copyright text-center">
-        © {new Date().getFullYear()} Alban Andrieu. Independent DevSecOps
-        Professional.
-      </p>
+      <p className="footer-copyright text-center">{copyright}</p>
     </footer>
   );
 }
