@@ -19,7 +19,7 @@ test("keeps the legacy postinstall until the dist consumers are audited", async 
   assert.equal(packageJson.scripts?.postinstall, EXPECTED_LEGACY_POSTINSTALL);
 });
 
-test("keeps base catalogs and composes migrated domain catalogs explicitly", async () => {
+test("keeps base catalogs but serializes only shared runtime chrome", async () => {
   const [requestConfig, messageLoader, englishMessages, frenchMessages] =
     await Promise.all([
       readFile(new URL("../i18n/request.ts", import.meta.url), "utf8"),
@@ -33,7 +33,8 @@ test("keeps base catalogs and composes migrated domain catalogs explicitly", asy
   assert.match(messageLoader, /CONTACT_LOADERS/);
   assert.match(messageLoader, /EMAIL_LOADERS/);
   assert.match(messageLoader, /LINK_LOADERS/);
-  assert.match(messageLoader, /MIGRATED_BASE_NAMESPACES/);
+  assert.match(messageLoader, /BASE_RUNTIME_NAMESPACES/);
+  assert.match(messageLoader, /new Set\(\["site"\]\)/);
   assert.doesNotMatch(`${requestConfig}\n${messageLoader}`, /messages\/migration/);
   assert.doesNotThrow(() => JSON.parse(englishMessages));
   assert.doesNotThrow(() => JSON.parse(frenchMessages));
