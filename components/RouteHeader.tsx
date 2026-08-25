@@ -62,14 +62,17 @@ export default function RouteHeader() {
       className={`route-header${showNavigation ? "" : " route-header--root"}`}
     >
       {showNavigation ? (
-        <nav className="route-header__nav container" aria-label="Breadcrumb">
+        <nav
+          className="route-header__nav container"
+          aria-label={t("breadcrumbLabel")}
+        >
           <Link
             className="route-header__home"
             href={homeHref}
-            aria-label={locale === "fr" ? "Accueil" : "Home"}
+            aria-label={t("home")}
           >
             <i className="fas fa-home" aria-hidden="true" />
-            <span>{locale === "fr" ? "Accueil" : "Home"}</span>
+            <span>{t("home")}</span>
           </Link>
           {parentHref && parentSegment ? (
             <>
