@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-const DOMAINS = ["contact", "email", "link"] as const;
+const DOMAINS = ["site", "contact", "email", "link"] as const;
 
 function keyShape(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(keyShape);
