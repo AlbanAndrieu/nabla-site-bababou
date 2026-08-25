@@ -1,0 +1,26 @@
+{
+  "linkPage": {
+    "metadataTitle": "Useful links — Bababou",
+    "metadataDescription": "Shortcuts to the main public pages of the Bababou site.",
+    "title": "Useful links",
+    "intro": "Quick access to the site's main public pages.",
+    "items": {
+      "home": {
+        "title": "Home",
+        "description": "Return to the site's home page."
+      },
+      "contact": {
+        "title": "Contact",
+        "description": "Use the site's public contact methods."
+      },
+      "email": {
+        "title": "Email",
+        "description": "See the dedicated public email address."
+      },
+      "rss": {
+        "title": "RSS feed",
+        "description": "Follow public site updates."
+      }
+    }
+  }
+}
