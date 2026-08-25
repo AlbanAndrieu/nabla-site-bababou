@@ -1,0 +1,26 @@
+{
+  "linkPage": {
+    "metadataTitle": "Liens utiles — Bababou",
+    "metadataDescription": "Raccourcis vers les principales pages publiques du site Bababou.",
+    "title": "Liens utiles",
+    "intro": "Accédez rapidement aux principales pages publiques du site.",
+    "items": {
+      "home": {
+        "title": "Accueil",
+        "description": "Revenir à la page d’accueil du site."
+      },
+      "contact": {
+        "title": "Contact",
+        "description": "Utiliser les moyens de contact publics du site."
+      },
+      "email": {
+        "title": "E-mail",
+        "description": "Consulter l’adresse e-mail publique dédiée."
+      },
+      "rss": {
+        "title": "Flux RSS",
+        "description": "Suivre les mises à jour publiques du site."
+      }
+    }
+  }
+}
