@@ -32,8 +32,8 @@
 - [x] Script `scripts/vercel-ignore-build.sh` ajouté pour réduire les déploiements inutiles.
 - [x] Sélecteur de langue généré depuis `routing.locales` au lieu d'options FR/EN maintenues à la main (#101).
 - [x] Migration 2 / P1 intégrée à `master` : CI qualité, `next build`, Vercel Preview et contrats E2E stabilisés (#100/#102).
-- [x] Structure i18n réalignée sur `nabla-site-alban` : `i18n/request.ts` charge directement `messages/{locale}.json`, sans catalogue parallèle `messages/migration/*`.
-- [x] Test de structure protégeant le `postinstall` legacy et le chargement direct des catalogues i18n pendant la phase hybride.
+- [x] Catalogues i18n de premier rang conservés sous `messages/{locale}.json`, sans catalogue parallèle `messages/migration/*`.
+- [x] Test de structure protégeant le `postinstall` legacy et l'emplacement des catalogues de base pendant la phase hybride.
 
 ### Blocages opérationnels actuels
 
@@ -57,7 +57,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] `npm ci` exécute néanmoins le `postinstall` sans erreur dans la CI de Migration 2.
   - [ ] Vérifier les consommateurs externes/legacy et la génération attendue hors Git avant toute suppression.
 - [x] **Conserver le `postinstall` actuel et `copyfiles` tant que l'audit n'est pas terminé.** Leur retrait doit être atomique avec la migration des consommateurs correspondants.
-- [x] Ajouter un test de régression qui verrouille le `postinstall` legacy et la structure directe `messages/{locale}.json` pendant cette phase hybride.
+- [x] Ajouter un test de régression qui verrouille le `postinstall` legacy et les catalogues de base `messages/{locale}.json` pendant cette phase hybride.
 - [ ] Supprimer les scripts redondants `build:n`, `start:n`, `build:v`, `start:v`, `dev:wrangler`, `start:wrangler`, `deploy:wrangler` seulement après retrait vérifié de leurs runtimes.
 - [ ] Conserver à terme un seul couple nominal `build: next build` / `start: next start`.
 - [x] Exécuter explicitement `next build` dans la CI GitHub de qualité afin de ne pas dépendre uniquement de Vercel pour valider la compilation.
@@ -74,7 +74,8 @@ Critères de sortie :
 
 - [ ] Nettoyer les derniers textes/labels copiés du site `nabla-site-alban`.
 - [x] Générer le sélecteur de langue depuis `routing.locales` au lieu de maintenir les options à la main.
-- [x] Conserver la structure de référence `messages/{locale}.json` chargée directement par `i18n/request.ts` ; éviter les catalogues parallèles de migration.
+- [x] Conserver les catalogues de base sous `messages/{locale}.json` et éviter tout catalogue parallèle `messages/migration/*`.
+- [ ] Introduire `i18n/messages.ts` uniquement lorsqu'un vrai domaine fonctionnel doit être extrait des catalogues de base, selon le pattern actuel de `nabla-site-alban` : loaders explicites par locale, composition des catalogues et rejet des namespaces de premier niveau dupliqués.
 - [x] Introduire un skip-link Next partagé dont le composant possède directement la traduction `site.skipToMainContent`, suivant le pattern récent de `nabla-site-alban`.
 - [x] Remplacer les types locaux de props de `email` et `link` par `PageProps<...>` généré par Next.
 - [x] Centraliser la politique canonical des routes Next déjà natives : `/`, `/contact`, `/email`, `/link` pour FR et `/en/...` pour EN, sans extension `.html`.
@@ -92,7 +93,9 @@ Critères de sortie :
 ### Règles i18n reprises du repo de référence
 
 - Un composant serveur focalisé doit charger son namespace avec `getTranslations()` lorsqu'il peut posséder sa copy, plutôt que recevoir de nombreux textes localisés par props.
-- Ne pas créer de dictionnaires de traduction locaux dans les composants ; les messages restent dans `messages/{locale}.json` ou dans des catalogues modulaires composés explicitement si leur taille le justifie plus tard.
+- Ne pas créer de dictionnaires de traduction locaux dans les composants.
+- Les catalogues de base restent `messages/{locale}.json`. Un domaine volumineux peut ensuite devenir `messages/<domaine>/{locale}.json`, mais uniquement avec un loader/compositeur central dans `i18n/messages.ts` et un contrôle d'unicité des namespaces.
+- La modularisation d'un catalogue doit transférer l'ownership d'un namespace : ne pas conserver durablement le même namespace simultanément dans le catalogue de base et le catalogue de domaine.
 - Conserver les noms propres, noms de produits et identifiants canoniques non traduisibles comme tels ; ajouter des tests lorsqu'une valeur doit être identique entre locales.
 - Les helpers de navigation, metadata et accessibilité communs doivent être partagés plutôt que dupliqués route par route.
 
@@ -151,8 +154,8 @@ Pour chaque page :
 
 - [x] **Migration 2 / P1 — PR #100/#102** : rebase, CI `next build`, contrats E2E Next/Vercel, invariants hybrides et nettoyage du contexte Vercel ; `postinstall` conservé jusqu'à l'audit `dist/`.
 - [ ] **Migration 2b / P1** — Next stable + engines bornés + suppression des dépendances confirmées orphelines + régénération atomique du lockfile.
-- [ ] **Migration 3a / P2** — fondations routing/i18n : canonical hybride correct, alternates pilotés par `routing`, `PageProps` Next et primitives d'accessibilité partagées.
-- [ ] **Migration 3b / P2** — i18n FR/EN propre + préparation DE/NO directement dans `messages/{locale}.json` ; appliquer progressivement l'ownership des traductions par composants.
+- [ ] **Migration 3a / P2 — PR #105** — fondations routing/i18n : canonical hybride correct, alternates pilotés par `routing`, `PageProps` Next et primitives d'accessibilité partagées.
+- [ ] **Migration 3b / P2** — i18n FR/EN propre + préparation DE/NO directement dans les catalogues de base ; appliquer progressivement l'ownership des traductions par composants et n'extraire des catalogues de domaine que lorsque leur taille le justifie.
 - [ ] **Migration 4 / P3** — home Next progressive et privacy gate.
 - [ ] **Migration 5 / P4a** — contact/email/link + redirects legacy.
 - [ ] **Migration 6 / P4b** — autres pages publiques.
