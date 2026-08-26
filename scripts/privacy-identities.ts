@@ -59,20 +59,3 @@ export function findIdentitySpans(
 
   return matches.sort((a, b) => a.start - b.start);
 }
-
-export function replaceProtectedIdentity(
-  text: string,
-  replacement: string,
-  fingerprints: IdentityFingerprintSet = PROTECTED_CHILD_IDENTITY_FINGERPRINTS,
-): string {
-  const matches = findIdentitySpans(text, fingerprints);
-  if (!matches.length) return text;
-
-  let output = "";
-  let cursor = 0;
-  for (const match of matches) {
-    output += text.slice(cursor, match.start) + replacement;
-    cursor = match.end;
-  }
-  return output + text.slice(cursor);
-}
