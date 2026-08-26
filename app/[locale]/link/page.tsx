@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import SkipToMainContent from "@/components/SkipToMainContent";
 import TopAnchor from "@/components/TopAnchor";
 import { routing } from "@/i18n/routing";
-import { canonicalPagePath, pageAlternates } from "@/lib/sitePageCatalog";
+import { canonicalPagePath } from "@/lib/sitePageCatalog";
+import { localizedPageMetadata } from "@/lib/siteSocialMetadata";
 
 export async function generateMetadata({
   params,
@@ -14,11 +16,12 @@ export async function generateMetadata({
   if (!hasLocale(routing.locales, locale)) return {};
   const t = await getTranslations({ locale, namespace: "linkPage" });
 
-  return {
-    title: t("metadataTitle"),
-    description: t("metadataDescription"),
-    alternates: pageAlternates("link", locale),
-  };
+  return localizedPageMetadata(
+    "link",
+    locale,
+    t("metadataTitle"),
+    t("metadataDescription"),
+  );
 }
 
 export default async function LinkPage({
@@ -65,11 +68,11 @@ export default async function LinkPage({
           <div className="tools-grid">
             {items.map((item) => (
               <div className="tool-item" key={item.key}>
-                <a href={item.href}>
+                <Link href={item.href}>
                   <i className={item.icon} aria-hidden="true" />
                   <h3>{t(`items.${item.key}.title`)}</h3>
                   <p>{t(`items.${item.key}.description`)}</p>
-                </a>
+                </Link>
               </div>
             ))}
           </div>

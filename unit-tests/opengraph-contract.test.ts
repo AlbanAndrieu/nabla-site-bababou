@@ -33,20 +33,36 @@ test("legacy homepage keeps the approved identity and complete social metadata",
   );
 });
 
-test("Next layout provides localized Open Graph without exposing the index-only identity", async () => {
-  const source = await readFile(
+test("Next social metadata is centralized and excludes the homepage-only identity", async () => {
+  const helper = await readFile(
+    new URL("../lib/siteSocialMetadata.ts", import.meta.url),
+    "utf8",
+  );
+  const layout = await readFile(
     new URL("../app/[locale]/layout.tsx", import.meta.url),
     "utf8",
   );
 
-  assert.match(source, /SOCIAL_IMAGE_PATH/);
-  assert.match(source, /openGraphLocale: "fr_FR"/);
-  assert.match(source, /openGraphLocale: "en_US"/);
-  assert.match(source, /alternateLocale/);
-  assert.match(source, /siteName: "Bababou"/);
-  assert.match(source, /secureUrl: socialImage/);
-  assert.match(source, /type: "image\/png"/);
-  assert.match(source, /creator: TWITTER_CREATOR/);
-  assert.match(source, /images: \[\{ url: socialImage, alt: metadata\.imageAlt \}\]/);
-  assert.doesNotMatch(source, /Éléonore|Eleonore|Elenore/);
+  assert.match(helper, /openGraphLocale: "fr_FR"/);
+  assert.match(helper, /openGraphLocale: "en_US"/);
+  assert.match(helper, /alternateLocale/);
+  assert.match(helper, /siteName: "Bababou"/);
+  assert.match(helper, /secureUrl: socialImage/);
+  assert.match(helper, /type: "image\/png"/);
+  assert.match(helper, /creator: TWITTER_CREATOR/);
+  assert.match(helper, /localizedPageMetadata/);
+  assert.match(layout, /localizedSiteMetadata\(locale\)/);
+  assert.doesNotMatch(helper, /Éléonore|Eleonore|Elenore/);
+});
+
+test("native Next routes own their page-specific social metadata", async () => {
+  for (const route of ["contact", "email", "link"] as const) {
+    const source = await readFile(
+      new URL(`../app/[locale]/${route}/page.tsx`, import.meta.url),
+      "utf8",
+    );
+
+    assert.match(source, /localizedPageMetadata\(/);
+    assert.doesNotMatch(source, /pageAlternates\(/);
+  }
 });
