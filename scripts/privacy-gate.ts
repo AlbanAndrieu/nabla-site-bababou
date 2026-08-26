@@ -1,11 +1,14 @@
-import { readdir, readFile } from "node:fs/promises";
+import { readdir, readFile, stat } from "node:fs/promises";
 import path from "node:path";
-import { fileURLToPath, pathToFileURL } from "node:url";
+import { pathToFileURL } from "node:url";
 
 export type PrivacyCategory =
   | "protected-address"
   | "private-phone"
   | "official-document-identifier"
+  | "official-document-artifact"
+  | "precise-location-link"
+  | "child-school-or-routine"
   | "medical-or-psychological";
 
 export type PrivacyFinding = {
@@ -51,6 +54,18 @@ const MEDICAL_OR_PSYCHOLOGICAL_PATTERNS = [
 const OFFICIAL_IDENTIFIER_PATTERNS = [
   /\b(?:passport|identity\s+card|national\s+id|official\s+document)\b[^\n<]{0,120}\b(?:id|number|no\.?)\b\s*[:#-]?\s*([A-Z0-9][A-Z0-9-]{5,})/gi,
   /["'](?:passport(?:Number|Id)?|documentNumber|identity(?:Card)?Number)["']\s*:\s*["']?([A-Z0-9-]{6,})/gi,
+];
+
+const OFFICIAL_DOCUMENT_ARTIFACT_PATTERNS = [
+  /<(?:a|img)\b[^>]*(?:href|src)=["'][^"']*(?:passport|identity[-_ ]?card|national[-_ ]?id)[^"']*["'][^>]*>/gi,
+];
+
+const PRECISE_LOCATION_PATTERNS = [
+  /href=["']https?:\/\/(?:www\.)?(?:goo\.gl\/maps|maps\.app\.goo\.gl|google\.[^/"']+\/maps)[^"']*["']/gi,
+];
+
+const CHILD_SCHOOL_OR_ROUTINE_PATTERNS = [
+  /\b(?:barnehage|kindergarten|nursery|cr[eè]che|child(?:ren)?['’]?s\s+school)\b/gi,
 ];
 
 function escapeRegex(value: string) {
@@ -161,6 +176,39 @@ export function scanText(
     );
   }
 
+  for (const pattern of OFFICIAL_DOCUMENT_ARTIFACT_PATTERNS) {
+    findings.push(
+      ...collectPatternFindings(
+        text,
+        pattern,
+        "official-document-artifact",
+        file,
+      ),
+    );
+  }
+
+  for (const pattern of PRECISE_LOCATION_PATTERNS) {
+    findings.push(
+      ...collectPatternFindings(
+        text,
+        pattern,
+        "precise-location-link",
+        file,
+      ),
+    );
+  }
+
+  for (const pattern of CHILD_SCHOOL_OR_ROUTINE_PATTERNS) {
+    findings.push(
+      ...collectPatternFindings(
+        text,
+        pattern,
+        "child-school-or-routine",
+        file,
+      ),
+    );
+  }
+
   for (const pattern of MEDICAL_OR_PSYCHOLOGICAL_PATTERNS) {
     findings.push(
       ...collectPatternFindings(
@@ -172,20 +220,32 @@ export function scanText(
     );
   }
 
-  return [...new Map(findings.map((finding) => [`${finding.category}:${finding.file}:${finding.line}`, finding])).values()];
+  return [
+    ...new Map(
+      findings.map((finding) => [
+        `${finding.category}:${finding.file}:${finding.line}`,
+        finding,
+      ]),
+    ).values(),
+  ];
 }
 
 async function collectTextFiles(relativePath: string): Promise<string[]> {
   const absolutePath = path.join(ROOT, relativePath);
-  const stat = await import("node:fs/promises").then(({ stat }) => stat(absolutePath));
-  if (stat.isFile()) return [relativePath];
+  const entryStat = await stat(absolutePath);
+  if (entryStat.isFile()) return [relativePath];
 
   const entries = await readdir(absolutePath, { withFileTypes: true });
   const nested = await Promise.all(
     entries.map(async (entry) => {
-      const child = path.posix.join(relativePath.replaceAll("\\", "/"), entry.name);
+      const child = path.posix.join(
+        relativePath.replaceAll("\\", "/"),
+        entry.name,
+      );
       if (entry.isDirectory()) return collectTextFiles(child);
-      if (entry.isFile() && TEXT_EXTENSIONS.has(path.extname(entry.name))) return [child];
+      if (entry.isFile() && TEXT_EXTENSIONS.has(path.extname(entry.name))) {
+        return [child];
+      }
       return [];
     }),
   );
@@ -213,14 +273,18 @@ async function main() {
     return;
   }
 
-  console.error(`Privacy gate failed: ${findings.length} protected publication finding(s).`);
+  console.error(
+    `Privacy gate failed: ${findings.length} protected publication finding(s).`,
+  );
   for (const finding of findings) {
     console.error(`- ${finding.file}:${finding.line} [${finding.category}]`);
   }
   process.exitCode = 1;
 }
 
-const executedFile = process.argv[1] ? pathToFileURL(path.resolve(process.argv[1])).href : "";
+const executedFile = process.argv[1]
+  ? pathToFileURL(path.resolve(process.argv[1])).href
+  : "";
 if (import.meta.url === executedFile) {
   await main();
 }
