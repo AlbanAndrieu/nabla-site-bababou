@@ -53,8 +53,9 @@ jobs:
       - name: Run canonical project checks
         run: npm run check
 
+      # Keep Snyk as an optional gate without referencing its Docker-based
+      # GitHub Action. GitHub may prepare container actions before evaluating
+      # the step-level condition, which pulled the image even with no token.
       - name: Run Snyk vulnerability scan
         if: env.SNYK_TOKEN != ''
-        uses: snyk/actions/node@master
-        with:
-          command: test
+        run: npx --yes snyk test
