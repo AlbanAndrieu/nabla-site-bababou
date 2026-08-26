@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   extractHtmlFragment,
+  loadPublicHtmlFragment,
   removeLegacyElementsById,
   rewriteLegacyHtmlHrefs,
 } from "../lib/htmlFromPublic.ts";
@@ -35,5 +36,19 @@ test("removeLegacyElementsById removes sections replaced by native React", () =>
   assert.equal(
     removeLegacyElementsById(fragment, ["migrated"]),
     `<section id="keep"><p>Keep</p></section>`,
+  );
+});
+
+test("loadPublicHtmlFragment uses the explicit default fallback for untranslated files", async () => {
+  const fragment = await loadPublicHtmlFragment("404.html", "body", "en");
+
+  assert.match(fragment, /<main\b/i);
+  assert.ok(fragment.trim().length > 0);
+});
+
+test("loadPublicHtmlFragment rejects files outside the explicit allowlist", async () => {
+  await assert.rejects(
+    loadPublicHtmlFragment("index.html", "body", "fr"),
+    /not allowed for loadPublicHtmlFragment/,
   );
 });
