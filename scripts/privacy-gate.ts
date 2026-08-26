@@ -24,20 +24,35 @@ export type PrivacyPolicy = {
   maskedPhone: string;
 };
 
+type PrivacyGateOptions = {
+  includeBuild?: boolean;
+};
+
 const ROOT = process.cwd();
 const POLICY_PATH = ".cursor/mem/privacy-address-phone.md";
 const ADDRESS_PHONE_EXCEPTION = "public/assets/nabla/signature/";
-const SCAN_TARGETS = ["public/index.html", "app", "components", "messages"];
+const SOURCE_SCAN_TARGETS = [
+  "public/index.html",
+  "app",
+  "components",
+  "messages",
+];
+const BUILD_SCAN_TARGETS = [".next/server", ".next/static"];
 const TEXT_EXTENSIONS = new Set([
+  ".body",
   ".html",
   ".js",
   ".json",
   ".jsonld",
   ".jsx",
+  ".map",
   ".md",
+  ".meta",
   ".mjs",
+  ".rsc",
   ".ts",
   ".tsx",
+  ".txt",
   ".xml",
 ]);
 
@@ -252,10 +267,15 @@ async function collectTextFiles(relativePath: string): Promise<string[]> {
   return nested.flat();
 }
 
-export async function runPrivacyGate(): Promise<PrivacyFinding[]> {
+export async function runPrivacyGate({
+  includeBuild = false,
+}: PrivacyGateOptions = {}): Promise<PrivacyFinding[]> {
   const policySource = await readFile(path.join(ROOT, POLICY_PATH), "utf8");
   const policy = parsePrivacyPolicy(policySource);
-  const files = (await Promise.all(SCAN_TARGETS.map(collectTextFiles))).flat();
+  const targets = includeBuild
+    ? [...SOURCE_SCAN_TARGETS, ...BUILD_SCAN_TARGETS]
+    : SOURCE_SCAN_TARGETS;
+  const files = (await Promise.all(targets.map(collectTextFiles))).flat();
   const findings: PrivacyFinding[] = [];
 
   for (const file of files) {
@@ -267,9 +287,14 @@ export async function runPrivacyGate(): Promise<PrivacyFinding[]> {
 }
 
 async function main() {
-  const findings = await runPrivacyGate();
+  const includeBuild = process.argv.includes("--build");
+  const findings = await runPrivacyGate({ includeBuild });
   if (!findings.length) {
-    console.log("Privacy gate passed: no protected publication values detected.");
+    console.log(
+      includeBuild
+        ? "Privacy gate passed: sources and generated Next output are clean."
+        : "Privacy gate passed: no protected publication values detected.",
+    );
     return;
   }
 
