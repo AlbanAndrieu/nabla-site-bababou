@@ -177,6 +177,26 @@ test("source-map scan ignores dependencies but checks project sourcesContent", (
   assert.match(findings[0]?.file ?? "", /app\/page\.tsx$/);
 });
 
+test("source-map scan keeps intentional public contact phone exceptions", () => {
+  const sourceMap = JSON.stringify({
+    version: 3,
+    sources: ["../../messages/contact/en.json"],
+    sourcesContent: [
+      '{"contactPage":{"methods":{"phone":{"value":"+33 6 12 34 56 78"}}}}',
+    ],
+    names: [],
+    mappings: "",
+  });
+
+  const findings = scanSourceMap(
+    sourceMap,
+    ".next/server/chunks/contact.js.map",
+    POLICY,
+  );
+
+  assert.deepEqual(findings, []);
+});
+
 test("accepts pseudonymized public copy and generalized location", () => {
   const findings = scanText(
     "Bababou. Located in Example area. Contact the public mailbox for this site.",
