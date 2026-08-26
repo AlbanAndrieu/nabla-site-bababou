@@ -52,6 +52,12 @@ const PUBLIC_CONTACT_SURFACES = [
   "app/[locale]/email/page.tsx",
   "messages/contact/",
   "messages/email/",
+  ".next/server/app/fr/contact",
+  ".next/server/app/en/contact",
+  ".next/server/app/fr/email",
+  ".next/server/app/en/email",
+  "messages_contact_",
+  "messages_email_",
 ];
 const SOURCE_SCAN_TARGETS = [
   "public/index.html",
