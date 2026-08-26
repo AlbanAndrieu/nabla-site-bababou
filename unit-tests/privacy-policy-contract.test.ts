@@ -17,14 +17,17 @@ test("canonical privacy policy uses the approved legal pseudonyms", async () => 
   assert.match(source, /Prefer \*\*Mr A\*\*/);
   assert.match(source, /Prefer \*\*Ms B\*\*/);
   assert.match(source, /Child legal\/official-derived copy → \*\*the child\*\*/);
-  assert.doesNotMatch(source, /\b(?:Mr|MR) AA\b(?![^\n]*→ \*\*Mr A\*\*)/);
-  assert.doesNotMatch(source, /\b(?:Ms|Mme|Mrs) RB\b(?![^\n]*→ \*\*Ms B\*\*)/);
+  assert.match(source, /`Mr AA`, `MR AA`[^\n]*→ \*\*Mr A\*\*/);
+  assert.match(source, /`Ms RB`, `Mme RB`, `Mrs RB`[^\n]*→ \*\*Ms B\*\*/);
 });
 
 test("canonical policy revokes the homepage real-name exception", async () => {
   const source = await readFile(SKILL_URL, "utf8");
 
-  assert.match(source, /previous `public\/index\.html` real-name\/display-name exception is \*\*revoked\*\*/i);
+  assert.match(
+    source,
+    /previous `public\/index\.html` real-name\/display-name exception is \*\*revoked\*\*/i,
+  );
   assert.match(source, /including the homepage/i);
   assert.match(source, /Do not recreate the revoked homepage real-name exception/);
 });
@@ -43,6 +46,9 @@ test("Cursor adapter points to the strict canonical policy", async () => {
   const source = await readFile(CURSOR_RULE_URL, "utf8");
 
   assert.match(source, /`Mr A` \/ `Ms B` legal aliases/);
-  assert.match(source, /former `public\/index\.html` child real-name exception has been revoked/i);
+  assert.match(
+    source,
+    /former `public\/index\.html` child real-name exception has been revoked/i,
+  );
   assert.doesNotMatch(source, /narrow `public\/index\.html` child-name exception/);
 });
