@@ -1,13 +1,60 @@
 {
   "email": {
-    "title": "Adresse e-mail du site",
-    "metadataTitle": "Contact par e-mail — Bababou",
-    "metadataDescription": "Adresse e-mail publique dédiée au site Bababou et informations de contact respectueuses de la vie privée.",
-    "intro": "Pour écrire au parent à l’origine de ce site, utilisez l’adresse publique dédiée ci-dessous.",
-    "contactTitle": "E-mail public",
-    "contactDescription": "Cette adresse est destinée aux messages liés à Bababou et à une reprise de contact.",
-    "contactCta": "Écrire un e-mail",
-    "privacyTitle": "Pourquoi une adresse dédiée ?",
-    "privacyDescription": "Une adresse publique dédiée évite de publier ou de réutiliser des coordonnées privées inutiles."
+    "title": "Mise à jour de l’adresse email",
+    "metadataTitle": "Adresses email de contact — Alban Andrieu",
+    "metadataDescription": "Adresses email actuelles d’Alban Andrieu pour les contacts professionnels, la sécurité, la facturation et les autres demandes.",
+    "useTheseAddresses": "Merci d’utiliser ces adresses",
+    "cards": [
+      {
+        "title": "Job / travail (indépendant)",
+        "email": "job@albandrieu.com",
+        "descriptionBefore": "",
+        "descriptionAfter": ""
+      },
+      {
+        "title": "Job / travail",
+        "email": "job@albandrieu.com",
+        "descriptionBefore": "",
+        "descriptionAfter": ""
+      },
+      {
+        "title": "Sécurité site",
+        "email": "security@albandrieu.com",
+        "descriptionBefore": "",
+        "descriptionAfter": ""
+      },
+      {
+        "title": "Facturation",
+        "email": "invoice@albanandrieu.com",
+        "descriptionBefore": "Pour toute question de facturation (règlement, TVA, etc.) : ",
+        "descriptionAfter": " — n’envoyez pas de facture à job ou contact."
+      },
+      {
+        "title": "Autres sujets",
+        "email": "contact@albandrieu.com",
+        "descriptionBefore": "",
+        "descriptionAfter": ""
+      },
+      {
+        "title": "Bababou",
+        "email": "alban.andrieu@bababou.com",
+        "descriptionBefore": "",
+        "descriptionAfter": ""
+      }
+    ],
+    "automatedHeading": "Expéditeurs automatiques",
+    "automatedDesc": "Si vous recevez un mail depuis l’un de ces expéditeurs, cela signifie que votre message n’a pas été ouvert manuellement (sinon il est géré par une règle ou un tri automatique) :",
+    "automatedList": [
+      "no-reply@albanandrieu.com",
+      "no-reply@albandrieu.com",
+      "no-reply@bababou.com",
+      "openclaw@albandrieu.com",
+      "assistant@albandrieu.com",
+      "invoice@albanandrieu.com"
+    ],
+    "reasonLine1": "L’adresse",
+    "reasonLine2": "est désactivée. Google modifie la gestion des comptes tiers dans Gmail (Gmailify et POP « vérifier d’autres adresses ») :",
+    "reasonLine3": "Plus d’informations sur les changements Gmailify & POP",
+    "reasonLine4": " (Aide Google). Ce changement explique la fermeture de cette boîte mail."
   }
 }
