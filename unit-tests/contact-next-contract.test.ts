@@ -2,17 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-const PROFESSIONAL_OR_PRECISE_PATTERNS = [
-  /DevSecOps/i,
-  /Calendly/i,
-  /nabla-site-alban/i,
-  /PostalAddress/i,
-  /openstreetmap\.org/i,
-  /methods\.phone/i,
-  /\/cv\//i,
-];
-
-test("contact route uses shared Next routing and accessibility primitives", async () => {
+test("contact route preserves public professional parity", async () => {
   const page = await readFile(
     new URL("../app/[locale]/contact/page.tsx", import.meta.url),
     "utf8",
@@ -20,29 +10,28 @@ test("contact route uses shared Next routing and accessibility primitives", asyn
 
   assert.match(page, /PageProps<"\/\[locale\]\/contact">/);
   assert.match(page, /pageAlternates\("contact", locale\)/);
-  assert.match(page, /<SkipToMainContent \/>/);
-  assert.match(page, /<TopAnchor \/>/);
-
-  for (const pattern of PROFESSIONAL_OR_PRECISE_PATTERNS) {
-    assert.doesNotMatch(page, pattern);
-  }
+  assert.match(page, /<ContactHero/);
+  assert.match(page, /methods\.phone/);
+  assert.match(page, /calendly\.com\/alban-andrieu/);
+  assert.match(page, /openstreetmap\.org/);
+  assert.match(page, /\/cv\/cv-/);
 });
 
-test("contact hero owns and renders its localized copy", async () => {
+test("contact hero renders the public professional identity and CV CTA", async () => {
   const hero = await readFile(
     new URL("../components/ContactHero.tsx", import.meta.url),
     "utf8",
   );
 
-  assert.match(hero, /getTranslations\("contactPage\.hero"\)/);
-  for (const key of ["profileAlt", "title", "subtitle", "intro", "contactCta"]) {
-    assert.match(hero, new RegExp(`t\\("${key}"\\)`));
-  }
   assert.match(hero, /contactHref: string/);
-  assert.doesNotMatch(hero, /cvHref|experience: string|role: string|profileAlt: string/);
+  assert.match(hero, /cvHref: string/);
+  assert.match(hero, /experience: string/);
+  assert.match(hero, /role: string/);
+  assert.match(hero, /profileAlt: string/);
+  assert.match(hero, /Alban Andrieu/);
 });
 
-test("contact catalogs expose no private phone or precise-address fields", async () => {
+test("contact catalogs retain intentional public professional contact data", async () => {
   const catalogs = await Promise.all(
     ["en", "fr"].map((locale) =>
       readFile(
@@ -53,9 +42,9 @@ test("contact catalogs expose no private phone or precise-address fields", async
   );
 
   for (const catalog of catalogs) {
-    assert.doesNotMatch(catalog, /"phone"\s*:/i);
-    assert.doesNotMatch(catalog, /"streetAddress"\s*:/i);
-    assert.doesNotMatch(catalog, /"postalCode"\s*:/i);
+    assert.match(catalog, /job@albandrieu\.com/);
+    assert.match(catalog, /"phone"\s*:/i);
+    assert.match(catalog, /Alban Andrieu/);
     assert.doesNotMatch(catalog, /"coordinates"\s*:/i);
   }
 });
