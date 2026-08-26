@@ -1,13 +1,60 @@
 {
   "email": {
-    "title": "Site email address",
-    "metadataTitle": "Email contact — Bababou",
-    "metadataDescription": "Public email address dedicated to the Bababou site and privacy-conscious contact information.",
-    "intro": "To contact the parent behind this site, use the dedicated public address below.",
-    "contactTitle": "Public email",
-    "contactDescription": "This address is intended for messages related to Bababou and reconnecting.",
-    "contactCta": "Send an email",
-    "privacyTitle": "Why a dedicated address?",
-    "privacyDescription": "A dedicated public address avoids publishing or reusing unnecessary private contact details."
+    "title": "Email address update",
+    "metadataTitle": "Contact email addresses — Alban Andrieu",
+    "metadataDescription": "Current professional, security, billing and general contact email addresses for Alban Andrieu.",
+    "useTheseAddresses": "Please use these addresses",
+    "cards": [
+      {
+        "title": "Job / work (independent)",
+        "email": "job@albandrieu.com",
+        "descriptionBefore": "",
+        "descriptionAfter": ""
+      },
+      {
+        "title": "Job / work",
+        "email": "job@albandrieu.com",
+        "descriptionBefore": "",
+        "descriptionAfter": ""
+      },
+      {
+        "title": "Website security",
+        "email": "security@albandrieu.com",
+        "descriptionBefore": "",
+        "descriptionAfter": ""
+      },
+      {
+        "title": "Invoices",
+        "email": "invoice@albanandrieu.com",
+        "descriptionBefore": "For all invoice-related matters (billing, payment questions, VAT or purchase orders), use ",
+        "descriptionAfter": " — do not send invoices to the job or general contact addresses above."
+      },
+      {
+        "title": "Other topics",
+        "email": "contact@albandrieu.com",
+        "descriptionBefore": "",
+        "descriptionAfter": ""
+      },
+      {
+        "title": "Bababou",
+        "email": "alban.andrieu@bababou.com",
+        "descriptionBefore": "",
+        "descriptionAfter": ""
+      }
+    ],
+    "automatedHeading": "Automated or triaged replies",
+    "automatedDesc": "If you receive mail from any of the following, it usually means your message did not meet the requirements to be read by a human (me), or it was handled by automated triage:",
+    "automatedList": [
+      "no-reply@albanandrieu.com",
+      "no-reply@albandrieu.com",
+      "no-reply@bababou.com",
+      "openclaw@albandrieu.com",
+      "assistant@albandrieu.com",
+      "invoice@albanandrieu.com"
+    ],
+    "reasonLine1": "The address",
+    "reasonLine2": "is discontinued. Google is changing how Gmail works with third-party accounts (Gmailify and POP “check mail from other accounts”); see",
+    "reasonLine3": "Learn about upcoming changes to Gmailify & POP in Gmail",
+    "reasonLine4": " (Google Help). That policy shift is why this mailbox will no longer be used."
   }
 }
