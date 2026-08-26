@@ -16,8 +16,8 @@
   },
   "homepage": "https://github.com/AlbanAndrieu/nabla-site-bababou#readme",
   "engines": {
-    "node": ">=24.11.0",
-    "npm": ">=11.6.2"
+    "node": ">=24.11.0 <25",
+    "npm": ">=11.6.2 <12"
   },
   "scripts": {
     "postinstall": "copyfiles -f ./node_modules/d3/d3.min.js ./index/dist/scripts/d3 && copyfiles -f ./app/scripts/arf.js ./dist/scripts/ && copyfiles -f ./app/resources/*.json ./dist/resources && copyfiles -f ./index.html ./dist/ && copyfiles -f ./wireframe.css ./dist/",
@@ -36,8 +36,6 @@
     "deploy:wrangler": "wrangler deploy",
     "build": "next build",
     "start": "next start",
-    "build:n": "next build",
-    "start:n": "next start",
     "build:v": "vercel build",
     "start:v": "vercel deploy",
     "start:test": "next start -p 3000",
