@@ -6,7 +6,7 @@ import SiteWidgetsScript from "@/components/SiteWidgetsScript";
 import SkipToMainContent from "@/components/SkipToMainContent";
 import TopAnchor from "@/components/TopAnchor";
 import { routing } from "@/i18n/routing";
-import { pageAlternates } from "@/lib/sitePageCatalog";
+import { localizedPageMetadata } from "@/lib/siteSocialMetadata";
 
 type EmailCard = {
   title: string;
@@ -22,11 +22,12 @@ export async function generateMetadata({
   if (!hasLocale(routing.locales, locale)) return {};
   const t = await getTranslations({ locale, namespace: "email" });
 
-  return {
-    title: t("metadataTitle"),
-    description: t("metadataDescription"),
-    alternates: pageAlternates("email", locale),
-  };
+  return localizedPageMetadata(
+    "email",
+    locale,
+    t("metadataTitle"),
+    t("metadataDescription"),
+  );
 }
 
 export default async function EmailPage({
