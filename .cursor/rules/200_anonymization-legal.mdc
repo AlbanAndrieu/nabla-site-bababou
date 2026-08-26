@@ -1,25 +1,31 @@
 ---
-description: Anonymization rules for legal and public content; never use real names for the child or parents.
-globs: public/**/*.html,public/**/*.md,.cursor/artifacts/**/*
+description: Contextual identity and privacy policy for Bababou public and legal content.
+globs: public/**/*,app/**/*,components/**/*,messages/**/*,.cursor/artifacts/**/*
 alwaysApply: true
 ---
-# Anonymization (legal and public content)
+# Contextual anonymization and publication policy
 
-When creating or editing content in this project (especially legal documents, NRE pages, complaints, or public-facing text), **anonymize** as follows.
+The canonical policy is `.agents/skills/protect-family-privacy/SKILL.md` plus its `references/private-rules.md`. Follow those files when this rule and older repository guidance differ.
 
-## Child (daughter)
+## Child
 
-- **Never use:** Éléonore, Céleste, ANDRIEU-BROOKE, or any full or partial real name.
-- **Always use instead:** *Bababou*, *my daughter*, or *the child* (use *the child* in legal-style documents).
+- Never publish the child's legal name.
+- Public/editorial copy: use `Bababou`.
+- Official/legal-derived copy: use `the child`, `the daughter`, `l’enfant`, or `ma fille`.
 
-## Father
+## Parents
 
-- **Never use:** Alban, Eric, Alexandre, ANDRIEU.
-- **Use instead:** *the father* (prefer *Mr A* in legal documents), otherwise use Alban Andrieu.
+Only anonymize parent legal identities when reproducing or closely deriving content from an official/legal document:
 
-## Mother
+- father → `the father`, `le père`, or `MR AA`;
+- mother → `the mother`, `la mère`, or `Mme RB`.
 
-- **Never use:** Rachael, Elaine, BROOKE (first or family names).
-- **Use instead:** *the mother* or *Ms B* (prefer *Ms B* in legal documents).
+The father's normal public identity and intentionally public contact information are allowed on ordinary editorial/contact/email surfaces.
 
-Apply these replacements in generated text, suggested copy, and when proposing edits to existing content. Existing pages that already use real names (e.g. for personal context) may be updated in a separate pass to comply with this rule where appropriate.
+## Explicit exceptions
+
+- `14CV32249` is an approved public identifier.
+- `public/assets/passport-fr-bababou-4.png` is an approved public identity-evidence asset.
+- Institutions, professionals/staff, professional identities/emails, and relevant historical map/location links may remain public.
+
+Do not use those exceptions to expose the child's legal name, private residence, credentials, or medical/psychological data.
