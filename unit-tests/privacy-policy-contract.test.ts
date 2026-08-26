@@ -17,19 +17,20 @@ test("canonical privacy policy uses the approved legal pseudonyms", async () => 
   assert.match(source, /Prefer \*\*Mr A\*\*/);
   assert.match(source, /Prefer \*\*Ms B\*\*/);
   assert.match(source, /Child legal\/official-derived copy → \*\*the child\*\*/);
-  assert.match(source, /`Mr AA`, `MR AA`[^\n]*→ \*\*Mr A\*\*/);
-  assert.match(source, /`Ms RB`, `Mme RB`, `Mrs RB`[^\n]*→ \*\*Ms B\*\*/);
+  assert.match(source, /`Mr AA` \/ `MR AA` → \*\*Mr A\*\*/);
+  assert.match(source, /`Ms RB` \/ `Mme RB` \/ `Mrs RB` → \*\*Ms B\*\*/);
 });
 
-test("canonical policy revokes the homepage real-name exception", async () => {
+test("homepage and index stay owner-controlled privacy exceptions", async () => {
   const source = await readFile(SKILL_URL, "utf8");
 
-  assert.match(
-    source,
-    /previous `public\/index\.html` real-name\/display-name exception is \*\*revoked\*\*/i,
-  );
-  assert.match(source, /including the homepage/i);
-  assert.match(source, /Do not recreate the revoked homepage real-name exception/);
+  assert.match(source, /Owner-controlled homepage and index exception/);
+  assert.match(source, /`public\/index\.html`/);
+  assert.match(source, /public `\/` homepage/);
+  assert.match(source, /Open Graph, Twitter\/X metadata, homepage JSON-LD/);
+  assert.match(source, /ask the user for explicit approval before editing/i);
+  assert.match(source, /Auditing and reporting the homepage\/index is allowed without approval; modifying it is not/);
+  assert.doesNotMatch(source, /homepage real-name\/display-name exception is \*\*revoked\*\*/i);
 });
 
 test("essential protected information is caviarded rather than silently deleted", async () => {
@@ -42,13 +43,11 @@ test("essential protected information is caviarded rather than silently deleted"
   assert.match(source, /Never keep the protected value in:/);
 });
 
-test("Cursor adapter points to the strict canonical policy", async () => {
+test("Cursor adapter preserves homepage approval boundary", async () => {
   const source = await readFile(CURSOR_RULE_URL, "utf8");
 
   assert.match(source, /`Mr A` \/ `Ms B` legal aliases/);
-  assert.match(
-    source,
-    /former `public\/index\.html` child real-name exception has been revoked/i,
-  );
-  assert.doesNotMatch(source, /narrow `public\/index\.html` child-name exception/);
+  assert.match(source, /homepage-specific Open Graph\/Twitter\/JSON-LD identity disclosures are \*\*owner-controlled exceptions\*\*/);
+  assert.match(source, /unless the user explicitly approves the specific change in the current task/);
+  assert.doesNotMatch(source, /former `public\/index\.html` child real-name exception has been revoked/i);
 });
