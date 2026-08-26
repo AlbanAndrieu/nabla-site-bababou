@@ -42,8 +42,9 @@ test("removeLegacyElementsById removes sections replaced by native React", () =>
 test("loadPublicHtmlFragment uses the explicit default fallback for untranslated files", async () => {
   const fragment = await loadPublicHtmlFragment("404.html", "body", "en");
 
-  assert.match(fragment, /<main\b/i);
   assert.ok(fragment.trim().length > 0);
+  assert.match(fragment, /<h1>404<\/h1>/i);
+  assert.match(fragment, /Back to home/i);
 });
 
 test("loadPublicHtmlFragment rejects files outside the explicit allowlist", async () => {

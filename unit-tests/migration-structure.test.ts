@@ -12,6 +12,8 @@ const DOMAIN_CATALOGS = [
   ["link", "linkPage"],
 ] as const;
 
+const MIGRATED_LEGACY_NAMESPACES = ["contactPage", "email", "linkPage"] as const;
+
 test("keeps the legacy postinstall until the dist consumers are audited", async () => {
   const packageJson = JSON.parse(
     await readFile(new URL("../package.json", import.meta.url), "utf8"),
@@ -39,6 +41,25 @@ test("keeps legacy base catalogs versioned but does not load them at runtime", a
   assert.doesNotMatch(`${requestConfig}\n${messageLoader}`, /messages\/migration/);
   assert.doesNotThrow(() => JSON.parse(englishMessages));
   assert.doesNotThrow(() => JSON.parse(frenchMessages));
+});
+
+test("legacy base catalogs do not duplicate migrated namespace ownership", async () => {
+  const catalogs = await Promise.all(
+    ["en", "fr"].map(async (locale) =>
+      JSON.parse(
+        await readFile(
+          new URL(`../messages/${locale}.json`, import.meta.url),
+          "utf8",
+        ),
+      ) as Record<string, unknown>,
+    ),
+  );
+
+  for (const catalog of catalogs) {
+    for (const namespace of MIGRATED_LEGACY_NAMESPACES) {
+      assert.equal(namespace in catalog, false);
+    }
+  }
 });
 
 for (const [directory, namespace] of DOMAIN_CATALOGS) {

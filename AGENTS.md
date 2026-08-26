@@ -1,3 +1,56 @@
+# Repository agent policy
+
+Keep context small, changes scoped, and publication deterministic.
+
+## Repository bootstrap
+
+Git hooks are versioned but are not installed automatically after clone. On every new checkout, run:
+
+```bash
+mise run hooks
+```
+
+This installs the configured `pre-commit`, `commit-msg`, and canonical `pre-push` quality-gate hooks.
+
+## Before editing
+
+1. Inspect `git status --short`, the task, and only relevant files.
+2. Prefer targeted search (`rg`, `git diff`, `git ls-files`) over recursive repository reads.
+3. Reuse existing formatters, linters, generators, privacy/security checks, and CI conventions. Do not create a parallel implementation of the same validation.
+4. For family/legal/publication content, follow `.agents/skills/protect-family-privacy/SKILL.md` and its `references/private-rules.md` before editing.
+
+## Validation
+
+For a focused change, run the closest relevant formatter or linter first. Before every publication, run the single canonical gate:
+
+```bash
+bash scripts/quality-gate.sh
+```
+
+The gate is the source of truth for local pre-publication validation. `mise run quality` and the `pre-push` hook are wrappers around the same script; they must not reimplement its logic.
+
+## Mandatory agent publish policy
+
+Agents must never publish changes immediately after editing files.
+
+Before every `git push`, GitHub API file update, or other remote repository mutation:
+
+1. Run `mise run hooks` once for a new checkout.
+2. Run `bash scripts/quality-gate.sh` from the repository checkout whenever shell access is available.
+3. Fix **every** YAML, Compose (when applicable), workflow, lint, format, generated-file, privacy, or security failure caused or exposed by the change.
+4. If a formatter or generator modifies files, review and commit those changes.
+5. Rerun `bash scripts/quality-gate.sh` until it exits successfully.
+6. Verify `git status --short` is empty.
+7. Only then publish the changes.
+
+Never use `git push --no-verify`, and never weaken validation rules merely to make a push or CI pass.
+
+An API-only agent must not silently use remote writes to bypass local hooks. If its runtime cannot obtain or execute a checkout, it must state that limitation, perform the closest deterministic checks available, keep the patch minimal, and inspect resulting CI immediately. It must never claim that the local quality gate passed when it was not executed.
+
+## Completion
+
+Report what changed, checks actually executed, and any unresolved failure or risk.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know

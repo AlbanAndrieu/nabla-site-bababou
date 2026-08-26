@@ -2,9 +2,13 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-const ACTIVE_NEXT_FILES = [
-  "../app/[locale]/contact/page.tsx",
-  "../app/[locale]/email/page.tsx",
+/**
+ * Contact/email intentionally preserve Alban's public professional/contact
+ * parity (see contact-next-contract.test.ts and the canonical privacy skill).
+ * Keep this anti-copy guard focused on Bababou surfaces where portfolio chrome
+ * would still be an accidental migration leak.
+ */
+const PORTFOLIO_FREE_NEXT_FILES = [
   "../app/[locale]/link/page.tsx",
   "../app/[locale]/test/page.tsx",
   "../app/components/Footer.tsx",
@@ -21,9 +25,9 @@ const COPIED_PORTFOLIO_PATTERNS = [
   /coffeeFab/i,
 ];
 
-test("active Next surfaces stay free of copied portfolio chrome", async () => {
+test("non-contact Next surfaces stay free of copied portfolio chrome", async () => {
   const sources = await Promise.all(
-    ACTIVE_NEXT_FILES.map((path) =>
+    PORTFOLIO_FREE_NEXT_FILES.map((path) =>
       readFile(new URL(path, import.meta.url), "utf8"),
     ),
   );
@@ -33,6 +37,16 @@ test("active Next surfaces stay free of copied portfolio chrome", async () => {
       assert.doesNotMatch(source, pattern);
     }
   }
+});
+
+test("locale layout serializes only shared site messages to client components", async () => {
+  const layout = await readFile(
+    new URL("../app/[locale]/layout.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(layout, /NextIntlClientProvider\s+locale=\{locale\}\s+messages=\{\{ site \}\}/);
+  assert.doesNotMatch(layout, /NextIntlClientProvider[^>]*messages=\{messages\}/);
 });
 
 test("technical test route stays explicitly non-indexable", async () => {

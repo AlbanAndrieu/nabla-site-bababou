@@ -10,16 +10,22 @@ import RouteHeader from "@/components/RouteHeader";
 import { routing } from "@/i18n/routing";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://bababou.com";
+const SOCIAL_IMAGE_PATH = "/assets/miss-and-love-you-quote.png";
+const TWITTER_CREATOR = "@AlbanAndrieu";
 const SITE_METADATA = {
   fr: {
-    title: "Bababou — Site familial",
+    title: "Bababou — Messages, contact et histoire familiale",
     description:
-      "Un espace familial dédié à Bababou pour préserver des souvenirs, partager des messages et faciliter la reprise de contact.",
+      "Site familial créé par le père de Bababou pour préserver des messages, faciliter la reprise de contact et documenter l’histoire familiale.",
+    openGraphLocale: "fr_FR",
+    imageAlt: "Un message affectueux du père de Bababou à sa fille.",
   },
   en: {
-    title: "Bababou — Family site",
+    title: "Bababou — Family messages, contact and history",
     description:
-      "A family space dedicated to Bababou, preserving memories, sharing messages and making it easier to reconnect.",
+      "A family site created by Bababou’s father to preserve messages, make reconnection easier and document the family story.",
+    openGraphLocale: "en_US",
+    imageAlt: "A heartfelt message from Bababou’s father to his daughter.",
   },
 } as const;
 
@@ -45,14 +51,20 @@ export async function generateMetadata({
       localizedCanonical(supportedLocale),
     ]),
   );
+  const socialImage = new URL(SOCIAL_IMAGE_PATH, SITE_URL).toString();
+  const alternateLocale = routing.locales
+    .filter((supportedLocale) => supportedLocale !== locale)
+    .map((supportedLocale) => SITE_METADATA[supportedLocale].openGraphLocale);
 
   return {
     metadataBase: new URL(SITE_URL),
+    applicationName: "Bababou",
     title: { absolute: metadata.title },
     description: metadata.description,
-    keywords: ["Bababou", "family", "family memories"],
-    authors: [{ name: "Alban Andrieu" }],
+    keywords: ["Bababou", "family", "family messages", "family contact"],
+    authors: [{ name: "Alban Andrieu", url: "https://albanandrieu.com" }],
     creator: "Alban Andrieu",
+    publisher: "Alban Andrieu",
     referrer: "origin-when-cross-origin",
     alternates: {
       canonical,
@@ -63,12 +75,15 @@ export async function generateMetadata({
       title: metadata.title,
       description: metadata.description,
       url: canonical,
-      locale: locale === "fr" ? "fr_FR" : "en_US",
+      locale: metadata.openGraphLocale,
+      alternateLocale,
       siteName: "Bababou",
       images: [
         {
-          url: "/assets/miss-and-love-you-quote.png",
-          alt: metadata.title,
+          url: socialImage,
+          secureUrl: socialImage,
+          type: "image/png",
+          alt: metadata.imageAlt,
         },
       ],
     },
@@ -76,7 +91,8 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: metadata.title,
       description: metadata.description,
-      images: ["/assets/miss-and-love-you-quote.png"],
+      creator: TWITTER_CREATOR,
+      images: [{ url: socialImage, alt: metadata.imageAlt }],
     },
   };
 }
@@ -141,7 +157,7 @@ export default async function LocaleLayout({
         />
       </head>
       <body>
-        <NextIntlClientProvider locale={locale} messages={messages}>
+        <NextIntlClientProvider locale={locale} messages={{ site }}>
           <RouteHeader />
           {children}
           <Footer

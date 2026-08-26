@@ -3,6 +3,11 @@ name: CI (Quality and Security)
 on:
   pull_request:
     paths:
+      - ".agents/**"
+      - ".cursor/**"
+      - ".pre-commit-config.yaml"
+      - ".pre-commit-pre-push.yaml"
+      - "AGENTS.md"
       - "app/**"
       - "components/**"
       - "i18n/**"
@@ -12,6 +17,7 @@ on:
       - "scripts/**"
       - "tests/**"
       - "unit-tests/**"
+      - "mise.toml"
       - "*.{js,cjs,mjs,ts,tsx,json}"
       - "package-lock.json"
       - ".github/workflows/ci.yml"
@@ -44,23 +50,8 @@ jobs:
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
 
-      - name: Lint JavaScript and TypeScript
-        run: npm run lint
-
-      - name: Lint CSS
-        run: npm run lint:css
-
-      - name: Generate Next.js route types
-        run: npx next typegen
-
-      - name: Type-check
-        run: npm run typecheck
-
-      - name: Run unit tests
-        run: npm run test:unit
-
-      - name: Build Next.js application
-        run: npm run build
+      - name: Run canonical project checks
+        run: npm run check
 
       - name: Run Snyk vulnerability scan
         if: env.SNYK_TOKEN != ''
