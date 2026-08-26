@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   parsePrivacyPolicy,
+  scanSourceMap,
   scanText,
   type PrivacyPolicy,
 } from "../scripts/privacy-gate.ts";
@@ -88,6 +89,42 @@ test("detects high-confidence medical or psychological publication content", () 
 
   assert.equal(findings.length, 1);
   assert.equal(findings[0]?.category, "medical-or-psychological");
+});
+
+test("does not confuse technical diagnostics with medical information", () => {
+  const findings = scanText(
+    "The framework emits diagnostic output when a build cache is unavailable.",
+    "lib/build-diagnostics.ts",
+    POLICY,
+  );
+
+  assert.deepEqual(findings, []);
+});
+
+test("source-map scan ignores dependencies but checks project sourcesContent", () => {
+  const sourceMap = JSON.stringify({
+    version: 3,
+    sources: [
+      "../../node_modules/framework/diagnostics.js",
+      "../../app/page.tsx",
+    ],
+    sourcesContent: [
+      "export const diagnostic = 'technical diagnostic output';",
+      "export const note = 'A psychological assessment must not be published.';",
+    ],
+    names: [],
+    mappings: "",
+  });
+
+  const findings = scanSourceMap(
+    sourceMap,
+    ".next/server/chunks/example.js.map",
+    POLICY,
+  );
+
+  assert.equal(findings.length, 1);
+  assert.equal(findings[0]?.category, "medical-or-psychological");
+  assert.match(findings[0]?.file ?? "", /app\/page\.tsx$/);
 });
 
 test("accepts minimized public contact and generalized location copy", () => {
