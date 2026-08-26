@@ -39,6 +39,16 @@ test("non-contact Next surfaces stay free of copied portfolio chrome", async () 
   }
 });
 
+test("locale layout serializes only shared site messages to client components", async () => {
+  const layout = await readFile(
+    new URL("../app/[locale]/layout.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(layout, /NextIntlClientProvider\s+locale=\{locale\}\s+messages=\{\{ site \}\}/);
+  assert.doesNotMatch(layout, /NextIntlClientProvider[^>]*messages=\{messages\}/);
+});
+
 test("technical test route stays explicitly non-indexable", async () => {
   const source = await readFile(
     new URL("../app/[locale]/test/page.tsx", import.meta.url),
