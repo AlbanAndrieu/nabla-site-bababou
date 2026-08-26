@@ -28,6 +28,12 @@ type PrivacyGateOptions = {
   includeBuild?: boolean;
 };
 
+type SourceMapRecord = {
+  sources?: unknown;
+  sourcesContent?: unknown;
+  sections?: unknown;
+};
+
 const ROOT = process.cwd();
 const POLICY_PATH = ".cursor/mem/privacy-address-phone.md";
 const ADDRESS_PHONE_EXCEPTION = "public/assets/nabla/signature/";
@@ -35,7 +41,11 @@ const SOURCE_SCAN_TARGETS = [
   "public/index.html",
   "app",
   "components",
+  "i18n",
+  "lib",
   "messages",
+  "proxy.ts",
+  "next.config.mjs",
 ];
 const BUILD_SCAN_TARGETS = [".next/server", ".next/static"];
 const TEXT_EXTENSIONS = new Set([
@@ -57,11 +67,12 @@ const TEXT_EXTENSIONS = new Set([
 ]);
 
 const MEDICAL_OR_PSYCHOLOGICAL_PATTERNS = [
-  /\bdiagnos(?:is|ed|tic)\b/gi,
-  /\bmedication\b/gi,
-  /\bmedical\s+(?:condition|record|report|assessment)\b/gi,
-  /\bpsychological\s+(?:condition|record|report|assessment|evaluation)\b/gi,
-  /\bpsychiatric\b/gi,
+  /\b(?:medical|clinical|psychiatric|psychological)\s+diagnos(?:is|es|tic)\b/gi,
+  /\bdiagnosed\s+with\b/gi,
+  /\bmedications?\b/gi,
+  /\bmedical\s+(?:condition|record|report|assessment|history|treatment)\b/gi,
+  /\bpsychological\s+(?:condition|record|report|assessment|evaluation|treatment)\b/gi,
+  /\bpsychiatric\s+(?:condition|record|report|assessment|treatment)\b/gi,
   /\bpsychotherapy\b/gi,
   /\btherapy\s+(?:record|report|session|treatment)\b/gi,
 ];
@@ -109,6 +120,17 @@ function firstCapture(source: string, pattern: RegExp, label: string) {
   const match = source.match(pattern)?.[1]?.trim();
   if (!match) throw new Error(`Privacy policy is missing ${label}`);
   return match;
+}
+
+function dedupeFindings(findings: PrivacyFinding[]) {
+  return [
+    ...new Map(
+      findings.map((finding) => [
+        `${finding.category}:${finding.file}:${finding.line}`,
+        finding,
+      ]),
+    ).values(),
+  ];
 }
 
 export function parsePrivacyPolicy(source: string): PrivacyPolicy {
@@ -235,14 +257,61 @@ export function scanText(
     );
   }
 
-  return [
-    ...new Map(
-      findings.map((finding) => [
-        `${finding.category}:${finding.file}:${finding.line}`,
-        finding,
-      ]),
-    ).values(),
-  ];
+  return dedupeFindings(findings);
+}
+
+function isDependencySource(source: string) {
+  const normalized = source.replaceAll("\\", "/");
+  return (
+    normalized.includes("/node_modules/") ||
+    normalized.startsWith("node_modules/") ||
+    normalized.startsWith("node:")
+  );
+}
+
+/**
+ * Source maps are JSON containers, not published prose. Scan project-owned
+ * sourcesContent individually so unrelated map metadata/dependency sources
+ * cannot create cross-boundary or framework false positives.
+ */
+export function scanSourceMap(
+  text: string,
+  file: string,
+  policy: PrivacyPolicy,
+): PrivacyFinding[] {
+  const parsed = JSON.parse(text) as SourceMapRecord;
+  const findings: PrivacyFinding[] = [];
+
+  function visit(sourceMap: SourceMapRecord) {
+    const sources = Array.isArray(sourceMap.sources) ? sourceMap.sources : [];
+    const sourcesContent = Array.isArray(sourceMap.sourcesContent)
+      ? sourceMap.sourcesContent
+      : [];
+
+    sources.forEach((source, index) => {
+      const content = sourcesContent[index];
+      if (
+        typeof source !== "string" ||
+        typeof content !== "string" ||
+        isDependencySource(source)
+      ) {
+        return;
+      }
+      findings.push(...scanText(content, `${file}::${source}`, policy));
+    });
+
+    if (!Array.isArray(sourceMap.sections)) return;
+    for (const section of sourceMap.sections) {
+      if (!section || typeof section !== "object") continue;
+      const nested = (section as { map?: unknown }).map;
+      if (nested && typeof nested === "object") {
+        visit(nested as SourceMapRecord);
+      }
+    }
+  }
+
+  visit(parsed);
+  return dedupeFindings(findings);
 }
 
 async function collectTextFiles(relativePath: string): Promise<string[]> {
@@ -280,10 +349,14 @@ export async function runPrivacyGate({
 
   for (const file of files) {
     const text = await readFile(path.join(ROOT, file), "utf8");
-    findings.push(...scanText(text, file, policy));
+    if (file.startsWith(".next/") && file.endsWith(".map")) {
+      findings.push(...scanSourceMap(text, file, policy));
+    } else {
+      findings.push(...scanText(text, file, policy));
+    }
   }
 
-  return findings;
+  return dedupeFindings(findings);
 }
 
 async function main() {
