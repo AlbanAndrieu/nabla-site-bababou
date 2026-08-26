@@ -9,7 +9,8 @@ test("contact route preserves public professional parity", async () => {
   );
 
   assert.match(page, /PageProps<"\/\[locale\]\/contact">/);
-  assert.match(page, /pageAlternates\("contact", locale\)/);
+  assert.match(page, /localizedPageMetadata\(/);
+  assert.doesNotMatch(page, /pageAlternates\("contact", locale\)/);
   assert.match(page, /<ContactHero/);
   assert.match(page, /methods\.phone/);
   assert.match(page, /calendly\.com\/alban-andrieu/);

@@ -15,11 +15,41 @@ const migratedLegacyRedirects = ["contact", "email", "link"].flatMap(
   ],
 );
 
+/**
+ * Policy pages remain static sources during Migration 6, but clean and localized
+ * entry points are now routed through the Next/Vercel runtime. This deliberately
+ * avoids copying legal text into React before content/parity review.
+ */
+const policyFiles = [
+  "legal",
+  "impressum",
+  "privacy_policy",
+  "service_terms",
+  "cookie_policy",
+  "accessibility_statement",
+];
+const policyLocales = ["fr", "en"];
+const policyRewrites = policyFiles.map((name) => ({
+  source: `/policy/${name}`,
+  destination: `/policy/${name}.html`,
+}));
+const localizedPolicyRewrites = policyLocales.flatMap((locale) =>
+  policyRewrites.map(({ source, destination }) => ({
+    source: `/${locale}${source}`,
+    destination,
+  })),
+);
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   async redirects() {
     return migratedLegacyRedirects;
+  },
+  async rewrites() {
+    return {
+      afterFiles: [...localizedPolicyRewrites, ...policyRewrites],
+    };
   },
   turbopack: {
     root: projectRoot,
