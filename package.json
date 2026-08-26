@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "private": true,
-  "description": "Bababou site - For Eléonore",
+  "description": "Bababou family site",
   "main": "index.html",
   "repository": {
     "type": "git",
