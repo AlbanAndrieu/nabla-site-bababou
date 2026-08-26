@@ -58,22 +58,21 @@ The child's legal identity is protected by default.
 
 - In ordinary/public/editorial copy use **Bababou**.
 - In text derived from official, administrative, court, police, school, or legal documents use **the child**, **the daughter**, `l’enfant`, or `ma fille` as appropriate.
-- Do not publish the child's legal-name variants in metadata, JSON-LD, titles, descriptions, attributes, comments, generated bundles, source maps, newly created filenames, or audit output unless a narrow exception below explicitly allows it.
+- Do not publish the child's legal-name variants in metadata, JSON-LD, titles, descriptions, attributes, comments, generated bundles, source maps, newly created filenames, or audit output unless the homepage exception below explicitly allows it.
 
-### Narrow homepage exception
+### Homepage display-name exception
 
-`public/index.html` has one deliberate exception. The child's given name may appear **only** in this exact recognition sentence fragment:
+`public/index.html` is the only public surface allowed to identify the child by the approved display identity **`Éléonore (Bababou)`**.
 
-`<strong>Your real name is Éléonore</strong> (some people call you by other names, but Éléonore`
+On that file only:
 
-This exception is intentionally narrow:
+- `Éléonore (Bababou)` may be used in visible headings, recognition/contact copy, the passport card, the HTML title, Open Graph/Twitter metadata and index-specific JSON-LD;
+- the recognition sentence may keep the given name alone in `Your real name is Éléonore` and its immediately associated explanatory sentence;
+- prefer the combined display form `Éléonore (Bababou)` whenever the name is used as a label, heading, social preview identity or standalone reference;
+- this does **not** authorize the middle name, family names, complete legal identity, accentless variants or alternative spellings on the index;
+- every other public/editorial surface continues to use `Bababou` unless the user gives a newer explicit exception.
 
-- both occurrences of `Éléonore` inside that exact fragment are allowed;
-- no other occurrence of the child's legal name is authorized on `public/index.html`;
-- do not restore it in Twitter/Open Graph metadata, headings, comments, CTA text, passport-card captions, JSON-LD, or other homepage content;
-- all other public/editorial references continue to use `Bababou`.
-
-Do not broaden or remove this exception without an explicit user instruction.
+Do not remove this homepage identity or narrow the exception back to a single sentence without an explicit user instruction.
 
 ## Parents
 
@@ -90,10 +89,11 @@ Do not apply official-document parent anonymization to ordinary site copy, autho
 
 The following are intentional public exceptions and **must not be removed merely because they relate to identity evidence**:
 
+- homepage display identity `Éléonore (Bababou)` as scoped above;
 - official identifier `14CV32249`;
 - `public/assets/passport-fr-bababou-4.png`.
 
-These exceptions do not authorize additional publication of the child's legal name beyond the narrow homepage exception above.
+These exceptions do not authorize publication of the child's complete legal identity outside the detection dictionary in this skill.
 
 ## Institutions, organizations, professionals, and historical locations
 
@@ -120,6 +120,8 @@ Existing files under `public/assets/nabla/signature/` retain their current scope
 
 ## Data that remains protected
 
+- the child's full legal identity, middle name and family-name combinations on public surfaces;
+- the child's given-name variants outside the approved `public/index.html` forms;
 - exact private residential address outside the scoped exception;
 - genuinely private phone/contact data outside explicitly public contact surfaces;
 - credentials, secrets, authentication data, or live/private tracking data;
@@ -127,8 +129,9 @@ Existing files under `public/assets/nabla/signature/` retain their current scope
 
 ## Transformation rules
 
-- Replace the child's legal identity according to the context rules above, except for the exact homepage recognition sentence.
-- In official/legal-derived content replace parent legal identities with the approved roles or initials.
+- On `public/index.html`, preserve the approved display identity `Éléonore (Bababou)` and the recognition sentence described above.
+- On other ordinary public/editorial surfaces replace child legal-name variants with `Bababou`.
+- In official/legal-derived content replace the child's legal identity with role wording and parent legal identities with the approved roles or initials.
 - Keep approved public contact information intact on contact/email surfaces.
 - Keep approved identifier `14CV32249` and the approved passport asset intact.
 - Keep relevant institutions, professionals, professional emails, and historical location links unless another concrete reason requires removal.
@@ -142,12 +145,12 @@ For HTML/app output inspect source, messages, metadata, JSON-LD, comments, attri
 The privacy gate should:
 
 - report only `file + line + category`, never the matched protected value;
-- reject child legal-name variants on public surfaces except the exact `public/index.html` fragment above;
+- allow exact `Éléonore (Bababou)` occurrences on `public/index.html` plus the approved recognition sentence, while rejecting child legal-name variants elsewhere;
 - allow the approved identifier and passport asset;
 - distinguish intentionally public father contact data from private address/phone data;
 - not treat institutions, professionals, professional emails, or historical map/location links as privacy findings by default.
 
-Tests should use synthetic identities/contact values whenever possible. A regression test may use the exact approved homepage fragment when necessary to ensure this narrow exception is not accidentally removed or broadened.
+Tests should use synthetic identities/contact values whenever possible. Regression tests may use the exact approved homepage display identity/recognition forms when necessary to ensure these exceptions are neither accidentally removed nor broadened.
 
 ## Agent editing rule
 
