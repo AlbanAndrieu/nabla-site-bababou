@@ -68,6 +68,23 @@ Auditing and reporting the homepage/index is allowed without approval; modifying
 
 This is a **narrow exception**. It does not authorize copying homepage-only identity or evidence into other routes, documents, metadata, tests, generated content, or assets. Existing tests may reproduce the exact approved homepage strings only when necessary to lock the owner-approved disclosure and prevent silent automated changes.
 
+## Legacy static 404 rendering exception
+
+`public/404.html`, the public `/404` presentation, and the `app/global-not-found.tsx` integration that loads the static 404 body are an **intentional rendering exception to the Next.js migration**.
+
+The current static 404 presentation is preferred over a fully native React/Next rewrite and must be preserved unless the user explicitly approves a migration in the current task.
+
+Agents must therefore:
+
+- keep `public/404.html` as the rendering source of truth for the custom 404 presentation;
+- keep `app/global-not-found.tsx` loading the trusted static body via `loadPublicHtmlFragment("404.html", ...)` (or an equivalent static-fragment integration that preserves the same rendered result);
+- preserve the current visual effect, layout, copy, animations, home CTA, analytics integration, widget integration, 404 HTTP status, and `noindex` behavior;
+- **not replace the 404 with fully native Next/React markup or migrate its styling wholesale into a CSS module merely for architectural consistency**;
+- not remove `public/404.html` as dead/legacy code while this exception is active;
+- treat Playwright assertions covering the static cloak/style behavior as intentional regression contracts rather than obsolete implementation details.
+
+Safety, compatibility, accessibility, or browser fixes may be made around the static integration when they preserve the established rendered behavior. Any architectural change that would stop loading `public/404.html` requires explicit user approval first.
+
 ## Mandatory pseudonyms outside the homepage/index exception
 
 ### Child
@@ -216,8 +233,10 @@ Tests should use synthetic identities/contact values whenever possible. Exact pr
 Before modifying family/legal/publication content, read this entire skill.
 
 - **Never alter `public/index.html`, `/`, or their homepage Open Graph/Twitter/JSON-LD identity disclosures for privacy/pseudonymization reasons without explicit user approval in the current task.**
-- Audit those surfaces first and show the disclosure impact before asking for approval.
-- Outside that exception, apply `Bababou` / `the child`, `Mr A`, and `Ms B` as defined above.
+- **Never replace the `public/404.html`-backed 404 with a fully native Next/React implementation without explicit user approval in the current task.**
+- Preserve the static 404 loader and established production rendering when refactoring migration or cleanup code.
+- Audit those exception surfaces first and show the impact before asking for approval.
+- Outside the homepage/index privacy exception, apply `Bababou` / `the child`, `Mr A`, and `Ms B` as defined above.
 - Do not clean up the detection dictionary merely because it contains protected spellings.
 - When information appears essential, **caviard rather than silently delete or invent a substitute**, and add a visible note that the protected information can be revealed on request.
 - Never claim a surface is compliant until the source and generated output have both been checked.
