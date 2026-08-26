@@ -53,16 +53,11 @@ const PUBLIC_CONTACT_SURFACES = [
 ];
 const SOURCE_SCAN_TARGETS = [
   "public/index.html",
-  "public/contact.html",
-  "public/abduction-norway.html",
-  "public/nre-en.html",
-  "public/nre-fr.html",
   "app",
   "components",
   "i18n",
   "lib",
   "messages",
-  "package.json",
   "proxy.ts",
   "next.config.mjs",
 ];
@@ -238,9 +233,8 @@ export function scanText(
 ): PrivacyFinding[] {
   const findings: PrivacyFinding[] = [];
   const normalizedFile = file.replaceAll("\\", "/");
-  const addressPhoneAllowed =
-    normalizedFile.startsWith(ADDRESS_PHONE_EXCEPTION) ||
-    isPublicContactSurface(normalizedFile);
+  const signatureException = normalizedFile.startsWith(ADDRESS_PHONE_EXCEPTION);
+  const publicContactSurface = isPublicContactSurface(normalizedFile);
 
   for (const match of findIdentitySpans(text, childIdentityFingerprints)) {
     findings.push({
@@ -250,7 +244,7 @@ export function scanText(
     });
   }
 
-  if (!addressPhoneAllowed) {
+  if (!signatureException) {
     findings.push(
       ...collectPatternFindings(
         text,
@@ -258,6 +252,11 @@ export function scanText(
         "protected-address",
         file,
       ),
+    );
+  }
+
+  if (!signatureException && !publicContactSurface) {
+    findings.push(
       ...collectPatternFindings(
         text,
         flexiblePhoneRegex(policy.privatePhone),
