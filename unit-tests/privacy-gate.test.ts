@@ -58,6 +58,27 @@ test("detects official document identifiers without storing real values", () => 
   assert.equal(findings[0]?.category, "official-document-identifier");
 });
 
+test("detects document image references, precise maps and child institutions", () => {
+  const findings = scanText(
+    [
+      '<img src="assets/passport-example.png" alt="Document">',
+      '<a href="https://goo.gl/maps/example">map</a>',
+      "The child attended an example barnehage.",
+    ].join("\n"),
+    "public/index.html",
+    POLICY,
+  );
+
+  assert.deepEqual(
+    findings.map((finding) => finding.category).sort(),
+    [
+      "child-school-or-routine",
+      "official-document-artifact",
+      "precise-location-link",
+    ],
+  );
+});
+
 test("detects high-confidence medical or psychological publication content", () => {
   const findings = scanText(
     "A psychological assessment is attached to this public page.",
