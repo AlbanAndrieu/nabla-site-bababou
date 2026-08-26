@@ -141,7 +141,7 @@ export default async function LocaleLayout({
         />
       </head>
       <body>
-        <NextIntlClientProvider locale={locale} messages={messages}>
+        <NextIntlClientProvider locale={locale} messages={{ site }}>
           <RouteHeader />
           {children}
           <Footer
