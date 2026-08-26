@@ -7,6 +7,7 @@ import {
   scanText,
   type PrivacyPolicy,
 } from "../scripts/privacy-gate.ts";
+import { identityFingerprint } from "../scripts/privacy-identities.ts";
 
 const FAKE_POLICY_SOURCE = `# Privacy test fixture
 
@@ -15,6 +16,9 @@ const FAKE_POLICY_SOURCE = `# Privacy test fixture
 `;
 
 const POLICY: PrivacyPolicy = parsePrivacyPolicy(FAKE_POLICY_SOURCE);
+const SYNTHETIC_CHILD_IDENTITIES = new Set([
+  identityFingerprint("Example Protected Child"),
+]);
 
 test("parses protected values and safe replacements from project policy format", () => {
   assert.equal(POLICY.generalizedLocation, "Located in Example area");
@@ -36,6 +40,19 @@ test("detects punctuation and spacing variants of protected address and phone", 
   );
 });
 
+test("detects a protected child identity without storing the real identity in tests", () => {
+  const findings = scanText(
+    "Example Protected Child appears in this public copy.",
+    "public/index.html",
+    POLICY,
+    SYNTHETIC_CHILD_IDENTITIES,
+  );
+
+  assert.deepEqual(findings.map((finding) => finding.category), [
+    "protected-child-identity",
+  ]);
+});
+
 test("keeps the signature exception scoped to address and phone only", () => {
   const findings = scanText(
     "123 Example Street, 75000 Example City +33 6 12 34 56 78. Passport with ID: ZXCV123456.",
@@ -48,7 +65,17 @@ test("keeps the signature exception scoped to address and phone only", () => {
   ]);
 });
 
-test("detects official document identifiers without storing real values", () => {
+test("allows the explicitly approved public identifier", () => {
+  const findings = scanText(
+    "French passport with ID: 14CV32249",
+    "public/index.html",
+    POLICY,
+  );
+
+  assert.deepEqual(findings, []);
+});
+
+test("still detects other official document identifiers", () => {
   const findings = scanText(
     "The passport with ID: ZXCV123456 is no longer published.",
     "public/index.html",
@@ -59,25 +86,48 @@ test("detects official document identifiers without storing real values", () => 
   assert.equal(findings[0]?.category, "official-document-identifier");
 });
 
-test("detects document image references, precise maps and child institutions", () => {
+test("allows the approved passport asset but rejects other document artifacts", () => {
+  const approved = scanText(
+    '<img src="assets/passport-fr-bababou-4.png" alt="French passport illustration">',
+    "public/index.html",
+    POLICY,
+  );
+  const other = scanText(
+    '<img src="assets/passport-example.png" alt="Document">',
+    "public/index.html",
+    POLICY,
+  );
+
+  assert.deepEqual(approved, []);
+  assert.deepEqual(other.map((finding) => finding.category), [
+    "official-document-artifact",
+  ]);
+});
+
+test("allows institutions, professional contacts and relevant map links", () => {
   const findings = scanText(
     [
-      '<img src="assets/passport-example.png" alt="Document">',
-      '<a href="https://goo.gl/maps/example">map</a>',
-      "The child attended an example barnehage.",
+      '<a href="https://goo.gl/maps/example">institution map</a>',
+      "Example Court — case.worker@example.invalid",
+      "The child attended an example kindergarten.",
     ].join("\n"),
     "public/index.html",
     POLICY,
   );
 
-  assert.deepEqual(
-    findings.map((finding) => finding.category).sort(),
-    [
-      "child-school-or-routine",
-      "official-document-artifact",
-      "precise-location-link",
-    ],
+  assert.deepEqual(findings, []);
+});
+
+test("allows intentional public phone data on contact surfaces but never the protected address", () => {
+  const findings = scanText(
+    "123 Example Street, 75000 Example City +33 6 12 34 56 78",
+    "messages/contact/en.json",
+    POLICY,
   );
+
+  assert.deepEqual(findings.map((finding) => finding.category), [
+    "protected-address",
+  ]);
 });
 
 test("detects high-confidence medical or psychological publication content", () => {
@@ -127,9 +177,9 @@ test("source-map scan ignores dependencies but checks project sourcesContent", (
   assert.match(findings[0]?.file ?? "", /app\/page\.tsx$/);
 });
 
-test("accepts minimized public contact and generalized location copy", () => {
+test("accepts pseudonymized public copy and generalized location", () => {
   const findings = scanText(
-    "Located in Example area. Contact the dedicated public mailbox for this site.",
+    "Bababou. Located in Example area. Contact the public mailbox for this site.",
     "public/index.html",
     POLICY,
   );
