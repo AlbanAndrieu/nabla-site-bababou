@@ -3,6 +3,11 @@ name: CI (Quality and Security)
 on:
   pull_request:
     paths:
+      - ".agents/**"
+      - ".cursor/**"
+      - ".pre-commit-config.yaml"
+      - ".pre-commit-pre-push.yaml"
+      - "AGENTS.md"
       - "app/**"
       - "components/**"
       - "i18n/**"
@@ -12,6 +17,7 @@ on:
       - "scripts/**"
       - "tests/**"
       - "unit-tests/**"
+      - "mise.toml"
       - "*.{js,cjs,mjs,ts,tsx,json}"
       - "package-lock.json"
       - ".github/workflows/ci.yml"
