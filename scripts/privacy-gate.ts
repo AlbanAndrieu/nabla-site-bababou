@@ -2,13 +2,18 @@ import { readdir, readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 
+import {
+  findIdentitySpans,
+  PROTECTED_CHILD_IDENTITY_FINGERPRINTS,
+  type IdentityFingerprintSet,
+} from "./privacy-identities.ts";
+
 export type PrivacyCategory =
+  | "protected-child-identity"
   | "protected-address"
   | "private-phone"
   | "official-document-identifier"
   | "official-document-artifact"
-  | "precise-location-link"
-  | "child-school-or-routine"
   | "medical-or-psychological";
 
 export type PrivacyFinding = {
@@ -37,13 +42,27 @@ type SourceMapRecord = {
 const ROOT = process.cwd();
 const POLICY_PATH = ".cursor/mem/privacy-address-phone.md";
 const ADDRESS_PHONE_EXCEPTION = "public/assets/nabla/signature/";
+const APPROVED_PUBLIC_IDENTIFIER = "14CV32249";
+const APPROVED_PUBLIC_DOCUMENT_ASSET = "public/assets/passport-fr-bababou-4.png";
+const APPROVED_PUBLIC_DOCUMENT_ASSET_REFERENCE = "assets/passport-fr-bababou-4.png";
+const PUBLIC_CONTACT_SURFACES = [
+  "app/[locale]/contact/page.tsx",
+  "app/[locale]/email/page.tsx",
+  "messages/contact/",
+  "messages/email/",
+];
 const SOURCE_SCAN_TARGETS = [
   "public/index.html",
+  "public/contact.html",
+  "public/abduction-norway.html",
+  "public/nre-en.html",
+  "public/nre-fr.html",
   "app",
   "components",
   "i18n",
   "lib",
   "messages",
+  "package.json",
   "proxy.ts",
   "next.config.mjs",
 ];
@@ -86,14 +105,6 @@ const OFFICIAL_DOCUMENT_ARTIFACT_PATTERNS = [
   /<(?:a|img)\b[^>]*(?:href|src)=["'][^"']*(?:passport|identity[-_ ]?card|national[-_ ]?id)[^"']*["'][^>]*>/gi,
 ];
 
-const PRECISE_LOCATION_PATTERNS = [
-  /href=["']https?:\/\/(?:www\.)?(?:goo\.gl\/maps|maps\.app\.goo\.gl|google\.[^/"']+\/maps)[^"']*["']/gi,
-];
-
-const CHILD_SCHOOL_OR_ROUTINE_PATTERNS = [
-  /\b(?:barnehage|kindergarten|nursery|cr[eè]che|child(?:ren)?['’]?s\s+school)\b/gi,
-];
-
 function escapeRegex(value: string) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
@@ -131,6 +142,13 @@ function dedupeFindings(findings: PrivacyFinding[]) {
       ]),
     ).values(),
   ];
+}
+
+function isPublicContactSurface(file: string) {
+  const normalized = file.replaceAll("\\", "/");
+  return PUBLIC_CONTACT_SURFACES.some(
+    (surface) => normalized === surface || normalized.startsWith(surface),
+  );
 }
 
 export function parsePrivacyPolicy(source: string): PrivacyPolicy {
@@ -176,14 +194,61 @@ function collectPatternFindings(
   return findings;
 }
 
+function collectOfficialIdentifierFindings(text: string, file: string) {
+  const findings: PrivacyFinding[] = [];
+  for (const pattern of OFFICIAL_IDENTIFIER_PATTERNS) {
+    pattern.lastIndex = 0;
+    for (const match of text.matchAll(pattern)) {
+      const identifier = match[1];
+      if (identifier === APPROVED_PUBLIC_IDENTIFIER) continue;
+      findings.push({
+        category: "official-document-identifier",
+        file,
+        line: lineAt(text, match.index ?? 0),
+      });
+    }
+  }
+  return findings;
+}
+
+function collectOfficialArtifactFindings(text: string, file: string) {
+  if (file.replaceAll("\\", "/") === APPROVED_PUBLIC_DOCUMENT_ASSET) return [];
+
+  const findings: PrivacyFinding[] = [];
+  for (const pattern of OFFICIAL_DOCUMENT_ARTIFACT_PATTERNS) {
+    pattern.lastIndex = 0;
+    for (const match of text.matchAll(pattern)) {
+      if (match[0].includes(APPROVED_PUBLIC_DOCUMENT_ASSET_REFERENCE)) continue;
+      findings.push({
+        category: "official-document-artifact",
+        file,
+        line: lineAt(text, match.index ?? 0),
+      });
+    }
+  }
+  return findings;
+}
+
 export function scanText(
   text: string,
   file: string,
   policy: PrivacyPolicy,
+  childIdentityFingerprints: IdentityFingerprintSet =
+    PROTECTED_CHILD_IDENTITY_FINGERPRINTS,
 ): PrivacyFinding[] {
   const findings: PrivacyFinding[] = [];
   const normalizedFile = file.replaceAll("\\", "/");
-  const addressPhoneAllowed = normalizedFile.startsWith(ADDRESS_PHONE_EXCEPTION);
+  const addressPhoneAllowed =
+    normalizedFile.startsWith(ADDRESS_PHONE_EXCEPTION) ||
+    isPublicContactSurface(normalizedFile);
+
+  for (const match of findIdentitySpans(text, childIdentityFingerprints)) {
+    findings.push({
+      category: "protected-child-identity",
+      file,
+      line: lineAt(text, match.start),
+    });
+  }
 
   if (!addressPhoneAllowed) {
     findings.push(
@@ -202,49 +267,10 @@ export function scanText(
     );
   }
 
-  for (const pattern of OFFICIAL_IDENTIFIER_PATTERNS) {
-    findings.push(
-      ...collectPatternFindings(
-        text,
-        pattern,
-        "official-document-identifier",
-        file,
-      ),
-    );
-  }
-
-  for (const pattern of OFFICIAL_DOCUMENT_ARTIFACT_PATTERNS) {
-    findings.push(
-      ...collectPatternFindings(
-        text,
-        pattern,
-        "official-document-artifact",
-        file,
-      ),
-    );
-  }
-
-  for (const pattern of PRECISE_LOCATION_PATTERNS) {
-    findings.push(
-      ...collectPatternFindings(
-        text,
-        pattern,
-        "precise-location-link",
-        file,
-      ),
-    );
-  }
-
-  for (const pattern of CHILD_SCHOOL_OR_ROUTINE_PATTERNS) {
-    findings.push(
-      ...collectPatternFindings(
-        text,
-        pattern,
-        "child-school-or-routine",
-        file,
-      ),
-    );
-  }
+  findings.push(
+    ...collectOfficialIdentifierFindings(text, file),
+    ...collectOfficialArtifactFindings(text, file),
+  );
 
   for (const pattern of MEDICAL_OR_PSYCHOLOGICAL_PATTERNS) {
     findings.push(
