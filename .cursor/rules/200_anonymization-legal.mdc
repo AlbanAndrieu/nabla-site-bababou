@@ -9,4 +9,6 @@ Before editing family, legal, identity, contact, document, metadata, or generate
 
 - `.agents/skills/protect-family-privacy/SKILL.md`
 
-That skill is the **single source of truth**. Do not duplicate or reinterpret its identity dictionary, official-document pseudonymization rules, contact exceptions, approved identifier/passport exceptions, institution/professional rules, or the narrow `public/index.html` child-name exception.
+That skill is the **single source of truth**. Do not duplicate or reinterpret its identity dictionary, mandatory pseudonyms, `Mr A` / `Ms B` legal aliases, essential-information caviardage rules, contact exceptions, approved identifier/passport exceptions, or institution/professional rules.
+
+The former `public/index.html` child real-name exception has been revoked. Do not recreate it in source, metadata, Open Graph/Twitter tags, JSON-LD, generated output, tests, or documentation unless the user explicitly introduces a newer exception.
