@@ -168,6 +168,31 @@ test("allows intentional public phone data on contact surfaces but never the pro
   ]);
 });
 
+test("scopes generated public contact data to contact/email artifacts", () => {
+  const publicPhone = "+33 6 12 34 56 78";
+  const contactHtml = scanText(
+    publicPhone,
+    ".next/server/app/en/contact.html",
+    POLICY,
+  );
+  const contactCatalogChunk = scanText(
+    publicPhone,
+    ".next/server/chunks/ssr/messages_contact_en_json_example.js",
+    POLICY,
+  );
+  const unrelatedRoute = scanText(
+    publicPhone,
+    ".next/server/app/en/link.html",
+    POLICY,
+  );
+
+  assert.deepEqual(contactHtml, []);
+  assert.deepEqual(contactCatalogChunk, []);
+  assert.deepEqual(unrelatedRoute.map((finding) => finding.category), [
+    "private-phone",
+  ]);
+});
+
 test("detects high-confidence medical or psychological publication content", () => {
   const findings = scanText(
     "A psychological assessment is attached to this public page.",
