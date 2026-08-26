@@ -1,0 +1,102 @@
+name: Sanitize legacy home privacy
+
+on:
+  push:
+    branches:
+      - refactor/next-migration-4-home-privacy-gate
+    paths:
+      - ".github/workflows/privacy-home-sanitize.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  sanitize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout migration branch
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Sanitize legacy homepage source
+        shell: bash
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          import re
+
+          page = Path("public/index.html")
+          source = page.read_text(encoding="utf-8")
+
+          def replace(pattern: str, replacement: str, *, expected: int = 1) -> None:
+              global source
+              source, count = re.subn(pattern, replacement, source, flags=re.IGNORECASE | re.DOTALL)
+              if count != expected:
+                  raise SystemExit(
+                      f"privacy sanitizer expected {expected} replacement(s), got {count}: {pattern}"
+                  )
+
+          replace(
+              r"(<strong>You are French</strong>\s*—\s*)You have a French passport with ID:\s*[A-Z0-9-]+",
+              r"\1Your French identity can be verified safely without publishing a document number",
+          )
+          replace(
+              r"\s*<img class=\"card-img-top\" src=\"assets/passport-[^\"]+\" alt=\"French passport illustration\" />",
+              "",
+          )
+          replace(
+              r"<h5 class=\"\"><b>Eleonore,\s*[A-Z0-9-]+\s+is your ID!</b></h5>",
+              '<h5 class=""><b>Éléonore, your French identity can be verified safely.</b></h5>',
+          )
+          replace(
+              r"<p class=\"card-text\">Ask for your French passport, she was not able to change that\.\.\.</p>",
+              '<p class="card-text">Official identity details are intentionally not published on this website.</p>',
+          )
+          replace(
+              r"\s*<img\s+class=\"img-fluid d-block mx-auto py-2\"\s+src=\"assets/flag-norway-location-1\.svg\"\s+alt=\"Map showing location in Norway\"\s*/>",
+              "",
+          )
+          replace(
+              r"<h5 class=\"\">\s*<b>I found my Baby\s*<a href=\"https://goo\.gl/maps/[^\"]+\" target=\"_blank\">here</a>\.\.\.</b>\s*</h5>",
+              '<h5 class=""><b>I found traces of you in Norway.</b></h5>',
+          )
+          replace(
+              r"<p class=\"card-text\">\s*<a href=\"https://[^\"]+\" target=\"_blank\">[^<]*barnehage</a>, is where my\s*daughter is kept <b>prisoner</b>\s*</p>",
+              '<p class="card-text">For privacy, the exact institution and location are not published here.</p>',
+          )
+          replace(
+              r"<p class=\"card-text\">\s*<span title=\"[^\"]+\">People</span> there are <b>unreachable</b>\. Why norway is not willing to\s*cooperate\?\s*</p>",
+              '<p class="card-text">Norway remains part of the search history; personal details of third parties are not published here.</p>',
+          )
+          replace(
+              r"\s*<img\s+class=\"img-fluid d-block mx-auto py-2\"\s+src=\"assets/flag-germany-location-1\.svg\"\s+alt=\"Map showing location in Germany\"\s*/>",
+              "",
+          )
+          replace(
+              r"<h5 class=\"\">\s*<b[^>]*>\s*I now search my Baby around\s*<a href=\"https://goo\.gl/maps/[^\"]+\" target=\"_blank\">[^<]+</a>\.\.\.</b\s*>\s*</h5>",
+              '<h5 class=""><b>I continue searching for my Baby in Germany.</b></h5>',
+          )
+
+          page.write_text(source, encoding="utf-8")
+
+          for asset in (
+              Path("public/assets/passport-fr-bababou-4.png"),
+              Path("public/assets/flag-norway-location-1.svg"),
+              Path("public/assets/flag-germany-location-1.svg"),
+          ):
+              if not asset.exists():
+                  raise SystemExit(f"expected privacy-sensitive asset is missing: {asset}")
+              asset.unlink()
+          PY
+
+      - name: Commit sanitized legacy home
+        shell: bash
+        run: |
+          git diff --check
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/index.html public/assets
+          git commit -m "fix(privacy): sanitize legacy home publication data"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
