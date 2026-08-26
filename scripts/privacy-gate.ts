@@ -142,7 +142,10 @@ function dedupeFindings(findings: PrivacyFinding[]) {
 function isPublicContactSurface(file: string) {
   const normalized = file.replaceAll("\\", "/");
   return PUBLIC_CONTACT_SURFACES.some(
-    (surface) => normalized === surface || normalized.startsWith(surface),
+    (surface) =>
+      normalized === surface ||
+      normalized.startsWith(surface) ||
+      normalized.includes(surface),
   );
 }
 
