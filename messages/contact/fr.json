@@ -1,34 +1,82 @@
 {
   "contactPage": {
     "meta": {
-      "title": "Contacter Bababou",
-      "description": "Moyens de contact publics et respectueux de la vie privée pour ce site familial."
+      "title": "Contacter Alban Andrieu — Architecte Cloud DevSecOps",
+      "description": "Contacter Alban Andrieu pour des missions d’architecture cloud, DevSecOps, infrastructure IA et sécurité."
     },
+    "role": "Architecte Cloud DevSecOps | Consultant indépendant",
+    "intro": "Disponible pour des problématiques d’intégration IA, de MLOps, de plateformes cloud et de sécurité.",
     "hero": {
-      "title": "Rester en contact",
-      "subtitle": "Un moyen simple et sûr de contacter le parent à l’origine de ce site.",
-      "intro": "Ce site conserve uniquement les informations publiques utiles pour permettre une reprise de contact, sans publier de coordonnées privées inutiles.",
-      "profileAlt": "Portrait d’Alban Andrieu",
-      "contactCta": "Écrire par e-mail"
+      "profileAlt": "Portrait d’Alban Andrieu, ingénieur DevSecOps et architecte cloud",
+      "current": "Je conçois actuellement des solutions cloud sécurisées chez",
+      "experience": "Avec plus de 20 ans d’expérience dans des environnements d’entreprise, j’accompagne leur transformation par l’automatisation DevOps, la sécurité cloud et l’infrastructure as code.",
+      "contactCta": "Me contacter",
+      "cvCta": "Voir mon CV"
     },
     "information": {
-      "title": "Contact public",
-      "subtitle": "Privilégiez l’adresse e-mail dédiée au site."
+      "title": "Coordonnées",
+      "subtitle": "Prêt à améliorer vos pratiques DevOps ? Choisissez le moyen de contact qui vous convient."
     },
     "methods": {
       "email": {
         "title": "E-mail",
-        "value": "aa@bababou.com"
+        "value": "job@albandrieu.com"
+      },
+      "phone": {
+        "title": "Téléphone",
+        "value": "+33 6 95 43 53 53"
+      },
+      "calendar": {
+        "title": "Planifier une réunion",
+        "value": "Réserver un appel de 30 minutes"
+      }
+    },
+    "allInfo": "Toutes les coordonnées",
+    "allInfoAlt": "QR code des coordonnées d’Alban Andrieu",
+    "linkedinQrAlt": "QR code du profil LinkedIn d’Alban Andrieu",
+    "cv": {
+      "title": "Curriculum Vitae",
+      "description": "Téléchargez ou consultez mon CV dans plusieurs formats et langues.",
+      "cta": "Voir tous les formats de CV",
+      "full": "CV complet",
+      "medium": "CV intermédiaire",
+      "small": "CV court"
+    },
+    "social": {
+      "title": "Réseaux sociaux",
+      "subtitle": "Suivez mes derniers travaux et mes projets open source.",
+      "channels": {
+        "linkedin": "Réseau professionnel",
+        "twitter": "Actualités techniques",
+        "xing": "Réseau professionnel",
+        "github": "Dépôts de code",
+        "docker": "Images de conteneurs",
+        "stack": "Contributions aux questions-réponses",
+        "facebook": "Réseau social",
+        "instagram": "Photos et stories",
+        "calendly": "Planifier une réunion",
+        "slack": "Collaboration avec l’équipe Nabla",
+        "discord": "Discuter avec le bot",
+        "rss": "Actualités du site (XML)"
       }
     },
     "location": {
-      "title": "Localisation générale",
-      "value": "Région parisienne",
-      "description": "Pour protéger la vie privée familiale, aucune adresse résidentielle précise ni localisation en temps réel n’est publiée ici."
+      "title": "Localisation",
+      "district": "Quartier d’affaires de La Défense",
+      "description": "Grand Paris, à l’ouest du centre : le corridor d’affaires de La Défense et Nanterre. Disponible pour des missions à distance et sur site dans toute la région.",
+      "mapTitle": "Carte de La Défense, Puteaux et l’ouest parisien",
+      "caption": "Vue de l’ouest parisien et de sa proche banlieue, centrée sur La Défense à Puteaux et le corridor d’affaires de Nanterre. Données cartographiques ©",
+      "contributors": "et ses contributeurs."
     },
-    "privacy": {
-      "title": "Protection de la vie privée",
-      "description": "Les coordonnées privées, identifiants officiels et informations médicales ou psychologiques ne font pas partie des informations de contact publiques du site."
+    "opensource": {
+      "title": "Projets open source",
+      "description": "Explorez mes travaux open source, le code de ce site et mes contributions publiques.",
+      "site": "Voir ce site sur GitHub",
+      "all": "Tous les dépôts",
+      "stars": "Étoiles GitHub",
+      "forks": "Forks GitHub",
+      "sponsor": "Soutenir Alban Andrieu",
+      "stackAlt": "Profil Stack Exchange d’Alban Andrieu"
     }
   }
 }
