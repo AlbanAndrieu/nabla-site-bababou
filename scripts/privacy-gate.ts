@@ -45,7 +45,8 @@ const ADDRESS_PHONE_EXCEPTION = "public/assets/nabla/signature/";
 const APPROVED_PUBLIC_IDENTIFIER = "14CV32249";
 const APPROVED_PUBLIC_DOCUMENT_ASSET = "public/assets/passport-fr-bababou-4.png";
 const APPROVED_PUBLIC_DOCUMENT_ASSET_REFERENCE = "assets/passport-fr-bababou-4.png";
-const APPROVED_INDEX_CHILD_IDENTITY_LITERAL =
+const APPROVED_INDEX_CHILD_DISPLAY_NAME = "Éléonore (Bababou)";
+const APPROVED_INDEX_CHILD_RECOGNITION_LITERAL =
   "<strong>Your real name is Éléonore</strong> (some people call you by other names, but Éléonore";
 const PUBLIC_CONTACT_SURFACES = [
   "app/[locale]/contact/page.tsx",
@@ -157,6 +158,21 @@ function isPublicContactSurface(file: string) {
   );
 }
 
+function isMatchWithinLiteral(
+  text: string,
+  start: number,
+  end: number,
+  literal: string,
+) {
+  let literalStart = text.indexOf(literal);
+  while (literalStart >= 0) {
+    const literalEnd = literalStart + literal.length;
+    if (start >= literalStart && end <= literalEnd) return true;
+    literalStart = text.indexOf(literal, literalStart + literal.length);
+  }
+  return false;
+}
+
 function isApprovedIndexChildIdentityMatch(
   text: string,
   file: string,
@@ -165,11 +181,20 @@ function isApprovedIndexChildIdentityMatch(
 ) {
   if (file.replaceAll("\\", "/") !== "public/index.html") return false;
 
-  const approvedStart = text.indexOf(APPROVED_INDEX_CHILD_IDENTITY_LITERAL);
-  if (approvedStart < 0) return false;
-
-  const approvedEnd = approvedStart + APPROVED_INDEX_CHILD_IDENTITY_LITERAL.length;
-  return start >= approvedStart && end <= approvedEnd;
+  return (
+    isMatchWithinLiteral(
+      text,
+      start,
+      end,
+      APPROVED_INDEX_CHILD_DISPLAY_NAME,
+    ) ||
+    isMatchWithinLiteral(
+      text,
+      start,
+      end,
+      APPROVED_INDEX_CHILD_RECOGNITION_LITERAL,
+    )
+  );
 }
 
 export function parsePrivacyPolicy(source: string): PrivacyPolicy {
