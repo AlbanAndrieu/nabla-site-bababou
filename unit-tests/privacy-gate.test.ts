@@ -53,25 +53,37 @@ test("detects a protected child identity without storing the real identity in ge
   ]);
 });
 
-test("allows only the exact approved child-name recognition fragment on public index", () => {
-  const approved = scanText(
+test("allows the approved display identity and recognition sentence only on public index", () => {
+  const socialMetadata = scanText(
+    '<meta property="og:title" content="Éléonore (Bababou) — Your Father Is Looking for You" />',
+    "public/index.html",
+    POLICY,
+  );
+  const visibleHeading = scanText(
+    "<h1>Éléonore (Bababou) — If you are reading this</h1>",
+    "public/index.html",
+    POLICY,
+  );
+  const recognition = scanText(
     "<strong>Your real name is Éléonore</strong> (some people call you by other names, but Éléonore\nis who you truly are)",
     "public/index.html",
     POLICY,
   );
-  const metadata = scanText(
-    '<meta name="twitter:title" value="Éléonore - Your Father is Looking for You" />',
+  const bareMetadata = scanText(
+    '<meta property="og:title" content="Éléonore — Your Father Is Looking for You" />',
     "public/index.html",
     POLICY,
   );
   const otherFile = scanText(
-    "<strong>Your real name is Éléonore</strong> (some people call you by other names, but Éléonore)",
+    "Éléonore (Bababou)",
     "messages/en.json",
     POLICY,
   );
 
-  assert.deepEqual(approved, []);
-  assert.deepEqual(metadata.map((finding) => finding.category), [
+  assert.deepEqual(socialMetadata, []);
+  assert.deepEqual(visibleHeading, []);
+  assert.deepEqual(recognition, []);
+  assert.deepEqual(bareMetadata.map((finding) => finding.category), [
     "protected-child-identity",
   ]);
   assert.deepEqual(otherFile.map((finding) => finding.category), [
@@ -79,16 +91,26 @@ test("allows only the exact approved child-name recognition fragment on public i
   ]);
 });
 
-test("detects the retained Elenore spelling variant outside the approved fragment", () => {
-  const findings = scanText(
+test("detects unapproved child identity variants on the index", () => {
+  const spellingVariant = scanText(
     "Elenore appears in ordinary public copy.",
     "public/index.html",
     POLICY,
   );
+  const completeIdentity = scanText(
+    "Éléonore Céleste ANDRIEU BROOKE",
+    "public/index.html",
+    POLICY,
+  );
 
-  assert.deepEqual(findings.map((finding) => finding.category), [
+  assert.deepEqual(spellingVariant.map((finding) => finding.category), [
     "protected-child-identity",
   ]);
+  assert.ok(
+    completeIdentity.some(
+      (finding) => finding.category === "protected-child-identity",
+    ),
+  );
 });
 
 test("keeps the signature exception scoped to address and phone only", () => {
