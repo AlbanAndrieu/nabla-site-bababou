@@ -28,13 +28,11 @@ async function expectAlternates(
 
 test.describe("native Next SEO locale metadata", () => {
   for (const route of ROUTES) {
-    test(`${route} renders French default canonical and hreflang`, async ({
-      page,
-    }) => {
-      await page.setExtraHTTPHeaders({
-        "Accept-Language": "fr-FR,fr;q=0.9,en;q=0.8",
-      });
-      await page.goto(`/${route}`);
+    test(`${route} renders French canonical and hreflang`, async ({ page }) => {
+      // Locale detection is enabled and the CI browser defaults to English.
+      // Target the explicit French route so this test validates metadata rather
+      // than the browser-language negotiation performed for an unprefixed URL.
+      await page.goto(`/fr/${route}`);
       await expectAlternates(page, {
         canonical: `/${route}`,
         fr: `/${route}`,

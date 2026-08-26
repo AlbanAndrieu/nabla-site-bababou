@@ -4,8 +4,11 @@ test.describe("Homepage Tests", () => {
 	test("should load the homepage successfully", async ({ page }) => {
 		await page.goto("/");
 
-		// Check page title
-		await expect(page).toHaveTitle(/Missing Child/);
+		// The homepage/index is an owner-controlled exception. Lock the currently
+		// approved title so automated changes cannot silently alter its disclosure.
+		await expect(page).toHaveTitle(
+			"Éléonore (Bababou) — Your Father Is Looking for You | Bababou",
+		);
 
 		// Primary landmark (homepage also has #second-content as a second <main>)
 		await expect(page.locator("#main-content")).toBeVisible();

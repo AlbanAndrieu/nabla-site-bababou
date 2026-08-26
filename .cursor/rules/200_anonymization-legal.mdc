@@ -9,4 +9,6 @@ Before editing family, legal, identity, contact, document, metadata, or generate
 
 - `.agents/skills/protect-family-privacy/SKILL.md`
 
-That skill is the **single source of truth**. Do not duplicate or reinterpret its identity dictionary, official-document pseudonymization rules, contact exceptions, approved identifier/passport exceptions, institution/professional rules, or the narrow `public/index.html` child-name exception.
+That skill is the **single source of truth**. Do not duplicate or reinterpret its identity dictionary, mandatory pseudonyms, `Mr A` / `Ms B` legal aliases, essential-information caviardage rules, contact exceptions, approved identifier/passport exceptions, or institution/professional rules.
+
+`public/index.html`, `/`, and their homepage-specific Open Graph/Twitter/JSON-LD identity disclosures are **owner-controlled exceptions**. Audit and report them when relevant, but do not pseudonymize, redact, remove, generalize, rename, or otherwise change identifying/privacy-sensitive homepage data unless the user explicitly approves the specific change in the current task. This exception is scoped to the homepage/index and must not be copied to unrelated routes or documents.
