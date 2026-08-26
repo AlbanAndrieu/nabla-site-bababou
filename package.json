@@ -36,8 +36,6 @@
     "deploy:wrangler": "wrangler deploy",
     "build": "next build",
     "start": "next start",
-    "build:n": "next build",
-    "start:n": "next start",
     "build:v": "vercel build",
     "start:v": "vercel deploy",
     "start:test": "next start -p 3000",
