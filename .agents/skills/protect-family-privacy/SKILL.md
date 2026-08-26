@@ -1,66 +1,66 @@
 ---
 name: protect-family-privacy
-description: Audit, classify, redact, or rewrite personal and family data before public release while preserving the minimum information needed for a missing or abducted child to recognize and contact a parent. Use for websites, repositories, documents, PDFs, images, legal narratives, contact pages, metadata, logs, or publication reviews involving Alban Andrieu, the child, relatives, addresses, phone numbers, health information, psychological information, or family proceedings.
+description: Apply the Bababou publication policy to family, legal, contact, identity, image, metadata, and generated content. Protect the child's legal identity and private family data while preserving explicitly approved identity evidence, public contact information, institutions, professionals, and factual case history.
 ---
 
 # Protect Family Privacy
 
-Protect family data without defeating the site's legitimate reunification purpose. Apply data minimization, not blanket anonymization.
+Apply **contextual pseudonymization**, not blanket anonymization. The site's purpose is recognition, contact, documentation, and factual case history.
 
-## Load the private rules
+## Sources of truth
 
-Read [references/private-rules.md](references/private-rules.md) before inspecting, drafting, or publishing relevant content. Treat that file as private configuration: use its rules to detect and transform data, but never quote protected source values in responses.
+Read `references/private-rules.md` first. When present, also read `.cursor/mem/privacy-address-phone.md` for exact private address/phone matching. Never copy protected values from private configuration into reports, tests, skills, or logs.
 
-When working in this repository, also read `.cursor/mem/privacy-address-phone.md` if it exists. Treat it as the authoritative project-specific source, but never copy its unmasked protected values into reports, generated documentation, source code, or this skill.
+## Child identity
 
-## Classify before changing
+The child's legal name is protected.
 
-Assign each item to one category:
+- In ordinary/public/editorial copy use **Bababou**.
+- In text derived from official, administrative, court, police, school, or legal documents use **the child**, **the daughter**, `l’enfant`, or `ma fille` as appropriate.
+- Do not publish full or partial legal-name variants in HTML, messages, metadata, JSON-LD, attributes, comments, source maps, generated bundles, filenames newly created from the identity, or audit output.
 
-1. **Necessary for recognition or contact** — retain only when it materially helps the child recognize the parent, verify identity, or establish safe contact. Examples may include the parent's public name, a stable public contact method, a general geographic area, and carefully selected shared context.
-2. **Private or excessive** — mask, generalize, or remove. This includes exact home addresses, private phone suffixes, credentials, official identifier numbers, live location, school, routines, and unnecessary third-party data.
-3. **Medical or psychological** — always redact from public output with an opaque black mask, including diagnoses, treatment, medication, disability, assessments, symptoms, therapy, and medical or psychological records.
-4. **Case narrative** — retain only facts necessary to explain the search or establish authenticity. Prefer neutral, dated, attributable wording. Remove gratuitous intimate details and unverified medical or psychological characterizations.
+## Parents
 
-Do not infer that all identifying data must be removed merely because the subject is a child. Balance the stated reunification purpose against foreseeable risks of tracking, profiling, harassment, or identity theft.
+The father's normal public identity and intentionally published contact information are allowed on editorial, contact, email, author, and recognition surfaces.
 
-## Apply the transformation
+For content copied from or closely reproducing an official/legal document:
 
-- Replace exact private locations with the approved general location from the private rules.
-- Mask the protected part of a private phone number exactly as specified.
-- For plain text or source files, replace health or psychological content with `[████████ — DONNÉE MÉDICALE/PSYCHOLOGIQUE CAVIARDÉE]`.
-- For rendered documents or images, use a fully opaque black rectangle and an accessible label such as “Donnée médicale ou psychologique caviardée.”
-- Remove official document numbers entirely unless a verified authority specifically requires them.
-- Prefer a dedicated public email address or contact form over private coordinates.
-- Preserve the exception listed in the private rules only within its stated directory scope. Do not copy that exception's protected values into other public files.
+- father → **the father / le père / MR AA**;
+- mother → **the mother / la mère / Mme RB**.
 
-## Make redaction irreversible
+Do not apply this official-document anonymization rule to ordinary site copy, authorship, public contact pages, or public email/contact methods.
 
-Never rely only on CSS overlays, highlights, blur, pixelation, white text, annotations, or removable PDF shapes.
+## Explicitly approved exceptions
 
-For PDFs and images:
+The following are intentional public exceptions and MUST NOT be removed merely because they relate to identity evidence:
 
-1. Apply true redaction or rasterize the affected page after masking.
-2. Remove hidden text, annotations, form values, layers, comments, revision history, and relevant metadata.
-3. Re-extract text and inspect the rendered result.
-4. Search the resulting artifact for every original protected value.
+- official identifier **14CV32249**;
+- `public/assets/passport-fr-bababou-4.png`;
+- factual references to institutions, organizations, public/professional contacts, staff identities, professional email addresses, and location/map links when relevant to the case history.
 
-For HTML and applications:
+An exception is narrow: it does not authorize publishing the child's legal name or unrelated private family data.
 
-1. Remove protected values from source, JSON, comments, attributes, structured data, alternate locales, generated files, bundles, source maps, tests, fixtures, and Git-tracked assets.
-2. Do not merely hide them in the UI.
-3. Search the build output when available.
+## Data that remains protected
 
-## Report findings safely
+- exact private residential address, except an existing explicitly scoped signature exception;
+- private phone data except where the repository policy explicitly designates that contact information as intentionally public;
+- credentials, secrets, authentication data, or live/private tracking data;
+- medical or psychological diagnoses, records, treatment, medication, assessments, therapy, or equivalent sensitive health information unless the user explicitly authorizes a specific publication later.
 
-List:
+## Transformation rules
 
-- file or page;
-- data category;
-- risk;
-- action: retain, generalize, mask, redact, or remove;
-- safe replacement.
+- Replace the child's legal identity according to the context rules above.
+- In official/legal-derived content replace parent legal identities with the approved role or initials.
+- Keep approved public contact information intact on contact/email surfaces.
+- Keep approved identifier `14CV32249` and the approved passport asset intact.
+- Do not generalize or remove institutions, professionals, professional emails, or historical location links solely for privacy reasons.
+- Replace protected private residence data with the approved generalized location from private configuration.
+- Redact medical/psychological data irreversibly in documents/images; do not merely hide it visually.
 
-Never reproduce a full protected value in an audit report. Show only the approved masked form. If the user asks only for analysis, do not edit files. If the user asks for changes, modify only the authorized scope and verify the result.
+## Verification
 
-When intent or necessity is ambiguous, retain the least sensitive version that still supports recognition and safe contact.
+For HTML/app output inspect source, messages, metadata, JSON-LD, comments, attributes, generated bundles and source maps. For PDFs/images use true redaction/rasterization when redaction is required and verify hidden text/metadata are clean.
+
+Privacy tooling must report only `file + line + category`; never echo the protected match. Tests must use synthetic identities and contact values, except the explicitly approved identifier may appear in a regression test.
+
+When rules conflict, this skill and `references/private-rules.md` are authoritative for this repository.
