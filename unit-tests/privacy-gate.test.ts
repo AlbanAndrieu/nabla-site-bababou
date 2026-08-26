@@ -40,12 +40,50 @@ test("detects punctuation and spacing variants of protected address and phone", 
   );
 });
 
-test("detects a protected child identity without storing the real identity in tests", () => {
+test("detects a protected child identity without storing the real identity in generic fixtures", () => {
   const findings = scanText(
     "Example Protected Child appears in this public copy.",
     "public/index.html",
     POLICY,
     SYNTHETIC_CHILD_IDENTITIES,
+  );
+
+  assert.deepEqual(findings.map((finding) => finding.category), [
+    "protected-child-identity",
+  ]);
+});
+
+test("allows only the exact approved child-name recognition fragment on public index", () => {
+  const approved = scanText(
+    "<strong>Your real name is Éléonore</strong> (some people call you by other names, but Éléonore\nis who you truly are)",
+    "public/index.html",
+    POLICY,
+  );
+  const metadata = scanText(
+    '<meta name="twitter:title" value="Éléonore - Your Father is Looking for You" />',
+    "public/index.html",
+    POLICY,
+  );
+  const otherFile = scanText(
+    "<strong>Your real name is Éléonore</strong> (some people call you by other names, but Éléonore)",
+    "messages/en.json",
+    POLICY,
+  );
+
+  assert.deepEqual(approved, []);
+  assert.deepEqual(metadata.map((finding) => finding.category), [
+    "protected-child-identity",
+  ]);
+  assert.deepEqual(otherFile.map((finding) => finding.category), [
+    "protected-child-identity",
+  ]);
+});
+
+test("detects the retained Elenore spelling variant outside the approved fragment", () => {
+  const findings = scanText(
+    "Elenore appears in ordinary public copy.",
+    "public/index.html",
+    POLICY,
   );
 
   assert.deepEqual(findings.map((finding) => finding.category), [

@@ -45,6 +45,8 @@ const ADDRESS_PHONE_EXCEPTION = "public/assets/nabla/signature/";
 const APPROVED_PUBLIC_IDENTIFIER = "14CV32249";
 const APPROVED_PUBLIC_DOCUMENT_ASSET = "public/assets/passport-fr-bababou-4.png";
 const APPROVED_PUBLIC_DOCUMENT_ASSET_REFERENCE = "assets/passport-fr-bababou-4.png";
+const APPROVED_INDEX_CHILD_IDENTITY_LITERAL =
+  "<strong>Your real name is Éléonore</strong> (some people call you by other names, but Éléonore";
 const PUBLIC_CONTACT_SURFACES = [
   "app/[locale]/contact/page.tsx",
   "app/[locale]/email/page.tsx",
@@ -149,6 +151,21 @@ function isPublicContactSurface(file: string) {
   );
 }
 
+function isApprovedIndexChildIdentityMatch(
+  text: string,
+  file: string,
+  start: number,
+  end: number,
+) {
+  if (file.replaceAll("\\", "/") !== "public/index.html") return false;
+
+  const approvedStart = text.indexOf(APPROVED_INDEX_CHILD_IDENTITY_LITERAL);
+  if (approvedStart < 0) return false;
+
+  const approvedEnd = approvedStart + APPROVED_INDEX_CHILD_IDENTITY_LITERAL.length;
+  return start >= approvedStart && end <= approvedEnd;
+}
+
 export function parsePrivacyPolicy(source: string): PrivacyPolicy {
   return {
     generalizedLocation: firstCapture(
@@ -240,6 +257,16 @@ export function scanText(
   const publicContactSurface = isPublicContactSurface(normalizedFile);
 
   for (const match of findIdentitySpans(text, childIdentityFingerprints)) {
+    if (
+      isApprovedIndexChildIdentityMatch(
+        text,
+        normalizedFile,
+        match.start,
+        match.end,
+      )
+    ) {
+      continue;
+    }
     findings.push({
       category: "protected-child-identity",
       file,

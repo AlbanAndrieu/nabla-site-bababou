@@ -1,66 +1,154 @@
 ---
 name: protect-family-privacy
-description: Apply the Bababou publication policy to family, legal, contact, identity, image, metadata, and generated content. Protect the child's legal identity and private family data while preserving explicitly approved identity evidence, public contact information, institutions, professionals, and factual case history.
+description: Canonical Bababou publication policy for family, legal, contact, identity, image, metadata, and generated content. Protect the child's identity by context while preserving explicitly approved evidence, public contact information, institutions, professionals, and factual case history.
 ---
 
 # Protect Family Privacy
 
 Apply **contextual pseudonymization**, not blanket anonymization. The site's purpose is recognition, contact, documentation, and factual case history.
 
-## Sources of truth
+## Canonical source of truth
 
-Read `references/private-rules.md` first. When present, also read `.cursor/mem/privacy-address-phone.md` for exact private address/phone matching. Never copy protected values from private configuration into reports, tests, skills, or logs.
+This file is the **single canonical privacy policy** for the repository.
 
-## Child identity
+Compatibility/adaptor files may point here, but they must not redefine or fork the rules:
 
-The child's legal name is protected.
+- `.agents/protect-family-privacy/SKILL.md`;
+- `.agents/skills/protect-family-privacy/references/private-rules.md`;
+- `.cursor/rules/200_anonymization-legal.mdc`.
+
+When older repository guidance conflicts with this file, **this file wins**.
+
+The identity dictionary below is an intentional exception to the general rule against copying protected identity data into agent instructions. **Do not delete, hash, sanitize, or replace these values inside this skill.** Agents need the real spellings and variants to detect accidental publication elsewhere.
+
+## Protected identity detection dictionary — intentionally retained
+
+These values are detection/reference data. Their presence **inside this canonical skill is allowed** and does not by itself authorize publication elsewhere.
+
+### Child
+
+Known legal-name tokens and spelling/accent variants to recognize:
+
+- given name: `Éléonore`, `Eléonore`, `Eleonore`, `Elenore`;
+- middle name: `Céleste`, `Celeste`;
+- family names: `ANDRIEU`, `BROOKE`;
+- combined form to recognize: `Éléonore Céleste ANDRIEU BROOKE`, including equivalent accentless/spelling variants such as `Eleonore Celeste ANDRIEU BROOKE` and `Elenore Celeste ANDRIEU BROOKE`.
+
+The family names overlap with the parents, so `ANDRIEU` or `BROOKE` alone must **not** be treated as proof that the child's identity is being published. Use context and the other child-name tokens.
+
+### Father
+
+Legal identity to recognize in official/legal-derived material:
+
+- `Alban Eric Alexandre ANDRIEU`;
+- tokens/variants to retain for detection: `Alban`, `Eric`, `Alexandre`, `ANDRIEU`.
+
+### Mother
+
+Legal identity to recognize in official/legal-derived material:
+
+- `Rachael Elaine BROOKE`;
+- tokens/variants to retain for detection: `Rachael`, `Elaine`, `BROOKE`.
+
+These parent names are **not globally private**. Their treatment depends on context as defined below.
+
+## Child publication policy
+
+The child's legal identity is protected by default.
 
 - In ordinary/public/editorial copy use **Bababou**.
 - In text derived from official, administrative, court, police, school, or legal documents use **the child**, **the daughter**, `l’enfant`, or `ma fille` as appropriate.
-- Do not publish full or partial legal-name variants in HTML, messages, metadata, JSON-LD, attributes, comments, source maps, generated bundles, filenames newly created from the identity, or audit output.
+- Do not publish the child's legal-name variants in metadata, JSON-LD, titles, descriptions, attributes, comments, generated bundles, source maps, newly created filenames, or audit output unless a narrow exception below explicitly allows it.
+
+### Narrow homepage exception
+
+`public/index.html` has one deliberate exception. The child's given name may appear **only** in this exact recognition sentence fragment:
+
+`<strong>Your real name is Éléonore</strong> (some people call you by other names, but Éléonore`
+
+This exception is intentionally narrow:
+
+- both occurrences of `Éléonore` inside that exact fragment are allowed;
+- no other occurrence of the child's legal name is authorized on `public/index.html`;
+- do not restore it in Twitter/Open Graph metadata, headings, comments, CTA text, passport-card captions, JSON-LD, or other homepage content;
+- all other public/editorial references continue to use `Bababou`.
+
+Do not broaden or remove this exception without an explicit user instruction.
 
 ## Parents
 
-The father's normal public identity and intentionally published contact information are allowed on editorial, contact, email, author, and recognition surfaces.
+The father's normal public identity and intentionally published contact information are allowed on editorial, contact, email, author, recognition, and comparable public-contact surfaces.
 
 For content copied from or closely reproducing an official/legal document:
 
 - father → **the father / le père / MR AA**;
 - mother → **the mother / la mère / Mme RB**.
 
-Do not apply this official-document anonymization rule to ordinary site copy, authorship, public contact pages, or public email/contact methods.
+Do not apply official-document parent anonymization to ordinary site copy, authorship, public contact pages, or intentionally public email/contact methods.
 
-## Explicitly approved exceptions
+## Explicitly approved identity/document exceptions
 
-The following are intentional public exceptions and MUST NOT be removed merely because they relate to identity evidence:
+The following are intentional public exceptions and **must not be removed merely because they relate to identity evidence**:
 
-- official identifier **14CV32249**;
-- `public/assets/passport-fr-bababou-4.png`;
-- factual references to institutions, organizations, public/professional contacts, staff identities, professional email addresses, and location/map links when relevant to the case history.
+- official identifier `14CV32249`;
+- `public/assets/passport-fr-bababou-4.png`.
 
-An exception is narrow: it does not authorize publishing the child's legal name or unrelated private family data.
+These exceptions do not authorize additional publication of the child's legal name beyond the narrow homepage exception above.
+
+## Institutions, organizations, professionals, and historical locations
+
+Institutions and people working for them may be named when relevant to the documented case history. This includes:
+
+- institutions and organizations;
+- professionals, staff, officials, and other relevant people;
+- professional identities and professional email addresses;
+- relevant historical location/map links.
+
+Do not remove or generalize these solely because they relate to the case. Apply normal accuracy, relevance, security, and credential rules.
+
+## Address and phone/contact data
+
+For exact private address/phone matching, read `.cursor/mem/privacy-address-phone.md`. Those private values may remain in that private configuration and must not be echoed into logs or audit findings.
+
+- Never disclose the exact private residential address outside an existing explicitly scoped exception.
+- Replace private residence data with the approved generalized location from the private configuration when required.
+- Distinguish private phone data from deliberately published site contact data.
+- Contact/email surfaces may expose the father's approved public contact information.
+- Do not make Bababou contact/email pages unnecessarily diverge from the public contact model used by `nabla-site-alban` solely because a contact field resembles private data.
+
+Existing files under `public/assets/nabla/signature/` retain their current scoped address/phone exception. That directory exception does not override child-identity or medical/psychological protections.
 
 ## Data that remains protected
 
-- exact private residential address, except an existing explicitly scoped signature exception;
-- private phone data except where the repository policy explicitly designates that contact information as intentionally public;
+- exact private residential address outside the scoped exception;
+- genuinely private phone/contact data outside explicitly public contact surfaces;
 - credentials, secrets, authentication data, or live/private tracking data;
-- medical or psychological diagnoses, records, treatment, medication, assessments, therapy, or equivalent sensitive health information unless the user explicitly authorizes a specific publication later.
+- medical or psychological diagnoses, records, treatment, medication, assessments, therapy, or equivalent sensitive health information unless the user later authorizes a specific publication.
 
 ## Transformation rules
 
-- Replace the child's legal identity according to the context rules above.
-- In official/legal-derived content replace parent legal identities with the approved role or initials.
+- Replace the child's legal identity according to the context rules above, except for the exact homepage recognition sentence.
+- In official/legal-derived content replace parent legal identities with the approved roles or initials.
 - Keep approved public contact information intact on contact/email surfaces.
 - Keep approved identifier `14CV32249` and the approved passport asset intact.
-- Do not generalize or remove institutions, professionals, professional emails, or historical location links solely for privacy reasons.
-- Replace protected private residence data with the approved generalized location from private configuration.
-- Redact medical/psychological data irreversibly in documents/images; do not merely hide it visually.
+- Keep relevant institutions, professionals, professional emails, and historical location links unless another concrete reason requires removal.
+- Replace protected private residence data with the approved generalized location.
+- Redact protected medical/psychological data irreversibly in documents/images; do not merely hide it visually.
 
-## Verification
+## Verification and privacy-gate behavior
 
 For HTML/app output inspect source, messages, metadata, JSON-LD, comments, attributes, generated bundles and source maps. For PDFs/images use true redaction/rasterization when redaction is required and verify hidden text/metadata are clean.
 
-Privacy tooling must report only `file + line + category`; never echo the protected match. Tests must use synthetic identities and contact values, except the explicitly approved identifier may appear in a regression test.
+The privacy gate should:
 
-When rules conflict, this skill and `references/private-rules.md` are authoritative for this repository.
+- report only `file + line + category`, never the matched protected value;
+- reject child legal-name variants on public surfaces except the exact `public/index.html` fragment above;
+- allow the approved identifier and passport asset;
+- distinguish intentionally public father contact data from private address/phone data;
+- not treat institutions, professionals, professional emails, or historical map/location links as privacy findings by default.
+
+Tests should use synthetic identities/contact values whenever possible. A regression test may use the exact approved homepage fragment when necessary to ensure this narrow exception is not accidentally removed or broadened.
+
+## Agent editing rule
+
+When modifying privacy controls, first read this entire skill. Preserve the detection dictionary and explicit exceptions unless the user gives a newer instruction. Do not "clean up" the real names from this file: keeping them here is deliberate so future agents can recognize them elsewhere.

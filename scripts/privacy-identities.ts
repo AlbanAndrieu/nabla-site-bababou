@@ -2,10 +2,13 @@ import { createHash } from "node:crypto";
 
 export type IdentityFingerprintSet = ReadonlySet<string>;
 
-// SHA-256 fingerprints of normalized protected child-name variants.
-// The protected source values are intentionally not stored in the repository.
+// SHA-256 fingerprints used by the publication scanner for protected child-name
+// variants. The canonical real-name detection dictionary is intentionally kept
+// in .agents/skills/protect-family-privacy/SKILL.md; do not remove it from that
+// skill. Fingerprints here are an implementation detail, not the source of truth.
 export const PROTECTED_CHILD_IDENTITY_FINGERPRINTS: IdentityFingerprintSet = new Set([
   "e6c09d94d4f43a39c7d1cf6a6d670a76962bc4e0af3b80a16db29ffde71df8c2",
+  "0d31461f93b78d7bca162477a9cf51425d7afa3072bfce3977652d834548b32b",
   "5b0e1ceb3173b8ff0de2a262df2abaa0d403bfaea700f399f82a4c9f7226398b",
   "f3d2b782bc9e28be5264bd7a156567a76e4bb5921cda9f1e148724b1330e941a",
   "0708682382da2f3de680ab2249af546778e6ec4e5e99b50ccb1fa6c5efa1f03d",
