@@ -1,11 +1,11 @@
 ---
 name: protect-family-privacy
-description: Canonical Bababou publication policy for family, legal, contact, identity, image, metadata, and generated content. Apply strict contextual pseudonymization and irreversible redaction while preserving information that is genuinely necessary to understand the case.
+description: Canonical Bababou publication policy for family, legal, contact, identity, image, metadata, and generated content. Apply contextual pseudonymization and irreversible redaction while preserving owner-controlled homepage exceptions and information genuinely necessary to understand the case.
 ---
 
 # Protect Family Privacy
 
-Apply **contextual pseudonymization and irreversible redaction**, not blanket deletion. Preserve the site's legitimate recognition, contact, documentary, and legal purpose without publishing protected family identities or sensitive values.
+Apply **contextual pseudonymization and irreversible redaction**, not blanket deletion. Preserve the site's legitimate recognition, contact, documentary, and legal purpose while protecting family identities and sensitive values outside explicitly controlled exceptions.
 
 ## Canonical source of truth
 
@@ -19,7 +19,7 @@ Compatibility/adaptor files may point here, but they must not redefine or fork t
 
 When older repository guidance conflicts with this file, **this file wins**.
 
-The identity dictionary below is an intentional detection/reference exception. Its values are retained so agents can recognize accidental publication. Their presence **inside this canonical skill does not authorize publication on the site, in generated output, metadata, legal copies, audit reports, or new filenames**.
+The identity dictionary below is intentional detection/reference data. Its presence in this skill does not authorize publication on ordinary public surfaces.
 
 ## Protected identity detection dictionary — intentionally retained
 
@@ -31,9 +31,9 @@ Known legal-name tokens and spelling/accent variants to detect:
 - middle name: `Céleste`, `Celeste`;
 - family names: `ANDRIEU`, `BROOKE`;
 - combined family form to detect: `ANDRIEU-BROOKE`, including spacing and punctuation variants;
-- complete legal-name combinations containing any of the protected child tokens above.
+- complete legal-name combinations containing protected child tokens.
 
-The family names overlap with parent identities. Use context when detecting them, but never publish a child's full or partial real identity merely because a token is ambiguous in isolation.
+The family names overlap with parent identities. Use context when detecting them.
 
 ### Father
 
@@ -49,38 +49,57 @@ Legal identity tokens to detect:
 - `Rachael`, `Elaine`, `BROOKE`;
 - expanded legal-name combinations containing those tokens.
 
-## Mandatory pseudonyms
+## Owner-controlled homepage and index exception
+
+`public/index.html`, the public `/` homepage that serves it, and metadata whose sole purpose is to describe that homepage are **owner-controlled exception surfaces**.
+
+This exception covers the currently approved homepage presentation, including visible copy, HTML title, Open Graph, Twitter/X metadata, homepage JSON-LD, recognition/contact copy, and explicitly approved homepage evidence.
+
+Agents **must not automatically pseudonymize, redact, generalize, remove, rename, or otherwise alter family identity, contact, or evidentiary information on these surfaces**.
+
+Before changing any protected or identifying information on the homepage/index:
+
+1. inspect and report what is currently exposed;
+2. show the proposed replacement or redaction and its publication impact;
+3. **ask the user for explicit approval before editing**;
+4. change only the specifically approved values.
+
+Auditing and reporting the homepage/index is allowed without approval; modifying it is not.
+
+This is a **narrow exception**. It does not authorize copying homepage-only identity or evidence into other routes, documents, metadata, tests, generated content, or assets. Existing tests may reproduce the exact approved homepage strings only when necessary to lock the owner-approved disclosure and prevent silent automated changes.
+
+## Mandatory pseudonyms outside the homepage/index exception
 
 ### Child
 
-The child's real identity is protected on **all public surfaces**, including the homepage.
+Outside the owner-controlled homepage/index exception:
 
-- **Never publish:** any protected given name, middle name, family name, combined family name, full legal identity, accentless/spelling variant, or partial real-name combination.
+- **Never publish:** protected given name, middle name, family name, combined family name, full legal identity, spelling variant, or partial real-name combination when it identifies the child.
 - **Ordinary/editorial wording:** use **Bababou** or **my daughter** where first-person wording is natural.
 - **Legal/official-style wording:** use **the child**.
-- Metadata, HTML titles, Open Graph/Twitter tags, JSON-LD, alt text, attributes, comments, generated bundles, source maps, filenames, tests, and fixtures must follow the same rule.
-
-The previous `public/index.html` real-name/display-name exception is **revoked**. Do not recreate or preserve a homepage exception without a newer explicit user instruction.
+- Metadata, HTML titles, Open Graph/Twitter tags, JSON-LD, alt text, attributes, comments, generated bundles, source maps, filenames, tests, and fixtures follow the same rule.
 
 ### Father
 
 For anonymized family-case, legal, court, police, administrative, evidentiary, or closely derived material:
 
-- **Never use:** individual first/middle/family-name tokens or the expanded legal identity.
+- **Never use:** individual first/middle/family-name tokens or the expanded legal identity when they identify the father.
 - Use **the father** in ordinary anonymized prose.
 - Prefer **Mr A** in legal-style documents, headings, party designations, chronology tables, pleadings, and quoted/reconstructed official material.
 
-For ordinary public author/contact/editorial surfaces where the father's public identity is intentionally required, use exactly **Alban Andrieu**. Do not expand it with middle names and do not use partial legal-name variants as a substitute.
+For ordinary public author/contact/editorial surfaces where the father's public identity is intentionally required, use exactly **Alban Andrieu**. Do not expand it with middle names.
 
 ### Mother
 
-- **Never publish:** the protected first or family names, alone or in combinations.
+Outside the owner-controlled homepage/index exception:
+
+- **Never publish:** protected first or family names, alone or in identifying combinations.
 - Use **the mother** in ordinary prose.
 - Prefer **Ms B** in legal-style documents, headings, party designations, chronology tables, pleadings, and quoted/reconstructed official material.
 
 ### Deprecated aliases
 
-The following older aliases are prohibited and must be normalized when encountered:
+Normalize older aliases when encountered outside the owner-controlled homepage/index exception:
 
 - `Mr AA`, `MR AA`, or equivalent two-letter father aliases → **Mr A**;
 - `Ms RB`, `Mme RB`, `Mrs RB`, or equivalent two-letter mother aliases → **Ms B**.
@@ -110,7 +129,7 @@ A black or grey visual treatment is acceptable **only after the original protect
 
 Never keep the protected value in:
 
-- the DOM text hidden by CSS;
+- DOM text hidden by CSS;
 - `data-*` attributes;
 - `title`, `aria-label`, `alt`, comments, JSON-LD, metadata, or hydration payloads;
 - JavaScript objects, message catalogs, source maps, generated bundles, tests, fixtures, or logs.
@@ -130,19 +149,15 @@ When the source is a PDF, scan, screenshot, image, or rendered legal document:
 
 Existing explicitly approved exceptions remain valid only within their stated scope unless the user revokes them:
 
-- official identifier `14CV32249`;
-- `public/assets/passport-fr-bababou-4.png`.
+- the owner-controlled homepage/index disclosures described above;
+- official identifier `14CV32249` on its currently approved homepage scope;
+- `public/assets/passport-fr-bababou-4.png` on its currently approved scope.
 
-These exceptions **do not** authorize publication of the child's real name and do not create a general exception for other identifiers or documents. If an approved artifact contains additional protected data beyond its approved purpose, redact those additional values while preserving the artifact's evidentiary context.
+These exceptions do not create a general permission to reproduce the same information elsewhere.
 
 ## Institutions, organizations, professionals, and historical locations
 
-Institutions and people working for them may be named when relevant to documented case history. This includes:
-
-- institutions and organizations;
-- professionals, staff, officials, and other relevant people;
-- professional identities and professional email addresses;
-- relevant historical location/map links.
+Institutions and people working for them may be named when relevant to documented case history, including institutions, professionals/staff/officials, professional identities and email addresses, and relevant historical location/map links.
 
 Do not remove or generalize these solely because they relate to the case. Apply normal accuracy, relevance, confidentiality, security, and credential rules.
 
@@ -150,21 +165,25 @@ Do not remove or generalize these solely because they relate to the case. Apply 
 
 For exact private address/phone matching, read `.cursor/mem/privacy-address-phone.md`. Those private values may remain in private configuration and must not be echoed into logs or audit findings.
 
-- Never disclose an exact private residential address outside an existing explicitly scoped exception.
-- Replace private residence data with the approved generalized location when the exact value is not essential.
-- If an exact location is legally/evidentially essential, caviard the protected value and preserve only the contextual fact necessary to understand the event.
-- Distinguish private phone data from deliberately published site contact data.
-- Contact/email surfaces may expose the father's approved public contact information.
+Outside an explicitly approved exception:
 
-Existing files under `public/assets/nabla/signature/` retain their current scoped address/phone exception. That directory exception does not override child-identity, parent-pseudonym, medical/psychological, or irreversible-redaction protections.
+- never disclose an exact private residential address;
+- replace private residence data with the approved generalized location when the exact value is not essential;
+- if an exact location is legally/evidentially essential, caviard the protected value and preserve the contextual fact;
+- distinguish private phone data from deliberately published site contact data;
+- contact/email surfaces may expose approved public contact information.
+
+Existing files under `public/assets/nabla/signature/` retain their current scoped address/phone exception. That exception does not override child-identity, parent-pseudonym, medical/psychological, or irreversible-redaction protections elsewhere.
 
 ## Medical and psychological information
 
 Medical or psychological diagnoses, records, treatment, medication, assessments, therapy, disability information, symptoms, or equivalent sensitive health information are protected unless the user expressly authorizes a specific publication.
 
-If such information is essential to the legal/evidentiary narrative, do not delete the existence of the evidence. Keep the neutral context and caviard the sensitive content using the essential-information rule above.
+If such information is essential to the legal/evidentiary narrative, do not delete the existence of the evidence. Keep neutral context and caviard the sensitive content using the essential-information rule above.
 
 ## Transformation rules
+
+Outside the owner-controlled homepage/index exception:
 
 - Child ordinary/editorial copy → **Bababou** or **my daughter**.
 - Child legal/official-derived copy → **the child**.
@@ -175,31 +194,30 @@ If such information is essential to the legal/evidentiary narrative, do not dele
 - `Ms RB` / `Mme RB` / `Mrs RB` → **Ms B**.
 - Non-essential private residence/contact data → approved generalization/masking.
 - Essential protected data → preserve context and use irreversible caviardage with an explicit `available on request` / `révélation sur demande` notice.
-- Keep relevant institutions, professionals, professional emails, and historical location links unless another concrete reason requires removal.
 
 ## Verification and privacy-gate behavior
 
-For HTML/app output inspect source, public files, messages, metadata, JSON-LD, comments, attributes, generated bundles and source maps. For PDFs/images use true redaction/rasterization when redaction is required and verify hidden text/metadata are clean.
+For HTML/app output inspect source, public files, messages, metadata, JSON-LD, comments, attributes, generated bundles and source maps. For PDFs/images use true redaction/rasterization and verify hidden text/metadata are clean.
 
-The privacy gate should ultimately:
+The privacy gate should:
 
 - report only `file + line + category`, never the matched protected value;
-- reject protected child legal-name variants on **every** public surface, including `public/index.html`;
-- reject deprecated `Mr AA` / `MR AA` / `Ms RB` / `Mme RB` / `Mrs RB` aliases and accept `Mr A` / `Ms B`;
-- distinguish the intentionally public `Alban Andrieu` author/contact form from expanded or partial father legal-name variants;
-- reject protected mother identity tokens on public/anonymized surfaces;
+- preserve the narrow, explicitly approved homepage/index exception rather than automatically rewriting or failing it;
+- reject homepage-only identity when it leaks to unrelated public surfaces;
+- reject deprecated aliases outside the exception and accept `Mr A` / `Ms B`;
+- distinguish intentionally public contact data from private address/phone data;
 - allow explicitly approved identifier/document exceptions only within scope;
-- distinguish intentionally public father contact data from private address/phone data;
 - not treat institutions, professionals, professional emails, or historical map/location links as privacy findings by default.
 
-Tests should use synthetic identities/contact values whenever possible. Exact protected spellings may be retained only in this canonical detection dictionary or in narrowly scoped detection regression tests when necessary to prove that a leak is blocked.
+Tests should use synthetic identities/contact values whenever possible. Exact protected spellings may be retained in the canonical detection dictionary and in narrowly scoped regression tests that lock an expressly approved homepage disclosure or prove a leak is blocked.
 
 ## Agent editing rule
 
 Before modifying family/legal/publication content, read this entire skill.
 
-- The strict child pseudonymization rule and `Mr A` / `Ms B` aliases override older guidance.
-- Do not recreate the revoked homepage real-name exception.
-- Do not "clean up" the detection dictionary merely because it contains protected spellings; it exists to identify leaks.
+- **Never alter `public/index.html`, `/`, or their homepage Open Graph/Twitter/JSON-LD identity disclosures for privacy/pseudonymization reasons without explicit user approval in the current task.**
+- Audit those surfaces first and show the disclosure impact before asking for approval.
+- Outside that exception, apply `Bababou` / `the child`, `Mr A`, and `Ms B` as defined above.
+- Do not clean up the detection dictionary merely because it contains protected spellings.
 - When information appears essential, **caviard rather than silently delete or invent a substitute**, and add a visible note that the protected information can be revealed on request.
 - Never claim a surface is compliant until the source and generated output have both been checked.
