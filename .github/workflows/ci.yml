@@ -65,6 +65,9 @@ jobs:
       - name: Build Next.js application
         run: npm run build
 
+      - name: Scan generated Next output for protected data
+        run: npm run privacy:check:build
+
       - name: Run Snyk vulnerability scan
         if: env.SNYK_TOKEN != ''
         uses: snyk/actions/node@master
