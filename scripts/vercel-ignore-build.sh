@@ -7,11 +7,18 @@ set -euo pipefail
 #
 # This repository is still in a hybrid Next.js/static migration. Keep the
 # decision deliberately fail-open: unknown changes build a Preview, while only
-# documentation and repository-maintenance changes are skipped.
+# documentation, repository-maintenance and semantic-release metadata commits
+# are skipped.
 #
 # IMPORTANT: public/** is still production runtime content until each legacy
 # page has a native Next.js replacement, so changes below public/ must always
 # trigger a deployment.
+
+commit_subject="$(git log -1 --pretty=%s)"
+if [[ "$commit_subject" =~ ^chore\(release\):\ [0-9]+\.[0-9]+\.[0-9]+\ \[skip\ ci\]$ ]]; then
+  echo "Semantic-release metadata commit detected; skip duplicate deployment."
+  exit 0
+fi
 
 if ! git rev-parse HEAD^ >/dev/null 2>&1; then
   echo "No parent commit available; build deployment."
