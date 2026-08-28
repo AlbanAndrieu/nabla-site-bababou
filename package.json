@@ -1,6 +1,6 @@
 {
   "name": "nabla-site-bababou",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "type": "module",
   "private": true,
   "description": "Bababou family site",
@@ -46,6 +46,7 @@
     "test:headed": "playwright test --headed",
     "test:debug": "playwright test --debug",
     "test:report": "playwright show-report",
+    "semantic-release": "semantic-release",
     "oco": "node scripts/run-opencommit.mjs",
     "opencommit": "node scripts/run-opencommit.mjs",
     "check:sanitize-html": "npm ls sanitize-html"
