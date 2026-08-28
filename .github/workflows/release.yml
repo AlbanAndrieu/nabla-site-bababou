@@ -1,24 +1,96 @@
-name: Release
+name: Semantic Release
 
 on:
   push:
     branches:
-      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: semantic-release-master
+  cancel-in-progress: false
 
 jobs:
   release:
+    name: Version, changelog and GitHub release
     runs-on: ubuntu-latest
+    env:
+      RELEASE_APP_CLIENT_ID: ${{ vars.RELEASE_APP_CLIENT_ID }}
+      RELEASE_APP_PRIVATE_KEY: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout full history
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           fetch-depth: 0
-      - name: Use Node.js
-        uses: actions/setup-node@v4
+          persist-credentials: false
+
+      - name: Create dedicated release App token
+        id: release_app_token
+        if: env.RELEASE_APP_CLIENT_ID != '' && env.RELEASE_APP_PRIVATE_KEY != ''
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
-          node-version: "20.x"
-      - name: Install deps
-        run: npm ci
-      - name: Semantic Release
+          client-id: ${{ env.RELEASE_APP_CLIENT_ID }}
+          private-key: ${{ env.RELEASE_APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-issues: write
+          permission-pull-requests: write
+
+      - name: Set up Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install release dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Configure Git authentication
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
+          GH_TOKEN: ${{ steps.release_app_token.outputs.token || secrets.GITHUB_TOKEN }}
+        run: gh auth setup-git
+
+      # semantic-release starts at 1.0.0 when no previous release tag exists.
+      # This repository intentionally starts at 0.0.1, so create a 0.0.0
+      # baseline on the commit immediately before the first release-enabled push.
+      - name: Bootstrap semantic version baseline
+        id: bootstrap
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          LATEST_SEMVER_TAG="$(git tag --list --sort=-version:refname | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1 || true)"
+          if [[ -n "${LATEST_SEMVER_TAG}" ]]; then
+            echo "initial=false" >> "${GITHUB_OUTPUT}"
+            echo "Existing semantic release tag: ${LATEST_SEMVER_TAG}"
+            exit 0
+          fi
+
+          BASE_SHA="$(git rev-parse HEAD^)"
+          git tag 0.0.0 "${BASE_SHA}"
+          git push origin refs/tags/0.0.0
+          echo "initial=true" >> "${GITHUB_OUTPUT}"
+          echo "Created semantic-release baseline tag 0.0.0 at ${BASE_SHA}"
+
+      - name: Run semantic-release
+        env:
+          GITHUB_TOKEN: ${{ steps.release_app_token.outputs.token || secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.release_app_token.outputs.token || secrets.GITHUB_TOKEN }}
+        run: npm run semantic-release
+
+      - name: Verify initial 0.0.1 release
+        if: steps.bootstrap.outputs.initial == 'true'
+        env:
+          GH_TOKEN: ${{ steps.release_app_token.outputs.token || secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --tags --force
+          git rev-parse --verify refs/tags/0.0.1
+          gh release view 0.0.1 --repo "${GITHUB_REPOSITORY}" >/dev/null
+          echo "Initial GitHub release 0.0.1 published successfully."
