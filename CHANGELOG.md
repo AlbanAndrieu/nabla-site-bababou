@@ -1,3 +1,10 @@
+## [0.2.1](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.2.0...0.2.1) (2026-08-28)
+
+
+### Bug Fixes
+
+* **ci:** restore 404 E2E and skip release-only Vercel builds ([#119](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/119)) ([7ba7a2b](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/7ba7a2b3d411b8ca9c17b67699b6db28e5284949))
+
 # [0.2.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.1.1...0.2.0) (2026-08-28)
 
 
