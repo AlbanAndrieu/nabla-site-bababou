@@ -1,10 +1,32 @@
-import { expect, test } from "@playwright/test";
+import { type APIRequestContext, expect, test } from "@playwright/test";
 
 const SITE_URL = "https://bababou.com";
 const ROUTES = ["contact", "email", "link"] as const;
 
 function canonical(path: string) {
   return new URL(path, SITE_URL).href;
+}
+
+function redirectPath(location: string | undefined) {
+  expect(location, "redirect response should expose a Location header").toBeTruthy();
+  return new URL(location ?? "/", SITE_URL).pathname;
+}
+
+async function applicationRedirect(request: APIRequestContext, path: string) {
+  let response = await request.get(path, { maxRedirects: 0 });
+
+  // Protected Vercel previews bootstrap their bypass cookie with a one-time 307
+  // back to the exact same path. That infrastructure handshake is not the
+  // application redirect under test. APIRequestContext keeps the Set-Cookie in
+  // its cookie jar, so the immediate retry reaches Next.js itself.
+  if (
+    response.status() === 307 &&
+    redirectPath(response.headers().location) === path
+  ) {
+    response = await request.get(path, { maxRedirects: 0 });
+  }
+
+  return response;
 }
 
 async function expectAlternates(
@@ -26,9 +48,54 @@ async function expectAlternates(
   ).toHaveAttribute("href", canonical(expected.xDefault));
 }
 
+async function expectSocialMetadata(
+  page: import("@playwright/test").Page,
+  expectedCanonical: string,
+) {
+  const ogTitle = page.locator('meta[property="og:title"]');
+  const ogDescription = page.locator('meta[property="og:description"]');
+
+  await expect(page.locator('meta[property="og:type"]')).toHaveAttribute(
+    "content",
+    "website",
+  );
+  await expect(page.locator('meta[property="og:url"]')).toHaveAttribute(
+    "content",
+    canonical(expectedCanonical),
+  );
+  await expect(ogTitle).toHaveAttribute("content", /.+/);
+  await expect(ogDescription).toHaveAttribute("content", /.+/);
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+    "content",
+    /^https:\/\//,
+  );
+  await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute(
+    "content",
+    "summary_large_image",
+  );
+
+  const title = await ogTitle.getAttribute("content");
+  const description = await ogDescription.getAttribute("content");
+  expect(title).toBeTruthy();
+  expect(description).toBeTruthy();
+  await expect(page.locator('meta[name="twitter:title"]')).toHaveAttribute(
+    "content",
+    title ?? "",
+  );
+  await expect(
+    page.locator('meta[name="twitter:description"]'),
+  ).toHaveAttribute("content", description ?? "");
+  await expect(page.locator('meta[name="twitter:image"]')).toHaveAttribute(
+    "content",
+    /^https:\/\//,
+  );
+}
+
 test.describe("native Next SEO locale metadata", () => {
   for (const route of ROUTES) {
-    test(`${route} renders French canonical and hreflang`, async ({ page }) => {
+    test(`${route} renders French canonical, hreflang and social metadata`, async ({
+      page,
+    }) => {
       // Locale detection is enabled and the CI browser defaults to English.
       // Target the explicit French route so this test validates metadata rather
       // than the browser-language negotiation performed for an unprefixed URL.
@@ -39,9 +106,10 @@ test.describe("native Next SEO locale metadata", () => {
         en: `/en/${route}`,
         xDefault: `/${route}`,
       });
+      await expectSocialMetadata(page, `/${route}`);
     });
 
-    test(`${route} renders English prefixed canonical and hreflang`, async ({
+    test(`${route} renders English prefixed canonical, hreflang and social metadata`, async ({
       page,
     }) => {
       await page.goto(`/en/${route}`);
@@ -51,6 +119,7 @@ test.describe("native Next SEO locale metadata", () => {
         en: `/en/${route}`,
         xDefault: `/${route}`,
       });
+      await expectSocialMetadata(page, `/en/${route}`);
     });
   }
 
@@ -61,4 +130,27 @@ test.describe("native Next SEO locale metadata", () => {
       /noindex.*nofollow|nofollow.*noindex/i,
     );
   });
+});
+
+test.describe("migrated legacy Next redirects", () => {
+  for (const route of ROUTES) {
+    test(`${route}.html permanently redirects to the English canonical`, async ({
+      request,
+    }) => {
+      const response = await applicationRedirect(request, `/${route}.html`);
+      expect(response.status()).toBe(308);
+      expect(redirectPath(response.headers().location)).toBe(`/en/${route}`);
+    });
+
+    test(`/fr/${route}.html permanently redirects to the French canonical`, async ({
+      request,
+    }) => {
+      const response = await applicationRedirect(
+        request,
+        `/fr/${route}.html`,
+      );
+      expect(response.status()).toBe(308);
+      expect(redirectPath(response.headers().location)).toBe(`/${route}`);
+    });
+  }
 });

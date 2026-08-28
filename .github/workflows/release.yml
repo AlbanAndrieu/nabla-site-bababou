@@ -50,16 +50,14 @@ jobs:
       - name: Install release dependencies
         run: npm ci --ignore-scripts --no-audit --no-fund
 
-      - name: Configure Git authentication
-        env:
-          GH_TOKEN: ${{ steps.release_app_token.outputs.token || secrets.GITHUB_TOKEN }}
-        run: gh auth setup-git
-
       # semantic-release starts at 1.0.0 when no previous release tag exists.
-      # This repository intentionally starts at 0.0.1, so create a 0.0.0
-      # baseline on the commit immediately before the first release-enabled push.
+      # This repository intentionally starts its new semantic-release history at
+      # the numeric 0.0.1 tag. The historical v0.0.1 Vercel release is legacy
+      # metadata and intentionally does not participate in this tag format.
       - name: Bootstrap semantic version baseline
         id: bootstrap
+        env:
+          GH_TOKEN: ${{ steps.release_app_token.outputs.token || secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
           set -euo pipefail
@@ -71,6 +69,10 @@ jobs:
             exit 0
           fi
 
+          # persist-credentials is deliberately disabled on checkout. Configure
+          # gh's credential helper in the same step that performs git push so
+          # the helper still has GH_TOKEN available when Git requests credentials.
+          gh auth setup-git
           BASE_SHA="$(git rev-parse HEAD^)"
           git tag 0.0.0 "${BASE_SHA}"
           git push origin refs/tags/0.0.0
@@ -81,7 +83,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ steps.release_app_token.outputs.token || secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ steps.release_app_token.outputs.token || secrets.GITHUB_TOKEN }}
-        run: npm run semantic-release
+        shell: bash
+        run: |
+          set -euo pipefail
+          # @semantic-release/git pushes the prepared release commit. Keep the
+          # credential helper and token in the same step, matching fastapi-sample.
+          gh auth setup-git
+          npm run semantic-release
 
       - name: Verify initial 0.0.1 release
         if: steps.bootstrap.outputs.initial == 'true'
