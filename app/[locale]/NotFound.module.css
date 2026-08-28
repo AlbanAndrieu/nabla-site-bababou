@@ -1,0 +1,55 @@
+.shell {
+  display: grid;
+  min-height: min(70vh, 44rem);
+  place-items: center;
+  padding: clamp(3rem, 8vw, 7rem) var(--ui-space-md);
+  color: var(--text-primary, #f8f9fa);
+  background: var(--bg-primary, #15181d);
+}
+
+.panel {
+  width: min(100%, 44rem);
+  padding: clamp(2rem, 6vw, 4rem);
+  border: 1px solid var(--border-color, rgb(255 255 255 / 14%));
+  border-radius: 1rem;
+  background: var(--bg-secondary, #20242b);
+  box-shadow: 0 1.5rem 4rem rgb(0 0 0 / 18%);
+  text-align: center;
+}
+
+.code {
+  margin: 0;
+  font-size: clamp(5rem, 18vw, 10rem);
+  font-weight: 800;
+  line-height: 0.85;
+  letter-spacing: -0.08em;
+  color: var(--text-secondary, #adb5bd);
+  opacity: 0.22;
+}
+
+.eyebrow {
+  margin: var(--ui-space-lg) 0 var(--ui-space-xs);
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-secondary, #adb5bd);
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(2rem, 6vw, 3.5rem);
+}
+
+.description {
+  max-width: 36rem;
+  margin: var(--ui-space-md) auto 0;
+  color: var(--text-secondary, #adb5bd);
+  line-height: 1.7;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
