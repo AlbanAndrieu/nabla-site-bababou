@@ -29,10 +29,6 @@ const STANDARD_PAGES: StandardPageCase[] = [
 		label: "central authorities failures page",
 	},
 	{ path: "/central-authorities.html", label: "central authorities page" },
-	{
-		path: "/email.html",
-		label: "email contact addresses page",
-	},
 	{ path: "/for-fathers.html", label: "for fathers page" },
 	{ path: "/nre-en.html", label: "nre english page" },
 	{ path: "/nre-fr.html", label: "nre french page" },
@@ -48,15 +44,13 @@ const STANDARD_PAGES: StandardPageCase[] = [
 	{ path: "/test.html", label: "test page" },
 ];
 
+const MIGRATED_NEXT_PAGES: StandardPageCase[] = [
+	{ path: "/contact.html", label: "contact page" },
+	{ path: "/email.html", label: "email contact addresses page" },
+	{ path: "/link.html", label: "links page" },
+];
+
 const CHECKOUT_CHROME_CASES: ChromeContractCase[] = [
-	{
-		path: "/contact.html",
-		label: "contact page",
-		hasTranslate: true,
-		hasAnalytics: true,
-		requiredWidgetAttrs: ["data-axeptio", "data-print-pdf", "data-coffee-fab"],
-		forbiddenWidgetAttrs: ["data-no-print-pdf", "data-no-coffee-fab", "data-minimal-chrome"],
-	},
 	{
 		path: "/cancel.html",
 		label: "cancel page",
@@ -108,6 +102,27 @@ test.describe("Page chrome structure regression coverage", () => {
 		}
 	});
 
+	test("migrated pages use native Next chrome instead of legacy static chrome", async ({
+		request,
+	}) => {
+		for (const pageCase of MIGRATED_NEXT_PAGES) {
+			const html = await fetchHtml(pageCase.path, request);
+
+			await test.step(pageCase.label, async () => {
+				expect(html).toContain('data-nabla-app="next-intl"');
+				expect(html).toContain('class="route-header');
+				expect(html).toContain('class="footer text-center"');
+				expect(html).not.toContain('a name="top"');
+				expect(html).not.toMatch(
+					/<script[^>]+theme-toggle\.js[^>]*><\/script>/i,
+				);
+				expect(html).not.toMatch(
+					/<script[^>]+site-google-translate\.js[^>]*><\/script>/i,
+				);
+			});
+		}
+	});
+
 	test("404 stays in minimal chrome mode", async ({ request }) => {
 		const response = await request.get("/404.html");
 		expect(response.status()).toBe(404);
@@ -127,9 +142,7 @@ test.describe("Page chrome structure regression coverage", () => {
 		);
 	});
 
-	test("checkout and contact pages keep explicit chrome contracts", async ({
-		request,
-	}) => {
+	test("checkout pages keep explicit legacy chrome contracts", async ({ request }) => {
 		for (const pageCase of CHECKOUT_CHROME_CASES) {
 			const html = await fetchHtml(pageCase.path, request);
 
@@ -177,8 +190,8 @@ test.describe("Page chrome structure regression coverage", () => {
 						new RegExp(
 							`<script[^>]+site-widgets\\.js[^>]*${forbiddenAttr}[^>]*><\\/script>`,
 							"i",
-						),
-					);
+					),
+				);
 				}
 			});
 		}
