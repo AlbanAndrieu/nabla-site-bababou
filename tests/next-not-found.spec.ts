@@ -2,37 +2,50 @@ import { expect, test } from "@playwright/test";
 
 const NOT_FOUND_CASES = [
   {
-    path: "/missing-next-route-for-playwright",
+    path: "/fr/missing-next-route-for-playwright",
     lang: "fr",
     title: "Cette page est introuvable",
+    skipLabel: "Aller au contenu principal",
   },
   {
     path: "/en/missing-next-route-for-playwright",
     lang: "en",
     title: "This page is missing",
+    skipLabel: "Skip to main content",
   },
 ] as const;
 
 test.describe("localized Next.js 404", () => {
   for (const pageCase of NOT_FOUND_CASES) {
     test(`${pageCase.lang} extensionless unknown route uses native Next chrome`, async ({
-      request,
+      page,
     }) => {
-      const response = await request.get(pageCase.path);
-      expect(response.status()).toBe(404);
+      const response = await page.goto(pageCase.path);
+      expect(response?.status()).toBe(404);
 
-      const html = await response.text();
-      expect(html).toContain(`lang="${pageCase.lang}"`);
-      expect(html).toContain('data-nabla-app="next-intl"');
-      expect(html).toContain('id="top"');
-      expect(html).toContain('class="skip-to-main"');
-      expect(html).toContain('id="main-content"');
-      expect(html).toContain('class="route-header');
-      expect(html).toContain('class="footer text-center"');
-      expect(html).toContain(pageCase.title);
-      expect(html).toMatch(/<meta[^>]+name="robots"[^>]+content="noindex"/i);
-      expect(html).not.toMatch(/<script[^>]+theme-toggle\.js/i);
-      expect(html).not.toMatch(/<script[^>]+site-google-translate\.js/i);
+      await expect(page.locator("html")).toHaveAttribute("lang", pageCase.lang);
+      await expect(page.locator("html")).toHaveAttribute(
+        "data-nabla-app",
+        "next-intl",
+      );
+      await expect(page.locator("#top")).toHaveCount(1);
+      await expect(
+        page.getByRole("link", { name: pageCase.skipLabel }),
+      ).toHaveAttribute("href", "#main-content");
+      await expect(page.locator("#main-content")).toBeVisible();
+      await expect(page.getByRole("banner")).toBeVisible();
+      await expect(page.getByRole("contentinfo")).toBeVisible();
+      await expect(
+        page.getByRole("heading", { level: 1, name: pageCase.title }),
+      ).toBeVisible();
+      await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+        "content",
+        /noindex/,
+      );
+      await expect(page.locator('script[src*="theme-toggle.js"]')).toHaveCount(0);
+      await expect(
+        page.locator('script[src*="site-google-translate.js"]'),
+      ).toHaveCount(0);
     });
   }
 
