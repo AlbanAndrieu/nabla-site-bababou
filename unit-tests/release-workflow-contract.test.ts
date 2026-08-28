@@ -20,19 +20,10 @@ test("semantic release keeps GitHub credentials available for every git push", a
 
   assert.match(workflow, /persist-credentials: false/);
 
-  const bootstrap = section(
-    workflow,
-    "- name: Bootstrap semantic version baseline",
-    "- name: Run semantic-release",
-  );
-  assert.match(bootstrap, /GH_TOKEN:/);
-  assert.match(bootstrap, /gh auth setup-git/);
-  assert.match(bootstrap, /git push origin refs\/tags\/0\.0\.0/);
-
   const semanticRelease = section(
     workflow,
     "- name: Run semantic-release",
-    "- name: Verify initial 0.0.1 release",
+    "- name: Verify numeric release state",
   );
   assert.match(semanticRelease, /GITHUB_TOKEN:/);
   assert.match(semanticRelease, /GH_TOKEN:/);
@@ -40,7 +31,7 @@ test("semantic release keeps GitHub credentials available for every git push", a
   assert.match(semanticRelease, /npm run semantic-release/);
 });
 
-test("semantic release keeps the requested numeric 0.0.x tag history", async () => {
+test("semantic release uses the established numeric release history", async () => {
   const config = await readFile(
     new URL("../.releaserc.yaml", import.meta.url),
     "utf8",
@@ -51,9 +42,21 @@ test("semantic release keeps the requested numeric 0.0.x tag history", async () 
   );
 
   assert.match(config, /tagFormat: "\$\{version\}"/);
-  assert.match(workflow, /git tag 0\.0\.0/);
-  assert.match(workflow, /refs\/tags\/0\.0\.1/);
-  assert.match(workflow, /gh release view 0\.0\.1/);
+  assert.doesNotMatch(workflow, /git tag 0\.0\.0/);
+  assert.doesNotMatch(workflow, /refs\/tags\/0\.0\.1/);
+  assert.match(workflow, /LATEST_TAG=/);
+  assert.match(workflow, /PACKAGE_VERSION=/);
+  assert.match(workflow, /gh release view "\$\{LATEST_TAG\}"/);
+});
+
+test("GitHub releases do not comment on or label historical pull requests", async () => {
+  const config = await readFile(
+    new URL("../.releaserc.yaml", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(config, /successComment: false/);
+  assert.match(config, /releasedLabels: false/);
 });
 
 test("quality CI runs when release automation changes", async () => {

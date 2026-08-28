@@ -27,5 +27,9 @@ plugins:
         - "package-lock.json"
       message: "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
 
-  # Create the GitHub Release and publish generated notes.
-  - "@semantic-release/github"
+  # Publish the GitHub Release without commenting on or labelling every PR in
+  # the release range. The Actions run and GitHub Release remain the sources of
+  # release status, while historical PRs stay free of automated release noise.
+  - - "@semantic-release/github"
+    - successComment: false
+      releasedLabels: false
