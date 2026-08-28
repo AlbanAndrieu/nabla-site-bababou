@@ -3,6 +3,7 @@
   "version": 2,
   "regions": ["fra1"],
   "framework": "nextjs",
+  "ignoreCommand": "git log -1 --pretty=%s | grep -Eq '^chore\\(release\\): [0-9]+\\.[0-9]+\\.[0-9]+ \\[skip ci\\]$'",
   "github": {
     "silent": true,
     "autoJobCancelation": true

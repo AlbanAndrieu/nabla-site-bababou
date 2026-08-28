@@ -20,7 +20,9 @@ test.describe("localized not-found page", () => {
 		await expect(
 			page.getByRole("heading", { level: 1, name: "This page is missing" }),
 		).toBeVisible();
-		await expect(page.getByRole("link", { name: "Back to home" })).toBeVisible();
+		await expect(
+			page.locator("#main-content").getByRole("link", { name: "Back to home" }),
+		).toBeVisible();
 		await expect(page.locator('script[src="/site-analytics.js"]')).toHaveCount(
 			1,
 		);
