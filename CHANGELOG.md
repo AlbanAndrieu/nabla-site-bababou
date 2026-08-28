@@ -1,3 +1,10 @@
+## [0.1.1](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.1.0...0.1.1) (2026-08-28)
+
+
+### Bug Fixes
+
+* **ci:** reconcile releases and optimize Preview E2E ([#117](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/117)) ([132ace0](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/132ace002fbf18f8d4100206769dc4db663ed42b))
+
 # [0.1.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/v0.0.1...0.1.0) (2026-08-28)
 
 
