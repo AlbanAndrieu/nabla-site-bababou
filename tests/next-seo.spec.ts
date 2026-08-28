@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { type APIRequestContext, expect, test } from "@playwright/test";
 
 const SITE_URL = "https://bababou.com";
 const ROUTES = ["contact", "email", "link"] as const;
@@ -10,6 +10,23 @@ function canonical(path: string) {
 function redirectPath(location: string | undefined) {
   expect(location, "redirect response should expose a Location header").toBeTruthy();
   return new URL(location ?? "/", SITE_URL).pathname;
+}
+
+async function applicationRedirect(request: APIRequestContext, path: string) {
+  let response = await request.get(path, { maxRedirects: 0 });
+
+  // Protected Vercel previews bootstrap their bypass cookie with a one-time 307
+  // back to the exact same path. That infrastructure handshake is not the
+  // application redirect under test. APIRequestContext keeps the Set-Cookie in
+  // its cookie jar, so the immediate retry reaches Next.js itself.
+  if (
+    response.status() === 307 &&
+    redirectPath(response.headers().location) === path
+  ) {
+    response = await request.get(path, { maxRedirects: 0 });
+  }
+
+  return response;
 }
 
 async function expectAlternates(
@@ -120,7 +137,7 @@ test.describe("migrated legacy Next redirects", () => {
     test(`${route}.html permanently redirects to the English canonical`, async ({
       request,
     }) => {
-      const response = await request.get(`/${route}.html`, { maxRedirects: 0 });
+      const response = await applicationRedirect(request, `/${route}.html`);
       expect(response.status()).toBe(308);
       expect(redirectPath(response.headers().location)).toBe(`/en/${route}`);
     });
@@ -128,9 +145,10 @@ test.describe("migrated legacy Next redirects", () => {
     test(`/fr/${route}.html permanently redirects to the French canonical`, async ({
       request,
     }) => {
-      const response = await request.get(`/fr/${route}.html`, {
-        maxRedirects: 0,
-      });
+      const response = await applicationRedirect(
+        request,
+        `/fr/${route}.html`,
+      );
       expect(response.status()).toBe(308);
       expect(redirectPath(response.headers().location)).toBe(`/${route}`);
     });
