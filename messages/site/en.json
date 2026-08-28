@@ -14,6 +14,12 @@
     },
     "switchLanguage": "Switch language",
     "rssFeedAria": "RSS feed for this site",
-    "copyright": "© {year} Bababou."
+    "copyright": "© {year} Bababou.",
+    "notFound": {
+      "eyebrow": "Page not found",
+      "title": "This page is missing",
+      "description": "The address may be outdated or the page may have moved. Return to the homepage to continue browsing.",
+      "backHome": "Back to home"
+    }
   }
 }

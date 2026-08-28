@@ -14,6 +14,12 @@
     },
     "switchLanguage": "Changer de langue",
     "rssFeedAria": "Flux RSS de ce site",
-    "copyright": "© {year} Bababou."
+    "copyright": "© {year} Bababou.",
+    "notFound": {
+      "eyebrow": "Page introuvable",
+      "title": "Cette page est introuvable",
+      "description": "L’adresse est peut-être obsolète ou la page a été déplacée. Retournez à l’accueil pour poursuivre votre navigation.",
+      "backHome": "Retour à l’accueil"
+    }
   }
 }
