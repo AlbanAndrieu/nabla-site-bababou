@@ -1,3 +1,10 @@
+# [0.2.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.1.1...0.2.0) (2026-08-28)
+
+
+### Features
+
+* **next:** migrate localized extensionless 404 routes ([#118](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/118)) ([e8e774f](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/e8e774f2f9fd21fd222494548f3b4e38d108b02f))
+
 ## [0.1.1](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.1.0...0.1.1) (2026-08-28)
 
 
