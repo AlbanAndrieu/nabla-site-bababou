@@ -12,6 +12,20 @@ function section(source: string, start: string, end: string) {
   return source.slice(startIndex, endIndex);
 }
 
+test("Playwright Preview runs use the Vercel repository dispatch path", async () => {
+  const workflow = await readFile(
+    new URL("../.github/workflows/playwright.yml", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(workflow, /repository_dispatch:/);
+  assert.match(workflow, /vercel\.deployment\.success/);
+  assert.doesNotMatch(workflow, /deployment_status:/);
+  assert.doesNotMatch(workflow, /github\.event\.deployment/);
+  assert.match(workflow, /github\.event\.client_payload\.git\.ref/);
+  assert.match(workflow, /github\.event\.client_payload\.git\.sha/);
+});
+
 test("Playwright Preview runs reuse the Chromium browser cache", async () => {
   const workflow = await readFile(
     new URL("../.github/workflows/playwright.yml", import.meta.url),
@@ -35,12 +49,29 @@ test("Playwright Preview runs reuse the Chromium browser cache", async () => {
     cache,
     /playwright-chromium-\$\{\{ runner\.os \}\}-\$\{\{ runner\.arch \}\}-\$\{\{ steps\.playwright-version\.outputs\.version \}\}/,
   );
-  assert.doesNotMatch(cache, /github\.event_name != 'deployment_status'/);
   assert.match(install, /steps\.playwright-cache\.outputs\.cache-hit != 'true'/);
-  assert.doesNotMatch(install, /github\.event_name == 'deployment_status'/);
 
   // System packages still need to be present on every fresh GitHub-hosted runner.
   assert.match(workflow, /npx playwright install-deps chromium/);
+});
+
+test("Playwright Preview dependency install skips legacy lifecycle scripts", async () => {
+  const workflow = await readFile(
+    new URL("../.github/workflows/playwright.yml", import.meta.url),
+    "utf8",
+  );
+
+  const dependencyInstall = section(
+    workflow,
+    "- name: Install dependencies",
+    "- name: Resolve Playwright browser cache version",
+  );
+
+  assert.match(
+    dependencyInstall,
+    /npm ci --ignore-scripts --no-audit --no-fund/,
+  );
+  assert.doesNotMatch(dependencyInstall, /npm run postinstall/);
 });
 
 test("Playwright Preview helper actions run on the Node 24 generation", async () => {
