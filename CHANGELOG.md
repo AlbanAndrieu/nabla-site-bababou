@@ -1,3 +1,10 @@
+## [0.2.3](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.2.2...0.2.3) (2026-08-29)
+
+
+### Performance Improvements
+
+* **ci:** deduplicate and accelerate Preview E2E ([#121](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/121)) ([9dd377d](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/9dd377dfc8503ffeabbd95da8eca9818ee639ec6))
+
 ## [0.2.2](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.2.1...0.2.2) (2026-08-29)
 
 
