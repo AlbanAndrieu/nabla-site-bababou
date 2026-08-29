@@ -23,7 +23,6 @@ on:
       - "*.{js,cjs,mjs,ts,tsx,json}"
       - "package-lock.json"
       - ".github/workflows/ci.yml"
-      - ".github/workflows/playwright-cache.yml"
       - ".github/workflows/release.yml"
   workflow_dispatch:
 
