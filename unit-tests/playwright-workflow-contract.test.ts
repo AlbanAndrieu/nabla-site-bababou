@@ -43,6 +43,25 @@ test("Playwright Preview runs reuse the Chromium browser cache", async () => {
   assert.match(workflow, /npx playwright install-deps chromium/);
 });
 
+test("Playwright Preview dependency install skips legacy lifecycle scripts", async () => {
+  const workflow = await readFile(
+    new URL("../.github/workflows/playwright.yml", import.meta.url),
+    "utf8",
+  );
+
+  const dependencyInstall = section(
+    workflow,
+    "- name: Install dependencies",
+    "- name: Resolve Playwright browser cache version",
+  );
+
+  assert.match(
+    dependencyInstall,
+    /npm ci --ignore-scripts --no-audit --no-fund/,
+  );
+  assert.doesNotMatch(dependencyInstall, /npm run postinstall/);
+});
+
 test("Playwright Preview helper actions run on the Node 24 generation", async () => {
   const workflow = await readFile(
     new URL("../.github/workflows/playwright.yml", import.meta.url),
