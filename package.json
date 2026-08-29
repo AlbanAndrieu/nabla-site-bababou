@@ -34,7 +34,7 @@
     "dev:v": "vercel",
     "dev:wrangler": "wrangler dev",
     "deploy:wrangler": "wrangler deploy",
-    "build": "next build",
+    "build": "node scripts/run-next-build.mjs",
     "start": "next start",
     "build:v": "vercel build",
     "start:v": "vercel deploy",
