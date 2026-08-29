@@ -1,3 +1,10 @@
+## [0.2.2](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.2.1...0.2.2) (2026-08-29)
+
+
+### Performance Improvements
+
+* **ci:** seed Chromium cache from master ([#120](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/120)) ([e0150f8](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/e0150f8fc6ee57cc5b6a5b50a1e0b4bb91100c21))
+
 ## [0.2.1](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.2.0...0.2.1) (2026-08-28)
 
 
