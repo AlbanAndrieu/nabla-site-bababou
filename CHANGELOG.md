@@ -1,3 +1,10 @@
+## [0.2.4](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.2.3...0.2.4) (2026-08-30)
+
+
+### Performance Improvements
+
+* **ci:** remove redundant cache seed and measure builds ([#122](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/122)) ([3502127](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/35021276bffaf000cbfe2f9f7f20aee6099213d4))
+
 ## [0.2.3](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.2.2...0.2.3) (2026-08-29)
 
 
