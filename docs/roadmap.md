@@ -47,6 +47,9 @@
 - [x] Privacy policy et exception homepage/index clarifiées, avec aliases juridiques `Mr A` / `Ms B` et règle de caviardage (#110).
 - [x] Les anciens `messages/{locale}.json` ne sont plus chargés par le runtime Next ; les namespaces déjà migrés ont été retirés de ces catalogues legacy.
 - [x] Test de structure protégeant le `postinstall` legacy tant que ses consommateurs ne sont pas audités.
+- [x] Migration 5 : redirects `contact`/`email`/`link`, metadata sociales par route, top anchor et validations Preview E2E (#116).
+- [x] Route 404 Next localisée et contrats E2E associés (#118).
+- [x] Preview E2E dédupliqué sur `repository_dispatch` avec cache Chromium réutilisable depuis le scope de la branche par défaut (#121).
 
 ### Blocages opérationnels actuels
 
@@ -60,11 +63,14 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 
 - [x] Remplacer l'ancienne version preview de Next.js par une version stable ; le projet utilise désormais Next `16.3.2`.
 - [ ] Aligner explicitement `next` et `eslint-config-next` dans le manifeste/lockfile et vérifier leur résolution effective.
-- [ ] Borner les engines Node/npm au major supporté par CI/Vercel (`Node 24`, `npm 11`) au lieu de bornes uniquement minimales.
+- [x] Borner les engines Node/npm au major supporté par CI/Vercel (`Node 24`, `npm 11`) dans `package.json`.
+  - [ ] Réconcilier les métadonnées `engines` racine du lockfile lors de la prochaine régénération atomique du lockfile.
 - [ ] Supprimer `express` et `@types/express` s'ils restent sans consommateur.
   - [x] Audit du code versionné : aucun import ESM, `require()` ou appel `express()` trouvé.
   - [ ] Retrait effectif à faire avec régénération atomique du lockfile.
 - [ ] Retirer Wrangler et `wrangler.jsonc` une fois confirmé qu'aucun déploiement Cloudflare Workers n'est encore requis.
+  - [x] Audit dépôt : aucune CI ni consommateur applicatif Wrangler détecté ; seuls `package.json` et `wrangler.jsonc` restent référencés.
+  - [ ] Confirmer l'absence de déploiement externe encore utilisé avant retrait du package/configuration.
 - [ ] Auditer les consommateurs de `dist/`, `index/dist/` et les assets copiés par `postinstall`.
   - [x] Audit initial du dépôt : `app/scripts/arf.js`, `app/resources/`, `dist/` et `index/dist/` ne sont pas versionnés sur la branche courante.
   - [x] `npm ci` exécute néanmoins le `postinstall` sans erreur dans la CI.
@@ -75,8 +81,10 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 - [ ] Conserver à terme un seul couple nominal `build: next build` / `start: next start`.
 - [x] Exécuter explicitement `next build` dans la CI GitHub de qualité afin de ne pas dépendre uniquement de Vercel pour valider la compilation.
 - [x] Contraindre le tracing de `htmlFromPublic.ts` aux fragments explicitement allowlistés (#108).
-- [ ] Éviter le pull de l'image Docker Snyk lorsque `SNYK_TOKEN` est vide ; aujourd'hui l'image est téléchargée même si le scan final est ensuite skipped.
+- [x] Éviter le pull de l'image Docker Snyk lorsque `SNYK_TOKEN` est vide ; la CI utilise désormais le CLI uniquement lorsque le token existe.
 - [ ] Mesurer l'impact sur taille d'installation/cache et durée de build après ces optimisations.
+  - [x] Instrumenter le job Quality sans second build : `npm ci`, `node_modules`, cache npm, `npm run check`, `next build` et taille `.next` sont publiés dans le Job Summary (#122).
+  - [ ] Conserver plusieurs baselines post-merge et comparer les régressions avant d'ajuster davantage la CI.
 
 ## P2 — Finaliser l'architecture i18n et routing
 
@@ -90,7 +98,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 - [x] Remplacer les types locaux de props par les `PageProps<...>` générés lorsque pertinent.
 - [x] Centraliser la politique canonical des routes Next natives : `/contact`, `/email`, `/link` pour FR et `/en/...` pour EN.
 - [x] Générer les alternates depuis `routing.locales` avec `fr` comme `x-default`.
-- [ ] Stabiliser FR et EN sur un Preview réel avant d'ajouter de nouvelles locales.
+- [x] Stabiliser FR et EN sur un Preview réel avant d'ajouter de nouvelles locales (#116, #118, #121).
 - [ ] Ajouter `de` et `no` à `routing.locales` avec des catalogues complets et validés.
 - [ ] Garder Google Translate uniquement pour les langues hors locales de premier rang.
 
@@ -107,20 +115,22 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 
 ### Surfaces Next natives et pages publiques
 
-- [ ] Finaliser les redirects legacy de `contact`, `email` et `link` vers leurs canonicals Next.
-- [ ] Donner à chaque route Next native ses propres Open Graph/Twitter metadata au lieu d'un aperçu social générique hérité du layout.
-- [ ] Harmoniser skip-link, top anchor, landmarks, icônes décoratives et navigation interne sur `contact`, `email` et `link`.
+- [x] Finaliser les redirects legacy de `contact`, `email` et `link` vers leurs canonicals Next (#116).
+- [x] Donner à chaque route Next native ses propres Open Graph/Twitter metadata au lieu d'un aperçu social générique hérité du layout (#116).
+- [x] Harmoniser skip-link, top anchor, landmarks, icônes décoratives et navigation interne sur `contact`, `email` et `link` (#116).
 - [ ] Harmoniser cartes, boutons, spacing et typographie entre les surfaces Next natives.
 - [ ] Migrer ensuite 404/pages légales puis les pages publiques structurées à faible risque.
+  - [x] 404 localisée migrée vers Next (#118).
+  - [ ] Pages légales et autres pages publiques structurées à faible risque.
 - [ ] Différer les pages contenant un corpus familial sensible jusqu'à la phase finale de confidentialité.
 
 ## P4 — SEO et métadonnées
 
 - [x] Canonicals et hreflang FR/EN des routes Next natives.
 - [x] Sitemap hybride et robots alignés sur les routes actuellement indexables.
-- [ ] Open Graph/Twitter complets et spécifiques pour chaque route Next native.
-- [ ] Redirects permanents des anciennes URLs `.html` uniquement lorsque la route Next correspondante est validée.
-- [ ] Vérifier les redirects et métadonnées avec Playwright sur le Preview exact.
+- [x] Open Graph/Twitter complets et spécifiques pour chaque route Next native (#116).
+- [x] Redirects permanents des anciennes URLs `.html` pour `contact`, `email` et `link` après validation des routes Next correspondantes (#116).
+- [x] Vérifier les redirects et métadonnées avec Playwright sur le Preview exact (#116).
 - [ ] Préparer l'ajout DE/NO dans les alternates seulement après stabilisation des catalogues.
 - [ ] Garder la homepage et son Open Graph/Twitter comme exception propriétaire : aucun changement sans accord explicite.
 
@@ -129,9 +139,14 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 - [ ] Aligner package/lockfile et retirer les dépendances confirmées orphelines.
 - [ ] Retirer progressivement les runtimes/scripts legacy après preuve d'absence de consommateurs.
 - [ ] Supprimer les pages `.html` et assets orphelins après validation des redirects et de la parité Next.
-- [ ] Réduire les téléchargements et jobs CI inutiles, notamment Snyk lorsque non configuré.
+- [ ] Réduire les téléchargements et jobs CI inutiles.
+  - [x] Snyk ne prépare plus/pull plus son image Docker lorsque `SNYK_TOKEN` est absent.
+  - [x] Les Preview Vercel ne déclenchent plus deux suites Playwright concurrentes et le chemin conservé réutilise le cache Chromium (#121).
+  - [x] Le workflow séparé de seed Chromium devient inutile et est retiré après validation du cache détenu par `repository_dispatch` (#122).
 - [ ] Mesurer durée de `npm ci`, `npm run check`, `next build`, taille de cache et taille de sortie.
-- [ ] Maintenir lint JS/TS/CSS, typecheck, unit tests, `next build`, Playwright Preview, accessibilité et tests SEO comme gates.
+  - [x] Instrumentation Quality ajoutée sans job ni build supplémentaire (#122).
+  - [ ] Collecter plusieurs baselines post-merge et définir des seuils uniquement après observation.
+- [x] Maintenir lint JS/TS/CSS, typecheck, unit tests, `next build`, Playwright Preview, accessibilité et tests SEO comme gates.
 
 ## P6 — Confidentialité finale hors homepage — À FAIRE EN DERNIER
 
@@ -150,9 +165,14 @@ Cette phase est volontairement placée après migration, UI/UX, SEO, nettoyage e
 - [x] **Migration 3a / P2 — PR #105** : fondations routing/i18n et accessibilité partagée.
 - [x] **Migration 3b / P2 — PR #106** : ownership i18n, nettoyage des surfaces Next, footer/header et sitemap hybride.
 - [x] **Privacy foundation — PR #107/#110** : gate initial, policy de pseudonymisation/caviardage et exception homepage contrôlée.
-- [ ] **Migration 5 / P3+P4** — redirects contact/email/link, metadata sociales spécifiques et harmonisation des surfaces Next natives.
+- [x] **Migration 5 / P3+P4 — PR #116** : redirects contact/email/link, metadata sociales spécifiques, chrome/accessibilité et validation Preview E2E.
 - [ ] **Migration 6 / P3** — 404/pages légales puis autres pages publiques structurées à faible risque.
+  - [x] 404 Next localisée (#118).
+  - [ ] Pages légales et autres pages publiques structurées.
 - [ ] **Migration 7 / P5** — dépendances/runtimes legacy, assets orphelins et optimisation CI/performance.
+  - [x] Réconciliation release/Preview et cache Chromium (#117/#119/#120/#121).
+  - [x] Suppression du seed Chromium redondant et instrumentation Quality (#122).
+  - [ ] Alignement package/lockfile et retrait des dépendances/runtimes confirmés orphelins.
 - [ ] **Migration 8 / P3** — extraction progressive de sections homepage en conservant les disclosures approuvées, sans changement sensible non validé.
 - [ ] **Migration finale / P6** — confidentialité hors homepage : pseudonymisation/caviardage du corpus restant et extension complète du privacy gate.
 
