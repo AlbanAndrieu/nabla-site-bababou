@@ -16,7 +16,7 @@ const migratedLegacyRedirects = ["contact", "email", "link"].flatMap(
 );
 
 /**
- * Remaining policy pages stay static sources during Migration 7, with clean and
+ * Remaining policy pages stay static sources during Migration 6, with clean and
  * localized entry points routed through Next/Vercel. Accessibility is excluded
  * because its clean route is now owned by the App Router while the reviewed
  * static document remains the source of its legal copy.
