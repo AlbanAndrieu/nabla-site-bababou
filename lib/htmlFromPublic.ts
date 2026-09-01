@@ -19,19 +19,28 @@ const SUPPORTED_LOCALES: readonly SiteLocale[] = ["fr", "en"];
  * repository privacy review. Loading a file through this helper makes its
  * markup eligible to be rendered by Next.js.
  */
-const PUBLIC_HTML_FILES = ["404.html", "test.html"] as const;
+const PUBLIC_HTML_FILES = [
+  "404.html",
+  "test.html",
+  "policy/accessibility_statement.html",
+] as const;
 type PublicHtmlFile = (typeof PUBLIC_HTML_FILES)[number];
 
 const PUBLIC_ROOT = path.join(process.cwd(), "public");
 
 /**
  * Keep every filesystem target explicit. A dynamic `path.join(..., file)` made
- * Turbopack conservatively trace the whole public tree (11k+ files) even though
- * this helper only permits two documents.
+ * Turbopack conservatively trace the whole public tree even though this helper
+ * only permits a small reviewed set of documents.
  */
 const DEFAULT_PUBLIC_HTML_PATHS: Record<PublicHtmlFile, string> = {
   "404.html": path.join(PUBLIC_ROOT, "404.html"),
   "test.html": path.join(PUBLIC_ROOT, "test.html"),
+  "policy/accessibility_statement.html": path.join(
+    PUBLIC_ROOT,
+    "policy",
+    "accessibility_statement.html",
+  ),
 };
 
 /**
@@ -74,9 +83,12 @@ function localePrefix(locale?: string): string {
 
 function withLocalePrefix(pathname: string, locale?: string): string {
   if (/^\/(fr|en)(\/|$)/.test(pathname)) return pathname;
+  // The homepage remains owner-controlled and mono-canonical at `/` during
+  // the hybrid migration; legacy index links must never create `/en` or `/fr`.
+  if (pathname === "/") return "/";
   const prefix = localePrefix(locale);
   if (!prefix) return pathname;
-  return pathname === "/" ? prefix : `${prefix}${pathname}`;
+  return `${prefix}${pathname}`;
 }
 
 function rewriteOneHref(
