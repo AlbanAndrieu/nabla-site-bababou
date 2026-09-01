@@ -16,9 +16,10 @@ const migratedLegacyRedirects = ["contact", "email", "link"].flatMap(
 );
 
 /**
- * Policy pages remain static sources during Migration 6, but clean and localized
- * entry points are now routed through the Next/Vercel runtime. This deliberately
- * avoids copying legal text into React before content/parity review.
+ * Remaining policy pages stay static sources during Migration 6, with clean and
+ * localized entry points routed through Next/Vercel. Accessibility is excluded
+ * because its clean route is now owned by the App Router while the reviewed
+ * static document remains the source of its legal copy.
  */
 const policyFiles = [
   "legal",
@@ -26,7 +27,6 @@ const policyFiles = [
   "privacy_policy",
   "service_terms",
   "cookie_policy",
-  "accessibility_statement",
 ];
 const policyLocales = ["fr", "en"];
 const policyRewrites = policyFiles.map((name) => ({

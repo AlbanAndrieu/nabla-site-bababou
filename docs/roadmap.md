@@ -50,6 +50,7 @@
 - [x] Migration 5 : redirects `contact`/`email`/`link`, metadata sociales par route, top anchor et validations Preview E2E (#116).
 - [x] Route 404 Next localisée et contrats E2E associés (#118).
 - [x] Preview E2E dédupliqué sur `repository_dispatch` avec cache Chromium réutilisable depuis le scope de la branche par défaut (#121).
+- [x] Migration 7 / P5 : manifeste/lockfile réconciliés, tooling Next 16.3.2 aligné et dépendances Express orphelines retirées (#123).
 
 ### Blocages opérationnels actuels
 
@@ -62,12 +63,12 @@
 Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-alban`, sans casser le runtime legacy encore requis.
 
 - [x] Remplacer l'ancienne version preview de Next.js par une version stable ; le projet utilise désormais Next `16.3.2`.
-- [ ] Aligner explicitement `next` et `eslint-config-next` dans le manifeste/lockfile et vérifier leur résolution effective.
+- [x] Aligner explicitement `next` et `eslint-config-next` dans le manifeste/lockfile et vérifier leur résolution effective (#123).
 - [x] Borner les engines Node/npm au major supporté par CI/Vercel (`Node 24`, `npm 11`) dans `package.json`.
-  - [ ] Réconcilier les métadonnées `engines` racine du lockfile lors de la prochaine régénération atomique du lockfile.
-- [ ] Supprimer `express` et `@types/express` s'ils restent sans consommateur.
+  - [x] Réconcilier les métadonnées `engines` racine du lockfile lors de la régénération atomique du lockfile (#123).
+- [x] Supprimer `express` et `@types/express` après confirmation de l'absence de consommateur (#123).
   - [x] Audit du code versionné : aucun import ESM, `require()` ou appel `express()` trouvé.
-  - [ ] Retrait effectif à faire avec régénération atomique du lockfile.
+  - [x] Retrait effectif avec régénération atomique du lockfile (#123).
 - [ ] Retirer Wrangler et `wrangler.jsonc` une fois confirmé qu'aucun déploiement Cloudflare Workers n'est encore requis.
   - [x] Audit dépôt : aucune CI ni consommateur applicatif Wrangler détecté ; seuls `package.json` et `wrangler.jsonc` restent référencés.
   - [ ] Confirmer l'absence de déploiement externe encore utilisé avant retrait du package/configuration.
@@ -121,7 +122,8 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 - [ ] Harmoniser cartes, boutons, spacing et typographie entre les surfaces Next natives.
 - [ ] Migrer ensuite 404/pages légales puis les pages publiques structurées à faible risque.
   - [x] 404 localisée migrée vers Next (#118).
-  - [ ] Pages légales et autres pages publiques structurées à faible risque.
+  - [x] Accessibility Statement : route propre Next, source HTML inchangée conservée, chrome/metadata et Preview E2E validés (#124).
+  - [ ] Autres pages légales et pages publiques structurées à faible risque.
 - [ ] Différer les pages contenant un corpus familial sensible jusqu'à la phase finale de confidentialité.
 
 ## P4 — SEO et métadonnées
@@ -136,7 +138,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 
 ## P5 — Nettoyage technique, performance et CI
 
-- [ ] Aligner package/lockfile et retirer les dépendances confirmées orphelines.
+- [x] Aligner package/lockfile et retirer les dépendances confirmées orphelines (#123).
 - [ ] Retirer progressivement les runtimes/scripts legacy après preuve d'absence de consommateurs.
 - [ ] Supprimer les pages `.html` et assets orphelins après validation des redirects et de la parité Next.
 - [ ] Réduire les téléchargements et jobs CI inutiles.
@@ -168,11 +170,13 @@ Cette phase est volontairement placée après migration, UI/UX, SEO, nettoyage e
 - [x] **Migration 5 / P3+P4 — PR #116** : redirects contact/email/link, metadata sociales spécifiques, chrome/accessibilité et validation Preview E2E.
 - [ ] **Migration 6 / P3** — 404/pages légales puis autres pages publiques structurées à faible risque.
   - [x] 404 Next localisée (#118).
-  - [ ] Pages légales et autres pages publiques structurées.
+  - [x] Accessibility Statement migrée vers le chrome Next avec source statique préservée et Preview E2E validée (#124).
+  - [ ] Autres pages légales et pages publiques structurées.
 - [ ] **Migration 7 / P5** — dépendances/runtimes legacy, assets orphelins et optimisation CI/performance.
   - [x] Réconciliation release/Preview et cache Chromium (#117/#119/#120/#121).
   - [x] Suppression du seed Chromium redondant et instrumentation Quality (#122).
-  - [ ] Alignement package/lockfile et retrait des dépendances/runtimes confirmés orphelins.
+  - [x] Alignement package/lockfile, engines et tooling Next ; retrait d'Express orphelin (#123).
+  - [ ] Retrait des runtimes/scripts/assets legacy restants après preuve d'absence de consommateurs externes.
 - [ ] **Migration 8 / P3** — extraction progressive de sections homepage en conservant les disclosures approuvées, sans changement sensible non validé.
 - [ ] **Migration finale / P6** — confidentialité hors homepage : pseudonymisation/caviardage du corpus restant et extension complète du privacy gate.
 
