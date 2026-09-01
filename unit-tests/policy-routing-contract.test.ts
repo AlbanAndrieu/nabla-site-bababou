@@ -7,12 +7,13 @@ const LEGACY_REWRITE_POLICY_FILES = [
   "impressum",
   "privacy_policy",
   "service_terms",
-  "cookie_policy",
 ] as const;
+
+const NEXT_POLICY_FILES = ["accessibility_statement", "cookie_policy"] as const;
 
 const POLICY_SOURCE_FILES = [
   ...LEGACY_REWRITE_POLICY_FILES,
-  "accessibility_statement",
+  ...NEXT_POLICY_FILES,
 ] as const;
 
 test("remaining policy pages keep clean rewrites without replacing static sources", async () => {
@@ -44,24 +45,25 @@ test("remaining policy pages keep clean rewrites without replacing static source
   }
 });
 
-test("accessibility policy clean route is owned by Next while static copy remains source", async () => {
-  const [config, route] = await Promise.all([
-    readFile(new URL("../next.config.mjs", import.meta.url), "utf8"),
-    readFile(
-      new URL(
-        "../app/[locale]/policy/accessibility_statement/page.tsx",
-        import.meta.url,
-      ),
-      "utf8",
-    ),
-  ]);
+test("migrated policy clean routes are owned by Next while static copy remains source", async () => {
+  const config = await readFile(
+    new URL("../next.config.mjs", import.meta.url),
+    "utf8",
+  );
 
-  assert.doesNotMatch(config, /\"accessibility_statement\"/);
-  assert.match(route, /policy\/accessibility_statement\.html/);
-  assert.match(route, /CANONICAL_PATH = \"\/policy\/accessibility_statement\"/);
-  assert.match(route, /lang=\"en\"/);
-  assert.match(route, /<SkipToMainContent \/>/);
-  assert.match(route, /<TopAnchor \/>/);
+  for (const policy of NEXT_POLICY_FILES) {
+    const route = await readFile(
+      new URL(`../app/[locale]/policy/${policy}/page.tsx`, import.meta.url),
+      "utf8",
+    );
+
+    assert.doesNotMatch(config, new RegExp(`\\"${policy}\\"`));
+    assert.match(route, new RegExp(`policy\\/${policy}\\.html`));
+    assert.match(route, new RegExp(`CANONICAL_PATH = \\"\\/policy\\/${policy}\\"`));
+    assert.match(route, /lang=\"en\"/);
+    assert.match(route, /<SkipToMainContent \/>/);
+    assert.match(route, /<TopAnchor \/>/);
+  }
 });
 
 test("policy migration does not touch the protected homepage or static 404 contract", async () => {
