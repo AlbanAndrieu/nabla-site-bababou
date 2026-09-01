@@ -1,3 +1,10 @@
+# [0.3.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.2.5...0.3.0) (2026-09-01)
+
+
+### Features
+
+* **next:** migrate accessibility policy route ([#124](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/124)) ([d1c28e7](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/d1c28e75e24d0a0f6b3034aa4d2a5b8585582829))
+
 ## [0.2.5](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.2.4...0.2.5) (2026-09-01)
 
 
