@@ -1,3 +1,10 @@
+## [0.2.5](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.2.4...0.2.5) (2026-09-01)
+
+
+### Bug Fixes
+
+* **deps:** align Next.js tooling and prune Express ([#123](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/123)) ([01d5c07](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/01d5c0731372a2bcd81f6a8018cc219afe60fdbe))
+
 ## [0.2.4](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.2.3...0.2.4) (2026-08-30)
 
 
