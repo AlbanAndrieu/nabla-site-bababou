@@ -17,17 +17,11 @@ const migratedLegacyRedirects = ["contact", "email", "link"].flatMap(
 
 /**
  * Remaining policy pages stay static sources during Migration 6, with clean and
- * localized entry points routed through Next/Vercel. Accessibility is excluded
- * because its clean route is now owned by the App Router while the reviewed
- * static document remains the source of its legal copy.
+ * localized entry points routed through Next/Vercel. Accessibility and Cookie
+ * Policy are excluded because their clean routes are now owned by the App Router
+ * while the reviewed static documents remain the source of their legal copy.
  */
-const policyFiles = [
-  "legal",
-  "impressum",
-  "privacy_policy",
-  "service_terms",
-  "cookie_policy",
-];
+const policyFiles = ["legal", "impressum", "privacy_policy", "service_terms"];
 const policyLocales = ["fr", "en"];
 const policyRewrites = policyFiles.map((name) => ({
   source: `/policy/${name}`,

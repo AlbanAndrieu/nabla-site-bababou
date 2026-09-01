@@ -27,6 +27,18 @@ test("rewriteLegacyHtmlHrefs emits clean localized Next.js routes", () => {
   );
 });
 
+test("rewriteLegacyHtmlHrefs resolves policy links from their source directory", () => {
+  const fragment = `<a href="privacy_policy.html?from=cookies#rights">Privacy</a><a href="../index.html">Home</a>`;
+  assert.equal(
+    rewriteLegacyHtmlHrefs(fragment, "fr", "policy/cookie_policy.html"),
+    `<a href="/policy/privacy_policy?from=cookies#rights">Privacy</a><a href="/">Home</a>`,
+  );
+  assert.equal(
+    rewriteLegacyHtmlHrefs(fragment, "en", "policy/cookie_policy.html"),
+    `<a href="/en/policy/privacy_policy?from=cookies#rights">Privacy</a><a href="/">Home</a>`,
+  );
+});
+
 test("legacy index links keep the owner-controlled homepage canonical", () => {
   const fragment = `<a href="../index.html">Home</a>`;
   assert.equal(rewriteLegacyHtmlHrefs(fragment, "fr"), `<a href="/">Home</a>`);
@@ -56,6 +68,18 @@ test("accessibility policy is an explicit Next fragment source", async () => {
   );
   assert.match(fragment, /<h1>Accessibility Statement<\/h1>/i);
   assert.match(fragment, /href="\/"/);
+  assert.doesNotMatch(fragment, /<footer\b/i);
+});
+
+test("cookie policy is an explicit Next fragment source with clean policy links", async () => {
+  const fragment = await loadPublicHtmlFragment(
+    "policy/cookie_policy.html",
+    "main",
+    "en",
+  );
+  assert.match(fragment, /<h1>Cookie Policy<\/h1>/i);
+  assert.match(fragment, /href="\/en\/policy\/privacy_policy"/);
+  assert.doesNotMatch(fragment, /href="\/en\/privacy_policy"/);
   assert.doesNotMatch(fragment, /<footer\b/i);
 });
 

@@ -23,6 +23,7 @@ const PUBLIC_HTML_FILES = [
   "404.html",
   "test.html",
   "policy/accessibility_statement.html",
+  "policy/cookie_policy.html",
 ] as const;
 type PublicHtmlFile = (typeof PUBLIC_HTML_FILES)[number];
 
@@ -40,6 +41,11 @@ const DEFAULT_PUBLIC_HTML_PATHS: Record<PublicHtmlFile, string> = {
     PUBLIC_ROOT,
     "policy",
     "accessibility_statement.html",
+  ),
+  "policy/cookie_policy.html": path.join(
+    PUBLIC_ROOT,
+    "policy",
+    "cookie_policy.html",
   ),
 };
 
@@ -91,10 +97,16 @@ function withLocalePrefix(pathname: string, locale?: string): string {
   return `${prefix}${pathname}`;
 }
 
+function resolveLegacyHtmlPath(pathname: string, sourceFile?: string): string {
+  if (!sourceFile || pathname.startsWith("/")) return pathname;
+  return path.posix.resolve("/", path.posix.dirname(sourceFile), pathname);
+}
+
 function rewriteOneHref(
   quote: '"' | "'",
   raw: string,
   locale?: string,
+  sourceFile?: string,
 ): string {
   const href = raw.trim();
   if (
@@ -109,8 +121,12 @@ function rewriteOneHref(
   const query = reference?.[2] ?? "";
   const hash = reference?.[3] ?? "";
 
-  while (pathPart.startsWith("../")) pathPart = pathPart.slice(3);
-  while (pathPart.startsWith("./")) pathPart = pathPart.slice(2);
+  if (sourceFile) {
+    pathPart = resolveLegacyHtmlPath(pathPart, sourceFile);
+  } else {
+    while (pathPart.startsWith("../")) pathPart = pathPart.slice(3);
+    while (pathPart.startsWith("./")) pathPart = pathPart.slice(2);
+  }
   if (!pathPart.endsWith(".html")) {
     return `href=${quote}${raw}${quote}`;
   }
@@ -146,13 +162,14 @@ function rewriteOneSrc(quote: '"' | "'", raw: string): string {
 export function rewriteLegacyHtmlHrefs(
   fragment: string,
   locale?: string,
+  sourceFile?: string,
 ): string {
   let output = fragment.replace(
     /\bhref="([^"]*)"/gi,
-    (_full, raw: string) => rewriteOneHref('"', raw, locale),
+    (_full, raw: string) => rewriteOneHref('"', raw, locale, sourceFile),
   );
   output = output.replace(/\bhref='([^']*)'/gi, (_full, raw: string) =>
-    rewriteOneHref("'", raw, locale),
+    rewriteOneHref("'", raw, locale, sourceFile),
   );
   output = output.replace(/\bsrc="([^"]*)"/gi, (_full, raw: string) =>
     rewriteOneSrc('"', raw),
@@ -229,5 +246,5 @@ export async function loadPublicHtmlFragment(
     /<nav\b[^>]*\bpage-nav\b[^>]*>[\s\S]*?<\/nav>/gi,
     "",
   );
-  return rewriteLegacyHtmlHrefs(fragment, locale);
+  return rewriteLegacyHtmlHrefs(fragment, locale, file);
 }
