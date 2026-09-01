@@ -1,3 +1,10 @@
+# [0.4.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.3.0...0.4.0) (2026-09-01)
+
+
+### Features
+
+* **next:** migrate cookie policy route ([#125](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/125)) ([90e0941](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/90e0941168a8c4360e039ae2a0a74c0728c2b0f6))
+
 # [0.3.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.2.5...0.3.0) (2026-09-01)
 
 
