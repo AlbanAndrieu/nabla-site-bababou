@@ -17,9 +17,14 @@ const POLICIES = [
   },
 ] as const;
 
+const LOCALE_ROUTES = [
+  { requestPrefix: "/fr", localizedPrefix: "" },
+  { requestPrefix: "/en", localizedPrefix: "/en" },
+] as const;
+
 for (const policy of POLICIES) {
-  for (const localePrefix of ["", "/en"] as const) {
-    const path = `${localePrefix}${policy.path}`;
+  for (const { requestPrefix, localizedPrefix } of LOCALE_ROUTES) {
+    const path = `${requestPrefix}${policy.path}`;
 
     test(`${policy.heading} uses native Next chrome at ${path}`, async ({
       page,
@@ -44,7 +49,7 @@ for (const policy of POLICIES) {
       if (policy.path === "/policy/cookie_policy") {
         await expect(
           page.locator(
-            `#main-content a[href="${localePrefix}${"/policy/privacy_policy"}"]`,
+            `#main-content a[href="${localizedPrefix}/policy/privacy_policy"]`,
           ),
         ).toHaveCount(2);
       }
