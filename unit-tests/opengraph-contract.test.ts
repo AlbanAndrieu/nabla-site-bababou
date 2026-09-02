@@ -43,8 +43,12 @@ test("Next social metadata is centralized and excludes the homepage-only identit
     "utf8",
   );
 
-  assert.match(helper, /openGraphLocale: "fr_FR"/);
-  assert.match(helper, /openGraphLocale: "en_US"/);
+  assert.match(helper, /fr: "fr_FR"/);
+  assert.match(helper, /en: "en_US"/);
+  assert.match(helper, /de: "de_DE"/);
+  assert.match(helper, /no: "nb_NO"/);
+  assert.match(helper, /satisfies Record<AppLocale, string>/);
+  assert.match(helper, /SITE_COPY\[locale as SiteCopyLocale\] \?\? SITE_COPY\.en/);
   assert.match(helper, /alternateLocale/);
   assert.match(helper, /siteName: "Bababou"/);
   assert.match(helper, /secureUrl: socialImage/);

@@ -47,6 +47,8 @@ test("native sitemap entries derive locale alternates from routing", async () =>
   assert.deepEqual(contact.alternates?.languages, {
     fr: "https://bababou.com/contact",
     en: "https://bababou.com/en/contact",
+    de: "https://bababou.com/de/contact",
+    no: "https://bababou.com/no/contact",
     "x-default": "https://bababou.com/contact",
   });
 });
