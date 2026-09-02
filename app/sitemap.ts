@@ -2,11 +2,13 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import type { MetadataRoute } from "next";
 
-import { routing } from "@/i18n/routing";
+import { type AppLocale, routing } from "@/i18n/routing";
 import {
+  isNativeLocalizedPolicySlug,
   isPolicyPageSlug,
   POLICY_PAGES,
   POLICY_PAGE_SLUGS,
+  type PolicyPageSlug,
 } from "@/lib/policyPages";
 import {
   canonicalPagePath,
@@ -84,20 +86,42 @@ function parseLegacySitemap(xml: string): MetadataRoute.Sitemap {
   return entries;
 }
 
-function policySitemapEntries(
-  existingUrls: ReadonlySet<string>,
-): MetadataRoute.Sitemap {
-  return POLICY_PAGE_SLUGS.flatMap((slug) => {
-    const url = new URL(POLICY_PAGES[slug].canonicalPath, SITE_URL).href;
-    if (existingUrls.has(url)) return [];
+function localizedPolicyPath(slug: PolicyPageSlug, locale: AppLocale) {
+  const primaryPath = POLICY_PAGES[slug].canonicalPath;
+  return locale === routing.defaultLocale ? primaryPath : `/${locale}${primaryPath}`;
+}
 
-    return [
-      {
-        url,
-        changeFrequency: "yearly" as const,
-        priority: 0.3,
-      },
-    ];
+function policySitemapEntries(
+  existingEntries: MetadataRoute.Sitemap,
+): MetadataRoute.Sitemap {
+  const existingByUrl = new Map(existingEntries.map((entry) => [entry.url, entry]));
+
+  return POLICY_PAGE_SLUGS.map((slug) => {
+    const primaryPath = POLICY_PAGES[slug].canonicalPath;
+    const url = new URL(primaryPath, SITE_URL).href;
+    const existing = existingByUrl.get(url);
+    const base = existing ?? {
+      url,
+      changeFrequency: "yearly" as const,
+      priority: 0.3,
+    };
+
+    if (!isNativeLocalizedPolicySlug(slug)) {
+      return base;
+    }
+
+    const languages = Object.fromEntries([
+      ...routing.locales.map((locale) => [
+        locale,
+        new URL(localizedPolicyPath(slug, locale), SITE_URL).href,
+      ]),
+      ["x-default", url],
+    ]);
+
+    return {
+      ...base,
+      alternates: { languages },
+    };
   });
 }
 
@@ -128,10 +152,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "utf8",
   );
   const legacyEntries = parseLegacySitemap(legacyXml);
-  const legacyUrls = new Set(legacyEntries.map((entry) => entry.url));
   const combined = [
     ...legacyEntries,
-    ...policySitemapEntries(legacyUrls),
+    ...policySitemapEntries(legacyEntries),
     ...nextSitemapEntries(),
   ];
   const unique = new Map(combined.map((entry) => [entry.url, entry]));

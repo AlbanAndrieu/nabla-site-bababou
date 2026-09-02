@@ -39,16 +39,41 @@ test("sitemap replaces migrated legacy duplicates with native Next URLs", async 
 
 test("native sitemap entries derive locale alternates from routing", async () => {
   const entries = await sitemap();
-  const contact = entries.find(
-    (entry) => entry.url === "https://bababou.com/contact",
-  );
-
-  assert.ok(contact);
-  assert.deepEqual(contact.alternates?.languages, {
+  const expected = {
     fr: "https://bababou.com/contact",
     en: "https://bababou.com/en/contact",
     de: "https://bababou.com/de/contact",
     no: "https://bababou.com/no/contact",
     "x-default": "https://bababou.com/contact",
-  });
+  };
+  const contact = entries.find(
+    (entry) => entry.url === "https://bababou.com/contact",
+  );
+
+  assert.ok(contact);
+  assert.deepEqual(contact.alternates?.languages, expected);
+});
+
+test("only native localized policies publish policy hreflang alternates", async () => {
+  const entries = await sitemap();
+
+  for (const slug of ["service_terms", "privacy_policy"] as const) {
+    const base = `https://bababou.com/policy/${slug}`;
+    const entry = entries.find((candidate) => candidate.url === base);
+
+    assert.ok(entry, `${slug} should exist in the sitemap`);
+    assert.deepEqual(entry.alternates?.languages, {
+      fr: base,
+      en: `https://bababou.com/en/policy/${slug}`,
+      de: `https://bababou.com/de/policy/${slug}`,
+      no: `https://bababou.com/no/policy/${slug}`,
+      "x-default": base,
+    });
+  }
+
+  const bridged = entries.find(
+    (entry) => entry.url === "https://bababou.com/policy/legal",
+  );
+  assert.ok(bridged);
+  assert.equal(bridged.alternates, undefined);
 });
