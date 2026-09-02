@@ -15,15 +15,19 @@ const SUPPORTED_LOCALES: readonly SiteLocale[] = ["fr", "en"];
 /**
  * Transitional allow-list only.
  *
- * Do not add legacy family-content pages here until they have passed the
- * repository privacy review. Loading a file through this helper makes its
- * markup eligible to be rendered by Next.js.
+ * Every entry is an explicitly reviewed source rendered through the native
+ * Next policy boundary. Keeping the filesystem targets enumerated prevents
+ * Turbopack from tracing the entire public tree.
  */
 const PUBLIC_HTML_FILES = [
   "404.html",
   "test.html",
   "policy/accessibility_statement.html",
   "policy/cookie_policy.html",
+  "policy/impressum.html",
+  "policy/legal.html",
+  "policy/privacy_policy.html",
+  "policy/service_terms.html",
 ] as const;
 type PublicHtmlFile = (typeof PUBLIC_HTML_FILES)[number];
 
@@ -46,6 +50,18 @@ const DEFAULT_PUBLIC_HTML_PATHS: Record<PublicHtmlFile, string> = {
     PUBLIC_ROOT,
     "policy",
     "cookie_policy.html",
+  ),
+  "policy/impressum.html": path.join(PUBLIC_ROOT, "policy", "impressum.html"),
+  "policy/legal.html": path.join(PUBLIC_ROOT, "policy", "legal.html"),
+  "policy/privacy_policy.html": path.join(
+    PUBLIC_ROOT,
+    "policy",
+    "privacy_policy.html",
+  ),
+  "policy/service_terms.html": path.join(
+    PUBLIC_ROOT,
+    "policy",
+    "service_terms.html",
   ),
 };
 

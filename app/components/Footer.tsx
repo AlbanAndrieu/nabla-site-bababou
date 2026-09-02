@@ -39,7 +39,7 @@ export default function Footer({
         </a>
       </div>
       <div className="footer-links text-center">
-        <a href="/policy/legal.html">{legalNotices}</a>
+        <a href="/policy/legal">{legalNotices}</a>
       </div>
       <nav className={styles.actions} aria-label="Footer navigation">
         <ActionLink href={homeHref}>

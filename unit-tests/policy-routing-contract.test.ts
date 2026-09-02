@@ -1,69 +1,61 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
 import test from "node:test";
 
-const LEGACY_REWRITE_POLICY_FILES = [
-  "legal",
-  "impressum",
-  "privacy_policy",
-  "service_terms",
-] as const;
+import { POLICY_PAGES, POLICY_PAGE_SLUGS } from "../lib/policyPages.ts";
 
-const NEXT_POLICY_FILES = ["accessibility_statement", "cookie_policy"] as const;
-
-const POLICY_SOURCE_FILES = [
-  ...LEGACY_REWRITE_POLICY_FILES,
-  ...NEXT_POLICY_FILES,
-] as const;
-
-test("remaining policy pages keep clean rewrites without replacing static sources", async () => {
+test("all reviewed policy pages are owned by the native registry", async () => {
   const config = await readFile(
     new URL("../next.config.mjs", import.meta.url),
     "utf8",
   );
-
-  assert.match(config, /const policyRewrites = policyFiles\.map/);
-  assert.match(config, /const localizedPolicyRewrites = policyLocales\.flatMap/);
-  assert.match(
-    config,
-    /afterFiles: \[\.\.\.localizedPolicyRewrites, \.\.\.policyRewrites\]/,
+  const route = await readFile(
+    new URL("../app/[locale]/policy/[policy]/page.tsx", import.meta.url),
+    "utf8",
   );
 
-  for (const policy of POLICY_SOURCE_FILES) {
+  assert.doesNotMatch(config, /policyRewrites/);
+  assert.doesNotMatch(config, /localizedPolicyRewrites/);
+  assert.match(config, /const migratedPolicyRedirects = \[/);
+  assert.match(route, /POLICY_PAGE_SLUGS/);
+  assert.match(route, /generateStaticParams/);
+  assert.match(route, /getPolicyPage/);
+  assert.match(route, /<SkipToMainContent \/>/);
+  assert.match(route, /<TopAnchor \/>/);
+
+  for (const slug of POLICY_PAGE_SLUGS) {
+    const policy = POLICY_PAGES[slug];
     const legacy = await readFile(
-      new URL(`../public/policy/${policy}.html`, import.meta.url),
+      new URL(`../public/${policy.sourceFile}`, import.meta.url),
       "utf8",
     );
-    assert.ok(
-      legacy.trim().length > 0,
-      `${policy}.html must remain a reviewed source during migration`,
-    );
-  }
 
-  for (const policy of LEGACY_REWRITE_POLICY_FILES) {
-    assert.match(config, new RegExp(`\\"${policy}\\"`));
+    assert.equal(policy.sourceFile, `policy/${slug}.html`);
+    assert.equal(policy.canonicalPath, `/policy/${slug}`);
+    assert.ok(
+      legacy.includes(`<h1>${policy.heading}</h1>`),
+      `${policy.sourceFile} must remain the reviewed content source`,
+    );
+    assert.ok(
+      legacy.includes(`<title>${policy.title}</title>`),
+      `${policy.sourceFile} metadata should stay represented in the registry`,
+    );
+    assert.match(config, new RegExp(`\\"${slug}\\"`));
   }
 });
 
-test("migrated policy clean routes are owned by Next while static copy remains source", async () => {
-  const config = await readFile(
-    new URL("../next.config.mjs", import.meta.url),
-    "utf8",
+test("policy-specific route copies collapse into the generic registry route", async () => {
+  const entries = await readdir(
+    new URL("../app/[locale]/policy/", import.meta.url),
+    { withFileTypes: true },
   );
+  const directories = entries
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name);
 
-  for (const policy of NEXT_POLICY_FILES) {
-    const route = await readFile(
-      new URL(`../app/[locale]/policy/${policy}/page.tsx`, import.meta.url),
-      "utf8",
-    );
-
-    assert.doesNotMatch(config, new RegExp(`\\"${policy}\\"`));
-    assert.match(route, new RegExp(`policy\\/${policy}\\.html`));
-    assert.match(route, new RegExp(`CANONICAL_PATH = \\"\\/policy\\/${policy}\\"`));
-    assert.match(route, /lang=\"en\"/);
-    assert.match(route, /<SkipToMainContent \/>/);
-    assert.match(route, /<TopAnchor \/>/);
-  }
+  assert.ok(directories.includes("[policy]"));
+  assert.ok(!directories.includes("accessibility_statement"));
+  assert.ok(!directories.includes("cookie_policy"));
 });
 
 test("policy migration does not touch the protected homepage or static 404 contract", async () => {

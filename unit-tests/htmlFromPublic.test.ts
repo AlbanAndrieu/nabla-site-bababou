@@ -7,6 +7,7 @@ import {
   removeLegacyElementsById,
   rewriteLegacyHtmlHrefs,
 } from "../lib/htmlFromPublic.ts";
+import { POLICY_PAGES, POLICY_PAGE_SLUGS } from "../lib/policyPages.ts";
 
 test("extractHtmlFragment keeps body content and removes the legacy footer", () => {
   const html = `<!doctype html><html><body><main><p>Hello</p></main><footer>Legacy footer</footer></body></html>`;
@@ -60,27 +61,49 @@ test("loadPublicHtmlFragment uses the explicit default fallback for untranslated
   assert.match(fragment, /Back to home/i);
 });
 
-test("accessibility policy is an explicit Next fragment source", async () => {
-  const fragment = await loadPublicHtmlFragment(
-    "policy/accessibility_statement.html",
-    "main",
-    "en",
-  );
-  assert.match(fragment, /<h1>Accessibility Statement<\/h1>/i);
-  assert.match(fragment, /href="\/"/);
-  assert.doesNotMatch(fragment, /<footer\b/i);
-});
+for (const slug of POLICY_PAGE_SLUGS) {
+  test(`${slug} is an explicit Next fragment source`, async () => {
+    const policy = POLICY_PAGES[slug];
+    const fragment = await loadPublicHtmlFragment(
+      policy.sourceFile,
+      "main",
+      "en",
+    );
 
-test("cookie policy is an explicit Next fragment source with clean policy links", async () => {
-  const fragment = await loadPublicHtmlFragment(
-    "policy/cookie_policy.html",
+    assert.ok(fragment.includes(`<h1>${policy.heading}</h1>`));
+    assert.doesNotMatch(fragment, /<footer\b/i);
+    assert.doesNotMatch(
+      fragment,
+      /href=["'](?:\/|\.\.?\/)[^"']*\.html(?:[?#][^"']*)?["']/i,
+      "internal legacy HTML links should be rewritten to clean Next routes",
+    );
+  });
+}
+
+test("policy cross-links stay inside the localized policy namespace", async () => {
+  const cookie = await loadPublicHtmlFragment(
+    POLICY_PAGES.cookie_policy.sourceFile,
     "main",
     "en",
   );
-  assert.match(fragment, /<h1>Cookie Policy<\/h1>/i);
-  assert.match(fragment, /href="\/en\/policy\/privacy_policy"/);
-  assert.doesNotMatch(fragment, /href="\/en\/privacy_policy"/);
-  assert.doesNotMatch(fragment, /<footer\b/i);
+  assert.match(cookie, /href="\/en\/policy\/privacy_policy"/);
+  assert.doesNotMatch(cookie, /href="\/en\/privacy_policy"/);
+
+  const impressum = await loadPublicHtmlFragment(
+    POLICY_PAGES.impressum.sourceFile,
+    "main",
+    "en",
+  );
+  assert.match(impressum, /href="\/en\/policy\/privacy_policy"/);
+  assert.match(impressum, /href="\/en\/policy\/service_terms"/);
+
+  const legal = await loadPublicHtmlFragment(
+    POLICY_PAGES.legal.sourceFile,
+    "main",
+    "en",
+  );
+  assert.match(legal, /href="\/en\/policy\/privacy_policy"/);
+  assert.match(legal, /href="\/en\/policy\/service_terms"/);
 });
 
 test("loadPublicHtmlFragment rejects files outside the explicit allowlist", async () => {
