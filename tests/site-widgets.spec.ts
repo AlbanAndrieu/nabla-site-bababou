@@ -27,6 +27,14 @@ test.describe("Site widgets integration", () => {
 		).toHaveCount(0);
 	});
 
+	test("removes inactive legacy cookie settings links on static pages", async ({ page }) => {
+		await page.goto("/cancel.html");
+
+		await expect(
+			page.locator('a[href="javascript:openAxeptioCookies()"]'),
+		).toHaveCount(0);
+	});
+
 	test("should trigger top scroll when back-to-top control is clicked", async ({
 		page,
 	}) => {

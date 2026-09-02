@@ -490,6 +490,7 @@
 
 	var DEFAULT_AXEPTIO_CLIENT = "63ff48361876ce66c29dddcd";
 	var DEFAULT_AXEPTIO_VER = "nabla-en";
+	var DEFAULT_CONTACT_EMAIL = "aa@bababou.com";
 	var DEFAULT_REVEAL_SELECTORS =
 		".service-card, .skill-category, .tool-item, .contact-card, .social-card, .js-animate-on-scroll, [data-animate-on-scroll]";
 
@@ -843,14 +844,26 @@
 		document.body.appendChild(link);
 	}
 
-	function initAxeptio() {
-		if (minimalChrome()) return;
+	function axeptioEnabled() {
+		if (minimalChrome()) return false;
 		var wTag = widgetsScriptTag();
-		var force =
+		return Boolean(
 			(wTag &&
 				(has("data-axeptio") || wTag.getAttribute("data-axeptio-client-id"))) ||
-			preset.axeptio;
-		if (!force) return;
+				preset.axeptio,
+		);
+	}
+
+	function initCookiePreferencesLinks() {
+		if (axeptioEnabled()) return;
+		document
+			.querySelectorAll('a[href="javascript:openAxeptioCookies()"]')
+			.forEach((link) => link.remove());
+	}
+
+	function initAxeptio() {
+		if (!axeptioEnabled()) return;
+		var wTag = widgetsScriptTag();
 		var clientId = String(
 			wTag?.getAttribute("data-axeptio-client-id") ||
 				preset.axeptioClientId ||
@@ -877,9 +890,7 @@
 		while (container.firstChild) {
 			container.removeChild(container.firstChild);
 		}
-		var user = "alban" + "." + "andrieu";
-		var domain = "bababou" + "." + "com";
-		var email = user + "@" + domain;
+		var email = DEFAULT_CONTACT_EMAIL;
 		var link = document.createElement("a");
 		link.href = "mailto:" + email;
 		link.className = "contact-me-card__link";
@@ -953,6 +964,7 @@
 		ensureBackToTopFab();
 		initSiteCopyright();
 		initContactEmailLink();
+		initCookiePreferencesLinks();
 		initAxeptio();
 
 		var intercomId =

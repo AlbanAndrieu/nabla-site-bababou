@@ -854,4 +854,4 @@ Before creating or updating workflows, verify:
 
 For issues specific to this project:
 - **GitHub Issues**: Open an issue in this repository
-- **Email**: alban.andrieu@bababou.com
+- **Email**: aa@bababou.com
