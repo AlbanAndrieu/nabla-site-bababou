@@ -1,3 +1,10 @@
+# [0.5.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.4.0...0.5.0) (2026-09-02)
+
+
+### Features
+
+* **next:** migrate remaining policy routes ([#128](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/128)) ([c2e25a9](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/c2e25a9397608d326bc579ecc9178c0541e924f1))
+
 # [0.4.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.3.0...0.4.0) (2026-09-01)
 
 
