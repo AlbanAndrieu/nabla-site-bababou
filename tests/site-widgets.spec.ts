@@ -13,6 +13,20 @@ test.describe("Site widgets integration", () => {
 		await expect(backToTop).toHaveAttribute("href", "#top");
 	});
 
+	test("homepage publishes the canonical Bababou email without inactive cookie settings", async ({
+		page,
+	}) => {
+		await page.goto("/");
+
+		await expect(
+			page.locator('a[href="mailto:aa@bababou.com"]'),
+		).toHaveCount(5);
+		await expect(page.getByRole("link", { name: "Cookies", exact: true })).toHaveCount(0);
+		await expect(
+			page.locator('a[href^="javascript:openAxeptioCookies"]'),
+		).toHaveCount(0);
+	});
+
 	test("should trigger top scroll when back-to-top control is clicked", async ({
 		page,
 	}) => {
