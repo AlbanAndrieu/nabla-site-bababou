@@ -1,3 +1,10 @@
+## [0.6.1](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.6.0...0.6.1) (2026-09-02)
+
+
+### Bug Fixes
+
+* **policy:** localize terms and normalize contact data ([#130](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/130)) ([00bd51a](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/00bd51a7059153e7c37cfc57fcb2f6dbdcf7d734))
+
 # [0.6.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.5.0...0.6.0) (2026-09-02)
 
 
