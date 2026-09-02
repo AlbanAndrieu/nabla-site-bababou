@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { type APIRequestContext, expect, test } from "@playwright/test";
 
 const SITE_URL = "https://bababou.com";
 
@@ -7,13 +7,37 @@ const POLICIES = [
     path: "/policy/accessibility_statement",
     heading: "Accessibility Statement",
     title: "Accessibility Statement | Bababou",
-    legacyFile: "/policy/accessibility_statement.html",
+    relatedPolicies: [],
   },
   {
     path: "/policy/cookie_policy",
     heading: "Cookie Policy",
     title: "Cookie Policy | Bababou",
-    legacyFile: "/policy/cookie_policy.html",
+    relatedPolicies: ["privacy_policy"],
+  },
+  {
+    path: "/policy/impressum",
+    heading: "Impressum (Legal Notice)",
+    title: "Impressum (Legal Notice) | Bababou",
+    relatedPolicies: ["privacy_policy", "service_terms"],
+  },
+  {
+    path: "/policy/legal",
+    heading: "Legal notices",
+    title: "Legal notices | Alban Andrieu",
+    relatedPolicies: ["privacy_policy", "service_terms"],
+  },
+  {
+    path: "/policy/privacy_policy",
+    heading: "Privacy Policy",
+    title: "Privacy Policy | Bababou",
+    relatedPolicies: [],
+  },
+  {
+    path: "/policy/service_terms",
+    heading: "Terms of Service",
+    title: "Terms of Service | Bababou",
+    relatedPolicies: [],
   },
 ] as const;
 
@@ -21,6 +45,24 @@ const LOCALE_ROUTES = [
   { requestPrefix: "/fr", localizedPrefix: "" },
   { requestPrefix: "/en", localizedPrefix: "/en" },
 ] as const;
+
+function redirectPath(location: string | undefined) {
+  expect(location, "redirect response should expose a Location header").toBeTruthy();
+  return new URL(location ?? "/", SITE_URL).pathname;
+}
+
+async function applicationRedirect(request: APIRequestContext, path: string) {
+  let response = await request.get(path, { maxRedirects: 0 });
+
+  if (
+    response.status() === 307 &&
+    redirectPath(response.headers().location) === path
+  ) {
+    response = await request.get(path, { maxRedirects: 0 });
+  }
+
+  return response;
+}
 
 for (const policy of POLICIES) {
   for (const { requestPrefix, localizedPrefix } of LOCALE_ROUTES) {
@@ -41,17 +83,19 @@ for (const policy of POLICIES) {
       await expect(page.locator("#main-content")).toHaveAttribute("lang", "en");
       await expect(page.locator("#main-content h1")).toHaveText(policy.heading);
       await expect(page.locator('a[href="#main-content"]')).toBeVisible();
+      await expect(
+        page.locator('#main-content a[href$=".html"]'),
+      ).toHaveCount(0);
 
       const html = await page.content();
       expect(html).not.toMatch(/<script[^>]+theme-toggle\.js/i);
       expect(html).not.toMatch(/<script[^>]+site-google-translate\.js/i);
 
-      if (policy.path === "/policy/cookie_policy") {
-        await expect(
-          page.locator(
-            `#main-content a[href="${localizedPrefix}/policy/privacy_policy"]`,
-          ),
-        ).toHaveCount(2);
+      for (const relatedPolicy of policy.relatedPolicies) {
+        const links = page.locator(
+          `#main-content a[href="${localizedPrefix}/policy/${relatedPolicy}"]`,
+        );
+        expect(await links.count()).toBeGreaterThan(0);
       }
     });
 
@@ -79,14 +123,13 @@ for (const policy of POLICIES) {
     });
   }
 
-  test(`legacy ${policy.heading} HTML remains available as the source document`, async ({
+  test(`legacy ${policy.heading} HTML permanently redirects to the clean policy route`, async ({
     request,
   }) => {
-    const response = await request.get(policy.legacyFile);
-    expect(response.ok()).toBeTruthy();
+    const legacyPath = `${policy.path}.html`;
+    const response = await applicationRedirect(request, legacyPath);
 
-    const html = await response.text();
-    expect(html).toContain(`<h1>${policy.heading}</h1>`);
-    expect(html).toMatch(/site-google-translate\.js/);
+    expect(response.status()).toBe(308);
+    expect(redirectPath(response.headers().location)).toBe(policy.path);
   });
 }

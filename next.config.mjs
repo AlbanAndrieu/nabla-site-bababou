@@ -16,34 +16,28 @@ const migratedLegacyRedirects = ["contact", "email", "link"].flatMap(
 );
 
 /**
- * Remaining policy pages stay static sources during Migration 6, with clean and
- * localized entry points routed through Next/Vercel. Accessibility and Cookie
- * Policy are excluded because their clean routes are now owned by the App Router
- * while the reviewed static documents remain the source of their legal copy.
+ * Policy HTML files stay in public/ as reviewed filesystem sources for the
+ * native policy registry, but their public legacy URLs now converge on the
+ * extensionless App Router canonicals.
  */
-const policyFiles = ["legal", "impressum", "privacy_policy", "service_terms"];
-const policyLocales = ["fr", "en"];
-const policyRewrites = policyFiles.map((name) => ({
-  source: `/policy/${name}`,
-  destination: `/policy/${name}.html`,
+const migratedPolicyRedirects = [
+  "accessibility_statement",
+  "cookie_policy",
+  "impressum",
+  "legal",
+  "privacy_policy",
+  "service_terms",
+].map((slug) => ({
+  source: `/policy/${slug}.html`,
+  destination: `/policy/${slug}`,
+  permanent: true,
 }));
-const localizedPolicyRewrites = policyLocales.flatMap((locale) =>
-  policyRewrites.map(({ source, destination }) => ({
-    source: `/${locale}${source}`,
-    destination,
-  })),
-);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   async redirects() {
-    return migratedLegacyRedirects;
-  },
-  async rewrites() {
-    return {
-      afterFiles: [...localizedPolicyRewrites, ...policyRewrites],
-    };
+    return [...migratedLegacyRedirects, ...migratedPolicyRedirects];
   },
   turbopack: {
     root: projectRoot,

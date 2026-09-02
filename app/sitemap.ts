@@ -3,6 +3,7 @@ import path from "node:path";
 import type { MetadataRoute } from "next";
 
 import { routing } from "@/i18n/routing";
+import { isPolicyPageSlug } from "@/lib/policyPages";
 import {
   canonicalPagePath,
   SEO_PAGE_SLUGS,
@@ -38,6 +39,11 @@ function normalizeLegacyLocation(location: string) {
 
   if (MIGRATED_LEGACY_PATHS.has(url.pathname)) return null;
   if (url.pathname === "/index.html") url.pathname = "/";
+
+  const policySource = url.pathname.match(/^\/policy\/([^/]+)\.html$/);
+  if (policySource && isPolicyPageSlug(policySource[1])) {
+    url.pathname = `/policy/${policySource[1]}`;
+  }
 
   return url.href;
 }
