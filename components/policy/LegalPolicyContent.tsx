@@ -7,7 +7,7 @@ import {
 } from "@/lib/legalPolicies";
 
 const INLINE_TOKEN_PATTERN =
-  /(\{email\}|\{vercel\}|\{cnil\}|\{privacy\}|\{terms\}|\{home\}|\{tmg\})/g;
+  /(\{email\}|\{vercel\}|\{cnil\}|\{privacy\}|\{terms\}|\{home\}|\{ddg\})/g;
 
 function localizedPath(locale: AppLocale, path: string) {
   return locale === routing.defaultLocale ? path : `/${locale}${path}`;
@@ -81,14 +81,14 @@ function InlineLegalText({
             </a>
           );
         }
-        if (part === "{tmg}") {
+        if (part === "{ddg}") {
           return (
             <a
-              key={`tmg-${index}`}
-              href="https://www.gesetze-im-internet.de/tmg/"
+              key={`ddg-${index}`}
+              href="https://www.gesetze-im-internet.de/ddg/__5.html"
               rel="noopener noreferrer"
             >
-              Telemediengesetz
+              § 5 Digitale-Dienste-Gesetz (DDG)
             </a>
           );
         }

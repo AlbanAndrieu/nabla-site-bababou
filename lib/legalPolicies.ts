@@ -2,7 +2,7 @@ import type { AppLocale } from "@/i18n/routing";
 
 export const LEGAL_POLICY_EMAIL = "aa@bababou.com";
 export const LEGAL_NOTICE_LAST_UPDATED = "2026-09-02";
-export const IMPRESSUM_LAST_UPDATED = "2026-02-20";
+export const IMPRESSUM_LAST_UPDATED = "2026-09-03";
 
 export type LegalPolicySlug = "legal" | "impressum";
 
@@ -290,7 +290,7 @@ const LEGAL_POLICY_COPY = {
       lastUpdatedLabel: "Dernière mise à jour",
       lastUpdated: IMPRESSUM_LAST_UPDATED,
       intro: [
-        "Un Impressum est un avis juridique requis en Allemagne, en Autriche et en Suisse, par exemple au titre du {tmg}. En France, l’équivalent est constitué par les mentions légales. Cette page fournit les informations relatives à l’éditeur et au contact de ce site.",
+        "Le terme « Impressum » désigne couramment une notice d’identification de l’éditeur dans les contextes germanophones. En Allemagne, les obligations générales d’information applicables à certains services numériques sont notamment prévues par le {ddg}, lorsqu’elles entrent dans son champ d’application. En France, l’équivalent est constitué par les mentions légales. Cette page fournit les informations relatives à l’éditeur et au contact de ce site.",
       ],
       links: {
         privacy: "Politique de confidentialité",
@@ -340,7 +340,7 @@ const LEGAL_POLICY_COPY = {
       lastUpdatedLabel: "Last updated",
       lastUpdated: IMPRESSUM_LAST_UPDATED,
       intro: [
-        "An Impressum is a legal notice required in Germany, Austria and Switzerland, for example under the {tmg}. In France the equivalent is mentions légales. This page provides the publisher and contact information for this website.",
+        "The term Impressum is commonly used for publisher-identification notices in German-speaking contexts. In Germany, general information duties applying to certain digital services are set out in the {ddg}, where its scope applies. In France the equivalent is mentions légales. This page provides the publisher and contact information for this website.",
       ],
       links: {
         privacy: "Privacy Policy",
@@ -390,7 +390,7 @@ const LEGAL_POLICY_COPY = {
       lastUpdatedLabel: "Zuletzt aktualisiert",
       lastUpdated: IMPRESSUM_LAST_UPDATED,
       intro: [
-        "Ein Impressum ist ein rechtlicher Hinweis, der in Deutschland, Österreich und der Schweiz erforderlich ist, zum Beispiel nach dem {tmg}. In Frankreich entspricht dem die mentions légales. Diese Seite enthält die Angaben zum Herausgeber und die Kontaktdaten dieser Website.",
+        "Der Begriff Impressum wird im deutschsprachigen Raum üblicherweise für Anbieter- oder Herausgeberangaben verwendet. In Deutschland ergeben sich allgemeine Informationspflichten für bestimmte digitale Dienste insbesondere aus dem {ddg}, soweit dessen Anwendungsbereich eröffnet ist. In Frankreich entspricht dem die mentions légales. Diese Seite enthält die Angaben zum Herausgeber und die Kontaktdaten dieser Website.",
       ],
       links: {
         privacy: "Datenschutzerklärung",
@@ -440,7 +440,7 @@ const LEGAL_POLICY_COPY = {
       lastUpdatedLabel: "Sist oppdatert",
       lastUpdated: IMPRESSUM_LAST_UPDATED,
       intro: [
-        "Et Impressum er en juridisk kunngjøring som kreves i Tyskland, Østerrike og Sveits, for eksempel etter {tmg}. I Frankrike er det tilsvarende mentions légales. Denne siden gir informasjon om utgiver og kontaktopplysninger for dette nettstedet.",
+        "Begrepet Impressum brukes vanligvis om opplysninger om utgiver eller tilbyder i tyskspråklige sammenhenger. I Tyskland følger generelle informasjonsplikter for enkelte digitale tjenester blant annet av {ddg}, når lovens virkeområde gjelder. I Frankrike er det tilsvarende mentions légales. Denne siden gir informasjon om utgiver og kontaktopplysninger for dette nettstedet.",
       ],
       links: {
         privacy: "Personvernerklæring",

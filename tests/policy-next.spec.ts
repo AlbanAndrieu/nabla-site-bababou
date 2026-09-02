@@ -27,7 +27,7 @@ const NATIVE_LOCALIZED_POLICIES = [
     slug: "service_terms",
     emailLinks: 2,
     cnilLinks: 0,
-    tmgLinks: 0,
+    ddgLinks: 0,
     relatedPolicies: [],
     locales: [
       {
@@ -56,7 +56,7 @@ const NATIVE_LOCALIZED_POLICIES = [
     slug: "privacy_policy",
     emailLinks: 2,
     cnilLinks: 1,
-    tmgLinks: 0,
+    ddgLinks: 0,
     relatedPolicies: [],
     locales: [
       {
@@ -85,7 +85,7 @@ const NATIVE_LOCALIZED_POLICIES = [
     slug: "legal",
     emailLinks: 1,
     cnilLinks: 1,
-    tmgLinks: 0,
+    ddgLinks: 0,
     relatedPolicies: ["privacy_policy", "service_terms"],
     locales: [
       {
@@ -114,7 +114,7 @@ const NATIVE_LOCALIZED_POLICIES = [
     slug: "impressum",
     emailLinks: 0,
     cnilLinks: 0,
-    tmgLinks: 1,
+    ddgLinks: 1,
     relatedPolicies: ["privacy_policy", "service_terms"],
     locales: [
       {
@@ -261,15 +261,18 @@ for (const policy of NATIVE_LOCALIZED_POLICIES) {
       ).toHaveCount(policy.cnilLinks);
       await expect(
         page.locator(
-          '#main-content a[href="https://www.gesetze-im-internet.de/tmg/"]',
+          '#main-content a[href="https://www.gesetze-im-internet.de/ddg/__5.html"]',
         ),
-      ).toHaveCount(policy.tmgLinks);
+      ).toHaveCount(policy.ddgLinks);
       await expect(page.locator("#main-content")).not.toContainText("{email}");
       await expect(page.locator("#main-content")).not.toContainText("{cnil}");
       await expect(page.locator("#main-content")).not.toContainText("{privacy}");
       await expect(page.locator("#main-content")).not.toContainText("{terms}");
       await expect(page.locator("#main-content")).not.toContainText("{home}");
-      await expect(page.locator("#main-content")).not.toContainText("{tmg}");
+      await expect(page.locator("#main-content")).not.toContainText("{ddg}");
+      await expect(page.locator("#main-content")).not.toContainText(
+        "Telemediengesetz",
+      );
       await expect(page.locator("#main-content")).not.toContainText("[COUNTRY]");
       await expect(page.locator("#main-content")).not.toContainText(
         "[CITY / COUNTRY]",
