@@ -91,6 +91,8 @@ export const POLICY_PAGE_SLUGS = Object.keys(POLICY_PAGES) as PolicyPageSlug[];
 export const NATIVE_LOCALIZED_POLICY_SLUGS = [
   "privacy_policy",
   "service_terms",
+  "legal",
+  "impressum",
 ] as const satisfies readonly PolicyPageSlug[];
 
 export type NativeLocalizedPolicySlug =

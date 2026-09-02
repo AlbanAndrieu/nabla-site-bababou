@@ -2,7 +2,10 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import sitemap from "../app/sitemap.ts";
-import { POLICY_PAGE_SLUGS } from "../lib/policyPages.ts";
+import {
+  NATIVE_LOCALIZED_POLICY_SLUGS,
+  POLICY_PAGE_SLUGS,
+} from "../lib/policyPages.ts";
 
 test("sitemap preserves active legacy URLs and adds native Next surfaces", async () => {
   const entries = await sitemap();
@@ -57,7 +60,7 @@ test("native sitemap entries derive locale alternates from routing", async () =>
 test("only native localized policies publish policy hreflang alternates", async () => {
   const entries = await sitemap();
 
-  for (const slug of ["service_terms", "privacy_policy"] as const) {
+  for (const slug of NATIVE_LOCALIZED_POLICY_SLUGS) {
     const base = `https://bababou.com/policy/${slug}`;
     const entry = entries.find((candidate) => candidate.url === base);
 
@@ -72,7 +75,7 @@ test("only native localized policies publish policy hreflang alternates", async 
   }
 
   const bridged = entries.find(
-    (entry) => entry.url === "https://bababou.com/policy/legal",
+    (entry) => entry.url === "https://bababou.com/policy/cookie_policy",
   );
   assert.ok(bridged);
   assert.equal(bridged.alternates, undefined);
