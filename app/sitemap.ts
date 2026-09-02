@@ -3,7 +3,11 @@ import path from "node:path";
 import type { MetadataRoute } from "next";
 
 import { routing } from "@/i18n/routing";
-import { isPolicyPageSlug } from "@/lib/policyPages";
+import {
+  isPolicyPageSlug,
+  POLICY_PAGES,
+  POLICY_PAGE_SLUGS,
+} from "@/lib/policyPages";
 import {
   canonicalPagePath,
   SEO_PAGE_SLUGS,
@@ -80,6 +84,23 @@ function parseLegacySitemap(xml: string): MetadataRoute.Sitemap {
   return entries;
 }
 
+function policySitemapEntries(
+  existingUrls: ReadonlySet<string>,
+): MetadataRoute.Sitemap {
+  return POLICY_PAGE_SLUGS.flatMap((slug) => {
+    const url = new URL(POLICY_PAGES[slug].canonicalPath, SITE_URL).href;
+    if (existingUrls.has(url)) return [];
+
+    return [
+      {
+        url,
+        changeFrequency: "yearly" as const,
+        priority: 0.3,
+      },
+    ];
+  });
+}
+
 function nextSitemapEntries(): MetadataRoute.Sitemap {
   return SEO_PAGE_SLUGS.map((slug) => {
     const primaryPath = canonicalPagePath(slug, routing.defaultLocale);
@@ -106,7 +127,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     path.join(process.cwd(), "public", "sitemap.xml"),
     "utf8",
   );
-  const combined = [...parseLegacySitemap(legacyXml), ...nextSitemapEntries()];
+  const legacyEntries = parseLegacySitemap(legacyXml);
+  const legacyUrls = new Set(legacyEntries.map((entry) => entry.url));
+  const combined = [
+    ...legacyEntries,
+    ...policySitemapEntries(legacyUrls),
+    ...nextSitemapEntries(),
+  ];
   const unique = new Map(combined.map((entry) => [entry.url, entry]));
 
   return [...unique.values()];
