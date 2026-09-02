@@ -1,3 +1,10 @@
+# [0.7.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.6.1...0.7.0) (2026-09-02)
+
+
+### Features
+
+* **policy:** migrate privacy policy to native i18n ([#131](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/131)) ([f20ab68](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/f20ab6899ad0ac8468a4760347fb0f6c2b8ea830))
+
 ## [0.6.1](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.6.0...0.6.1) (2026-09-02)
 
 
