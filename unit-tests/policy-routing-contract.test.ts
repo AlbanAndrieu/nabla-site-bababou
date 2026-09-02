@@ -2,9 +2,13 @@ import assert from "node:assert/strict";
 import { readFile, readdir } from "node:fs/promises";
 import test from "node:test";
 
-import { POLICY_PAGES, POLICY_PAGE_SLUGS } from "../lib/policyPages.ts";
+import {
+  NATIVE_LOCALIZED_POLICY_SLUGS,
+  POLICY_PAGES,
+  POLICY_PAGE_SLUGS,
+} from "../lib/policyPages.ts";
 
-const NATIVE_POLICY_SLUGS = new Set(["service_terms"]);
+const NATIVE_POLICY_SLUGS = new Set(NATIVE_LOCALIZED_POLICY_SLUGS);
 
 test("all reviewed policy pages are owned by the native registry", async () => {
   const config = await readFile(
@@ -24,6 +28,7 @@ test("all reviewed policy pages are owned by the native registry", async () => {
   assert.match(route, /getPolicyPage/);
   assert.match(route, /<SkipToMainContent \/>/);
   assert.match(route, /<TopAnchor \/>/);
+  assert.match(route, /PrivacyPolicyContent/);
   assert.match(route, /ServiceTermsContent/);
 
   for (const slug of POLICY_PAGE_SLUGS) {
@@ -55,24 +60,37 @@ test("all reviewed policy pages are owned by the native registry", async () => {
   }
 });
 
-test("service terms own localized content instead of the legacy HTML bridge", async () => {
+test("localized policies own native content instead of the legacy HTML bridge", async () => {
   const route = await readFile(
     new URL("../app/[locale]/policy/[policy]/page.tsx", import.meta.url),
     "utf8",
   );
-  const content = await readFile(
+  const privacyContent = await readFile(
+    new URL("../components/policy/PrivacyPolicyContent.tsx", import.meta.url),
+    "utf8",
+  );
+  const privacyCopy = await readFile(
+    new URL("../lib/privacyPolicy.ts", import.meta.url),
+    "utf8",
+  );
+  const serviceContent = await readFile(
     new URL("../components/policy/ServiceTermsContent.tsx", import.meta.url),
     "utf8",
   );
-  const copy = await readFile(
+  const serviceCopy = await readFile(
     new URL("../lib/serviceTerms.ts", import.meta.url),
     "utf8",
   );
 
+  assert.match(route, /policy === "privacy_policy"/);
+  assert.match(route, /<PrivacyPolicyContent locale=\{locale\} \/>/);
+  assert.match(privacyContent, /getPrivacyPolicyCopy/);
+  assert.match(privacyCopy, /satisfies Record<AppLocale, PrivacyPolicyCopy>/);
+
   assert.match(route, /policy === "service_terms"/);
   assert.match(route, /<ServiceTermsContent locale=\{locale\} \/>/);
-  assert.match(content, /getServiceTermsCopy/);
-  assert.match(copy, /satisfies Record<AppLocale, ServiceTermsCopy>/);
+  assert.match(serviceContent, /getServiceTermsCopy/);
+  assert.match(serviceCopy, /satisfies Record<AppLocale, ServiceTermsCopy>/);
 });
 
 test("policy-specific route copies collapse into the generic registry route", async () => {
