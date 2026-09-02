@@ -1,0 +1,60 @@
+{
+  "email": {
+    "title": "Aktualisierung der E-Mail-Adressen",
+    "metadataTitle": "Kontakt-E-Mail-Adressen — Alban Andrieu",
+    "metadataDescription": "Aktuelle E-Mail-Adressen für berufliche, Sicherheits-, Rechnungs- und allgemeine Kontaktanfragen an Alban Andrieu.",
+    "useTheseAddresses": "Bitte verwenden Sie diese Adressen",
+    "cards": [
+      {
+        "title": "Beruf / Arbeit (selbstständig)",
+        "email": "job@albandrieu.com",
+        "descriptionBefore": "",
+        "descriptionAfter": ""
+      },
+      {
+        "title": "Beruf / Arbeit",
+        "email": "job@albandrieu.com",
+        "descriptionBefore": "",
+        "descriptionAfter": ""
+      },
+      {
+        "title": "Website-Sicherheit",
+        "email": "security@albandrieu.com",
+        "descriptionBefore": "",
+        "descriptionAfter": ""
+      },
+      {
+        "title": "Rechnungen",
+        "email": "invoice@albanandrieu.com",
+        "descriptionBefore": "Für alle rechnungsbezogenen Themen (Abrechnung, Zahlungsfragen, MwSt. oder Bestellungen) verwenden Sie ",
+        "descriptionAfter": " — senden Sie Rechnungen nicht an die oben genannten Arbeits- oder allgemeinen Kontaktadressen."
+      },
+      {
+        "title": "Andere Themen",
+        "email": "contact@albandrieu.com",
+        "descriptionBefore": "",
+        "descriptionAfter": ""
+      },
+      {
+        "title": "Bababou",
+        "email": "alban.andrieu@bababou.com",
+        "descriptionBefore": "",
+        "descriptionAfter": ""
+      }
+    ],
+    "automatedHeading": "Automatisierte oder vorsortierte Antworten",
+    "automatedDesc": "Wenn Sie eine Nachricht von einer der folgenden Adressen erhalten, bedeutet dies in der Regel, dass Ihre Nachricht die Voraussetzungen für eine persönliche Bearbeitung (durch mich) nicht erfüllt hat oder automatisch vorsortiert wurde:",
+    "automatedList": [
+      "no-reply@albanandrieu.com",
+      "no-reply@albandrieu.com",
+      "no-reply@bababou.com",
+      "openclaw@albandrieu.com",
+      "assistant@albandrieu.com",
+      "invoice@albanandrieu.com"
+    ],
+    "reasonLine1": "Die Adresse",
+    "reasonLine2": "wird nicht mehr verwendet. Google ändert die Funktionsweise von Gmail mit Drittanbieter-Konten (Gmailify und POP „E-Mails von anderen Konten abrufen“); siehe",
+    "reasonLine3": "Informationen zu bevorstehenden Änderungen an Gmailify und POP in Gmail",
+    "reasonLine4": " (Google-Hilfe). Aufgrund dieser Änderung wird dieses Postfach nicht mehr verwendet."
+  }
+}

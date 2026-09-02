@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 const DOMAINS = ["site", "contact", "email", "link"] as const;
+const LOCALES = ["fr", "en", "de", "no"] as const;
 
 function keyShape(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(keyShape);
@@ -17,15 +18,26 @@ function keyShape(value: unknown): unknown {
 }
 
 for (const domain of DOMAINS) {
-  test(`${domain} French and English catalogs keep the same message shape`, async () => {
-    const [englishSource, frenchSource] = await Promise.all([
-      readFile(new URL(`../messages/${domain}/en.json`, import.meta.url), "utf8"),
-      readFile(new URL(`../messages/${domain}/fr.json`, import.meta.url), "utf8"),
-    ]);
-
-    assert.deepEqual(
-      keyShape(JSON.parse(frenchSource)),
-      keyShape(JSON.parse(englishSource)),
+  test(`${domain} first-class locale catalogs keep the same message shape`, async () => {
+    const catalogs = await Promise.all(
+      LOCALES.map(async (locale) => {
+        const source = await readFile(
+          new URL(`../messages/${domain}/${locale}.json`, import.meta.url),
+          "utf8",
+        );
+        return [locale, keyShape(JSON.parse(source))] as const;
+      }),
     );
+
+    const englishShape = catalogs.find(([locale]) => locale === "en")?.[1];
+    assert.ok(englishShape);
+
+    for (const [locale, catalogShape] of catalogs) {
+      assert.deepEqual(
+        catalogShape,
+        englishShape,
+        `${domain}/${locale}.json drifted`,
+      );
+    }
   });
 }

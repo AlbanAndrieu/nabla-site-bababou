@@ -1,0 +1,27 @@
+{
+  "site": {
+    "skipToMainContent": "Zum Hauptinhalt springen",
+    "legalNotices": "Rechtliche Hinweise",
+    "backHome": "Zur Startseite",
+    "home": "Startseite",
+    "breadcrumbLabel": "Brotkrümelnavigation",
+    "backToTop": "Nach oben",
+    "backToTopAria": "Zurück zum Seitenanfang",
+    "localeSwitcherLabel": "Sprache",
+    "languageName": {
+      "en": "Englisch",
+      "fr": "Französisch",
+      "de": "Deutsch",
+      "no": "Norwegisch"
+    },
+    "switchLanguage": "Sprache wechseln",
+    "rssFeedAria": "RSS-Feed dieser Website",
+    "copyright": "© {year} Bababou.",
+    "notFound": {
+      "eyebrow": "Seite nicht gefunden",
+      "title": "Diese Seite wurde nicht gefunden",
+      "description": "Die Adresse ist möglicherweise veraltet oder die Seite wurde verschoben. Kehren Sie zur Startseite zurück, um weiterzusurfen.",
+      "backHome": "Zur Startseite"
+    }
+  }
+}

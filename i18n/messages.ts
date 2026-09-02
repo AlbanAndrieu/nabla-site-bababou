@@ -1,24 +1,34 @@
 import type { AppLocale } from "@/i18n/routing";
 
+type CatalogLoader = () => Promise<unknown>;
+
 const SITE_LOADERS = {
   fr: () => import("@/messages/site/fr.json"),
   en: () => import("@/messages/site/en.json"),
-} as const;
+  de: () => import("@/messages/site/de.json"),
+  no: () => import("@/messages/site/no.json"),
+} as const satisfies Record<AppLocale, CatalogLoader>;
 
 const CONTACT_LOADERS = {
   fr: () => import("@/messages/contact/fr.json"),
   en: () => import("@/messages/contact/en.json"),
-} as const;
+  de: () => import("@/messages/contact/de.json"),
+  no: () => import("@/messages/contact/no.json"),
+} as const satisfies Record<AppLocale, CatalogLoader>;
 
 const EMAIL_LOADERS = {
   fr: () => import("@/messages/email/fr.json"),
   en: () => import("@/messages/email/en.json"),
-} as const;
+  de: () => import("@/messages/email/de.json"),
+  no: () => import("@/messages/email/no.json"),
+} as const satisfies Record<AppLocale, CatalogLoader>;
 
 const LINK_LOADERS = {
   fr: () => import("@/messages/link/fr.json"),
   en: () => import("@/messages/link/en.json"),
-} as const;
+  de: () => import("@/messages/link/de.json"),
+  no: () => import("@/messages/link/no.json"),
+} as const satisfies Record<AppLocale, CatalogLoader>;
 
 function assertUniqueTopLevelNamespaces(
   catalogs: ReadonlyArray<Record<string, unknown>>,

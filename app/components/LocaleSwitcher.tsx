@@ -2,6 +2,8 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import type { ChangeEvent } from "react";
+
+import { type AppLocale, routing } from "@/i18n/routing";
 import { usePathname, useRouter } from "@/i18n/navigation";
 
 export default function LocaleSwitcher() {
@@ -11,7 +13,7 @@ export default function LocaleSwitcher() {
   const router = useRouter();
 
   function handleLocaleChange(event: ChangeEvent<HTMLSelectElement>) {
-    const nextLocale = event.target.value as "en" | "fr";
+    const nextLocale = event.target.value as AppLocale;
     // Shared routing (no `pathnames` map): `pathname` already reflects the active route.
     router.replace({ pathname }, { locale: nextLocale });
   }
@@ -27,8 +29,11 @@ export default function LocaleSwitcher() {
         className="form-select form-select-sm"
         aria-label={t("switchLanguage")}
       >
-        <option value="en">{t("languageName.en")}</option>
-        <option value="fr">{t("languageName.fr")}</option>
+        {routing.locales.map((supportedLocale) => (
+          <option key={supportedLocale} value={supportedLocale}>
+            {t(`languageName.${supportedLocale}`)}
+          </option>
+        ))}
       </select>
     </label>
   );

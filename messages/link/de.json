@@ -1,0 +1,26 @@
+{
+  "linkPage": {
+    "metadataTitle": "Nützliche Links — Bababou",
+    "metadataDescription": "Direktlinks zu den wichtigsten öffentlichen Seiten der Bababou-Website.",
+    "title": "Nützliche Links",
+    "intro": "Schneller Zugriff auf die wichtigsten öffentlichen Seiten der Website.",
+    "items": {
+      "home": {
+        "title": "Startseite",
+        "description": "Zur Startseite der Website zurückkehren."
+      },
+      "contact": {
+        "title": "Kontakt",
+        "description": "Die öffentlichen Kontaktmöglichkeiten der Website nutzen."
+      },
+      "email": {
+        "title": "E-Mail",
+        "description": "Die öffentliche E-Mail-Adresse aufrufen."
+      },
+      "rss": {
+        "title": "RSS-Feed",
+        "description": "Öffentlichen Aktualisierungen der Website folgen."
+      }
+    }
+  }
+}

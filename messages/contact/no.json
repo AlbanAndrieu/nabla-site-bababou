@@ -1,0 +1,82 @@
+{
+  "contactPage": {
+    "meta": {
+      "title": "Kontakt Alban Andrieu — DevSecOps Cloud Architect",
+      "description": "Kontakt Alban Andrieu om skyarkitektur, DevSecOps, KI-infrastruktur og sikkerhetsrådgivning."
+    },
+    "role": "DevSecOps Cloud Architect | Uavhengig konsulent",
+    "intro": "Åpen for utfordringer innen KI-integrasjon, MLOps, skyplattformer og sikkerhet.",
+    "hero": {
+      "profileAlt": "Portrett av Alban Andrieu, DevSecOps-ingeniør og skyarkitekt",
+      "current": "Utformer for tiden sikre skyløsninger hos",
+      "experience": "Med mer enn 20 års erfaring fra bedriftsmiljøer bidrar jeg til transformasjon gjennom DevOps-automatisering, skysikkerhet og infrastruktur som kode.",
+      "contactCta": "Ta kontakt",
+      "cvCta": "Se CV-en min"
+    },
+    "information": {
+      "title": "Kontaktinformasjon",
+      "subtitle": "Klar for å forbedre DevOps-praksisen? Velg den kontaktmåten som passer best."
+    },
+    "methods": {
+      "email": {
+        "title": "E-post",
+        "value": "job@albandrieu.com"
+      },
+      "phone": {
+        "title": "Telefon",
+        "value": "+33 6 95 43 53 53"
+      },
+      "calendar": {
+        "title": "Avtal et møte",
+        "value": "Bestill en 30-minutters samtale"
+      }
+    },
+    "allInfo": "All kontaktinformasjon",
+    "allInfoAlt": "QR-kode med kontaktinformasjonen til Alban Andrieu",
+    "linkedinQrAlt": "QR-kode til LinkedIn-profilen til Alban Andrieu",
+    "cv": {
+      "title": "Curriculum Vitae",
+      "description": "Last ned eller se CV-en min i flere formater og språk.",
+      "cta": "Se alle CV-formater",
+      "full": "Fullstendig CV",
+      "medium": "Mellomlang CV",
+      "small": "Kort CV"
+    },
+    "social": {
+      "title": "Koble til på sosiale medier",
+      "subtitle": "Følg det siste arbeidet mitt og åpen kildekode-prosjektene mine.",
+      "channels": {
+        "linkedin": "Profesjonelt nettverk",
+        "twitter": "Teknologioppdateringer",
+        "xing": "Profesjonelt nettverk",
+        "github": "Kodearkiver",
+        "docker": "Containerbilder",
+        "stack": "Spørsmål-og-svar-bidrag",
+        "facebook": "Sosialt nettverk",
+        "instagram": "Bilder og historier",
+        "calendly": "Avtal et møte",
+        "slack": "Samarbeid i Nabla-teamet",
+        "discord": "Snakk med boten",
+        "rss": "Nettstedsoppdateringer (XML)"
+      }
+    },
+    "location": {
+      "title": "Sted",
+      "district": "Forretningsområdet La Défense",
+      "description": "Stor-Paris — vest for sentrum: forretningskorridoren La Défense og Nanterre. Tilgjengelig for fjern- og stedlig rådgivning i hele regionen.",
+      "mapTitle": "Kart over La Défense, Puteaux og vestlige Paris",
+      "caption": "Oversikt over vestlige Paris og de indre forstedene, med sentrum rundt La Défense i Puteaux og forretningskorridoren i Nanterre. Kartdata ©",
+      "contributors": "bidragsytere."
+    },
+    "opensource": {
+      "title": "Åpen kildekode-prosjekter",
+      "description": "Utforsk arbeidet mitt med åpen kildekode, kildekoden til dette nettstedet og mine offentlige bidrag.",
+      "site": "Se dette nettstedet på GitHub",
+      "all": "Alle arkiver",
+      "stars": "GitHub-stjerner",
+      "forks": "GitHub-forker",
+      "sponsor": "Spons Alban Andrieu",
+      "stackAlt": "Stack Exchange-profil for Alban Andrieu"
+    }
+  }
+}

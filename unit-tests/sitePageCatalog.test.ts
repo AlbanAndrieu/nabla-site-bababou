@@ -10,8 +10,9 @@ import {
 } from "../lib/sitePageCatalog.ts";
 
 test("hybrid homepage stays single-canonical at the legacy root", () => {
-  assert.equal(canonicalPagePath("index", "fr"), "/");
-  assert.equal(canonicalPagePath("index", "en"), "/");
+  for (const locale of ["fr", "en", "de", "no"] as const) {
+    assert.equal(canonicalPagePath("index", locale), "/");
+  }
   assert.equal(isNextCanonicalSlug("index"), false);
   assert.equal(isSeoPageSlug("index"), false);
 });
@@ -23,23 +24,29 @@ test("native Next routes use the French default locale without a prefix", () => 
 });
 
 test("native Next routes prefix non-default locales and stay extensionless", () => {
-  assert.equal(canonicalPagePath("contact", "en"), "/en/contact");
-  assert.equal(canonicalPagePath("email", "en"), "/en/email");
-  assert.equal(canonicalPagePath("link", "en"), "/en/link");
+  for (const locale of ["en", "de", "no"] as const) {
+    assert.equal(canonicalPagePath("contact", locale), `/${locale}/contact`);
+    assert.equal(canonicalPagePath("email", locale), `/${locale}/email`);
+    assert.equal(canonicalPagePath("link", locale), `/${locale}/link`);
+  }
 });
 
 test("legacy URL semantics remain frozen until the route is migrated", () => {
   assert.equal(isNextCanonicalSlug("security"), false);
   assert.equal(canonicalPagePath("security", "en"), "/security.html");
   assert.equal(canonicalPagePath("security", "fr"), "/fr/security.html");
+  assert.equal(canonicalPagePath("security", "de"), "/security.html");
+  assert.equal(canonicalPagePath("security", "no"), "/security.html");
 });
 
 test("alternates follow routing locales and use French as x-default", () => {
-  assert.deepEqual(pageAlternates("contact", "en"), {
-    canonical: "/en/contact",
+  assert.deepEqual(pageAlternates("contact", "de"), {
+    canonical: "/de/contact",
     languages: {
       fr: "/contact",
       en: "/en/contact",
+      de: "/de/contact",
+      no: "/no/contact",
       "x-default": "/contact",
     },
   });
