@@ -1,3 +1,10 @@
+# [0.8.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.7.1...0.8.0) (2026-09-02)
+
+
+### Features
+
+* **policy:** localize legal notices and impressum ([#134](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/134)) ([c7e53e8](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/c7e53e81db1837605d5cf70ef63a1f0c167f3ea5))
+
 ## [0.7.1](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.7.0...0.7.1) (2026-09-02)
 
 
