@@ -32,15 +32,6 @@ const STANDARD_PAGES: StandardPageCase[] = [
 	{ path: "/for-fathers.html", label: "for fathers page" },
 	{ path: "/nre-en.html", label: "nre english page" },
 	{ path: "/nre-fr.html", label: "nre french page" },
-	{ path: "/policy/privacy_policy.html", label: "privacy policy page" },
-	{
-		path: "/policy/accessibility_statement.html",
-		label: "accessibility statement page",
-	},
-	{ path: "/policy/cookie_policy.html", label: "cookie policy page" },
-	{ path: "/policy/impressum.html", label: "impressum page" },
-	{ path: "/policy/legal.html", label: "legal page" },
-	{ path: "/policy/service_terms.html", label: "service terms page" },
 	{ path: "/test.html", label: "test page" },
 ];
 
@@ -48,6 +39,15 @@ const MIGRATED_NEXT_PAGES: StandardPageCase[] = [
 	{ path: "/contact.html", label: "contact page" },
 	{ path: "/email.html", label: "email contact addresses page" },
 	{ path: "/link.html", label: "links page" },
+	{
+		path: "/policy/accessibility_statement.html",
+		label: "accessibility statement page",
+	},
+	{ path: "/policy/cookie_policy.html", label: "cookie policy page" },
+	{ path: "/policy/impressum.html", label: "impressum page" },
+	{ path: "/policy/legal.html", label: "legal page" },
+	{ path: "/policy/privacy_policy.html", label: "privacy policy page" },
+	{ path: "/policy/service_terms.html", label: "service terms page" },
 ];
 
 const CHECKOUT_CHROME_CASES: ChromeContractCase[] = [
@@ -112,7 +112,9 @@ test.describe("Page chrome structure regression coverage", () => {
 				expect(html).toContain('data-nabla-app="next-intl"');
 				expect(html).toContain('class="route-header');
 				expect(html).toContain('class="footer text-center"');
+				expect(html).toContain('id="top" data-role="top-anchor"');
 				expect(html).not.toContain('a name="top"');
+				expect(html).not.toContain('href="/policy/legal.html"');
 				expect(html).not.toMatch(
 					/<script[^>]+theme-toggle\.js[^>]*><\/script>/i,
 				);
