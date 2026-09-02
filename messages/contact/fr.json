@@ -20,7 +20,7 @@
     "methods": {
       "email": {
         "title": "E-mail",
-        "value": "job@albandrieu.com"
+        "value": "aa@bababou.com"
       },
       "phone": {
         "title": "Téléphone",
@@ -31,9 +31,6 @@
         "value": "Réserver un appel de 30 minutes"
       }
     },
-    "allInfo": "Toutes les coordonnées",
-    "allInfoAlt": "QR code des coordonnées d’Alban Andrieu",
-    "linkedinQrAlt": "QR code du profil LinkedIn d’Alban Andrieu",
     "cv": {
       "title": "Curriculum Vitae",
       "description": "Téléchargez ou consultez mon CV dans plusieurs formats et langues.",
@@ -42,41 +39,13 @@
       "medium": "CV intermédiaire",
       "small": "CV court"
     },
-    "social": {
-      "title": "Réseaux sociaux",
-      "subtitle": "Suivez mes derniers travaux et mes projets open source.",
-      "channels": {
-        "linkedin": "Réseau professionnel",
-        "twitter": "Actualités techniques",
-        "xing": "Réseau professionnel",
-        "github": "Dépôts de code",
-        "docker": "Images de conteneurs",
-        "stack": "Contributions aux questions-réponses",
-        "facebook": "Réseau social",
-        "instagram": "Photos et stories",
-        "calendly": "Planifier une réunion",
-        "slack": "Collaboration avec l’équipe Nabla",
-        "discord": "Discuter avec le bot",
-        "rss": "Actualités du site (XML)"
-      }
-    },
     "location": {
       "title": "Localisation",
-      "district": "Quartier d’affaires de La Défense",
-      "description": "Grand Paris, à l’ouest du centre : le corridor d’affaires de La Défense et Nanterre. Disponible pour des missions à distance et sur site dans toute la région.",
-      "mapTitle": "Carte de La Défense, Puteaux et l’ouest parisien",
-      "caption": "Vue de l’ouest parisien et de sa proche banlieue, centrée sur La Défense à Puteaux et le corridor d’affaires de Nanterre. Données cartographiques ©",
+      "district": "La Défense",
+      "description": "Quartier d’affaires de La Défense, dans le Grand Paris. Disponible pour des missions à distance et sur site dans toute la région.",
+      "mapTitle": "Carte de La Défense et de l’ouest parisien",
+      "caption": "Vue de l’ouest parisien centrée sur le quartier d’affaires de La Défense. Données cartographiques ©",
       "contributors": "et ses contributeurs."
-    },
-    "opensource": {
-      "title": "Projets open source",
-      "description": "Explorez mes travaux open source, le code de ce site et mes contributions publiques.",
-      "site": "Voir ce site sur GitHub",
-      "all": "Tous les dépôts",
-      "stars": "Étoiles GitHub",
-      "forks": "Forks GitHub",
-      "sponsor": "Soutenir Alban Andrieu",
-      "stackAlt": "Profil Stack Exchange d’Alban Andrieu"
     }
   }
 }

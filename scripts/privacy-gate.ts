@@ -53,13 +53,11 @@ const PUBLIC_CONTACT_SURFACES = [
   "app/[locale]/email/page.tsx",
   "messages/contact/",
   "messages/email/",
-  ".next/server/app/fr/contact",
-  ".next/server/app/en/contact",
-  ".next/server/app/fr/email",
-  ".next/server/app/en/email",
   "messages_contact_",
   "messages_email_",
 ];
+const GENERATED_PUBLIC_CONTACT_SURFACE =
+  /^\.next\/server\/app\/[^/]+\/(?:contact|email)(?:[./]|\/|$)/;
 const SOURCE_SCAN_TARGETS = [
   "public/index.html",
   "app",
@@ -150,11 +148,14 @@ function dedupeFindings(findings: PrivacyFinding[]) {
 
 function isPublicContactSurface(file: string) {
   const normalized = file.replaceAll("\\", "/");
-  return PUBLIC_CONTACT_SURFACES.some(
-    (surface) =>
-      normalized === surface ||
-      normalized.startsWith(surface) ||
-      normalized.includes(surface),
+  return (
+    GENERATED_PUBLIC_CONTACT_SURFACE.test(normalized) ||
+    PUBLIC_CONTACT_SURFACES.some(
+      (surface) =>
+        normalized === surface ||
+        normalized.startsWith(surface) ||
+        normalized.includes(surface),
+    )
   );
 }
 

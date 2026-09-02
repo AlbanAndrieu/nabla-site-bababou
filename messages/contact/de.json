@@ -20,7 +20,7 @@
     "methods": {
       "email": {
         "title": "E-Mail",
-        "value": "job@albandrieu.com"
+        "value": "aa@bababou.com"
       },
       "phone": {
         "title": "Telefon",
@@ -31,9 +31,6 @@
         "value": "30-minütiges Gespräch buchen"
       }
     },
-    "allInfo": "Alle Kontaktinformationen",
-    "allInfoAlt": "QR-Code mit den Kontaktinformationen von Alban Andrieu",
-    "linkedinQrAlt": "QR-Code zum LinkedIn-Profil von Alban Andrieu",
     "cv": {
       "title": "Lebenslauf",
       "description": "Meinen Lebenslauf in verschiedenen Formaten und Sprachen herunterladen oder ansehen.",
@@ -42,41 +39,13 @@
       "medium": "Mittlerer Lebenslauf",
       "small": "Kurzlebenslauf"
     },
-    "social": {
-      "title": "In sozialen Netzwerken verbinden",
-      "subtitle": "Folgen Sie meinen neuesten Arbeiten und Open-Source-Projekten.",
-      "channels": {
-        "linkedin": "Berufliches Netzwerk",
-        "twitter": "Technik-Updates",
-        "xing": "Berufliches Netzwerk",
-        "github": "Code-Repositories",
-        "docker": "Container-Images",
-        "stack": "Fragen-und-Antworten-Beiträge",
-        "facebook": "Soziales Netzwerk",
-        "instagram": "Fotos und Storys",
-        "calendly": "Termin vereinbaren",
-        "slack": "Zusammenarbeit im Nabla-Team",
-        "discord": "Mit dem Bot sprechen",
-        "rss": "Website-Aktualisierungen (XML)"
-      }
-    },
     "location": {
       "title": "Standort",
-      "district": "Geschäftsviertel La Défense",
-      "description": "Großraum Paris — westlich des Stadtzentrums: der Geschäftskorridor La Défense und Nanterre. Verfügbar für Remote- und Vor-Ort-Beratung in der gesamten Region.",
-      "mapTitle": "Karte von La Défense, Puteaux und dem Westen von Paris",
-      "caption": "Übersicht über den Westen von Paris und die inneren Vororte mit Schwerpunkt auf La Défense in Puteaux und dem Geschäftskorridor Nanterre. Kartendaten ©",
+      "district": "La Défense",
+      "description": "Geschäftsviertel La Défense im Großraum Paris. Verfügbar für Remote- und Vor-Ort-Beratung in der gesamten Region.",
+      "mapTitle": "Karte von La Défense und dem Westen von Paris",
+      "caption": "Übersicht über den Westen von Paris mit Schwerpunkt auf dem Geschäftsviertel La Défense. Kartendaten ©",
       "contributors": "Mitwirkende."
-    },
-    "opensource": {
-      "title": "Open-Source-Projekte",
-      "description": "Entdecken Sie meine Open-Source-Arbeit, den Quellcode dieser Website und meine öffentlichen Beiträge.",
-      "site": "Diese Website auf GitHub ansehen",
-      "all": "Alle Repositories",
-      "stars": "GitHub-Sterne",
-      "forks": "GitHub-Forks",
-      "sponsor": "Alban Andrieu sponsern",
-      "stackAlt": "Stack-Exchange-Profil von Alban Andrieu"
     }
   }
 }
