@@ -13,9 +13,26 @@ test("contact route preserves public professional parity", async () => {
   assert.doesNotMatch(page, /pageAlternates\("contact", locale\)/);
   assert.match(page, /<ContactHero/);
   assert.match(page, /methods\.phone/);
+  assert.match(page, /aa@bababou\.com/);
   assert.match(page, /calendly\.com\/alban-andrieu/);
   assert.match(page, /openstreetmap\.org/);
   assert.match(page, /\/cv\/cv-/);
+
+  for (const removedSurface of [
+    "qr_albanandrieu_contact_logo.png",
+    "linkedin.com",
+    "github.com",
+    "twitter.com",
+    "xing.com",
+    "hub.docker.com",
+    "stackexchange.com",
+    "facebook.com",
+    "instagram.com",
+    "nabla-siege.slack.com",
+    "discord.com",
+  ]) {
+    assert.doesNotMatch(page, new RegExp(removedSurface.replaceAll(".", "\\.")));
+  }
 });
 
 test("contact hero renders the public professional identity and CV CTA", async () => {
@@ -32,9 +49,9 @@ test("contact hero renders the public professional identity and CV CTA", async (
   assert.match(hero, /Alban Andrieu/);
 });
 
-test("contact catalogs retain intentional public professional contact data", async () => {
+test("contact catalogs retain only approved public professional contact data", async () => {
   const catalogs = await Promise.all(
-    ["en", "fr"].map((locale) =>
+    ["fr", "en", "de", "no"].map((locale) =>
       readFile(
         new URL(`../messages/contact/${locale}.json`, import.meta.url),
         "utf8",
@@ -43,9 +60,13 @@ test("contact catalogs retain intentional public professional contact data", asy
   );
 
   for (const catalog of catalogs) {
-    assert.match(catalog, /job@albandrieu\.com/);
-    assert.match(catalog, /"phone"\s*:/i);
+    assert.match(catalog, /aa@bababou\.com/);
+    assert.match(catalog, /\+33 6 95 43 53 53/);
+    assert.match(catalog, /"district"\s*:\s*"La Défense"/);
     assert.match(catalog, /Alban Andrieu/);
+    assert.doesNotMatch(catalog, /job@albandrieu\.com/);
+    assert.doesNotMatch(catalog, /"social"\s*:/i);
+    assert.doesNotMatch(catalog, /"opensource"\s*:/i);
     assert.doesNotMatch(catalog, /"coordinates"\s*:/i);
   }
 });
