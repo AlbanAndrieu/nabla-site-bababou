@@ -1,3 +1,10 @@
+# [0.6.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.5.0...0.6.0) (2026-09-02)
+
+
+### Features
+
+* **i18n:** add German and Norwegian locales ([#129](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/129)) ([5d75202](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/5d75202ea0d3fe285268292f1c44c896bdc8cf6c))
+
 # [0.5.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.4.0...0.5.0) (2026-09-02)
 
 
