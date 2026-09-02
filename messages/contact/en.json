@@ -20,7 +20,7 @@
     "methods": {
       "email": {
         "title": "Email",
-        "value": "job@albandrieu.com"
+        "value": "aa@bababou.com"
       },
       "phone": {
         "title": "Phone",
@@ -31,9 +31,6 @@
         "value": "Book a 30-minute call"
       }
     },
-    "allInfo": "All contact information",
-    "allInfoAlt": "QR code for Alban Andrieu's contact information",
-    "linkedinQrAlt": "QR code for Alban Andrieu's LinkedIn profile",
     "cv": {
       "title": "Curriculum Vitae",
       "description": "Download or view my CV in several formats and languages.",
@@ -42,41 +39,13 @@
       "medium": "Medium CV",
       "small": "Short CV"
     },
-    "social": {
-      "title": "Connect on social media",
-      "subtitle": "Follow my latest work and open-source projects.",
-      "channels": {
-        "linkedin": "Professional network",
-        "twitter": "Tech updates",
-        "xing": "Professional network",
-        "github": "Code repositories",
-        "docker": "Container images",
-        "stack": "Q&A contributions",
-        "facebook": "Social network",
-        "instagram": "Photos and stories",
-        "calendly": "Schedule a meeting",
-        "slack": "Nabla team collaboration",
-        "discord": "Talk to the bot",
-        "rss": "Site updates (XML)"
-      }
-    },
     "location": {
       "title": "Location",
-      "district": "La Défense business district",
-      "description": "Greater Paris — west of the city centre: the La Défense and Nanterre business corridor. Available for remote and on-site consulting across the region.",
-      "mapTitle": "Map of La Défense, Puteaux and western Paris",
-      "caption": "Overview of western Paris and its inner suburbs, centred on La Défense in Puteaux and the Nanterre business corridor. Map data ©",
+      "district": "La Défense",
+      "description": "La Défense business district in Greater Paris. Available for remote and on-site consulting across the region.",
+      "mapTitle": "Map of La Défense and western Paris",
+      "caption": "Overview of western Paris centred on the La Défense business district. Map data ©",
       "contributors": "contributors."
-    },
-    "opensource": {
-      "title": "Open source projects",
-      "description": "Explore my open-source work, the source of this website and my public contributions.",
-      "site": "View this site on GitHub",
-      "all": "All repositories",
-      "stars": "GitHub stars",
-      "forks": "GitHub forks",
-      "sponsor": "Sponsor Alban Andrieu",
-      "stackAlt": "Stack Exchange profile for Alban Andrieu"
     }
   }
 }

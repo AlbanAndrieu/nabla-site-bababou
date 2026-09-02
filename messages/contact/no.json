@@ -1,0 +1,51 @@
+{
+  "contactPage": {
+    "meta": {
+      "title": "Kontakt Alban Andrieu — DevSecOps Cloud Architect",
+      "description": "Kontakt Alban Andrieu om skyarkitektur, DevSecOps, KI-infrastruktur og sikkerhetsrådgivning."
+    },
+    "role": "DevSecOps Cloud Architect | Uavhengig konsulent",
+    "intro": "Åpen for utfordringer innen KI-integrasjon, MLOps, skyplattformer og sikkerhet.",
+    "hero": {
+      "profileAlt": "Portrett av Alban Andrieu, DevSecOps-ingeniør og skyarkitekt",
+      "current": "Utformer for tiden sikre skyløsninger hos",
+      "experience": "Med mer enn 20 års erfaring fra bedriftsmiljøer bidrar jeg til transformasjon gjennom DevOps-automatisering, skysikkerhet og infrastruktur som kode.",
+      "contactCta": "Ta kontakt",
+      "cvCta": "Se CV-en min"
+    },
+    "information": {
+      "title": "Kontaktinformasjon",
+      "subtitle": "Klar for å forbedre DevOps-praksisen? Velg den kontaktmåten som passer best."
+    },
+    "methods": {
+      "email": {
+        "title": "E-post",
+        "value": "aa@bababou.com"
+      },
+      "phone": {
+        "title": "Telefon",
+        "value": "+33 6 95 43 53 53"
+      },
+      "calendar": {
+        "title": "Avtal et møte",
+        "value": "Bestill en 30-minutters samtale"
+      }
+    },
+    "cv": {
+      "title": "Curriculum Vitae",
+      "description": "Last ned eller se CV-en min i flere formater og språk.",
+      "cta": "Se alle CV-formater",
+      "full": "Fullstendig CV",
+      "medium": "Mellomlang CV",
+      "small": "Kort CV"
+    },
+    "location": {
+      "title": "Sted",
+      "district": "La Défense",
+      "description": "Forretningsområdet La Défense i Stor-Paris. Tilgjengelig for fjern- og stedlig rådgivning i hele regionen.",
+      "mapTitle": "Kart over La Défense og vestlige Paris",
+      "caption": "Oversikt over vestlige Paris med sentrum rundt forretningsområdet La Défense. Kartdata ©",
+      "contributors": "bidragsytere."
+    }
+  }
+}

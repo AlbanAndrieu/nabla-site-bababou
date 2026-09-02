@@ -1,0 +1,51 @@
+{
+  "contactPage": {
+    "meta": {
+      "title": "Alban Andrieu kontaktieren — DevSecOps Cloud Architect",
+      "description": "Kontaktieren Sie Alban Andrieu für Cloud-Architektur, DevSecOps, KI-Infrastruktur und Sicherheitsberatung."
+    },
+    "role": "DevSecOps Cloud Architect | Unabhängiger Berater",
+    "intro": "Offen für Herausforderungen rund um KI-Integration, MLOps, Cloud-Plattformen und Sicherheit.",
+    "hero": {
+      "profileAlt": "Porträt von Alban Andrieu, DevSecOps-Ingenieur und Cloud-Architekt",
+      "current": "Derzeit Entwicklung sicherer Cloud-Lösungen bei",
+      "experience": "Mit mehr als 20 Jahren Erfahrung in Unternehmensumgebungen unterstütze ich die Transformation durch DevOps-Automatisierung, Cloud-Sicherheit und Infrastructure as Code.",
+      "contactCta": "Kontakt aufnehmen",
+      "cvCta": "Meinen Lebenslauf ansehen"
+    },
+    "information": {
+      "title": "Kontaktinformationen",
+      "subtitle": "Möchten Sie Ihre DevOps-Praktiken verbessern? Wählen Sie den für Sie bequemsten Kontaktweg."
+    },
+    "methods": {
+      "email": {
+        "title": "E-Mail",
+        "value": "aa@bababou.com"
+      },
+      "phone": {
+        "title": "Telefon",
+        "value": "+33 6 95 43 53 53"
+      },
+      "calendar": {
+        "title": "Termin vereinbaren",
+        "value": "30-minütiges Gespräch buchen"
+      }
+    },
+    "cv": {
+      "title": "Lebenslauf",
+      "description": "Meinen Lebenslauf in verschiedenen Formaten und Sprachen herunterladen oder ansehen.",
+      "cta": "Alle Lebenslauf-Formate ansehen",
+      "full": "Vollständiger Lebenslauf",
+      "medium": "Mittlerer Lebenslauf",
+      "small": "Kurzlebenslauf"
+    },
+    "location": {
+      "title": "Standort",
+      "district": "La Défense",
+      "description": "Geschäftsviertel La Défense im Großraum Paris. Verfügbar für Remote- und Vor-Ort-Beratung in der gesamten Region.",
+      "mapTitle": "Karte von La Défense und dem Westen von Paris",
+      "caption": "Übersicht über den Westen von Paris mit Schwerpunkt auf dem Geschäftsviertel La Défense. Kartendaten ©",
+      "contributors": "Mitwirkende."
+    }
+  }
+}

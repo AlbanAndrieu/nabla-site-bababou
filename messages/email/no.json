@@ -1,0 +1,60 @@
+{
+  "email": {
+    "title": "Oppdatering av e-postadresser",
+    "metadataTitle": "Kontaktadresser på e-post — Alban Andrieu",
+    "metadataDescription": "Gjeldende e-postadresser for arbeid, sikkerhet, fakturering og generell kontakt med Alban Andrieu.",
+    "useTheseAddresses": "Vennligst bruk disse adressene",
+    "cards": [
+      {
+        "title": "Jobb / arbeid (selvstendig)",
+        "email": "aa@bababou.com",
+        "descriptionBefore": "",
+        "descriptionAfter": ""
+      },
+      {
+        "title": "Jobb / arbeid",
+        "email": "aa@bababou.com",
+        "descriptionBefore": "",
+        "descriptionAfter": ""
+      },
+      {
+        "title": "Nettstedssikkerhet",
+        "email": "security@albandrieu.com",
+        "descriptionBefore": "",
+        "descriptionAfter": ""
+      },
+      {
+        "title": "Fakturaer",
+        "email": "invoice@albanandrieu.com",
+        "descriptionBefore": "For alle fakturarelaterte saker (fakturering, betalingsspørsmål, MVA eller innkjøpsordrer), bruk ",
+        "descriptionAfter": " — ikke send fakturaer til jobb- eller de generelle kontaktadressene ovenfor."
+      },
+      {
+        "title": "Andre emner",
+        "email": "contact@albandrieu.com",
+        "descriptionBefore": "",
+        "descriptionAfter": ""
+      },
+      {
+        "title": "Bababou",
+        "email": "alban.andrieu@bababou.com",
+        "descriptionBefore": "",
+        "descriptionAfter": ""
+      }
+    ],
+    "automatedHeading": "Automatiserte eller sorterte svar",
+    "automatedDesc": "Hvis du mottar e-post fra en av adressene nedenfor, betyr det vanligvis at meldingen din ikke oppfylte kravene for å bli lest av et menneske (meg), eller at den ble håndtert av automatisk sortering:",
+    "automatedList": [
+      "no-reply@albanandrieu.com",
+      "no-reply@albandrieu.com",
+      "no-reply@bababou.com",
+      "openclaw@albandrieu.com",
+      "assistant@albandrieu.com",
+      "invoice@albanandrieu.com"
+    ],
+    "reasonLine1": "Adressen",
+    "reasonLine2": "er avviklet. Google endrer hvordan Gmail fungerer med tredjepartskontoer (Gmailify og POP «sjekk e-post fra andre kontoer»); se",
+    "reasonLine3": "Les om kommende endringer i Gmailify og POP i Gmail",
+    "reasonLine4": " (Google Hjelp). Denne endringen er grunnen til at denne postboksen ikke lenger vil bli brukt."
+  }
+}

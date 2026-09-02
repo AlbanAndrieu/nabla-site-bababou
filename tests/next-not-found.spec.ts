@@ -13,6 +13,18 @@ const NOT_FOUND_CASES = [
     title: "This page is missing",
     skipLabel: "Skip to main content",
   },
+  {
+    path: "/de/missing-next-route-for-playwright",
+    lang: "de",
+    title: "Diese Seite wurde nicht gefunden",
+    skipLabel: "Zum Hauptinhalt springen",
+  },
+  {
+    path: "/no/missing-next-route-for-playwright",
+    lang: "no",
+    title: "Denne siden finnes ikke",
+    skipLabel: "Hopp til hovedinnhold",
+  },
 ] as const;
 
 test.describe("localized Next.js 404", () => {

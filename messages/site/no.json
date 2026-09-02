@@ -1,0 +1,27 @@
+{
+  "site": {
+    "skipToMainContent": "Hopp til hovedinnhold",
+    "legalNotices": "Juridiske merknader",
+    "backHome": "Tilbake til forsiden",
+    "home": "Forside",
+    "breadcrumbLabel": "Brødsmulesti",
+    "backToTop": "Tilbake til toppen",
+    "backToTopAria": "Tilbake til toppen av siden",
+    "localeSwitcherLabel": "Språk",
+    "languageName": {
+      "en": "Engelsk",
+      "fr": "Fransk",
+      "de": "Tysk",
+      "no": "Norsk"
+    },
+    "switchLanguage": "Bytt språk",
+    "rssFeedAria": "RSS-feed for dette nettstedet",
+    "copyright": "© {year} Bababou.",
+    "notFound": {
+      "eyebrow": "Siden ble ikke funnet",
+      "title": "Denne siden finnes ikke",
+      "description": "Adressen kan være utdatert, eller siden kan ha blitt flyttet. Gå tilbake til forsiden for å fortsette.",
+      "backHome": "Tilbake til forsiden"
+    }
+  }
+}

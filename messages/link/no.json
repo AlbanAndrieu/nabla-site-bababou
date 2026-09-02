@@ -1,0 +1,26 @@
+{
+  "linkPage": {
+    "metadataTitle": "Nyttige lenker — Bababou",
+    "metadataDescription": "Snarveier til de viktigste offentlige sidene på Bababou-nettstedet.",
+    "title": "Nyttige lenker",
+    "intro": "Rask tilgang til nettstedets viktigste offentlige sider.",
+    "items": {
+      "home": {
+        "title": "Forside",
+        "description": "Gå tilbake til nettstedets forside."
+      },
+      "contact": {
+        "title": "Kontakt",
+        "description": "Bruk nettstedets offentlige kontaktmuligheter."
+      },
+      "email": {
+        "title": "E-post",
+        "description": "Se den offentlige e-postadressen."
+      },
+      "rss": {
+        "title": "RSS-feed",
+        "description": "Følg offentlige oppdateringer på nettstedet."
+      }
+    }
+  }
+}

@@ -2,6 +2,12 @@ import { type APIRequestContext, expect, test } from "@playwright/test";
 
 const SITE_URL = "https://bababou.com";
 const ROUTES = ["contact", "email", "link"] as const;
+const LOCALES = [
+  { locale: "fr", requestPrefix: "/fr", canonicalPrefix: "" },
+  { locale: "en", requestPrefix: "/en", canonicalPrefix: "/en" },
+  { locale: "de", requestPrefix: "/de", canonicalPrefix: "/de" },
+  { locale: "no", requestPrefix: "/no", canonicalPrefix: "/no" },
+] as const;
 
 function canonical(path: string) {
   return new URL(path, SITE_URL).href;
@@ -31,18 +37,26 @@ async function applicationRedirect(request: APIRequestContext, path: string) {
 
 async function expectAlternates(
   page: import("@playwright/test").Page,
-  expected: { canonical: string; en: string; fr: string; xDefault: string },
+  expected: {
+    canonical: string;
+    de: string;
+    en: string;
+    fr: string;
+    no: string;
+    xDefault: string;
+  },
 ) {
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
     canonical(expected.canonical),
   );
-  await expect(
-    page.locator('link[rel="alternate"][hreflang="fr"]'),
-  ).toHaveAttribute("href", canonical(expected.fr));
-  await expect(
-    page.locator('link[rel="alternate"][hreflang="en"]'),
-  ).toHaveAttribute("href", canonical(expected.en));
+
+  for (const locale of ["fr", "en", "de", "no"] as const) {
+    await expect(
+      page.locator(`link[rel="alternate"][hreflang="${locale}"]`),
+    ).toHaveAttribute("href", canonical(expected[locale]));
+  }
+
   await expect(
     page.locator('link[rel="alternate"][hreflang="x-default"]'),
   ).toHaveAttribute("href", canonical(expected.xDefault));
@@ -93,38 +107,42 @@ async function expectSocialMetadata(
 
 test.describe("native Next SEO locale metadata", () => {
   for (const route of ROUTES) {
-    test(`${route} renders French canonical, hreflang and social metadata`, async ({
-      page,
-    }) => {
-      // Locale detection is enabled and the CI browser defaults to English.
-      // Target the explicit French route so this test validates metadata rather
-      // than the browser-language negotiation performed for an unprefixed URL.
-      await page.goto(`/fr/${route}`);
-      await expectAlternates(page, {
-        canonical: `/${route}`,
-        fr: `/${route}`,
-        en: `/en/${route}`,
-        xDefault: `/${route}`,
-      });
-      await expectSocialMetadata(page, `/${route}`);
-    });
+    for (const { locale, requestPrefix, canonicalPrefix } of LOCALES) {
+      test(`${route} renders ${locale} canonical, hreflang and social metadata`, async ({
+        page,
+      }) => {
+        const path = `${requestPrefix}/${route}`;
+        const canonicalPath = `${canonicalPrefix}/${route}`;
 
-    test(`${route} renders English prefixed canonical, hreflang and social metadata`, async ({
-      page,
-    }) => {
-      await page.goto(`/en/${route}`);
-      await expectAlternates(page, {
-        canonical: `/en/${route}`,
-        fr: `/${route}`,
-        en: `/en/${route}`,
-        xDefault: `/${route}`,
+        await page.goto(path);
+        await expect(page.locator("html")).toHaveAttribute("lang", locale);
+        await expectAlternates(page, {
+          canonical: canonicalPath,
+          fr: `/${route}`,
+          en: `/en/${route}`,
+          de: `/de/${route}`,
+          no: `/no/${route}`,
+          xDefault: `/${route}`,
+        });
+        await expectSocialMetadata(page, canonicalPath);
       });
-      await expectSocialMetadata(page, `/en/${route}`);
-    });
+    }
   }
 
+  test("locale switcher exposes all first-class locales", async ({ page }) => {
+    await page.goto("/de/contact");
+    const switcher = page.locator("#route-header-locale");
+
+    await expect(switcher).toHaveValue("de");
+    await expect(switcher.locator("option")).toHaveCount(4);
+    await expect(switcher.locator('option[value="fr"]')).toHaveCount(1);
+    await expect(switcher.locator('option[value="en"]')).toHaveCount(1);
+    await expect(switcher.locator('option[value="de"]')).toHaveCount(1);
+    await expect(switcher.locator('option[value="no"]')).toHaveCount(1);
+  });
+
   test("technical test route renders noindex and nofollow", async ({ page }) => {
-    await page.goto("/en/test");
+    await page.goto("/no/test");
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
       "content",
       /noindex.*nofollow|nofollow.*noindex/i,

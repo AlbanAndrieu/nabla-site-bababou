@@ -1,16 +1,21 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
+import { type AppLocale, routing } from "@/i18n/routing";
+
 export type HtmlExtractMode =
   | "body"
   | "main"
   | "headerMain"
   | "navHeaderMain"
   | "mainOuter";
-export type SiteLocale = "fr" | "en";
+export type SiteLocale = AppLocale;
 
-const DEFAULT_LOCALE: SiteLocale = "fr";
-const SUPPORTED_LOCALES: readonly SiteLocale[] = ["fr", "en"];
+const DEFAULT_LOCALE: SiteLocale = routing.defaultLocale;
+const SUPPORTED_LOCALES: readonly SiteLocale[] = routing.locales;
+const LOCALE_PREFIX_PATTERN = new RegExp(
+  `^/(?:${SUPPORTED_LOCALES.join("|")})(?:/|$)`,
+);
 
 /**
  * Transitional allow-list only.
@@ -98,15 +103,15 @@ function resolvePublicFilePath(file: string, locale?: string): string {
 }
 
 function localePrefix(locale?: string): string {
-  return normalizeLocale(locale) === DEFAULT_LOCALE
-    ? ""
-    : `/${normalizeLocale(locale)}`;
+  const normalizedLocale = normalizeLocale(locale);
+  return normalizedLocale === DEFAULT_LOCALE ? "" : `/${normalizedLocale}`;
 }
 
 function withLocalePrefix(pathname: string, locale?: string): string {
-  if (/^\/(fr|en)(\/|$)/.test(pathname)) return pathname;
+  if (LOCALE_PREFIX_PATTERN.test(pathname)) return pathname;
   // The homepage remains owner-controlled and mono-canonical at `/` during
-  // the hybrid migration; legacy index links must never create `/en` or `/fr`.
+  // the hybrid migration; legacy index links must never create locale-prefixed
+  // variants for any first-class locale.
   if (pathname === "/") return "/";
   const prefix = localePrefix(locale);
   if (!prefix) return pathname;

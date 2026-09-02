@@ -9,6 +9,13 @@ import {
 } from "../lib/htmlFromPublic.ts";
 import { POLICY_PAGES, POLICY_PAGE_SLUGS } from "../lib/policyPages.ts";
 
+const LOCALIZED_PREFIXES = {
+  fr: "",
+  en: "/en",
+  de: "/de",
+  no: "/no",
+} as const;
+
 test("extractHtmlFragment keeps body content and removes the legacy footer", () => {
   const html = `<!doctype html><html><body><main><p>Hello</p></main><footer>Legacy footer</footer></body></html>`;
   const fragment = extractHtmlFragment(html, "body");
@@ -18,32 +25,32 @@ test("extractHtmlFragment keeps body content and removes the legacy footer", () 
 
 test("rewriteLegacyHtmlHrefs emits clean localized Next.js routes", () => {
   const fragment = `<a href="contact.html?from=legacy#form">Contact</a><img src="./assets/photo.webp">`;
-  assert.equal(
-    rewriteLegacyHtmlHrefs(fragment, "fr"),
-    `<a href="/contact?from=legacy#form">Contact</a><img src="/assets/photo.webp">`,
-  );
-  assert.equal(
-    rewriteLegacyHtmlHrefs(fragment, "en"),
-    `<a href="/en/contact?from=legacy#form">Contact</a><img src="/assets/photo.webp">`,
-  );
+
+  for (const [locale, prefix] of Object.entries(LOCALIZED_PREFIXES)) {
+    assert.equal(
+      rewriteLegacyHtmlHrefs(fragment, locale),
+      `<a href="${prefix}/contact?from=legacy#form">Contact</a><img src="/assets/photo.webp">`,
+    );
+  }
 });
 
 test("rewriteLegacyHtmlHrefs resolves policy links from their source directory", () => {
   const fragment = `<a href="privacy_policy.html?from=cookies#rights">Privacy</a><a href="../index.html">Home</a>`;
-  assert.equal(
-    rewriteLegacyHtmlHrefs(fragment, "fr", "policy/cookie_policy.html"),
-    `<a href="/policy/privacy_policy?from=cookies#rights">Privacy</a><a href="/">Home</a>`,
-  );
-  assert.equal(
-    rewriteLegacyHtmlHrefs(fragment, "en", "policy/cookie_policy.html"),
-    `<a href="/en/policy/privacy_policy?from=cookies#rights">Privacy</a><a href="/">Home</a>`,
-  );
+
+  for (const [locale, prefix] of Object.entries(LOCALIZED_PREFIXES)) {
+    assert.equal(
+      rewriteLegacyHtmlHrefs(fragment, locale, "policy/cookie_policy.html"),
+      `<a href="${prefix}/policy/privacy_policy?from=cookies#rights">Privacy</a><a href="/">Home</a>`,
+    );
+  }
 });
 
 test("legacy index links keep the owner-controlled homepage canonical", () => {
   const fragment = `<a href="../index.html">Home</a>`;
-  assert.equal(rewriteLegacyHtmlHrefs(fragment, "fr"), `<a href="/">Home</a>`);
-  assert.equal(rewriteLegacyHtmlHrefs(fragment, "en"), `<a href="/">Home</a>`);
+
+  for (const locale of Object.keys(LOCALIZED_PREFIXES)) {
+    assert.equal(rewriteLegacyHtmlHrefs(fragment, locale), `<a href="/">Home</a>`);
+  }
 });
 
 test("removeLegacyElementsById removes sections replaced by native React", () => {
@@ -54,11 +61,13 @@ test("removeLegacyElementsById removes sections replaced by native React", () =>
   );
 });
 
-test("loadPublicHtmlFragment uses the explicit default fallback for untranslated files", async () => {
-  const fragment = await loadPublicHtmlFragment("404.html", "body", "en");
-  assert.ok(fragment.trim().length > 0);
-  assert.match(fragment, /<h1>404<\/h1>/i);
-  assert.match(fragment, /Back to home/i);
+test("loadPublicHtmlFragment uses the explicit fallback for untranslated files", async () => {
+  for (const locale of ["en", "de", "no"] as const) {
+    const fragment = await loadPublicHtmlFragment("404.html", "body", locale);
+    assert.ok(fragment.trim().length > 0);
+    assert.match(fragment, /<h1>404<\/h1>/i);
+    assert.match(fragment, /Back to home/i);
+  }
 });
 
 for (const slug of POLICY_PAGE_SLUGS) {
@@ -80,30 +89,51 @@ for (const slug of POLICY_PAGE_SLUGS) {
   });
 }
 
-test("policy cross-links stay inside the localized policy namespace", async () => {
-  const cookie = await loadPublicHtmlFragment(
-    POLICY_PAGES.cookie_policy.sourceFile,
-    "main",
-    "en",
-  );
-  assert.match(cookie, /href="\/en\/policy\/privacy_policy"/);
-  assert.doesNotMatch(cookie, /href="\/en\/privacy_policy"/);
+test("policy cross-links stay inside each localized policy namespace", async () => {
+  for (const locale of ["en", "de", "no"] as const) {
+    const prefix = LOCALIZED_PREFIXES[locale];
+    const cookie = await loadPublicHtmlFragment(
+      POLICY_PAGES.cookie_policy.sourceFile,
+      "main",
+      locale,
+    );
+    assert.match(
+      cookie,
+      new RegExp(`href="${prefix}/policy/privacy_policy"`),
+    );
+    assert.doesNotMatch(
+      cookie,
+      new RegExp(`href="${prefix}/privacy_policy"`),
+    );
 
-  const impressum = await loadPublicHtmlFragment(
-    POLICY_PAGES.impressum.sourceFile,
-    "main",
-    "en",
-  );
-  assert.match(impressum, /href="\/en\/policy\/privacy_policy"/);
-  assert.match(impressum, /href="\/en\/policy\/service_terms"/);
+    const impressum = await loadPublicHtmlFragment(
+      POLICY_PAGES.impressum.sourceFile,
+      "main",
+      locale,
+    );
+    assert.match(
+      impressum,
+      new RegExp(`href="${prefix}/policy/privacy_policy"`),
+    );
+    assert.match(
+      impressum,
+      new RegExp(`href="${prefix}/policy/service_terms"`),
+    );
 
-  const legal = await loadPublicHtmlFragment(
-    POLICY_PAGES.legal.sourceFile,
-    "main",
-    "en",
-  );
-  assert.match(legal, /href="\/en\/policy\/privacy_policy"/);
-  assert.match(legal, /href="\/en\/policy\/service_terms"/);
+    const legal = await loadPublicHtmlFragment(
+      POLICY_PAGES.legal.sourceFile,
+      "main",
+      locale,
+    );
+    assert.match(
+      legal,
+      new RegExp(`href="${prefix}/policy/privacy_policy"`),
+    );
+    assert.match(
+      legal,
+      new RegExp(`href="${prefix}/policy/service_terms"`),
+    );
+  }
 });
 
 test("loadPublicHtmlFragment rejects files outside the explicit allowlist", async () => {

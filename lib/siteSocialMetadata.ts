@@ -16,25 +16,31 @@ const SITE_COPY = {
     title: "Bababou — Messages, contact et histoire familiale",
     description:
       "Site familial créé par le père de Bababou pour préserver des messages, faciliter la reprise de contact et documenter l’histoire familiale.",
-    openGraphLocale: "fr_FR",
     imageAlt: "Un message affectueux du père de Bababou à sa fille.",
   },
   en: {
     title: "Bababou — Family messages, contact and history",
     description:
       "A family site created by Bababou’s father to preserve messages, make reconnection easier and document the family story.",
-    openGraphLocale: "en_US",
     imageAlt: "A heartfelt message from Bababou’s father to his daughter.",
   },
-} as const satisfies Record<
-  AppLocale,
-  {
-    title: string;
-    description: string;
-    openGraphLocale: string;
-    imageAlt: string;
-  }
->;
+} as const;
+
+const OPEN_GRAPH_LOCALE = {
+  fr: "fr_FR",
+  en: "en_US",
+  de: "de_DE",
+  no: "nb_NO",
+} as const satisfies Record<AppLocale, string>;
+
+type SiteCopyLocale = keyof typeof SITE_COPY;
+
+function siteCopy(locale: AppLocale) {
+  // Homepage/disclosure copy remains owner-controlled. New first-class locales
+  // reuse the already-reviewed English fallback until the homepage itself is
+  // explicitly migrated and translated.
+  return SITE_COPY[locale as SiteCopyLocale] ?? SITE_COPY.en;
+}
 
 function localizedHomePath(locale: AppLocale) {
   return locale === routing.defaultLocale ? "/" : `/${locale}`;
@@ -46,11 +52,11 @@ function socialMetadata(
   description: string,
   url: string,
 ): Pick<Metadata, "openGraph" | "twitter"> {
-  const copy = SITE_COPY[locale];
+  const copy = siteCopy(locale);
   const socialImage = new URL(SOCIAL_IMAGE_PATH, SITE_URL).toString();
   const alternateLocale = routing.locales
     .filter((supportedLocale) => supportedLocale !== locale)
-    .map((supportedLocale) => SITE_COPY[supportedLocale].openGraphLocale);
+    .map((supportedLocale) => OPEN_GRAPH_LOCALE[supportedLocale]);
 
   return {
     openGraph: {
@@ -58,7 +64,7 @@ function socialMetadata(
       title,
       description,
       url,
-      locale: copy.openGraphLocale,
+      locale: OPEN_GRAPH_LOCALE[locale],
       alternateLocale,
       siteName: "Bababou",
       images: [
@@ -81,7 +87,7 @@ function socialMetadata(
 }
 
 export function localizedSiteMetadata(locale: AppLocale): Metadata {
-  const copy = SITE_COPY[locale];
+  const copy = siteCopy(locale);
   const canonical = localizedHomePath(locale);
   const languages = Object.fromEntries(
     routing.locales.map((supportedLocale) => [

@@ -10,7 +10,9 @@
     "localeSwitcherLabel": "Language",
     "languageName": {
       "en": "English",
-      "fr": "French"
+      "fr": "French",
+      "de": "German",
+      "no": "Norwegian"
     },
     "switchLanguage": "Switch language",
     "rssFeedAria": "RSS feed for this site",
