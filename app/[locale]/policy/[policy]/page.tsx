@@ -4,11 +4,13 @@ import { hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 
 import PublicHtmlFragment from "@/app/components/PublicHtmlFragment";
+import LegalPolicyContent from "@/components/policy/LegalPolicyContent";
 import PrivacyPolicyContent from "@/components/policy/PrivacyPolicyContent";
 import ServiceTermsContent from "@/components/policy/ServiceTermsContent";
 import SkipToMainContent from "@/components/SkipToMainContent";
 import TopAnchor from "@/components/TopAnchor";
 import { type AppLocale, routing } from "@/i18n/routing";
+import { getLegalPolicyCopy } from "@/lib/legalPolicies";
 import {
   getPolicyPage,
   isNativeLocalizedPolicySlug,
@@ -47,6 +49,9 @@ function getNativePolicyCopy(policy: PolicyPageSlug, locale: AppLocale) {
   }
   if (policy === "service_terms") {
     return getServiceTermsCopy(locale);
+  }
+  if (policy === "legal" || policy === "impressum") {
+    return getLegalPolicyCopy(policy, locale);
   }
   return null;
 }
@@ -135,6 +140,8 @@ export default async function PolicyPage({
           <PrivacyPolicyContent locale={locale} />
         ) : policy === "service_terms" ? (
           <ServiceTermsContent locale={locale} />
+        ) : policy === "legal" || policy === "impressum" ? (
+          <LegalPolicyContent locale={locale} policy={policy} />
         ) : (
           <PublicHtmlFragment
             file={page.sourceFile}

@@ -15,18 +15,6 @@ const LEGACY_BRIDGED_POLICIES = [
     title: "Cookie Policy | Bababou",
     relatedPolicies: ["privacy_policy"],
   },
-  {
-    path: "/policy/impressum",
-    heading: "Impressum (Legal Notice)",
-    title: "Impressum (Legal Notice) | Bababou",
-    relatedPolicies: ["privacy_policy", "service_terms"],
-  },
-  {
-    path: "/policy/legal",
-    heading: "Legal notices",
-    title: "Legal notices | Alban Andrieu",
-    relatedPolicies: ["privacy_policy", "service_terms"],
-  },
 ] as const;
 
 const LEGACY_BRIDGE_LOCALES = [
@@ -37,6 +25,10 @@ const LEGACY_BRIDGE_LOCALES = [
 const NATIVE_LOCALIZED_POLICIES = [
   {
     slug: "service_terms",
+    emailLinks: 2,
+    cnilLinks: 0,
+    tmgLinks: 0,
+    relatedPolicies: [],
     locales: [
       {
         locale: "fr",
@@ -62,6 +54,10 @@ const NATIVE_LOCALIZED_POLICIES = [
   },
   {
     slug: "privacy_policy",
+    emailLinks: 2,
+    cnilLinks: 1,
+    tmgLinks: 0,
+    relatedPolicies: [],
     locales: [
       {
         locale: "fr",
@@ -82,6 +78,64 @@ const NATIVE_LOCALIZED_POLICIES = [
         locale: "no",
         heading: "Personvernerklæring",
         title: "Personvernerklæring | Bababou",
+      },
+    ],
+  },
+  {
+    slug: "legal",
+    emailLinks: 1,
+    cnilLinks: 1,
+    tmgLinks: 0,
+    relatedPolicies: ["privacy_policy", "service_terms"],
+    locales: [
+      {
+        locale: "fr",
+        heading: "Mentions légales",
+        title: "Mentions légales | Alban Andrieu",
+      },
+      {
+        locale: "en",
+        heading: "Legal notices",
+        title: "Legal notices | Alban Andrieu",
+      },
+      {
+        locale: "de",
+        heading: "Rechtliche Hinweise",
+        title: "Rechtliche Hinweise | Alban Andrieu",
+      },
+      {
+        locale: "no",
+        heading: "Juridisk informasjon",
+        title: "Juridisk informasjon | Alban Andrieu",
+      },
+    ],
+  },
+  {
+    slug: "impressum",
+    emailLinks: 0,
+    cnilLinks: 0,
+    tmgLinks: 1,
+    relatedPolicies: ["privacy_policy", "service_terms"],
+    locales: [
+      {
+        locale: "fr",
+        heading: "Impressum (mentions légales)",
+        title: "Impressum (mentions légales) | Bababou",
+      },
+      {
+        locale: "en",
+        heading: "Impressum (Legal Notice)",
+        title: "Impressum (Legal Notice) | Bababou",
+      },
+      {
+        locale: "de",
+        heading: "Impressum",
+        title: "Impressum | Bababou",
+      },
+      {
+        locale: "no",
+        heading: "Impressum (juridisk informasjon)",
+        title: "Impressum (juridisk informasjon) | Bababou",
       },
     ],
   },
@@ -182,6 +236,7 @@ for (const policy of NATIVE_LOCALIZED_POLICIES) {
     const requestPath = `/${locale.locale}${policyPath}`;
     const canonicalPath =
       locale.locale === "fr" ? policyPath : `/${locale.locale}${policyPath}`;
+    const localizedPrefix = locale.locale === "fr" ? "" : `/${locale.locale}`;
 
     test(`localized ${policy.slug} is native at ${requestPath}`, async ({
       page,
@@ -200,18 +255,31 @@ for (const policy of NATIVE_LOCALIZED_POLICIES) {
       await expect(page.locator("#main-content h1")).toHaveText(locale.heading);
       await expect(
         page.locator('#main-content a[href="mailto:aa@bababou.com"]'),
-      ).toHaveCount(2);
+      ).toHaveCount(policy.emailLinks);
+      await expect(
+        page.locator('#main-content a[href="https://www.cnil.fr/"]'),
+      ).toHaveCount(policy.cnilLinks);
+      await expect(
+        page.locator(
+          '#main-content a[href="https://www.gesetze-im-internet.de/tmg/"]',
+        ),
+      ).toHaveCount(policy.tmgLinks);
       await expect(page.locator("#main-content")).not.toContainText("{email}");
       await expect(page.locator("#main-content")).not.toContainText("{cnil}");
+      await expect(page.locator("#main-content")).not.toContainText("{privacy}");
+      await expect(page.locator("#main-content")).not.toContainText("{terms}");
+      await expect(page.locator("#main-content")).not.toContainText("{home}");
+      await expect(page.locator("#main-content")).not.toContainText("{tmg}");
       await expect(page.locator("#main-content")).not.toContainText("[COUNTRY]");
       await expect(page.locator("#main-content")).not.toContainText(
         "[CITY / COUNTRY]",
       );
 
-      if (policy.slug === "privacy_policy") {
-        await expect(
-          page.locator('#main-content a[href="https://www.cnil.fr/"]'),
-        ).toHaveCount(1);
+      for (const relatedPolicy of policy.relatedPolicies) {
+        const links = page.locator(
+          `#main-content a[href="${localizedPrefix}/policy/${relatedPolicy}"]`,
+        );
+        expect(await links.count()).toBeGreaterThan(0);
       }
     });
 

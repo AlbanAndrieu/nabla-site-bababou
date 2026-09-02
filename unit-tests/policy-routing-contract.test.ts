@@ -30,6 +30,7 @@ test("all reviewed policy pages are owned by the native registry", async () => {
   assert.match(route, /<TopAnchor \/>/);
   assert.match(route, /PrivacyPolicyContent/);
   assert.match(route, /ServiceTermsContent/);
+  assert.match(route, /LegalPolicyContent/);
 
   for (const slug of POLICY_PAGE_SLUGS) {
     const policy = POLICY_PAGES[slug];
@@ -81,6 +82,14 @@ test("localized policies own native content instead of the legacy HTML bridge", 
     new URL("../lib/serviceTerms.ts", import.meta.url),
     "utf8",
   );
+  const legalContent = await readFile(
+    new URL("../components/policy/LegalPolicyContent.tsx", import.meta.url),
+    "utf8",
+  );
+  const legalCopy = await readFile(
+    new URL("../lib/legalPolicies.ts", import.meta.url),
+    "utf8",
+  );
 
   assert.match(route, /policy === "privacy_policy"/);
   assert.match(route, /<PrivacyPolicyContent locale=\{locale\} \/>/);
@@ -91,6 +100,17 @@ test("localized policies own native content instead of the legacy HTML bridge", 
   assert.match(route, /<ServiceTermsContent locale=\{locale\} \/>/);
   assert.match(serviceContent, /getServiceTermsCopy/);
   assert.match(serviceCopy, /satisfies Record<AppLocale, ServiceTermsCopy>/);
+
+  assert.match(route, /policy === "legal" \|\| policy === "impressum"/);
+  assert.match(
+    route,
+    /<LegalPolicyContent locale=\{locale\} policy=\{policy\} \/>/,
+  );
+  assert.match(legalContent, /getLegalPolicyCopy/);
+  assert.match(
+    legalCopy,
+    /satisfies Record<\s*LegalPolicySlug,\s*Record<AppLocale, LegalPolicyCopy>\s*>/,
+  );
 });
 
 test("policy-specific route copies collapse into the generic registry route", async () => {
