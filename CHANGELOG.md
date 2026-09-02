@@ -1,3 +1,10 @@
+## [0.7.1](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.7.0...0.7.1) (2026-09-02)
+
+
+### Bug Fixes
+
+* **site:** normalize contact and cookie controls ([#132](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/132)) ([fa0b472](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/fa0b472e4d09d6594a6c99372753b0762076a39e))
+
 # [0.7.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.6.1...0.7.0) (2026-09-02)
 
 
