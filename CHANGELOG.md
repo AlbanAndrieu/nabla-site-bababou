@@ -1,3 +1,10 @@
+# [0.10.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.9.1...0.10.0) (2026-09-03)
+
+
+### Features
+
+* **payment:** migrate result pages to Next ([#140](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/140)) ([09364ff](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/09364ff440ce6fa0927e2a593f186509f4b9d700))
+
 ## [0.9.1](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.9.0...0.9.1) (2026-09-03)
 
 
