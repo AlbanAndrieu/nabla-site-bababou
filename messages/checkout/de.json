@@ -1,0 +1,23 @@
+{
+  "checkoutResult": {
+    "success": {
+      "metadataTitle": "Zahlung erfolgreich — Bababou",
+      "metadataDescription": "Sichere Bestätigung einer für Bababou ausgeführten Zahlung.",
+      "title": "Vielen Dank für Ihre Zahlung",
+      "message": "Ihre Zahlung war erfolgreich. Vielen Dank für Ihre Unterstützung.",
+      "referenceLabel": "Zahlungsreferenz:",
+      "contactBefore": "Bei Fragen kontaktieren Sie",
+      "payAgain": "Weitere Zahlung durchführen",
+      "backSite": "Zurück zur Website"
+    },
+    "cancel": {
+      "metadataTitle": "Zahlung abgebrochen — Bababou",
+      "metadataDescription": "Bestätigung, dass eine Bababou-Zahlung ohne Belastung abgebrochen wurde.",
+      "title": "Zahlung abgebrochen",
+      "message": "Der Zahlungsvorgang wurde abgebrochen. Es wurde nichts belastet.",
+      "retryMessage": "Sie können die Zahlung sicher erneut versuchen oder zur Website zurückkehren.",
+      "retryPayment": "Zahlung erneut versuchen",
+      "backSite": "Zurück zur Website"
+    }
+  }
+}

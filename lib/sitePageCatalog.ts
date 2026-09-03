@@ -100,6 +100,8 @@ const nextCanonicalSlugs = new Set<SitePageSlug>([
   "contact",
   "email",
   "link",
+  "success",
+  "cancel",
 ]);
 
 export const NON_INDEXABLE_ROBOTS = { index: false, follow: false } as const;
