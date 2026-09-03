@@ -15,6 +15,7 @@
 - Ne pas recopier aveuglément les politiques propres au repo de référence : `nabla-site-alban` a l'anglais à la racine, alors que Bababou conserve le français comme `defaultLocale` non préfixée.
 - La homepage `/` et `public/index.html` sont des exceptions de publication contrôlées par le propriétaire : toute modification de pseudonymisation, caviardage ou disclosure sensible sur ces surfaces nécessite un accord explicite préalable.
 - Le privacy hardening global hors homepage est volontairement reporté à la dernière phase de cette roadmap ; les contrôles déjà en place restent actifs entre-temps.
+- `public/404.html` est une exception protégée : il reste la source visuelle revue de la 404 et doit être servi via le mécanisme `global-not-found`, sans réécriture React native non approuvée.
 
 ## Ordre d'exécution prioritaire — décision du 2026-08-26
 
@@ -25,7 +26,7 @@
 5. **Performance et CI** : réduire tracing, builds, téléchargements inutiles et coûts de validation.
 6. **Confidentialité finale hors homepage** : pseudonymisation/caviardage du corpus restant, extension du gate et vérification irréversible des documents/assets concernés.
 
-## État de référence — 2026-08-26
+## État de référence — 2026-09-03
 
 ### Terminé
 
@@ -48,14 +49,17 @@
 - [x] Les anciens `messages/{locale}.json` ne sont plus chargés par le runtime Next ; les namespaces déjà migrés ont été retirés de ces catalogues legacy.
 - [x] Test de structure protégeant le `postinstall` legacy tant que ses consommateurs ne sont pas audités.
 - [x] Migration 5 : redirects `contact`/`email`/`link`, metadata sociales par route, top anchor et validations Preview E2E (#116).
-- [x] Route 404 Next localisée et contrats E2E associés (#118).
+- [x] La tentative de 404 Next localisée de #118 a été remplacée par la restauration de l'exception statique protégée `public/404.html` via `global-not-found` (#139).
 - [x] Preview E2E dédupliqué sur `repository_dispatch` avec cache Chromium réutilisable depuis le scope de la branche par défaut (#121).
 - [x] Migration 7 / P5 : manifeste/lockfile réconciliés, tooling Next 16.3.2 aligné et dépendances Express orphelines retirées (#123).
 - [x] Locales de premier rang `fr`, `en`, `de` et `no` activées dans `routing.locales`, avec catalogues et contrats de routing/SEO associés (#129).
 - [x] Les six policies (`service_terms`, `privacy_policy`, `legal`, `impressum`, `cookie_policy`, `accessibility_statement`) sont rendues nativement en FR/EN/DE/NO (#130, #131, #134, #136), avec récupération du contrat Preview E2E après #136 (#137).
+- [x] Index `/policy` natif localisé ajouté et comportement 404 statique protégé restauré (#139).
+- [x] Résultats de paiement `success` / `cancel` migrés vers des routes Next FR/EN/DE/NO noindex, avec redirects legacy et domaine i18n dédié (#140).
 
 ### Blocages opérationnels actuels
 
+- [ ] Fermer la réconciliation Preview #141 : locale française déterministe sur les URLs non préfixées, 404 globale statique et contrats E2E post-#140.
 - [ ] Configurer dans Vercel l'Ignored Build Step sur `bash scripts/vercel-ignore-build.sh` si ce n'est pas déjà fait.
 - [ ] Vérifier le binding DNS/domaine de `bababou.com` et le rattachement au projet Vercel.
 - [ ] Vérifier `/`, `/index.html`, les routes Next déjà migrées et Playwright Preview sur le SHA exact après chaque changement de routage/runtime.
@@ -97,10 +101,10 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] `contactPage`, `email` et `linkPage` n'existent plus en double dans les catalogues legacy.
 - [x] Générer le sélecteur de langue depuis `routing.locales`.
 - [x] Composer les catalogues runtime via `i18n/messages.ts` avec loaders explicites par locale et rejet des namespaces dupliqués.
-- [x] Extraire les domaines runtime sous `messages/site`, `messages/contact`, `messages/email` et `messages/link`.
+- [x] Extraire les domaines runtime sous `messages/site`, `messages/contact`, `messages/email`, `messages/link` et `messages/checkout`.
 - [x] Introduire un skip-link Next partagé.
 - [x] Remplacer les types locaux de props par les `PageProps<...>` générés lorsque pertinent.
-- [x] Centraliser la politique canonical des routes Next natives : `/contact`, `/email`, `/link` pour FR et `/en/...` pour EN.
+- [x] Centraliser la politique canonical des routes Next natives : FR sans préfixe, EN/DE/NO préfixés, y compris `contact`, `email`, `link`, `success`, `cancel` et les policies.
 - [x] Générer les alternates depuis `routing.locales` avec `fr` comme `x-default`.
 - [x] Stabiliser FR et EN sur un Preview réel avant d'ajouter de nouvelles locales (#116, #118, #121).
 - [x] Ajouter `de` et `no` à `routing.locales` avec des catalogues complets et validés (#129).
@@ -123,13 +127,16 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 - [x] Donner à chaque route Next native ses propres Open Graph/Twitter metadata au lieu d'un aperçu social générique hérité du layout (#116).
 - [x] Harmoniser skip-link, top anchor, landmarks, icônes décoratives et navigation interne sur `contact`, `email` et `link` (#116).
 - [ ] Harmoniser cartes, boutons, spacing et typographie entre les surfaces Next natives.
-- [ ] Migrer ensuite 404/pages légales puis les pages publiques structurées à faible risque.
-  - [x] 404 localisée migrée vers Next (#118).
+- [ ] Poursuivre les pages publiques structurées à faible risque en conservant le fallback legacy jusqu'à preuve de parité.
+  - [x] Exception 404 : `public/404.html` reste la source protégée, consommée par `global-not-found`; la 404 React localisée de #118 n'est plus le comportement cible (#139).
   - [x] Accessibility Statement : route propre Next, source HTML inchangée conservée, chrome/metadata et Preview E2E validés (#124).
   - [x] Conditions d’utilisation localisées et rendues nativement en FR/EN/DE/NO (#130).
   - [x] Privacy Policy localisée et rendue nativement en FR/EN/DE/NO (#131).
   - [x] Legal notices et Impressum localisés et rendus nativement en FR/EN/DE/NO (#134).
   - [x] Cookie Policy et contenu de l’Accessibility Statement migrés depuis le bridge HTML anglais vers du contenu natif FR/EN/DE/NO (#136), avec contrat E2E corrigé dans #137.
+  - [x] Index `/policy` localisé nativement (#139).
+  - [x] `success` et `cancel` migrés vers Next avec i18n FR/EN/DE/NO, noindex et redirects legacy (#140).
+  - [ ] Supprimer `public/success.html` et `public/cancel.html` uniquement après validation Preview complète de la réconciliation #141.
   - [ ] Migrer ensuite les autres pages publiques structurées à faible risque.
 - [ ] Différer les pages contenant un corpus familial sensible jusqu'à la phase finale de confidentialité.
 
@@ -138,7 +145,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 - [x] Canonicals et hreflang FR/EN/DE/NO des routes Next natives.
 - [x] Sitemap hybride et robots alignés sur les routes actuellement indexables.
 - [x] Open Graph/Twitter complets et spécifiques pour chaque route Next native (#116).
-- [x] Redirects permanents des anciennes URLs `.html` pour `contact`, `email` et `link` après validation des routes Next correspondantes (#116).
+- [x] Redirects permanents des anciennes URLs `.html` pour `contact`, `email`, `link`, `success` et `cancel` après migration des routes Next correspondantes (#116, #140).
 - [x] Vérifier les redirects et métadonnées avec Playwright sur le Preview exact (#116).
 - [x] Ajouter DE/NO dans les alternates après stabilisation des catalogues, y compris pour les six policies nativement localisées (#129, #130, #131, #134, #136).
 - [ ] Garder la homepage et son Open Graph/Twitter comme exception propriétaire : aucun changement sans accord explicite.
@@ -149,10 +156,12 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 - [ ] Retirer progressivement les runtimes/scripts legacy après preuve d'absence de consommateurs.
 - [x] Retirer le bridge HTML des policies et le composant `PublicHtmlFragment` devenu orphelin ; conserver `htmlFromPublic` uniquement pour l'exception 404 imposée par la policy du repo.
 - [ ] Supprimer les pages `.html` et assets orphelins après validation des redirects et de la parité Next.
+  - [ ] Après gate #141 vert, retirer `public/success.html`, `public/cancel.html` et l'ignore Stylelint `public/checkout.css` devenu sans fichier.
 - [ ] Réduire les téléchargements et jobs CI inutiles.
   - [x] Snyk ne prépare plus/pull plus son image Docker lorsque `SNYK_TOKEN` est absent.
   - [x] Les Preview Vercel ne déclenchent plus deux suites Playwright concurrentes et le chemin conservé réutilise le cache Chromium (#121).
   - [x] Le workflow séparé de seed Chromium devient inutile et est retiré après validation du cache détenu par `repository_dispatch` (#122).
+  - [x] Les anciens contrats Playwright de 404 localisée et de chrome checkout legacy sont retirés/réconciliés avec les surfaces réellement publiées (#141).
 - [ ] Mesurer durée de `npm ci`, `npm run check`, `next build`, taille de cache et taille de sortie.
   - [x] Instrumentation Quality ajoutée sans job ni build supplémentaire (#122).
   - [ ] Collecter plusieurs baselines post-merge et définir des seuils uniquement après observation.
@@ -176,19 +185,23 @@ Cette phase est volontairement placée après migration, UI/UX, SEO, nettoyage e
 - [x] **Migration 3b / P2 — PR #106** : ownership i18n, nettoyage des surfaces Next, footer/header et sitemap hybride.
 - [x] **Privacy foundation — PR #107/#110** : gate initial, policy de pseudonymisation/caviardage et exception homepage contrôlée.
 - [x] **Migration 5 / P3+P4 — PR #116** : redirects contact/email/link, metadata sociales spécifiques, chrome/accessibilité et validation Preview E2E.
-- [ ] **Migration 6 / P3** — 404/pages légales puis autres pages publiques structurées à faible risque.
-  - [x] 404 Next localisée (#118).
+- [ ] **Migration 6 / P3** — 404 protégée, pages légales puis autres pages publiques structurées à faible risque.
+  - [x] Exception statique 404 restaurée via `global-not-found` (#139), supersédant la 404 localisée de #118.
   - [x] Accessibility Statement migrée vers le chrome Next avec source statique préservée et Preview E2E validée (#124).
   - [x] Conditions d’utilisation natives FR/EN/DE/NO (#130).
   - [x] Privacy Policy native FR/EN/DE/NO (#131).
   - [x] Legal notices et Impressum natifs FR/EN/DE/NO (#134).
   - [x] Cookie Policy et Accessibility Statement finalisés en i18n natif FR/EN/DE/NO (#136/#137).
+  - [x] Index policy et restauration finale de la 404 protégée (#139).
+  - [x] Résultats de paiement `success` / `cancel` migrés vers Next (#140).
+  - [ ] Réconcilier le routage FR/404 et fermer les tests Preview post-migration (#141).
   - [ ] Poursuivre les pages publiques structurées à faible risque.
 - [ ] **Migration 7 / P5** — dépendances/runtimes legacy, assets orphelins et optimisation CI/performance.
   - [x] Réconciliation release/Preview et cache Chromium (#117/#119/#120/#121).
   - [x] Suppression du seed Chromium redondant et instrumentation Quality (#122).
   - [x] Alignement package/lockfile, engines et tooling Next ; retrait d'Express orphelin (#123).
   - [x] Retrait du bridge HTML policy et réduction de `htmlFromPublic` au seul 404 protégé.
+  - [ ] Retrait des résultats de paiement HTML legacy après gate #141 vert.
   - [ ] Retrait des runtimes/scripts/assets legacy restants après preuve d'absence de consommateurs externes.
 - [ ] **Migration 8 / P3** — extraction progressive de sections homepage en conservant les disclosures approuvées, sans changement sensible non validé.
 - [ ] **Migration finale / P6** — confidentialité hors homepage : pseudonymisation/caviardage du corpus restant et extension complète du privacy gate.
