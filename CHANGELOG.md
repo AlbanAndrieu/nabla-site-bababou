@@ -1,3 +1,10 @@
+## [0.9.1](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.9.0...0.9.1) (2026-09-03)
+
+
+### Bug Fixes
+
+* **site:** add policy index, restore static 404 and clean contact routes ([#139](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/139)) ([523ca6c](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/523ca6c061b0e58923b514e76f31e0b9bb7bca32))
+
 # [0.9.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.8.1...0.9.0) (2026-09-03)
 
 
