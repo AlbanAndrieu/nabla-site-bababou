@@ -1,0 +1,23 @@
+{
+  "checkoutResult": {
+    "success": {
+      "metadataTitle": "Betaling fullført — Bababou",
+      "metadataDescription": "Sikker bekreftelse på en betaling utført for Bababou.",
+      "title": "Takk for betalingen",
+      "message": "Betalingen ble gjennomført. Takk for støtten.",
+      "referenceLabel": "Betalingsreferanse:",
+      "contactBefore": "Hvis du har spørsmål, kontakt",
+      "payAgain": "Utfør en ny betaling",
+      "backSite": "Tilbake til nettstedet"
+    },
+    "cancel": {
+      "metadataTitle": "Betaling avbrutt — Bababou",
+      "metadataDescription": "Bekreftelse på at en Bababou-betaling ble avbrutt uten belastning.",
+      "title": "Betaling avbrutt",
+      "message": "Betalingen ble avbrutt. Ingen belastning ble utført.",
+      "retryMessage": "Du kan trygt prøve betalingen på nytt eller gå tilbake til nettstedet.",
+      "retryPayment": "Prøv betalingen på nytt",
+      "backSite": "Tilbake til nettstedet"
+    }
+  }
+}

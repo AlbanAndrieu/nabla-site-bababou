@@ -8,7 +8,9 @@ test("migrated legacy html routes redirect to localized Next canonicals", async 
     "utf8",
   );
 
-  assert.match(source, /\["contact", "email", "link"\]\.flatMap/);
+  for (const slug of ["contact", "email", "link", "success", "cancel"]) {
+    assert.match(source, new RegExp(`"${slug}"`));
+  }
   assert.match(
     source,
     /source: `\/\$\{slug\}\.html`, destination: `\/en\/\$\{slug\}`/,

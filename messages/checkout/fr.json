@@ -1,0 +1,23 @@
+{
+  "checkoutResult": {
+    "success": {
+      "metadataTitle": "Paiement confirmé — Bababou",
+      "metadataDescription": "Confirmation sécurisée d’un paiement effectué pour Bababou.",
+      "title": "Merci pour votre paiement",
+      "message": "Votre paiement a bien été confirmé. Merci pour votre soutien.",
+      "referenceLabel": "Référence du paiement :",
+      "contactBefore": "Pour toute question, contactez",
+      "payAgain": "Effectuer un autre paiement",
+      "backSite": "Retour au site"
+    },
+    "cancel": {
+      "metadataTitle": "Paiement annulé — Bababou",
+      "metadataDescription": "Confirmation qu’un paiement Bababou a été annulé sans débit.",
+      "title": "Paiement annulé",
+      "message": "Le paiement a été annulé. Aucun débit n’a été effectué.",
+      "retryMessage": "Vous pouvez réessayer le paiement en toute sécurité ou revenir au site.",
+      "retryPayment": "Réessayer le paiement",
+      "backSite": "Retour au site"
+    }
+  }
+}
