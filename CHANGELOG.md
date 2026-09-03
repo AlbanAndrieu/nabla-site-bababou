@@ -1,3 +1,10 @@
+# [0.9.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.8.1...0.9.0) (2026-09-03)
+
+
+### Features
+
+* **policy:** complete native policy localization ([#136](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/136)) ([1dc295e](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/1dc295eecdfa1911615c972f765ad590fc64bd88))
+
 ## [0.8.1](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.8.0...0.8.1) (2026-09-03)
 
 
