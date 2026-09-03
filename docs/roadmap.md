@@ -51,6 +51,8 @@
 - [x] Route 404 Next localisée et contrats E2E associés (#118).
 - [x] Preview E2E dédupliqué sur `repository_dispatch` avec cache Chromium réutilisable depuis le scope de la branche par défaut (#121).
 - [x] Migration 7 / P5 : manifeste/lockfile réconciliés, tooling Next 16.3.2 aligné et dépendances Express orphelines retirées (#123).
+- [x] Locales de premier rang `fr`, `en`, `de` et `no` activées dans `routing.locales`, avec catalogues et contrats de routing/SEO associés (#129).
+- [x] Conditions d’utilisation, Privacy Policy, Legal notices et Impressum migrés vers du contenu Next natif FR/EN/DE/NO (#130, #131, #134).
 
 ### Blocages opérationnels actuels
 
@@ -100,7 +102,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 - [x] Centraliser la politique canonical des routes Next natives : `/contact`, `/email`, `/link` pour FR et `/en/...` pour EN.
 - [x] Générer les alternates depuis `routing.locales` avec `fr` comme `x-default`.
 - [x] Stabiliser FR et EN sur un Preview réel avant d'ajouter de nouvelles locales (#116, #118, #121).
-- [ ] Ajouter `de` et `no` à `routing.locales` avec des catalogues complets et validés.
+- [x] Ajouter `de` et `no` à `routing.locales` avec des catalogues complets et validés (#129).
 - [ ] Garder Google Translate uniquement pour les langues hors locales de premier rang.
 
 ## P3 — Migration Next.js et UI/UX
@@ -123,17 +125,21 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 - [ ] Migrer ensuite 404/pages légales puis les pages publiques structurées à faible risque.
   - [x] 404 localisée migrée vers Next (#118).
   - [x] Accessibility Statement : route propre Next, source HTML inchangée conservée, chrome/metadata et Preview E2E validés (#124).
-  - [ ] Autres pages légales et pages publiques structurées à faible risque.
+  - [x] Conditions d’utilisation localisées et rendues nativement en FR/EN/DE/NO (#130).
+  - [x] Privacy Policy localisée et rendue nativement en FR/EN/DE/NO (#131).
+  - [x] Legal notices et Impressum localisés et rendus nativement en FR/EN/DE/NO (#134).
+  - [ ] Migrer le contenu de `cookie_policy` et de l’Accessibility Statement depuis le bridge HTML anglais vers du contenu natif FR/EN/DE/NO.
+  - [ ] Migrer ensuite les autres pages publiques structurées à faible risque.
 - [ ] Différer les pages contenant un corpus familial sensible jusqu'à la phase finale de confidentialité.
 
 ## P4 — SEO et métadonnées
 
-- [x] Canonicals et hreflang FR/EN des routes Next natives.
+- [x] Canonicals et hreflang FR/EN/DE/NO des routes Next natives.
 - [x] Sitemap hybride et robots alignés sur les routes actuellement indexables.
 - [x] Open Graph/Twitter complets et spécifiques pour chaque route Next native (#116).
 - [x] Redirects permanents des anciennes URLs `.html` pour `contact`, `email` et `link` après validation des routes Next correspondantes (#116).
 - [x] Vérifier les redirects et métadonnées avec Playwright sur le Preview exact (#116).
-- [ ] Préparer l'ajout DE/NO dans les alternates seulement après stabilisation des catalogues.
+- [x] Ajouter DE/NO dans les alternates après stabilisation des catalogues, y compris pour les policies localisées (#129, #130, #131, #134).
 - [ ] Garder la homepage et son Open Graph/Twitter comme exception propriétaire : aucun changement sans accord explicite.
 
 ## P5 — Nettoyage technique, performance et CI
@@ -171,7 +177,10 @@ Cette phase est volontairement placée après migration, UI/UX, SEO, nettoyage e
 - [ ] **Migration 6 / P3** — 404/pages légales puis autres pages publiques structurées à faible risque.
   - [x] 404 Next localisée (#118).
   - [x] Accessibility Statement migrée vers le chrome Next avec source statique préservée et Preview E2E validée (#124).
-  - [ ] Autres pages légales et pages publiques structurées.
+  - [x] Conditions d’utilisation natives FR/EN/DE/NO (#130).
+  - [x] Privacy Policy native FR/EN/DE/NO (#131).
+  - [x] Legal notices et Impressum natifs FR/EN/DE/NO (#134).
+  - [ ] Finaliser `cookie_policy` et le contenu Accessibility Statement en i18n natif, puis poursuivre les pages publiques structurées.
 - [ ] **Migration 7 / P5** — dépendances/runtimes legacy, assets orphelins et optimisation CI/performance.
   - [x] Réconciliation release/Preview et cache Chromium (#117/#119/#120/#121).
   - [x] Suppression du seed Chromium redondant et instrumentation Quality (#122).
