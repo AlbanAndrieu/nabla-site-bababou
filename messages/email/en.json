@@ -1,8 +1,8 @@
 {
   "email": {
-    "title": "Email address update",
+    "title": "Email addresses",
     "metadataTitle": "Contact email addresses — Alban Andrieu",
-    "metadataDescription": "Current professional, security, billing and general contact email addresses for Alban Andrieu.",
+    "metadataDescription": "Current email addresses for contacting Alban Andrieu via bababou.com.",
     "useTheseAddresses": "Please use these addresses",
     "cards": [
       {
@@ -18,43 +18,14 @@
         "descriptionAfter": ""
       },
       {
-        "title": "Website security",
-        "email": "security@albandrieu.com",
-        "descriptionBefore": "",
-        "descriptionAfter": ""
-      },
-      {
-        "title": "Invoices",
-        "email": "invoice@albanandrieu.com",
-        "descriptionBefore": "For all invoice-related matters (billing, payment questions, VAT or purchase orders), use ",
-        "descriptionAfter": " — do not send invoices to the work or general contact addresses above."
-      },
-      {
-        "title": "Other topics",
-        "email": "contact@albandrieu.com",
-        "descriptionBefore": "",
-        "descriptionAfter": ""
-      },
-      {
         "title": "Bababou",
         "email": "aa@bababou.com",
         "descriptionBefore": "",
         "descriptionAfter": ""
       }
     ],
-    "automatedHeading": "Automated or triaged replies",
-    "automatedDesc": "If you receive mail from any of the following, it usually means your message did not meet the requirements to be read by a human (me), or it was handled by automated triage:",
-    "automatedList": [
-      "no-reply@albanandrieu.com",
-      "no-reply@albandrieu.com",
-      "no-reply@bababou.com",
-      "openclaw@albandrieu.com",
-      "assistant@albandrieu.com",
-      "invoice@albanandrieu.com"
-    ],
-    "reasonLine1": "The address",
-    "reasonLine2": "is discontinued. Google is changing how Gmail works with third-party accounts (Gmailify and POP “check mail from other accounts”); see",
-    "reasonLine3": "Learn about upcoming changes to Gmailify & POP in Gmail",
-    "reasonLine4": " (Google Help). That policy shift is why this mailbox will no longer be used."
+    "automatedHeading": "Automated senders",
+    "automatedDesc": "Automated messages from the site may come from the following address:",
+    "automatedList": ["no-reply@bababou.com"]
   }
 }
