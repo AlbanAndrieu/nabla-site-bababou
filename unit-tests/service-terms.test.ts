@@ -38,7 +38,7 @@ test("service terms route renders the native locale-aware component", async () =
 
   assert.match(route, /ServiceTermsContent/);
   assert.match(route, /policy === "service_terms"/);
-  assert.match(route, /lang=\{nativePolicy \? locale : page\.contentLanguage\}/);
+  assert.match(route, /lang=\{locale\}/);
   assert.match(route, /localizedPolicyAlternates/);
 });
 

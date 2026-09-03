@@ -3,9 +3,9 @@ import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 
-import PublicHtmlFragment from "@/app/components/PublicHtmlFragment";
 import LegalPolicyContent from "@/components/policy/LegalPolicyContent";
 import PrivacyPolicyContent from "@/components/policy/PrivacyPolicyContent";
+import PublicPolicyContent from "@/components/policy/PublicPolicyContent";
 import ServiceTermsContent from "@/components/policy/ServiceTermsContent";
 import SkipToMainContent from "@/components/SkipToMainContent";
 import TopAnchor from "@/components/TopAnchor";
@@ -13,12 +13,12 @@ import { type AppLocale, routing } from "@/i18n/routing";
 import { getLegalPolicyCopy } from "@/lib/legalPolicies";
 import {
   getPolicyPage,
-  isNativeLocalizedPolicySlug,
   isPolicyPageSlug,
   POLICY_PAGE_SLUGS,
   type PolicyPageSlug,
 } from "@/lib/policyPages";
 import { getPrivacyPolicyCopy } from "@/lib/privacyPolicy";
+import { getPublicPolicyCopy } from "@/lib/publicPolicies";
 import { getServiceTermsCopy } from "@/lib/serviceTerms";
 
 export const dynamicParams = false;
@@ -53,7 +53,26 @@ function getNativePolicyCopy(policy: PolicyPageSlug, locale: AppLocale) {
   if (policy === "legal" || policy === "impressum") {
     return getLegalPolicyCopy(policy, locale);
   }
-  return null;
+  return getPublicPolicyCopy(policy, locale);
+}
+
+function NativePolicyContent({
+  policy,
+  locale,
+}: {
+  policy: PolicyPageSlug;
+  locale: AppLocale;
+}) {
+  if (policy === "privacy_policy") {
+    return <PrivacyPolicyContent locale={locale} />;
+  }
+  if (policy === "service_terms") {
+    return <ServiceTermsContent locale={locale} />;
+  }
+  if (policy === "legal" || policy === "impressum") {
+    return <LegalPolicyContent locale={locale} policy={policy} />;
+  }
+  return <PublicPolicyContent locale={locale} policy={policy} />;
 }
 
 export async function generateMetadata({
@@ -66,51 +85,29 @@ export async function generateMetadata({
 
   const page = getPolicyPage(policy);
   const nativeCopy = getNativePolicyCopy(policy, locale);
-  if (nativeCopy) {
-    const canonical = localizedPolicyPath(policy, locale);
-
-    return {
-      title: nativeCopy.metadataTitle,
-      description: nativeCopy.metadataDescription,
-      alternates: {
-        canonical,
-        languages: {
-          ...localizedPolicyAlternates(policy),
-          "x-default": localizedPolicyPath(policy, routing.defaultLocale),
-        },
-      },
-      openGraph: {
-        type: "website",
-        url: canonical,
-        title: nativeCopy.metadataTitle,
-        description: nativeCopy.metadataDescription,
-        siteName: page.siteName,
-      },
-      twitter: {
-        card: "summary",
-        title: nativeCopy.metadataTitle,
-        description: nativeCopy.metadataDescription,
-      },
-    };
-  }
+  const canonical = localizedPolicyPath(policy, locale);
 
   return {
-    title: page.title,
-    description: page.description,
+    title: nativeCopy.metadataTitle,
+    description: nativeCopy.metadataDescription,
     alternates: {
-      canonical: page.canonicalPath,
+      canonical,
+      languages: {
+        ...localizedPolicyAlternates(policy),
+        "x-default": localizedPolicyPath(policy, routing.defaultLocale),
+      },
     },
     openGraph: {
       type: "website",
-      url: page.canonicalPath,
-      title: page.title,
-      description: page.socialDescription,
+      url: canonical,
+      title: nativeCopy.metadataTitle,
+      description: nativeCopy.metadataDescription,
       siteName: page.siteName,
     },
     twitter: {
       card: "summary",
-      title: page.title,
-      description: page.socialDescription,
+      title: nativeCopy.metadataTitle,
+      description: nativeCopy.metadataDescription,
     },
   };
 }
@@ -124,8 +121,6 @@ export default async function PolicyPage({
   }
 
   setRequestLocale(locale);
-  const page = getPolicyPage(policy);
-  const nativePolicy = isNativeLocalizedPolicySlug(policy);
 
   return (
     <>
@@ -134,21 +129,9 @@ export default async function PolicyPage({
       <main
         id="main-content"
         className="site-content-page policy-legal container py-4"
-        lang={nativePolicy ? locale : page.contentLanguage}
+        lang={locale}
       >
-        {policy === "privacy_policy" ? (
-          <PrivacyPolicyContent locale={locale} />
-        ) : policy === "service_terms" ? (
-          <ServiceTermsContent locale={locale} />
-        ) : policy === "legal" || policy === "impressum" ? (
-          <LegalPolicyContent locale={locale} policy={policy} />
-        ) : (
-          <PublicHtmlFragment
-            file={page.sourceFile}
-            mode="main"
-            locale={locale}
-          />
-        )}
+        <NativePolicyContent policy={policy} locale={locale} />
       </main>
     </>
   );
