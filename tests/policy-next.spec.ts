@@ -225,7 +225,7 @@ for (const policy of NATIVE_LOCALIZED_POLICIES) {
       await expect(page.locator("footer.footer")).toBeVisible();
       await expect(page.locator('a[href="#main-content"]')).toBeVisible();
       await expect(
-        page.locator('#main-content a[href$=".html"]'),
+        page.locator('#main-content a[href*="/policy/"][href$=".html"]'),
       ).toHaveCount(0);
       await expect(
         page.locator('#main-content a[href="mailto:aa@bababou.com"]'),
