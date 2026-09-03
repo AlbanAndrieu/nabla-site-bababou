@@ -10,8 +10,7 @@
       "profileAlt": "Portrait d’Alban Andrieu, ingénieur DevSecOps et architecte cloud",
       "current": "Je conçois actuellement des solutions cloud sécurisées chez",
       "experience": "Avec plus de 20 ans d’expérience dans des environnements d’entreprise, j’accompagne leur transformation par l’automatisation DevOps, la sécurité cloud et l’infrastructure as code.",
-      "contactCta": "Me contacter",
-      "cvCta": "Voir mon CV"
+      "contactCta": "Me contacter"
     },
     "information": {
       "title": "Coordonnées",
@@ -34,7 +33,6 @@
     "cv": {
       "title": "Curriculum Vitae",
       "description": "Téléchargez ou consultez mon CV dans plusieurs formats et langues.",
-      "cta": "Voir tous les formats de CV",
       "full": "CV complet",
       "medium": "CV intermédiaire",
       "small": "CV court"

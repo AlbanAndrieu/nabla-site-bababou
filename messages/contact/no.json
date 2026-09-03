@@ -10,8 +10,7 @@
       "profileAlt": "Portrett av Alban Andrieu, DevSecOps-ingeniør og skyarkitekt",
       "current": "Utformer for tiden sikre skyløsninger hos",
       "experience": "Med mer enn 20 års erfaring fra bedriftsmiljøer bidrar jeg til transformasjon gjennom DevOps-automatisering, skysikkerhet og infrastruktur som kode.",
-      "contactCta": "Ta kontakt",
-      "cvCta": "Se CV-en min"
+      "contactCta": "Ta kontakt"
     },
     "information": {
       "title": "Kontaktinformasjon",
@@ -34,7 +33,6 @@
     "cv": {
       "title": "Curriculum Vitae",
       "description": "Last ned eller se CV-en min i flere formater og språk.",
-      "cta": "Se alle CV-formater",
       "full": "Fullstendig CV",
       "medium": "Mellomlang CV",
       "small": "Kort CV"

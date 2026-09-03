@@ -164,13 +164,5 @@ Disallow: /test
 Disallow: /*/test
 Crawl-delay: 10
 
-# Disallow technical signup pages
-Allow: /login/$
-Allow: /signup/$
-Disallow: /login/*
-Disallow: /signup/*
-Disallow: /*/?*
-Crawl-delay: 20
-
 # sitemap index
 Sitemap: https://bababou.com/sitemap.xml

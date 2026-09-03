@@ -21,3 +21,10 @@ test("unknown localized routes fall through to the protected global 404", async 
 
   await assert.rejects(access(projectUrl("app/[locale]/[...rest]/page.tsx")));
 });
+
+test("technical test surface has only the localized App Router implementation", async () => {
+  const localizedTestPage = await read("app/[locale]/test/page.tsx");
+
+  assert.match(localizedTestPage, /NON_INDEXABLE_ROBOTS/);
+  await assert.rejects(access(projectUrl("app/test/page.tsx")));
+});

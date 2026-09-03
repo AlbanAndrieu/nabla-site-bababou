@@ -68,6 +68,8 @@ Never use `git push --no-verify`, and never weaken validation rules merely to ma
 
 An API-only agent must not silently use remote writes to bypass local hooks. If its runtime cannot obtain or execute a checkout, it must state that limitation, perform the closest deterministic checks available, keep the patch minimal, and inspect resulting CI immediately. It must never claim that the local quality gate passed when it was not executed.
 
+When an API-only change touches multiple files, assemble the final patch as one atomic Git tree/commit and update the branch once whenever the connector supports it. Do not create one Contents-API commit per file on Vercel-connected branches: that fans out Preview deployments, consumes build quota, and obscures the review history. If atomic writes are unavailable, minimize remote writes and squash the branch before final CI/Preview validation.
+
 ## Completion
 
 Report what changed, checks actually executed, and any unresolved failure or risk.

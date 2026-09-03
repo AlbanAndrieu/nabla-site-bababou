@@ -9,24 +9,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 npm install
 ```
 
-**Build and run root project (static HTML + Vercel API):**
+**Build and run the Next.js/Vercel project:**
 ```
-npm run start:python      # (for local Python server)
-npm run start             # (Cloudflare wrangler)
-vc build                  # (Vercel CLI)
-vercel dev                # Develop with Vercel
-vercel deploy             # Deploy to Vercel
-vercel --prod             # Deploy as production
+npm run dev
+npm run build
+npm run start
 ```
-
-**Stripe Checkout backend (local):**
-```
-export STRIPE_SECRET_KEY=sk_test_...
-export STRIPE_PRICE_ID=price_...
-export DOMAIN=http://localhost:4242
-npm run start:stripe
-```
-Open `http://localhost:4242/checkout.html`.
 
 **Playwright Testing (E2E):**
 ```
@@ -39,24 +27,18 @@ npm run test:debug      # debug mode
 npm run test:report     # view test report
 ```
 
-**Local Python static site:**
+**Legacy static fallback audit:**
 ```
-python -m SimpleHTTPServer 8001   # Python 2
-python -m http.server 8001        # Python 3
+npm run start-python
 ```
 
 
 ## High-Level Architecture
 
-- **Monorepo** containing multiple deployable projects:
-  - `public/`: Static HTML site and assets, core root project
-  - `api/`: Vercel serverless API routes (Node.js)
-  - `my-app/`: Next.js app (separate deployment)
-  - `vue-client/`: Vue/Vite app (separate deployment)
-
-- **Frontend documentation:**
-  - See `docs/frontend-runtime-scripts-runbook.md`
-  - CV architecture is documented in `public/cv/README.md`
+- `app/`: Next.js App Router and localized native routes.
+- `public/`: legacy static pages and shared assets retained only while migration parity is being proven; `public/404.html` is the protected reviewed 404 source.
+- `api/`: Vercel serverless API routes.
+- `messages/` and `i18n/`: first-class FR/EN/DE/NO runtime catalogs and routing.
 
 - **Workflows:**
   - GitHub Actions for Playwright tests, Docker CI, MegaLinter, PDF builds, Copilot setup
@@ -83,7 +65,7 @@ python -m http.server 8001        # Python 3
 - Maintain `public/print.css` (media query, optimization, proper page breaks).
 
 ### SEO/Crawler
-- Keep `public/robots.txt` and `public/sitemap-albandrieu-com.xml` up to date.
+- Keep `public/robots.txt` and the active sitemap generation/output up to date.
 - Include meta tags and canonical URLs.
 
 ### Commit/Branching

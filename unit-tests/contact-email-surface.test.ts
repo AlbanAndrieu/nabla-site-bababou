@@ -17,6 +17,8 @@ test("contact hero no longer exposes a CV action", async () => {
 
   assert.doesNotMatch(page, /hero\.cvCta/);
   assert.doesNotMatch(page, /cvHref=/);
+  assert.doesNotMatch(page, /canonicalPagePath\("cv"/);
+  assert.doesNotMatch(page, /cv\.cta/);
   assert.doesNotMatch(hero, /cvCta/);
   assert.doesNotMatch(hero, /cvHref/);
 });

@@ -10,8 +10,7 @@
       "profileAlt": "Porträt von Alban Andrieu, DevSecOps-Ingenieur und Cloud-Architekt",
       "current": "Derzeit Entwicklung sicherer Cloud-Lösungen bei",
       "experience": "Mit mehr als 20 Jahren Erfahrung in Unternehmensumgebungen unterstütze ich die Transformation durch DevOps-Automatisierung, Cloud-Sicherheit und Infrastructure as Code.",
-      "contactCta": "Kontakt aufnehmen",
-      "cvCta": "Meinen Lebenslauf ansehen"
+      "contactCta": "Kontakt aufnehmen"
     },
     "information": {
       "title": "Kontaktinformationen",
@@ -34,7 +33,6 @@
     "cv": {
       "title": "Lebenslauf",
       "description": "Meinen Lebenslauf in verschiedenen Formaten und Sprachen herunterladen oder ansehen.",
-      "cta": "Alle Lebenslauf-Formate ansehen",
       "full": "Vollständiger Lebenslauf",
       "medium": "Mittlerer Lebenslauf",
       "small": "Kurzlebenslauf"

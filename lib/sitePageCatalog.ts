@@ -3,8 +3,6 @@ import { type AppLocale, routing } from "@/i18n/routing";
 export type PageCategory =
   | "primaryVisibility"
   | "discoverability"
-  | "editorialShowcase"
-  | "portfolioEvidence"
   | "technicalFlow";
 
 type SeoSettings = {
@@ -28,15 +26,10 @@ type SitePageDefinition = {
  */
 export const SITE_PAGES = {
   index: { category: "primaryVisibility" },
-  expertise: { category: "primaryVisibility" },
   contact: {
     category: "primaryVisibility",
     seo: { priority: 0.9, changeFrequency: "monthly" },
   },
-  security: { category: "editorialShowcase" },
-  ai: { category: "editorialShowcase" },
-  ciso: { category: "editorialShowcase" },
-  truenas: { category: "editorialShowcase" },
   link: {
     category: "discoverability",
     seo: { priority: 0.65, changeFrequency: "monthly" },
@@ -45,21 +38,8 @@ export const SITE_PAGES = {
     category: "discoverability",
     seo: { priority: 0.65, changeFrequency: "monthly" },
   },
-  ctid: { category: "editorialShowcase" },
-  freenas: { category: "editorialShowcase" },
-  nabla: { category: "editorialShowcase" },
-  workstation: { category: "editorialShowcase" },
-  cv: { category: "portfolioEvidence" },
-  jm: { category: "portfolioEvidence" },
-  startup: { category: "technicalFlow" },
-  "startup-thanks": { category: "technicalFlow" },
-  pricing: { category: "technicalFlow" },
-  payment: { category: "technicalFlow" },
   success: { category: "technicalFlow" },
   cancel: { category: "technicalFlow" },
-  checkout: { category: "technicalFlow" },
-  "checkout-tjm": { category: "technicalFlow" },
-  login: { category: "technicalFlow" },
   test: { category: "technicalFlow" },
 } as const satisfies Record<string, SitePageDefinition>;
 
@@ -79,8 +59,6 @@ export const PAGE_CATEGORIES = Object.fromEntries(
     [
       "primaryVisibility",
       "discoverability",
-      "editorialShowcase",
-      "portfolioEvidence",
       "technicalFlow",
     ] as const
   ).map((category) => [
@@ -143,9 +121,6 @@ export function canonicalPagePath(slug: SitePageSlug, locale: AppLocale) {
   }
 
   // Preserve the pre-existing legacy URL policy until that route is migrated.
-  if (slug === "cv" || slug === "jm") {
-    return `${locale === "fr" ? "/fr" : ""}/${slug}`;
-  }
   return `${locale === "fr" ? "/fr" : ""}/${slug}.html`;
 }
 
