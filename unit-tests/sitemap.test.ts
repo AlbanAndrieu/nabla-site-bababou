@@ -57,8 +57,13 @@ test("native sitemap entries derive locale alternates from routing", async () =>
   assert.deepEqual(contact.alternates?.languages, expected);
 });
 
-test("only native localized policies publish policy hreflang alternates", async () => {
+test("all native localized policies publish policy hreflang alternates", async () => {
   const entries = await sitemap();
+
+  assert.deepEqual(
+    [...NATIVE_LOCALIZED_POLICY_SLUGS].sort(),
+    [...POLICY_PAGE_SLUGS].sort(),
+  );
 
   for (const slug of NATIVE_LOCALIZED_POLICY_SLUGS) {
     const base = `https://bababou.com/policy/${slug}`;
@@ -73,10 +78,4 @@ test("only native localized policies publish policy hreflang alternates", async 
       "x-default": base,
     });
   }
-
-  const bridged = entries.find(
-    (entry) => entry.url === "https://bababou.com/policy/cookie_policy",
-  );
-  assert.ok(bridged);
-  assert.equal(bridged.alternates, undefined);
 });
