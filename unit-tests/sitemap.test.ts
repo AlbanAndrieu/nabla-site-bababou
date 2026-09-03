@@ -2,10 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import sitemap from "../app/sitemap.ts";
-import {
-  NATIVE_LOCALIZED_POLICY_SLUGS,
-  POLICY_PAGE_SLUGS,
-} from "../lib/policyPages.ts";
+import { POLICY_PAGE_SLUGS } from "../lib/policyPages.ts";
 
 test("sitemap preserves active legacy URLs and adds native Next surfaces", async () => {
   const entries = await sitemap();
@@ -57,15 +54,10 @@ test("native sitemap entries derive locale alternates from routing", async () =>
   assert.deepEqual(contact.alternates?.languages, expected);
 });
 
-test("all native localized policies publish policy hreflang alternates", async () => {
+test("all policies publish native hreflang alternates", async () => {
   const entries = await sitemap();
 
-  assert.deepEqual(
-    [...NATIVE_LOCALIZED_POLICY_SLUGS].sort(),
-    [...POLICY_PAGE_SLUGS].sort(),
-  );
-
-  for (const slug of NATIVE_LOCALIZED_POLICY_SLUGS) {
+  for (const slug of POLICY_PAGE_SLUGS) {
     const base = `https://bababou.com/policy/${slug}`;
     const entry = entries.find((candidate) => candidate.url === base);
 
