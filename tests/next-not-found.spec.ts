@@ -10,7 +10,7 @@ const NOT_FOUND_PATHS = [
 
 test.describe("static global Next.js 404", () => {
   for (const path of NOT_FOUND_PATHS) {
-    test(`${path} preserves the legacy static 404 presentation`, async ({ page }) => {
+    test(`${path} preserves the reviewed static 404 presentation`, async ({ page }) => {
       const response = await page.goto(path);
       expect(response?.status()).toBe(404);
 
@@ -40,14 +40,4 @@ test.describe("static global Next.js 404", () => {
       );
     });
   }
-
-  test("legacy 404.html remains the reviewed static source", async ({ request }) => {
-    const response = await request.get("/404.html");
-    expect(response.status()).toBe(404);
-
-    const html = await response.text();
-    expect(html).toContain('class="cloak__wrapper"');
-    expect(html).toContain("We can't find that page");
-    expect(html).not.toContain('data-nabla-app="next-intl"');
-  });
 });

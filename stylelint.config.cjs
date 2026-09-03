@@ -21,7 +21,6 @@ module.exports = {
     "node_modules/**/*",
     "public/assets/**/*.css",
     "public/arf.css",
-    "public/checkout.css",
     "public/education.css",
     "public/jm/**/*.css",
     "public/theme.css",
