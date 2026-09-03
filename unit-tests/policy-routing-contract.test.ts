@@ -20,6 +20,11 @@ test("all reviewed policy pages are owned by the native registry", async () => {
     "utf8",
   );
 
+  assert.deepEqual(
+    [...NATIVE_LOCALIZED_POLICY_SLUGS].sort(),
+    [...POLICY_PAGE_SLUGS].sort(),
+  );
+  assert.equal(NATIVE_POLICY_SLUGS.size, POLICY_PAGE_SLUGS.length);
   assert.doesNotMatch(config, /policyRewrites/);
   assert.doesNotMatch(config, /localizedPolicyRewrites/);
   assert.match(config, /const migratedPolicyRedirects = \[/);
@@ -28,9 +33,7 @@ test("all reviewed policy pages are owned by the native registry", async () => {
   assert.match(route, /getPolicyPage/);
   assert.match(route, /<SkipToMainContent \/>/);
   assert.match(route, /<TopAnchor \/>/);
-  assert.match(route, /PrivacyPolicyContent/);
-  assert.match(route, /ServiceTermsContent/);
-  assert.match(route, /LegalPolicyContent/);
+  assert.doesNotMatch(route, /PublicHtmlFragment/);
 
   for (const slug of POLICY_PAGE_SLUGS) {
     const policy = POLICY_PAGES[slug];
@@ -50,14 +53,6 @@ test("all reviewed policy pages are owned by the native registry", async () => {
       `${policy.sourceFile} metadata should stay represented in the registry`,
     );
     assert.match(config, new RegExp(`\\"${slug}\\"`));
-
-    if (!NATIVE_POLICY_SLUGS.has(slug)) {
-      assert.match(
-        route,
-        /<PublicHtmlFragment/,
-        "legacy-bridged policies should remain supported by the shared fragment bridge",
-      );
-    }
   }
 });
 
@@ -90,6 +85,14 @@ test("localized policies own native content instead of the legacy HTML bridge", 
     new URL("../lib/legalPolicies.ts", import.meta.url),
     "utf8",
   );
+  const publicContent = await readFile(
+    new URL("../components/policy/PublicPolicyContent.tsx", import.meta.url),
+    "utf8",
+  );
+  const publicCopy = await readFile(
+    new URL("../lib/publicPolicies.ts", import.meta.url),
+    "utf8",
+  );
 
   assert.match(route, /policy === "privacy_policy"/);
   assert.match(route, /<PrivacyPolicyContent locale=\{locale\} \/>/);
@@ -110,6 +113,14 @@ test("localized policies own native content instead of the legacy HTML bridge", 
   assert.match(
     legalCopy,
     /satisfies Record<\s*LegalPolicySlug,\s*Record<AppLocale, LegalPolicyCopy>\s*>/,
+  );
+
+  assert.match(route, /<PublicPolicyContent locale=\{locale\} policy=\{policy\} \/>/);
+  assert.match(route, /getPublicPolicyCopy/);
+  assert.match(publicContent, /getPublicPolicyCopy/);
+  assert.match(
+    publicCopy,
+    /satisfies Record<\s*PublicPolicySlug,\s*Record<AppLocale, PublicPolicyCopy>\s*>/,
   );
 });
 

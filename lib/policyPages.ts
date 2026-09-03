@@ -89,6 +89,8 @@ export type PolicyPageSlug = keyof typeof POLICY_PAGES;
 export const POLICY_PAGE_SLUGS = Object.keys(POLICY_PAGES) as PolicyPageSlug[];
 
 export const NATIVE_LOCALIZED_POLICY_SLUGS = [
+  "accessibility_statement",
+  "cookie_policy",
   "privacy_policy",
   "service_terms",
   "legal",
