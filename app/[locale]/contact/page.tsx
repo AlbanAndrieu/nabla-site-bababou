@@ -6,7 +6,6 @@ import ContactHero from "@/components/ContactHero";
 import SkipToMainContent from "@/components/SkipToMainContent";
 import TopAnchor from "@/components/TopAnchor";
 import { routing } from "@/i18n/routing";
-import { canonicalPagePath } from "@/lib/sitePageCatalog";
 import { localizedPageMetadata } from "@/lib/siteSocialMetadata";
 
 export async function generateMetadata({
@@ -96,12 +95,6 @@ export default async function ContactPage({
           <h2 className="section-title">{t("cv.title")}</h2>
           <p>{t("cv.description")}</p>
           <div className="cv-page-links">
-            <a
-              className="btn btn-primary"
-              href={canonicalPagePath("cv", locale)}
-            >
-              {t("cv.cta")}
-            </a>
             {["full", "medium", "small"].map((size) => (
               <a
                 className="btn btn-outline-primary"

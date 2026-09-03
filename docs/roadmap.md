@@ -26,7 +26,7 @@
 5. **Performance et CI** : réduire tracing, builds, téléchargements inutiles et coûts de validation.
 6. **Confidentialité finale hors homepage** : pseudonymisation/caviardage du corpus restant, extension du gate et vérification irréversible des documents/assets concernés.
 
-## État de référence — 2026-09-03
+## État de référence — 2026-09-04
 
 ### Terminé
 
@@ -58,10 +58,11 @@
 - [x] Index `/policy` natif localisé ajouté et comportement 404 statique protégé restauré (#139).
 - [x] Résultats de paiement `success` / `cancel` migrés vers des routes Next FR/EN/DE/NO noindex, avec redirects legacy et domaine i18n dédié (#140).
 - [x] Réconciliation post-#140 validée sur Preview exact : FR non préfixé déterministe, 404 globale statique protégée, cleanup payment et Playwright 167/167 sur le SHA déployé (#141).
+- [x] Routes/aliases fantômes `pricing`, `payment`, `startup`, `startup-thanks`, `checkout`, `checkout-tjm`, `login`, `ai`, `security`, `expertise`, `ciso`, `truenas`, `ctid`, `freenas`, `nabla`, `workstation`, `cv` et `jm` retirés du catalogue ; configuration/générateur legacy, support homelab non routé et styles dédiés `security`/`ciso`/`login`/`ctid` supprimés (#142).
+- [x] Documentation agent/outillage réconciliée avec l'architecture Next/Vercel réelle ; anciennes références `my-app`, `vue-client`, runbook frontend absent et sitemap obsolète retirées (#142).
 
 ### Blocages opérationnels actuels
 
-- [ ] Merger la réconciliation #141 maintenant que CI, Vercel Preview et Playwright Preview sont verts sur le SHA exact.
 - [ ] Vérifier le binding DNS/domaine de `bababou.com` et le rattachement au projet Vercel ; le projet ne le rapporte pas encore parmi ses domaines attachés.
 - [ ] Vérifier `/`, `/index.html`, les routes Next déjà migrées et Playwright Preview sur le SHA exact après chaque changement de routage/runtime.
 
@@ -110,7 +111,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 - [x] Stabiliser FR et EN sur un Preview réel avant d'ajouter de nouvelles locales (#116, #118, #121).
 - [x] Ajouter `de` et `no` à `routing.locales` avec des catalogues complets et validés (#129).
 - [ ] Garder Google Translate uniquement pour les langues hors locales de premier rang.
-- [ ] Réconcilier les catalogues/routes legacy avec les surfaces réellement publiées : auditer les entrées fantômes (`pricing`, `payment`, `startup-thanks`, etc.), `lib/htmlRoutes.config.mjs` et l'ancien générateur `scripts/old/generate_fr_locale_html.py`, puis retirer uniquement les artefacts sans consommateur prouvé.
+- [x] Réconcilier les catalogues/routes legacy avec les surfaces réellement publiées : 18 routes/aliases fantômes retirés de `SITE_PAGES`, `lib/htmlRoutes.config.mjs`, `scripts/old/generate_fr_locale_html.py` et le support homelab sans route supprimés après audit d'absence de consommateur (#142).
 
 ## P3 — Migration Next.js et UI/UX
 
@@ -121,6 +122,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 - [ ] Toute proposition qui change une identité, un caviardage ou une disclosure de `/` / `public/index.html` doit être présentée au propriétaire avant modification.
 - [ ] Retirer chaque section legacy du fragment dès que son composant React atteint la parité.
 - [ ] Vérifier responsive/mobile, accessibilité, liens, assets, metadata et SEO.
+- [ ] Lors du cutover homepage, retirer ou remplacer les CTA orphelins de `app/components/Hero.tsx` qui ciblent encore les anciennes routes `startup` et `expertise`; ne pas republier ces liens fantômes.
 - [ ] Une fois la page native prête et explicitement validée, retirer le rewrite temporaire de `/` et rediriger `/index.html` vers `/`.
 
 ### Surfaces Next natives et pages publiques
@@ -128,6 +130,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 - [x] Finaliser les redirects legacy de `contact`, `email` et `link` vers leurs canonicals Next (#116).
 - [x] Donner à chaque route Next native ses propres Open Graph/Twitter metadata au lieu d'un aperçu social générique hérité du layout (#116).
 - [x] Harmoniser skip-link, top anchor, landmarks, icônes décoratives et navigation interne sur `contact`, `email` et `link` (#116).
+- [x] Retirer le bouton canonique `/cv` résiduel de `/contact` tout en conservant provisoirement les liens directs vers les variantes CV jusqu'à leur audit d'artefacts (#142).
 - [ ] Harmoniser cartes, boutons, spacing et typographie entre les surfaces Next natives.
 - [ ] Poursuivre les pages publiques structurées à faible risque en conservant le fallback legacy jusqu'à preuve de parité.
   - [x] Exception 404 : `public/404.html` reste la source protégée, consommée par `global-not-found`; la 404 React localisée de #118 n'est plus le comportement cible (#139).
@@ -140,6 +143,8 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] `success` et `cancel` migrés vers Next avec i18n FR/EN/DE/NO, noindex et redirects legacy (#140).
   - [x] `public/success.html` et `public/cancel.html` supprimés après validation complète CI + Preview + Playwright de #141 ; les redirects `.html` restent couverts après suppression physique.
   - [ ] Migrer ensuite les autres pages publiques structurées à faible risque.
+    - [x] Surface technique `/test` : supprimer le doublon `app/test/page.tsx` et conserver la seule implémentation Next localisée `app/[locale]/test/page.tsx` (#142).
+    - [ ] Conserver `public/test.html` tant que sa finalité/contenu legacy ne sont pas réconciliés avec `/test`; aucune suppression ni redirection avant preuve de parité.
 - [ ] Différer les pages contenant un corpus familial sensible jusqu'à la phase finale de confidentialité.
 
 ## P4 — SEO et métadonnées
@@ -159,13 +164,14 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 - [x] Retirer le bridge HTML des policies et le composant `PublicHtmlFragment` devenu orphelin ; conserver `htmlFromPublic` uniquement pour l'exception 404 imposée par la policy du repo.
 - [ ] Supprimer les pages `.html` et assets orphelins après validation des redirects et de la parité Next.
   - [x] Après gate #141 vert, retirer `public/success.html`, `public/cancel.html` et l'ignore Stylelint `public/checkout.css` devenu sans fichier ; verrouiller leur absence par contrat unitaire.
-  - [ ] Auditer puis retirer les catalogues/configurations legacy orphelins (`lib/htmlRoutes.config.mjs`, entrées fantômes de `sitePageCatalog`, scripts `scripts/old/`) uniquement après preuve d'absence de consommateur.
+  - [x] Retirer les routes/catalogues fantômes confirmés, `lib/htmlRoutes.config.mjs` et l'ancien générateur FR après preuve d'absence de consommateur ; conserver les CTA homepage orphelins comme dette explicite jusqu'au cutover contrôlé (#142).
 - [ ] Réduire les téléchargements et jobs CI inutiles.
   - [x] Snyk ne prépare plus/pull plus son image Docker lorsque `SNYK_TOKEN` est absent.
   - [x] Les Preview Vercel ne déclenchent plus deux suites Playwright concurrentes et le chemin conservé réutilise le cache Chromium (#121).
   - [x] Le workflow séparé de seed Chromium devient inutile et est retiré après validation du cache détenu par `repository_dispatch` (#122).
   - [x] Les anciens contrats Playwright de 404 localisée et de chrome checkout legacy sont retirés/réconciliés avec les surfaces réellement publiées (#141).
   - [x] Les changements docs/repository-maintenance évitent un Preview Vercel grâce à l'`ignoreCommand` versionné et testé.
+  - [x] Les agents API-only doivent publier les changements multi-fichiers en un commit Git atomique lorsque possible, afin d'éviter le fan-out de Preview Vercel et les rate limits ; #142 a été squashée ainsi avant validation finale.
 - [ ] Mesurer durée de `npm ci`, `npm run check`, `next build`, taille de cache et taille de sortie.
   - [x] Instrumentation Quality ajoutée sans job ni build supplémentaire (#122).
   - [ ] Collecter plusieurs baselines post-merge et définir des seuils uniquement après observation.
@@ -206,7 +212,7 @@ Cette phase est volontairement placée après migration, UI/UX, SEO, nettoyage e
   - [x] Alignement package/lockfile, engines et tooling Next ; retrait d'Express orphelin (#123).
   - [x] Retrait du bridge HTML policy et réduction de `htmlFromPublic` au seul 404 protégé.
   - [x] Retrait des résultats de paiement HTML legacy après gate #141 vert, avec conservation des redirects et test d'absence.
-  - [ ] Auditer puis retirer les routes/catalogues/scripts fantômes (`lib/htmlRoutes.config.mjs`, `pricing`, `payment`, `startup-thanks`, `scripts/old/generate_fr_locale_html.py`) si aucun consommateur externe n'est identifié.
+  - [x] Retirer les routes/catalogues/scripts fantômes confirmés, le support homelab non routé et les directives/docs associées devenues sans cible (#142).
   - [ ] Retrait des runtimes/scripts/assets legacy restants après preuve d'absence de consommateurs externes.
 - [ ] **Migration 8 / P3** — extraction progressive de sections homepage en conservant les disclosures approuvées, sans changement sensible non validé.
 - [ ] **Migration finale / P6** — confidentialité hors homepage : pseudonymisation/caviardage du corpus restant et extension complète du privacy gate.
