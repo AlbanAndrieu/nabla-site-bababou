@@ -88,28 +88,8 @@ export type PolicyPageSlug = keyof typeof POLICY_PAGES;
 
 export const POLICY_PAGE_SLUGS = Object.keys(POLICY_PAGES) as PolicyPageSlug[];
 
-export const NATIVE_LOCALIZED_POLICY_SLUGS = [
-  "accessibility_statement",
-  "cookie_policy",
-  "privacy_policy",
-  "service_terms",
-  "legal",
-  "impressum",
-] as const satisfies readonly PolicyPageSlug[];
-
-export type NativeLocalizedPolicySlug =
-  (typeof NATIVE_LOCALIZED_POLICY_SLUGS)[number];
-
 export function isPolicyPageSlug(value: string): value is PolicyPageSlug {
   return Object.prototype.hasOwnProperty.call(POLICY_PAGES, value);
-}
-
-export function isNativeLocalizedPolicySlug(
-  value: PolicyPageSlug,
-): value is NativeLocalizedPolicySlug {
-  return (NATIVE_LOCALIZED_POLICY_SLUGS as readonly PolicyPageSlug[]).includes(
-    value,
-  );
 }
 
 export function getPolicyPage(slug: PolicyPageSlug) {
