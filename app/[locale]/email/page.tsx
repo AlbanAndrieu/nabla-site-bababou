@@ -47,18 +47,6 @@ export default async function EmailPage({
       <main id="main-content" className="container py-4 pb-5">
         <header className="mb-4">
           <h1 className="h2 mb-2">{t("title")}</h1>
-          <p className="lead text-secondary mb-0">
-            {t("reasonLine1")} <strong>alban.andrieu@free.fr</strong>{" "}
-            {t("reasonLine2")}{" "}
-            <a
-              href="https://support.google.com/mail/answer/16604719"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              {t("reasonLine3")}
-            </a>
-            {t("reasonLine4")}
-          </p>
         </header>
         <section className="py-3" aria-labelledby="preferred-addresses-heading">
           <h2 id="preferred-addresses-heading" className="h4 mb-3">
