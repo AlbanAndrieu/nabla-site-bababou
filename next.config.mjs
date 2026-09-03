@@ -6,14 +6,18 @@ import createNextIntlPlugin from "next-intl/plugin";
 const projectRoot = path.dirname(fileURLToPath(import.meta.url));
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
-const migratedLegacyRedirects = ["contact", "email", "link"].flatMap(
-  (slug) => [
-    // Legacy root pages were English before the Next locale policy changed.
-    { source: `/${slug}.html`, destination: `/en/${slug}`, permanent: true },
-    // Legacy French pages lived below /fr; French is now the unprefixed default.
-    { source: `/fr/${slug}.html`, destination: `/${slug}`, permanent: true },
-  ],
-);
+const migratedLegacyRedirects = [
+  "contact",
+  "email",
+  "link",
+  "success",
+  "cancel",
+].flatMap((slug) => [
+  // Legacy root pages were English before the Next locale policy changed.
+  { source: `/${slug}.html`, destination: `/en/${slug}`, permanent: true },
+  // Legacy French pages lived below /fr; French is now the unprefixed default.
+  { source: `/fr/${slug}.html`, destination: `/${slug}`, permanent: true },
+]);
 
 /**
  * Policy HTML files stay in public/ as reviewed filesystem sources for the

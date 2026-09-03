@@ -1,0 +1,23 @@
+{
+  "checkoutResult": {
+    "success": {
+      "metadataTitle": "Payment successful — Bababou",
+      "metadataDescription": "Secure confirmation of a payment made for Bababou.",
+      "title": "Thank you for your payment",
+      "message": "Your payment was successful. We appreciate your support.",
+      "referenceLabel": "Checkout reference:",
+      "contactBefore": "If you have any questions, contact",
+      "payAgain": "Make another payment",
+      "backSite": "Back to site"
+    },
+    "cancel": {
+      "metadataTitle": "Checkout canceled — Bababou",
+      "metadataDescription": "Confirmation that a Bababou checkout was canceled without a charge.",
+      "title": "Checkout canceled",
+      "message": "Your checkout was canceled. No charge was made.",
+      "retryMessage": "You can safely try the payment again or return to the site.",
+      "retryPayment": "Try payment again",
+      "backSite": "Back to site"
+    }
+  }
+}
