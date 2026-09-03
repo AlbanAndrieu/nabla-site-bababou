@@ -2,13 +2,7 @@ import assert from "node:assert/strict";
 import { readFile, readdir } from "node:fs/promises";
 import test from "node:test";
 
-import {
-  NATIVE_LOCALIZED_POLICY_SLUGS,
-  POLICY_PAGES,
-  POLICY_PAGE_SLUGS,
-} from "../lib/policyPages.ts";
-
-const NATIVE_POLICY_SLUGS = new Set(NATIVE_LOCALIZED_POLICY_SLUGS);
+import { POLICY_PAGES, POLICY_PAGE_SLUGS } from "../lib/policyPages.ts";
 
 test("all reviewed policy pages are owned by the native registry", async () => {
   const config = await readFile(
@@ -19,12 +13,11 @@ test("all reviewed policy pages are owned by the native registry", async () => {
     new URL("../app/[locale]/policy/[policy]/page.tsx", import.meta.url),
     "utf8",
   );
-
-  assert.deepEqual(
-    [...NATIVE_LOCALIZED_POLICY_SLUGS].sort(),
-    [...POLICY_PAGE_SLUGS].sort(),
+  const htmlBridge = await readFile(
+    new URL("../lib/htmlFromPublic.ts", import.meta.url),
+    "utf8",
   );
-  assert.equal(NATIVE_POLICY_SLUGS.size, POLICY_PAGE_SLUGS.length);
+
   assert.doesNotMatch(config, /policyRewrites/);
   assert.doesNotMatch(config, /localizedPolicyRewrites/);
   assert.match(config, /const migratedPolicyRedirects = \[/);
@@ -34,6 +27,10 @@ test("all reviewed policy pages are owned by the native registry", async () => {
   assert.match(route, /<SkipToMainContent \/>/);
   assert.match(route, /<TopAnchor \/>/);
   assert.doesNotMatch(route, /PublicHtmlFragment/);
+  assert.doesNotMatch(route, /htmlFromPublic/);
+  assert.match(htmlBridge, /404\.html/);
+  assert.doesNotMatch(htmlBridge, /policy\//);
+  assert.doesNotMatch(htmlBridge, /test\.html/);
 
   for (const slug of POLICY_PAGE_SLUGS) {
     const policy = POLICY_PAGES[slug];

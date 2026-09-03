@@ -4,7 +4,6 @@ import type { MetadataRoute } from "next";
 
 import { type AppLocale, routing } from "@/i18n/routing";
 import {
-  isNativeLocalizedPolicySlug,
   isPolicyPageSlug,
   POLICY_PAGES,
   POLICY_PAGE_SLUGS,
@@ -105,11 +104,6 @@ function policySitemapEntries(
       changeFrequency: "yearly" as const,
       priority: 0.3,
     };
-
-    if (!isNativeLocalizedPolicySlug(slug)) {
-      return base;
-    }
-
     const languages = Object.fromEntries([
       ...routing.locales.map((locale) => [
         locale,

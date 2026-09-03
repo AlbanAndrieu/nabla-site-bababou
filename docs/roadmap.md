@@ -36,7 +36,7 @@
 - [x] Canonicals et metadata Next corrigés pour Bababou et la locale française par défaut.
 - [x] Routes françaises sans préfixe et routes anglaises sous `/en` pour les surfaces Next natives.
 - [x] Le home reste volontairement mono-canonical sur `/` tant que son cutover n'est pas terminé ; `/fr` et `/en` ne publient pas de faux home Next.
-- [x] Bridge progressif HTML -> React (`PublicHtmlFragment` / `htmlFromPublic`) avec tests unitaires.
+- [x] Bridge progressif HTML -> React utilisé pendant la migration des policies ; les routes policy n'en dépendent plus après leur passage intégral en contenu natif. `htmlFromPublic` reste volontairement limité à l'exception 404 protégée.
 - [x] Playwright Preview utilise le SHA et l'URL de déploiement exacts, le bypass Vercel et un fallback OIDC.
 - [x] CI Next génère les types de routes avant le typecheck et conserve `public/**` comme source runtime pendant la phase hybride.
 - [x] Script `scripts/vercel-ignore-build.sh` ajouté pour réduire les déploiements inutiles.
@@ -52,7 +52,7 @@
 - [x] Preview E2E dédupliqué sur `repository_dispatch` avec cache Chromium réutilisable depuis le scope de la branche par défaut (#121).
 - [x] Migration 7 / P5 : manifeste/lockfile réconciliés, tooling Next 16.3.2 aligné et dépendances Express orphelines retirées (#123).
 - [x] Locales de premier rang `fr`, `en`, `de` et `no` activées dans `routing.locales`, avec catalogues et contrats de routing/SEO associés (#129).
-- [x] Conditions d’utilisation, Privacy Policy, Legal notices et Impressum migrés vers du contenu Next natif FR/EN/DE/NO (#130, #131, #134).
+- [x] Les six policies (`service_terms`, `privacy_policy`, `legal`, `impressum`, `cookie_policy`, `accessibility_statement`) sont rendues nativement en FR/EN/DE/NO (#130, #131, #134, #136), avec récupération du contrat Preview E2E après #136 (#137).
 
 ### Blocages opérationnels actuels
 
@@ -84,6 +84,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 - [ ] Conserver à terme un seul couple nominal `build: next build` / `start: next start`.
 - [x] Exécuter explicitement `next build` dans la CI GitHub de qualité afin de ne pas dépendre uniquement de Vercel pour valider la compilation.
 - [x] Contraindre le tracing de `htmlFromPublic.ts` aux fragments explicitement allowlistés (#108).
+- [x] Réduire ensuite `htmlFromPublic.ts` au seul `public/404.html` protégé et retirer le composant `PublicHtmlFragment` devenu sans consommateur après la migration native complète des policies.
 - [x] Éviter le pull de l'image Docker Snyk lorsque `SNYK_TOKEN` est vide ; la CI utilise désormais le CLI uniquement lorsque le token existe.
 - [ ] Mesurer l'impact sur taille d'installation/cache et durée de build après ces optimisations.
   - [x] Instrumenter le job Quality sans second build : `npm ci`, `node_modules`, cache npm, `npm run check`, `next build` et taille `.next` sont publiés dans le Job Summary (#122).
@@ -128,7 +129,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] Conditions d’utilisation localisées et rendues nativement en FR/EN/DE/NO (#130).
   - [x] Privacy Policy localisée et rendue nativement en FR/EN/DE/NO (#131).
   - [x] Legal notices et Impressum localisés et rendus nativement en FR/EN/DE/NO (#134).
-  - [ ] Migrer le contenu de `cookie_policy` et de l’Accessibility Statement depuis le bridge HTML anglais vers du contenu natif FR/EN/DE/NO.
+  - [x] Cookie Policy et contenu de l’Accessibility Statement migrés depuis le bridge HTML anglais vers du contenu natif FR/EN/DE/NO (#136), avec contrat E2E corrigé dans #137.
   - [ ] Migrer ensuite les autres pages publiques structurées à faible risque.
 - [ ] Différer les pages contenant un corpus familial sensible jusqu'à la phase finale de confidentialité.
 
@@ -139,13 +140,14 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 - [x] Open Graph/Twitter complets et spécifiques pour chaque route Next native (#116).
 - [x] Redirects permanents des anciennes URLs `.html` pour `contact`, `email` et `link` après validation des routes Next correspondantes (#116).
 - [x] Vérifier les redirects et métadonnées avec Playwright sur le Preview exact (#116).
-- [x] Ajouter DE/NO dans les alternates après stabilisation des catalogues, y compris pour les policies localisées (#129, #130, #131, #134).
+- [x] Ajouter DE/NO dans les alternates après stabilisation des catalogues, y compris pour les six policies nativement localisées (#129, #130, #131, #134, #136).
 - [ ] Garder la homepage et son Open Graph/Twitter comme exception propriétaire : aucun changement sans accord explicite.
 
 ## P5 — Nettoyage technique, performance et CI
 
 - [x] Aligner package/lockfile et retirer les dépendances confirmées orphelines (#123).
 - [ ] Retirer progressivement les runtimes/scripts legacy après preuve d'absence de consommateurs.
+- [x] Retirer le bridge HTML des policies et le composant `PublicHtmlFragment` devenu orphelin ; conserver `htmlFromPublic` uniquement pour l'exception 404 imposée par la policy du repo.
 - [ ] Supprimer les pages `.html` et assets orphelins après validation des redirects et de la parité Next.
 - [ ] Réduire les téléchargements et jobs CI inutiles.
   - [x] Snyk ne prépare plus/pull plus son image Docker lorsque `SNYK_TOKEN` est absent.
@@ -180,11 +182,13 @@ Cette phase est volontairement placée après migration, UI/UX, SEO, nettoyage e
   - [x] Conditions d’utilisation natives FR/EN/DE/NO (#130).
   - [x] Privacy Policy native FR/EN/DE/NO (#131).
   - [x] Legal notices et Impressum natifs FR/EN/DE/NO (#134).
-  - [ ] Finaliser `cookie_policy` et le contenu Accessibility Statement en i18n natif, puis poursuivre les pages publiques structurées.
+  - [x] Cookie Policy et Accessibility Statement finalisés en i18n natif FR/EN/DE/NO (#136/#137).
+  - [ ] Poursuivre les pages publiques structurées à faible risque.
 - [ ] **Migration 7 / P5** — dépendances/runtimes legacy, assets orphelins et optimisation CI/performance.
   - [x] Réconciliation release/Preview et cache Chromium (#117/#119/#120/#121).
   - [x] Suppression du seed Chromium redondant et instrumentation Quality (#122).
   - [x] Alignement package/lockfile, engines et tooling Next ; retrait d'Express orphelin (#123).
+  - [x] Retrait du bridge HTML policy et réduction de `htmlFromPublic` au seul 404 protégé.
   - [ ] Retrait des runtimes/scripts/assets legacy restants après preuve d'absence de consommateurs externes.
 - [ ] **Migration 8 / P3** — extraction progressive de sections homepage en conservant les disclosures approuvées, sans changement sensible non validé.
 - [ ] **Migration finale / P6** — confidentialité hors homepage : pseudonymisation/caviardage du corpus restant et extension complète du privacy gate.
