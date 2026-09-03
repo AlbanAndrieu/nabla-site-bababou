@@ -1,3 +1,10 @@
+## [0.10.1](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.10.0...0.10.1) (2026-09-03)
+
+
+### Bug Fixes
+
+* **routing:** reconcile default locale and global 404 ([#141](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/141)) ([9a512f3](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/9a512f3eb97fa773cc0e9066dec830d721cdafec))
+
 # [0.10.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.9.1...0.10.0) (2026-09-03)
 
 
