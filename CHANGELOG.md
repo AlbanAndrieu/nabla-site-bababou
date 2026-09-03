@@ -1,3 +1,10 @@
+## [0.8.1](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.8.0...0.8.1) (2026-09-03)
+
+
+### Bug Fixes
+
+* **policy:** update German impressum legal basis ([#135](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/135)) ([c5f0617](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/c5f06170db809d894050a50ba234e2e722e2ec0b))
+
 # [0.8.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.7.1...0.8.0) (2026-09-02)
 
 
