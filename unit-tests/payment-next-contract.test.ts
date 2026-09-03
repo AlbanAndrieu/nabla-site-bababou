@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { access, readFile } from "node:fs/promises";
 import test from "node:test";
 
-const read = (path: string) =>
-  readFile(new URL(`../${path}`, import.meta.url), "utf8");
+const projectUrl = (path: string) => new URL(`../${path}`, import.meta.url);
+const read = (path: string) => readFile(projectUrl(path), "utf8");
 
 test("payment result routes are native localized noindex surfaces", async () => {
   const [success, cancel] = await Promise.all([
@@ -31,4 +31,12 @@ test("checkout messages are loaded as a first-class i18n domain", async () => {
   assert.match(messages, /messages\/checkout\/en\.json/);
   assert.match(messages, /messages\/checkout\/de\.json/);
   assert.match(messages, /messages\/checkout\/no\.json/);
+});
+
+test("legacy payment result artifacts stay removed after Next parity", async () => {
+  await assert.rejects(access(projectUrl("public/success.html")));
+  await assert.rejects(access(projectUrl("public/cancel.html")));
+
+  const stylelint = await read("stylelint.config.cjs");
+  assert.doesNotMatch(stylelint, /public\/checkout\.css/);
 });
