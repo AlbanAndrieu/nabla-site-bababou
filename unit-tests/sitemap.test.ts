@@ -13,6 +13,7 @@ test("sitemap preserves active legacy URLs and adds native Next surfaces", async
   assert.ok(urls.includes("https://bababou.com/contact"));
   assert.ok(urls.includes("https://bababou.com/link"));
   assert.ok(urls.includes("https://bababou.com/email"));
+  assert.ok(urls.includes("https://bababou.com/policy"));
 });
 
 test("sitemap replaces migrated legacy duplicates with native Next URLs", async () => {
@@ -52,6 +53,22 @@ test("native sitemap entries derive locale alternates from routing", async () =>
 
   assert.ok(contact);
   assert.deepEqual(contact.alternates?.languages, expected);
+});
+
+test("policy index publishes native hreflang alternates", async () => {
+  const entries = await sitemap();
+  const policyIndex = entries.find(
+    (entry) => entry.url === "https://bababou.com/policy",
+  );
+
+  assert.ok(policyIndex);
+  assert.deepEqual(policyIndex.alternates?.languages, {
+    fr: "https://bababou.com/policy",
+    en: "https://bababou.com/en/policy",
+    de: "https://bababou.com/de/policy",
+    no: "https://bababou.com/no/policy",
+    "x-default": "https://bababou.com/policy",
+  });
 });
 
 test("all policies publish native hreflang alternates", async () => {

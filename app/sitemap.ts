@@ -85,9 +85,31 @@ function parseLegacySitemap(xml: string): MetadataRoute.Sitemap {
   return entries;
 }
 
+function localizedPolicyIndexPath(locale: AppLocale) {
+  return locale === routing.defaultLocale ? "/policy" : `/${locale}/policy`;
+}
+
 function localizedPolicyPath(slug: PolicyPageSlug, locale: AppLocale) {
   const primaryPath = POLICY_PAGES[slug].canonicalPath;
   return locale === routing.defaultLocale ? primaryPath : `/${locale}${primaryPath}`;
+}
+
+function policyIndexSitemapEntry(): SitemapEntry {
+  const url = new URL("/policy", SITE_URL).href;
+  const languages = Object.fromEntries([
+    ...routing.locales.map((locale) => [
+      locale,
+      new URL(localizedPolicyIndexPath(locale), SITE_URL).href,
+    ]),
+    ["x-default", url],
+  ]);
+
+  return {
+    url,
+    changeFrequency: "yearly",
+    priority: 0.4,
+    alternates: { languages },
+  };
 }
 
 function policySitemapEntries(
@@ -148,6 +170,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const legacyEntries = parseLegacySitemap(legacyXml);
   const combined = [
     ...legacyEntries,
+    policyIndexSitemapEntry(),
     ...policySitemapEntries(legacyEntries),
     ...nextSitemapEntries(),
   ];

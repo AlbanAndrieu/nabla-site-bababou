@@ -35,14 +35,15 @@ test("contact route preserves public professional parity", async () => {
   }
 });
 
-test("contact hero renders the public professional identity and CV CTA", async () => {
+test("contact hero renders the public professional identity without a CV CTA", async () => {
   const hero = await readFile(
     new URL("../components/ContactHero.tsx", import.meta.url),
     "utf8",
   );
 
   assert.match(hero, /contactHref: string/);
-  assert.match(hero, /cvHref: string/);
+  assert.doesNotMatch(hero, /cvHref: string/);
+  assert.doesNotMatch(hero, /cvCta: string/);
   assert.match(hero, /experience: string/);
   assert.match(hero, /role: string/);
   assert.match(hero, /profileAlt: string/);

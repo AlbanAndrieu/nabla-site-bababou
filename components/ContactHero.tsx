@@ -4,8 +4,6 @@ type ContactHeroProps = {
   contactCta: string;
   contactHref: string;
   current: string;
-  cvCta: string;
-  cvHref: string;
   experience: string;
   intro: string;
   profileAlt: string;
@@ -15,8 +13,6 @@ type ContactHeroProps = {
 export default function ContactHero({
   contactCta,
   contactHref,
-  cvCta,
-  cvHref,
   experience,
   intro,
   profileAlt,
@@ -41,9 +37,6 @@ export default function ContactHero({
         <div className="cta-buttons">
           <a className="btn btn-light btn-lg" href={contactHref}>
             <i className="fas fa-envelope" aria-hidden="true" /> {contactCta}
-          </a>
-          <a className="btn btn-outline-light btn-lg" href={cvHref}>
-            <i className="fas fa-file-pdf" aria-hidden="true" /> {cvCta}
           </a>
         </div>
       </div>

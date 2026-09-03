@@ -36,6 +36,9 @@ const migratedPolicyRedirects = [
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  experimental: {
+    globalNotFound: true,
+  },
   async redirects() {
     return [...migratedLegacyRedirects, ...migratedPolicyRedirects];
   },

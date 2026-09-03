@@ -1,8 +1,8 @@
 {
   "email": {
-    "title": "Mise à jour de l’adresse email",
+    "title": "Adresses email",
     "metadataTitle": "Adresses email de contact — Alban Andrieu",
-    "metadataDescription": "Adresses email actuelles d’Alban Andrieu pour les contacts professionnels, la sécurité, la facturation et les autres demandes.",
+    "metadataDescription": "Adresses email actuelles pour contacter Alban Andrieu via bababou.com.",
     "useTheseAddresses": "Merci d’utiliser ces adresses",
     "cards": [
       {
@@ -18,24 +18,6 @@
         "descriptionAfter": ""
       },
       {
-        "title": "Sécurité site",
-        "email": "security@albandrieu.com",
-        "descriptionBefore": "",
-        "descriptionAfter": ""
-      },
-      {
-        "title": "Facturation",
-        "email": "invoice@albanandrieu.com",
-        "descriptionBefore": "Pour toute question de facturation (règlement, TVA, etc.) : ",
-        "descriptionAfter": " — n’envoyez pas de facture aux adresses de travail ou de contact général ci-dessus."
-      },
-      {
-        "title": "Autres sujets",
-        "email": "contact@albandrieu.com",
-        "descriptionBefore": "",
-        "descriptionAfter": ""
-      },
-      {
         "title": "Bababou",
         "email": "aa@bababou.com",
         "descriptionBefore": "",
@@ -43,18 +25,7 @@
       }
     ],
     "automatedHeading": "Expéditeurs automatiques",
-    "automatedDesc": "Si vous recevez un mail depuis l’un de ces expéditeurs, cela signifie que votre message n’a pas été ouvert manuellement (sinon il est géré par une règle ou un tri automatique) :",
-    "automatedList": [
-      "no-reply@albanandrieu.com",
-      "no-reply@albandrieu.com",
-      "no-reply@bababou.com",
-      "openclaw@albandrieu.com",
-      "assistant@albandrieu.com",
-      "invoice@albanandrieu.com"
-    ],
-    "reasonLine1": "L’adresse",
-    "reasonLine2": "est désactivée. Google modifie la gestion des comptes tiers dans Gmail (Gmailify et POP « vérifier d’autres adresses ») :",
-    "reasonLine3": "Plus d’informations sur les changements Gmailify & POP",
-    "reasonLine4": " (Aide Google). Ce changement explique la fermeture de cette boîte mail."
+    "automatedDesc": "Les messages automatiques du site peuvent provenir de l’adresse suivante :",
+    "automatedList": ["no-reply@bababou.com"]
   }
 }
