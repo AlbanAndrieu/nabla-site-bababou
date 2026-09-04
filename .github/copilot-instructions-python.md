@@ -54,7 +54,7 @@ gitlint = "*"
 
 ### Starting the Server
 
-The Python HTTP server is used as an alternative to Cloudflare Wrangler for local development:
+The Python HTTP server is used only for focused audits of legacy static files; normal local development uses the root Next.js server:
 
 ```bash
 # From project root
@@ -90,7 +90,7 @@ openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -node
 python -m http.server 8001 --bind 127.0.0.1 --protocol https
 ```
 
-**Note:** Python HTTP server is for development only. Use Cloudflare Workers or Vercel for production.
+**Note:** The Python HTTP server is not the application runtime. Use the root Next.js commands locally and Vercel for deployment.
 
 ## Linting Tools
 

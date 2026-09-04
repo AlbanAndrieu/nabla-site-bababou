@@ -2,31 +2,30 @@
 
 ## Repository Overview
 
-This is the nabla-site-bababou repository, a static website project for "nabla" created for Job search. The repository contains:
+This is the Bababou hybrid Next.js migration repository. The repository contains:
 
-- A static website in the `public/` directory
-- A Next.js application in the `app/` directory
-- Cloudflare Workers configuration for deployment
+- A root Next.js App Router application in `app/`
+- Legacy HTML and static assets in `public/`, retained only until migration parity is proven
 - Vercel deployment configuration
+- Legacy Wrangler configuration retained only while external Cloudflare usage is audited
 
 **Languages & Technologies:**
-- JavaScript/TypeScript (Node.js v24.11.0+, npm v11.6.2+, pnpm v10.22.0+)
-- Next.js 16.0.7 with React 19.2.0
-- Cloudflare Workers (wrangler)
+- JavaScript/TypeScript (Node.js v24.11.0+, npm v11.6.2+)
+- Next.js 16.3.2 with React 19.2.4
 - Vercel deployment platform
 
 ## Project Structure
 
 ### Root Directory Files
 - `package.json` - Root package configuration with build scripts and dependencies
-- `vercel.json` - Vercel deployment configuration (`rootDirectory`: `app` for Next.js)
-- `wrangler.jsonc` - Cloudflare Workers configuration (assets: `./public`)
+- `vercel.json` - Vercel/Next.js deployment configuration
+- `wrangler.jsonc` - legacy Cloudflare configuration pending external-usage audit
 - `eslint.config.js` - ESLint configuration for the project
 - `commitlint.config.ts` - Commitlint configuration with emoji support
 
 ### Key Directories
-- `public/` - Static assets directory served by Cloudflare/Vercel (HTML, CSS, JS, JSON)
-- `app/` - Next.js application (separate package with its own package.json)
+- `public/` - static assets plus legacy HTML retained during migration
+- `app/` - root Next.js App Router application
 - `api/` - Optional Vercel serverless handlers (for example `hello.js`); not PHP
 - `scripts/` - Utility scripts (e.g., `run-wicked.sh`)
 - `.github/workflows/` - SDLC workflows (OpenCommit action)
@@ -43,48 +42,26 @@ This is the nabla-site-bababou repository, a static website project for "nabla" 
 ### Installation & Setup
 **ALWAYS run installation before building or running:**
 ```bash
-# Install root dependencies (REQUIRED before any build/start)
-pnpm install
-# OR
-npm install
-
-# For app Next.js project
-cd app && pnpm install
+npm ci
 ```
 
-The postinstall script automatically:
-- Copies d3.min.js to index/dist/scripts/d3
-- Copies arf.js to dist/scripts/
-- Copies resources/*.json to dist/resources
-- Copies index.html and wireframe.css to dist/
+The root `postinstall` is temporary legacy compatibility while dist consumers
+are audited. Do not create or restore a package manifest under `public/`.
 
 ### Development Servers
 
-**Root Project (Static Site):**
+**Next.js application:**
 ```bash
-# Cloudflare Workers dev server (primary method)
-npm run start
-# OR
-npm run dev
-# OR
-wrangler dev
-```
-
-**Next.js App (app/):**
-```bash
-cd app
 npm run dev
 # Opens at http://localhost:3000
 ```
 
-### Linting
-**ALWAYS run linting before committing code:**
-```bash
-# Root project ESLint
-npm run lint
+Use `npm run start-python` only for focused legacy-static audits.
 
-# app ESLint
-cd app && npm run lint
+### Linting
+**ALWAYS run the canonical quality gate before publication:**
+```bash
+bash scripts/quality-gate.sh
 ```
 
 The project has extensive pre-commit hooks configured in `.pre-commit-config.yaml` that run automatically on commit, including:
@@ -96,13 +73,12 @@ The project has extensive pre-commit hooks configured in `.pre-commit-config.yam
 
 ### Building
 
-**Next.js App:**
+**Next.js application:**
 ```bash
-cd app
 npm run build
 ```
 
-**Note:** The root project does not have a separate build step as it serves static files directly from `public/`.
+The root project is the Next.js project; `public/` is not a separate runtime.
 
 ### Deployment
 
@@ -112,12 +88,8 @@ vercel deploy        # Preview deployment
 vercel --prod        # Production deployment
 ```
 
-**Cloudflare Workers:**
-```bash
-npm run deploy
-# OR
-wrangler deploy
-```
+**Cloudflare Workers:** `wrangler.jsonc` is legacy-only pending confirmation
+that no external Cloudflare deployment still consumes it.
 
 ## SDLC & Validation
 
@@ -180,9 +152,9 @@ The following directories are ignored by ESLint (see `eslint.config.js`):
 
 ### Common Issues & Workarounds
 
-1. **Always install dependencies first** - The postinstall script is critical for setting up the project correctly
-2. **Use pnpm** - This project is configured for pnpm workspaces
-3. **Python server timeout** - If using Python HTTP server, it may be slower than Cloudflare Workers dev server
+1. **Use the root package only** - `public/package.json` is retired; root postinstall remains temporary pending dist audit
+2. **Use the canonical npm workflow** - CI uses the root npm lockfile
+3. **Python server is legacy-only** - normal development uses Next.js
 4. **Pre-commit hooks may be slow** - Some hooks (like mega-linter, ansible-lint) are disabled in `.pre-commit-config.yaml` because they're too slow
 5. **Large files excluded** - Several large files are excluded from git (see `.pre-commit-config.yaml` check-added-large-files)
 
@@ -192,11 +164,11 @@ The `scripts/run-wicked.sh` script is excluded from some linting checks (bashate
 ## Validation Steps
 
 Before submitting a PR:
-1. Run `pnpm install` to ensure dependencies are up to date
-2. Run `npm run lint` to check for linting errors
-3. For Next.js changes: `cd app && npm run build` to verify builds successfully
-4. Test locally with `npm run start` (Cloudflare) or `npm run start-python` (Python server)
-5. Verify pre-commit hooks pass (if installed)
+1. Run `npm ci`
+2. Run `bash scripts/quality-gate.sh`
+3. Use `npm run dev` for interactive Next.js validation
+4. Run Playwright when browser behavior changes
+5. Verify the working tree is clean before publication
 
 ## Key Resources & Documentation
 
@@ -204,7 +176,7 @@ Before submitting a PR:
 - Issue Tracker: https://github.com/AlbanAndrieu/nabla-site-bababou/issues
 - License: Apache v2
 - Vercel deployment: Configured via `vercel.json`
-- Cloudflare Workers: Configured via `wrangler.jsonc`
+- Wrangler: legacy compatibility only; external usage must be confirmed before removal
 
 ## Search Guidance
 
@@ -212,7 +184,7 @@ When exploring the codebase:
 - Static site files: Look in `public/` directory
 - Next.js app: Look in `app/` directory
 - API endpoints: Look in `api/` directory
-- Build configurations: Check root-level config files (package.json, vercel.json, wrangler.jsonc)
+- Build configurations: check root `package.json` and `vercel.json`; inspect `wrangler.jsonc` only for the pending legacy-runtime audit
 - Linting configs: Check `.eslintrc`, `.mega-linter.yml`, `.pre-commit-config.yaml`
 - SDLC: Check `.github/workflows/`
 
