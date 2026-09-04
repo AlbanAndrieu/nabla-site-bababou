@@ -1,60 +1,34 @@
-# Security Summary
+# Security
 
-## Security Improvements Made
+## Runtime and deployment boundary
 
-### Vulnerabilities Addressed
-- **Initial State**: 25 vulnerabilities (7 moderate, 16 high, 2 critical)
-- **Final State**: 17 vulnerabilities (4 moderate, 13 high, 0 critical)
-- **Improvement**: Eliminated 2 critical and 6 other vulnerabilities
+- Production is a root Next.js application deployed through Vercel Git Integration.
+- The local Vercel CLI, npm D3, Wrangler and unused browser observability SDK roots are intentionally retired.
+- Bababou has no active Stripe SDK dependency; hosted payment result routes do not require one.
+- Browser Vercel/Datadog analytics use the shared site analytics integration rather than root npm SDKs.
+- OpenCommit is intentionally retained as dev-only commit tooling and is not part of the runtime bundle.
 
-### Changes Made
+## Dependency supply-chain controls
 
-1. **Removed webdriver-manager** (v12.1.9)
-   - Had critical vulnerabilities in form-data and request dependencies
-   - Not used anywhere in the codebase
-   - Removed along with 64 transitive dependencies
+- Node.js is constrained to `>=24.11.0 <25`.
+- npm is constrained to `>=11.17.0 <12`.
+- `.npmrc` enables `strict-allow-scripts=true`.
+- Packages with reviewed install scripts are explicitly denied through `package.json#allowScripts`; any new install script must fail until reviewed.
+- Never enable `dangerously-allow-all-scripts`.
+- Keep the application dependency graph limited to packages with a proven runtime or build consumer.
 
-2. **Removed @astrojs/vercel** (v9.0.2)
-   - Not used in the project
-   - Had high severity vulnerabilities in path-to-regexp
+## Content/privacy boundary
 
-3. **Removed crypto package** (v1.0.1)
-   - Not used anywhere in the codebase
-   - Unnecessary dependency
+- The repository privacy gate is part of the canonical quality checks.
+- Family/legal publication rules are defined in `AGENTS.md` and the dedicated privacy skill; do not duplicate sensitive values in security documentation.
+- `public/404.html` and the owner-controlled homepage have explicit repository policies that security refactors must preserve.
 
-4. **Total Impact**:
-   - Removed 296 packages
-   - Reduced from 836 to 476 packages
-   - Significantly reduced attack surface
+## Validation
 
-### Current dependency posture
+- `CI (Quality and Security)` runs lint, route type generation, type-check, unit/privacy checks and the production Next build.
+- Snyk runs when `SNYK_TOKEN` is configured.
+- Preview Playwright validates deploy-relevant PR revisions on the exact Vercel checkpoint SHA.
+- `npm audit` is an advisory signal; review upgrades instead of applying blind `--force` fixes.
+- Interpret CodeQL, dependency and deployment posture from current runs rather than historical vulnerability counts.
 
-The repository no longer installs the Vercel CLI as an application dependency.
-Deployments use Vercel's Git integration, while runtime integrations remain
-explicit `@vercel/*` packages where they are actually consumed.
-
-Do not rely on historical vulnerability counts in this document as a current
-audit result. Use `npm audit`, the repository security workflows, and the
-current lockfile for the live dependency posture.
-
-## CodeQL Analysis
-
-CodeQL security scanning was run with **0 alerts** found:
-- ✅ JavaScript: No security issues detected
-
-## Recommendations
-
-1. **Regular Audits**: Run `npm audit` regularly to catch new vulnerabilities
-2. **Dependency Updates**: Keep dependencies up to date through the repository dependency workflow
-3. **Minimize Tooling**: Keep deployment CLIs out of the application dependency graph when platform Git integration already provides deployment
-4. **Security Headers**: Maintain security headers in the active Vercel/Next.js configuration
-
-## Conclusion
-
-The project's security posture has been significantly improved by:
-- Eliminating all critical vulnerabilities
-- Removing unused dependencies with known security issues
-- Reducing the dependency tree by ~35%
-- Passing CodeQL security analysis with zero alerts
-
-The remaining vulnerabilities are in deployment tooling and do not affect the production website's security.
+Secrets must never be committed. Use the minimum permissions required by each workflow and keep release/deployment credentials scoped to their task.

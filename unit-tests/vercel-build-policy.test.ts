@@ -45,10 +45,11 @@ async function createRepo(
   return directory;
 }
 
-function runPolicy(directory: string) {
+function runPolicy(directory: string, env: NodeJS.ProcessEnv = {}) {
   return spawnSync("bash", [policyScript], {
     cwd: directory,
     encoding: "utf8",
+    env: { ...process.env, ...env },
   });
 }
 
@@ -82,13 +83,47 @@ test("Vercel still skips documentation-only commits", async (t) => {
   const result = runPolicy(directory);
 
   assert.equal(result.status, 0, result.stderr);
-  assert.match(result.stdout, /Only documentation\/repository maintenance changed/);
+  assert.match(result.stdout, /Only documentation, tests, editor metadata, agent instructions, or GitHub maintenance changed/);
 });
 
-test("vercel.json delegates ignored-build decisions to the shared policy", async () => {
+test("Vercel compares against the previous deployed SHA across multi-commit changes", async (t) => {
+  const directory = await createRepo("fix: runtime baseline", "next.config.mjs");
+  t.after(async () => rm(directory, { recursive: true, force: true }));
+
+  const previousSha = execFileSync("git", ["rev-parse", "HEAD^"], {
+    cwd: directory,
+    encoding: "utf8",
+  }).trim();
+
+  await mkdir(join(directory, "docs"), { recursive: true });
+  await writeFile(join(directory, "docs", "roadmap.md"), "docs only\n");
+  execFileSync("git", ["add", "."], { cwd: directory, stdio: "ignore" });
+  execFileSync("git", ["commit", "-m", "docs: explain runtime change"], {
+    cwd: directory,
+    stdio: "ignore",
+  });
+
+  const result = runPolicy(directory, {
+    VERCEL_GIT_PREVIOUS_SHA: previousSha,
+  });
+
+  assert.equal(result.status, 1, result.stderr);
+  assert.match(result.stdout, /Deploy-relevant change detected: next\.config\.mjs/);
+});
+
+test("vercel.json delegates ignored-build decisions and disables slash-branch auto deploys", async () => {
   const config = JSON.parse(
     await readFile(new URL("../vercel.json", import.meta.url), "utf8"),
-  ) as { ignoreCommand?: string };
+  ) as {
+    ignoreCommand?: string;
+    git?: { deploymentEnabled?: Record<string, boolean> };
+  };
 
   assert.equal(config.ignoreCommand, "bash scripts/vercel-ignore-build.sh");
+  const rules = config.git?.deploymentEnabled;
+  assert.ok(rules);
+  assert.equal(rules["**"], false);
+  assert.equal(rules.master, true);
+  assert.equal(rules["vercel-preview-*"], true);
+  assert.equal(rules["*"], undefined);
 });

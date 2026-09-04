@@ -64,9 +64,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "24"
+          node-version: "25.9.0"
           cache: npm
           cache-dependency-path: package-lock.json
+
+      - name: Pin npm
+        run: npm install --global npm@11.17.0
 
       # This job exercises an already-built remote Preview. Skip lifecycle
       # scripts to keep dependency installation deterministic and minimal.

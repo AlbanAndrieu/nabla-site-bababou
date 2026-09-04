@@ -1,9 +1,11 @@
 name: Semantic Release
 
 on:
-  push:
-    branches:
-      - master
+  workflow_run:
+    workflows:
+      - CI (Quality and Security)
+    types:
+      - completed
   workflow_dispatch:
 
 permissions:
@@ -18,25 +20,29 @@ concurrency:
 jobs:
   release:
     name: Version, changelog and GitHub release
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_branch == 'master')
     runs-on: ubuntu-latest
     env:
       RELEASE_APP_CLIENT_ID: ${{ vars.RELEASE_APP_CLIENT_ID }}
-      RELEASE_APP_PRIVATE_KEY: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
 
     steps:
-      - name: Checkout full history
+      - name: Checkout validated master revision
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
+          ref: master
           fetch-depth: 0
           persist-credentials: false
 
       - name: Create dedicated release App token
         id: release_app_token
-        if: env.RELEASE_APP_CLIENT_ID != '' && env.RELEASE_APP_PRIVATE_KEY != ''
+        if: env.RELEASE_APP_CLIENT_ID != ''
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
           client-id: ${{ env.RELEASE_APP_CLIENT_ID }}
-          private-key: ${{ env.RELEASE_APP_PRIVATE_KEY }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
           permission-contents: write
           permission-issues: write
           permission-pull-requests: write
@@ -44,29 +50,59 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
         with:
-          node-version: "24"
+          node-version: "25.9.0"
           cache: npm
 
-      - name: Install release dependencies
+      - name: Pin npm
+        run: npm install --global npm@11.17.0
+
+      - name: Install application dependencies
         run: npm ci --ignore-scripts --no-audit --no-fund
 
-      # Release 0.1.0 is the established numeric semantic-release baseline.
-      # The repository also contains a historical legacy v0.0.1 tag. Do not
-      # recreate a synthetic 0.0.x bootstrap: semantic-release treats that
-      # legacy SemVer tag as release history even with a numeric tagFormat.
+      - name: Verify validated revision is still current master
+        id: freshness
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --force origin master:refs/remotes/origin/master --tags
+          CURRENT_SHA="$(git rev-parse HEAD)"
+          MASTER_SHA="$(git rev-parse origin/master)"
+          VALIDATED_SHA="${{ github.event.workflow_run.head_sha }}"
+
+          if [[ "$CURRENT_SHA" != "$MASTER_SHA" ]]; then
+            echo "Checkout $CURRENT_SHA is not current master $MASTER_SHA."
+            echo "current=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [[ -n "$VALIDATED_SHA" && "$CURRENT_SHA" != "$VALIDATED_SHA" ]]; then
+            echo "Validated revision $VALIDATED_SHA is stale; master is $CURRENT_SHA."
+            echo "current=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "current=true" >> "$GITHUB_OUTPUT"
+
+      # Bababou already has established numeric semantic-release history.
+      # Do not recreate Alban's v0.0.0 bootstrap here.
       - name: Run semantic-release
+        if: steps.freshness.outputs.current == 'true'
         env:
           GITHUB_TOKEN: ${{ steps.release_app_token.outputs.token || secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ steps.release_app_token.outputs.token || secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
           set -euo pipefail
-          # @semantic-release/git pushes the prepared release commit. Keep the
-          # credential helper and token in the same step as the authenticated push.
           gh auth setup-git
-          npm run semantic-release
+          npm exec --yes --ignore-scripts \
+            --package=semantic-release@25.0.8 \
+            --package=@semantic-release/changelog@7.0.0 \
+            --package=@semantic-release/git@11.0.1 \
+            --package=@semantic-release/github@12.0.9 \
+            -- semantic-release
 
       - name: Verify numeric release state
+        if: steps.freshness.outputs.current == 'true'
         env:
           GH_TOKEN: ${{ steps.release_app_token.outputs.token || secrets.GITHUB_TOKEN }}
         shell: bash
@@ -76,15 +112,15 @@ jobs:
           PACKAGE_VERSION="$(node -p "require('./package.json').version")"
           LATEST_TAG="$(git tag --list --sort=-version:refname | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1 || true)"
 
-          if [[ -z "${LATEST_TAG}" ]]; then
+          if [[ -z "$LATEST_TAG" ]]; then
             echo "No numeric semantic-release tag exists." >&2
             exit 1
           fi
 
-          if [[ "${LATEST_TAG}" != "${PACKAGE_VERSION}" ]]; then
-            echo "package.json version ${PACKAGE_VERSION} does not match latest numeric tag ${LATEST_TAG}." >&2
+          if [[ "$LATEST_TAG" != "$PACKAGE_VERSION" ]]; then
+            echo "package.json version $PACKAGE_VERSION does not match latest numeric tag $LATEST_TAG." >&2
             exit 1
           fi
 
-          gh release view "${LATEST_TAG}" --repo "${GITHUB_REPOSITORY}" >/dev/null
-          echo "Verified semantic-release state at ${LATEST_TAG}."
+          gh release view "$LATEST_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null
+          echo "Verified semantic-release state at $LATEST_TAG."

@@ -1,0 +1,154 @@
+name: Vercel Preview (On Demand)
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "Pull request number to deploy after CI is validated"
+        required: true
+        type: number
+  pull_request:
+    types:
+      - closed
+
+permissions:
+  actions: read
+  contents: write
+  pull-requests: read
+
+concurrency:
+  group: >-
+    vercel-preview-${{
+      inputs.pr_number ||
+      github.event.pull_request.number ||
+      github.ref
+    }}
+  cancel-in-progress: true
+
+jobs:
+  checkpoint:
+    name: Publish requested PR Preview checkpoint
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve requested PR checkpoint
+        id: preview
+        uses: actions/github-script@v8
+        env:
+          PR_NUMBER: ${{ inputs.pr_number }}
+        with:
+          script: |
+            const prNumber = Number(process.env.PR_NUMBER);
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+            });
+
+            if (pr.state !== 'open') {
+              core.setFailed(`PR #${prNumber} is not open.`);
+              return;
+            }
+            if (pr.head.repo.full_name !== context.repo.owner + '/' + context.repo.repo) {
+              core.setFailed('Preview checkpoints are limited to branches from this repository.');
+              return;
+            }
+
+            const { data: qualityRuns } = await github.rest.actions.listWorkflowRunsForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head_sha: pr.head.sha,
+              event: 'pull_request',
+              per_page: 100,
+            });
+            const quality = qualityRuns.workflow_runs.find(
+              (run) =>
+                run.name === 'CI (Quality and Security)' &&
+                run.head_sha === pr.head.sha,
+            );
+            if (!quality || quality.status !== 'completed' || quality.conclusion !== 'success') {
+              core.setFailed(
+                `PR #${prNumber} head ${pr.head.sha} does not have a successful completed Quality run.`,
+              );
+              return;
+            }
+
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+              per_page: 100,
+            });
+
+            const safeOnly = (filename) =>
+              filename.startsWith('docs/') ||
+              filename.endsWith('.md') ||
+              filename.startsWith('unit-tests/') ||
+              filename.startsWith('.github/') ||
+              filename.startsWith('.vscode/') ||
+              filename.startsWith('.idea/') ||
+              filename.startsWith('.agents/') ||
+              filename.startsWith('.cursor/') ||
+              filename.startsWith('.claude/');
+
+            const deployRelevant = files
+              .map((file) => file.filename)
+              .filter((filename) => !safeOnly(filename));
+
+            core.setOutput('sha', pr.head.sha);
+            core.setOutput('branch', `vercel-preview-pr-${prNumber}`);
+            core.setOutput('deploy_relevant', deployRelevant.length > 0 ? 'true' : 'false');
+
+            if (deployRelevant.length === 0) {
+              core.info(`PR #${prNumber} only changes tests/docs/maintenance; no Vercel Preview needed.`);
+              return;
+            }
+
+            core.info(`Deploy-relevant files: ${deployRelevant.join(', ')}`);
+
+      - name: Checkout exact PR revision
+        if: steps.preview.outputs.deploy_relevant == 'true'
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ steps.preview.outputs.sha }}
+          fetch-depth: 0
+
+      # Use the Git transport deliberately. Vercel Git Integration reacts to
+      # branch pushes; creating/updating refs through the GitHub REST API alone
+      # does not reliably emit the Git push signal consumed by Vercel.
+      - name: Push dedicated Preview checkpoint
+        if: steps.preview.outputs.deploy_relevant == 'true'
+        env:
+          CHECKPOINT_BRANCH: ${{ steps.preview.outputs.branch }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git push --force origin "HEAD:refs/heads/${CHECKPOINT_BRANCH}"
+          echo "Published ${CHECKPOINT_BRANCH} at $(git rev-parse HEAD)."
+
+  cleanup:
+    name: Remove closed PR Preview checkpoint
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.action == 'closed' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete dedicated Preview branch
+        uses: actions/github-script@v8
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        with:
+          script: |
+            const ref = `heads/vercel-preview-pr-${process.env.PR_NUMBER}`;
+            try {
+              await github.rest.git.deleteRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref,
+              });
+              core.info(`Deleted ${ref}`);
+            } catch (error) {
+              if (error.status !== 422 && error.status !== 404) throw error;
+              core.info(`${ref} does not exist; nothing to clean up.`);
+            }

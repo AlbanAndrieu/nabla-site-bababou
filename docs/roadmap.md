@@ -74,15 +74,15 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 
 - [x] Remplacer l'ancienne version preview de Next.js par une version stable ; le projet utilise désormais Next `16.3.2`.
 - [x] Aligner explicitement `next` et `eslint-config-next` dans le manifeste/lockfile et vérifier leur résolution effective (#123).
-- [x] Borner les engines Node/npm au major supporté par CI/Vercel (`Node 24`, `npm 11`) dans `package.json`.
+- [x] Borner les engines Node/npm au major supporté par CI/Vercel (`Node 25`, `npm 11`) dans `package.json`.
   - [x] Réconcilier les métadonnées `engines` racine du lockfile lors de la régénération atomique du lockfile (#123).
 - [x] Supprimer `express` et `@types/express` après confirmation de l'absence de consommateur (#123).
   - [x] Audit du code versionné : aucun import ESM, `require()` ou appel `express()` trouvé.
   - [x] Retrait effectif avec régénération atomique du lockfile (#123).
-- [ ] Retirer Wrangler et `wrangler.jsonc` une fois confirmé qu'aucun déploiement Cloudflare Workers n'est encore requis.
+- [x] Retirer Wrangler et `wrangler.jsonc` après décision explicite du propriétaire (#150).
   - [x] Audit dépôt : aucune CI ni consommateur applicatif Wrangler détecté.
   - [x] Retirer le manifeste autonome `public/package.json` et les instructions qui présentaient Wrangler comme runtime recommandé (#143).
-  - [ ] Confirmer l'absence de déploiement externe encore utilisé avant retrait du package/configuration Wrangler racine.
+  - [x] Retirer le package, les scripts npm, la configuration et les nœuds lockfile exclusivement liés (#150).
 - [x] Auditer puis retirer les sorties `dist/`, `index/dist/` et le `postinstall` legacy (#145).
   - [x] Les quatre inputs applicatifs historiques (`index.html`, `wireframe.css`, `app/scripts/arf.js`, `app/resources/`) n'existent plus à la racine.
   - [x] Les sorties `dist/` et `index/` ne sont ni versionnées ni consommées par le runtime Next/Vercel ou la CI GitHub actuelle.
@@ -92,7 +92,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] Remplacer le contrat de conservation par un contrat d'absence.
 - [ ] Supprimer les scripts runtime redondants après preuve d'absence de consommateurs.
   - [x] Retirer `dev:v`, `build:v`, `start:v`, l'ancien `build.sh` et le package CLI `vercel`; les déploiements sont portés par la Git Integration Vercel (#146).
-  - [ ] Retirer `dev:wrangler`, `start:wrangler`, `deploy:wrangler` avec Wrangler après confirmation de l'absence de déploiement Cloudflare externe.
+  - [x] Retirer `dev:wrangler`, `start:wrangler`, `deploy:wrangler` avec Wrangler (#150).
 - [ ] Conserver à terme un seul couple nominal `build: next build` / `start: next start`.
 - [x] Exécuter explicitement `next build` dans la CI GitHub de qualité afin de ne pas dépendre uniquement de Vercel pour valider la compilation.
 - [x] Contraindre le tracing de `htmlFromPublic.ts` aux fragments explicitement allowlistés (#108).
@@ -169,7 +169,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 - [x] Aligner package/lockfile et retirer les dépendances confirmées orphelines (#123).
   - [x] Retirer `stripe`, `@stripe/stripe-js` et `@stripe/react-stripe-js` devenus sans consommateur après la migration/suppression des surfaces checkout (#144).
 - [ ] Retirer progressivement les runtimes/scripts legacy après preuve d'absence de consommateurs.
-  - [x] Retirer OpenCommit, son wrapper/config devenus sans workflow consommateur et 131 entrées lockfile exclusivement liées ; les warnings `@azure/openai`, `crypto` et `node-domexception` disparaissent avec cette chaîne.
+  - [x] Conserver OpenCommit sur décision explicite du propriétaire : wrapper/config et scripts `oco` / `opencommit` restaurés, dev-only et hors runtime (#150).
   - [x] Formaliser la policy npm 11.17+ d'installation : scripts transitoires actuellement bloqués explicitement refusés via `allowScripts`, mode `strict-allow-scripts` activé et `.npmrc` ajouté aux déclencheurs Quality.
 - [x] Retirer le bridge HTML des policies et le composant `PublicHtmlFragment` devenu orphelin ; conserver `htmlFromPublic` uniquement pour l'exception 404 imposée par la policy du repo.
 - [ ] Supprimer les pages `.html` et assets orphelins après validation des redirects et de la parité Next.
@@ -182,12 +182,14 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] Les anciens contrats Playwright de 404 localisée et de chrome checkout legacy sont retirés/réconciliés avec les surfaces réellement publiées (#141).
   - [x] Les changements docs/repository-maintenance évitent un Preview Vercel grâce à l'`ignoreCommand` versionné et testé.
   - [x] Les agents API-only doivent publier les changements multi-fichiers en un commit Git atomique lorsque possible, afin d'éviter le fan-out de Preview Vercel et les rate limits ; #142 a été squashée ainsi avant validation finale.
+  - [x] Porter le modèle Vercel stabilisé dans `nabla-site-alban` (#130) : désactiver les auto-Preview des branches `fix/*` / `feat/*`, réserver l’auto-déploiement à `master` et aux checkpoints `vercel-preview-*`, puis créer/nettoyer ces checkpoints à la demande via un vrai `git push` afin que Vercel reçoive l’événement de branche attendu.
 - [ ] Mesurer durée de `npm ci`, `npm run check`, `next build`, taille de cache et taille de sortie.
   - [x] Instrumentation Quality ajoutée sans job ni build supplémentaire (#122).
   - [x] Première comparaison #146 → #147 : `npm ci` 31 → 24 s, `node_modules` 1112 → 1041 MiB, `next build` 19,6 → 18,2 s et `.next` 69 → 66 MiB.
   - [x] Deuxième baseline #148 : 808 paquets, `npm ci` 20 s, `node_modules` 918 MiB, `npm run check` 31 s, `next build` 14,0 s et `.next` 66 MiB.
   - [ ] Collecter plusieurs baselines post-merge et définir des seuils uniquement après observation.
 - [x] Maintenir lint JS/TS/CSS, typecheck, unit tests, `next build`, Playwright Preview, accessibilité et tests SEO comme gates.
+- [x] Aligner le cycle release sur `nabla-site-alban` (#131) sans changer l’historique Bababou : CI post-merge sur `master`, release uniquement après CI verte et contrôle que le SHA validé est toujours le `master` courant.
 
 ## P6 — Confidentialité finale hors homepage — À FAIRE EN DERNIER
 
@@ -230,8 +232,10 @@ Cette phase est volontairement placée après migration, UI/UX, SEO, nettoyage e
   - [x] Retirer le `postinstall` dist historique, `copyfiles`, le package npm `d3` et 47 entrées lockfile devenues orphelines (#145).
   - [x] Retirer le CLI Vercel local, ses wrappers et 324 entrées lockfile exclusivement liées ; conserver les SDK `@vercel/*` réellement utilisés (#146).
   - [x] Retirer 10 dépendances directes observabilité/devtools sans import, déplacer `lodash-es` en devDependency et élaguer 144 entrées lockfile supplémentaires (#147).
-  - [x] Retirer le tooling OpenCommit local devenu sans workflow, son wrapper/config et 131 entrées lockfile exclusivement liées.
+  - [x] Restaurer OpenCommit comme outil local optionnel sans recréer de workflow OpenCommit obligatoire (#150).
   - [x] Durcir npm install avec une denylist explicite des scripts déjà bloqués et un échec strict pour toute nouvelle dépendance à script non revue.
+  - [x] Converger avec le cleanup agent/tooling d’Alban #133 : Copilot Setup sur Node 25 et adapters VS Code/Cursor/Next.js/Security réduits vers `AGENTS.md`, sans anciennes instructions Vercel CLI/Git Flow/sitemap.
+  - [x] Sortir la toolchain semantic-release du graphe npm normal comme Alban #133 : 4 dépendances directes et 412 entrées lockfile retirées, versions pinées et téléchargées uniquement dans le job release.
   - [ ] Retrait des runtimes/scripts/assets legacy restants après preuve d'absence de consommateurs externes.
 - [ ] **Migration 8 / P3** — extraction progressive de sections homepage en conservant les disclosures approuvées, sans changement sensible non validé.
 - [ ] **Migration finale / P6** — confidentialité hors homepage : pseudonymisation/caviardage du corpus restant et extension complète du privacy gate.

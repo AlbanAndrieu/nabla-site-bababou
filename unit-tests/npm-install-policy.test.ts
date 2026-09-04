@@ -5,10 +5,9 @@ import test from "node:test";
 const reviewedInstallScriptVersions = {
   "@parcel/watcher": ["2.6.0"],
   "@swc/core": ["1.15.46"],
-  esbuild: ["0.27.7", "0.28.1"],
-  fsevents: ["2.3.2", "2.3.3", "2.3.3"],
+  esbuild: ["0.27.7"],
+  fsevents: ["2.3.2", "2.3.3"],
   "unrs-resolver": ["1.12.2"],
-  workerd: ["1.20260722.1"],
 } as const;
 
 function packageNameFromLockPath(path: string) {
@@ -26,13 +25,14 @@ test("npm install scripts stay explicitly denied and strict", async () => {
   ]);
 
   const packageJson = JSON.parse(packageJsonSource) as {
-    engines?: { npm?: string };
+    engines?: { node?: string; npm?: string };
     allowScripts?: Record<string, boolean>;
   };
   const lock = JSON.parse(lockSource) as {
     packages: Record<string, { version?: string }>;
   };
 
+  assert.equal(packageJson.engines?.node, ">=25.9.0 <26");
   assert.equal(packageJson.engines?.npm, ">=11.17.0 <12");
   assert.deepEqual(packageJson.allowScripts, {
     "@parcel/watcher": false,
@@ -40,7 +40,6 @@ test("npm install scripts stay explicitly denied and strict", async () => {
     esbuild: false,
     fsevents: false,
     "unrs-resolver": false,
-    workerd: false,
   });
   assert.match(npmrc, /^strict-allow-scripts=true$/m);
   assert.doesNotMatch(npmrc, /dangerously-allow-all-scripts\s*=\s*true/);
