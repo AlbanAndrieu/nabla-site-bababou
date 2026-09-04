@@ -1,436 +1,106 @@
-# Copilot Instructions for Next.js Application (app/)
+# Copilot instructions — Next.js runtime
 
-This file provides specific guidance for working with the Next.js application located in the `app/` directory.
+This repository is a **single root Next.js/Vercel project**. The `app/` directory is the App Router tree; it is not a standalone npm project.
 
-## Overview
+## Runtime contract
 
-The `app/` directory contains a Next.js 16.0.10 application built with React 19.2.0 and TypeScript. It uses Tailwind CSS for styling and includes Vercel Analytics and Speed Insights.
+- Next.js: **16.3.2** (App Router)
+- React: **19.2.x**
+- TypeScript: **5.x**
+- Tailwind CSS: **4.x** through `@tailwindcss/postcss`
+- i18n: `next-intl`, with first-class locales `fr`, `en`, `de`, `no`
+- Default locale: French, unprefixed on migrated Next routes
+- Deployment: Vercel Git integration; no local Vercel CLI dependency
+- Analytics: `public/site-analytics.js` injects the Vercel platform endpoints and Datadog browser CDN integration; do not add duplicate React analytics SDK components
 
-## Technology Stack
+## Commands
 
-- **Next.js**: 16.0.10 (App Router)
-- **React**: 19.2.0
-- **TypeScript**: 5.x
-- **Tailwind CSS**: 4.x with @tailwindcss/postcss
-- **Vercel Analytics**: 1.5.0
-- **Vercel Speed Insights**: 1.2.0
-
-## Project Structure
-
-```
-app/
-├── app/                    # Next.js App Router directory
-│   ├── layout.tsx          # Root layout component
-│   ├── page.tsx            # Homepage
-│   └── globals.css         # Global styles
-├── public/                 # Static assets for Next.js app
-├── node_modules/           # Dependencies
-├── eslint.config.mjs       # ESLint configuration
-├── next.config.ts          # Next.js configuration
-├── package.json            # Dependencies and scripts
-├── postcss.config.mjs      # PostCSS configuration (Tailwind)
-├── tsconfig.json           # TypeScript configuration
-└── README.md               # Documentation
-```
-
-## Development Setup
-
-### Prerequisites
-
-**CRITICAL:** This application requires:
-- Node.js >= 24.11.0
-- npm >= 11.6.2
-- pnpm ^10.22.0
-
-Use `.nvmrc` in the root directory:
-```bash
-cd /path/to/nabla-site-bababou
-nvm use
-```
-
-### Installation
-
-**ALWAYS install dependencies before development:**
+Run commands from the repository root:
 
 ```bash
-cd app
-npm install
-# OR
-pnpm install
-```
-
-### Development Server
-
-```bash
-cd app
+npm ci
 npm run dev
-```
-
-The application will be available at `http://localhost:3000`.
-
-**Hot Reload:** Changes to files in the `app/` directory trigger automatic reloading.
-
-### Building
-
-```bash
-cd app
+npm run check
 npm run build
-```
-
-This creates an optimized production build in `.next/` directory.
-
-### Production Server
-
-```bash
-cd app
 npm run start
 ```
 
-Starts the production server (requires build first).
-
-## Linting
-
-**ALWAYS run linting before committing:**
+Before publication, use the canonical project gate documented in `AGENTS.md`:
 
 ```bash
-cd app
-npm run lint
+bash scripts/quality-gate.sh
 ```
 
-The ESLint configuration extends `eslint-config-next` for Next.js-specific rules.
+Keep package/build commands at the repository root. Do not treat `app/` as a nested npm project, do not expect a nested manifest, and do not introduce a manual local Vercel CLI deployment path.
 
-## Code Standards
+## Project structure
 
-### TypeScript Guidelines
+```text
+app/                    # Next.js App Router
+components/             # Shared React components
+i18n/                   # next-intl routing and message loading
+messages/               # Localized runtime catalogs
+lib/                    # Routing/SEO/content helpers
+public/                 # Legacy static surfaces and shared assets
+scripts/                # Build, privacy and repository tooling
+unit-tests/              # Deterministic contract tests
+tests/                   # Playwright E2E tests
+next.config.mjs          # Next.js configuration
+postcss.config.mjs       # Tailwind/PostCSS integration
+package.json             # Single root manifest
+```
 
-1. **Type Safety**
-   - Use explicit types for function parameters and return values
-   - Avoid `any` type unless absolutely necessary
-   - Use TypeScript's built-in utility types (`Partial`, `Pick`, `Omit`, etc.)
-   - Define interfaces for component props
+## Hybrid migration rules
 
-2. **Component Typing**
-   ```typescript
-   // Good - Explicit prop types
-   interface ButtonProps {
-     label: string;
-     onClick: () => void;
-     disabled?: boolean;
-   }
+- Next.js/Vercel is the target runtime.
+- Keep a legacy static page until its Next replacement has functional, visual, SEO, accessibility and E2E parity.
+- Never create a second durable implementation of the same route.
+- `public/404.html` is the protected reviewed 404 source consumed through `global-not-found`.
+- The homepage `/` / `public/index.html` is owner-controlled. Do not change sensitive disclosures, pseudonymization or redaction there without explicit approval.
+- Keep Google Translate complementary only; first-class canonical locales are handled by `next-intl`.
 
-   export default function Button({ label, onClick, disabled = false }: ButtonProps) {
-     // Component logic
-   }
-   ```
+## App Router conventions
 
-3. **Async/Await**
-   - Use async/await for asynchronous operations
-   - Handle errors with try/catch blocks
-   - Type async function return values
+- Default to Server Components.
+- Add `"use client"` only for hooks, browser APIs or client event handling.
+- Use generated `PageProps<...>` route types where the project already does so.
+- Use shared routing helpers for canonicals/alternates instead of rebuilding locale policy in page components.
+- Keep route copy in the focused message domain rather than hardcoding translated UI strings.
+- Reuse shared chrome, accessibility primitives and metadata helpers instead of duplicating header/footer/skip-link logic.
 
-### React Best Practices
+## Styling
 
-1. **Server vs Client Components**
-   - **Default to Server Components** (no "use client" directive)
-   - Only use Client Components when:
-     - Using React hooks (useState, useEffect, etc.)
-     - Handling browser events (onClick, onChange, etc.)
-     - Using browser-only APIs
-   - Mark with `"use client"` directive at top of file
+- Tailwind is available through `app/globals.css` and `postcss.config.mjs`.
+- Existing migrated pages also depend on versioned styles in `public/`; do not rewrite them wholesale merely to use Tailwind.
+- Preserve light/dark behavior, responsive layout, print behavior and WCAG AA expectations.
 
-2. **Component Structure**
-   ```typescript
-   // Server Component (default)
-   export default function ServerComponent() {
-     // Can fetch data directly
-     return <div>Content</div>;
-   }
+## Analytics and observability
 
-   // Client Component (interactive)
-   "use client";
+The application does **not** directly depend on these retired npm packages:
 
-   import { useState } from "react";
+- `@vercel/analytics`
+- `@vercel/speed-insights`
+- `@vercel/otel`
+- `@vercel/toolbar`
+- `@datadog/browser-rum`
 
-   export default function ClientComponent() {
-     const [count, setCount] = useState(0);
-     return <button onClick={() => setCount(count + 1)}>{count}</button>;
-   }
-   ```
-
-3. **File Naming**
-   - Components: PascalCase (e.g., `MyComponent.tsx`)
-   - Pages: lowercase (e.g., `page.tsx`, `layout.tsx`)
-   - Utilities: camelCase (e.g., `utils.ts`)
-
-### Next.js App Router Conventions
-
-1. **File-based Routing**
-   - `app/page.tsx` → `/` (homepage)
-   - `app/about/page.tsx` → `/about`
-   - `app/blog/[slug]/page.tsx` → `/blog/:slug` (dynamic route)
-
-2. **Special Files**
-   - `layout.tsx` - Shared UI for a route segment
-   - `page.tsx` - Unique UI for a route
-   - `loading.tsx` - Loading UI (Suspense boundary)
-   - `error.tsx` - Error UI (Error boundary)
-   - `not-found.tsx` - 404 UI
-
-3. **Metadata API**
-   ```typescript
-   // Static metadata
-   export const metadata = {
-     title: 'Page Title',
-     description: 'Page description',
-   };
-
-   // Dynamic metadata
-   export async function generateMetadata({ params }) {
-     return {
-       title: `Dynamic Title`,
-     };
-   }
-   ```
-
-### Tailwind CSS Guidelines
-
-1. **Utility-First Approach**
-   - Use Tailwind utility classes for styling
-   - Avoid custom CSS unless necessary
-   - Use `@apply` directive sparingly
-
-2. **Responsive Design**
-   ```tsx
-   <div className="w-full md:w-1/2 lg:w-1/3">
-     {/* Mobile-first: full width, then half on medium screens, third on large */}
-   </div>
-   ```
-
-3. **Dark Mode**
-   ```tsx
-   <div className="bg-white dark:bg-gray-900 text-black dark:text-white">
-     {/* Automatically adapts to user's system preference */}
-   </div>
-   ```
-
-4. **Custom Configuration**
-   - Extend theme in `tailwind.config.ts`
-   - Use semantic color names
-   - Define reusable spacing/sizing values
-
-### Performance Optimization
-
-1. **Image Optimization**
-   ```tsx
-   import Image from 'next/image';
-
-   <Image
-     src="/path/to/image.jpg"
-     alt="Description"
-     width={500}
-     height={300}
-     priority // For above-the-fold images
-   />
-   ```
-
-2. **Font Optimization**
-   - Use `next/font` for optimized font loading
-   - Already configured in `app/layout.tsx` with Geist font
-
-3. **Code Splitting**
-   - Use dynamic imports for large components
-   ```tsx
-   import dynamic from 'next/dynamic';
-
-   const HeavyComponent = dynamic(() => import('./HeavyComponent'), {
-     loading: () => <p>Loading...</p>,
-   });
-   ```
-
-4. **Data Fetching**
-   - Fetch data in Server Components when possible
-   - Use React Suspense for streaming
-   - Implement proper caching strategies
-
-### Analytics Integration
-
-The application includes:
-- **Vercel Analytics** - Page views and web vitals
-- **Vercel Speed Insights** - Core Web Vitals tracking
-
-Both are already configured in the root layout. No additional setup needed.
+Vercel Web Analytics and Speed Insights use the platform scripts loaded by `public/site-analytics.js`. Datadog RUM is also browser-CDN based there. Do not re-add an npm SDK without a proven runtime consumer.
 
 ## Testing
 
-### Before Committing
+For a focused change, run the closest relevant test first. The publication gate must retain:
 
-1. **Lint the code:**
-   ```bash
-   cd app
-   npm run lint
-   ```
+- ESLint
+- Stylelint
+- Next route type generation
+- TypeScript typecheck
+- unit tests
+- privacy gate
+- `next build`
+- Playwright Preview E2E for runtime/routing changes
 
-2. **Build verification:**
-   ```bash
-   cd app
-   npm run build
-   ```
+Do not weaken or skip checks merely to make CI green.
 
-3. **Manual testing:**
-   - Test in development mode (`npm run dev`)
-   - Verify responsive design at different breakpoints
-   - Check dark mode if implemented
-   - Test all interactive features
+## Next.js documentation
 
-### Browser Testing
-
-Test in modern browsers:
-- Chrome/Edge (latest)
-- Firefox (latest)
-- Safari (latest)
-
-## Deployment
-
-### Vercel Deployment (Recommended)
-
-The Next.js app is configured for Vercel deployment:
-
-```bash
-# From project root
-vercel deploy        # Preview
-vercel --prod        # Production
-```
-
-Vercel automatically:
-- Detects Next.js configuration
-- Builds the application
-- Optimizes for production
-- Provides preview URLs for PRs
-
-### Environment Variables
-
-Store sensitive values in `.env.local` (not committed to git):
-
-```bash
-# .env.local
-NEXT_PUBLIC_API_URL=https://api.example.com
-DATABASE_URL=postgresql://...
-```
-
-**Important:**
-- Prefix client-side variables with `NEXT_PUBLIC_`
-- Server-side variables don't need prefix
-- Add `.env.local` to `.gitignore`
-
-## Common Patterns
-
-### Data Fetching (Server Component)
-
-```typescript
-// app/posts/page.tsx
-async function getPosts() {
-  const res = await fetch('https://api.example.com/posts', {
-    next: { revalidate: 3600 } // Cache for 1 hour
-  });
-  return res.json();
-}
-
-export default async function PostsPage() {
-  const posts = await getPosts();
-  return (
-    <div>
-      {posts.map(post => (
-        <article key={post.id}>{post.title}</article>
-      ))}
-    </div>
-  );
-}
-```
-
-### Form Handling (Client Component)
-
-```typescript
-"use client";
-
-import { useState } from 'react';
-
-export default function ContactForm() {
-  const [formData, setFormData] = useState({ name: '', email: '' });
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle form submission
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        value={formData.name}
-        onChange={(e) => setFormData({...formData, name: e.target.value})}
-      />
-      {/* More fields */}
-    </form>
-  );
-}
-```
-
-### Route Handlers (API Routes)
-
-```typescript
-// app/api/hello/route.ts
-import { NextResponse } from 'next/server';
-
-export async function GET(request: Request) {
-  return NextResponse.json({ message: 'Hello' });
-}
-
-export async function POST(request: Request) {
-  const body = await request.json();
-  // Process request
-  return NextResponse.json({ success: true });
-}
-```
-
-## Troubleshooting
-
-### Common Issues
-
-1. **"Cannot find module" errors**
-   - Run `npm install` in `app/` directory
-   - Check TypeScript paths in `tsconfig.json`
-
-2. **Build errors**
-   - Clear `.next` directory: `rm -rf .next`
-   - Rebuild: `npm run build`
-
-3. **Port conflicts**
-   - Default port 3000 is in use
-   - Specify different port: `PORT=3001 npm run dev`
-
-4. **TypeScript errors**
-   - Run type checking: `npx tsc --noEmit`
-   - Check `tsconfig.json` configuration
-
-5. **Tailwind classes not working**
-   - Verify `tailwind.config.ts` content paths
-   - Check PostCSS configuration
-   - Restart dev server
-
-## Resources
-
-- [Next.js Documentation](https://nextjs.org/docs)
-- [React Documentation](https://react.dev/)
-- [TypeScript Documentation](https://www.typescriptlang.org/docs/)
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
-- [Vercel Deployment Docs](https://vercel.com/docs)
-
-## Migration Notes
-
-This application uses:
-- **Next.js 16.x** (latest features and improvements)
-- **React 19.x** (latest React version with new features)
-- **App Router** (not Pages Router - different conventions)
-- **Tailwind CSS 4.x** (with @tailwindcss/postcss plugin)
-
-If migrating from older versions, consult the official upgrade guides.
+This project pins a current Next 16 release. Prefer the documentation shipped in the installed `next` package and the generated Next agent rules in `AGENTS.md` over assumptions from older Next.js versions.

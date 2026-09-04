@@ -31,10 +31,3 @@ button.addEventListener("click", () => {
 	//   'Signup Type': 'Referral'
 	// })
 });
-
-// import { inject } from "@vercel/analytics";
-
-// import { injectSpeedInsights } from "@vercel/speed-insights";
-
-// inject();
-// injectSpeedInsights();
