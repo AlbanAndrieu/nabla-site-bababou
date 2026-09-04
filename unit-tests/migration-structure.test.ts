@@ -104,6 +104,29 @@ test("deployment docs describe Git integration instead of the retired app-root C
   }
 });
 
+test("retired OpenCommit tooling stays out of the root install", async () => {
+  const packageJson = JSON.parse(
+    await readFile(new URL("../package.json", import.meta.url), "utf8"),
+  ) as {
+    scripts?: Record<string, string>;
+    devDependencies?: Record<string, string>;
+  };
+
+  assert.equal("opencommit" in (packageJson.devDependencies ?? {}), false);
+  for (const script of ["oco", "opencommit"]) {
+    assert.equal(script in (packageJson.scripts ?? {}), false);
+  }
+
+  await assert.rejects(access(new URL("../scripts/run-opencommit.mjs", import.meta.url)));
+  await assert.rejects(access(new URL("../.opencommit-commitlint", import.meta.url)));
+
+  const ciInstructions = await readFile(
+    new URL("../.github/copilot-instructions-cicd.md", import.meta.url),
+    "utf8",
+  );
+  assert.doesNotMatch(ciInstructions, /opencommit\.yml|OCO_|OpenCommit/);
+});
+
 test("public does not carry a second package/runtime manifest", async () => {
   await assert.rejects(access(new URL("../public/package.json", import.meta.url)));
 });

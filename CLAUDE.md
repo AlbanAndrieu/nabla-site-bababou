@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Install dependencies:**
 ```
-npm install
+npm ci
 ```
 
 **Build and run the Next.js/Vercel project:**
@@ -18,7 +18,7 @@ npm run start
 
 **Playwright Testing (E2E):**
 ```
-npm install             # install dependencies, incl. Playwright
+npm ci             # install dependencies, incl. Playwright
 npx playwright install  # install browsers (if first time)
 npm test                # run all tests
 npm run test:headed     # headed mode
@@ -42,7 +42,7 @@ npm run start-python
 
 - **Workflows:**
   - GitHub Actions for Playwright tests, Docker CI, MegaLinter, PDF builds, Copilot setup
-  - Secrets for Docker, OCO, and MegaLinter auto-commits
+  - Secrets only for versioned workflows that actively consume them
 
 ## Testing & CI
 
@@ -109,6 +109,6 @@ npm run start-python
 
 ---
 
-**Contact:** For questions or clarifications, contact: aa@albandrieu.com
+**Contact:** For questions or clarifications, contact: aa@bababou.com
 
 ---

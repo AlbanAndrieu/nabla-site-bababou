@@ -18,7 +18,7 @@ The repository layout looks like this (main items):
 ├── ⚙️ .cursor/rules/                  <- LLM instructions for Cursor IDE (*.mdc)
 ├── 🧑‍💻 .github/
 │   ├── 📄 copilot-instructions*.md   <- Copilot instructions (static-site, api, python, cicd, etc.)
-│   └── ⚡ workflows/                 <- Playwright, OpenCommit, copilot-setup-steps
+│   └── ⚡ workflows/                 <- CI, Playwright, release, MegaLinter, copilot-setup-steps
 ├── 💻 .vscode/                       <- Settings, MCP config, copilot-instructions
 ├── 📁 api/                           <- API (e.g. hello.js serverless)
 ├── 📦 package.json                   <- Root Node deps and Next.js/Playwright scripts

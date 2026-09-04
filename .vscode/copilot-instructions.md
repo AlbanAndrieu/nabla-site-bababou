@@ -28,7 +28,6 @@ This is the Bababou hybrid Next.js migration repository. The repository contains
 - `app/` - root Next.js App Router application
 - `api/` - Optional Vercel serverless handlers (for example `hello.js`); not PHP
 - `scripts/` - Utility scripts (e.g., `run-wicked.sh`)
-- `.github/workflows/` - SDLC workflows (OpenCommit action)
 
 ### Configuration Files
 - `.mega-linter.yml` - MegaLinter configuration (comprehensive multi-language linter)
@@ -94,7 +93,6 @@ that no external Cloudflare deployment still consumes it.
 ## SDLC & Validation
 
 ### GitHub Workflows
-- `.github/workflows/opencommit.yml` - OpenCommit action for automated commit message generation (runs on all branches except main/master/dev/development/release)
 
 ### Pre-commit Hooks
 The repository uses extensive pre-commit hooks. To install them:
