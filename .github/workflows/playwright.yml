@@ -68,9 +68,8 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
 
-      # This job exercises an already-built remote Preview. The repository's
-      # legacy postinstall only copies local dist/static assets and is not
-      # required to execute Playwright, so skip lifecycle scripts here.
+      # This job exercises an already-built remote Preview. Skip lifecycle
+      # scripts to keep dependency installation deterministic and minimal.
       - name: Install dependencies
         run: npm ci --ignore-scripts --no-audit --no-fund
 

@@ -20,7 +20,6 @@
     "npm": ">=11.6.2 <12"
   },
   "scripts": {
-    "postinstall": "copyfiles -f ./node_modules/d3/d3.min.js ./index/dist/scripts/d3 && copyfiles -f ./app/scripts/arf.js ./dist/scripts/ && copyfiles -f ./app/resources/*.json ./dist/resources && copyfiles -f ./index.html ./dist/ && copyfiles -f ./wireframe.css ./dist/",
     "lint": "eslint --format gitlab .",
     "lint:css": "stylelint public/*.css",
     "typecheck": "tsc --noEmit",
@@ -81,8 +80,6 @@
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "copyfiles": "2.4.1",
-    "d3": "7.9.0",
     "eslint": "^9.39.1",
     "eslint-config-next": "16.3.2",
     "eslint-formatter-gitlab": "^7.2.0",

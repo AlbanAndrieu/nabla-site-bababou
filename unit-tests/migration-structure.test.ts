@@ -2,9 +2,6 @@ import assert from "node:assert/strict";
 import { access, readFile } from "node:fs/promises";
 import test from "node:test";
 
-const EXPECTED_LEGACY_POSTINSTALL =
-  "copyfiles -f ./node_modules/d3/d3.min.js ./index/dist/scripts/d3 && copyfiles -f ./app/scripts/arf.js ./dist/scripts/ && copyfiles -f ./app/resources/*.json ./dist/resources && copyfiles -f ./index.html ./dist/ && copyfiles -f ./wireframe.css ./dist/";
-
 const DOMAIN_CATALOGS = [
   ["site", "site"],
   ["contact", "contactPage"],
@@ -14,12 +11,17 @@ const DOMAIN_CATALOGS = [
 
 const MIGRATED_LEGACY_NAMESPACES = ["contactPage", "email", "linkPage"] as const;
 
-test("keeps the legacy postinstall until the dist consumers are audited", async () => {
+test("root install stays free of the retired dist-copy postinstall", async () => {
   const packageJson = JSON.parse(
     await readFile(new URL("../package.json", import.meta.url), "utf8"),
-  ) as { scripts?: Record<string, string> };
+  ) as {
+    scripts?: Record<string, string>;
+    devDependencies?: Record<string, string>;
+  };
 
-  assert.equal(packageJson.scripts?.postinstall, EXPECTED_LEGACY_POSTINSTALL);
+  assert.equal("postinstall" in (packageJson.scripts ?? {}), false);
+  assert.equal("copyfiles" in (packageJson.devDependencies ?? {}), false);
+  assert.equal("d3" in (packageJson.devDependencies ?? {}), false);
 });
 
 test("public does not carry a second package/runtime manifest", async () => {

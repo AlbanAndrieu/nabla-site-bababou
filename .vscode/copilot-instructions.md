@@ -45,8 +45,8 @@ This is the Bababou hybrid Next.js migration repository. The repository contains
 npm ci
 ```
 
-The root `postinstall` is temporary legacy compatibility while dist consumers
-are audited. Do not create or restore a package manifest under `public/`.
+The legacy root dist-copy `postinstall` is retired. Do not restore it or create
+a package manifest under `public/`; legacy D3 is already versioned in `public/`.
 
 ### Development Servers
 
@@ -152,7 +152,7 @@ The following directories are ignored by ESLint (see `eslint.config.js`):
 
 ### Common Issues & Workarounds
 
-1. **Use the root package only** - `public/package.json` is retired; root postinstall remains temporary pending dist audit
+1. **Use the root package only** - `public/package.json` and the old dist-copy postinstall are retired
 2. **Use the canonical npm workflow** - CI uses the root npm lockfile
 3. **Python server is legacy-only** - normal development uses Next.js
 4. **Pre-commit hooks may be slow** - Some hooks (like mega-linter, ansible-lint) are disabled in `.pre-commit-config.yaml` because they're too slow
