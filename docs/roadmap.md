@@ -48,7 +48,7 @@
 - [x] Migration 3b / P2 intégrée : catalogues runtime focalisés `site`, `contact`, `email`, `link`, nettoyage des surfaces Next actives et sitemap hybride (#106).
 - [x] Privacy policy et exception homepage/index clarifiées, avec aliases juridiques `Mr A` / `Ms B` et règle de caviardage (#110).
 - [x] Les anciens `messages/{locale}.json` ne sont plus chargés par le runtime Next ; les namespaces déjà migrés ont été retirés de ces catalogues legacy.
-- [x] Test de structure protégeant le `postinstall` legacy tant que ses consommateurs ne sont pas audités.
+- [x] Ancien contrat de conservation du `postinstall` remplacé par un contrat d'absence après audit complet de ses inputs/outputs (#145).
 - [x] Migration 5 : redirects `contact`/`email`/`link`, metadata sociales par route, top anchor et validations Preview E2E (#116).
 - [x] La tentative de 404 Next localisée de #118 a été remplacée par la restauration de l'exception statique protégée `public/404.html` via `global-not-found` (#139).
 - [x] Preview E2E dédupliqué sur `repository_dispatch` avec cache Chromium réutilisable depuis le scope de la branche par défaut (#121).
@@ -83,12 +83,13 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] Audit dépôt : aucune CI ni consommateur applicatif Wrangler détecté.
   - [x] Retirer le manifeste autonome `public/package.json` et les instructions qui présentaient Wrangler comme runtime recommandé (#143).
   - [ ] Confirmer l'absence de déploiement externe encore utilisé avant retrait du package/configuration Wrangler racine.
-- [ ] Auditer les consommateurs de `dist/`, `index/dist/` et les assets copiés par `postinstall`.
-  - [x] Audit initial du dépôt : `app/scripts/arf.js`, `app/resources/`, `dist/` et `index/dist/` ne sont pas versionnés sur la branche courante.
-  - [x] `npm ci` exécute néanmoins le `postinstall` sans erreur dans la CI.
-  - [ ] Vérifier les consommateurs externes/legacy et la génération attendue hors Git avant toute suppression.
-- [x] **Conserver le `postinstall` actuel et `copyfiles` tant que l'audit n'est pas terminé.** Leur retrait doit être atomique avec la migration des consommateurs correspondants.
-- [x] Ajouter un test de régression qui verrouille le `postinstall` legacy pendant cette phase hybride.
+- [x] Auditer puis retirer les sorties `dist/`, `index/dist/` et le `postinstall` legacy (#145).
+  - [x] Les quatre inputs applicatifs historiques (`index.html`, `wireframe.css`, `app/scripts/arf.js`, `app/resources/`) n'existent plus à la racine.
+  - [x] Les sorties `dist/` et `index/` ne sont ni versionnées ni consommées par le runtime Next/Vercel ou la CI GitHub actuelle.
+  - [x] Le `dist/` encore cité dans `.gitlab-ci.yml` appartient à l'ancien `vue-client/`, pas au `dist/` racine.
+  - [x] Le D3 réellement servi aux pages legacy reste le fichier versionné `public/d3.v3.min.js`; aucun import npm `d3` n'existe.
+  - [x] Retirer atomiquement `postinstall`, `copyfiles`, `d3` et leurs 47 entrées lockfile exclusivement dépendantes.
+  - [x] Remplacer le contrat de conservation par un contrat d'absence.
 - [ ] Supprimer les scripts redondants `build:n`, `start:n`, `build:v`, `start:v`, `dev:wrangler`, `start:wrangler`, `deploy:wrangler` seulement après retrait vérifié de leurs runtimes.
 - [ ] Conserver à terme un seul couple nominal `build: next build` / `start: next start`.
 - [x] Exécuter explicitement `next build` dans la CI GitHub de qualité afin de ne pas dépendre uniquement de Vercel pour valider la compilation.
@@ -219,6 +220,7 @@ Cette phase est volontairement placée après migration, UI/UX, SEO, nettoyage e
   - [x] Retirer les routes/catalogues/scripts fantômes confirmés, le support homelab non routé et les directives/docs associées devenues sans cible (#142).
   - [x] Retirer le manifeste secondaire `public/package.json` et corriger les instructions runtime dupliquées/stales sans supprimer le corpus qualité utile (#143).
   - [x] Retirer les trois SDK Stripe orphelins et réconcilier le lockfile racine (#144).
+  - [x] Retirer le `postinstall` dist historique, `copyfiles`, le package npm `d3` et 47 entrées lockfile devenues orphelines (#145).
   - [ ] Retrait des runtimes/scripts/assets legacy restants après preuve d'absence de consommateurs externes.
 - [ ] **Migration 8 / P3** — extraction progressive de sections homepage en conservant les disclosures approuvées, sans changement sensible non validé.
 - [ ] **Migration finale / P6** — confidentialité hors homepage : pseudonymisation/caviardage du corpus restant et extension complète du privacy gate.

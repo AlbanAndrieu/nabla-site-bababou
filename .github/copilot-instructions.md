@@ -73,9 +73,9 @@ This main file provides general guidance for the entire repository. For area-spe
 npm ci
 ```
 
-The root `postinstall` is a temporary legacy compatibility step. Keep it only
-until the remaining dist consumers are audited; do not create a second package
-under `public/`.
+The retired root dist-copy `postinstall` must stay absent. Legacy D3 is served
+from the reviewed versioned asset `public/d3.v3.min.js`; do not restore an npm
+copy step or a second package under `public/`.
 
 ### Development Servers
 
@@ -185,7 +185,7 @@ The following directories are ignored by ESLint (see `eslint.config.js`):
 
 ### Common Issues & Workarounds
 
-1. **Use the root package only** - `public/package.json` is retired; the legacy root postinstall remains temporary until its dist consumers are audited
+1. **Use the root package only** - `public/package.json` and the legacy dist-copy postinstall are retired
 2. **Use the canonical npm workflow** - CI and the quality gate use the root npm lockfile
 3. **Python server is legacy-only** - use it only for focused static-page audits; normal development uses Next.js
 4. **Pre-commit hooks may be slow** - Some hooks (like mega-linter, ansible-lint) are disabled in `.pre-commit-config.yaml` because they're too slow
