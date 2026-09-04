@@ -10,7 +10,7 @@ This is the hybrid Next.js migration repository for Bababou. The repository cont
 - Legacy Wrangler configuration retained only while external Cloudflare usage is audited
 
 **Languages & Technologies:**
-- JavaScript/TypeScript (Node.js v24.11.0+, npm v11.6.2+)
+- JavaScript/TypeScript (Node.js v24.11.0+, npm v11.17.0+)
 - Python 3.12 (for tooling and focused legacy-static audits)
 - Next.js 16.3.2 with React 19.2.4
 - Vercel deployment platform
@@ -150,7 +150,7 @@ The project uses MegaLinter with specific disabled linters (see `.mega-linter.ym
 ### Node.js Version Requirements
 **CRITICAL:** This project requires:
 - Node.js >= 24.11.0
-- npm >= 11.6.2
+- npm >= 11.17.0
 
 Use `.nvmrc` for version management:
 ```bash

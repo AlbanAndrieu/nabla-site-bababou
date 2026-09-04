@@ -17,7 +17,7 @@
   "homepage": "https://github.com/AlbanAndrieu/nabla-site-bababou#readme",
   "engines": {
     "node": ">=24.11.0 <25",
-    "npm": ">=11.6.2 <12"
+    "npm": ">=11.17.0 <12"
   },
   "scripts": {
     "lint": "eslint --format gitlab .",
@@ -76,5 +76,13 @@
     "typescript-eslint": "^8.47.0",
     "wrangler": "^4.114.0",
     "lodash-es": "^4.18.1"
+  },
+  "allowScripts": {
+    "@parcel/watcher": false,
+    "@swc/core": false,
+    "esbuild": false,
+    "unrs-resolver": false,
+    "workerd": false,
+    "fsevents": false
   }
 }
