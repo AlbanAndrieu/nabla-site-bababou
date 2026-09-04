@@ -26,6 +26,20 @@ test("public does not carry a second package/runtime manifest", async () => {
   await assert.rejects(access(new URL("../public/package.json", import.meta.url)));
 });
 
+test("hosted payment result routes do not require Stripe SDK packages", async () => {
+  const packageJson = JSON.parse(
+    await readFile(new URL("../package.json", import.meta.url), "utf8"),
+  ) as { dependencies?: Record<string, string> };
+
+  for (const dependency of [
+    "@stripe/react-stripe-js",
+    "@stripe/stripe-js",
+    "stripe",
+  ]) {
+    assert.equal(dependency in (packageJson.dependencies ?? {}), false);
+  }
+});
+
 test("keeps legacy base catalogs versioned but does not load them at runtime", async () => {
   const [requestConfig, messageLoader, englishMessages, frenchMessages] =
     await Promise.all([
