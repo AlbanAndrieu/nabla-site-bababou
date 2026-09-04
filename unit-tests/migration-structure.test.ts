@@ -24,6 +24,21 @@ test("root install stays free of the retired dist-copy postinstall", async () =>
   assert.equal("d3" in (packageJson.devDependencies ?? {}), false);
 });
 
+test("Git-integrated Vercel deployment does not require a local Vercel CLI", async () => {
+  const packageJson = JSON.parse(
+    await readFile(new URL("../package.json", import.meta.url), "utf8"),
+  ) as {
+    scripts?: Record<string, string>;
+    dependencies?: Record<string, string>;
+  };
+
+  assert.equal("vercel" in (packageJson.dependencies ?? {}), false);
+  for (const script of ["dev:v", "build:v", "start:v"]) {
+    assert.equal(script in (packageJson.scripts ?? {}), false);
+  }
+  await assert.rejects(access(new URL("../build.sh", import.meta.url)));
+});
+
 test("public does not carry a second package/runtime manifest", async () => {
   await assert.rejects(access(new URL("../public/package.json", import.meta.url)));
 });

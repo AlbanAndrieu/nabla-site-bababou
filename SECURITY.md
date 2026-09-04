@@ -27,17 +27,15 @@
    - Reduced from 836 to 476 packages
    - Significantly reduced attack surface
 
-### Remaining Vulnerabilities
+### Current dependency posture
 
-The 17 remaining vulnerabilities are primarily in the `vercel` package and its transitive dependencies:
+The repository no longer installs the Vercel CLI as an application dependency.
+Deployments use Vercel's Git integration, while runtime integrations remain
+explicit `@vercel/*` packages where they are actually consumed.
 
-- **path-to-regexp** (CVE: GHSA-9wv6-86v2-598j)
-  - Severity: High
-  - Issue: Backtracking regular expressions (ReDoS)
-  - Status: Requires Vercel to update their dependencies
-  - Mitigation: These are in deployment tooling, not runtime code
-
-These vulnerabilities are in development/deployment tools (Vercel CLI) and don't affect the runtime security of the static website itself.
+Do not rely on historical vulnerability counts in this document as a current
+audit result. Use `npm audit`, the repository security workflows, and the
+current lockfile for the live dependency posture.
 
 ## CodeQL Analysis
 
@@ -46,10 +44,10 @@ CodeQL security scanning was run with **0 alerts** found:
 
 ## Recommendations
 
-1. **Monitor Vercel Updates**: Keep an eye on Vercel CLI updates that address the path-to-regexp vulnerabilities
-2. **Regular Audits**: Run `npm audit` regularly to catch new vulnerabilities
-3. **Dependency Updates**: Keep dependencies up to date with `npm update`
-4. **Security Headers**: Consider adding security headers via Cloudflare or Vercel configuration
+1. **Regular Audits**: Run `npm audit` regularly to catch new vulnerabilities
+2. **Dependency Updates**: Keep dependencies up to date through the repository dependency workflow
+3. **Minimize Tooling**: Keep deployment CLIs out of the application dependency graph when platform Git integration already provides deployment
+4. **Security Headers**: Maintain security headers in the active Vercel/Next.js configuration
 
 ## Conclusion
 

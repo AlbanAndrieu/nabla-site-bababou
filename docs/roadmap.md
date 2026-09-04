@@ -90,13 +90,16 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] Le D3 réellement servi aux pages legacy reste le fichier versionné `public/d3.v3.min.js`; aucun import npm `d3` n'existe.
   - [x] Retirer atomiquement `postinstall`, `copyfiles`, `d3` et leurs 47 entrées lockfile exclusivement dépendantes.
   - [x] Remplacer le contrat de conservation par un contrat d'absence.
-- [ ] Supprimer les scripts redondants `build:n`, `start:n`, `build:v`, `start:v`, `dev:wrangler`, `start:wrangler`, `deploy:wrangler` seulement après retrait vérifié de leurs runtimes.
+- [ ] Supprimer les scripts runtime redondants après preuve d'absence de consommateurs.
+  - [x] Retirer `dev:v`, `build:v`, `start:v`, l'ancien `build.sh` et le package CLI `vercel`; les déploiements sont portés par la Git Integration Vercel (#146).
+  - [ ] Retirer `dev:wrangler`, `start:wrangler`, `deploy:wrangler` avec Wrangler après confirmation de l'absence de déploiement Cloudflare externe.
 - [ ] Conserver à terme un seul couple nominal `build: next build` / `start: next start`.
 - [x] Exécuter explicitement `next build` dans la CI GitHub de qualité afin de ne pas dépendre uniquement de Vercel pour valider la compilation.
 - [x] Contraindre le tracing de `htmlFromPublic.ts` aux fragments explicitement allowlistés (#108).
 - [x] Réduire ensuite `htmlFromPublic.ts` au seul `public/404.html` protégé et retirer le composant `PublicHtmlFragment` devenu sans consommateur après la migration native complète des policies.
 - [x] Éviter le pull de l'image Docker Snyk lorsque `SNYK_TOKEN` est vide ; la CI utilise désormais le CLI uniquement lorsque le token existe.
 - [ ] Mesurer l'impact sur taille d'installation/cache et durée de build après ces optimisations.
+  - [x] Réduire d'abord le graphe d'installation de 47 paquets via #145 puis de 324 paquets CLI Vercel via #146 avant de comparer les nouvelles baselines CI.
   - [x] Instrumenter le job Quality sans second build : `npm ci`, `node_modules`, cache npm, `npm run check`, `next build` et taille `.next` sont publiés dans le Job Summary (#122).
   - [ ] Conserver plusieurs baselines post-merge et comparer les régressions avant d'ajuster davantage la CI.
 
@@ -221,6 +224,7 @@ Cette phase est volontairement placée après migration, UI/UX, SEO, nettoyage e
   - [x] Retirer le manifeste secondaire `public/package.json` et corriger les instructions runtime dupliquées/stales sans supprimer le corpus qualité utile (#143).
   - [x] Retirer les trois SDK Stripe orphelins et réconcilier le lockfile racine (#144).
   - [x] Retirer le `postinstall` dist historique, `copyfiles`, le package npm `d3` et 47 entrées lockfile devenues orphelines (#145).
+  - [x] Retirer le CLI Vercel local, ses wrappers et 324 entrées lockfile exclusivement liées ; conserver les SDK `@vercel/*` réellement utilisés (#146).
   - [ ] Retrait des runtimes/scripts/assets legacy restants après preuve d'absence de consommateurs externes.
 - [ ] **Migration 8 / P3** — extraction progressive de sections homepage en conservant les disclosures approuvées, sans changement sensible non validé.
 - [ ] **Migration finale / P6** — confidentialité hors homepage : pseudonymisation/caviardage du corpus restant et extension complète du privacy gate.
