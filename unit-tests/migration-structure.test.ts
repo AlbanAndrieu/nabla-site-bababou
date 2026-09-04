@@ -39,6 +39,71 @@ test("Git-integrated Vercel deployment does not require a local Vercel CLI", asy
   await assert.rejects(access(new URL("../build.sh", import.meta.url)));
 });
 
+test("analytics and devtools use external/platform integration instead of unused npm SDKs", async () => {
+  const packageJson = JSON.parse(
+    await readFile(new URL("../package.json", import.meta.url), "utf8"),
+  ) as {
+    dependencies?: Record<string, string>;
+    devDependencies?: Record<string, string>;
+  };
+  const retiredDirectDependencies = [
+    "@datadog/browser-rum",
+    "@opentelemetry/api",
+    "@opentelemetry/api-logs",
+    "@opentelemetry/instrumentation",
+    "@opentelemetry/sdk-logs",
+    "@vercel/analytics",
+    "@vercel/otel",
+    "@vercel/speed-insights",
+    "@vercel/toolbar",
+    "next-devtools-mcp",
+  ];
+
+  for (const dependency of retiredDirectDependencies) {
+    assert.equal(dependency in (packageJson.dependencies ?? {}), false);
+  }
+  assert.equal("lodash-es" in (packageJson.dependencies ?? {}), false);
+  assert.ok(packageJson.devDependencies?.["lodash-es"]);
+
+  const [analytics, legacyTestScript, nextInstructions] = await Promise.all([
+    readFile(new URL("../public/site-analytics.js", import.meta.url), "utf8"),
+    readFile(new URL("../public/index.js", import.meta.url), "utf8"),
+    readFile(
+      new URL("../.github/copilot-instructions-nextjs.md", import.meta.url),
+      "utf8",
+    ),
+  ]);
+
+  assert.match(analytics, /\/_vercel\/insights\/script\.js/);
+  assert.match(analytics, /\/_vercel\/speed-insights\/script\.js/);
+  assert.match(analytics, /datadoghq-browser-agent\.com/);
+  assert.doesNotMatch(
+    legacyTestScript,
+    /@vercel\/(?:analytics|speed-insights)/,
+  );
+  assert.match(nextInstructions, /Next\.js: \*\*16\.3\.2\*\*/);
+  assert.doesNotMatch(nextInstructions, /cd app|vercel deploy|app\/package\.json/);
+
+  const mcpConfig = await readFile(new URL("../.mcp.json", import.meta.url), "utf8");
+  assert.match(mcpConfig, /next-devtools-mcp@latest/);
+  await assert.rejects(access(new URL("../instrumentation.ts", import.meta.url)));
+});
+
+test("deployment docs describe Git integration instead of the retired app-root CLI flow", async () => {
+  const [vercelGuide, actionsGuide] = await Promise.all([
+    readFile(
+      new URL("../.github/vercel-deployment-instructions.md", import.meta.url),
+      "utf8",
+    ),
+    readFile(new URL("../docs/GITHUB_ACTIONS_SETUP.md", import.meta.url), "utf8"),
+  ]);
+
+  for (const guide of [vercelGuide, actionsGuide]) {
+    assert.match(guide, /Vercel Git integration/i);
+    assert.doesNotMatch(guide, /rootDirectory["`:\s]+app|cd app|VERCEL_TOKEN/);
+  }
+});
+
 test("public does not carry a second package/runtime manifest", async () => {
   await assert.rejects(access(new URL("../public/package.json", import.meta.url)));
 });
