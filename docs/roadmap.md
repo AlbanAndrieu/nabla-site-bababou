@@ -60,6 +60,7 @@
 - [x] Réconciliation post-#140 validée sur Preview exact : FR non préfixé déterministe, 404 globale statique protégée, cleanup payment et Playwright 167/167 sur le SHA déployé (#141).
 - [x] Routes/aliases fantômes `pricing`, `payment`, `startup`, `startup-thanks`, `checkout`, `checkout-tjm`, `login`, `ai`, `security`, `expertise`, `ciso`, `truenas`, `ctid`, `freenas`, `nabla`, `workstation`, `cv` et `jm` retirés du catalogue ; configuration/générateur legacy, support homelab non routé et styles dédiés `security`/`ciso`/`login`/`ctid` supprimés (#142).
 - [x] Documentation agent/outillage réconciliée avec l'architecture Next/Vercel réelle ; anciennes références `my-app`, `vue-client`, runbook frontend absent et sitemap obsolète retirées (#142).
+- [x] Manifeste secondaire `public/package.json` supprimé après preuve d'absence de consommateur ; documentation locale/Playwright/Copilot réalignée sur le runtime Next/Vercel (#143).
 
 ### Blocages opérationnels actuels
 
@@ -78,8 +79,9 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] Audit du code versionné : aucun import ESM, `require()` ou appel `express()` trouvé.
   - [x] Retrait effectif avec régénération atomique du lockfile (#123).
 - [ ] Retirer Wrangler et `wrangler.jsonc` une fois confirmé qu'aucun déploiement Cloudflare Workers n'est encore requis.
-  - [x] Audit dépôt : aucune CI ni consommateur applicatif Wrangler détecté ; seuls `package.json` et `wrangler.jsonc` restent référencés.
-  - [ ] Confirmer l'absence de déploiement externe encore utilisé avant retrait du package/configuration.
+  - [x] Audit dépôt : aucune CI ni consommateur applicatif Wrangler détecté.
+  - [x] Retirer le manifeste autonome `public/package.json` et les instructions qui présentaient Wrangler comme runtime recommandé (#143).
+  - [ ] Confirmer l'absence de déploiement externe encore utilisé avant retrait du package/configuration Wrangler racine.
 - [ ] Auditer les consommateurs de `dist/`, `index/dist/` et les assets copiés par `postinstall`.
   - [x] Audit initial du dépôt : `app/scripts/arf.js`, `app/resources/`, `dist/` et `index/dist/` ne sont pas versionnés sur la branche courante.
   - [x] `npm ci` exécute néanmoins le `postinstall` sans erreur dans la CI.
@@ -213,6 +215,7 @@ Cette phase est volontairement placée après migration, UI/UX, SEO, nettoyage e
   - [x] Retrait du bridge HTML policy et réduction de `htmlFromPublic` au seul 404 protégé.
   - [x] Retrait des résultats de paiement HTML legacy après gate #141 vert, avec conservation des redirects et test d'absence.
   - [x] Retirer les routes/catalogues/scripts fantômes confirmés, le support homelab non routé et les directives/docs associées devenues sans cible (#142).
+  - [x] Retirer le manifeste secondaire `public/package.json` et corriger les instructions runtime dupliquées/stales sans supprimer le corpus qualité utile (#143).
   - [ ] Retrait des runtimes/scripts/assets legacy restants après preuve d'absence de consommateurs externes.
 - [ ] **Migration 8 / P3** — extraction progressive de sections homepage en conservant les disclosures approuvées, sans changement sensible non validé.
 - [ ] **Migration finale / P6** — confidentialité hors homepage : pseudonymisation/caviardage du corpus restant et extension complète du privacy gate.

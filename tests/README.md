@@ -111,10 +111,10 @@ expect(theme).toBe('dark');
 
 Test configuration is in `playwright.config.ts` in the root directory:
 
-- **Base URL**: `http://localhost:8787` (Wrangler dev server)
+- **Base URL**: `http://localhost:3000` by default; set `BASE_URL` for an external Preview
 - **Browsers**: Chromium, Firefox, WebKit
 - **Mobile**: Pixel 5, iPhone 12
-- **Auto-start server**: Tests will start Wrangler dev server automatically
+- **Auto-start server**: local tests start the Next.js dev server; CI local runs use `next start`
 - **Retries on CI**: 2 retries on failure in CI environment
 - **Screenshots**: Captured on failure
 - **Traces**: Captured on first retry
@@ -161,7 +161,7 @@ Test reports and results are uploaded as artifacts and retained for 30 days.
 
 ### Tests fail locally but pass in CI
 - Ensure browsers are installed: `npx playwright install --with-deps`
-- Check that Wrangler dev server is running properly
+- Check that the Next.js dev server is reachable on `http://localhost:3000`
 
 ### Flaky tests
 - Increase wait times for slow animations

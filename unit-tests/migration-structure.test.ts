@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { access, readFile } from "node:fs/promises";
 import test from "node:test";
 
 const EXPECTED_LEGACY_POSTINSTALL =
@@ -20,6 +20,10 @@ test("keeps the legacy postinstall until the dist consumers are audited", async 
   ) as { scripts?: Record<string, string> };
 
   assert.equal(packageJson.scripts?.postinstall, EXPECTED_LEGACY_POSTINSTALL);
+});
+
+test("public does not carry a second package/runtime manifest", async () => {
+  await assert.rejects(access(new URL("../public/package.json", import.meta.url)));
 });
 
 test("keeps legacy base catalogs versioned but does not load them at runtime", async () => {

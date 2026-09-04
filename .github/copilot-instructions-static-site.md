@@ -4,7 +4,7 @@ This file provides specific guidance for working with the static website located
 
 ## Overview
 
-The `public/` directory contains the main static website for the "bababou" project. It includes HTML pages, CSS stylesheets, JavaScript files, and assets. The site is deployed via Cloudflare Workers and Vercel.
+The `public/` directory contains legacy HTML plus static assets retained during the incremental Next.js migration. Next.js/Vercel is the target runtime; legacy pages remain public only until their replacements reach parity.
 
 ## File Structure
 
@@ -42,18 +42,14 @@ public/
 
 ### Local Development Servers
 
-**Option 1: Cloudflare Wrangler (Recommended)**
+**Option 1: Next.js development server (recommended)**
 ```bash
 # From project root
-npm run start
-# OR
 npm run dev
-# OR
-wrangler dev
 ```
-Serves at `http://localhost:8787`
+Serves at `http://localhost:3000`
 
-**Option 2: Python HTTP Server**
+**Option 2: Python HTTP Server (legacy static audit only)**
 ```bash
 # From project root
 npm run start-python
@@ -491,14 +487,9 @@ Run Lighthouse in Chrome DevTools:
 
 ### Cloudflare Workers
 
-Configured via `wrangler.jsonc` in project root:
-
-```bash
-# From project root
-npm run deploy
-# OR
-wrangler deploy
-```
+`wrangler.jsonc` is retained only as a legacy compatibility artifact while
+external Cloudflare usage is audited. Do not use Wrangler as the default
+development or deployment path.
 
 ### Vercel
 

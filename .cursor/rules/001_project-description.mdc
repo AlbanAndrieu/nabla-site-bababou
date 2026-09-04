@@ -21,7 +21,7 @@ The repository layout looks like this (main items):
 │   └── ⚡ workflows/                 <- Playwright, OpenCommit, copilot-setup-steps
 ├── 💻 .vscode/                       <- Settings, MCP config, copilot-instructions
 ├── 📁 api/                           <- API (e.g. hello.js serverless)
-├── 📦 package.json                   <- Node deps, scripts (start, test Playwright, deploy wrangler)
+├── 📦 package.json                   <- Root Node deps and Next.js/Playwright scripts
 ├── 📄 playwright.config.ts           <- Playwright test config (baseURL, webServer)
 ├── 📁 public/                        <- Static site root (served as web root)
 │   ├── 📄 index.html                 <- Homepage
@@ -37,7 +37,7 @@ The repository layout looks like this (main items):
 │   └── README.md
 ├── 👩‍⚖️ LICENSE
 ├── 📰 README.md
-├── 📄 vercel.json, wrangler.jsonc    <- Deployment (Vercel, Cloudflare)
+├── 📄 vercel.json                    <- Target deployment configuration (Vercel)
 └── 📄 .gitignore, .pre-commit-config.yaml, commitlint.config.ts, ...
 ```
 

@@ -16,7 +16,7 @@ Please be respectful and constructive in all interactions.
    ```
 3. **Install dependencies**:
    ```bash
-   npm install
+   npm ci
    ```
 
 ## Development Workflow
@@ -30,11 +30,11 @@ Please be respectful and constructive in all interactions.
 
 3. **Test your changes**:
    ```bash
-   # Run linting
-   npm run lint
+   # Canonical local quality gate
+   bash scripts/quality-gate.sh
 
-   # Test locally
-   npm run start
+   # Run the Next.js development server when interactive testing is needed
+   npm run dev
    ```
 
 4. **Commit your changes** using conventional commit format:
@@ -104,10 +104,10 @@ Before submitting a PR:
 
 2. **Test locally**:
    ```bash
-   # Using Cloudflare Wrangler
-   npm run start
+   # Next.js development server (http://localhost:3000)
+   npm run dev
 
-   # Or using Python
+   # Legacy static fallback audit only
    npm run start-python
    ```
 
