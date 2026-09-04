@@ -35,7 +35,7 @@ This main file provides general guidance for the entire repository. For area-spe
 
 - **[copilot-instructions-cicd.md](copilot-instructions-cicd.md)** - CI/CD workflows (`.github/workflows/`)
   - GitHub Actions workflows
-  - OpenCommit, Copilot setup
+  - Quality, Playwright Preview, release, MegaLinter and Copilot setup
   - Workflow patterns, triggers, debugging
 
 - **[copilot-instructions-python.md](copilot-instructions-python.md)** - Python tools and scripts
@@ -56,7 +56,7 @@ This main file provides general guidance for the entire repository. For area-spe
 - `public/` - static assets plus legacy HTML retained during migration
 - `app/` - root Next.js App Router application
 - `api/` - API functions
-- `.github/workflows/` - CI/CD workflows (OpenCommit action)
+- `.github/workflows/` - CI, Preview E2E, release, MegaLinter, Docker and Copilot setup workflows
 
 ### Configuration Files
 - `.mega-linter.yml` - MegaLinter configuration (comprehensive multi-language linter)
@@ -114,11 +114,7 @@ The root project is the Next.js project; `public/` is not a separate runtime.
 
 ### Deployment
 
-**Vercel Deployment:**
-```bash
-vercel deploy        # Preview deployment
-vercel --prod        # Production deployment
-```
+**Vercel deployment:** Preview and production deployments come from the repository's Vercel Git Integration. The local Vercel CLI was intentionally retired; use the deployment produced for the branch/PR and validate its exact SHA.
 
 **Cloudflare Workers:** `wrangler.jsonc` is legacy-only pending confirmation
 that no external Cloudflare deployment still consumes it. Do not use Wrangler
@@ -127,12 +123,15 @@ as the normal development or deployment path.
 ## CI/CD & Validation
 
 ### GitHub Workflows
-- `.github/workflows/opencommit.yml` - OpenCommit action for automated commit message generation (runs on all branches except main/master/dev/development/release)
+- `.github/workflows/ci.yml` - canonical quality/security checks
+- `.github/workflows/playwright.yml` - browser and exact Vercel Preview E2E validation
+- `.github/workflows/release.yml` - semantic release
+- `.github/workflows/mega-linter.yml`, `docker-build.yml`, `copilot-setup-steps.yml` - supporting validation/tooling
 
 ### Pre-commit Hooks
 The repository uses extensive pre-commit hooks. To install them:
 ```bash
-pre-commit install
+mise run hooks
 ```
 
 **Important:** Many linters and formatters run automatically via pre-commit hooks, including:
@@ -152,7 +151,6 @@ The project uses MegaLinter with specific disabled linters (see `.mega-linter.ym
 **CRITICAL:** This project requires:
 - Node.js >= 24.11.0
 - npm >= 11.6.2
-- pnpm ^10.22.0
 
 Use `.nvmrc` for version management:
 ```bash
@@ -207,7 +205,7 @@ Before submitting a PR:
 
 - Repository: https://github.com/AlbanAndrieu/nabla-site-bababou
 - Issue Tracker: https://github.com/AlbanAndrieu/nabla-site-bababou/issues
-- License: Apache License 2.0
+- License: MIT
 - Vercel deployment: Configured via `vercel.json`
 - Wrangler: legacy compatibility only; external usage must be confirmed before removal
 

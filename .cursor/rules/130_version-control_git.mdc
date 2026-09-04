@@ -19,7 +19,7 @@ This project uses **Git** for version control with repositories hosted on **GitH
 
 Use the [Conventional Commits](mdc:https:/www.conventionalcommits.org) specification for commit messages:
 
-When suggesting or writing commit messages (e.g. in review-changes), follow the project's Conventional Commits rules from `commitlint.config.ts` and `.opencommit-commitlint`.
+When suggesting or writing commit messages (e.g. in review-changes), follow the project's Conventional Commits rules from `commitlint.config.ts`.
 
 ## Format
 
