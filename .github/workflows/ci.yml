@@ -6,6 +6,7 @@ on:
       - ".agents/**"
       - ".cursor/**"
       - ".pre-commit-config.yaml"
+      - ".npmrc"
       - ".pre-commit-pre-push.yaml"
       - ".releaserc.yaml"
       - "AGENTS.md"

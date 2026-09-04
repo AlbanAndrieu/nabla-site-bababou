@@ -170,6 +170,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] Retirer `stripe`, `@stripe/stripe-js` et `@stripe/react-stripe-js` devenus sans consommateur après la migration/suppression des surfaces checkout (#144).
 - [ ] Retirer progressivement les runtimes/scripts legacy après preuve d'absence de consommateurs.
   - [x] Retirer OpenCommit, son wrapper/config devenus sans workflow consommateur et 131 entrées lockfile exclusivement liées ; les warnings `@azure/openai`, `crypto` et `node-domexception` disparaissent avec cette chaîne.
+  - [x] Formaliser la policy npm 11.17+ d'installation : scripts transitoires actuellement bloqués explicitement refusés via `allowScripts`, mode `strict-allow-scripts` activé et `.npmrc` ajouté aux déclencheurs Quality.
 - [x] Retirer le bridge HTML des policies et le composant `PublicHtmlFragment` devenu orphelin ; conserver `htmlFromPublic` uniquement pour l'exception 404 imposée par la policy du repo.
 - [ ] Supprimer les pages `.html` et assets orphelins après validation des redirects et de la parité Next.
   - [x] Après gate #141 vert, retirer `public/success.html`, `public/cancel.html` et l'ignore Stylelint `public/checkout.css` devenu sans fichier ; verrouiller leur absence par contrat unitaire.
@@ -184,6 +185,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 - [ ] Mesurer durée de `npm ci`, `npm run check`, `next build`, taille de cache et taille de sortie.
   - [x] Instrumentation Quality ajoutée sans job ni build supplémentaire (#122).
   - [x] Première comparaison #146 → #147 : `npm ci` 31 → 24 s, `node_modules` 1112 → 1041 MiB, `next build` 19,6 → 18,2 s et `.next` 69 → 66 MiB.
+  - [x] Deuxième baseline #148 : 808 paquets, `npm ci` 20 s, `node_modules` 918 MiB, `npm run check` 31 s, `next build` 14,0 s et `.next` 66 MiB.
   - [ ] Collecter plusieurs baselines post-merge et définir des seuils uniquement après observation.
 - [x] Maintenir lint JS/TS/CSS, typecheck, unit tests, `next build`, Playwright Preview, accessibilité et tests SEO comme gates.
 
@@ -229,6 +231,7 @@ Cette phase est volontairement placée après migration, UI/UX, SEO, nettoyage e
   - [x] Retirer le CLI Vercel local, ses wrappers et 324 entrées lockfile exclusivement liées ; conserver les SDK `@vercel/*` réellement utilisés (#146).
   - [x] Retirer 10 dépendances directes observabilité/devtools sans import, déplacer `lodash-es` en devDependency et élaguer 144 entrées lockfile supplémentaires (#147).
   - [x] Retirer le tooling OpenCommit local devenu sans workflow, son wrapper/config et 131 entrées lockfile exclusivement liées.
+  - [x] Durcir npm install avec une denylist explicite des scripts déjà bloqués et un échec strict pour toute nouvelle dépendance à script non revue.
   - [ ] Retrait des runtimes/scripts/assets legacy restants après preuve d'absence de consommateurs externes.
 - [ ] **Migration 8 / P3** — extraction progressive de sections homepage en conservant les disclosures approuvées, sans changement sensible non validé.
 - [ ] **Migration finale / P6** — confidentialité hors homepage : pseudonymisation/caviardage du corpus restant et extension complète du privacy gate.

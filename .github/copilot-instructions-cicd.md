@@ -18,7 +18,7 @@ Do not document or restore workflows that are no longer versioned.
 ## Runtime
 
 - Node.js major: **24**.
-- npm major: **11**.
+- npm: **>=11.17.0 <12**; install scripts are governed by the repository `allowScripts` policy.
 - Run Node/npm commands from the repository root.
 - `package.json` and `package-lock.json` at the root are the only application npm manifests.
 - Vercel deployments come from Git Integration; do not add a local Vercel CLI deployment workflow unless the project deliberately changes that architecture.
@@ -46,6 +46,7 @@ When editing Actions:
 6. use path filtering/ignore policy only when it cannot hide runtime-relevant changes;
 7. keep Node/npm versions aligned with `package.json`;
 8. update unit workflow-contract tests when the event model changes.
+9. keep `.npmrc` in Quality path filters and review any dependency install script before changing `allowScripts`; never use `dangerously-allow-all-scripts`.
 
 ## Deployment boundary
 
