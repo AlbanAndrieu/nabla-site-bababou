@@ -3,7 +3,7 @@
 Follow `/AGENTS.md` as the canonical repository policy.
 
 - Runtime: Next.js 16 / React 19 / TypeScript from the repository root.
-- Node.js: `>=25.9.0 <26`; npm: `>=11.17.0 <12`.
+- Node.js local/CI: `25.9.0`; package engine: `>=24.11.0 <26` so Vercel can use its supported Node 24.x runtime; npm: `>=11.17.0 <12`.
 - First-class locales are `fr`, `en`, `de`, `no`; French is the unprefixed default for migrated routes.
 - Vercel deployment uses Git Integration; the local Vercel CLI is retired. OpenCommit remains available through `npm run oco` / `npm run opencommit`.
 - Ordinary PR branches do not auto-deploy; use the validated `vercel-preview-pr-*` checkpoint workflow for runtime Preview validation.
