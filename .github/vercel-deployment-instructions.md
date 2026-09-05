@@ -8,7 +8,7 @@ Bababou is a **single root Next.js project** deployed through Vercel's Git integ
 - `vercel.json` selects the Next.js framework and the build-ignore policy.
 - `package.json` owns install/build/start scripts.
 - `scripts/vercel-ignore-build.sh` decides whether a Git commit needs a Vercel build.
-- Vercel Preview deployments are created from pull-request commits that affect runtime/deployment content.
+- Automatic Git deployment is enabled only for `master` and dedicated `vercel-preview-*` checkpoint branches. Ordinary PR branches do not auto-deploy.
 - Production deployments follow the connected `master` branch.
 
 There is no standalone `app/` npm project and no repository-owned Vercel CLI dependency.
@@ -16,10 +16,10 @@ There is no standalone `app/` npm project and no repository-owned Vercel CLI dep
 ## Normal deployment workflow
 
 1. Create a focused branch and pull request.
-2. Run the canonical repository quality gate.
-3. Let the Vercel Git integration create the Preview when the change is deploy-relevant.
-4. Validate the **exact deployed SHA** with the Preview Playwright workflow.
-5. Merge only after the required GitHub/Vercel/Preview gates are green.
+2. Run the canonical repository quality gate and let GitHub Quality validate the PR.
+3. After the exact PR SHA has a successful completed Quality run, dispatch **Vercel Preview (On Demand)** with the PR number. The workflow verifies that gate, checks out the exact SHA and pushes `vercel-preview-pr-<number>` through Git so Vercel receives a real branch-push event.
+4. Let Vercel Git Integration deploy that checkpoint branch and validate the **exact deployed SHA** through repository-dispatch Playwright.
+5. Merge only after the required GitHub/Vercel/Preview gates are green. The checkpoint ref still points to the exact PR commit (no synthetic commit is created). Closing the PR removes its checkpoint branch.
 
 Documentation-only or repository-maintenance commits may be intentionally skipped by `scripts/vercel-ignore-build.sh`.
 
@@ -90,9 +90,10 @@ The application runtime and DNS/domain binding are separate concerns. When valid
 
 ### Preview missing
 
-1. check whether `scripts/vercel-ignore-build.sh` intentionally skipped the commit;
-2. confirm the Git integration still points to this repository/project;
-3. inspect Vercel project status and build-rate limits.
+1. confirm the PR is deploy-relevant and **Vercel Preview (On Demand)** was dispatched for its PR number;
+2. check whether `scripts/vercel-ignore-build.sh` intentionally skipped the checkpoint commit;
+3. confirm Git integration and the `vercel-preview-*` rule in `vercel.json`;
+4. inspect Vercel project status and build-rate limits.
 
 ### Preview succeeds but E2E fails
 

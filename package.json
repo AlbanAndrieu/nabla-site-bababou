@@ -16,7 +16,7 @@
   },
   "homepage": "https://github.com/AlbanAndrieu/nabla-site-bababou#readme",
   "engines": {
-    "node": ">=24.11.0 <25",
+    "node": ">=25.9.0 <26",
     "npm": ">=11.17.0 <12"
   },
   "scripts": {
@@ -30,20 +30,18 @@
     "audit": "npm audit --audit-level=moderate",
     "dev": "next dev",
     "dev:test": "next dev -p 3000",
-    "dev:wrangler": "wrangler dev",
-    "deploy:wrangler": "wrangler deploy",
     "build": "node scripts/run-next-build.mjs",
     "start": "next start",
     "start:test": "next start -p 3000",
-    "start:wrangler": "wrangler dev",
     "start-python": "python3 -m http.server 8001 --directory public",
     "test": "playwright test",
     "test:ui": "playwright test --ui",
     "test:headed": "playwright test --headed",
     "test:debug": "playwright test --debug",
     "test:report": "playwright show-report",
-    "semantic-release": "semantic-release",
-    "check:sanitize-html": "npm ls sanitize-html"
+    "check:sanitize-html": "npm ls sanitize-html",
+    "oco": "node scripts/run-opencommit.mjs",
+    "opencommit": "node scripts/run-opencommit.mjs"
   },
   "dependencies": {
     "next": "16.3.2",
@@ -56,9 +54,6 @@
     "@commitlint/config-conventional": "^20.3.1",
     "@eslint/js": "^9.39.1",
     "@playwright/test": "^1.58.0",
-    "@semantic-release/changelog": "^7.0.0",
-    "@semantic-release/git": "^11.0.1",
-    "@semantic-release/github": "^12.0.9",
     "@tailwindcss/postcss": "^4.2.4",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.14",
@@ -68,21 +63,19 @@
     "eslint-formatter-gitlab": "^7.2.0",
     "playwright": "^1.58.0",
     "postcss-selector-parser": "^7.1.4",
-    "semantic-release": "^25.0.8",
     "stylelint": "^17.14.1",
     "tailwindcss": "^4.2.4",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.47.0",
-    "wrangler": "^4.114.0",
-    "lodash-es": "^4.18.1"
+    "lodash-es": "^4.18.1",
+    "opencommit": "^3.2.14"
   },
   "allowScripts": {
     "@parcel/watcher": false,
     "@swc/core": false,
     "esbuild": false,
     "unrs-resolver": false,
-    "workerd": false,
     "fsevents": false
   }
 }

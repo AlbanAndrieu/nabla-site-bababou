@@ -9,8 +9,9 @@ The exact workflow set evolves, so `.github/workflows/` is authoritative. Core r
 - canonical quality/security checks;
 - Next.js build validation;
 - Playwright end-to-end testing;
+- on-demand Vercel Preview checkpoint publication and cleanup;
 - exact Vercel Preview Playwright validation;
-- release/tooling workflows where configured.
+- semantic release only after validated `master` CI;
 
 Do not document a second `app/` npm project or a separate GitHub-driven Vercel deployment path unless the repository actually adopts one.
 
@@ -27,9 +28,9 @@ The quality gate is the source of truth before publication. Do not weaken indivi
 
 ## Vercel deployment
 
-Production and Preview deployments normally come from the Vercel Git integration attached to this repository.
+Production and Preview deployments still come from the Vercel Git integration attached to this repository. GitHub Actions checks out the exact PR SHA and pushes an explicit `vercel-preview-pr-<number>` checkpoint branch when a Preview is requested; it does not invoke the Vercel CLI or create a synthetic commit.
 
-GitHub Actions therefore does **not** need Vercel deployment secrets for the normal project workflow. The Preview E2E workflow consumes deployment events/metadata and validates the exact deployed SHA; it is not a deployment replacement.
+GitHub Actions therefore does **not** need Vercel deployment credentials for the normal project workflow. The Preview E2E workflow consumes Vercel deployment events/metadata and validates the exact deployed SHA.
 
 ## GitHub secrets
 
@@ -48,8 +49,8 @@ Do not add Vercel CLI credentials pre-emptively: the local CLI and its npm wrapp
 For runtime changes, validation should prove all three layers:
 
 1. GitHub quality workflow passed for the commit;
-2. Vercel reports a `READY` deployment for that exact SHA;
-3. Preview Playwright passed against that exact deployment URL.
+2. `Vercel Preview (On Demand)` published the PR SHA and Vercel reports that checkpoint deployment `READY`;
+3. Preview Playwright passed against that exact deployment URL/SHA.
 
 If the Preview is intentionally skipped by `scripts/vercel-ignore-build.sh`, no deployment validation is expected for that docs/repository-maintenance-only commit.
 

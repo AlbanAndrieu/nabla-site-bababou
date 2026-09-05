@@ -7,10 +7,9 @@ This is the hybrid Next.js migration repository for Bababou. The repository cont
 - A Next.js App Router application in `app/`
 - Legacy HTML and static assets in `public/`, retained only until migration parity is proven
 - Vercel deployment configuration
-- Legacy Wrangler configuration retained only while external Cloudflare usage is audited
 
 **Languages & Technologies:**
-- JavaScript/TypeScript (Node.js v24.11.0+, npm v11.17.0+)
+- JavaScript/TypeScript (Node.js v25.9.0+, npm v11.17.0+)
 - Python 3.12 (for tooling and focused legacy-static audits)
 - Next.js 16.3.2 with React 19.2.4
 - Vercel deployment platform
@@ -48,7 +47,6 @@ This main file provides general guidance for the entire repository. For area-spe
 ### Root Directory Files
 - `package.json` - Root package configuration with build scripts and dependencies
 - `vercel.json` - Vercel/Next.js deployment configuration
-- `wrangler.jsonc` - legacy Cloudflare configuration pending external-usage audit
 - `eslint.config.js` - ESLint configuration for the project
 - `commitlint.config.ts` - Commitlint configuration with emoji support
 
@@ -116,16 +114,13 @@ The root project is the Next.js project; `public/` is not a separate runtime.
 
 **Vercel deployment:** Preview and production deployments come from the repository's Vercel Git Integration. The local Vercel CLI was intentionally retired; use the deployment produced for the branch/PR and validate its exact SHA.
 
-**Cloudflare Workers:** `wrangler.jsonc` is legacy-only pending confirmation
-that no external Cloudflare deployment still consumes it. Do not use Wrangler
-as the normal development or deployment path.
-
 ## CI/CD & Validation
 
 ### GitHub Workflows
-- `.github/workflows/ci.yml` - canonical quality/security checks
+- `.github/workflows/ci.yml` - canonical PR and post-merge `master` quality/security checks
+- `.github/workflows/vercel-preview.yml` - on-demand `vercel-preview-pr-*` checkpoint publication/cleanup
 - `.github/workflows/playwright.yml` - browser and exact Vercel Preview E2E validation
-- `.github/workflows/release.yml` - semantic release
+- `.github/workflows/release.yml` - semantic release after validated current `master`
 - `.github/workflows/mega-linter.yml`, `docker-build.yml`, `copilot-setup-steps.yml` - supporting validation/tooling
 
 ### Pre-commit Hooks
@@ -149,7 +144,7 @@ The project uses MegaLinter with specific disabled linters (see `.mega-linter.ym
 
 ### Node.js Version Requirements
 **CRITICAL:** This project requires:
-- Node.js >= 24.11.0
+- Node.js >= 25.9.0
 - npm >= 11.17.0
 
 Use `.nvmrc` for version management:
@@ -164,7 +159,7 @@ pipenv install --dev
 ```
 
 ### Commit Message Format
-The project uses commitlint with conventional commits and emoji support. Valid commit types:
+The project uses commitlint with conventional commits and emoji support. OpenCommit is intentionally retained as an optional local assistant via `npm run oco` / `npm run opencommit`; commitlint remains authoritative. Valid commit types:
 - `build`, `chore`, `ci`, `docs`, `feat`, `feature`, `fix`, `perf`, `refactor`, `revert`, `style`, `test`
 
 Example commit messages:
@@ -207,7 +202,6 @@ Before submitting a PR:
 - Issue Tracker: https://github.com/AlbanAndrieu/nabla-site-bababou/issues
 - License: MIT
 - Vercel deployment: Configured via `vercel.json`
-- Wrangler: legacy compatibility only; external usage must be confirmed before removal
 
 ## Search Guidance
 
@@ -215,7 +209,7 @@ When exploring the codebase:
 - Static site files: Look in `public/` directory
 - Next.js app: Look in `app/` directory
 - API endpoints: Look in `api/` directory
-- Build configurations: check root `package.json` and `vercel.json`; inspect `wrangler.jsonc` only for the pending legacy-runtime audit
+- Build configurations: check root `package.json` and `vercel.json`
 - Linting configs: Check `eslint.config.js`, `.mega-linter.yml`, `.pre-commit-config.yaml`
 - CI/CD: Check `.github/workflows/`
 

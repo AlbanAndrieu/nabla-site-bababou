@@ -38,7 +38,6 @@ test-results/
 /*.yaml
 /.ansible-lint
 /.bandit.yml
-/wrangler.jsonc
 
 # Package test fixtures.
 packages/*/test/**

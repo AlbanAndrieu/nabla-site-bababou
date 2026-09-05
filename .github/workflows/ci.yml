@@ -25,6 +25,36 @@ on:
       - "package-lock.json"
       - ".github/workflows/ci.yml"
       - ".github/workflows/release.yml"
+      - ".github/workflows/playwright.yml"
+      - ".github/workflows/vercel-preview.yml"
+  push:
+    branches:
+      - master
+    paths:
+      - ".agents/**"
+      - ".cursor/**"
+      - ".pre-commit-config.yaml"
+      - ".npmrc"
+      - ".pre-commit-pre-push.yaml"
+      - ".releaserc.yaml"
+      - "AGENTS.md"
+      - "CHANGELOG.md"
+      - "app/**"
+      - "components/**"
+      - "i18n/**"
+      - "lib/**"
+      - "messages/**"
+      - "public/**"
+      - "scripts/**"
+      - "tests/**"
+      - "unit-tests/**"
+      - "mise.toml"
+      - "*.{js,cjs,mjs,ts,tsx,json}"
+      - "package-lock.json"
+      - ".github/workflows/ci.yml"
+      - ".github/workflows/release.yml"
+      - ".github/workflows/playwright.yml"
+      - ".github/workflows/vercel-preview.yml"
   workflow_dispatch:
 
 permissions:
@@ -48,8 +78,11 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "24"
+          node-version: "25.9.0"
           cache: npm
+
+      - name: Pin npm
+        run: npm install --global npm@11.17.0
 
       - name: Install dependencies
         id: install

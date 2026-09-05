@@ -7,8 +7,9 @@ The repository uses GitHub Actions for validation and Vercel Git Integration for
 The files under `.github/workflows/` are authoritative. The current set is:
 
 - `ci.yml` — canonical quality/security gate, including the Next.js build and CI performance summary;
+- `vercel-preview.yml` — creates/removes explicit `vercel-preview-pr-*` checkpoint branches for on-demand Preview deployments;
 - `playwright.yml` — browser validation, including exact Vercel Preview E2E through repository dispatch;
-- `release.yml` — semantic-release;
+- `release.yml` — semantic-release after successful current-`master` Quality validation; release packages are fetched ephemerally there and stay out of the normal application lock graph;
 - `mega-linter.yml` — repository-wide linting;
 - `docker-build.yml` — Docker validation;
 - `copilot-setup-steps.yml` — Copilot environment bootstrap.
@@ -17,11 +18,11 @@ Do not document or restore workflows that are no longer versioned.
 
 ## Runtime
 
-- Node.js major: **24**.
+- Node.js major: **25** (25.9.0 baseline).
 - npm: **>=11.17.0 <12**; install scripts are governed by the repository `allowScripts` policy.
 - Run Node/npm commands from the repository root.
 - `package.json` and `package-lock.json` at the root are the only application npm manifests.
-- Vercel deployments come from Git Integration; do not add a local Vercel CLI deployment workflow unless the project deliberately changes that architecture.
+- Vercel deployments come from Git Integration. Only `master` and `vercel-preview-*` refs auto-deploy; normal PR branches require the on-demand checkpoint workflow. Do not add a local Vercel CLI deployment workflow unless the project deliberately changes that architecture.
 
 ## Validation
 
@@ -54,4 +55,4 @@ GitHub Actions validates the project. Vercel deploys it.
 
 Do not add deployment tokens, manual CLI wrappers, or a second build root merely to work around a failing Preview. Diagnose the Vercel build/runtime/configuration instead.
 
-Wrangler remains a legacy compatibility artifact only while external Cloudflare usage is being audited; it is not the default CI or deployment path.
+Wrangler is retired; Vercel Git Integration is the only versioned web deployment path.

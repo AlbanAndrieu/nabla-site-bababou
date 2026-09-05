@@ -4,7 +4,6 @@ export default [
   {
     ignores: [
       "node_modules/**",
-      ".wrangler/**",
       ".venv/**",
       ".next/**",
       "out/**",

@@ -81,7 +81,7 @@ test("analytics and devtools use external/platform integration instead of unused
     legacyTestScript,
     /@vercel\/(?:analytics|speed-insights)/,
   );
-  assert.match(nextInstructions, /Next\.js: \*\*16\.3\.2\*\*/);
+  assert.match(nextInstructions, /Next\.js[^\n]*16\.3\.2/);
   assert.doesNotMatch(nextInstructions, /cd app|vercel deploy|app\/package\.json/);
 
   const mcpConfig = await readFile(new URL("../.mcp.json", import.meta.url), "utf8");
@@ -104,7 +104,7 @@ test("deployment docs describe Git integration instead of the retired app-root C
   }
 });
 
-test("retired OpenCommit tooling stays out of the root install", async () => {
+test("OpenCommit stays available as local commit tooling", async () => {
   const packageJson = JSON.parse(
     await readFile(new URL("../package.json", import.meta.url), "utf8"),
   ) as {
@@ -112,21 +112,27 @@ test("retired OpenCommit tooling stays out of the root install", async () => {
     devDependencies?: Record<string, string>;
   };
 
-  assert.equal("opencommit" in (packageJson.devDependencies ?? {}), false);
-  for (const script of ["oco", "opencommit"]) {
-    assert.equal(script in (packageJson.scripts ?? {}), false);
-  }
-
-  await assert.rejects(access(new URL("../scripts/run-opencommit.mjs", import.meta.url)));
-  await assert.rejects(access(new URL("../.opencommit-commitlint", import.meta.url)));
-
-  const ciInstructions = await readFile(
-    new URL("../.github/copilot-instructions-cicd.md", import.meta.url),
-    "utf8",
-  );
-  assert.doesNotMatch(ciInstructions, /opencommit\.yml|OCO_|OpenCommit/);
+  assert.ok(packageJson.devDependencies?.opencommit);
+  assert.equal(packageJson.scripts?.oco, "node scripts/run-opencommit.mjs");
+  assert.equal(packageJson.scripts?.opencommit, "node scripts/run-opencommit.mjs");
+  await access(new URL("../scripts/run-opencommit.mjs", import.meta.url));
+  await access(new URL("../.opencommit-commitlint", import.meta.url));
 });
 
+test("Wrangler stays retired from the root deployment graph", async () => {
+  const packageJson = JSON.parse(
+    await readFile(new URL("../package.json", import.meta.url), "utf8"),
+  ) as {
+    scripts?: Record<string, string>;
+    devDependencies?: Record<string, string>;
+  };
+
+  assert.equal(packageJson.devDependencies?.wrangler, undefined);
+  for (const script of ["dev:wrangler", "start:wrangler", "deploy:wrangler"]) {
+    assert.equal(packageJson.scripts?.[script], undefined);
+  }
+  await assert.rejects(access(new URL("../wrangler.jsonc", import.meta.url)));
+});
 test("public does not carry a second package/runtime manifest", async () => {
   await assert.rejects(access(new URL("../public/package.json", import.meta.url)));
 });

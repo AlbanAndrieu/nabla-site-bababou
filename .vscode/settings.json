@@ -1,7 +1,4 @@
 {
-  "files.associations": {
-    "wrangler.json": "jsonc"
-  },
   "github.copilot.advanced": {
     "debug.overrideProxyUrl": "http://172.17.0.57:4000",
     "debug.testOverrideProxyUrl": "http://172.17.0.57:4000"
@@ -9,14 +6,30 @@
   "aws.telemetry": false,
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "Biome.biome-vscode",
-  "[javascript]": { "editor.defaultFormatter": "Biome.biome-vscode" },
-  "[typescript]": { "editor.defaultFormatter": "Biome.biome-vscode" },
-  "[typescriptreact]": { "editor.defaultFormatter": "Biome.biome-vscode" },
-  "[json]": { "editor.defaultFormatter": "Biome.biome-vscode" },
-  "[markdown]": { "editor.defaultFormatter": "Biome.biome-vscode" },
-  "[css]": { "editor.defaultFormatter": "Biome.biome-vscode" },
-  "[html]": { "editor.defaultFormatter": "Biome.biome-vscode" },
+  "[javascript]": {
+    "editor.defaultFormatter": "Biome.biome-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "Biome.biome-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "Biome.biome-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "Biome.biome-vscode"
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "Biome.biome-vscode"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "Biome.biome-vscode"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "Biome.biome-vscode"
+  },
   "eslint.format.enable": false,
   "prettier.enable": false,
-  "cSpell.words": ["Jugendamt"]
+  "cSpell.words": [
+    "Jugendamt"
+  ]
 }
