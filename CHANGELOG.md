@@ -1,3 +1,11 @@
+## [0.10.2](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.10.1...0.10.2) (2026-09-06)
+
+
+### Bug Fixes
+
+* **ci:** authenticate semantic release freshness check ([#156](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/156)) ([ed3e3d2](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/ed3e3d26b23b8cc4632ec1eb0620fc7713079a3b))
+* **vercel:** restore Node engine compatibility ([#152](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/152)) ([cd14808](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/cd1480837f15d6e8dde08898c3afa1275f4b82bb))
+
 ## [0.10.1](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.10.0...0.10.1) (2026-09-03)
 
 
