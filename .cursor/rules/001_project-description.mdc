@@ -4,9 +4,9 @@ globs: public/**/*.html,public/**/*.css
 alwaysApply: true
 ---
 
-# nabla-site-bababou — Static HTML project
+# nabla-site-bababou — hybrid Next.js / legacy HTML project
 
-Static HTML site promoting the research and contact efforts for Éléonore. Main content lives in `public/`: homepage `index.html`.
+Repository-root Next.js application with retained legacy HTML/assets in `public/` during migration. The owner-controlled homepage currently remains backed by `public/index.html`.
 
 <details>
 <summary><b>Project directory structure</b></summary>
@@ -23,7 +23,7 @@ The repository layout looks like this (main items):
 ├── 📁 api/                           <- API (e.g. hello.js serverless)
 ├── 📦 package.json                   <- Root Node deps and Next.js/Playwright scripts
 ├── 📄 playwright.config.ts           <- Playwright test config (baseURL, webServer)
-├── 📁 public/                        <- Static site root (served as web root)
+├── 📁 public/                        <- Static assets + retained legacy HTML during migration
 │   ├── 📄 index.html                 <- Homepage
 │   ├── 📄 test.html, 404.html
 │   ├── 📄 theme.css, landing-sections.css (optional), wireframe.css, print.css

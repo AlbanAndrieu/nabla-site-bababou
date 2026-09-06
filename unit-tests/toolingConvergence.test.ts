@@ -70,6 +70,27 @@ test("release-only tooling is not installed during normal development", async ()
   assert.equal(packageJson.scripts?.["semantic-release"], undefined);
 });
 
+test("public/contributor guidance does not restore the retired standalone-static architecture", async () => {
+  const [publicReadme, contributing, cursor, precommit] = await Promise.all([
+    read("public/README.md"),
+    read("CONTRIBUTING.md"),
+    read(".cursor/rules/001_project-description.mdc"),
+    read(".pre-commit-config.yaml"),
+  ]);
+
+  assert.match(publicReadme, /repository-root \*\*Next\.js\*\* application/);
+  assert.match(publicReadme, /not.*separate deployment target/i);
+  assert.doesNotMatch(publicReadme, /static site root|my-app\//);
+
+  assert.match(contributing, /MIT License/);
+  assert.match(contributing, /mise run hooks/);
+  assert.match(contributing, /npm run oco/);
+  assert.doesNotMatch(contributing, /Apache License 2\.0|my-app\//);
+
+  assert.doesNotMatch(cursor, /Static site root \(served as web root\)/);
+  assert.doesNotMatch(precommit, /my-app\//);
+});
+
 test("security guidance reflects the current dependency and deployment boundary", async () => {
   const security = await read("SECURITY.md");
 

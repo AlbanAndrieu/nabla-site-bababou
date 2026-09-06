@@ -1,140 +1,72 @@
-# Contributing to this repo
+# Contributing to nabla-site-bababou
 
-Thank you for your interest in contributing to nabla-site-bababou! This document provides guidelines and instructions for contributing.
+Follow `AGENTS.md` as the canonical repository policy.
 
-## Code of Conduct
+## Getting started
 
-Please be respectful and constructive in all interactions.
-
-## Getting Started
-
-1. **Fork the repository** on GitHub
-2. **Clone your fork** locally:
-   ```bash
-   git clone https://github.com/AlbanAndrieu/nabla-site-bababou.git
-   cd nabla-site-bababou
-   ```
-3. **Install dependencies**:
-   ```bash
-   npm ci
-   ```
-
-## Development Workflow
-
-1. **Create a feature branch**:
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-
-2. **Make your changes** following the code style guidelines
-
-3. **Test your changes**:
-   ```bash
-   # Canonical local quality gate
-   bash scripts/quality-gate.sh
-
-   # Run the Next.js development server when interactive testing is needed
-   npm run dev
-   ```
-
-4. **Commit your changes** using conventional commit format:
-   ```bash
-   git commit -m "feat: add new feature"
-   git commit -m "fix: resolve bug"
-   git commit -m "docs: update README"
-   ```
-
-5. **Push to your fork**:
-   ```bash
-   git push origin feature/your-feature-name
-   ```
-
-6. **Open a Pull Request** on GitHub
-
-## Commit Message Guidelines
-
-We follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
-
-- `feat:` - New features
-- `fix:` - Bug fixes
-- `docs:` - Documentation changes
-- `style:` - Code style changes (formatting, etc.)
-- `refactor:` - Code refactoring
-- `test:` - Adding or updating tests
-- `chore:` - Maintenance tasks
-- `ci:` - CI/CD changes
-- `build:` - Build system changes
-- `perf:` - Performance improvements
-- `revert:` - Reverting previous commits
-
-## Code Style
-
-- Follow the [EditorConfig](.editorconfig) settings
-- Run `npm run lint` before committing
-- Use tabs for indentation in JavaScript/TypeScript files
-- Add comments for complex logic
-- Keep functions small and focused
-
-## Pull Request Process
-
-1. Update documentation if needed
-2. Ensure all tests pass
-3. Update the README.md if you've made significant changes
-4. Request review from maintainers
-5. Address any review feedback
-
-## Project Structure
-
+```bash
+git clone https://github.com/AlbanAndrieu/nabla-site-bababou.git
+cd nabla-site-bababou
+npm ci
+mise run hooks
 ```
+
+Node.js local/CI is pinned through `.nvmrc` / `mise.toml`; the package engine remains compatible with the supported Vercel runtime.
+
+## Development workflow
+
+> Never write or push directly to `master`. Create a non-default branch and integrate changes through a pull request.
+
+```bash
+git checkout -b feature/your-change
+npm run dev
+```
+
+Before publication:
+
+```bash
+bash scripts/quality-gate.sh
+```
+
+For focused checks, use the root scripts such as `npm run lint`, `npm run test:unit`, `npm run build`, or `npm test`.
+
+OpenCommit remains available as an optional local helper:
+
+```bash
+npm run oco
+# or
+npm run opencommit
+```
+
+Commitlint remains authoritative. Use Conventional Commits such as `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`, `ci:`, `build:`, `perf:` and `revert:`.
+
+## Project structure
+
+```text
 nabla-site-bababou/
-├── public/              # Static website files (main site)
-├── app/                 # Next.js application
-├── api/                 # API functions
-└── .github/             # GitHub workflows and configurations
+├── app/                 # Next.js App Router
+├── api/                 # Optional Vercel serverless handlers
+├── public/              # Shared assets + retained legacy HTML during migration
+├── messages/            # first-class next-intl catalogs
+├── unit-tests/          # Node contract tests
+├── tests/               # Playwright E2E tests
+└── .github/             # GitHub workflows and repository instructions
 ```
 
-## Testing
+Bababou remains hybrid while migration parity is being proven. Do not create a second npm/Next application under `public/`.
 
-Before submitting a PR:
+## Pull requests
 
-1. **Lint your code**:
-   ```bash
-   npm run lint
-   ```
+- Keep changes focused and use one atomic commit for API-authored multi-file changes when practical.
+- Preserve the owner-controlled homepage and protected `public/404.html` rules.
+- Do not change family/legal publication or pseudonymization rules outside the explicit policy in `AGENTS.md`.
+- For deploy-relevant changes, use the validated on-demand Vercel Preview checkpoint and exact-SHA Playwright flow.
+- Update documentation and regression contracts when the repository architecture changes.
 
-2. **Test locally**:
-   ```bash
-   # Next.js development server (http://localhost:3000)
-   npm run dev
+## Security
 
-   # Legacy static fallback audit only
-   npm run start-python
-   ```
-
-3. **Check for security vulnerabilities**:
-   ```bash
-   npm audit
-   ```
-
-## Reporting Issues
-
-When reporting issues, please include:
-
-- Clear description of the problem
-- Steps to reproduce
-- Expected vs actual behavior
-- Browser/environment information
-- Screenshots (if applicable)
-
-## Questions?
-
-If you have questions, please:
-1. Check existing issues and documentation
-2. Open a new issue with your question
-3. Be clear and provide context
+Never commit secrets or realistic credentials. `npm audit` is advisory; review dependency changes instead of applying blind `--force` upgrades.
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under the Apache License 2.0.
-
-Thank you for contributing! 🎉
+Contributions are licensed under the repository's **MIT License**.

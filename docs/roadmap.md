@@ -83,6 +83,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] Audit dépôt : aucune CI ni consommateur applicatif Wrangler détecté.
   - [x] Retirer le manifeste autonome `public/package.json` et les instructions qui présentaient Wrangler comme runtime recommandé (#143).
   - [x] Retirer le package, les scripts npm, la configuration et les nœuds lockfile exclusivement liés (#150).
+  - [x] Réconcilier ensuite la documentation de `public/`/contribution et les exclusions pre-commit : aucun `my-app/`, aucun web-root autonome, licence MIT et runtime Next racine.
 - [x] Auditer puis retirer les sorties `dist/`, `index/dist/` et le `postinstall` legacy (#145).
   - [x] Les quatre inputs applicatifs historiques (`index.html`, `wireframe.css`, `app/scripts/arf.js`, `app/resources/`) n'existent plus à la racine.
   - [x] Les sorties `dist/` et `index/` ne sont ni versionnées ni consommées par le runtime Next/Vercel ou la CI GitHub actuelle.
