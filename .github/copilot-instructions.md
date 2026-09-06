@@ -11,7 +11,7 @@ This is the hybrid Next.js migration repository for Bababou. The repository cont
 **Languages & Technologies:**
 - JavaScript/TypeScript (Node.js v25.9.0+, npm v11.17.0+)
 - Python 3.12 (for tooling and focused legacy-static audits)
-- Next.js 16.3.2 with React 19.2.4
+- Next.js 16.3.4 with React 19.2.4
 - Vercel deployment platform
 
 ## Specialized Instruction Files

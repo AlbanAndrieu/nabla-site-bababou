@@ -72,8 +72,8 @@
 
 Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-alban`, sans casser le runtime legacy encore requis.
 
-- [x] Remplacer l'ancienne version preview de Next.js par une version stable ; le projet utilise désormais Next `16.3.2`.
-- [x] Aligner explicitement `next` et `eslint-config-next` dans le manifeste/lockfile et vérifier leur résolution effective (#123).
+- [x] Remplacer l'ancienne version preview de Next.js par une version stable ; le projet utilise désormais Next `16.3.4` (Active LTS), au-delà du minimum `16.3.3` de la security release d'août 2026.
+- [x] Aligner explicitement `next` et `eslint-config-next` dans le manifeste/lockfile et vérifier leur résolution effective (#123), puis converger vers `16.3.4` comme `nabla-site-alban`.
 - [x] Séparer la cible de validation Node 25 du runtime Vercel : local/CI restent sur Node `25.9.0`, tandis que `package.json#engines.node` accepte `>=24.11.0 <26` afin que Vercel puisse utiliser son runtime Node 24.x supporté ; npm reste `>=11.17.0 <12`.
   - [x] Réconcilier les métadonnées `engines` racine du lockfile lors de la régénération atomique du lockfile (#123), puis après le correctif de compatibilité Vercel post-#150.
 - [x] Supprimer `express` et `@types/express` après confirmation de l'absence de consommateur (#123).
@@ -174,6 +174,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] Formaliser la policy npm 11.17+ d'installation : scripts transitoires actuellement bloqués explicitement refusés via `allowScripts`, mode `strict-allow-scripts` activé et `.npmrc` ajouté aux déclencheurs Quality.
   - [x] Réconcilier le contrat supply-chain après Dependabot #151 : `esbuild` `0.28.2` est la version transitive revue et explicitement attendue par le test d'installation, au lieu de laisser un merge dependency invalider Quality.
 - [x] Retirer le bridge HTML des policies et le composant `PublicHtmlFragment` devenu orphelin ; conserver `htmlFromPublic` uniquement pour l'exception 404 imposée par la policy du repo.
+  - [x] Retirer `sanitize-html` et son wrapper `check:sanitize-html` après preuve que `htmlFromPublic` n'en dépend plus ; élaguer les 12 entrées lockfile devenues exclusivement orphelines.
 - [ ] Supprimer les pages `.html` et assets orphelins après validation des redirects et de la parité Next.
   - [x] Après gate #141 vert, retirer `public/success.html`, `public/cancel.html` et l'ignore Stylelint `public/checkout.css` devenu sans fichier ; verrouiller leur absence par contrat unitaire.
   - [x] Retirer les routes/catalogues fantômes confirmés, `lib/htmlRoutes.config.mjs` et l'ancien générateur FR après preuve d'absence de consommateur ; conserver les CTA homepage orphelins comme dette explicite jusqu'au cutover contrôlé (#142).

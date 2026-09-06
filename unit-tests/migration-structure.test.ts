@@ -81,7 +81,7 @@ test("analytics and devtools use external/platform integration instead of unused
     legacyTestScript,
     /@vercel\/(?:analytics|speed-insights)/,
   );
-  assert.match(nextInstructions, /Next\.js[^\n]*16\.3\.2/);
+  assert.match(nextInstructions, /Next\.js[^\n]*16\.3\.4/);
   assert.doesNotMatch(nextInstructions, /cd app|vercel deploy|app\/package\.json/);
 
   const mcpConfig = await readFile(new URL("../.mcp.json", import.meta.url), "utf8");
@@ -133,6 +133,23 @@ test("Wrangler stays retired from the root deployment graph", async () => {
   }
   await assert.rejects(access(new URL("../wrangler.jsonc", import.meta.url)));
 });
+
+
+test("protected 404 loader does not retain the retired sanitize-html package", async () => {
+  const [packageSource, loader] = await Promise.all([
+    readFile(new URL("../package.json", import.meta.url), "utf8"),
+    readFile(new URL("../lib/htmlFromPublic.ts", import.meta.url), "utf8"),
+  ]);
+  const packageJson = JSON.parse(packageSource) as {
+    scripts?: Record<string, string>;
+    dependencies?: Record<string, string>;
+  };
+
+  assert.equal(packageJson.dependencies?.["sanitize-html"], undefined);
+  assert.equal(packageJson.scripts?.["check:sanitize-html"], undefined);
+  assert.doesNotMatch(loader, /sanitize-html|sanitizeHtml/);
+});
+
 test("public does not carry a second package/runtime manifest", async () => {
   await assert.rejects(access(new URL("../public/package.json", import.meta.url)));
 });
