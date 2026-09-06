@@ -21,7 +21,7 @@ There is no standalone `app/` npm project and no repository-owned Vercel CLI dep
 4. Let Vercel Git Integration deploy that checkpoint branch and validate the **exact deployed SHA** through repository-dispatch Playwright.
 5. Merge only after the required GitHub/Vercel/Preview gates are green. The checkpoint ref still points to the exact PR commit (no synthetic commit is created). Closing the PR removes its checkpoint branch.
 
-Documentation-only or repository-maintenance commits may be intentionally skipped by `scripts/vercel-ignore-build.sh`.
+Documentation-only or repository-maintenance commits may be intentionally skipped by `scripts/vercel-ignore-build.sh`. Dedicated `vercel-preview-*` checkpoints are the exception: they always build so the deployment and Playwright run validate the exact CI-approved SHA.
 
 ## Local development
 
@@ -35,7 +35,7 @@ npm run build
 npm run start
 ```
 
-The application normally uses port 3000 for local Next development/testing.
+The application defaults to port 3000 for local Next development/testing. Playwright can use another loopback port through `PLAYWRIGHT_PORT` when parallel local work would otherwise collide.
 
 ## Project configuration
 

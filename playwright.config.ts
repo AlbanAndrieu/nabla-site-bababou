@@ -1,5 +1,13 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const requestedPort = Number(process.env.PLAYWRIGHT_PORT || 3000);
+const testPort =
+  Number.isInteger(requestedPort) &&
+  requestedPort >= 1 &&
+  requestedPort <= 65535
+    ? requestedPort
+    : 3000;
+const localTestUrl = `http://127.0.0.1:${testPort}`;
 const externalBaseUrl = process.env.BASE_URL?.trim();
 const vercelBypassSecret =
   process.env.VERCEL_AUTOMATION_BYPASS_SECRET?.trim();
@@ -47,7 +55,7 @@ export default defineConfig({
       : []),
   ],
   use: {
-    baseURL: externalBaseUrl || "http://localhost:3000",
+    baseURL: externalBaseUrl || localTestUrl,
     navigationTimeout: 30_000,
     trace: "on-first-retry",
     screenshot: "only-on-failure",
@@ -81,14 +89,12 @@ export default defineConfig({
       use: { ...devices["iPhone 12"] },
     },
   ],
-  ...(externalBaseUrl
-    ? {}
+  webServer: externalBaseUrl
+    ? undefined
     : {
-        webServer: {
-          command: process.env.CI ? "npm run start:test" : "npm run dev:test",
-          url: "http://localhost:3000",
-          reuseExistingServer: !process.env.CI,
-          timeout: 120 * 1000,
-        },
-      }),
+        command: `${process.env.CI ? "npm run start:test" : "npm run dev:test"} -- --port ${testPort}`,
+        url: localTestUrl,
+        reuseExistingServer: !process.env.CI,
+        timeout: 120 * 1000,
+      },
 });

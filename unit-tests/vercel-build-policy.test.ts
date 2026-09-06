@@ -76,6 +76,18 @@ test("Vercel still builds deploy-relevant commits", async (t) => {
   assert.match(result.stdout, /Deploy-relevant change detected/);
 });
 
+test("Vercel always builds validated Preview checkpoint refs", async (t) => {
+  const directory = await createRepo("docs: checkpoint metadata", "docs/roadmap.md");
+  t.after(async () => rm(directory, { recursive: true, force: true }));
+
+  const result = runPolicy(directory, {
+    VERCEL_GIT_COMMIT_REF: "vercel-preview-pr-154",
+  });
+
+  assert.equal(result.status, 1, result.stderr);
+  assert.match(result.stdout, /Validated checkpoint vercel-preview-pr-154/);
+});
+
 test("Vercel still skips documentation-only commits", async (t) => {
   const directory = await createRepo("docs: refresh roadmap", "docs/roadmap.md");
   t.after(async () => rm(directory, { recursive: true, force: true }));
