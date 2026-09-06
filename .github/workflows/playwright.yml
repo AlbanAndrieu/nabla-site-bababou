@@ -64,12 +64,22 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "25.9.0"
-          cache: npm
-          cache-dependency-path: package-lock.json
+          node-version-file: ".nvmrc"
+
+      - name: Cache npm downloads
+        uses: actions/cache@v5
+        with:
+          path: ~/.npm
+          key: npm-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            npm-${{ runner.os }}-${{ runner.arch }}-
 
       - name: Pin npm
-        run: npm install --global npm@11.17.0
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "${RUNNER_TEMP}"
+          npm install --global npm@11.17.0 --no-audit --no-fund
 
       # This job exercises an already-built remote Preview. Skip lifecycle
       # scripts to keep dependency installation deterministic and minimal.

@@ -89,7 +89,11 @@ jobs:
 
       - name: Pin npm
         if: steps.freshness.outputs.current == 'true'
-        run: npm install --global npm@11.17.0 --no-audit --no-fund
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "${RUNNER_TEMP}"
+          npm install --global npm@11.17.0 --no-audit --no-fund
 
       # Bababou already has established numeric semantic-release history.
       # Do not recreate Alban's v0.0.0 bootstrap here.

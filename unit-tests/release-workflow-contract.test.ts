@@ -88,6 +88,16 @@ test("semantic release avoids installing the application dependency graph", asyn
   assert.match(nodeSetup, /steps\.freshness\.outputs\.current == 'true'/);
   assert.match(nodeSetup, /node-version-file: "\.nvmrc"/);
   assert.doesNotMatch(nodeSetup, /cache: npm/);
+  const npmPin = section(
+    workflow,
+    "- name: Pin npm",
+    "- name: Run semantic-release",
+  );
+  assert.match(npmPin, /cd "\$\{RUNNER_TEMP\}"/);
+  assert.match(
+    npmPin,
+    /npm install --global npm@11\.17\.0 --no-audit --no-fund/,
+  );
   assert.doesNotMatch(workflow, /Install application dependencies/);
   assert.doesNotMatch(workflow, /npm ci/);
 

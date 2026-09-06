@@ -13,8 +13,11 @@ test("shared agent tooling follows the Node 25 root-runtime contract", async () 
     read(".github/copilot-instructions-nextjs.md"),
   ]);
 
-  assert.match(setup, /node-version:\s*"25\.9\.0"/);
-  assert.doesNotMatch(setup, /node-version:\s*"24"/);
+  assert.match(setup, /node-version-file:\s*"\.nvmrc"/);
+  assert.doesNotMatch(setup, /node-version:\s*"?(?:24|25\.9\.0)"?/);
+  assert.match(setup, /- name: Cache npm downloads/);
+  assert.match(setup, /actions\/cache@v5/);
+  assert.match(setup, /cd "\$\{RUNNER_TEMP\}"/);
   assert.match(setup, /npm ci --no-audit --no-fund/);
 
   for (const adapter of [vscode, cursor, nextjs]) {
@@ -26,6 +29,29 @@ test("shared agent tooling follows the Node 25 root-runtime contract", async () 
   assert.doesNotMatch(vscode, /sitemap-albandrieu-com\.xml/);
   assert.doesNotMatch(cursor, /branch from and merge to develop/);
   assert.doesNotMatch(cursor, /feature\/new-feature develop/);
+});
+
+
+test("GitHub Node workflows share .nvmrc as their source of truth", async () => {
+  const [nvmrc, quality, playwright, copilot, docker, release] =
+    await Promise.all([
+      read(".nvmrc"),
+      read(".github/workflows/ci.yml"),
+      read(".github/workflows/playwright.yml"),
+      read(".github/workflows/copilot-setup-steps.yml"),
+      read(".github/workflows/docker-build.yml"),
+      read(".github/workflows/release.yml"),
+    ]);
+
+  assert.equal(nvmrc.trim(), "v25.9.0");
+
+  for (const workflow of [quality, playwright, copilot, docker, release]) {
+    assert.match(workflow, /node-version-file:\s*"\.nvmrc"/);
+    assert.doesNotMatch(workflow, /node-version:\s*"?25\.9\.0"?/);
+  }
+
+  assert.match(quality, /\.github\/workflows\/copilot-setup-steps\.yml/);
+  assert.match(quality, /\.github\/workflows\/docker-build\.yml/);
 });
 
 test("specialized agent adapters do not restore retired deployment or hook paths", async () => {
