@@ -13,6 +13,16 @@ set -euo pipefail
 # important for on-demand checkpoint branches: a PR may contain several commits,
 # and HEAD^ alone can miss an earlier deploy-relevant change.
 
+git_ref="${VERCEL_GIT_COMMIT_REF:-}"
+
+# Explicit Preview checkpoint refs are CI-validated publication targets.
+# Always build the checkpoint so Vercel and Playwright validate the exact PR SHA,
+# even when the changed files themselves would normally be maintenance-only.
+if [[ "$git_ref" == vercel-preview-* ]]; then
+  echo "Validated checkpoint $git_ref; build exact deployment."
+  exit 1
+fi
+
 commit_subject="$(git log -1 --pretty=%s)"
 if [[ "$commit_subject" =~ ^chore\(release\):\ [0-9]+\.[0-9]+\.[0-9]+\ \[skip\ ci\]$ ]]; then
   echo "Semantic-release metadata commit detected; skip duplicate deployment."

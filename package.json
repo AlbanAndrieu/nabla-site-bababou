@@ -29,10 +29,10 @@
     "check": "npm run lint && npm run lint:css && npx next typegen && npm run typecheck && npm run test:unit && npm run privacy:check && npm run build && npm run privacy:check:build",
     "audit": "npm audit --audit-level=moderate",
     "dev": "next dev",
-    "dev:test": "next dev -p 3000",
+    "dev:test": "next dev --hostname 127.0.0.1",
     "build": "node scripts/run-next-build.mjs",
     "start": "next start",
-    "start:test": "next start -p 3000",
+    "start:test": "next start --hostname 127.0.0.1",
     "start-python": "python3 -m http.server 8001 --directory public",
     "test": "playwright test",
     "test:ui": "playwright test --ui",
@@ -41,7 +41,8 @@
     "test:report": "playwright show-report",
     "check:sanitize-html": "npm ls sanitize-html",
     "oco": "node scripts/run-opencommit.mjs",
-    "opencommit": "node scripts/run-opencommit.mjs"
+    "opencommit": "node scripts/run-opencommit.mjs",
+    "quality:gate": "bash scripts/quality-gate.sh"
   },
   "dependencies": {
     "next": "16.3.2",

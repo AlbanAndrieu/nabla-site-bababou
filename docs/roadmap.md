@@ -185,12 +185,14 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] Les changements docs/repository-maintenance évitent un Preview Vercel grâce à l'`ignoreCommand` versionné et testé.
   - [x] Les agents API-only doivent publier les changements multi-fichiers en un commit Git atomique lorsque possible, afin d'éviter le fan-out de Preview Vercel et les rate limits ; #142 a été squashée ainsi avant validation finale.
   - [x] Porter le modèle Vercel stabilisé dans `nabla-site-alban` (#130) : désactiver les auto-Preview des branches `fix/*` / `feat/*`, réserver l’auto-déploiement à `master` et aux checkpoints `vercel-preview-*`, puis créer/nettoyer ces checkpoints à la demande via un vrai `git push` afin que Vercel reçoive l’événement de branche attendu.
+  - [x] Aligner le hardening checkpoint du `master` Alban : `vercel-preview-*` force toujours un build du SHA exact même lorsque son delta est docs/tests-only ; le contrat unitaire verrouille cette exception.
 - [ ] Mesurer durée de `npm ci`, `npm run check`, `next build`, taille de cache et taille de sortie.
   - [x] Instrumentation Quality ajoutée sans job ni build supplémentaire (#122).
   - [x] Première comparaison #146 → #147 : `npm ci` 31 → 24 s, `node_modules` 1112 → 1041 MiB, `next build` 19,6 → 18,2 s et `.next` 69 → 66 MiB.
   - [x] Deuxième baseline #148 : 808 paquets, `npm ci` 20 s, `node_modules` 918 MiB, `npm run check` 31 s, `next build` 14,0 s et `.next` 66 MiB.
   - [ ] Collecter plusieurs baselines post-merge et définir des seuils uniquement après observation.
 - [x] Maintenir lint JS/TS/CSS, typecheck, unit tests, `next build`, Playwright Preview, accessibilité et tests SEO comme gates.
+  - [x] Exposer le gate canonique via `npm run quality:gate` et garder `scripts/quality-gate.sh` byte-for-byte aligné avec `nabla-site-alban`.
 - [x] Aligner le cycle release sur `nabla-site-alban` (#131) sans changer l’historique Bababou : CI post-merge sur `master`, release uniquement après CI verte et contrôle que le SHA validé est toujours le `master` courant.
 
 ## P6 — Confidentialité finale hors homepage — À FAIRE EN DERNIER
