@@ -171,6 +171,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] Retirer `stripe`, `@stripe/stripe-js` et `@stripe/react-stripe-js` devenus sans consommateur après la migration/suppression des surfaces checkout (#144).
 - [ ] Retirer progressivement les runtimes/scripts legacy après preuve d'absence de consommateurs.
   - [x] Conserver OpenCommit sur décision explicite du propriétaire : wrapper/config et scripts `oco` / `opencommit` restaurés, dev-only et hors runtime (#150).
+  - [x] Utiliser GitHub Actions comme CI principale et des annotations ESLint GitHub pour le workflow courant, tout en conservant `.gitlab-ci.yml` et son formatter comme fallback réactivable.
   - [x] Formaliser la policy npm 11.17+ d'installation : scripts transitoires actuellement bloqués explicitement refusés via `allowScripts`, mode `strict-allow-scripts` activé et `.npmrc` ajouté aux déclencheurs Quality.
   - [x] Réconcilier le contrat supply-chain après Dependabot #151 : `esbuild` `0.28.2` est la version transitive revue et explicitement attendue par le test d'installation, au lieu de laisser un merge dependency invalider Quality.
 - [x] Retirer le bridge HTML des policies et le composant `PublicHtmlFragment` devenu orphelin ; conserver `htmlFromPublic` uniquement pour l'exception 404 imposée par la policy du repo.
