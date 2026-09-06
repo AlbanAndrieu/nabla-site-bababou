@@ -45,13 +45,51 @@ test("semantic release refuses stale validated revisions", async () => {
   assert.match(workflow, /steps\.freshness\.outputs\.current == 'true'/);
 });
 
-test("semantic release keeps GitHub credentials available for the authenticated push", async () => {
+test("semantic release authenticates before refreshing current master", async () => {
   const workflow = await readFile(
     new URL("../.github/workflows/release.yml", import.meta.url),
     "utf8",
   );
 
   assert.match(workflow, /persist-credentials: false/);
+
+  const authentication = section(
+    workflow,
+    "- name: Configure release Git authentication",
+    "- name: Verify validated revision is still current master",
+  );
+  const freshness = section(
+    workflow,
+    "- name: Verify validated revision is still current master",
+    "- name: Set up Node.js",
+  );
+
+  assert.match(authentication, /GH_TOKEN:/);
+  assert.match(authentication, /gh auth setup-git/);
+  assert.match(freshness, /GH_TOKEN:/);
+  assert.match(freshness, /git fetch --force origin master:/);
+  assert.ok(
+    workflow.indexOf("- name: Configure release Git authentication") <
+      workflow.indexOf("- name: Verify validated revision is still current master"),
+  );
+});
+
+test("semantic release avoids installing the application dependency graph", async () => {
+  const workflow = await readFile(
+    new URL("../.github/workflows/release.yml", import.meta.url),
+    "utf8",
+  );
+
+  const nodeSetup = section(
+    workflow,
+    "- name: Set up Node.js",
+    "- name: Pin npm",
+  );
+  assert.match(nodeSetup, /steps\.freshness\.outputs\.current == 'true'/);
+  assert.match(nodeSetup, /node-version-file: "\.nvmrc"/);
+  assert.doesNotMatch(nodeSetup, /cache: npm/);
+  assert.doesNotMatch(workflow, /Install application dependencies/);
+  assert.doesNotMatch(workflow, /npm ci/);
 
   const semanticRelease = section(
     workflow,
@@ -60,7 +98,8 @@ test("semantic release keeps GitHub credentials available for the authenticated 
   );
   assert.match(semanticRelease, /GITHUB_TOKEN:/);
   assert.match(semanticRelease, /GH_TOKEN:/);
-  assert.match(semanticRelease, /gh auth setup-git/);
+  assert.match(semanticRelease, /git config --local user\.name/);
+  assert.match(semanticRelease, /git config --local user\.email/);
   assert.match(semanticRelease, /npm exec --yes --ignore-scripts/);
   assert.match(semanticRelease, /--package=semantic-release@25\.0\.8/);
   assert.match(semanticRelease, /--package=@semantic-release\/changelog@7\.0\.0/);
