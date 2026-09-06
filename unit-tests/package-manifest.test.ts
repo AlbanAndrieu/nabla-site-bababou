@@ -26,6 +26,7 @@ test("Next.js tooling stays aligned and Express is not a direct dependency", asy
   const nextVersion = manifest.dependencies?.next;
 
   assert.equal(typeof nextVersion, "string");
+  assert.equal(nextVersion, "16.3.4");
   assert.equal(manifest.dependencies?.express, undefined);
   assert.equal(manifest.devDependencies?.["@types/express"], undefined);
   assert.equal(manifest.devDependencies?.["eslint-config-next"], nextVersion);

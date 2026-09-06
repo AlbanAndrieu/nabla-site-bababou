@@ -39,17 +39,15 @@
     "test:headed": "playwright test --headed",
     "test:debug": "playwright test --debug",
     "test:report": "playwright show-report",
-    "check:sanitize-html": "npm ls sanitize-html",
     "oco": "node scripts/run-opencommit.mjs",
     "opencommit": "node scripts/run-opencommit.mjs",
     "quality:gate": "bash scripts/quality-gate.sh"
   },
   "dependencies": {
-    "next": "16.3.2",
+    "next": "16.3.4",
     "next-intl": "^4.9.2",
     "react": "^19.2.4",
-    "react-dom": "^19.2.4",
-    "sanitize-html": "^2.17.7"
+    "react-dom": "^19.2.4"
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^20.3.1",
@@ -60,7 +58,7 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "eslint": "^9.39.1",
-    "eslint-config-next": "16.3.2",
+    "eslint-config-next": "16.3.4",
     "eslint-formatter-gitlab": "^7.2.0",
     "playwright": "^1.58.0",
     "postcss-selector-parser": "^7.1.4",
