@@ -121,3 +121,58 @@ test.describe("Responsive Design Tests", () => {
 		}
 	});
 });
+
+test.describe("Native Next chrome", () => {
+  test("keeps 44px controls and no horizontal overflow on mobile", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 375, height: 667 });
+
+    for (const path of ["/contact", "/en/contact", "/policy"]) {
+      await page.goto(path);
+      await expect(page.locator("body")).toBeVisible();
+
+      const hasHorizontalScroll = await page.evaluate(
+        () =>
+          document.documentElement.scrollWidth >
+          document.documentElement.clientWidth,
+      );
+      expect(hasHorizontalScroll, `${path} should not overflow horizontally`).toBe(
+        false,
+      );
+
+      const localeSelect = page.locator("#route-header-locale");
+      await expect(localeSelect).toBeVisible();
+      const localeBox = await localeSelect.boundingBox();
+      expect(
+        localeBox?.height ?? 0,
+        `${path} language selector should be at least 44px high`,
+      ).toBeGreaterThanOrEqual(44);
+
+      const socialLinks = page.locator(
+        'footer[role="contentinfo"] a.social-link',
+      );
+      const socialCount = await socialLinks.count();
+      expect(socialCount).toBeGreaterThanOrEqual(2);
+      for (let index = 0; index < socialCount; index += 1) {
+        const link = socialLinks.nth(index);
+        if (!(await link.isVisible())) continue;
+        const box = await link.boundingBox();
+        expect(
+          Math.min(box?.width ?? 0, box?.height ?? 0),
+          `${path} footer social control should be at least 44x44px`,
+        ).toBeGreaterThanOrEqual(44);
+      }
+
+      if (path.endsWith("/contact")) {
+        const contactCta = page.locator('a[href="#contact-details"]').first();
+        await expect(contactCta).toBeVisible();
+        const ctaBox = await contactCta.boundingBox();
+        expect(
+          ctaBox?.height ?? 0,
+          `${path} contact CTA should be at least 44px high`,
+        ).toBeGreaterThanOrEqual(44);
+      }
+    }
+  });
+});
