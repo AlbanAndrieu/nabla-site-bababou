@@ -181,6 +181,8 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] Retirer les routes/catalogues fantômes confirmés, `lib/htmlRoutes.config.mjs` et l'ancien générateur FR après preuve d'absence de consommateur ; conserver les CTA homepage orphelins comme dette explicite jusqu'au cutover contrôlé (#142).
 - [ ] Réduire les téléchargements et jobs CI inutiles.
   - [x] Snyk ne prépare plus/pull plus son image Docker lorsque `SNYK_TOKEN` est absent.
+  - [x] Remplacer le cache npm implicite de `setup-node` par `actions/cache` sur `~/.npm` dans les workflows qui installent le projet ; pinner npm depuis `$RUNNER_TEMP` dans tous les workflows GitHub afin que le npm embarqué ne lise pas `.npmrc` avant npm 11.17, tout en conservant `strict-allow-scripts` et le cache.
+  - [x] Centraliser la version Node des workflows GitHub sur `.nvmrc` (`v25.9.0`) ; conserver séparément l'engine package compatible Vercel `>=24.11.0 <26`.
   - [x] Les Preview Vercel ne déclenchent plus deux suites Playwright concurrentes et le chemin conservé réutilise le cache Chromium (#121).
   - [x] Le workflow séparé de seed Chromium devient inutile et est retiré après validation du cache détenu par `repository_dispatch` (#122).
   - [x] Les anciens contrats Playwright de 404 localisée et de chrome checkout legacy sont retirés/réconciliés avec les surfaces réellement publiées (#141).

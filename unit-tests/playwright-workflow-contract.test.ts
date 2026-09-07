@@ -55,6 +55,37 @@ test("Playwright Preview runs reuse the Chromium browser cache", async () => {
   assert.match(workflow, /npx playwright install-deps chromium/);
 });
 
+test("Playwright npm cache avoids bundled npm project config before pinning", async () => {
+  const workflow = await readFile(
+    new URL("../.github/workflows/playwright.yml", import.meta.url),
+    "utf8",
+  );
+
+  const npmCache = section(
+    workflow,
+    "- name: Cache npm downloads",
+    "- name: Pin npm",
+  );
+  const npmPin = section(
+    workflow,
+    "- name: Pin npm",
+    "- name: Install dependencies",
+  );
+
+  assert.match(npmCache, /actions\/cache@v5/);
+  assert.match(npmCache, /path: ~\/\.npm/);
+  assert.match(
+    npmCache,
+    /npm-\$\{\{ runner\.os \}\}-\$\{\{ runner\.arch \}\}-\$\{\{ hashFiles\('package-lock\.json'\) \}\}/,
+  );
+  assert.doesNotMatch(workflow, /cache: npm/);
+  assert.match(npmPin, /cd "\$\{RUNNER_TEMP\}"/);
+  assert.match(
+    npmPin,
+    /npm install --global npm@11\.17\.0 --no-audit --no-fund/,
+  );
+});
+
 test("Playwright Preview dependency install skips legacy lifecycle scripts", async () => {
   const workflow = await readFile(
     new URL("../.github/workflows/playwright.yml", import.meta.url),

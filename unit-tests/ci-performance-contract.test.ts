@@ -25,9 +25,25 @@ test("quality CI records performance without running a second Next build", async
   assert.match(nextBuildRunner, /GITHUB_OUTPUT/);
 
   assert.match(workflow, /id: install/);
+  assert.match(workflow, /- name: Cache npm downloads/);
+  assert.match(workflow, /id: npm-cache/);
+  assert.match(workflow, /actions\/cache@v5/);
+  assert.match(workflow, /path: ~\/\.npm/);
+  assert.match(
+    workflow,
+    /npm-\$\{\{ runner\.os \}\}-\$\{\{ runner\.arch \}\}-\$\{\{ hashFiles\('package-lock\.json'\) \}\}/,
+  );
+  assert.doesNotMatch(workflow, /cache: npm/);
+  assert.match(workflow, /cd "\$\{RUNNER_TEMP\}"/);
+  assert.match(
+    workflow,
+    /npm install --global npm@11\.17\.0 --no-audit --no-fund/,
+  );
   assert.match(workflow, /id: checks/);
   assert.match(workflow, /Publish CI performance summary/);
   assert.match(workflow, /npm_cache_mb/);
+  assert.match(workflow, /steps\.npm-cache\.outputs\.cache-hit/);
+  assert.match(workflow, /npm cache hit/);
   assert.match(workflow, /node_modules_mb/);
   assert.match(workflow, /next_mb/);
   assert.match(workflow, /NEXT_BUILD_SECONDS/);

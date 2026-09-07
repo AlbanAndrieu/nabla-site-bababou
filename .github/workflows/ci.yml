@@ -24,6 +24,8 @@ on:
       - "*.{js,cjs,mjs,ts,tsx,json}"
       - "package-lock.json"
       - ".github/workflows/ci.yml"
+      - ".github/workflows/copilot-setup-steps.yml"
+      - ".github/workflows/docker-build.yml"
       - ".github/workflows/release.yml"
       - ".github/workflows/playwright.yml"
       - ".github/workflows/vercel-preview.yml"
@@ -52,6 +54,8 @@ on:
       - "*.{js,cjs,mjs,ts,tsx,json}"
       - "package-lock.json"
       - ".github/workflows/ci.yml"
+      - ".github/workflows/copilot-setup-steps.yml"
+      - ".github/workflows/docker-build.yml"
       - ".github/workflows/release.yml"
       - ".github/workflows/playwright.yml"
       - ".github/workflows/vercel-preview.yml"
@@ -78,11 +82,23 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "25.9.0"
-          cache: npm
+          node-version-file: ".nvmrc"
+
+      - name: Cache npm downloads
+        id: npm-cache
+        uses: actions/cache@v5
+        with:
+          path: ~/.npm
+          key: npm-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            npm-${{ runner.os }}-${{ runner.arch }}-
 
       - name: Pin npm
-        run: npm install --global npm@11.17.0
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "${RUNNER_TEMP}"
+          npm install --global npm@11.17.0 --no-audit --no-fund
 
       - name: Install dependencies
         id: install
@@ -121,6 +137,7 @@ jobs:
           NPM_CI_SECONDS: ${{ steps.install.outputs.seconds }}
           NODE_MODULES_MB: ${{ steps.install.outputs.node_modules_mb }}
           NPM_CACHE_MB: ${{ steps.install.outputs.npm_cache_mb }}
+          NPM_CACHE_HIT: ${{ steps.npm-cache.outputs.cache-hit }}
           CHECK_SECONDS: ${{ steps.checks.outputs.seconds }}
           NEXT_BUILD_SECONDS: ${{ steps.checks.outputs.next_build_seconds }}
           NEXT_MB: ${{ steps.checks.outputs.next_mb }}
@@ -141,6 +158,7 @@ jobs:
             echo "| npm ci | $(value_or_na "$NPM_CI_SECONDS") s |"
             echo "| node_modules | $(value_or_na "$NODE_MODULES_MB") MiB |"
             echo "| npm cache | $(value_or_na "$NPM_CACHE_MB") MiB |"
+            echo "| npm cache hit | $(value_or_na "$NPM_CACHE_HIT") |"
             echo "| npm run check | $(value_or_na "$CHECK_SECONDS") s |"
             echo "| next build | $(value_or_na "$NEXT_BUILD_SECONDS") s |"
             echo "| .next output | $(value_or_na "$NEXT_MB") MiB |"
