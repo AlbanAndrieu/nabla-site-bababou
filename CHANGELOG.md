@@ -1,3 +1,10 @@
+# [0.11.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.10.2...0.11.0) (2026-09-07)
+
+
+### Features
+
+* **theme:** align theme bootstrap and contrast ([#160](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/160)) ([d8457ad](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/d8457ad0855d3fe18785adfaa31e3945c2eea019))
+
 ## [0.10.2](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.10.1...0.10.2) (2026-09-06)
 
 
