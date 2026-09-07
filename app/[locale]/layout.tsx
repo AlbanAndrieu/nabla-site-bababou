@@ -7,6 +7,7 @@ import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import Footer from "@/app/components/Footer";
 import RouteHeader from "@/components/RouteHeader";
+import ThemeBootstrap from "@/components/ThemeBootstrap";
 import { routing } from "@/i18n/routing";
 import { localizedSiteMetadata } from "@/lib/siteSocialMetadata";
 
@@ -58,6 +59,7 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} data-nabla-app="next-intl" suppressHydrationWarning>
       <head>
+        <ThemeBootstrap />
         <meta name="color-scheme" content="light dark" />
         <link rel="stylesheet" href="/landing-sections.css" />
         <link rel="stylesheet" href="/wireframe.css" />
