@@ -1,0 +1,32 @@
+.disclosure {
+  margin-block: var(--ui-space-md);
+  padding: var(--ui-space-md);
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius-card);
+  background: var(--ui-surface-card);
+  box-shadow: var(--ui-shadow-sm);
+}
+
+.summary {
+  color: var(--ui-text-primary);
+  font-weight: var(--ui-font-weight-action);
+  cursor: pointer;
+}
+
+.summary:focus-visible {
+  outline: 3px solid var(--ui-focus-ring);
+  outline-offset: 4px;
+  border-radius: var(--ui-radius-sm);
+}
+
+.body {
+  margin-top: var(--ui-space-md);
+}
+
+.body p {
+  margin-bottom: var(--ui-space-sm);
+}
+
+.body p:last-child {
+  margin-bottom: 0;
+}

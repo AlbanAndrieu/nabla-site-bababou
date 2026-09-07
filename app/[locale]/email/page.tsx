@@ -5,6 +5,9 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import SiteWidgetsScript from "@/components/SiteWidgetsScript";
 import SkipToMainContent from "@/components/SkipToMainContent";
 import TopAnchor from "@/components/TopAnchor";
+import Container from "@/components/ui/Container";
+import layout from "@/components/ui/ContentLayout.module.css";
+import surface from "@/components/ui/Surface.module.css";
 import { routing } from "@/i18n/routing";
 import { localizedPageMetadata } from "@/lib/siteSocialMetadata";
 
@@ -44,39 +47,54 @@ export default async function EmailPage({
     <div className="site-content-page page-dark">
       <TopAnchor />
       <SkipToMainContent />
-      <main id="main-content" className="container py-4 pb-5">
-        <header className="mb-4">
-          <h1 className="h2 mb-2">{t("title")}</h1>
-        </header>
-        <section className="py-3" aria-labelledby="preferred-addresses-heading">
-          <h2 id="preferred-addresses-heading" className="h4 mb-3">
-            {t("useTheseAddresses")}
-          </h2>
-          <div className="row g-3">
-            {cards.map((card) => (
-              <div key={`${card.title}:${card.email}`} className="col-md-6">
-                <div className="card h-100 bg-body-secondary border-secondary">
-                  <div className="card-body">
-                    <h3 className="h6 card-title">{card.title}</h3>
-                    <p className="card-text mb-0">
-                      {card.descriptionBefore}
-                      <a href={`mailto:${card.email}`}>{card.email}</a>
-                      {card.descriptionAfter}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-        <section className="py-3" aria-labelledby="automated-senders-heading">
-          <h2 id="automated-senders-heading" className="h4 mb-3">
-            {t("automatedHeading")}
-          </h2>
-          <div className="card border-warning bg-body-secondary">
-            <div className="card-body">
-              <p className="mb-2">{t("automatedDesc")}</p>
-              <ul className="mb-0">
+      <main id="main-content" className={layout.main}>
+        <Container>
+          <header className={layout.header}>
+            <h1 className={layout.title}>{t("title")}</h1>
+          </header>
+
+          <section
+            className={layout.section}
+            aria-labelledby="preferred-addresses-heading"
+          >
+            <h2
+              id="preferred-addresses-heading"
+              className={layout.sectionTitle}
+            >
+              {t("useTheseAddresses")}
+            </h2>
+            <div className={layout.twoColumnGrid}>
+              {cards.map((card) => (
+                <article
+                  key={`${card.title}:${card.email}`}
+                  className={`${surface.card} ${surface.muted}`}
+                >
+                  <h3 className={surface.title}>{card.title}</h3>
+                  <p className={surface.text}>
+                    {card.descriptionBefore}
+                    <a href={`mailto:${card.email}`}>{card.email}</a>
+                    {card.descriptionAfter}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section
+            className={layout.section}
+            aria-labelledby="automated-senders-heading"
+          >
+            <h2
+              id="automated-senders-heading"
+              className={layout.sectionTitle}
+            >
+              {t("automatedHeading")}
+            </h2>
+            <div
+              className={`${surface.card} ${surface.muted} ${surface.warning}`}
+            >
+              <p className={surface.text}>{t("automatedDesc")}</p>
+              <ul>
                 {automatedList.map((email) => (
                   <li key={email}>
                     <a href={`mailto:${email}`}>{email}</a>
@@ -84,8 +102,8 @@ export default async function EmailPage({
                 ))}
               </ul>
             </div>
-          </div>
-        </section>
+          </section>
+        </Container>
       </main>
       <SiteWidgetsScript printPdf coffeeFab />
     </div>

@@ -143,6 +143,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] Appliquer globalement la préférence de thème `light|dark|auto` dès le layout Next, avant les runtimes page-specific, sans charger les widgets legacy (#160).
   - [x] Porter les tokens de contraste clair au niveau WCAG AA pour liens, boutons primaires et segments de thème inactifs, avec contrat déterministe light/dark (#160).
   - [x] Porter le design-system sémantique d’Alban #105–#107 : aliases `--ui-*`, `Container` responsive, `RouteHeader`, `Footer` et `ContactHero` scindés en CSS Modules, avec contrôles 44 px et focus visible sans dépendance Bootstrap sur ce chrome Next.
+  - [x] Migrer le lot Bootstrap `card`/grid/actions des surfaces Next natives `email`, `policy` (index + six pages), `success`, `cancel`, `contact`, `link` et `test` vers `ActionLink`, `Container`, `ContentLayout` et `Surface`, avec contrat de non-régression (#162).
 - [ ] Poursuivre les pages publiques structurées à faible risque en conservant le fallback legacy jusqu'à preuve de parité.
   - [x] Exception 404 : `public/404.html` reste la source protégée, consommée par `global-not-found`; la 404 React localisée de #118 n'est plus le comportement cible (#139).
   - [x] Accessibility Statement : route propre Next, source HTML inchangée conservée, chrome/metadata et Preview E2E validés (#124).

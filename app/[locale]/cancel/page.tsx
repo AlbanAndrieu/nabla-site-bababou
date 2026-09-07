@@ -6,6 +6,11 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import CheckoutResultCard from "@/components/CheckoutResultCard";
 import SkipToMainContent from "@/components/SkipToMainContent";
 import TopAnchor from "@/components/TopAnchor";
+import ActionLink, {
+  actionClassName,
+} from "@/components/ui/ActionLink";
+import Container from "@/components/ui/Container";
+import layout from "@/components/ui/ContentLayout.module.css";
 import { routing } from "@/i18n/routing";
 import {
   canonicalPagePath,
@@ -49,37 +54,34 @@ export default async function CancelPage({
     <div className="site-content-page page-dark">
       <TopAnchor />
       <SkipToMainContent />
-      <main id="main-content" className="container py-5">
-        <div className="row justify-content-center">
-          <div className="col-lg-8">
-            <CheckoutResultCard
-              iconClass="fa-solid fa-circle-xmark"
-              iconToneClass="text-warning"
-              title={t("title")}
-              actions={
-                <>
-                  <a
-                    className="btn btn-primary"
-                    href={STRIPE_DIRECT_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {t("retryPayment")}
-                  </a>
-                  <Link
-                    className="btn btn-outline-secondary"
-                    href={canonicalPagePath("index", locale)}
-                  >
-                    {t("backSite")}
-                  </Link>
-                </>
-              }
-            >
-              <p className="lead">{t("message")}</p>
-              <p className="mb-0">{t("retryMessage")}</p>
-            </CheckoutResultCard>
-          </div>
-        </div>
+      <main id="main-content" className={layout.main}>
+        <Container>
+          <CheckoutResultCard
+            iconClass="fa-solid fa-circle-xmark"
+            tone="warning"
+            title={t("title")}
+            actions={
+              <>
+                <ActionLink
+                  href={STRIPE_DIRECT_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {t("retryPayment")}
+                </ActionLink>
+                <Link
+                  className={actionClassName("outline")}
+                  href={canonicalPagePath("index", locale)}
+                >
+                  {t("backSite")}
+                </Link>
+              </>
+            }
+          >
+            <p className={layout.lead}>{t("message")}</p>
+            <p>{t("retryMessage")}</p>
+          </CheckoutResultCard>
+        </Container>
       </main>
     </div>
   );

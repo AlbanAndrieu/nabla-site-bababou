@@ -5,6 +5,10 @@ import { setRequestLocale } from "next-intl/server";
 
 import SkipToMainContent from "@/components/SkipToMainContent";
 import TopAnchor from "@/components/TopAnchor";
+import ActionLink from "@/components/ui/ActionLink";
+import Container from "@/components/ui/Container";
+import layout from "@/components/ui/ContentLayout.module.css";
+import surface from "@/components/ui/Surface.module.css";
 import { type AppLocale, routing } from "@/i18n/routing";
 import { getLegalPolicyCopy } from "@/lib/legalPolicies";
 import {
@@ -141,36 +145,38 @@ export default async function PolicyIndexPage({
       <SkipToMainContent />
       <main
         id="main-content"
-        className="site-content-page container py-4"
+        className={`site-content-page ${layout.main}`}
         lang={locale}
       >
-        <header className="mb-4">
-          <h1>{copy.heading}</h1>
-          <p className="lead mb-0">{copy.intro}</p>
-        </header>
+        <Container>
+          <header className={layout.centeredHeader}>
+            <h1 className={layout.title}>{copy.heading}</h1>
+            <p className={layout.lead}>{copy.intro}</p>
+          </header>
 
-        <div className="row g-3">
-          {POLICY_PAGE_SLUGS.map((policy) => {
-            const policyCopy = getNativePolicyCopy(policy, locale);
-            const href = localizedPolicyPath(policy, locale);
+          <div className={layout.twoColumnGrid}>
+            {POLICY_PAGE_SLUGS.map((policy) => {
+              const policyCopy = getNativePolicyCopy(policy, locale);
+              const href = localizedPolicyPath(policy, locale);
 
-            return (
-              <div className="col-12 col-md-6" key={policy}>
-                <article className="card h-100 shadow-sm">
-                  <div className="card-body d-flex flex-column">
-                    <h2 className="h4 card-title">{policyCopy.title}</h2>
-                    <p className="card-text flex-grow-1">
-                      {policyCopy.metadataDescription}
-                    </p>
-                    <a className="btn btn-outline-primary align-self-start" href={href}>
-                      {copy.open}
-                    </a>
-                  </div>
+              return (
+                <article className={surface.card} key={policy}>
+                  <h2 className={surface.title}>{policyCopy.title}</h2>
+                  <p className={`${surface.text} ${surface.grow}`}>
+                    {policyCopy.metadataDescription}
+                  </p>
+                  <ActionLink
+                    href={href}
+                    variant="outline"
+                    size="compact"
+                  >
+                    {copy.open}
+                  </ActionLink>
                 </article>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        </Container>
       </main>
     </>
   );

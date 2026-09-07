@@ -5,6 +5,7 @@ import {
   type LegalPolicyLinkLabels,
   type LegalPolicySlug,
 } from "@/lib/legalPolicies";
+import styles from "./LegalPolicyContent.module.css";
 
 const INLINE_TOKEN_PATTERN =
   /(\{email\}|\{vercel\}|\{cnil\}|\{privacy\}|\{terms\}|\{home\}|\{ddg\})/g;
@@ -124,13 +125,13 @@ export default function LegalPolicyContent({
         <section key={section.heading}>
           <h2>{section.heading}</h2>
           {section.disclosure ? (
-            <details className="card card-body my-3">
-              <summary className="h6 mb-0 cursor-pointer">
+            <details className={styles.disclosure}>
+              <summary className={styles.summary}>
                 {section.disclosure.summary}
               </summary>
-              <div className="mt-3">
+              <div className={styles.body}>
                 {section.disclosure.paragraphs.map((paragraph) => (
-                  <p key={paragraph} className="mb-2">
+                  <p key={paragraph}>
                     <InlineLegalText
                       text={paragraph}
                       locale={locale}
