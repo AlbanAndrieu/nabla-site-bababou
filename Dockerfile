@@ -1,11 +1,15 @@
 # syntax=docker/dockerfile:1
-# Serves the static site from public/ (no PHP runtime).
-FROM nginx:1.27-alpine
+# Static fallback only. Production remains the Next.js application on Vercel.
+FROM nginxinc/nginx-unprivileged:1.30.4-alpine-slim
 
-LABEL name="nabla-site-bababou" vendor="nabla" version="0.0.5"
+LABEL org.opencontainers.image.title="nabla-site-bababou" \
+      org.opencontainers.image.vendor="nabla" \
+      org.opencontainers.image.description="Static public/ fallback for nabla-site-bababou"
 
 COPY public/ /usr/share/nginx/html/
 
-EXPOSE 80
+EXPOSE 8080
+
+USER 101
 
 CMD ["nginx", "-g", "daemon off;"]
