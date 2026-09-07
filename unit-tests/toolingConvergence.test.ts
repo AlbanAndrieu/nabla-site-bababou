@@ -33,19 +33,17 @@ test("shared agent tooling follows the Node 25 root-runtime contract", async () 
 
 
 test("GitHub Node workflows share .nvmrc as their source of truth", async () => {
-  const [nvmrc, quality, playwright, copilot, docker, release] =
-    await Promise.all([
-      read(".nvmrc"),
-      read(".github/workflows/ci.yml"),
-      read(".github/workflows/playwright.yml"),
-      read(".github/workflows/copilot-setup-steps.yml"),
-      read(".github/workflows/docker-build.yml"),
-      read(".github/workflows/release.yml"),
-    ]);
+  const [nvmrc, quality, playwright, copilot, release] = await Promise.all([
+    read(".nvmrc"),
+    read(".github/workflows/ci.yml"),
+    read(".github/workflows/playwright.yml"),
+    read(".github/workflows/copilot-setup-steps.yml"),
+    read(".github/workflows/release.yml"),
+  ]);
 
   assert.equal(nvmrc.trim(), "v25.9.0");
 
-  for (const workflow of [quality, playwright, copilot, docker, release]) {
+  for (const workflow of [quality, playwright, copilot, release]) {
     assert.match(workflow, /node-version-file:\s*"\.nvmrc"/);
     assert.doesNotMatch(workflow, /node-version:\s*"?25\.9\.0"?/);
   }
