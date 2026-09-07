@@ -1,0 +1,44 @@
+.card {
+  width: min(100%, 50rem);
+  margin-inline: auto;
+  padding: clamp(var(--ui-space-lg), 5vw, 3rem);
+  text-align: center;
+}
+
+.icon {
+  margin-bottom: var(--ui-space-md);
+  font-size: clamp(2.75rem, 8vw, 3.75rem);
+  line-height: 1;
+}
+
+.success {
+  color: var(--ui-success-text);
+}
+
+.warning {
+  color: var(--ui-warning-text);
+}
+
+.title {
+  margin: 0 0 var(--ui-space-md);
+  color: var(--ui-text-primary);
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  line-height: 1.2;
+}
+
+.copy {
+  color: var(--ui-text-primary);
+  line-height: 1.65;
+}
+
+.copy > :last-child {
+  margin-bottom: 0;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--ui-space-xs);
+  margin-top: var(--ui-space-lg);
+}

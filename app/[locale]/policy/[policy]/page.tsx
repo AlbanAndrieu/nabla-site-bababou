@@ -9,6 +9,8 @@ import PublicPolicyContent from "@/components/policy/PublicPolicyContent";
 import ServiceTermsContent from "@/components/policy/ServiceTermsContent";
 import SkipToMainContent from "@/components/SkipToMainContent";
 import TopAnchor from "@/components/TopAnchor";
+import Container from "@/components/ui/Container";
+import layout from "@/components/ui/ContentLayout.module.css";
 import { type AppLocale, routing } from "@/i18n/routing";
 import { getLegalPolicyCopy } from "@/lib/legalPolicies";
 import {
@@ -128,10 +130,12 @@ export default async function PolicyPage({
       <SkipToMainContent />
       <main
         id="main-content"
-        className="site-content-page policy-legal container py-4"
+        className={`site-content-page policy-legal ${layout.main}`}
         lang={locale}
       >
-        <NativePolicyContent policy={policy} locale={locale} />
+        <Container>
+          <NativePolicyContent policy={policy} locale={locale} />
+        </Container>
       </main>
     </>
   );

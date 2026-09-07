@@ -5,6 +5,8 @@ import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import SkipToMainContent from "@/components/SkipToMainContent";
 import TopAnchor from "@/components/TopAnchor";
+import Container from "@/components/ui/Container";
+import layout from "@/components/ui/ContentLayout.module.css";
 import { routing } from "@/i18n/routing";
 import { canonicalPagePath } from "@/lib/sitePageCatalog";
 import { localizedPageMetadata } from "@/lib/siteSocialMetadata";
@@ -55,28 +57,30 @@ export default async function LinkPage({
     <div className="site-content-page page-dark">
       <TopAnchor />
       <SkipToMainContent />
-      <main id="main-content" className="container py-4 pb-5">
-        <header className="mb-4 text-center">
-          <h1 className="h2 mb-2">{t("title")}</h1>
-          <p className="lead text-secondary">{t("intro")}</p>
-        </header>
+      <main id="main-content" className={layout.main}>
+        <Container>
+          <header className={layout.centeredHeader}>
+            <h1 className={layout.title}>{t("title")}</h1>
+            <p className={layout.lead}>{t("intro")}</p>
+          </header>
 
-        <section className="py-2" aria-labelledby="site-links-heading">
-          <h2 id="site-links-heading" className="visually-hidden">
-            {t("title")}
-          </h2>
-          <div className="tools-grid">
-            {items.map((item) => (
-              <div className="tool-item" key={item.key}>
-                <Link href={item.href}>
-                  <i className={item.icon} aria-hidden="true" />
-                  <h3>{t(`items.${item.key}.title`)}</h3>
-                  <p>{t(`items.${item.key}.description`)}</p>
-                </Link>
-              </div>
-            ))}
-          </div>
-        </section>
+          <section className={layout.section} aria-labelledby="site-links-heading">
+            <h2 id="site-links-heading" className={layout.visuallyHidden}>
+              {t("title")}
+            </h2>
+            <div className="tools-grid">
+              {items.map((item) => (
+                <div className="tool-item" key={item.key}>
+                  <Link href={item.href}>
+                    <i className={item.icon} aria-hidden="true" />
+                    <h3>{t(`items.${item.key}.title`)}</h3>
+                    <p>{t(`items.${item.key}.description`)}</p>
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </section>
+        </Container>
       </main>
     </div>
   );

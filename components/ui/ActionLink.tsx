@@ -1,26 +1,31 @@
-import type { ReactNode } from "react";
+import type { ComponentPropsWithoutRef } from "react";
 import styles from "./Action.module.css";
 
-type ActionVariant = "primary" | "secondary";
+type ActionVariant = "primary" | "secondary" | "outline";
+type ActionSize = "default" | "compact";
 
-type ActionLinkProps = Readonly<{
-  href: string;
+type ActionLinkProps = ComponentPropsWithoutRef<"a"> & {
   variant?: ActionVariant;
-  children: ReactNode;
-}>;
+  size?: ActionSize;
+};
 
 export function actionClassName(variant: ActionVariant = "primary") {
   return `${styles.action} ${styles[variant]}`;
 }
 
 export default function ActionLink({
-  href,
   variant = "primary",
-  children,
+  size = "default",
+  className,
+  ...props
 }: ActionLinkProps) {
-  return (
-    <a href={href} className={actionClassName(variant)}>
-      {children}
-    </a>
-  );
+  const classes = [
+    actionClassName(variant),
+    size === "compact" ? styles.compact : undefined,
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  return <a {...props} className={classes} />;
 }

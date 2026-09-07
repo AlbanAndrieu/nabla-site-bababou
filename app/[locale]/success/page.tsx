@@ -6,6 +6,11 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import CheckoutResultCard from "@/components/CheckoutResultCard";
 import SkipToMainContent from "@/components/SkipToMainContent";
 import TopAnchor from "@/components/TopAnchor";
+import ActionLink, {
+  actionClassName,
+} from "@/components/ui/ActionLink";
+import Container from "@/components/ui/Container";
+import layout from "@/components/ui/ContentLayout.module.css";
 import { routing } from "@/i18n/routing";
 import {
   canonicalPagePath,
@@ -56,47 +61,44 @@ export default async function SuccessPage({
     <div className="site-content-page page-dark">
       <TopAnchor />
       <SkipToMainContent />
-      <main id="main-content" className="container py-5">
-        <div className="row justify-content-center">
-          <div className="col-lg-8">
-            <CheckoutResultCard
-              iconClass="fa-solid fa-circle-check"
-              iconToneClass="text-success"
-              title={t("title")}
-              actions={
-                <>
-                  <a
-                    className="btn btn-primary"
-                    href={STRIPE_DIRECT_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {t("payAgain")}
-                  </a>
-                  <Link
-                    className="btn btn-outline-secondary"
-                    href={canonicalPagePath("index", locale)}
-                  >
-                    {t("backSite")}
-                  </Link>
-                </>
-              }
-            >
-              <p className="lead">{t("message")}</p>
-              {sessionId ? (
-                <p id="checkout-session-ref" className="text-break">
-                  <strong>{t("referenceLabel")}</strong> {sessionId}
-                </p>
-              ) : (
-                <p id="checkout-session-ref" hidden />
-              )}
-              <p className="mb-0">
-                {t("contactBefore")}{" "}
-                <a href="mailto:invoice@bababou.com">invoice@bababou.com</a>.
+      <main id="main-content" className={layout.main}>
+        <Container>
+          <CheckoutResultCard
+            iconClass="fa-solid fa-circle-check"
+            tone="success"
+            title={t("title")}
+            actions={
+              <>
+                <ActionLink
+                  href={STRIPE_DIRECT_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {t("payAgain")}
+                </ActionLink>
+                <Link
+                  className={actionClassName("outline")}
+                  href={canonicalPagePath("index", locale)}
+                >
+                  {t("backSite")}
+                </Link>
+              </>
+            }
+          >
+            <p className={layout.lead}>{t("message")}</p>
+            {sessionId ? (
+              <p id="checkout-session-ref" className={layout.breakable}>
+                <strong>{t("referenceLabel")}</strong> {sessionId}
               </p>
-            </CheckoutResultCard>
-          </div>
-        </div>
+            ) : (
+              <p id="checkout-session-ref" hidden />
+            )}
+            <p>
+              {t("contactBefore")}{" "}
+              <a href="mailto:invoice@bababou.com">invoice@bababou.com</a>.
+            </p>
+          </CheckoutResultCard>
+        </Container>
       </main>
     </div>
   );

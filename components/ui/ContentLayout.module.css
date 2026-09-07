@@ -1,0 +1,76 @@
+.main {
+  padding-block: var(--ui-space-xl);
+}
+
+.header {
+  margin-bottom: var(--ui-space-xl);
+}
+
+.centeredHeader {
+  max-width: 760px;
+  margin-inline: auto;
+  margin-bottom: var(--ui-space-xl);
+  text-align: center;
+}
+
+.title {
+  margin: 0 0 var(--ui-space-xs);
+  color: var(--ui-text-primary);
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  line-height: 1.2;
+}
+
+.lead {
+  margin: 0;
+  color: var(--ui-text-secondary);
+  font-size: 1.075rem;
+  line-height: 1.65;
+}
+
+.section {
+  padding-block: var(--ui-space-sm);
+}
+
+.section + .section {
+  margin-top: var(--ui-space-md);
+}
+
+.sectionTitle {
+  margin: 0 0 var(--ui-space-md);
+  color: var(--ui-text-primary);
+  font-size: 1.25rem;
+  line-height: 1.3;
+}
+
+.twoColumnGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ui-space-lg);
+}
+
+.breakable {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 760px) {
+  .main {
+    padding-block: var(--ui-space-lg);
+  }
+
+  .twoColumnGrid {
+    grid-template-columns: 1fr;
+  }
+}

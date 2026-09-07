@@ -5,6 +5,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import ContactHero from "@/components/ContactHero";
 import SkipToMainContent from "@/components/SkipToMainContent";
 import TopAnchor from "@/components/TopAnchor";
+import ActionLink from "@/components/ui/ActionLink";
 import { routing } from "@/i18n/routing";
 import { localizedPageMetadata } from "@/lib/siteSocialMetadata";
 
@@ -96,15 +97,16 @@ export default async function ContactPage({
           <p>{t("cv.description")}</p>
           <div className="cv-page-links">
             {["full", "medium", "small"].map((size) => (
-              <a
-                className="btn btn-outline-primary"
+              <ActionLink
                 href={`/cv/cv-${size}-${locale}.html`}
                 target="_blank"
                 key={size}
                 rel="noopener"
+                variant="outline"
+                size="compact"
               >
                 {t(`cv.${size}`)}
-              </a>
+              </ActionLink>
             ))}
           </div>
         </section>
