@@ -91,6 +91,42 @@ test("allows the approved display identity and recognition sentence only on publ
   ]);
 });
 
+test("allows only the approved given name on the dedicated RSS contact artifact", () => {
+  const approvedFeedCopy = scanText(
+    "Éléonore, si tu trouves ce site, tu peux me contacter.",
+    "public/eleonore-feed.xml",
+    POLICY,
+  );
+  const unrelatedSurface = scanText(
+    "Éléonore",
+    "messages/site/fr.json",
+    POLICY,
+  );
+  const spellingVariant = scanText(
+    "Elenore",
+    "public/eleonore-feed.xml",
+    POLICY,
+  );
+  const expandedIdentity = scanText(
+    "Éléonore Céleste ANDRIEU BROOKE",
+    "public/eleonore-feed.xml",
+    POLICY,
+  );
+
+  assert.deepEqual(approvedFeedCopy, []);
+  assert.deepEqual(unrelatedSurface.map((finding) => finding.category), [
+    "protected-child-identity",
+  ]);
+  assert.deepEqual(spellingVariant.map((finding) => finding.category), [
+    "protected-child-identity",
+  ]);
+  assert.ok(
+    expandedIdentity.some(
+      (finding) => finding.category === "protected-child-identity",
+    ),
+  );
+});
+
 test("detects unapproved child identity variants on the index", () => {
   const spellingVariant = scanText(
     "Elenore appears in ordinary public copy.",

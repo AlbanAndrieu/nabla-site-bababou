@@ -20,6 +20,10 @@
       "rss": {
         "title": "RSS feed",
         "description": "Follow public site updates."
+      },
+      "eleonoreRss": {
+        "title": "Dedicated contact — RSS",
+        "description": "Follow the public message saying that contact is still awaited."
       }
     }
   }

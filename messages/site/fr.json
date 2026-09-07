@@ -16,6 +16,7 @@
     },
     "switchLanguage": "Changer de langue",
     "rssFeedAria": "Flux RSS de ce site",
+    "eleonoreRssFeedAria": "Flux RSS public pour un message de contact dédié",
     "copyright": "© {year} Bababou.",
     "notFound": {
       "eyebrow": "Page introuvable",

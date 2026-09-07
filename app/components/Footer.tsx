@@ -10,6 +10,7 @@ type FooterProps = {
   backToTopAria: string;
   contactLabel: string;
   copyright: string;
+  eleonoreRssFeedAria: string;
   legalNotices: string;
   locale: AppLocale;
   rssFeedAria: string;
@@ -21,6 +22,7 @@ export default function Footer({
   backToTopAria,
   contactLabel,
   copyright,
+  eleonoreRssFeedAria,
   legalNotices,
   locale,
   rssFeedAria,
@@ -42,6 +44,13 @@ export default function Footer({
           href="/feed.xml"
           className={`${styles.socialLink} social-link`}
           aria-label={rssFeedAria}
+        >
+          <i className="fa fa-rss" aria-hidden="true" />
+        </a>
+        <a
+          href="/eleonore-feed.xml"
+          className={`${styles.socialLink} social-link`}
+          aria-label={eleonoreRssFeedAria}
         >
           <i className="fa fa-rss" aria-hidden="true" />
         </a>

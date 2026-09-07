@@ -33,6 +33,19 @@ test("homepage and index stay owner-controlled privacy exceptions", async () => 
   assert.doesNotMatch(source, /homepage real-name\/display-name exception is \*\*revoked\*\*/i);
 });
 
+test("dedicated RSS identity exception stays narrow and explicit", async () => {
+  const source = await readFile(SKILL_URL, "utf8");
+
+  assert.match(source, /Owner-approved dedicated RSS contact exception/);
+  assert.match(source, /`public\/eleonore-feed\.xml`/);
+  assert.match(source, /exact accented given-name display `Éléonore`/);
+  assert.match(
+    source,
+    /RSS discovery labels outside the dedicated XML artifact must remain generic/,
+  );
+  assert.match(source, /requires new explicit user approval/);
+});
+
 test("essential protected information is caviarded rather than silently deleted", async () => {
   const source = await readFile(SKILL_URL, "utf8");
 

@@ -68,6 +68,22 @@ Auditing and reporting the homepage/index is allowed without approval; modifying
 
 This is a **narrow exception**. It does not authorize copying homepage-only identity or evidence into other routes, documents, metadata, tests, generated content, or assets. Existing tests may reproduce the exact approved homepage strings only when necessary to lock the owner-approved disclosure and prevent silent automated changes.
 
+## Owner-approved dedicated RSS contact exception
+
+The user explicitly approved a dedicated public RSS contact artifact in the current task so the child can find a neutral invitation to make contact.
+
+This exception is limited to:
+
+- `public/eleonore-feed.xml`;
+- the exact accented given-name display `Éléonore` inside that feed;
+- neutral recognition/contact wording that points to the site's already-public contact route.
+
+The exception **does not** authorize publishing spelling variants, middle/family names, the complete legal identity, private address/phone data, legal allegations, case details, medical/psychological information, or copying the given name into unrelated Next routes, message catalogs, metadata, generated output, assets, or other feeds.
+
+RSS discovery labels outside the dedicated XML artifact must remain generic and must not repeat the protected given name. The privacy gate must scan the dedicated feed itself and retain all non-identity protections there.
+
+Any extension of this exception to another publication surface requires new explicit user approval.
+
 ## Legacy static 404 rendering exception
 
 `public/404.html`, the public `/404` presentation, and the `app/global-not-found.tsx` integration that loads the static 404 body are an **intentional rendering exception to the Next.js migration**.
@@ -89,7 +105,7 @@ Safety, compatibility, accessibility, or browser fixes may be made around the st
 
 ### Child
 
-Outside the owner-controlled homepage/index exception:
+Outside the owner-controlled homepage/index exception and the dedicated RSS contact exception above:
 
 - **Never publish:** protected given name, middle name, family name, combined family name, full legal identity, spelling variant, or partial real-name combination when it identifies the child.
 - **Ordinary/editorial wording:** use **Bababou** or **my daughter** where first-person wording is natural.
@@ -167,6 +183,7 @@ When the source is a PDF, scan, screenshot, image, or rendered legal document:
 Existing explicitly approved exceptions remain valid only within their stated scope unless the user revokes them:
 
 - the owner-controlled homepage/index disclosures described above;
+- the dedicated RSS contact exception described above, limited to the exact given name inside `public/eleonore-feed.xml`;
 - official identifier `14CV32249` on its currently approved homepage scope;
 - `public/assets/passport-fr-bababou-4.png` on its currently approved scope.
 
@@ -220,7 +237,8 @@ The privacy gate should:
 
 - report only `file + line + category`, never the matched protected value;
 - preserve the narrow, explicitly approved homepage/index exception rather than automatically rewriting or failing it;
-- reject homepage-only identity when it leaks to unrelated public surfaces;
+- preserve the dedicated RSS exception only for the exact approved given name inside `public/eleonore-feed.xml`, while scanning that feed for every other protected category;
+- reject homepage/RSS-only identity when it leaks to unrelated public surfaces;
 - reject deprecated aliases outside the exception and accept `Mr A` / `Ms B`;
 - distinguish intentionally public contact data from private address/phone data;
 - allow explicitly approved identifier/document exceptions only within scope;
@@ -236,7 +254,7 @@ Before modifying family/legal/publication content, read this entire skill.
 - **Never replace the `public/404.html`-backed 404 with a fully native Next/React implementation without explicit user approval in the current task.**
 - Preserve the static 404 loader and established production rendering when refactoring migration or cleanup code.
 - Audit those exception surfaces first and show the impact before asking for approval.
-- Outside the homepage/index privacy exception, apply `Bababou` / `the child`, `Mr A`, and `Ms B` as defined above.
+- Outside the homepage/index and dedicated RSS contact exceptions, apply `Bababou` / `the child`, `Mr A`, and `Ms B` as defined above.
 - Do not clean up the detection dictionary merely because it contains protected spellings.
 - When information appears essential, **caviard rather than silently delete or invent a substitute**, and add a visible note that the protected information can be revealed on request.
 - Never claim a surface is compliant until the source and generated output have both been checked.

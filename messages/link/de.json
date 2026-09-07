@@ -20,6 +20,10 @@
       "rss": {
         "title": "RSS-Feed",
         "description": "Öffentlichen Aktualisierungen der Website folgen."
+      },
+      "eleonoreRss": {
+        "title": "Eigener Kontakt — RSS",
+        "description": "Der öffentlichen Nachricht folgen, dass weiterhin auf eine Kontaktaufnahme gewartet wird."
       }
     }
   }

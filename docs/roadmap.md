@@ -166,6 +166,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 - [x] Open Graph/Twitter complets et spécifiques pour chaque route Next native (#116).
 - [x] Redirects permanents des anciennes URLs `.html` pour `contact`, `email`, `link`, `success` et `cancel` après migration des routes Next correspondantes (#116, #140).
 - [x] Vérifier les redirects et métadonnées avec Playwright sur le Preview exact (#116).
+- [x] Restaurer `/feed.xml` et ajouter le feed de contact dédié avec découverte RSS Next ; garder l’identité approuvée confinée au XML dédié et scanner explicitement les deux feeds via le privacy gate (#163).
 - [x] Ajouter DE/NO dans les alternates après stabilisation des catalogues, y compris pour les six policies nativement localisées (#129, #130, #131, #134, #136).
 - [ ] Garder la homepage et son Open Graph/Twitter comme exception propriétaire : aucun changement sans accord explicite.
 
