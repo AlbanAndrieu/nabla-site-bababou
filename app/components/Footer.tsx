@@ -29,21 +29,29 @@ export default function Footer({
   const contactHref = canonicalPagePath("contact", locale);
 
   return (
-    <footer className="footer text-center" role="contentinfo">
-      <div className="social-links">
-        <a href={contactHref} className="social-link" aria-label={contactLabel}>
-          <i className="fas fa-envelope" aria-hidden="true"></i>
+    <footer className={`${styles.root} footer`} role="contentinfo">
+      <div className={`${styles.socialLinks} social-links`}>
+        <a
+          href={contactHref}
+          className={`${styles.socialLink} social-link`}
+          aria-label={contactLabel}
+        >
+          <i className="fas fa-envelope" aria-hidden="true" />
         </a>
-        <a href="/feed.xml" className="social-link" aria-label={rssFeedAria}>
-          <i className="fa fa-rss" aria-hidden="true"></i>
+        <a
+          href="/feed.xml"
+          className={`${styles.socialLink} social-link`}
+          aria-label={rssFeedAria}
+        >
+          <i className="fa fa-rss" aria-hidden="true" />
         </a>
       </div>
-      <div className="footer-links text-center">
+      <div className={`${styles.links} footer-links`}>
         <a href="/policy/legal">{legalNotices}</a>
       </div>
       <nav className={styles.actions} aria-label="Footer navigation">
         <ActionLink href={homeHref}>
-          <i className="fas fa-home" aria-hidden="true"></i>
+          <i className="fas fa-home" aria-hidden="true" />
           <span>{backHome}</span>
         </ActionLink>
         <BackToTopButton
@@ -52,7 +60,7 @@ export default function Footer({
           className={actionClassName("secondary")}
         />
       </nav>
-      <p className="footer-copyright text-center">{copyright}</p>
+      <p className={`${styles.copyright} footer-copyright`}>{copyright}</p>
     </footer>
   );
 }
