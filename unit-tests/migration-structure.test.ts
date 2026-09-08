@@ -7,6 +7,7 @@ const DOMAIN_CATALOGS = [
   ["contact", "contactPage"],
   ["email", "email"],
   ["link", "linkPage"],
+  ["test", "testSurface"],
 ] as const;
 
 const MIGRATED_LEGACY_NAMESPACES = ["contactPage", "email", "linkPage", "home"] as const;
@@ -182,6 +183,7 @@ test("keeps legacy base catalogs versioned but does not load them at runtime", a
   assert.match(messageLoader, /CONTACT_LOADERS/);
   assert.match(messageLoader, /EMAIL_LOADERS/);
   assert.match(messageLoader, /LINK_LOADERS/);
+  assert.match(messageLoader, /TEST_LOADERS/);
   assert.doesNotMatch(messageLoader, /BASE_LOADERS/);
   assert.doesNotMatch(messageLoader, /@\/messages\/(?:en|fr)\.json/);
   assert.doesNotMatch(`${requestConfig}\n${messageLoader}`, /messages\/migration/);
