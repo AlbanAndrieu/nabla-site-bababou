@@ -1,3 +1,10 @@
+## [0.13.1](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.13.0...0.13.1) (2026-09-08)
+
+
+### Performance Improvements
+
+* **public:** trim legacy assets and harden Vercel validation ([#170](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/170)) ([cdf0dfa](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/cdf0dfa3a2b0b32f453cc739ca21294f925935ba))
+
 # [0.13.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.12.0...0.13.0) (2026-09-08)
 
 
