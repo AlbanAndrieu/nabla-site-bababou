@@ -20,10 +20,9 @@ async function collectHtml(directory: string): Promise<string[]> {
   return files;
 }
 
-test("legacy HTML uses the shared Google Translate bootstrap only", async () => {
+test("legacy HTML does not own a direct Google loader", async () => {
   for (const path of await collectHtml(publicRoot)) {
     const source = await readFile(path, "utf8");
-    assert.doesNotMatch(source, /google-translate-config\.js/);
     assert.doesNotMatch(
       source,
       /<script[^>]+translate\.google\.com\/translate_a\/element\.js/i,
@@ -31,7 +30,7 @@ test("legacy HTML uses the shared Google Translate bootstrap only", async () => 
   }
 });
 
-test("site-google-translate owns the retained legacy Google loader", async () => {
+test("site-google-translate owns the retained Google Translate fallback", async () => {
   const source = await readFile(
     resolve(publicRoot, "site-google-translate.js"),
     "utf8",
@@ -43,6 +42,21 @@ test("site-google-translate owns the retained legacy Google loader", async () =>
   );
   assert.match(source, /window\.googleTranslateElementInit/);
   assert.match(source, /__NABLA_GOOGLE_TRANSLATE_STARTED/);
+  assert.match(source, /INCLUDED_LANGS/);
+});
+
+test("google-translate-config remains a compatibility shim, not a second loader", async () => {
+  const source = await readFile(
+    resolve(publicRoot, "google-translate-config.js"),
+    "utf8",
+  );
+
+  assert.match(source, /site-google-translate\.js/);
+  assert.match(source, /__NABLA_GOOGLE_TRANSLATE_STARTED/);
+  assert.doesNotMatch(
+    source,
+    /translate\.google\.com\/translate_a\/element\.js/,
+  );
 });
 
 test("site-widgets no longer owns Google Translate bootstrap", async () => {
@@ -57,7 +71,7 @@ test("site-widgets no longer owns Google Translate bootstrap", async () => {
   assert.doesNotMatch(component, /noGoogleTranslate|data-no-google-translate/);
 });
 
-test("every translated legacy page owns the dedicated bootstrap explicitly", async () => {
+test("every translated legacy page keeps the Google Translate fallback explicitly", async () => {
   for (const path of await collectHtml(publicRoot)) {
     const source = await readFile(path, "utf8");
     const hasWidgets = /<script[^>]+site-widgets\.js/i.test(source);

@@ -317,9 +317,9 @@ When exploring the codebase:
 - First-class locales are **FR, EN, DE and NO** and are owned by `next-intl` routes/catalogs.
 - Never add Google Translate bootstrap scripts or widget markup to a Next-native route.
 - Retained legacy `public/**/*.html` pages may keep `/site-google-translate.js` only while no parity-complete native replacement exists.
-- Do not restore the removed `google-translate-config.js` or add a direct Google loader; retained legacy pages use `site-google-translate.js` as the single bootstrap owner.
+- Keep Google Translate as a supported fallback when no parity-complete native i18n translation exists. `site-google-translate.js` is the single runtime/bootstrap owner; `google-translate-config.js` remains only as a compatibility shim that delegates to it. Do not add a second direct Google loader.
 - For a newly migrated route, add translations to the owning `messages/<domain>/{fr,en,de,no}.json` catalogs and validate canonical/hreflang behavior.
-- Long term, Google Translate is complementary only for languages outside the first-class locale set; legacy pages are reduced to that model as they reach native parity.
+- Long term, native `next-intl` remains preferred whenever a translation exists. Google Translate must remain available as fallback for legacy/static content or languages without a parity-complete native i18n translation.
 
 ### Testing and Validation
 
@@ -384,7 +384,7 @@ When exploring the codebase:
 4. **File Structure**
    - Main styles: `public/wireframe.css`, `public/arf.css`, `public/theme.css`
    - Theme toggle: `public/theme-toggle.js`
-   - Translation bootstrap: `public/site-google-translate.js` (legacy pages only)
+   - Translation fallback: `public/site-google-translate.js` (runtime owner) with `public/google-translate-config.js` kept as compatibility shim
    - Keep related assets organized in `public/` directory
 
 ### PDF Printing Support

@@ -128,8 +128,8 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 - [x] Générer les alternates depuis `routing.locales` avec `fr` comme `x-default`.
 - [x] Stabiliser FR et EN sur un Preview réel avant d'ajouter de nouvelles locales (#116, #118, #121).
 - [x] Ajouter `de` et `no` à `routing.locales` avec des catalogues complets et validés (#129).
-- [ ] Garder Google Translate uniquement pour les langues hors locales de premier rang.
-  - [x] Retirer le double bootstrap Google Translate legacy des deux derniers consommateurs de `google-translate-config.js` : conserver uniquement `site-google-translate.js`, qui possède déjà le mount, le callback et le chargement externe, puis supprimer le stub no-op devenu orphelin (#171).
+- [ ] Garder Google Translate comme fallback lorsque la traduction i18n native demandée n'existe pas ou n'a pas encore atteint la parité ; `next-intl` reste prioritaire lorsqu'une traduction native FR/EN/DE/NO existe.
+  - [x] Dédupliquer le bootstrap Google Translate legacy : `site-google-translate.js` reste l'unique runtime qui possède le mount, le callback et le chargement externe ; conserver `google-translate-config.js` comme shim de compatibilité pour les anciennes pages/caches, sans second loader Google direct (#171).
   - [x] Retirer ensuite l'implémentation Google Translate dupliquée de `site-widgets.js` : toutes les pages legacy traduisibles possèdent désormais le bootstrap dédié, la seule page `site-widgets.js` sans ce script est la 404 minimal-chrome qui interdit la traduction ; supprimer aussi l'option Next `noGoogleTranslate` devenue sans consommateur (#171).
   - [x] Les routes Next natives restent exclusivement pilotées par `next-intl` pour FR/EN/DE/NO ; les instructions agent/Copilot interdisent d'ajouter Google Translate aux nouvelles surfaces Next.
   - [ ] Les pages HTML legacy peuvent encore proposer Google Translate, y compris vers une locale de premier rang lorsqu'aucune route native équivalente n'a atteint la parité ; réduire cette liste au fil des migrations, sans casser le fallback legacy.
@@ -294,8 +294,8 @@ Cette phase est volontairement placée après migration, UI/UX, SEO, nettoyage e
   - [x] Corriger le déclencheur Docker PR pour inclure `public/**` comme le trigger `push master`, puis étendre le smoke fallback aux trois bundles Font Awesome conservés afin qu'un asset public supprimé par erreur échoue avant merge (#170).
   - [x] Sortir le convertisseur JPG/Pillow de `public/assets/` vers `scripts/`, conserver son défaut `public/assets` et le wrapper existant, afin que le tooling de maintenance ne soit plus servi comme asset HTTP (#170).
   - [x] Retirer `scripts/run-install.sh` et `scripts/run-test.sh` après audit : aucun consommateur externe, le premier réinstallait des packages Font Awesome hors manifeste et le second dupliquait des sous-ensembles Playwright déjà couverts par les scripts npm canoniques (#170).
-  - [x] Retirer `public/google-translate-config.js` après suppression de ses deux derniers tags consommateurs ; le fichier était déjà un stub no-op et le contrat interdit désormais de réintroduire ce bootstrap ou le loader Google direct dans les HTML legacy (#171).
-  - [x] Dédupliquer le runtime traduction entre `site-widgets.js` et `site-google-translate.js`, avec ownership unique et contrat de couverture des consommateurs legacy (#171).
+  - [x] Conserver `public/google-translate-config.js` comme shim de compatibilité qui délègue vers `site-google-translate.js`; ne pas réintroduire de loader Google direct ni supprimer le fallback tant qu'il existe du contenu/langues sans traduction i18n native paritaire (#171).
+  - [x] Dédupliquer le runtime traduction entre `site-widgets.js` et `site-google-translate.js`, avec ownership runtime unique, shim de compatibilité conservé et contrat garantissant le fallback Google Translate sur les consommateurs legacy sans parité i18n (#171).
   - [ ] Retrait des runtimes/scripts/assets legacy restants après preuve d'absence de consommateurs externes.
 - [ ] **Migration 8 / P3** — extraction progressive de sections homepage en conservant les disclosures approuvées, sans changement sensible non validé.
 - [ ] **Migration finale / P6** — confidentialité hors homepage : pseudonymisation/caviardage du corpus restant et extension complète du privacy gate.
