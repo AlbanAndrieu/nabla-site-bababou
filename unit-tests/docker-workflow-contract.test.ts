@@ -66,9 +66,10 @@ test("Docker fallback smoke test proves non-root runtime and protected static as
     /docker run --detach --rm --publish 127\.0\.0\.1:18080:8080/,
   );
   assert.match(workflow, /http:\/\/127\.0\.0\.1:18080\/404\.html/);
-  assert.match(
-    workflow,
-    /assets\/fontawesome-free-7\.1\.0-web\/js\/\\\$\{asset\}/,
+  assert.ok(
+    workflow.includes(
+      '"http://127.0.0.1:18080/assets/fontawesome-free-7.1.0-web/js/${asset}"',
+    ),
   );
   assert.match(workflow, /docker exec "\$\{container_id\}" id -u/);
   assert.match(workflow, /runtime_uid.*== "0"/s);
