@@ -115,18 +115,6 @@ test("draft PRs run only the Git preflight until ready for review", async () => 
 	}
 });
 
-test("agent policy requires fix-check-publish and preserves API-only disclosure", async () => {");");
-		assert.match(
-			workflow,
-			new RegExp(
-				"- name: " +
-					escaped +
-					"\\n\\s+if: github\\.event_name != 'pull_request' \\|\\| github\\.event\\.pull_request\\.draft == false",
-			),
-		);
-	}
-});
-
 test("agent policy requires fix-check-publish and preserves API-only disclosure", async () => {
 	const agents = await read("../AGENTS.md");
 
