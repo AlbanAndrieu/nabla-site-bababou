@@ -44,3 +44,27 @@ test("site-google-translate owns the retained legacy Google loader", async () =>
   assert.match(source, /window\.googleTranslateElementInit/);
   assert.match(source, /__NABLA_GOOGLE_TRANSLATE_STARTED/);
 });
+
+test("site-widgets no longer owns Google Translate bootstrap", async () => {
+  const [widgets, component] = await Promise.all([
+    readFile(resolve(publicRoot, "site-widgets.js"), "utf8"),
+    readFile(resolve(projectRoot, "components/SiteWidgetsScript.tsx"), "utf8"),
+  ]);
+
+  assert.doesNotMatch(widgets, /googleTranslateElementInit/);
+  assert.doesNotMatch(widgets, /__NABLA_GOOGLE_TRANSLATE_STARTED/);
+  assert.doesNotMatch(widgets, /data-no-google-translate/);
+  assert.doesNotMatch(component, /noGoogleTranslate|data-no-google-translate/);
+});
+
+test("every translated legacy page owns the dedicated bootstrap explicitly", async () => {
+  for (const path of await collectHtml(publicRoot)) {
+    const source = await readFile(path, "utf8");
+    const hasWidgets = /<script[^>]+site-widgets\.js/i.test(source);
+    const hasTranslate = /<script[^>]+site-google-translate\.js/i.test(source);
+
+    if (hasWidgets && !path.endsWith("/404.html")) {
+      assert.equal(hasTranslate, true, path);
+    }
+  }
+});

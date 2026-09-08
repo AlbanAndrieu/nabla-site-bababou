@@ -7,7 +7,6 @@ type SiteWidgetsScriptProps = {
   axeptio?: boolean;
   coffeeFab?: boolean;
   noCoffeeFab?: boolean;
-  noGoogleTranslate?: boolean;
   printPdf?: boolean;
   revealAnimation?: string;
   revealEffect?: "animation" | "opacity";
@@ -24,7 +23,6 @@ export default function SiteWidgetsScript({
   axeptio = false,
   coffeeFab = false,
   noCoffeeFab = false,
-  noGoogleTranslate = false,
   printPdf = false,
   revealAnimation,
   revealEffect,
@@ -34,7 +32,6 @@ export default function SiteWidgetsScript({
     axeptio && "axeptio",
     coffeeFab && "coffee",
     noCoffeeFab && "no-coffee",
-    noGoogleTranslate && "no-translate",
     printPdf && "print",
     revealEffect,
     scrollReveal && "reveal",
@@ -60,7 +57,6 @@ export default function SiteWidgetsScript({
       data-axeptio={axeptio ? "" : undefined}
       data-coffee-fab={coffeeFab ? "" : undefined}
       data-no-coffee-fab={noCoffeeFab ? "" : undefined}
-      data-no-google-translate={noGoogleTranslate ? "" : undefined}
       data-print-pdf={printPdf ? "" : undefined}
       data-reveal-animation={revealAnimation}
       data-reveal-effect={revealEffect}

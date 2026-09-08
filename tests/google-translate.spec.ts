@@ -185,7 +185,7 @@ test.describe("Google Translate widget regression coverage", () => {
 		test("should have Google Translate widget container", async ({ page }) => {
 			await page.goto("/");
 
-			// Wrapper is injected by /site-widgets.js (Next Script afterInteractive), not SSR.
+			// Wrapper is injected by the dedicated /site-google-translate.js runtime, not SSR.
 			const wrapper = page.locator(".google-translate-widget");
 			await expect(wrapper).toBeVisible({ timeout: 15_000 });
 			const translateElement = page.locator("#google_translate_element");
