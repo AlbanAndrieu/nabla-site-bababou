@@ -46,6 +46,37 @@ test("npm, mise and pre-push expose the agent workflow", async () => {
 	assert.match(prePush, /entry: bash scripts\/agent-quality-gate\.sh --publish/);
 });
 
+test("agent bootstrap toolchain is pinned and complete", async () => {
+	const [mise, pythonVersion, nvmrc, ci, setup] = await Promise.all([
+		read("../mise.toml"),
+		read("../.python-version"),
+		read("../.nvmrc"),
+		read("../.github/workflows/ci.yml"),
+		read("../.github/workflows/copilot-setup-steps.yml"),
+	]);
+
+	assert.equal(pythonVersion.trim(), "3.13");
+	assert.equal(nvmrc.trim(), "v25.9.0");
+	assert.match(mise, /default='3\.13'/);
+	assert.match(mise, /pre-commit = "4\.6\.2"/);
+	assert.match(setup, /python-version-file: "\.python-version"/);
+	assert.match(setup, /pre-commit==4\.6\.2/);
+	assert.match(setup, /npm ci --no-audit --no-fund/);
+	for (const input of [
+		".nvmrc",
+		".python-version",
+		".pre-commit-config.yaml",
+		"mise.toml",
+		"package.json",
+		"package-lock.json",
+		"scripts/agent-quality-gate.sh",
+	]) {
+		assert.ok(setup.includes("- " + input), "Copilot bootstrap trigger must include " + input);
+	}
+	assert.match(ci, /- "\.nvmrc"/);
+	assert.match(ci, /- "\.python-version"/);
+});
+
 test("CI runs the Git-only agent preflight before Node and dependency installation", async () => {
 	const workflow = await read("../.github/workflows/ci.yml");
 	const preflight = workflow.indexOf("Run agent preflight before dependency install");
