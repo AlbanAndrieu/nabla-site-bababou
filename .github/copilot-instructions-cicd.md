@@ -10,11 +10,10 @@ The files under `.github/workflows/` are authoritative. The current set is:
 - `vercel-preview.yml` — creates/removes explicit `vercel-preview-pr-*` checkpoint branches for on-demand Preview deployments;
 - `playwright.yml` — browser validation, including exact Vercel Preview E2E through repository dispatch;
 - `release.yml` — semantic-release after successful current-`master` Quality validation; release packages are fetched ephemerally there and stay out of the normal application lock graph;
-- `mega-linter.yml` — repository-wide linting;
 - `docker-build.yml` — Docker validation;
 - `copilot-setup-steps.yml` — Copilot environment bootstrap.
 
-Do not document or restore workflows that are no longer versioned.
+MegaLinter is intentionally not a GitHub workflow: `.mega-linter.yml` remains only for the `.gitlab-ci.yml` fallback. Do not restore a duplicate GitHub MegaLinter job without proving a validation gap in the canonical Quality/pre-commit path.
 
 ## Runtime
 
@@ -40,7 +39,7 @@ In GitHub Actions, `ci.yml` must preserve the equivalent lint, typecheck, unit, 
 When editing Actions:
 
 1. use least-privilege permissions;
-2. pin or intentionally version third-party actions;
+2. pin every remote action to an immutable reviewed commit SHA;
 3. use repository/environment secrets only when a versioned step consumes them;
 4. never print secrets or sensitive values;
 5. avoid duplicate builds or duplicate Playwright paths;

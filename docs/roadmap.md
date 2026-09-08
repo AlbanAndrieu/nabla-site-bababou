@@ -61,7 +61,8 @@
 - [x] Routes/aliases fantômes `pricing`, `payment`, `startup`, `startup-thanks`, `checkout`, `checkout-tjm`, `login`, `ai`, `security`, `expertise`, `ciso`, `truenas`, `ctid`, `freenas`, `nabla`, `workstation`, `cv` et `jm` retirés du catalogue ; configuration/générateur legacy, support homelab non routé et styles dédiés `security`/`ciso`/`login`/`ctid` supprimés (#142).
 - [x] Documentation agent/outillage réconciliée avec l'architecture Next/Vercel réelle ; anciennes références `my-app`, `vue-client`, runbook frontend absent et sitemap obsolète retirées (#142).
 - [x] Manifeste secondaire `public/package.json` supprimé après preuve d'absence de consommateur ; documentation locale/Playwright/Copilot réalignée sur le runtime Next/Vercel (#143).
-- [x] SDK Stripe Node/React retirés après confirmation qu'aucun code runtime ne les importe ; les résultats `success`/`cancel` conservent uniquement le lien Checkout hébergé (#144).\n- [x] Hardening CI post-#167 : caches npm/pre-commit/Next best-effort, réutilisation de `.next/cache`, GitHub Actions Quality/Copilot pinées sur SHA immuables et gate final 160/160 vert.
+- [x] SDK Stripe Node/React retirés après confirmation qu'aucun code runtime ne les importe ; les résultats `success`/`cancel` conservent uniquement le lien Checkout hébergé (#144).
+- [x] Hardening CI post-#167 : caches npm/pre-commit/Next best-effort, réutilisation de `.next/cache`, GitHub Actions Quality/Copilot pinées sur SHA immuables et gate final 160/160 vert.
 
 ### Blocages opérationnels actuels
 
@@ -160,7 +161,8 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] `public/success.html` et `public/cancel.html` supprimés après validation complète CI + Preview + Playwright de #141 ; les redirects `.html` restent couverts après suppression physique.
   - [ ] Migrer ensuite les autres pages publiques structurées à faible risque.
     - [x] Surface technique `/test` : supprimer le doublon `app/test/page.tsx` et conserver la seule implémentation Next localisée `app/[locale]/test/page.tsx` (#142).
-    - [ ] Conserver `public/test.html` tant que sa finalité/contenu legacy ne sont pas réconciliés avec `/test`; l'audit post-#167 confirme que ce legacy charge le corpus ARF, donc aucune suppression/redirection avant la phase P6 et une preuve de parité complète.\n    - [x] Inventorier les HTML legacy racine post-#167 : aucune nouvelle cible P3 faible risque immédiate n'est éligible ; `404.html` est protégée, `index.html` est owner-controlled, `contact.html` reste utile au fallback Docker statique, et les autres surfaces relèvent du corpus différé.
+    - [ ] Conserver `public/test.html` tant que sa finalité/contenu legacy ne sont pas réconciliés avec `/test`; l'audit post-#167 confirme que ce legacy charge le corpus ARF, donc aucune suppression/redirection avant la phase P6 et une preuve de parité complète.
+    - [x] Inventorier les HTML legacy racine post-#167 : aucune nouvelle cible P3 faible risque immédiate n'est éligible ; `404.html` est protégée, `index.html` est owner-controlled, `contact.html` reste utile au fallback Docker statique, et les autres surfaces relèvent du corpus différé.
 - [ ] Différer les pages contenant un corpus familial sensible jusqu'à la phase finale de confidentialité.
 
 ## P4 — SEO et métadonnées
@@ -194,7 +196,10 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] Snyk ne prépare plus/pull plus son image Docker lorsque `SNYK_TOKEN` est absent.
   - [x] Remplacer le cache npm implicite de `setup-node` par `actions/cache` sur `~/.npm` dans les workflows qui installent le projet ; pinner npm depuis `$RUNNER_TEMP` dans tous les workflows GitHub afin que le npm embarqué ne lise pas `.npmrc` avant npm 11.17, tout en conservant `strict-allow-scripts` et le cache.
   - [x] Rendre les caches npm/pre-commit/Next best-effort : une panne du backend GitHub Cache ne doit jamais rendre Quality rouge ; séparer restore/save, préchauffer les hooks pre-commit sur cache miss et réutiliser `.next/cache` entre builds afin d'éviter les compilations systématiquement froides.
-  - [x] Pinner les GitHub Actions des chemins critiques Quality/Copilot sur les SHA immuables correspondant aux versions revues, avec contrat empêchant le retour de références flottantes dans ces workflows.\n  - [x] Étendre le pinning SHA à tous les workflows versionnés (Docker, MegaLinter, Playwright, Vercel Preview et Release déjà conforme) et étendre le contrat pour empêcher toute nouvelle référence distante flottante.\n  - [x] Rendre les caches npm et Chromium du workflow Playwright best-effort afin qu'une panne GitHub Cache ne transforme pas un Preview fonctionnel en faux échec E2E.
+  - [x] Pinner les GitHub Actions des chemins critiques Quality/Copilot sur les SHA immuables correspondant aux versions revues, avec contrat empêchant le retour de références flottantes dans ces workflows.
+  - [x] Étendre le pinning SHA à tous les workflows GitHub actifs (Docker, Playwright, Vercel Preview et Release déjà conforme) et étendre le contrat pour empêcher toute nouvelle référence distante flottante.
+  - [x] Rendre les caches npm et Chromium du workflow Playwright best-effort afin qu'une panne GitHub Cache ne transforme pas un Preview fonctionnel en faux échec E2E.
+  - [x] Retirer le workflow GitHub MegaLinter dormant, encore câblé sur l'ancien `main`, plutôt que réactiver un job lourd et redondant ; conserver `.mega-linter.yml` aligné sur `master` uniquement pour le fallback `.gitlab-ci.yml`.
   - [x] Centraliser la version Node des workflows GitHub sur `.nvmrc` (`v25.9.0`) ; conserver séparément l'engine package compatible Vercel `>=24.11.0 <26`.
   - [x] Réconcilier le fallback Docker statique avec le repo réel : `master`, image Bababou, contexte limité à `public/`, BuildKit cache + Trivy, publication GHCR sur les changements du fallback et Docker Hub uniquement en opt-in manuel ; supprimer la dette `pgclient`/`PG_MAJOR`/Node inutile sans en faire le runtime principal.
   - [x] Mettre à niveau la base du fallback de `nginx:1.27-alpine` vers la stable `nginx:1.30.4-alpine-slim` avant d'envisager un gate Trivy bloquant ; l'ancienne base exposait des findings HIGH/CRITICAL corrigés dans des packages plus récents.

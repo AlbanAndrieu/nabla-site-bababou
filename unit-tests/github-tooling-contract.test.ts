@@ -102,6 +102,20 @@ test("all versioned GitHub Actions are pinned to immutable SHAs", async () => {
   }
 });
 
+test("MegaLinter remains a GitLab fallback instead of a duplicate GitHub job", async () => {
+  await assert.rejects(
+    access(new URL("../.github/workflows/mega-linter.yml", import.meta.url)),
+  );
+
+  const [config, gitlab] = await Promise.all([
+    readFile(new URL("../.mega-linter.yml", import.meta.url), "utf8"),
+    readFile(new URL("../.gitlab-ci.yml", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(config, /DEFAULT_BRANCH:\s+master/);
+  assert.match(gitlab, /mega-linter\.gitlab-ci\.yml/);
+});
+
 test("Playwright download caches stay best-effort", async () => {
   const workflow = await readFile(
     new URL("../.github/workflows/playwright.yml", import.meta.url),
