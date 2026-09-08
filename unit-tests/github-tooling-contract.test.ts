@@ -70,3 +70,26 @@ test("GitHub Actions formatter emits annotations and escapes workflow commands",
     else process.env.GITHUB_WORKSPACE = previousWorkspace;
   }
 });
+
+
+test("Quality and Copilot GitHub Actions are pinned to immutable SHAs", async () => {
+  for (const workflowPath of [
+    "../.github/workflows/ci.yml",
+    "../.github/workflows/copilot-setup-steps.yml",
+  ]) {
+    const workflow = await readFile(new URL(workflowPath, import.meta.url), "utf8");
+    const refs = workflow
+      .split("\n")
+      .map((line) => line.match(/uses:\\s+([^@\\s]+)@([^\\s#]+)/))
+      .filter((match): match is RegExpMatchArray => match !== null);
+
+    assert.ok(refs.length > 0);
+    for (const ref of refs) {
+      assert.match(
+        ref[2],
+        /^[0-9a-f]{40}$/,
+        `${ref[1]} in ${workflowPath} must use an immutable commit SHA`,
+      );
+    }
+  }
+});
