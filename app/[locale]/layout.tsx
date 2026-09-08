@@ -38,6 +38,7 @@ export default async function LocaleLayout({
     backToTop: string;
     backToTopAria: string;
     copyright: string;
+    eleonoreRssFeedAria: string;
     legalNotices: string;
     rssFeedAria: string;
   };
@@ -61,6 +62,18 @@ export default async function LocaleLayout({
       <head>
         <ThemeBootstrap />
         <meta name="color-scheme" content="light dark" />
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title="Bababou — RSS"
+          href="/feed.xml"
+        />
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title="Bababou — dedicated contact RSS"
+          href="/eleonore-feed.xml"
+        />
         <link rel="stylesheet" href="/landing-sections.css" />
         <link rel="stylesheet" href="/wireframe.css" />
         <link rel="stylesheet" href="/theme.css" />
@@ -94,6 +107,7 @@ export default async function LocaleLayout({
             backToTopAria={site.backToTopAria}
             contactLabel={contactPage.information.title}
             copyright={copyright}
+            eleonoreRssFeedAria={site.eleonoreRssFeedAria}
             legalNotices={site.legalNotices}
             locale={locale}
             rssFeedAria={site.rssFeedAria}

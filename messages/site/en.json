@@ -16,6 +16,7 @@
     },
     "switchLanguage": "Switch language",
     "rssFeedAria": "RSS feed for this site",
+    "eleonoreRssFeedAria": "Public RSS feed for a dedicated contact message",
     "copyright": "© {year} Bababou.",
     "notFound": {
       "eyebrow": "Page not found",

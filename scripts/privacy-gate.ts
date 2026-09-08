@@ -48,6 +48,8 @@ const APPROVED_PUBLIC_DOCUMENT_ASSET_REFERENCE = "assets/passport-fr-bababou-4.p
 const APPROVED_INDEX_CHILD_DISPLAY_NAME = "Éléonore (Bababou)";
 const APPROVED_INDEX_CHILD_RECOGNITION_LITERAL =
   "<strong>Your real name is Éléonore</strong> (some people call you by other names, but Éléonore";
+const APPROVED_RSS_CHILD_DISPLAY_NAME = "Éléonore";
+const APPROVED_RSS_CHILD_IDENTITY_SURFACE = "public/eleonore-feed.xml";
 const PUBLIC_CONTACT_SURFACES = [
   "app/[locale]/contact/page.tsx",
   "app/[locale]/email/page.tsx",
@@ -60,6 +62,8 @@ const GENERATED_PUBLIC_CONTACT_SURFACE =
   /^\.next\/server\/app\/[^/]+\/(?:contact|email)(?:[./]|\/|$)/;
 const SOURCE_SCAN_TARGETS = [
   "public/index.html",
+  "public/feed.xml",
+  "public/eleonore-feed.xml",
   "app",
   "components",
   "i18n",
@@ -198,6 +202,24 @@ function isApprovedIndexChildIdentityMatch(
   );
 }
 
+function isApprovedRssChildIdentityMatch(
+  text: string,
+  file: string,
+  start: number,
+  end: number,
+) {
+  if (file.replaceAll("\\", "/") !== APPROVED_RSS_CHILD_IDENTITY_SURFACE) {
+    return false;
+  }
+
+  return isMatchWithinLiteral(
+    text,
+    start,
+    end,
+    APPROVED_RSS_CHILD_DISPLAY_NAME,
+  );
+}
+
 export function parsePrivacyPolicy(source: string): PrivacyPolicy {
   return {
     generalizedLocation: firstCapture(
@@ -291,6 +313,12 @@ export function scanText(
   for (const match of findIdentitySpans(text, childIdentityFingerprints)) {
     if (
       isApprovedIndexChildIdentityMatch(
+        text,
+        normalizedFile,
+        match.start,
+        match.end,
+      ) ||
+      isApprovedRssChildIdentityMatch(
         text,
         normalizedFile,
         match.start,

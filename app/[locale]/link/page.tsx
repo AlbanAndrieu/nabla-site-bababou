@@ -51,6 +51,11 @@ export default async function LinkPage({
       icon: "fas fa-at",
     },
     { key: "rss", href: "/feed.xml", icon: "fas fa-rss" },
+    {
+      key: "eleonoreRss",
+      href: "/eleonore-feed.xml",
+      icon: "fas fa-rss",
+    },
   ] as const;
 
   return (

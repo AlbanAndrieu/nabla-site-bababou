@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title><![CDATA[Bababou — message pour Éléonore]]></title>
+    <link>https://bababou.com/contact</link>
+    <description><![CDATA[Un flux public pour qu’Éléonore puisse retrouver un message de contact.]]></description>
+    <language>fr</language>
+    <lastBuildDate>Mon, 07 Sep 2026 22:02:00 GMT</lastBuildDate>
+    <atom:link href="https://bababou.com/eleonore-feed.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title><![CDATA[Éléonore, si tu trouves ce site, tu peux me contacter]]></title>
+      <link>https://bababou.com/contact</link>
+      <guid isPermaLink="false">bababou-eleonore-contact-2026-09-08</guid>
+      <pubDate>Mon, 07 Sep 2026 22:02:00 GMT</pubDate>
+      <description><![CDATA[Éléonore, si tu trouves ce site, sache que j’attends ton contact. Tu peux me joindre librement via la page de contact publique de Bababou.]]></description>
+    </item>
+  </channel>
+</rss>

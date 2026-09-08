@@ -20,6 +20,10 @@
       "rss": {
         "title": "Flux RSS",
         "description": "Suivre les mises à jour publiques du site."
+      },
+      "eleonoreRss": {
+        "title": "Contact dédié — RSS",
+        "description": "Suivre le message public indiquant qu’un contact reste attendu."
       }
     }
   }

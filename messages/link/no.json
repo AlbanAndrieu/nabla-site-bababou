@@ -20,6 +20,10 @@
       "rss": {
         "title": "RSS-feed",
         "description": "Følg offentlige oppdateringer på nettstedet."
+      },
+      "eleonoreRss": {
+        "title": "Egen kontakt — RSS",
+        "description": "Følg den offentlige meldingen om at jeg fortsatt venter på kontakt."
       }
     }
   }
