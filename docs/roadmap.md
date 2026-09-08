@@ -72,6 +72,9 @@
   - [x] Le déploiement production post-#168 est `READY` sur le SHA exact `234f847b0cf760162f7b0d69a5da0a2247fd843b`; HTTPS atteint bien Vercel sur `www.bababou.com`.
   - [x] Les probes automatisées non authentifiées peuvent recevoir le Vercel Security Checkpoint (`HTTP 429`, `x-vercel-mitigated: challenge`) ; ce signal ne doit plus être interprété comme un domaine détaché ni comme un succès applicatif.
 - [ ] Vérifier `/`, `/index.html`, les routes Next déjà migrées et Playwright Preview sur le SHA exact après chaque changement de routage/runtime.
+  - [x] Câbler un smoke production léger sur `vercel.deployment.success` pour `master`/`production`, sans `npm ci` ni navigateur : `/`, `/index.html`, `/test` FR/EN/DE/NO, `/test.html`, `/contact` et `/policy` sont vérifiés sur le deployment URL exact avec bypass/OIDC.
+  - [x] Sonder séparément `https://www.bababou.com/` et classer `HTTP 429` / `x-vercel-mitigated: challenge` comme Security Checkpoint informatif lorsque le deployment exact est sain.
+  - [ ] Observer le premier smoke production post-merge de cette amélioration avant de considérer ce contrôle opérationnel comme stabilisé.
 
 ## P1 — Stabiliser et simplifier le runtime
 
@@ -214,6 +217,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] Vérifier le SARIF après upgrade : 34 findings HIGH/CRITICAL sur l'ancienne base → 0 sur `nginx:1.30.4-alpine-slim`, puis activer `exit-code: 1` pour rendre le scan HIGH/CRITICAL bloquant sur le fallback Docker.
   - [x] Basculer le fallback vers l'image officielle `nginxinc/nginx-unprivileged:1.30.4-alpine-slim`, exposer 8080 et ajouter un smoke test CI prouvant un runtime non-root ainsi que le service de `/` et du `public/404.html` protégé.
   - [x] Les Preview Vercel ne déclenchent plus deux suites Playwright concurrentes et le chemin conservé réutilise le cache Chromium (#121).
+  - [x] Réutiliser l'événement Vercel production jusque-là `skipped` pour un smoke `curl` ciblé et peu coûteux du SHA déployé, sans télécharger Chromium ni réexécuter la suite Playwright complète.
   - [x] Le workflow séparé de seed Chromium devient inutile et est retiré après validation du cache détenu par `repository_dispatch` (#122).
   - [x] Les anciens contrats Playwright de 404 localisée et de chrome checkout legacy sont retirés/réconciliés avec les surfaces réellement publiées (#141).
   - [x] Les changements docs/repository-maintenance évitent un Preview Vercel grâce à l'`ignoreCommand` versionné et testé.
