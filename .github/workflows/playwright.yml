@@ -320,6 +320,7 @@ jobs:
             local path="$2"
             local label="$3"
             local expected_fragment="${4:-}"
+            local expected_redirect="${5:-}"
             local headers
             local body
             local status
@@ -353,8 +354,27 @@ jobs:
               return 3
             fi
 
+            if [[ "$status" == "307" && -n "$expected_redirect" ]]; then
+              redirect_path="$location"
+              redirect_path="${redirect_path#http://}"
+              redirect_path="${redirect_path#https://}"
+              if [[ "$redirect_path" != /* ]]; then
+                redirect_path="/${redirect_path#*/}"
+              fi
+              redirect_path="${redirect_path%%\?*}"
+
+              if [[ "$redirect_path" == "$expected_redirect" ]]; then
+                echo "$label returned the expected protected rewrite (HTTP 307 → $expected_redirect)."
+                rm -f "$headers" "$body"
+                return 0
+              fi
+            fi
+
             if [[ "$status" != "200" ]]; then
               echo "$label returned unexpected HTTP $status."
+              if [[ -n "$location" ]]; then
+                echo "Unexpected redirect target: ${location%%\?*}"
+              fi
               rm -f "$headers" "$body"
               return 4
             fi
@@ -369,7 +389,7 @@ jobs:
             rm -f "$headers" "$body"
           }
 
-          request "$DEPLOYMENT_BASE_URL" "/" "deployment /"
+          request "$DEPLOYMENT_BASE_URL" "/" "deployment /" "" "/index.html"
           request "$DEPLOYMENT_BASE_URL" "/index.html" "deployment /index.html"
           request "$DEPLOYMENT_BASE_URL" "/test" "deployment /test" "Surface de test du framework OSINT"
           request "$DEPLOYMENT_BASE_URL" "/en/test" "deployment /en/test" "OSINT framework test surface"

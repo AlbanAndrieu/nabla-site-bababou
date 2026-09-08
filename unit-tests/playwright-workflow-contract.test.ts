@@ -150,6 +150,18 @@ test("Playwright production deployment smoke stays lightweight", async () => {
   assert.match(productionSmoke, /PUBLIC_BASE_URL: https:\/\/www\.bababou\.com/);
   assert.match(productionSmoke, /x-vercel-mitigated/);
   assert.match(productionSmoke, /Vercel Security Checkpoint/);
+  assert.match(productionSmoke, /expected protected rewrite/);
+  assert.ok(
+    productionSmoke.includes(
+      'request "$DEPLOYMENT_BASE_URL" "/" "deployment /" "" "/index.html"',
+    ),
+  );
+  assert.match(productionSmoke, /status\" == \"307\"/);
+  assert.match(productionSmoke, /redirect_path.*expected_redirect/s);
+  assert.match(
+    productionSmoke,
+    /location: https:\/\/vercel\\\.com\/(login|sso-api)/,
+  );
   for (const route of [
     "/",
     "/index.html",
