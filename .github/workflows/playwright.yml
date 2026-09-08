@@ -132,6 +132,7 @@ jobs:
             local response_headers
             local status
             local location
+            local mitigated
 
             response_headers="$(mktemp)"
             status="$(curl --silent --show-error \
@@ -141,6 +142,13 @@ jobs:
               "$@" \
               "$BASE_URL/")"
             location="$(awk 'BEGIN { IGNORECASE=1 } /^location:/ { sub(/^[^:]+:[[:space:]]*/, ""); sub(/\r$/, ""); print; exit }' "$response_headers")"
+            mitigated="$(awk 'BEGIN { IGNORECASE=1 } /^x-vercel-mitigated:/ { sub(/^[^:]+:[[:space:]]*/, ""); sub(/\r$/, ""); print; exit }' "$response_headers")"
+
+            if [[ "$status" == "429" || "${mitigated,,}" == "challenge" ]]; then
+              echo "$auth_name reached the Vercel Security Checkpoint (HTTP $status, x-vercel-mitigated=${mitigated:-unknown})."
+              rm -f "$response_headers"
+              return 1
+            fi
 
             if grep -Eiq '^location: https://vercel\.com/(login|sso-api)' "$response_headers" || \
               [[ "$status" == "401" || "$status" == "403" ]]; then
@@ -194,7 +202,7 @@ jobs:
           elif [[ "$bypass_configured" == "false" ]]; then
             echo "::error::GitHub Actions secret VERCEL_AUTOMATION_BYPASS_SECRET is not configured."
           fi
-          echo "::error::GitHub Actions OIDC was also not accepted as a Vercel Trusted Source."
+          echo "::error::GitHub Actions OIDC was also not accepted as a Vercel Trusted Source. HTTP 429 or x-vercel-mitigated: challenge indicates the Vercel Security Checkpoint, not an application success."
           exit 1
 
       - name: Run Playwright against deployed preview
