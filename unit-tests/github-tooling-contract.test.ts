@@ -80,7 +80,7 @@ test("Quality and Copilot GitHub Actions are pinned to immutable SHAs", async ()
     const workflow = await readFile(new URL(workflowPath, import.meta.url), "utf8");
     const refs = workflow
       .split("\n")
-      .map((line) => line.match(/uses:\\s+([^@\\s]+)@([^\\s#]+)/))
+      .map((line) => line.match(/uses:\s+([^@\s]+)@([^\s#]+)/))
       .filter((match): match is RegExpMatchArray => match !== null);
 
     assert.ok(refs.length > 0);
