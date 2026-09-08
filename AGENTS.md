@@ -62,6 +62,8 @@ bash scripts/agent-quality-gate.sh --preflight
 
 CI uses that preflight before Node/npm setup so stale branches, suspicious large truncations and missing executable bits fail before dependency installation and the Next build.
 
+Keep iterative agent pull requests in **draft** while they are still being edited. Draft PR CI runs only the Git preflight; once the strict local `--publish` gate is green, mark the PR ready for review so the `ready_for_review` event runs the full Node/npm/Next quality gate. An API-only agent that cannot run the local gate may mark an atomic draft PR ready after the draft preflight succeeds in order to obtain authoritative full CI, while still disclosing that no local gate ran.
+
 ## Mandatory agent publish policy
 
 Agents must never publish changes immediately after editing files.

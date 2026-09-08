@@ -92,6 +92,29 @@ test("CI runs the Git-only agent preflight before Node and dependency installati
 	assert.match(workflow, /bash scripts\/agent-quality-gate\.sh --preflight/);
 });
 
+test("draft PRs run only the Git preflight until ready for review", async () => {
+	const workflow = await read("../.github/workflows/ci.yml");
+	const fullGateCondition =
+		"github.event_name != 'pull_request' || github.event.pull_request.draft == false";
+
+	assert.match(workflow, /types: \[opened, synchronize, reopened, ready_for_review\]/);
+	assert.match(workflow, /github\.event\.pull_request\.draft == true/);
+	assert.match(workflow, /Draft PR preflight/);
+
+	for (const step of [
+		"Setup Node.js",
+		"Cache npm downloads",
+		"Pin npm",
+		"Install dependencies",
+		"Run canonical project checks",
+	]) {
+		assert.ok(
+			workflow.includes("- name: " + step + "\n        if: " + fullGateCondition),
+			step + " must be deferred for draft PRs",
+		);
+	}
+});
+
 test("agent policy requires fix-check-publish and preserves API-only disclosure", async () => {
 	const agents = await read("../AGENTS.md");
 
