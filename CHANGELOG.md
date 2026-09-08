@@ -1,3 +1,10 @@
+# [0.13.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.12.0...0.13.0) (2026-09-08)
+
+
+### Features
+
+* **ci:** add agent-first quality gate ([#164](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/164)) ([75f18e4](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/75f18e4834704344db4b3e77dfcccee930d9dff8))
+
 # [0.12.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.11.0...0.12.0) (2026-09-08)
 
 
