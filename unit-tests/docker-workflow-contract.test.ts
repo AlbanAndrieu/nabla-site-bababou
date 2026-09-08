@@ -10,7 +10,7 @@ test("Docker CI targets master and the static fallback inputs only", async () =>
 
   assert.match(workflow, /branches: \[master\]/);
   assert.doesNotMatch(workflow, /branches: \[main\]/);
-  assert.match(workflow, /"public\/\*\*"/);
+  assert.equal(workflow.match(/"public\/\*\*"/g)?.length, 2);
   assert.match(workflow, /"Dockerfile"/);
   assert.match(workflow, /"\.dockerignore"/);
   assert.match(workflow, /workflow_dispatch:/);
@@ -66,6 +66,10 @@ test("Docker fallback smoke test proves non-root runtime and protected static as
     /docker run --detach --rm --publish 127\.0\.0\.1:18080:8080/,
   );
   assert.match(workflow, /http:\/\/127\.0\.0\.1:18080\/404\.html/);
+  assert.match(
+    workflow,
+    /assets\/fontawesome-free-7\.1\.0-web\/js\/\\\$\{asset\}/,
+  );
   assert.match(workflow, /docker exec "\$\{container_id\}" id -u/);
   assert.match(workflow, /runtime_uid.*== "0"/s);
   assert.ok(
