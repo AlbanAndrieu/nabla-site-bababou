@@ -162,7 +162,7 @@ test("private root manifest does not advertise the legacy homepage as an npm ent
 
   assert.equal(packageJson.private, true);
   assert.equal(packageJson.main, undefined);
-  assert.equal(packageJson.scripts?.build, "node scripts/run-next-build.mjs");
+  assert.equal(packageJson.scripts?.build, "next build");
   assert.equal(packageJson.scripts?.start, "next start");
   assert.equal(packageJson.scripts?.["dev:test"], "next dev --hostname 127.0.0.1");
   assert.equal(packageJson.scripts?.["start:test"], "next start --hostname 127.0.0.1");

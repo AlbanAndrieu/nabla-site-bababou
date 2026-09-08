@@ -1,36 +1,54 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { access, readFile } from "node:fs/promises";
 import test from "node:test";
 
 const ciWorkflowUrl = new URL("../.github/workflows/ci.yml", import.meta.url);
 const packageJsonUrl = new URL("../package.json", import.meta.url);
-const nextBuildRunnerUrl = new URL(
+const retiredBuildWrapperUrl = new URL(
   "../scripts/run-next-build.mjs",
   import.meta.url,
 );
 
-test("quality CI records performance without running a second Next build", async () => {
-  const [workflow, packageJsonSource, nextBuildRunner] = await Promise.all([
+test("quality CI records performance around the single canonical Next build", async () => {
+  const [workflow, packageJsonSource] = await Promise.all([
     readFile(ciWorkflowUrl, "utf8"),
     readFile(packageJsonUrl, "utf8"),
-    readFile(nextBuildRunnerUrl, "utf8"),
   ]);
   const packageJson = JSON.parse(packageJsonSource) as {
     scripts: Record<string, string>;
   };
 
-  assert.equal(packageJson.scripts.build, "node scripts/run-next-build.mjs");
-  assert.match(nextBuildRunner, /node_modules\/next\/dist\/bin\/next/);
-  assert.match(nextBuildRunner, /next_build_seconds/);
-  assert.match(nextBuildRunner, /GITHUB_OUTPUT/);
+  assert.equal(packageJson.scripts.build, "next build");
+  assert.equal(packageJson.scripts.start, "next start");
+  assert.equal(
+    packageJson.scripts.check,
+    "npm run check:prebuild && npm run build && npm run check:postbuild",
+  );
+  assert.match(packageJson.scripts["check:prebuild"], /npm run privacy:check$/);
+  assert.equal(
+    packageJson.scripts["check:postbuild"],
+    "npm run privacy:check:build",
+  );
+  await assert.rejects(access(retiredBuildWrapperUrl));
 
   assert.match(workflow, /id: install/);
   assert.match(workflow, /- name: Restore npm downloads/);
   assert.match(workflow, /id: npm-cache/);
-  assert.ok(workflow.includes("actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25"));
-  assert.ok(workflow.includes("actions/cache/save@caa296126883cff596d87d8935842f9db880ef25"));
+  assert.ok(
+    workflow.includes(
+      "actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25",
+    ),
+  );
+  assert.ok(
+    workflow.includes(
+      "actions/cache/save@caa296126883cff596d87d8935842f9db880ef25",
+    ),
+  );
   assert.match(workflow, /continue-on-error: true/);
-  assert.doesNotMatch(workflow, /uses: actions\/cache(?:\/(?:restore|save))?@v5/);
+  assert.doesNotMatch(
+    workflow,
+    /uses: actions\/cache(?:\/(?:restore|save))?@v5/,
+  );
   assert.match(workflow, /path: ~\/\.npm/);
   assert.match(
     workflow,
@@ -42,7 +60,14 @@ test("quality CI records performance without running a second Next build", async
     workflow,
     /npm install --global npm@11\.17\.0 --no-audit --no-fund/,
   );
+
   assert.match(workflow, /id: checks/);
+  assert.match(workflow, /npm run check:prebuild/);
+  assert.match(workflow, /npm run check:postbuild/);
+  assert.equal(workflow.match(/npm run build/g)?.length, 1);
+  assert.match(workflow, /date \+%s%3N/);
+  assert.match(workflow, /next_build_seconds/);
+
   assert.match(workflow, /Publish CI performance summary/);
   assert.match(workflow, /npm_cache_mb/);
   assert.match(workflow, /steps\.npm-cache\.outputs\.cache-hit/);
@@ -52,7 +77,4 @@ test("quality CI records performance without running a second Next build", async
   assert.match(workflow, /NEXT_BUILD_SECONDS/);
   assert.match(workflow, /NEXT_CACHE_HIT/);
   assert.match(workflow, /path: \.next\/cache/);
-
-  assert.equal(workflow.match(/npm run check/g)?.length, 2);
-  assert.doesNotMatch(workflow, /npm run build/);
 });
