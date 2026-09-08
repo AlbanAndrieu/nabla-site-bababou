@@ -87,7 +87,7 @@ test("CI and Copilot caches are best effort and Next build cache is reusable", a
 		assert.match(workflow, /actions\\/cache\\/restore@caa296126883cff596d87d8935842f9db880ef25/);
 		assert.match(workflow, /actions\\/cache\\/save@caa296126883cff596d87d8935842f9db880ef25/);
 		assert.match(workflow, /continue-on-error: true/);
-		assert.doesNotMatch(workflow, /uses: actions\/cache@v5/);
+		assert.doesNotMatch(workflow, /uses: actions\/cache(?:\/(?:restore|save))?@v5/);
 	}
 
 	assert.match(setup, /pre-commit install-hooks/);

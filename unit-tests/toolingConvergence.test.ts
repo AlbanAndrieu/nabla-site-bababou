@@ -19,7 +19,7 @@ test("shared agent tooling follows the Node 25 root-runtime contract", async () 
   assert.match(setup, /actions\\/cache\\/restore@caa296126883cff596d87d8935842f9db880ef25/);
   assert.match(setup, /actions\\/cache\\/save@caa296126883cff596d87d8935842f9db880ef25/);
   assert.match(setup, /pre-commit install-hooks/);
-  assert.doesNotMatch(setup, /uses: actions\/cache@v5/);
+  assert.doesNotMatch(setup, /uses: actions\/cache(?:\/(?:restore|save))?@v5/);
   assert.match(setup, /cd "\$\{RUNNER_TEMP\}"/);
   assert.match(setup, /npm ci --no-audit --no-fund/);
 
