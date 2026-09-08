@@ -124,7 +124,8 @@ test("draft PRs run only the Git preflight until ready for review", async () => 
 
 	for (const step of [
 		"Setup Node.js",
-		"Cache npm downloads",
+		"Restore npm downloads",
+		"Restore Next build cache",
 		"Pin npm",
 		"Install dependencies",
 		"Run canonical project checks",

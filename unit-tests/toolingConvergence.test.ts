@@ -15,7 +15,7 @@ test("shared agent tooling follows the Node 25 root-runtime contract", async () 
 
   assert.match(setup, /node-version-file:\s*"\.nvmrc"/);
   assert.doesNotMatch(setup, /node-version:\s*"?(?:24|25\.9\.0)"?/);
-  assert.match(setup, /- name: Cache npm downloads/);
+  assert.match(setup, /- name: Restore npm downloads/);
   assert.match(setup, /actions\/cache@v5/);
   assert.match(setup, /cd "\$\{RUNNER_TEMP\}"/);
   assert.match(setup, /npm ci --no-audit --no-fund/);
