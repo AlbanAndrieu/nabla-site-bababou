@@ -115,3 +115,21 @@ test("Playwright Preview helper actions run on the Node 24 generation", async ()
   assert.doesNotMatch(workflow, /actions\/github-script@v[0-9]+/);
   assert.match(workflow, /persist-credentials: false/);
 });
+
+test("Playwright Preview rejects Vercel Security Checkpoint responses", async () => {
+  const workflow = await readFile(
+    new URL("../.github/workflows/playwright.yml", import.meta.url),
+    "utf8",
+  );
+
+  const accessCheck = section(
+    workflow,
+    "- name: Verify protected Preview access",
+    "- name: Run Playwright against deployed preview",
+  );
+
+  assert.match(accessCheck, /x-vercel-mitigated/);
+  assert.match(accessCheck, /status\" == \"429\"/);
+  assert.match(accessCheck, /Vercel Security Checkpoint/);
+  assert.match(accessCheck, /return 1/);
+});
