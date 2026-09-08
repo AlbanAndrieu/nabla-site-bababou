@@ -158,9 +158,10 @@ test("Playwright production deployment smoke stays lightweight", async () => {
   );
   assert.match(productionSmoke, /status\" == \"307\"/);
   assert.match(productionSmoke, /redirect_path.*expected_redirect/s);
-  assert.match(
-    productionSmoke,
-    /location: https:\/\/vercel\\\.com\/(login|sso-api)/,
+  assert.ok(
+    productionSmoke.includes(
+      "^location: https://vercel\\.com/(login|sso-api)",
+    ),
   );
   for (const route of [
     "/",

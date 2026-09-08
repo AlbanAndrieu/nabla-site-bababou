@@ -129,6 +129,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 - [x] Stabiliser FR et EN sur un Preview réel avant d'ajouter de nouvelles locales (#116, #118, #121).
 - [x] Ajouter `de` et `no` à `routing.locales` avec des catalogues complets et validés (#129).
 - [ ] Garder Google Translate uniquement pour les langues hors locales de premier rang.
+  - [x] Retirer le double bootstrap Google Translate legacy des deux derniers consommateurs de `google-translate-config.js` : conserver uniquement `site-google-translate.js`, qui possède déjà le mount, le callback et le chargement externe, puis supprimer le stub no-op devenu orphelin (#171).
   - [x] Les routes Next natives restent exclusivement pilotées par `next-intl` pour FR/EN/DE/NO ; les instructions agent/Copilot interdisent d'ajouter Google Translate aux nouvelles surfaces Next.
   - [ ] Les pages HTML legacy peuvent encore proposer Google Translate, y compris vers une locale de premier rang lorsqu'aucune route native équivalente n'a atteint la parité ; réduire cette liste au fil des migrations, sans casser le fallback legacy.
 - [x] Réconcilier les catalogues/routes legacy avec les surfaces réellement publiées : 18 routes/aliases fantômes retirés de `SITE_PAGES`, `lib/htmlRoutes.config.mjs`, `scripts/old/generate_fr_locale_html.py` et le support homelab sans route supprimés après audit d'absence de consommateur (#142).
@@ -292,6 +293,7 @@ Cette phase est volontairement placée après migration, UI/UX, SEO, nettoyage e
   - [x] Corriger le déclencheur Docker PR pour inclure `public/**` comme le trigger `push master`, puis étendre le smoke fallback aux trois bundles Font Awesome conservés afin qu'un asset public supprimé par erreur échoue avant merge (#170).
   - [x] Sortir le convertisseur JPG/Pillow de `public/assets/` vers `scripts/`, conserver son défaut `public/assets` et le wrapper existant, afin que le tooling de maintenance ne soit plus servi comme asset HTTP (#170).
   - [x] Retirer `scripts/run-install.sh` et `scripts/run-test.sh` après audit : aucun consommateur externe, le premier réinstallait des packages Font Awesome hors manifeste et le second dupliquait des sous-ensembles Playwright déjà couverts par les scripts npm canoniques (#170).
+  - [x] Retirer `public/google-translate-config.js` après suppression de ses deux derniers tags consommateurs ; le fichier était déjà un stub no-op et le contrat interdit désormais de réintroduire ce bootstrap ou le loader Google direct dans les HTML legacy (#171).
   - [ ] Retrait des runtimes/scripts/assets legacy restants après preuve d'absence de consommateurs externes.
 - [ ] **Migration 8 / P3** — extraction progressive de sections homepage en conservant les disclosures approuvées, sans changement sensible non validé.
 - [ ] **Migration finale / P6** — confidentialité hors homepage : pseudonymisation/caviardage du corpus restant et extension complète du privacy gate.
