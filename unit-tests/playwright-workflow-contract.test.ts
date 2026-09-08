@@ -133,3 +133,35 @@ test("Playwright Preview rejects Vercel Security Checkpoint responses", async ()
   assert.match(accessCheck, /Vercel Security Checkpoint/);
   assert.match(accessCheck, /return 1/);
 });
+
+test("Playwright production deployment smoke stays lightweight", async () => {
+  const workflow = await readFile(
+    new URL("../.github/workflows/playwright.yml", import.meta.url),
+    "utf8",
+  );
+
+  const start = workflow.indexOf("  production-smoke:");
+  assert.notEqual(start, -1);
+  const productionSmoke = workflow.slice(start);
+
+  assert.match(productionSmoke, /git\.ref == 'master'/);
+  assert.match(productionSmoke, /environment == 'production'/);
+  assert.match(productionSmoke, /DEPLOYMENT_BASE_URL/);
+  assert.match(productionSmoke, /PUBLIC_BASE_URL: https:\/\/www\.bababou\.com/);
+  assert.match(productionSmoke, /x-vercel-mitigated/);
+  assert.match(productionSmoke, /Vercel Security Checkpoint/);
+  for (const route of [
+    "/",
+    "/index.html",
+    "/test",
+    "/en/test",
+    "/de/test",
+    "/no/test",
+    "/test.html",
+    "/contact",
+    "/policy",
+  ]) {
+    assert.ok(productionSmoke.includes(`"${route}"`), route);
+  }
+  assert.doesNotMatch(productionSmoke, /npm ci|playwright install|npm test/);
+});
