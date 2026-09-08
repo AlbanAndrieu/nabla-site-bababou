@@ -75,7 +75,7 @@ test("GitHub Actions formatter emits annotations and escapes workflow commands",
 test("all versioned GitHub Actions are pinned to immutable SHAs", async () => {
   const workflowsDirectory = new URL("../.github/workflows/", import.meta.url);
   const workflowNames = (await readdir(workflowsDirectory))
-    .filter((name) => /\\.ya?ml$/.test(name))
+    .filter((name) => /\.ya?ml$/.test(name))
     .sort();
 
   assert.ok(workflowNames.length > 0);
