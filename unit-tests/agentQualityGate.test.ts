@@ -77,6 +77,27 @@ test("agent bootstrap toolchain is pinned and complete", async () => {
 	assert.match(ci, /- "\.python-version"/);
 });
 
+test("CI and Copilot caches are best effort and Next build cache is reusable", async () => {
+	const [ci, setup] = await Promise.all([
+		read("../.github/workflows/ci.yml"),
+		read("../.github/workflows/copilot-setup-steps.yml"),
+	]);
+
+	for (const workflow of [ci, setup]) {
+		assert.match(workflow, /actions\/cache\/restore@v5/);
+		assert.match(workflow, /actions\/cache\/save@v5/);
+		assert.match(workflow, /continue-on-error: true/);
+		assert.doesNotMatch(workflow, /uses: actions\/cache@v5/);
+	}
+
+	assert.match(setup, /pre-commit install-hooks/);
+	assert.match(setup, /hashFiles\('\.pre-commit-config\.yaml', '\.python-version'\)/);
+	assert.match(ci, /Restore Next build cache/);
+	assert.match(ci, /Save Next build cache/);
+	assert.match(ci, /path: \.next\/cache/);
+	assert.match(ci, /NEXT_CACHE_HIT/);
+});
+
 test("CI runs the Git-only agent preflight before Node and dependency installation", async () => {
 	const workflow = await read("../.github/workflows/ci.yml");
 	const preflight = workflow.indexOf("Run agent preflight before dependency install");
