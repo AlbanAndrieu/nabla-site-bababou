@@ -191,6 +191,30 @@ test("keeps legacy base catalogs versioned but does not load them at runtime", a
   assert.doesNotThrow(() => JSON.parse(frenchMessages));
 });
 
+test("legacy homepage stays authoritative without orphaned Next scaffolds", async () => {
+  const [proxy, routeHeader] = await Promise.all([
+    readFile(new URL("../proxy.ts", import.meta.url), "utf8"),
+    readFile(new URL("../components/RouteHeader.tsx", import.meta.url), "utf8"),
+  ]);
+
+  for (const retiredPath of [
+    "../app/components/Hero.tsx",
+    "../app/components/LocaleSwitcher.tsx",
+    "../components/LocaleSwitcher.tsx",
+    "../i18n/navigation.ts",
+  ]) {
+    await assert.rejects(access(new URL(retiredPath, import.meta.url)));
+  }
+
+  assert.match(
+    proxy,
+    /pathname === "\/"[\s\S]*rewrite\(new URL\("\/index\.html"/,
+  );
+  assert.match(routeHeader, /id="route-header-locale"/);
+  assert.match(routeHeader, /routing\.locales\.map/);
+  assert.doesNotMatch(routeHeader, /startup\.html|expertise\.html/);
+});
+
 test("legacy base catalogs do not duplicate migrated namespace ownership", async () => {
   const catalogs = await Promise.all(
     ["en", "fr"].map(async (locale) =>

@@ -135,7 +135,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 - [ ] Toute proposition qui change une identité, un caviardage ou une disclosure de `/` / `public/index.html` doit être présentée au propriétaire avant modification.
 - [ ] Retirer chaque section legacy du fragment dès que son composant React atteint la parité.
 - [ ] Vérifier responsive/mobile, accessibilité, liens, assets, metadata et SEO.
-- [ ] Lors du cutover homepage, retirer ou remplacer les CTA orphelins de `app/components/Hero.tsx` qui ciblent encore les anciennes routes `startup` et `expertise`; ne pas republier ces liens fantômes.
+- [x] Retirer le scaffold `app/components/Hero.tsx` orphelin avant le cutover : aucun consommateur, namespace `home` déjà retiré et CTA vers les routes fantômes `startup` / `expertise`; la future homepage native devra repartir de la source owner-controlled auditée sans réintroduire ces liens (#168).
 - [ ] Une fois la page native prête et explicitement validée, retirer le rewrite temporaire de `/` et rediriger `/index.html` vers `/`.
 
 ### Surfaces Next natives et pages publiques
@@ -183,6 +183,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 - [x] Aligner package/lockfile et retirer les dépendances confirmées orphelines (#123).
   - [x] Retirer `stripe`, `@stripe/stripe-js` et `@stripe/react-stripe-js` devenus sans consommateur après la migration/suppression des surfaces checkout (#144).
 - [ ] Retirer progressivement les runtimes/scripts legacy après preuve d'absence de consommateurs.
+  - [x] Retirer les scaffolds Next orphelins non publiés `app/components/Hero.tsx`, les deux anciens `LocaleSwitcher.tsx` et `i18n/navigation.ts` après preuve d'absence d'import ; `RouteHeader` reste l'unique owner du switcher FR/EN/DE/NO et `/` continue d'être réécrit vers `public/index.html` (#168).
   - [x] Conserver OpenCommit sur décision explicite du propriétaire : wrapper/config et scripts `oco` / `opencommit` restaurés, dev-only et hors runtime (#150).
   - [x] Utiliser GitHub Actions comme CI principale et des annotations ESLint GitHub pour le workflow courant, tout en conservant `.gitlab-ci.yml` et son formatter comme fallback réactivable.
   - [x] Formaliser la policy npm 11.17+ d'installation : scripts transitoires actuellement bloqués explicitement refusés via `allowScripts`, mode `strict-allow-scripts` activé et `.npmrc` ajouté aux déclencheurs Quality.
@@ -270,6 +271,7 @@ Cette phase est volontairement placée après migration, UI/UX, SEO, nettoyage e
   - [x] Durcir npm install avec une denylist explicite des scripts déjà bloqués et un échec strict pour toute nouvelle dépendance à script non revue.
   - [x] Converger avec le cleanup agent/tooling d’Alban #133 : Copilot Setup sur Node 25 et adapters VS Code/Cursor/Next.js/Security réduits vers `AGENTS.md`, sans anciennes instructions Vercel CLI/Git Flow/sitemap.
   - [x] Sortir la toolchain semantic-release du graphe npm normal comme Alban #133 : 4 dépendances directes et 412 entrées lockfile retirées, versions pinées et téléchargées uniquement dans le job release.
+  - [x] Retirer les scaffolds Next homepage/locale orphelins et leur helper de navigation après preuve d'absence de consommateurs (#168).
   - [ ] Retrait des runtimes/scripts/assets legacy restants après preuve d'absence de consommateurs externes.
 - [ ] **Migration 8 / P3** — extraction progressive de sections homepage en conservant les disclosures approuvées, sans changement sensible non validé.
 - [ ] **Migration finale / P6** — confidentialité hors homepage : pseudonymisation/caviardage du corpus restant et extension complète du privacy gate.
