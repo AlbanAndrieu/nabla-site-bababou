@@ -2,6 +2,7 @@ name: CI (Quality and Security)
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - ".agents/**"
       - ".cursor/**"
@@ -98,12 +99,24 @@ jobs:
           QUALITY_LOG_TAIL: "120"
         run: bash scripts/agent-quality-gate.sh --preflight
 
+      - name: Report draft preflight-only mode
+        if: github.event_name == 'pull_request' && github.event.pull_request.draft == true
+        shell: bash
+        run: |
+          {
+            echo "## Draft PR preflight"
+            echo
+            echo "Git-only agent preflight passed. Node/npm installation and the full Next quality gate are deferred until the PR is ready for review."
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Setup Node.js
+        if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
         uses: actions/setup-node@v6
         with:
           node-version-file: ".nvmrc"
 
       - name: Cache npm downloads
+        if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
         id: npm-cache
         uses: actions/cache@v5
         with:
@@ -113,6 +126,7 @@ jobs:
             npm-${{ runner.os }}-${{ runner.arch }}-
 
       - name: Pin npm
+        if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
         shell: bash
         run: |
           set -euo pipefail
@@ -120,6 +134,7 @@ jobs:
           npm install --global npm@11.17.0 --no-audit --no-fund
 
       - name: Install dependencies
+        if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
         id: install
         shell: bash
         run: |
@@ -133,6 +148,7 @@ jobs:
           echo "npm_cache_mb=${npm_cache_mb:-0}" >> "$GITHUB_OUTPUT"
 
       - name: Run canonical project checks
+        if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
         id: checks
         shell: bash
         run: |
@@ -146,11 +162,11 @@ jobs:
       # GitHub Action. GitHub may prepare container actions before evaluating
       # the step-level condition, which pulled the image even with no token.
       - name: Run Snyk vulnerability scan
-        if: env.SNYK_TOKEN != ''
+        if: (github.event_name != 'pull_request' || github.event.pull_request.draft == false) && env.SNYK_TOKEN != ''
         run: npx --yes snyk test
 
       - name: Publish CI performance summary
-        if: always() && !cancelled()
+        if: always() && !cancelled() && (github.event_name != 'pull_request' || github.event.pull_request.draft == false)
         shell: bash
         env:
           NPM_CI_SECONDS: ${{ steps.install.outputs.seconds }}
