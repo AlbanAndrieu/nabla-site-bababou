@@ -59,15 +59,15 @@ Use this pattern for dedicated error or ultra-minimal pages that must not load a
 
 To bulk-fix placement and paths, run from repo root: `node scripts/sync-html-page-scripts.mjs` (excludes `public/assets/nabla/signature/` and `public/node_modules/`).
 
-## 2. Theme toggle, Font Awesome JS, Google Translate, and widgets (`site-widgets.js`)
+## 2. Theme toggle, Font Awesome JS, and widgets (`site-widgets.js`)
 
 - Use a **single** script in `<head>` : **`site-widgets.js`** with the correct relative `src` for folder depth (e.g. `site-widgets.js`, `../site-widgets.js`, `../../../../site-widgets.js`). **Do not** use `defer` on this tag so theme applies before first paint and paths resolve consistently.
-- **`site-widgets.js`** includes: theme toggle (formerly `theme-toggle.js`), Font Awesome kit JS (`fontawesome.js` + `solid.js` + `brands.js`), Google Translate bootstrap (formerly `site-google-translate.js`), plus print/back-to-top/coffee/Axeptio/etc. Optional opt-outs: **`data-no-google-translate`**, **`data-no-font-awesome`** (rare).
+- **`site-widgets.js`** includes: theme toggle (formerly `theme-toggle.js`), Font Awesome kit JS (`fontawesome.js` + `solid.js` + `brands.js`), plus print/back-to-top/coffee/Axeptio/etc. Font Awesome keeps the rare **`data-no-font-awesome`** opt-out.
 - The theme script creates the button with id **`theme-toggle-btn`** automatically; no extra markup required.
 
 ## 3. Google Translate widget
 
-- **Do not** add separate `site-google-translate.js` or `google-translate-config.js` tags; translation is started from **`site-widgets.js`** unless `data-no-google-translate` is set.
+- Retained legacy pages that need automatic translation load **`site-google-translate.js`** exactly once. Do not restore `google-translate-config.js`, a direct Google loader, or translation bootstrap code inside `site-widgets.js`.
 - In `<body>`: a wrapper div with class **`google-translate-widget`** containing **`<div id="google_translate_element"></div>`** (or let the script create the wrapper if missing).
 - Use the same fixed positioning styles as on `index.html` / `people-contacted.html` (top-right, z-index 9999).
 

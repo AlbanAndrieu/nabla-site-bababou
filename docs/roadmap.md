@@ -74,7 +74,9 @@
 - [ ] Vérifier `/`, `/index.html`, les routes Next déjà migrées et Playwright Preview sur le SHA exact après chaque changement de routage/runtime.
   - [x] Câbler un smoke production léger sur `vercel.deployment.success` pour `master`/`production`, sans `npm ci` ni navigateur : `/`, `/index.html`, `/test` FR/EN/DE/NO, `/test.html`, `/contact` et `/policy` sont vérifiés sur le deployment URL exact avec bypass/OIDC.
   - [x] Sonder séparément `https://www.bababou.com/` et classer `HTTP 429` / `x-vercel-mitigated: challenge` comme Security Checkpoint informatif lorsque le deployment exact est sain.
-  - [ ] Observer le premier smoke production post-merge de cette amélioration avant de considérer ce contrôle opérationnel comme stabilisé.
+  - [x] Observer le premier smoke production post-merge : #170 a déployé `cdf0dfa` en `READY` avec les alias `www.bababou.com` / `bababou.com`; Vercel ne remonte aucun runtime 4xx/5xx sur ce déploiement et la homepage publique répond. Le run Playwright #521 a néanmoins false-fail sur le `HTTP 307` du rewrite protégé `/ → /index.html`, pas sur une panne applicative.
+  - [x] Corriger le smoke pour accepter uniquement ce `307` attendu vers `/index.html`, après avoir exclu les redirects d'authentification Vercel ; `/index.html` reste ensuite vérifié séparément en `200`.
+  - [ ] Observer le premier smoke production **corrigé** sur un nouveau `vercel.deployment.success` avant de considérer ce contrôle opérationnel comme stabilisé.
 
 ## P1 — Stabiliser et simplifier le runtime
 
@@ -126,7 +128,9 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 - [x] Générer les alternates depuis `routing.locales` avec `fr` comme `x-default`.
 - [x] Stabiliser FR et EN sur un Preview réel avant d'ajouter de nouvelles locales (#116, #118, #121).
 - [x] Ajouter `de` et `no` à `routing.locales` avec des catalogues complets et validés (#129).
-- [ ] Garder Google Translate uniquement pour les langues hors locales de premier rang.
+- [ ] Garder Google Translate comme fallback lorsque la traduction i18n native demandée n'existe pas ou n'a pas encore atteint la parité ; `next-intl` reste prioritaire lorsqu'une traduction native FR/EN/DE/NO existe.
+  - [x] Dédupliquer le bootstrap Google Translate legacy : `site-google-translate.js` reste l'unique runtime qui possède le mount, le callback et le chargement externe ; conserver `google-translate-config.js` comme shim de compatibilité pour les anciennes pages/caches, sans second loader Google direct (#171).
+  - [x] Retirer ensuite l'implémentation Google Translate dupliquée de `site-widgets.js` : toutes les pages legacy traduisibles possèdent désormais le bootstrap dédié, la seule page `site-widgets.js` sans ce script est la 404 minimal-chrome qui interdit la traduction ; supprimer aussi l'option Next `noGoogleTranslate` devenue sans consommateur (#171).
   - [x] Les routes Next natives restent exclusivement pilotées par `next-intl` pour FR/EN/DE/NO ; les instructions agent/Copilot interdisent d'ajouter Google Translate aux nouvelles surfaces Next.
   - [ ] Les pages HTML legacy peuvent encore proposer Google Translate, y compris vers une locale de premier rang lorsqu'aucune route native équivalente n'a atteint la parité ; réduire cette liste au fil des migrations, sans casser le fallback legacy.
 - [x] Réconcilier les catalogues/routes legacy avec les surfaces réellement publiées : 18 routes/aliases fantômes retirés de `SITE_PAGES`, `lib/htmlRoutes.config.mjs`, `scripts/old/generate_fr_locale_html.py` et le support homelab sans route supprimés après audit d'absence de consommateur (#142).
@@ -218,6 +222,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] Basculer le fallback vers l'image officielle `nginxinc/nginx-unprivileged:1.30.4-alpine-slim`, exposer 8080 et ajouter un smoke test CI prouvant un runtime non-root ainsi que le service de `/` et du `public/404.html` protégé.
   - [x] Les Preview Vercel ne déclenchent plus deux suites Playwright concurrentes et le chemin conservé réutilise le cache Chromium (#121).
   - [x] Réutiliser l'événement Vercel production jusque-là `skipped` pour un smoke `curl` ciblé et peu coûteux du SHA déployé, sans télécharger Chromium ni réexécuter la suite Playwright complète.
+  - [x] Réconcilier ce smoke avec le rewrite homepage hybride protégé : sous Protection Bypass, Vercel peut matérialiser le rewrite `/ → /index.html` en `307`; accepter seulement cette destination attendue et conserver les redirects `vercel.com/login|sso-api` comme échecs (#171).
   - [x] Le workflow séparé de seed Chromium devient inutile et est retiré après validation du cache détenu par `repository_dispatch` (#122).
   - [x] Les anciens contrats Playwright de 404 localisée et de chrome checkout legacy sont retirés/réconciliés avec les surfaces réellement publiées (#141).
   - [x] Les changements docs/repository-maintenance évitent un Preview Vercel grâce à l'`ignoreCommand` versionné et testé.
@@ -289,6 +294,8 @@ Cette phase est volontairement placée après migration, UI/UX, SEO, nettoyage e
   - [x] Corriger le déclencheur Docker PR pour inclure `public/**` comme le trigger `push master`, puis étendre le smoke fallback aux trois bundles Font Awesome conservés afin qu'un asset public supprimé par erreur échoue avant merge (#170).
   - [x] Sortir le convertisseur JPG/Pillow de `public/assets/` vers `scripts/`, conserver son défaut `public/assets` et le wrapper existant, afin que le tooling de maintenance ne soit plus servi comme asset HTTP (#170).
   - [x] Retirer `scripts/run-install.sh` et `scripts/run-test.sh` après audit : aucun consommateur externe, le premier réinstallait des packages Font Awesome hors manifeste et le second dupliquait des sous-ensembles Playwright déjà couverts par les scripts npm canoniques (#170).
+  - [x] Conserver `public/google-translate-config.js` comme shim de compatibilité qui délègue vers `site-google-translate.js`; ne pas réintroduire de loader Google direct ni supprimer le fallback tant qu'il existe du contenu/langues sans traduction i18n native paritaire (#171).
+  - [x] Dédupliquer le runtime traduction entre `site-widgets.js` et `site-google-translate.js`, avec ownership runtime unique, shim de compatibilité conservé et contrat garantissant le fallback Google Translate sur les consommateurs legacy sans parité i18n (#171).
   - [ ] Retrait des runtimes/scripts/assets legacy restants après preuve d'absence de consommateurs externes.
 - [ ] **Migration 8 / P3** — extraction progressive de sections homepage en conservant les disclosures approuvées, sans changement sensible non validé.
 - [ ] **Migration finale / P6** — confidentialité hors homepage : pseudonymisation/caviardage du corpus restant et extension complète du privacy gate.
