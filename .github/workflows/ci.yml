@@ -82,6 +82,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.ref }}
+
+      - name: Run agent preflight before dependency install
+        if: github.event_name == 'pull_request'
+        shell: bash
+        env:
+          QUALITY_BASE_REF: ${{ github.event.pull_request.base.sha }}
+          QUALITY_LOG_TAIL: "120"
+        run: bash scripts/agent-quality-gate.sh --preflight
 
       - name: Setup Node.js
         uses: actions/setup-node@v6

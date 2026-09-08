@@ -41,7 +41,10 @@
     "test:report": "playwright show-report",
     "oco": "node scripts/run-opencommit.mjs",
     "opencommit": "node scripts/run-opencommit.mjs",
-    "quality:gate": "bash scripts/quality-gate.sh"
+    "quality:gate": "bash scripts/quality-gate.sh",
+    "agent:fix": "bash scripts/agent-quality-gate.sh --fix",
+    "agent:quality": "bash scripts/agent-quality-gate.sh",
+    "agent:publish": "bash scripts/agent-quality-gate.sh --publish"
   },
   "dependencies": {
     "next": "16.3.4",
