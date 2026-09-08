@@ -9,7 +9,7 @@ Usage:
   python3 jpg_to_transparent_png.py [directory]
   python3 jpg_to_transparent_png.py [directory] file1.jpg file2.jpeg
 
-If no directory is given, uses the script's directory (assets/).
+If no directory is given, uses the repository's public/assets directory.
 """
 
 import os
@@ -71,10 +71,12 @@ def make_transparent(
 
 def main() -> None:
     script_dir = Path(__file__).resolve().parent
+    repo_root = script_dir.parent
+    default_directory = repo_root / "public" / "assets"
     threshold = 240
 
     if len(sys.argv) < 2:
-        directory = script_dir
+        directory = default_directory
         patterns = ("*.jpg", "*.jpeg")
         files = []
         for p in patterns:
@@ -95,7 +97,7 @@ def main() -> None:
                 if p.is_file():
                     files.append(p)
         else:
-            directory = script_dir
+            directory = default_directory
             files = [Path(f) for f in sys.argv[1:] if Path(f).is_file()]
 
     if not files:
