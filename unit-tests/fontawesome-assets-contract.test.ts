@@ -62,7 +62,7 @@ test("legacy text consumers only reference retained Font Awesome runtime JS", as
   for (const path of textFiles) {
     const source = await readFile(resolve(publicRoot, path), "utf8");
     const pattern =
-      /\/assets\/fontawesome-free-7\.1\.0-web\/([^"'?\\s<]+)/g;
+      /\/?assets\/fontawesome-free-7\.1\.0-web\/([^"'?\s<]+)/g;
     for (const match of source.matchAll(pattern)) {
       referenced.add(match[1]);
     }
