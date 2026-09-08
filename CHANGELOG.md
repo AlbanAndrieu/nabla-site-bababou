@@ -1,3 +1,10 @@
+# [0.12.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.11.0...0.12.0) (2026-09-08)
+
+
+### Features
+
+* **rss:** add a privacy-scoped dedicated contact feed ([#163](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/163)) ([ae50d66](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/ae50d669202cd26f73f5e4a9423f3c3c361dffeb))
+
 # [0.11.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.10.2...0.11.0) (2026-09-07)
 
 
