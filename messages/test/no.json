@@ -1,0 +1,12 @@
+{
+  "testSurface": {
+    "metadataTitle": "Testflate for migrering — Bababou",
+    "metadataDescription": "Ikke-indeksert teknisk flate som brukes til å validere Next.js-migreringen av Bababou.",
+    "title": "Testflate for OSINT-rammeverket",
+    "lead": "Ikke-indeksert utviklingsrute som brukes til å validere felles Next.js-layout, ruting og gradvis integrering av den eldre visualiseringen under migreringen.",
+    "visualizationTitle": "Integrering av OSINT-visualisering",
+    "visualizationPending": "Integreringen av visualiseringen gjenstår i migreringen.",
+    "contactTitle": "Offentlig kontaktside",
+    "contactLink": "Åpne den lokaliserte Bababou-kontaktsiden"
+  }
+}

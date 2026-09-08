@@ -7,9 +7,10 @@ const DOMAIN_CATALOGS = [
   ["contact", "contactPage"],
   ["email", "email"],
   ["link", "linkPage"],
+  ["test", "testSurface"],
 ] as const;
 
-const MIGRATED_LEGACY_NAMESPACES = ["contactPage", "email", "linkPage"] as const;
+const MIGRATED_LEGACY_NAMESPACES = ["contactPage", "email", "linkPage", "home"] as const;
 
 test("root install stays free of the retired dist-copy postinstall", async () => {
   const packageJson = JSON.parse(
@@ -150,6 +151,38 @@ test("protected 404 loader does not retain the retired sanitize-html package", a
   assert.doesNotMatch(loader, /sanitize-html|sanitizeHtml/);
 });
 
+test("private root manifest does not advertise the legacy homepage as an npm entrypoint", async () => {
+  const packageJson = JSON.parse(
+    await readFile(new URL("../package.json", import.meta.url), "utf8"),
+  ) as {
+    private?: boolean;
+    main?: string;
+    scripts?: Record<string, string>;
+  };
+
+  assert.equal(packageJson.private, true);
+  assert.equal(packageJson.main, undefined);
+  assert.equal(packageJson.scripts?.build, "next build");
+  assert.equal(packageJson.scripts?.start, "next start");
+  assert.equal(packageJson.scripts?.["dev:test"], "next dev --hostname 127.0.0.1");
+  assert.equal(packageJson.scripts?.["start:test"], "next start --hostname 127.0.0.1");
+  assert.equal(
+    packageJson.scripts?.["start-python"],
+    "python3 -m http.server 8001 --directory public",
+  );
+
+  for (const retiredRuntimeScript of [
+    "dev:v",
+    "build:v",
+    "start:v",
+    "dev:wrangler",
+    "start:wrangler",
+    "deploy:wrangler",
+  ]) {
+    assert.equal(packageJson.scripts?.[retiredRuntimeScript], undefined);
+  }
+});
+
 test("public does not carry a second package/runtime manifest", async () => {
   await assert.rejects(access(new URL("../public/package.json", import.meta.url)));
 });
@@ -182,11 +215,36 @@ test("keeps legacy base catalogs versioned but does not load them at runtime", a
   assert.match(messageLoader, /CONTACT_LOADERS/);
   assert.match(messageLoader, /EMAIL_LOADERS/);
   assert.match(messageLoader, /LINK_LOADERS/);
+  assert.match(messageLoader, /TEST_LOADERS/);
   assert.doesNotMatch(messageLoader, /BASE_LOADERS/);
   assert.doesNotMatch(messageLoader, /@\/messages\/(?:en|fr)\.json/);
   assert.doesNotMatch(`${requestConfig}\n${messageLoader}`, /messages\/migration/);
   assert.doesNotThrow(() => JSON.parse(englishMessages));
   assert.doesNotThrow(() => JSON.parse(frenchMessages));
+});
+
+test("legacy homepage stays authoritative without orphaned Next scaffolds", async () => {
+  const [proxy, routeHeader] = await Promise.all([
+    readFile(new URL("../proxy.ts", import.meta.url), "utf8"),
+    readFile(new URL("../components/RouteHeader.tsx", import.meta.url), "utf8"),
+  ]);
+
+  for (const retiredPath of [
+    "../app/components/Hero.tsx",
+    "../app/components/LocaleSwitcher.tsx",
+    "../components/LocaleSwitcher.tsx",
+    "../i18n/navigation.ts",
+  ]) {
+    await assert.rejects(access(new URL(retiredPath, import.meta.url)));
+  }
+
+  assert.match(
+    proxy,
+    /pathname === "\/"[\s\S]*rewrite\(new URL\("\/index\.html"/,
+  );
+  assert.match(routeHeader, /id="route-header-locale"/);
+  assert.match(routeHeader, /routing\.locales\.map/);
+  assert.doesNotMatch(routeHeader, /startup\.html|expertise\.html/);
 });
 
 test("legacy base catalogs do not duplicate migrated namespace ownership", async () => {
@@ -206,6 +264,19 @@ test("legacy base catalogs do not duplicate migrated namespace ownership", async
       assert.equal(namespace in catalog, false);
     }
   }
+});
+
+test("migration skill uses domain-owned catalogs instead of retired root registries", async () => {
+  const skill = await readFile(
+    new URL("../.agents/skills/next-migrate-locale-pages/SKILL.md", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(skill, /messages\/<domain>\/\{fr,en,de,no\}\.json/);
+  assert.match(skill, /i18n\/messages\.ts/);
+  assert.match(skill, /legacy root `messages\/en\.json` or `messages\/fr\.json`/);
+  assert.doesNotMatch(skill, /global registries/);
+  assert.doesNotMatch(skill, /merge-i18n-message\.js messages\/en\.json/);
 });
 
 for (const [directory, namespace] of DOMAIN_CATALOGS) {

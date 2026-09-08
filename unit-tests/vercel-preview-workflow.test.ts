@@ -18,7 +18,7 @@ test("Vercel Preview uses explicit checkpoint branches instead of PR auto-deploy
   assert.match(workflow, /CI \(Quality and Security\)/);
   assert.match(workflow, /quality\.conclusion !== 'success'/);
   assert.match(workflow, /actions: read/);
-  assert.match(workflow, /actions\/checkout@v6/);
+  assert.ok(workflow.includes("actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803"));
   assert.match(workflow, /ref: \$\{\{ steps\.preview\.outputs\.sha \}\}/);
   assert.match(workflow, /git push --force origin "HEAD:refs\/heads\/\$\{CHECKPOINT_BRANCH\}"/);
   assert.doesNotMatch(workflow, /github\.rest\.git\.(createRef|updateRef)/);

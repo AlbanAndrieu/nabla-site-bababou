@@ -1,0 +1,12 @@
+{
+  "testSurface": {
+    "metadataTitle": "Surface de test de migration — Bababou",
+    "metadataDescription": "Surface technique non indexée utilisée pour valider la migration Next.js de Bababou.",
+    "title": "Surface de test du framework OSINT",
+    "lead": "Route de développement non indexée utilisée pour valider le layout Next.js partagé, le routage et l’intégration progressive de la visualisation legacy pendant la migration.",
+    "visualizationTitle": "Intégration de la visualisation OSINT",
+    "visualizationPending": "L’intégration de la visualisation reste en attente de migration.",
+    "contactTitle": "Surface de contact publique",
+    "contactLink": "Ouvrir la page de contact Bababou localisée"
+  }
+}

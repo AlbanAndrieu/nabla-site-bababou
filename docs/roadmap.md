@@ -26,7 +26,7 @@
 5. **Performance et CI** : réduire tracing, builds, téléchargements inutiles et coûts de validation.
 6. **Confidentialité finale hors homepage** : pseudonymisation/caviardage du corpus restant, extension du gate et vérification irréversible des documents/assets concernés.
 
-## État de référence — 2026-09-04
+## État de référence — 2026-09-08
 
 ### Terminé
 
@@ -61,11 +61,15 @@
 - [x] Routes/aliases fantômes `pricing`, `payment`, `startup`, `startup-thanks`, `checkout`, `checkout-tjm`, `login`, `ai`, `security`, `expertise`, `ciso`, `truenas`, `ctid`, `freenas`, `nabla`, `workstation`, `cv` et `jm` retirés du catalogue ; configuration/générateur legacy, support homelab non routé et styles dédiés `security`/`ciso`/`login`/`ctid` supprimés (#142).
 - [x] Documentation agent/outillage réconciliée avec l'architecture Next/Vercel réelle ; anciennes références `my-app`, `vue-client`, runbook frontend absent et sitemap obsolète retirées (#142).
 - [x] Manifeste secondaire `public/package.json` supprimé après preuve d'absence de consommateur ; documentation locale/Playwright/Copilot réalignée sur le runtime Next/Vercel (#143).
+- [x] Retirer aussi `main: "index.html"` du `package.json` racine privé : `public/index.html` reste une surface HTTP owner-controlled via `proxy.ts`, pas un entrypoint de package npm (#168).
 - [x] SDK Stripe Node/React retirés après confirmation qu'aucun code runtime ne les importe ; les résultats `success`/`cancel` conservent uniquement le lien Checkout hébergé (#144).
+- [x] Hardening CI post-#167 : caches npm/pre-commit/Next best-effort, réutilisation de `.next/cache`, GitHub Actions Quality/Copilot pinées sur SHA immuables et gate final 160/160 vert.
 
 ### Blocages opérationnels actuels
 
 - [ ] Vérifier le binding DNS/domaine de `bababou.com` et le rattachement au projet Vercel ; le projet ne le rapporte pas encore parmi ses domaines attachés.
+  - [x] Audit Vercel API du 2026-09-08 : le projet `nabla-site-bababou` est bien lié au dépôt GitHub mais ne publie actuellement que ses domaines `*.vercel.app`; `bababou.com` n'est pas attaché.
+  - [ ] Attacher `bababou.com` au projet Vercel puis vérifier DNS/TLS et le comportement de `/` / `/index.html` en production.
 - [ ] Vérifier `/`, `/index.html`, les routes Next déjà migrées et Playwright Preview sur le SHA exact après chaque changement de routage/runtime.
 
 ## P1 — Stabiliser et simplifier le runtime
@@ -91,10 +95,10 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] Le D3 réellement servi aux pages legacy reste le fichier versionné `public/d3.v3.min.js`; aucun import npm `d3` n'existe.
   - [x] Retirer atomiquement `postinstall`, `copyfiles`, `d3` et leurs 47 entrées lockfile exclusivement dépendantes.
   - [x] Remplacer le contrat de conservation par un contrat d'absence.
-- [ ] Supprimer les scripts runtime redondants après preuve d'absence de consommateurs.
+- [x] Supprimer les scripts runtime redondants après preuve d'absence de consommateurs.
   - [x] Retirer `dev:v`, `build:v`, `start:v`, l'ancien `build.sh` et le package CLI `vercel`; les déploiements sont portés par la Git Integration Vercel (#146).
   - [x] Retirer `dev:wrangler`, `start:wrangler`, `deploy:wrangler` avec Wrangler (#150).
-- [ ] Conserver à terme un seul couple nominal `build: next build` / `start: next start`.
+- [x] Conserver un seul couple nominal `build: next build` / `start: next start` comme `nabla-site-alban`; retirer `scripts/run-next-build.mjs` et mesurer l’unique build directement dans Quality via les phases `check:prebuild` / build / `check:postbuild`, sans seconde compilation. `dev:test`, `start:test` et `start-python` restent des helpers explicites de test/diagnostic (#168).
 - [x] Exécuter explicitement `next build` dans la CI GitHub de qualité afin de ne pas dépendre uniquement de Vercel pour valider la compilation.
 - [x] Contraindre le tracing de `htmlFromPublic.ts` aux fragments explicitement allowlistés (#108).
 - [x] Réduire ensuite `htmlFromPublic.ts` au seul `public/404.html` protégé et retirer le composant `PublicHtmlFragment` devenu sans consommateur après la migration native complète des policies.
@@ -106,12 +110,12 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 
 ## P2 — Finaliser l'architecture i18n et routing
 
-- [ ] Nettoyer les derniers textes/labels copiés du site `nabla-site-alban` qui subsistent dans les catalogues legacy non chargés.
+- [x] Nettoyer les derniers textes/labels copiés du site `nabla-site-alban` qui subsistaient dans les catalogues legacy non chargés : le namespace professionnel `home` est retiré de `messages/fr.json` / `messages/en.json`, et le skill de migration interdit désormais de recréer des namespaces runtime dans ces registres racine.
   - [x] Les surfaces Next actives ne rendent plus le chrome professionnel copié.
   - [x] `contactPage`, `email` et `linkPage` n'existent plus en double dans les catalogues legacy.
 - [x] Générer le sélecteur de langue depuis `routing.locales`.
 - [x] Composer les catalogues runtime via `i18n/messages.ts` avec loaders explicites par locale et rejet des namespaces dupliqués.
-- [x] Extraire les domaines runtime sous `messages/site`, `messages/contact`, `messages/email`, `messages/link` et `messages/checkout`.
+- [x] Extraire les domaines runtime sous `messages/site`, `messages/contact`, `messages/email`, `messages/link`, `messages/checkout` et `messages/test` pour la surface technique localisée.
 - [x] Introduire un skip-link Next partagé.
 - [x] Remplacer les types locaux de props par les `PageProps<...>` générés lorsque pertinent.
 - [x] Centraliser la politique canonical des routes Next natives : FR sans préfixe, EN/DE/NO préfixés, y compris `contact`, `email`, `link`, `success`, `cancel` et les policies.
@@ -119,6 +123,8 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 - [x] Stabiliser FR et EN sur un Preview réel avant d'ajouter de nouvelles locales (#116, #118, #121).
 - [x] Ajouter `de` et `no` à `routing.locales` avec des catalogues complets et validés (#129).
 - [ ] Garder Google Translate uniquement pour les langues hors locales de premier rang.
+  - [x] Les routes Next natives restent exclusivement pilotées par `next-intl` pour FR/EN/DE/NO ; les instructions agent/Copilot interdisent d'ajouter Google Translate aux nouvelles surfaces Next.
+  - [ ] Les pages HTML legacy peuvent encore proposer Google Translate, y compris vers une locale de premier rang lorsqu'aucune route native équivalente n'a atteint la parité ; réduire cette liste au fil des migrations, sans casser le fallback legacy.
 - [x] Réconcilier les catalogues/routes legacy avec les surfaces réellement publiées : 18 routes/aliases fantômes retirés de `SITE_PAGES`, `lib/htmlRoutes.config.mjs`, `scripts/old/generate_fr_locale_html.py` et le support homelab sans route supprimés après audit d'absence de consommateur (#142).
 
 ## P3 — Migration Next.js et UI/UX
@@ -130,7 +136,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 - [ ] Toute proposition qui change une identité, un caviardage ou une disclosure de `/` / `public/index.html` doit être présentée au propriétaire avant modification.
 - [ ] Retirer chaque section legacy du fragment dès que son composant React atteint la parité.
 - [ ] Vérifier responsive/mobile, accessibilité, liens, assets, metadata et SEO.
-- [ ] Lors du cutover homepage, retirer ou remplacer les CTA orphelins de `app/components/Hero.tsx` qui ciblent encore les anciennes routes `startup` et `expertise`; ne pas republier ces liens fantômes.
+- [x] Retirer le scaffold `app/components/Hero.tsx` orphelin avant le cutover : aucun consommateur, namespace `home` déjà retiré et CTA vers les routes fantômes `startup` / `expertise`; la future homepage native devra repartir de la source owner-controlled auditée sans réintroduire ces liens (#168).
 - [ ] Une fois la page native prête et explicitement validée, retirer le rewrite temporaire de `/` et rediriger `/index.html` vers `/`.
 
 ### Surfaces Next natives et pages publiques
@@ -156,7 +162,12 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] `public/success.html` et `public/cancel.html` supprimés après validation complète CI + Preview + Playwright de #141 ; les redirects `.html` restent couverts après suppression physique.
   - [ ] Migrer ensuite les autres pages publiques structurées à faible risque.
     - [x] Surface technique `/test` : supprimer le doublon `app/test/page.tsx` et conserver la seule implémentation Next localisée `app/[locale]/test/page.tsx` (#142).
-    - [ ] Conserver `public/test.html` tant que sa finalité/contenu legacy ne sont pas réconciliés avec `/test`; aucune suppression ni redirection avant preuve de parité.
+    - [ ] Conserver `public/test.html` tant que sa finalité/contenu legacy ne sont pas réconciliés avec `/test`; l'audit post-#167 confirme que ce legacy charge le corpus ARF, donc aucune suppression/redirection avant la phase P6 et une preuve de parité complète.
+      - [x] Localiser la surface Next `/test` en FR/EN/DE/NO via un domaine `messages/test`, y compris ses metadata noindex, sans importer le corpus legacy.
+      - [x] Ajouter un contrat de coexistence qui exige `public/test.html` et ses signaux ARF (`d3.v3.min.js`, `arf.js`, `index.js`, association) et interdit tout redirect `/test.html` tant que la parité n'est pas démontrée.
+      - [x] Ajouter une couverture Playwright FR/EN/DE/NO/noindex pour la surface Next et vérifier que `/test.html` reste un fallback ARF distinct.
+      - [ ] Exécuter cette couverture sur un checkpoint Vercel du SHA exact avant toute nouvelle déclaration de parité ou suppression legacy.
+    - [x] Inventorier les HTML legacy racine post-#167 : aucune nouvelle cible P3 faible risque immédiate n'est éligible ; `404.html` est protégée, `index.html` est owner-controlled, `contact.html` reste utile au fallback Docker statique, et les autres surfaces relèvent du corpus différé.
 - [ ] Différer les pages contenant un corpus familial sensible jusqu'à la phase finale de confidentialité.
 
 ## P4 — SEO et métadonnées
@@ -175,6 +186,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 - [x] Aligner package/lockfile et retirer les dépendances confirmées orphelines (#123).
   - [x] Retirer `stripe`, `@stripe/stripe-js` et `@stripe/react-stripe-js` devenus sans consommateur après la migration/suppression des surfaces checkout (#144).
 - [ ] Retirer progressivement les runtimes/scripts legacy après preuve d'absence de consommateurs.
+  - [x] Retirer les scaffolds Next orphelins non publiés `app/components/Hero.tsx`, les deux anciens `LocaleSwitcher.tsx` et `i18n/navigation.ts` après preuve d'absence d'import ; `RouteHeader` reste l'unique owner du switcher FR/EN/DE/NO et `/` continue d'être réécrit vers `public/index.html` (#168).
   - [x] Conserver OpenCommit sur décision explicite du propriétaire : wrapper/config et scripts `oco` / `opencommit` restaurés, dev-only et hors runtime (#150).
   - [x] Utiliser GitHub Actions comme CI principale et des annotations ESLint GitHub pour le workflow courant, tout en conservant `.gitlab-ci.yml` et son formatter comme fallback réactivable.
   - [x] Formaliser la policy npm 11.17+ d'installation : scripts transitoires actuellement bloqués explicitement refusés via `allowScripts`, mode `strict-allow-scripts` activé et `.npmrc` ajouté aux déclencheurs Quality.
@@ -184,13 +196,16 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 - [ ] Supprimer les pages `.html` et assets orphelins après validation des redirects et de la parité Next.
   - [x] Après gate #141 vert, retirer `public/success.html`, `public/cancel.html` et l'ignore Stylelint `public/checkout.css` devenu sans fichier ; verrouiller leur absence par contrat unitaire.
   - [x] Retirer les routes/catalogues fantômes confirmés, `lib/htmlRoutes.config.mjs` et l'ancien générateur FR après preuve d'absence de consommateur ; conserver les CTA homepage orphelins comme dette explicite jusqu'au cutover contrôlé (#142).
-- [ ] Réduire les téléchargements et jobs CI inutiles.
+- [x] Réduire les téléchargements et jobs CI inutiles.
   - [x] Ajouter un gate agent-first inspiré de `nabla-compose#132` : préflight Git sans dépendances avant `npm ci`, garde de fraîcheur/troncature/bit exécutable, workflow `--fix` → check → `--publish`, sortie compacte et pre-push dédié, sans dupliquer le gate Nabla canonique.
   - [x] Sur les PR en draft, limiter Quality au préflight Git sans installer Node/npm ni construire Next ; `ready_for_review` relance automatiquement le gate complet, afin que l'itération agent ne consomme une build qu'au checkpoint de publication.
   - [x] Snyk ne prépare plus/pull plus son image Docker lorsque `SNYK_TOKEN` est absent.
   - [x] Remplacer le cache npm implicite de `setup-node` par `actions/cache` sur `~/.npm` dans les workflows qui installent le projet ; pinner npm depuis `$RUNNER_TEMP` dans tous les workflows GitHub afin que le npm embarqué ne lise pas `.npmrc` avant npm 11.17, tout en conservant `strict-allow-scripts` et le cache.
   - [x] Rendre les caches npm/pre-commit/Next best-effort : une panne du backend GitHub Cache ne doit jamais rendre Quality rouge ; séparer restore/save, préchauffer les hooks pre-commit sur cache miss et réutiliser `.next/cache` entre builds afin d'éviter les compilations systématiquement froides.
   - [x] Pinner les GitHub Actions des chemins critiques Quality/Copilot sur les SHA immuables correspondant aux versions revues, avec contrat empêchant le retour de références flottantes dans ces workflows.
+  - [x] Étendre le pinning SHA à tous les workflows GitHub actifs (Docker, Playwright, Vercel Preview et Release déjà conforme) et étendre le contrat pour empêcher toute nouvelle référence distante flottante.
+  - [x] Rendre les caches npm et Chromium du workflow Playwright best-effort afin qu'une panne GitHub Cache ne transforme pas un Preview fonctionnel en faux échec E2E.
+  - [x] Retirer le workflow GitHub MegaLinter dormant, encore câblé sur l'ancien `main`, plutôt que réactiver un job lourd et redondant ; conserver `.mega-linter.yml` aligné sur `master` uniquement pour le fallback `.gitlab-ci.yml`.
   - [x] Centraliser la version Node des workflows GitHub sur `.nvmrc` (`v25.9.0`) ; conserver séparément l'engine package compatible Vercel `>=24.11.0 <26`.
   - [x] Réconcilier le fallback Docker statique avec le repo réel : `master`, image Bababou, contexte limité à `public/`, BuildKit cache + Trivy, publication GHCR sur les changements du fallback et Docker Hub uniquement en opt-in manuel ; supprimer la dette `pgclient`/`PG_MAJOR`/Node inutile sans en faire le runtime principal.
   - [x] Mettre à niveau la base du fallback de `nginx:1.27-alpine` vers la stable `nginx:1.30.4-alpine-slim` avant d'envisager un gate Trivy bloquant ; l'ancienne base exposait des findings HIGH/CRITICAL corrigés dans des packages plus récents.
@@ -205,9 +220,11 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] Aligner le hardening checkpoint du `master` Alban : `vercel-preview-*` force toujours un build du SHA exact même lorsque son delta est docs/tests-only ; le contrat unitaire verrouille cette exception.
 - [ ] Mesurer durée de `npm ci`, `npm run check`, `next build`, taille de cache et taille de sortie.
   - [x] Instrumentation Quality ajoutée sans job ni build supplémentaire (#122).
+  - [x] Instrumentation conservée après retour à `build: next build` : le wrapper `run-next-build.mjs` retiré n’est plus nécessaire, Quality chronomètre directement l’unique `npm run build` entre les phases pré/post-build.
   - [x] Première comparaison #146 → #147 : `npm ci` 31 → 24 s, `node_modules` 1112 → 1041 MiB, `next build` 19,6 → 18,2 s et `.next` 69 → 66 MiB.
   - [x] Deuxième baseline #148 : 808 paquets, `npm ci` 20 s, `node_modules` 918 MiB, `npm run check` 31 s, `next build` 14,0 s et `.next` 66 MiB.
   - [x] Baseline post-merge #158 à cache `master` froid : `npm ci` 22 s, `node_modules` 723 MiB, cache npm 207 MiB, `npm run check` 42 s, `next build` 19,3 s et `.next` 66 MiB ; aucun warning npm pré-pin.
+  - [x] Baseline post-merge #167 / Quality #354 : cache npm hit, cache Next initial de `master` absent, `npm ci` 15 s, `node_modules` 723 MiB, cache npm 207 MiB, `npm run check` 44 s, `next build` 19,5 s et `.next` 67 MiB ; ce run amorce le cache Next propre à `master`.
   - [ ] Collecter plusieurs baselines post-merge et définir des seuils uniquement après observation.
 - [x] Maintenir lint JS/TS/CSS, typecheck, unit tests, `next build`, Playwright Preview, accessibilité et tests SEO comme gates.
   - [x] Exposer le gate canonique via `npm run quality:gate` et garder `scripts/quality-gate.sh` byte-for-byte aligné avec `nabla-site-alban`.
@@ -258,6 +275,8 @@ Cette phase est volontairement placée après migration, UI/UX, SEO, nettoyage e
   - [x] Durcir npm install avec une denylist explicite des scripts déjà bloqués et un échec strict pour toute nouvelle dépendance à script non revue.
   - [x] Converger avec le cleanup agent/tooling d’Alban #133 : Copilot Setup sur Node 25 et adapters VS Code/Cursor/Next.js/Security réduits vers `AGENTS.md`, sans anciennes instructions Vercel CLI/Git Flow/sitemap.
   - [x] Sortir la toolchain semantic-release du graphe npm normal comme Alban #133 : 4 dépendances directes et 412 entrées lockfile retirées, versions pinées et téléchargées uniquement dans le job release.
+  - [x] Retirer les scaffolds Next homepage/locale orphelins et leur helper de navigation après preuve d'absence de consommateurs (#168).
+  - [x] Retirer le wrapper de build métrique `scripts/run-next-build.mjs` et aligner le manifeste sur `build: next build` / `start: next start`, tout en gardant une mesure CI sans build dupliqué (#168).
   - [ ] Retrait des runtimes/scripts/assets legacy restants après preuve d'absence de consommateurs externes.
 - [ ] **Migration 8 / P3** — extraction progressive de sections homepage en conservant les disclosures approuvées, sans changement sensible non validé.
 - [ ] **Migration finale / P6** — confidentialité hors homepage : pseudonymisation/caviardage du corpus restant et extension complète du privacy gate.

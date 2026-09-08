@@ -37,6 +37,13 @@ const CHECKOUT_LOADERS = {
   no: () => import("@/messages/checkout/no.json"),
 } as const satisfies Record<AppLocale, CatalogLoader>;
 
+const TEST_LOADERS = {
+  fr: () => import("@/messages/test/fr.json"),
+  en: () => import("@/messages/test/en.json"),
+  de: () => import("@/messages/test/de.json"),
+  no: () => import("@/messages/test/no.json"),
+} as const satisfies Record<AppLocale, CatalogLoader>;
+
 function assertUniqueTopLevelNamespaces(
   catalogs: ReadonlyArray<Record<string, unknown>>,
 ) {
@@ -62,15 +69,17 @@ export async function loadMessages(locale: AppLocale) {
     { default: email },
     { default: link },
     { default: checkout },
+    { default: testSurface },
   ] = await Promise.all([
     SITE_LOADERS[locale](),
     CONTACT_LOADERS[locale](),
     EMAIL_LOADERS[locale](),
     LINK_LOADERS[locale](),
     CHECKOUT_LOADERS[locale](),
+    TEST_LOADERS[locale](),
   ]);
 
-  const catalogs = [site, contact, email, link, checkout];
+  const catalogs = [site, contact, email, link, checkout, testSurface];
   assertUniqueTopLevelNamespaces(catalogs);
 
   return Object.assign({}, ...catalogs);

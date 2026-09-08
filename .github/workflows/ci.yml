@@ -174,7 +174,21 @@ jobs:
         run: |
           set -euo pipefail
           started_at="$SECONDS"
-          npm run check
+
+          # Keep this sequence equivalent to `npm run check` while exposing
+          # the duration of the one real production build.
+          npm run check:prebuild
+
+          build_started_ms="$(date +%s%3N)"
+          npm run build
+          build_elapsed_ms=$(( $(date +%s%3N) - build_started_ms ))
+          printf -v build_seconds '%d.%01d' \
+            "$((build_elapsed_ms / 1000))" \
+            "$(((build_elapsed_ms % 1000) / 100))"
+          echo "next_build_seconds=$build_seconds" >> "$GITHUB_OUTPUT"
+
+          npm run check:postbuild
+
           echo "seconds=$((SECONDS - started_at))" >> "$GITHUB_OUTPUT"
           echo "next_mb=$(du -sm .next | awk '{print $1}')" >> "$GITHUB_OUTPUT"
 

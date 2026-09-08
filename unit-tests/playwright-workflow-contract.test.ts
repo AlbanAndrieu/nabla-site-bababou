@@ -44,7 +44,7 @@ test("Playwright Preview runs reuse the Chromium browser cache", async () => {
   );
 
   assert.match(workflow, /id: playwright-version/);
-  assert.match(workflow, /actions\/cache@v5/);
+  assert.ok(workflow.includes("actions/cache@caa296126883cff596d87d8935842f9db880ef25"));
   assert.match(
     cache,
     /playwright-chromium-\$\{\{ runner\.os \}\}-\$\{\{ runner\.arch \}\}-\$\{\{ steps\.playwright-version\.outputs\.version \}\}/,
@@ -72,7 +72,7 @@ test("Playwright npm cache avoids bundled npm project config before pinning", as
     "- name: Install dependencies",
   );
 
-  assert.match(npmCache, /actions\/cache@v5/);
+  assert.ok(npmCache.includes("actions/cache@caa296126883cff596d87d8935842f9db880ef25"));
   assert.match(npmCache, /path: ~\/\.npm/);
   assert.match(
     npmCache,
@@ -111,7 +111,7 @@ test("Playwright Preview helper actions run on the Node 24 generation", async ()
     "utf8",
   );
 
-  assert.match(workflow, /actions\/github-script@v8/);
-  assert.doesNotMatch(workflow, /actions\/github-script@v7/);
+  assert.ok(workflow.includes("actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd"));
+  assert.doesNotMatch(workflow, /actions\/github-script@v[0-9]+/);
   assert.match(workflow, /persist-credentials: false/);
 });

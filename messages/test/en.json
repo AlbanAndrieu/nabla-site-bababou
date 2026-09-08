@@ -1,0 +1,12 @@
+{
+  "testSurface": {
+    "metadataTitle": "Migration test surface — Bababou",
+    "metadataDescription": "Non-indexed technical surface used to validate Bababou's Next.js migration.",
+    "title": "OSINT framework test surface",
+    "lead": "Non-indexed development route used to validate the shared Next.js layout, routing, and progressive legacy visualization integration during migration.",
+    "visualizationTitle": "OSINT visualization integration",
+    "visualizationPending": "Visualization integration remains pending migration.",
+    "contactTitle": "Public contact surface",
+    "contactLink": "Open the localized Bababou contact page"
+  }
+}

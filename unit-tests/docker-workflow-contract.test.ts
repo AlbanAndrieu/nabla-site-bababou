@@ -23,22 +23,22 @@ test("Docker fallback builds and scans the Bababou image without Node or pgclien
   assert.match(workflow, /LOCAL_IMAGE: nabla-site-bababou:ci/);
   assert.match(workflow, /GHCR_IMAGE: ghcr\.io\/albanandrieu\/nabla-site-bababou/);
   assert.match(workflow, /DOCKERHUB_IMAGE: nabla\/nabla-site-bababou/);
-  assert.match(workflow, /docker\/setup-buildx-action@v4/);
-  assert.match(workflow, /docker\/build-push-action@v7/);
+  assert.ok(workflow.includes("docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e"));
+  assert.ok(workflow.includes("docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a"));
   assert.match(workflow, /context: \./);
   assert.match(workflow, /load: true/);
   assert.match(workflow, /push: false/);
   assert.match(workflow, /cache-from: type=gha/);
   assert.match(workflow, /cache-to: type=gha,mode=max/);
   assert.match(workflow, /image-ref: \$\{\{ env\.LOCAL_IMAGE \}\}/);
-  assert.match(workflow, /aquasecurity\/trivy-action@v0\.36\.0/);
+  assert.ok(workflow.includes("aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25"));
   assert.match(workflow, /version: "v0\.74\.0"/);
   assert.match(workflow, /scanners: "vuln"/);
   assert.match(workflow, /format: "sarif"/);
   assert.match(workflow, /limit-severities-for-sarif: true/);
   assert.match(workflow, /exit-code: "1"/);
   assert.doesNotMatch(workflow, /sarif\.tpl/);
-  assert.match(workflow, /actions\/upload-artifact@v6/);
+  assert.ok(workflow.includes("actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f"));
   assert.match(workflow, /trivy-sarif-\$\{\{ github\.sha \}\}/);
   assert.match(workflow, /Detect GitHub Code Scanning availability/);
   assert.match(workflow, /code-scanning\/alerts\?per_page=1/);
@@ -46,7 +46,7 @@ test("Docker fallback builds and scans the Bababou image without Node or pgclien
     workflow,
     /if: steps\.code-scanning\.outputs\.enabled == 'true'/,
   );
-  assert.match(workflow, /github\/codeql-action\/upload-sarif@v4/);
+  assert.ok(workflow.includes("github/codeql-action/upload-sarif@cdf488f595d80d6e07e03d4674febd5ab45fa938"));
   assert.match(workflow, /actions: read/);
 
   assert.doesNotMatch(workflow, /pgclient/i);
@@ -87,7 +87,7 @@ test("Docker fallback publishing is safe by default", async () => {
     workflow,
     /github\.event_name == 'workflow_dispatch' && inputs\.publish_dockerhub/,
   );
-  assert.match(workflow, /docker\/login-action@v4/);
+  assert.ok(workflow.includes("docker/login-action@dbcb813823bdd20940b903addbd779551569679f"));
 });
 
 test("Docker context contains only the reviewed public fallback", async () => {

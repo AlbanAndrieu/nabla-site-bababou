@@ -34,7 +34,7 @@ This main file provides general guidance for the entire repository. For area-spe
 
 - **[copilot-instructions-cicd.md](copilot-instructions-cicd.md)** - CI/CD workflows (`.github/workflows/`)
   - GitHub Actions workflows
-  - Quality, Playwright Preview, release, MegaLinter and Copilot setup
+  - Quality, Playwright Preview, release, Docker and Copilot setup
   - Workflow patterns, triggers, debugging
 
 - **[copilot-instructions-python.md](copilot-instructions-python.md)** - Python tools and scripts
@@ -54,7 +54,7 @@ This main file provides general guidance for the entire repository. For area-spe
 - `public/` - static assets plus legacy HTML retained during migration
 - `app/` - root Next.js App Router application
 - `api/` - API functions
-- `.github/workflows/` - CI, Preview E2E, release, MegaLinter, Docker and Copilot setup workflows
+- `.github/workflows/` - CI, Preview E2E, release, Docker and Copilot setup workflows
 
 ### Configuration Files
 - `.mega-linter.yml` - MegaLinter configuration (comprehensive multi-language linter)
@@ -121,7 +121,7 @@ The root project is the Next.js project; `public/` is not a separate runtime.
 - `.github/workflows/vercel-preview.yml` - on-demand `vercel-preview-pr-*` checkpoint publication/cleanup
 - `.github/workflows/playwright.yml` - browser and exact Vercel Preview E2E validation
 - `.github/workflows/release.yml` - semantic release after validated current `master`
-- `.github/workflows/mega-linter.yml`, `docker-build.yml`, `copilot-setup-steps.yml` - supporting validation/tooling
+- `.github/workflows/docker-build.yml`, `copilot-setup-steps.yml` - supporting validation/tooling
 
 ### Pre-commit Hooks
 The repository uses extensive pre-commit hooks. To install them:
@@ -136,9 +136,8 @@ mise run hooks
 - YAML: yamllint, prettier
 - Security: gitleaks, encryption-check
 
-### MegaLinter
-The project uses MegaLinter with specific disabled linters (see `.mega-linter.yml`). Disabled categories include:
-- CLOUDFORMATION, EDITORCONFIG, MARKDOWN, SPELL, JAVASCRIPT, CSS_SCSS_LINT, CSS_STYLELINT, TEKTON
+### MegaLinter fallback
+`.mega-linter.yml` is retained for the `.gitlab-ci.yml` fallback only. GitHub does not run a duplicate MegaLinter workflow: `ci.yml` is the canonical Quality gate and focused workflows cover Docker and Preview E2E. Do not restore a GitHub MegaLinter job unless a concrete validation gap is demonstrated first.
 
 ## Important Development Notes
 
@@ -181,7 +180,7 @@ The following directories are ignored by ESLint (see `eslint.config.js`):
 1. **Use the root package only** - `public/package.json` and the legacy dist-copy postinstall are retired
 2. **Use the canonical npm workflow** - CI and the quality gate use the root npm lockfile
 3. **Python server is legacy-only** - use it only for focused static-page audits; normal development uses Next.js
-4. **Pre-commit hooks may be slow** - Some hooks (like mega-linter, ansible-lint) are disabled in `.pre-commit-config.yaml` because they're too slow
+4. **Pre-commit hooks may be slow** - Some heavyweight hooks such as ansible-lint are disabled in `.pre-commit-config.yaml`; MegaLinter is retained only for the GitLab fallback
 5. **Large files excluded** - Several large files are excluded from git (see `.pre-commit-config.yaml` check-added-large-files)
 
 ### Shell Script Notes
@@ -313,34 +312,14 @@ When exploring the codebase:
    - Ensure sufficient contrast in both themes
    - Icons and images should work in both themes (consider using CSS filters if needed)
 
-### Google Translate Integration
+### Native locales and legacy Google Translate
 
-**The project includes multi-language support via Google Translate:**
-
-1. **Configuration**
-   - Central config file: `public/google-translate-config.js`
-   - Widget included on all pages (positioned top-right, fixed)
-   - **Supported languages**: English (en), French (fr), Norwegian (no), German (de), Spanish (es), Italian (it), Portuguese (pt), Dutch (nl), Swedish (sv), Danish (da), Finnish (suomi), Polish (pl), Czech (cs), Russian (ru), Arabic (ar), Japanese (ja), Chinese Simplified (zh-CN)
-
-2. **Implementation Pattern**
-   - Widget placement: `<div id="google_translate_element"></div>`
-   - Styled with `.google-translate-widget` class (fixed position, top-right)
-   - Scripts loaded in HTML head:
-     ```html
-     <script type="text/javascript" src="/google-translate-config.js"></script>
-     <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-     ```
-
-3. **When Adding New Pages**
-   - Include the translate widget container in the same fixed position
-   - Import both translate scripts in the `<head>` section
-   - Ensure the widget styling matches existing pages (see `index.html` styles)
-
-4. **Content Considerations**
-   - Write clear, simple content that translates well
-   - Avoid idioms or culturally-specific references
-   - Use proper semantic HTML (helps translation accuracy)
-   - Test translated versions to ensure layout doesn't break
+- First-class locales are **FR, EN, DE and NO** and are owned by `next-intl` routes/catalogs.
+- Never add Google Translate bootstrap scripts or widget markup to a Next-native route.
+- Retained legacy `public/**/*.html` pages may keep `/site-google-translate.js` only while no parity-complete native replacement exists.
+- Do not copy the deprecated `google-translate-config.js` + direct Google loader pattern into new pages.
+- For a newly migrated route, add translations to the owning `messages/<domain>/{fr,en,de,no}.json` catalogs and validate canonical/hreflang behavior.
+- Long term, Google Translate is complementary only for languages outside the first-class locale set; legacy pages are reduced to that model as they reach native parity.
 
 ### Testing and Validation
 

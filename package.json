@@ -4,7 +4,6 @@
   "type": "module",
   "private": true,
   "description": "Bababou family site",
-  "main": "index.html",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/AlbanAndrieu/nabla-site-bababou.git"
@@ -26,11 +25,11 @@
     "test:unit": "node --import tsx --test \"unit-tests/**/*.test.ts\"",
     "privacy:check": "node --import tsx scripts/privacy-gate.ts",
     "privacy:check:build": "node --import tsx scripts/privacy-gate.ts --build",
-    "check": "npm run lint && npm run lint:css && npx next typegen && npm run typecheck && npm run test:unit && npm run privacy:check && npm run build && npm run privacy:check:build",
+    "check": "npm run check:prebuild && npm run build && npm run check:postbuild",
     "audit": "npm audit --audit-level=moderate",
     "dev": "next dev",
     "dev:test": "next dev --hostname 127.0.0.1",
-    "build": "node scripts/run-next-build.mjs",
+    "build": "next build",
     "start": "next start",
     "start:test": "next start --hostname 127.0.0.1",
     "start-python": "python3 -m http.server 8001 --directory public",
@@ -44,7 +43,9 @@
     "quality:gate": "bash scripts/quality-gate.sh",
     "agent:fix": "bash scripts/agent-quality-gate.sh --fix",
     "agent:quality": "bash scripts/agent-quality-gate.sh",
-    "agent:publish": "bash scripts/agent-quality-gate.sh --publish"
+    "agent:publish": "bash scripts/agent-quality-gate.sh --publish",
+    "check:prebuild": "npm run lint && npm run lint:css && npx next typegen && npm run typecheck && npm run test:unit && npm run privacy:check",
+    "check:postbuild": "npm run privacy:check:build"
   },
   "dependencies": {
     "next": "16.3.4",
