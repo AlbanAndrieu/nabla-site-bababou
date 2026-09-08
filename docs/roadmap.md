@@ -288,6 +288,7 @@ Cette phase est volontairement placée après migration, UI/UX, SEO, nettoyage e
   - [x] Élaguer aussi le bundle CSS Font Awesome : conserver uniquement `fontawesome.css`, `brands.css`, `solid.css` et les deux webfonts réellement référencées; retirer 19 variantes/minifiés/shims/fonts non chargés (~405 KB) avec contrat sur les consommateurs Next + legacy (#170).
   - [x] Corriger le déclencheur Docker PR pour inclure `public/**` comme le trigger `push master`, puis étendre le smoke fallback aux trois bundles Font Awesome conservés afin qu'un asset public supprimé par erreur échoue avant merge (#170).
   - [x] Sortir le convertisseur JPG/Pillow de `public/assets/` vers `scripts/`, conserver son défaut `public/assets` et le wrapper existant, afin que le tooling de maintenance ne soit plus servi comme asset HTTP (#170).
+  - [x] Retirer `scripts/run-install.sh` et `scripts/run-test.sh` après audit : aucun consommateur externe, le premier réinstallait des packages Font Awesome hors manifeste et le second dupliquait des sous-ensembles Playwright déjà couverts par les scripts npm canoniques (#170).
   - [ ] Retrait des runtimes/scripts/assets legacy restants après preuve d'absence de consommateurs externes.
 - [ ] **Migration 8 / P3** — extraction progressive de sections homepage en conservant les disclosures approuvées, sans changement sensible non validé.
 - [ ] **Migration finale / P6** — confidentialité hors homepage : pseudonymisation/caviardage du corpus restant et extension complète du privacy gate.
