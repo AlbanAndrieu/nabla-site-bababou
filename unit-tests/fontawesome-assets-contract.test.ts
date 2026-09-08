@@ -18,6 +18,15 @@ const retainedVendorFiles = [
   "js/solid.js",
 ] as const;
 
+const cssVendorRoot = resolve(publicRoot, "assets/fontawesome");
+const retainedCssVendorFiles = [
+  "css/brands.css",
+  "css/fontawesome.css",
+  "css/solid.css",
+  "webfonts/fa-brands-400.woff2",
+  "webfonts/fa-solid-900.woff2",
+] as const;
+
 async function collectFiles(
   root: string,
   options: { skipAssets?: boolean } = {},
@@ -52,6 +61,17 @@ test("vendored Font Awesome runtime keeps only files consumed by legacy pages", 
   assert.deepEqual(await collectFiles(vendorRoot), retainedVendorFiles);
 });
 
+test("Font Awesome CSS runtime keeps only loaded styles and their webfonts", async () => {
+  assert.deepEqual(await collectFiles(cssVendorRoot), retainedCssVendorFiles);
+
+  const [brands, solid] = await Promise.all([
+    readFile(resolve(cssVendorRoot, "css/brands.css"), "utf8"),
+    readFile(resolve(cssVendorRoot, "css/solid.css"), "utf8"),
+  ]);
+  assert.match(brands, /fa-brands-400\.woff2/);
+  assert.match(solid, /fa-solid-900\.woff2/);
+});
+
 test("legacy text consumers only reference retained Font Awesome runtime JS", async () => {
   const textFiles = (await collectFiles(publicRoot, { skipAssets: true })).filter(
     (path) => path.endsWith(".html") || path.endsWith(".js"),
@@ -71,5 +91,34 @@ test("legacy text consumers only reference retained Font Awesome runtime JS", as
   assert.deepEqual(
     [...referenced].sort(),
     ["js/brands.js", "js/fontawesome.js", "js/solid.js"],
+  );
+});
+
+test("Next and legacy consumers only reference retained Font Awesome CSS", async () => {
+  const appRoot = resolve(projectRoot, "app");
+  const sourceFiles = [
+    ...(await collectFiles(publicRoot, { skipAssets: true })).map((path) =>
+      resolve(publicRoot, path),
+    ),
+    ...(await collectFiles(appRoot)).map((path) => resolve(appRoot, path)),
+  ].filter((path) =>
+    [".html", ".js", ".ts", ".tsx"].some((extension) =>
+      path.endsWith(extension),
+    ),
+  );
+
+  const referenced = new Set<string>();
+  const pattern = /\/assets\/fontawesome\/([^"'?\s<]+)/g;
+
+  for (const path of sourceFiles) {
+    const source = await readFile(path, "utf8");
+    for (const match of source.matchAll(pattern)) {
+      referenced.add(match[1]);
+    }
+  }
+
+  assert.deepEqual(
+    [...referenced].sort(),
+    ["css/brands.css", "css/fontawesome.css", "css/solid.css"],
   );
 });

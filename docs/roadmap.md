@@ -285,6 +285,7 @@ Cette phase est volontairement placée après migration, UI/UX, SEO, nettoyage e
   - [x] Retirer les scaffolds Next homepage/locale orphelins et leur helper de navigation après preuve d'absence de consommateurs (#168).
   - [x] Retirer le wrapper de build métrique `scripts/run-next-build.mjs` et aligner le manifeste sur `build: next build` / `start: next start`, tout en gardant une mesure CI sans build dupliqué (#168).
   - [x] Élaguer la distribution Font Awesome complète vendorizée : les pages legacy ne consomment que `js/fontawesome.js`, `js/solid.js` et `js/brands.js`; conserver ces trois fichiers et la licence aux mêmes URLs, retirer 5 681 fichiers CSS/SCSS/metadata/sprites/SVG/webfonts non servis (~26,3 MB) et verrouiller ce sous-ensemble par contrat (#170).
+  - [x] Élaguer aussi le bundle CSS Font Awesome : conserver uniquement `fontawesome.css`, `brands.css`, `solid.css` et les deux webfonts réellement référencées; retirer 19 variantes/minifiés/shims/fonts non chargés (~405 KB) avec contrat sur les consommateurs Next + legacy (#170).
   - [x] Corriger le déclencheur Docker PR pour inclure `public/**` comme le trigger `push master`, puis étendre le smoke fallback aux trois bundles Font Awesome conservés afin qu'un asset public supprimé par erreur échoue avant merge (#170).
   - [ ] Retrait des runtimes/scripts/assets legacy restants après preuve d'absence de consommateurs externes.
 - [ ] **Migration 8 / P3** — extraction progressive de sections homepage en conservant les disclosures approuvées, sans changement sensible non validé.
