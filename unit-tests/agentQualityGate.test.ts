@@ -106,7 +106,7 @@ test("draft PRs run only the Git preflight until ready for review", async () => 
 		"Install dependencies",
 		"Run canonical project checks",
 	]) {
-		const escaped = step.replace(/[.*+?^${}()|[\]\\]/g, "\\test("agent policy requires fix-check-publish and preserves API-only disclosure", async () => {");
+		const escaped = step.replace(/[.*+?^${}()|[\]\\]/g, "\\const escaped = step.replace(/[.*+?^${}()|[\]\\]/g, "\\test("agent policy requires fix-check-publish and preserves API-only disclosure", async () => {");");
 		assert.match(
 			workflow,
 			new RegExp(
