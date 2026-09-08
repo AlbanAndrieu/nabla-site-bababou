@@ -23,3 +23,16 @@ pre-commit install --config .pre-commit-pre-push.yaml --install-hooks --hook-typ
 [tasks.quality]
 description = "Run the canonical publication quality gate"
 run = "bash scripts/quality-gate.sh"
+
+
+[tasks.agent-fix]
+description = "Apply/check deterministic pre-commit fixes for agent changes"
+run = "bash scripts/agent-quality-gate.sh --fix"
+
+[tasks.agent-quality]
+description = "Run the strict agent-first local quality gate"
+run = "bash scripts/agent-quality-gate.sh"
+
+[tasks.agent-publish]
+description = "Run the strict agent publication gate before push"
+run = "bash scripts/agent-quality-gate.sh --publish"

@@ -42,13 +42,25 @@ The following integrations are not currently part of the normal `nabla-site-baba
 
 ## Validation
 
-For a focused change, run the closest relevant formatter or linter first. Before every publication, run the single canonical gate:
+For a focused change, run the closest relevant formatter or linter first. After an editing batch, use the repository-specific agent workflow:
 
 ```bash
-bash scripts/quality-gate.sh
+bash scripts/agent-quality-gate.sh --fix
+# Review deterministic formatter changes, then commit them.
+bash scripts/agent-quality-gate.sh
 ```
 
-The gate is the source of truth for local pre-publication validation. `mise run quality` and the `pre-push` hook are wrappers around the same script; they must not reimplement its logic.
+The agent gate adds cheap branch-freshness, destructive-diff and executable-script checks before running the full `npm run check` suite and delegating to the canonical cross-Nabla `scripts/quality-gate.sh`. Keep `scripts/quality-gate.sh` byte-for-byte aligned with sibling repositories rather than duplicating or moving its formatter/linter/security logic.
+
+Prefer the compact local agent gate output over remote CI logs. If CI still fails, inspect the failing workflow, job and step first, then widen to complete logs or artifacts only when needed.
+
+The Git-only preflight is available without dependencies:
+
+```bash
+bash scripts/agent-quality-gate.sh --preflight
+```
+
+CI uses that preflight before Node/npm setup so stale branches, suspicious large truncations and missing executable bits fail before dependency installation and the Next build.
 
 ## Mandatory agent publish policy
 
@@ -57,14 +69,13 @@ Agents must never publish changes immediately after editing files.
 Before every `git push`, GitHub API file update, or other remote repository mutation:
 
 1. Run `mise run hooks` once for a new checkout.
-2. Run `bash scripts/quality-gate.sh` from the repository checkout whenever shell access is available.
-3. Fix **every** YAML, Compose (when applicable), workflow, lint, format, generated-file, privacy, or security failure caused or exposed by the change.
-4. If a formatter or generator modifies files, review and commit those changes.
-5. Rerun `bash scripts/quality-gate.sh` until it exits successfully.
-6. Verify `git status --short` is empty.
-7. Only then publish the changes.
+2. Run `bash scripts/agent-quality-gate.sh --fix` after editing and review any deterministic formatter output.
+3. Commit the reviewed change set.
+4. Run `bash scripts/agent-quality-gate.sh` and fix every lint, type, unit, privacy, build, workflow, formatter or security failure.
+5. Run `bash scripts/agent-quality-gate.sh --publish`; publication mode requires a clean committed branch and is also enforced by the pre-push hook.
+6. Only then publish the changes.
 
-Never use `git push --no-verify`, and never weaken validation rules merely to make a push or CI pass.
+Never use `git push --no-verify`, and never weaken validation rules merely to make a push or CI pass. Set `QUALITY_ALLOW_LARGE_DELETION=1` only after explicitly reviewing an intentional large truncation or deletion.
 
 An API-only agent must not silently use remote writes to bypass local hooks. If its runtime cannot obtain or execute a checkout, it must state that limitation, perform the closest deterministic checks available, keep the patch minimal, and inspect resulting CI immediately. It must never claim that the local quality gate passed when it was not executed.
 
