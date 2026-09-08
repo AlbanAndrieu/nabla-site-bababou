@@ -67,10 +67,14 @@
 
 ### Blocages opérationnels actuels
 
-- [ ] Vérifier le binding DNS/domaine de `bababou.com` et le rattachement au projet Vercel ; le projet ne le rapporte pas encore parmi ses domaines attachés.
-  - [x] Audit Vercel API du 2026-09-08 : le projet `nabla-site-bababou` est bien lié au dépôt GitHub mais ne publie actuellement que ses domaines `*.vercel.app`; `bababou.com` n'est pas attaché.
-  - [ ] Attacher `bababou.com` au projet Vercel puis vérifier DNS/TLS et le comportement de `/` / `/index.html` en production.
+- [x] Vérifier le binding DNS/domaine de `bababou.com` et le rattachement au projet Vercel.
+  - [x] Vérification Vercel API du 2026-09-08 : le projet `nabla-site-bababou` publie bien les alias `www.bababou.com` et `bababou.com`, ainsi que les domaines `*.vercel.app`.
+  - [x] Le déploiement production post-#168 est `READY` sur le SHA exact `234f847b0cf760162f7b0d69a5da0a2247fd843b`; HTTPS atteint bien Vercel sur `www.bababou.com`.
+  - [x] Les probes automatisées non authentifiées peuvent recevoir le Vercel Security Checkpoint (`HTTP 429`, `x-vercel-mitigated: challenge`) ; ce signal ne doit plus être interprété comme un domaine détaché ni comme un succès applicatif.
 - [ ] Vérifier `/`, `/index.html`, les routes Next déjà migrées et Playwright Preview sur le SHA exact après chaque changement de routage/runtime.
+  - [x] Câbler un smoke production léger sur `vercel.deployment.success` pour `master`/`production`, sans `npm ci` ni navigateur : `/`, `/index.html`, `/test` FR/EN/DE/NO, `/test.html`, `/contact` et `/policy` sont vérifiés sur le deployment URL exact avec bypass/OIDC.
+  - [x] Sonder séparément `https://www.bababou.com/` et classer `HTTP 429` / `x-vercel-mitigated: challenge` comme Security Checkpoint informatif lorsque le deployment exact est sain.
+  - [ ] Observer le premier smoke production post-merge de cette amélioration avant de considérer ce contrôle opérationnel comme stabilisé.
 
 ## P1 — Stabiliser et simplifier le runtime
 
@@ -103,10 +107,10 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 - [x] Contraindre le tracing de `htmlFromPublic.ts` aux fragments explicitement allowlistés (#108).
 - [x] Réduire ensuite `htmlFromPublic.ts` au seul `public/404.html` protégé et retirer le composant `PublicHtmlFragment` devenu sans consommateur après la migration native complète des policies.
 - [x] Éviter le pull de l'image Docker Snyk lorsque `SNYK_TOKEN` est vide ; la CI utilise désormais le CLI uniquement lorsque le token existe.
-- [ ] Mesurer l'impact sur taille d'installation/cache et durée de build après ces optimisations.
+- [x] Mesurer l'impact sur taille d'installation/cache et durée de build après ces optimisations.
   - [x] Réduire le graphe d'installation de 47 paquets via #145, 324 paquets CLI Vercel via #146 puis 144 paquets observabilité/devtools via #147 avant de comparer les nouvelles baselines CI.
   - [x] Instrumenter le job Quality sans second build : `npm ci`, `node_modules`, cache npm, `npm run check`, `next build` et taille `.next` sont publiés dans le Job Summary (#122).
-  - [ ] Conserver plusieurs baselines post-merge et comparer les régressions avant d'ajuster davantage la CI.
+  - [x] Conserver plusieurs baselines post-merge et comparer les régressions avant d'ajuster davantage la CI ; #158, #167 et #168 fournissent désormais trois points de référence.
 
 ## P2 — Finaliser l'architecture i18n et routing
 
@@ -167,6 +171,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
       - [x] Ajouter un contrat de coexistence qui exige `public/test.html` et ses signaux ARF (`d3.v3.min.js`, `arf.js`, `index.js`, association) et interdit tout redirect `/test.html` tant que la parité n'est pas démontrée.
       - [x] Ajouter une couverture Playwright FR/EN/DE/NO/noindex pour la surface Next et vérifier que `/test.html` reste un fallback ARF distinct.
       - [ ] Exécuter cette couverture sur un checkpoint Vercel du SHA exact avant toute nouvelle déclaration de parité ou suppression legacy.
+      - [x] Durcir le préflight Playwright afin qu'un `HTTP 429` ou `x-vercel-mitigated: challenge` soit identifié comme Vercel Security Checkpoint et rejeté avant les tests, au lieu d'être pris pour un accès valide.
     - [x] Inventorier les HTML legacy racine post-#167 : aucune nouvelle cible P3 faible risque immédiate n'est éligible ; `404.html` est protégée, `index.html` est owner-controlled, `contact.html` reste utile au fallback Docker statique, et les autres surfaces relèvent du corpus différé.
 - [ ] Différer les pages contenant un corpus familial sensible jusqu'à la phase finale de confidentialité.
 
@@ -212,19 +217,21 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] Vérifier le SARIF après upgrade : 34 findings HIGH/CRITICAL sur l'ancienne base → 0 sur `nginx:1.30.4-alpine-slim`, puis activer `exit-code: 1` pour rendre le scan HIGH/CRITICAL bloquant sur le fallback Docker.
   - [x] Basculer le fallback vers l'image officielle `nginxinc/nginx-unprivileged:1.30.4-alpine-slim`, exposer 8080 et ajouter un smoke test CI prouvant un runtime non-root ainsi que le service de `/` et du `public/404.html` protégé.
   - [x] Les Preview Vercel ne déclenchent plus deux suites Playwright concurrentes et le chemin conservé réutilise le cache Chromium (#121).
+  - [x] Réutiliser l'événement Vercel production jusque-là `skipped` pour un smoke `curl` ciblé et peu coûteux du SHA déployé, sans télécharger Chromium ni réexécuter la suite Playwright complète.
   - [x] Le workflow séparé de seed Chromium devient inutile et est retiré après validation du cache détenu par `repository_dispatch` (#122).
   - [x] Les anciens contrats Playwright de 404 localisée et de chrome checkout legacy sont retirés/réconciliés avec les surfaces réellement publiées (#141).
   - [x] Les changements docs/repository-maintenance évitent un Preview Vercel grâce à l'`ignoreCommand` versionné et testé.
   - [x] Les agents API-only doivent publier les changements multi-fichiers en un commit Git atomique lorsque possible, afin d'éviter le fan-out de Preview Vercel et les rate limits ; #142 a été squashée ainsi avant validation finale.
   - [x] Porter le modèle Vercel stabilisé dans `nabla-site-alban` (#130) : désactiver les auto-Preview des branches `fix/*` / `feat/*`, réserver l’auto-déploiement à `master` et aux checkpoints `vercel-preview-*`, puis créer/nettoyer ces checkpoints à la demande via un vrai `git push` afin que Vercel reçoive l’événement de branche attendu.
   - [x] Aligner le hardening checkpoint du `master` Alban : `vercel-preview-*` force toujours un build du SHA exact même lorsque son delta est docs/tests-only ; le contrat unitaire verrouille cette exception.
-- [ ] Mesurer durée de `npm ci`, `npm run check`, `next build`, taille de cache et taille de sortie.
+- [x] Mesurer durée de `npm ci`, `npm run check`, `next build`, taille de cache et taille de sortie.
   - [x] Instrumentation Quality ajoutée sans job ni build supplémentaire (#122).
   - [x] Instrumentation conservée après retour à `build: next build` : le wrapper `run-next-build.mjs` retiré n’est plus nécessaire, Quality chronomètre directement l’unique `npm run build` entre les phases pré/post-build.
   - [x] Première comparaison #146 → #147 : `npm ci` 31 → 24 s, `node_modules` 1112 → 1041 MiB, `next build` 19,6 → 18,2 s et `.next` 69 → 66 MiB.
   - [x] Deuxième baseline #148 : 808 paquets, `npm ci` 20 s, `node_modules` 918 MiB, `npm run check` 31 s, `next build` 14,0 s et `.next` 66 MiB.
   - [x] Baseline post-merge #158 à cache `master` froid : `npm ci` 22 s, `node_modules` 723 MiB, cache npm 207 MiB, `npm run check` 42 s, `next build` 19,3 s et `.next` 66 MiB ; aucun warning npm pré-pin.
   - [x] Baseline post-merge #167 / Quality #354 : cache npm hit, cache Next initial de `master` absent, `npm ci` 15 s, `node_modules` 723 MiB, cache npm 207 MiB, `npm run check` 44 s, `next build` 19,5 s et `.next` 67 MiB ; ce run amorce le cache Next propre à `master`.
+  - [x] Baseline post-merge #168 / Quality #367 : 168/168 tests, cache npm hit, cache Next miss après changement de clé/runtime, `npm ci` 10 s, `node_modules` 723 MiB, cache npm 207 MiB, checks 23 s, `next build` 6,5 s et `.next` 72 MiB.
   - [ ] Collecter plusieurs baselines post-merge et définir des seuils uniquement après observation.
 - [x] Maintenir lint JS/TS/CSS, typecheck, unit tests, `next build`, Playwright Preview, accessibilité et tests SEO comme gates.
   - [x] Exposer le gate canonique via `npm run quality:gate` et garder `scripts/quality-gate.sh` byte-for-byte aligné avec `nabla-site-alban`.
@@ -277,6 +284,11 @@ Cette phase est volontairement placée après migration, UI/UX, SEO, nettoyage e
   - [x] Sortir la toolchain semantic-release du graphe npm normal comme Alban #133 : 4 dépendances directes et 412 entrées lockfile retirées, versions pinées et téléchargées uniquement dans le job release.
   - [x] Retirer les scaffolds Next homepage/locale orphelins et leur helper de navigation après preuve d'absence de consommateurs (#168).
   - [x] Retirer le wrapper de build métrique `scripts/run-next-build.mjs` et aligner le manifeste sur `build: next build` / `start: next start`, tout en gardant une mesure CI sans build dupliqué (#168).
+  - [x] Élaguer la distribution Font Awesome complète vendorizée : les pages legacy ne consomment que `js/fontawesome.js`, `js/solid.js` et `js/brands.js`; conserver ces trois fichiers et la licence aux mêmes URLs, retirer 5 681 fichiers CSS/SCSS/metadata/sprites/SVG/webfonts non servis (~26,3 MB) et verrouiller ce sous-ensemble par contrat (#170).
+  - [x] Élaguer aussi le bundle CSS Font Awesome : conserver uniquement `fontawesome.css`, `brands.css`, `solid.css` et les deux webfonts réellement référencées; retirer 19 variantes/minifiés/shims/fonts non chargés (~405 KB) avec contrat sur les consommateurs Next + legacy (#170).
+  - [x] Corriger le déclencheur Docker PR pour inclure `public/**` comme le trigger `push master`, puis étendre le smoke fallback aux trois bundles Font Awesome conservés afin qu'un asset public supprimé par erreur échoue avant merge (#170).
+  - [x] Sortir le convertisseur JPG/Pillow de `public/assets/` vers `scripts/`, conserver son défaut `public/assets` et le wrapper existant, afin que le tooling de maintenance ne soit plus servi comme asset HTTP (#170).
+  - [x] Retirer `scripts/run-install.sh` et `scripts/run-test.sh` après audit : aucun consommateur externe, le premier réinstallait des packages Font Awesome hors manifeste et le second dupliquait des sous-ensembles Playwright déjà couverts par les scripts npm canoniques (#170).
   - [ ] Retrait des runtimes/scripts/assets legacy restants après preuve d'absence de consommateurs externes.
 - [ ] **Migration 8 / P3** — extraction progressive de sections homepage en conservant les disclosures approuvées, sans changement sensible non validé.
 - [ ] **Migration finale / P6** — confidentialité hors homepage : pseudonymisation/caviardage du corpus restant et extension complète du privacy gate.

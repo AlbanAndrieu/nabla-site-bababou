@@ -132,6 +132,7 @@ jobs:
             local response_headers
             local status
             local location
+            local mitigated
 
             response_headers="$(mktemp)"
             status="$(curl --silent --show-error \
@@ -141,6 +142,13 @@ jobs:
               "$@" \
               "$BASE_URL/")"
             location="$(awk 'BEGIN { IGNORECASE=1 } /^location:/ { sub(/^[^:]+:[[:space:]]*/, ""); sub(/\r$/, ""); print; exit }' "$response_headers")"
+            mitigated="$(awk 'BEGIN { IGNORECASE=1 } /^x-vercel-mitigated:/ { sub(/^[^:]+:[[:space:]]*/, ""); sub(/\r$/, ""); print; exit }' "$response_headers")"
+
+            if [[ "$status" == "429" || "${mitigated,,}" == "challenge" ]]; then
+              echo "$auth_name reached the Vercel Security Checkpoint (HTTP $status, x-vercel-mitigated=${mitigated:-unknown})."
+              rm -f "$response_headers"
+              return 1
+            fi
 
             if grep -Eiq '^location: https://vercel\.com/(login|sso-api)' "$response_headers" || \
               [[ "$status" == "401" || "$status" == "403" ]]; then
@@ -194,7 +202,7 @@ jobs:
           elif [[ "$bypass_configured" == "false" ]]; then
             echo "::error::GitHub Actions secret VERCEL_AUTOMATION_BYPASS_SECRET is not configured."
           fi
-          echo "::error::GitHub Actions OIDC was also not accepted as a Vercel Trusted Source."
+          echo "::error::GitHub Actions OIDC was also not accepted as a Vercel Trusted Source. HTTP 429 or x-vercel-mitigated: challenge indicates the Vercel Security Checkpoint, not an application success."
           exit 1
 
       - name: Run Playwright against deployed preview
@@ -256,3 +264,138 @@ jobs:
             --header 'X-GitHub-Api-Version: 2022-11-28' \
             "${{ github.api_url }}/repos/${{ github.repository }}/statuses/$STATUS_SHA" \
             --data "$payload"
+
+  production-smoke:
+    name: Smoke deployed production routes
+    if: >-
+      github.event_name == 'repository_dispatch' &&
+      github.event.client_payload.url != '' &&
+      github.event.client_payload.git.sha != '' &&
+      (github.event.client_payload.git.ref == 'master' ||
+       github.event.client_payload.environment == 'production')
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    env:
+      DEPLOYMENT_BASE_URL: ${{ github.event.client_payload.url }}
+      DEPLOYED_SHA: ${{ github.event.client_payload.git.sha }}
+      PUBLIC_BASE_URL: https://www.bababou.com
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+
+    steps:
+      - name: Request GitHub OIDC token for Vercel
+        id: production-vercel-oidc
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        with:
+          script: |
+            const token = await core.getIDToken();
+            core.setSecret(token);
+            core.setOutput('token', token);
+
+      - name: Smoke exact production deployment
+        env:
+          VERCEL_TRUSTED_OIDC_TOKEN: ${{ steps.production-vercel-oidc.outputs.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          auth_args=()
+          if [[ -n "${VERCEL_AUTOMATION_BYPASS_SECRET:-}" ]]; then
+            auth_args+=(
+              --header "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET"
+              --header 'x-vercel-set-bypass-cookie: true'
+            )
+          fi
+          if [[ -n "${VERCEL_TRUSTED_OIDC_TOKEN:-}" ]]; then
+            auth_args+=(
+              --header "x-vercel-trusted-oidc-idp-token: $VERCEL_TRUSTED_OIDC_TOKEN"
+            )
+          fi
+          if ((${#auth_args[@]} == 0)); then
+            echo "::error::No Vercel automation credential is available for the production smoke."
+            exit 1
+          fi
+
+          request() {
+            local base_url="$1"
+            local path="$2"
+            local label="$3"
+            local expected_fragment="${4:-}"
+            local headers
+            local body
+            local status
+            local mitigated
+            local location
+
+            headers="$(mktemp)"
+            body="$(mktemp)"
+            status="$(curl --silent --show-error \
+              --output "$body" \
+              --dump-header "$headers" \
+              --write-out '%{http_code}' \
+              "${auth_args[@]}" \
+              "${base_url}${path}")"
+            mitigated="$(awk 'BEGIN { IGNORECASE=1 } /^x-vercel-mitigated:/ { sub(/^[^:]+:[[:space:]]*/, ""); sub(/\r$/, ""); print; exit }' "$headers")"
+            location="$(awk 'BEGIN { IGNORECASE=1 } /^location:/ { sub(/^[^:]+:[[:space:]]*/, ""); sub(/\r$/, ""); print; exit }' "$headers")"
+
+            if [[ "$status" == "429" || "${mitigated,,}" == "challenge" ]]; then
+              echo "$label reached the Vercel Security Checkpoint (HTTP $status)."
+              rm -f "$headers" "$body"
+              return 2
+            fi
+
+            if grep -Eiq '^location: https://vercel\.com/(login|sso-api)' "$headers" || \
+              [[ "$status" == "401" || "$status" == "403" ]]; then
+              echo "$label rejected by Vercel automation access (HTTP $status)."
+              if [[ -n "$location" ]]; then
+                echo "Authentication redirect: ${location%%\?*}"
+              fi
+              rm -f "$headers" "$body"
+              return 3
+            fi
+
+            if [[ "$status" != "200" ]]; then
+              echo "$label returned unexpected HTTP $status."
+              rm -f "$headers" "$body"
+              return 4
+            fi
+
+            if [[ -n "$expected_fragment" ]] && ! grep -Fq "$expected_fragment" "$body"; then
+              echo "$label did not contain its expected non-sensitive marker."
+              rm -f "$headers" "$body"
+              return 5
+            fi
+
+            echo "$label OK (HTTP 200)."
+            rm -f "$headers" "$body"
+          }
+
+          request "$DEPLOYMENT_BASE_URL" "/" "deployment /"
+          request "$DEPLOYMENT_BASE_URL" "/index.html" "deployment /index.html"
+          request "$DEPLOYMENT_BASE_URL" "/test" "deployment /test" "Surface de test du framework OSINT"
+          request "$DEPLOYMENT_BASE_URL" "/en/test" "deployment /en/test" "OSINT framework test surface"
+          request "$DEPLOYMENT_BASE_URL" "/de/test" "deployment /de/test" "Testfläche für das OSINT-Framework"
+          request "$DEPLOYMENT_BASE_URL" "/no/test" "deployment /no/test" "Testflate for OSINT-rammeverket"
+          request "$DEPLOYMENT_BASE_URL" "/test.html" "deployment /test.html" "d3.v3.min.js"
+          request "$DEPLOYMENT_BASE_URL" "/contact" "deployment /contact"
+          request "$DEPLOYMENT_BASE_URL" "/policy" "deployment /policy"
+
+          public_result=0
+          request "$PUBLIC_BASE_URL" "/" "public www.bababou.com" || public_result=$?
+          if [[ "$public_result" == "2" ]]; then
+            echo "::warning::www.bababou.com is attached and reaches Vercel, but this GitHub runner is challenged by the Vercel Security Checkpoint."
+          elif [[ "$public_result" != "0" ]]; then
+            echo "::error::www.bababou.com failed the production alias probe."
+            exit "$public_result"
+          fi
+
+          {
+            echo "## Production deployment smoke"
+            echo
+            echo "- deployed SHA: \`$DEPLOYED_SHA\`"
+            echo "- exact deployment routes: passed"
+            if [[ "$public_result" == "2" ]]; then
+              echo "- public alias: Vercel Security Checkpoint challenge (informational)"
+            else
+              echo "- public alias: reachable"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
