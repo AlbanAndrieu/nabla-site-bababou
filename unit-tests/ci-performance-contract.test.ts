@@ -27,8 +27,8 @@ test("quality CI records performance without running a second Next build", async
   assert.match(workflow, /id: install/);
   assert.match(workflow, /- name: Restore npm downloads/);
   assert.match(workflow, /id: npm-cache/);
-  assert.match(workflow, /actions\/cache\/restore@v5/);
-  assert.match(workflow, /actions\/cache\/save@v5/);
+  assert.match(workflow, /actions\\/cache\\/restore@caa296126883cff596d87d8935842f9db880ef25/);
+  assert.match(workflow, /actions\\/cache\\/save@caa296126883cff596d87d8935842f9db880ef25/);
   assert.match(workflow, /continue-on-error: true/);
   assert.doesNotMatch(workflow, /uses: actions\/cache@v5/);
   assert.match(workflow, /path: ~\/\.npm/);
