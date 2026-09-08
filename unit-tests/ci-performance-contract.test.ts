@@ -25,9 +25,12 @@ test("quality CI records performance without running a second Next build", async
   assert.match(nextBuildRunner, /GITHUB_OUTPUT/);
 
   assert.match(workflow, /id: install/);
-  assert.match(workflow, /- name: Cache npm downloads/);
+  assert.match(workflow, /- name: Restore npm downloads/);
   assert.match(workflow, /id: npm-cache/);
-  assert.match(workflow, /actions\/cache@v5/);
+  assert.ok(workflow.includes("actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25"));
+  assert.ok(workflow.includes("actions/cache/save@caa296126883cff596d87d8935842f9db880ef25"));
+  assert.match(workflow, /continue-on-error: true/);
+  assert.doesNotMatch(workflow, /uses: actions\/cache(?:\/(?:restore|save))?@v5/);
   assert.match(workflow, /path: ~\/\.npm/);
   assert.match(
     workflow,
@@ -47,6 +50,8 @@ test("quality CI records performance without running a second Next build", async
   assert.match(workflow, /node_modules_mb/);
   assert.match(workflow, /next_mb/);
   assert.match(workflow, /NEXT_BUILD_SECONDS/);
+  assert.match(workflow, /NEXT_CACHE_HIT/);
+  assert.match(workflow, /path: \.next\/cache/);
 
   assert.equal(workflow.match(/npm run check/g)?.length, 2);
   assert.doesNotMatch(workflow, /npm run build/);

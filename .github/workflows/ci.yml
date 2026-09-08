@@ -86,7 +86,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha || github.ref }}
@@ -111,19 +111,31 @@ jobs:
 
       - name: Setup Node.js
         if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version-file: ".nvmrc"
 
-      - name: Cache npm downloads
+      - name: Restore npm downloads
         if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
         id: npm-cache
-        uses: actions/cache@v5
+        continue-on-error: true
+        uses: actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25 # v5
         with:
           path: ~/.npm
           key: npm-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('package-lock.json') }}
           restore-keys: |
             npm-${{ runner.os }}-${{ runner.arch }}-
+
+      - name: Restore Next build cache
+        if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+        id: next-cache
+        continue-on-error: true
+        uses: actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: .next/cache
+          key: next-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('package-lock.json') }}-${{ hashFiles('app/**', 'components/**', 'i18n/**', 'lib/**', 'messages/**', 'next.config.*', 'proxy.ts', 'tsconfig.json') }}
+          restore-keys: |
+            next-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('package-lock.json') }}-
 
       - name: Pin npm
         if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
@@ -147,6 +159,14 @@ jobs:
           npm_cache_mb="$(du -sm "$npm_cache" 2>/dev/null | awk '{print $1}' || true)"
           echo "npm_cache_mb=${npm_cache_mb:-0}" >> "$GITHUB_OUTPUT"
 
+      - name: Save npm downloads
+        if: (github.event_name != 'pull_request' || github.event.pull_request.draft == false) && steps.npm-cache.outputs.cache-hit != 'true'
+        continue-on-error: true
+        uses: actions/cache/save@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: ~/.npm
+          key: npm-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('package-lock.json') }}
+
       - name: Run canonical project checks
         if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
         id: checks
@@ -157,6 +177,14 @@ jobs:
           npm run check
           echo "seconds=$((SECONDS - started_at))" >> "$GITHUB_OUTPUT"
           echo "next_mb=$(du -sm .next | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+
+      - name: Save Next build cache
+        if: (github.event_name != 'pull_request' || github.event.pull_request.draft == false) && steps.next-cache.outputs.cache-hit != 'true'
+        continue-on-error: true
+        uses: actions/cache/save@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: .next/cache
+          key: next-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('package-lock.json') }}-${{ hashFiles('app/**', 'components/**', 'i18n/**', 'lib/**', 'messages/**', 'next.config.*', 'proxy.ts', 'tsconfig.json') }}
 
       # Keep Snyk as an optional gate without referencing its Docker-based
       # GitHub Action. GitHub may prepare container actions before evaluating
@@ -173,6 +201,7 @@ jobs:
           NODE_MODULES_MB: ${{ steps.install.outputs.node_modules_mb }}
           NPM_CACHE_MB: ${{ steps.install.outputs.npm_cache_mb }}
           NPM_CACHE_HIT: ${{ steps.npm-cache.outputs.cache-hit }}
+          NEXT_CACHE_HIT: ${{ steps.next-cache.outputs.cache-hit }}
           CHECK_SECONDS: ${{ steps.checks.outputs.seconds }}
           NEXT_BUILD_SECONDS: ${{ steps.checks.outputs.next_build_seconds }}
           NEXT_MB: ${{ steps.checks.outputs.next_mb }}
@@ -194,6 +223,7 @@ jobs:
             echo "| node_modules | $(value_or_na "$NODE_MODULES_MB") MiB |"
             echo "| npm cache | $(value_or_na "$NPM_CACHE_MB") MiB |"
             echo "| npm cache hit | $(value_or_na "$NPM_CACHE_HIT") |"
+            echo "| Next build cache hit | $(value_or_na "$NEXT_CACHE_HIT") |"
             echo "| npm run check | $(value_or_na "$CHECK_SECONDS") s |"
             echo "| next build | $(value_or_na "$NEXT_BUILD_SECONDS") s |"
             echo "| .next output | $(value_or_na "$NEXT_MB") MiB |"

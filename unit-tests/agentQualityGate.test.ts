@@ -77,6 +77,27 @@ test("agent bootstrap toolchain is pinned and complete", async () => {
 	assert.match(ci, /- "\.python-version"/);
 });
 
+test("CI and Copilot caches are best effort and Next build cache is reusable", async () => {
+	const [ci, setup] = await Promise.all([
+		read("../.github/workflows/ci.yml"),
+		read("../.github/workflows/copilot-setup-steps.yml"),
+	]);
+
+	for (const workflow of [ci, setup]) {
+		assert.ok(workflow.includes("actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25"));
+		assert.ok(workflow.includes("actions/cache/save@caa296126883cff596d87d8935842f9db880ef25"));
+		assert.match(workflow, /continue-on-error: true/);
+		assert.doesNotMatch(workflow, /uses: actions\/cache(?:\/(?:restore|save))?@v5/);
+	}
+
+	assert.match(setup, /pre-commit install-hooks/);
+	assert.match(setup, /hashFiles\('\.pre-commit-config\.yaml', '\.python-version'\)/);
+	assert.match(ci, /Restore Next build cache/);
+	assert.match(ci, /Save Next build cache/);
+	assert.match(ci, /path: \.next\/cache/);
+	assert.match(ci, /NEXT_CACHE_HIT/);
+});
+
 test("CI runs the Git-only agent preflight before Node and dependency installation", async () => {
 	const workflow = await read("../.github/workflows/ci.yml");
 	const preflight = workflow.indexOf("Run agent preflight before dependency install");
@@ -103,7 +124,8 @@ test("draft PRs run only the Git preflight until ready for review", async () => 
 
 	for (const step of [
 		"Setup Node.js",
-		"Cache npm downloads",
+		"Restore npm downloads",
+		"Restore Next build cache",
 		"Pin npm",
 		"Install dependencies",
 		"Run canonical project checks",
