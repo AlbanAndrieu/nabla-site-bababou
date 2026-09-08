@@ -313,34 +313,14 @@ When exploring the codebase:
    - Ensure sufficient contrast in both themes
    - Icons and images should work in both themes (consider using CSS filters if needed)
 
-### Google Translate Integration
+### Native locales and legacy Google Translate
 
-**The project includes multi-language support via Google Translate:**
-
-1. **Configuration**
-   - Central config file: `public/google-translate-config.js`
-   - Widget included on all pages (positioned top-right, fixed)
-   - **Supported languages**: English (en), French (fr), Norwegian (no), German (de), Spanish (es), Italian (it), Portuguese (pt), Dutch (nl), Swedish (sv), Danish (da), Finnish (suomi), Polish (pl), Czech (cs), Russian (ru), Arabic (ar), Japanese (ja), Chinese Simplified (zh-CN)
-
-2. **Implementation Pattern**
-   - Widget placement: `<div id="google_translate_element"></div>`
-   - Styled with `.google-translate-widget` class (fixed position, top-right)
-   - Scripts loaded in HTML head:
-     ```html
-     <script type="text/javascript" src="/google-translate-config.js"></script>
-     <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-     ```
-
-3. **When Adding New Pages**
-   - Include the translate widget container in the same fixed position
-   - Import both translate scripts in the `<head>` section
-   - Ensure the widget styling matches existing pages (see `index.html` styles)
-
-4. **Content Considerations**
-   - Write clear, simple content that translates well
-   - Avoid idioms or culturally-specific references
-   - Use proper semantic HTML (helps translation accuracy)
-   - Test translated versions to ensure layout doesn't break
+- First-class locales are **FR, EN, DE and NO** and are owned by `next-intl` routes/catalogs.
+- Never add Google Translate bootstrap scripts or widget markup to a Next-native route.
+- Retained legacy `public/**/*.html` pages may keep `/site-google-translate.js` only while no parity-complete native replacement exists.
+- Do not copy the deprecated `google-translate-config.js` + direct Google loader pattern into new pages.
+- For a newly migrated route, add translations to the owning `messages/<domain>/{fr,en,de,no}.json` catalogs and validate canonical/hreflang behavior.
+- Long term, Google Translate is complementary only for languages outside the first-class locale set; legacy pages are reduced to that model as they reach native parity.
 
 ### Testing and Validation
 

@@ -9,7 +9,7 @@ const DOMAIN_CATALOGS = [
   ["link", "linkPage"],
 ] as const;
 
-const MIGRATED_LEGACY_NAMESPACES = ["contactPage", "email", "linkPage"] as const;
+const MIGRATED_LEGACY_NAMESPACES = ["contactPage", "email", "linkPage", "home"] as const;
 
 test("root install stays free of the retired dist-copy postinstall", async () => {
   const packageJson = JSON.parse(
@@ -206,6 +206,19 @@ test("legacy base catalogs do not duplicate migrated namespace ownership", async
       assert.equal(namespace in catalog, false);
     }
   }
+});
+
+test("migration skill uses domain-owned catalogs instead of retired root registries", async () => {
+  const skill = await readFile(
+    new URL("../.agents/skills/next-migrate-locale-pages/SKILL.md", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(skill, /messages\/<domain>\/\{fr,en,de,no\}\.json/);
+  assert.match(skill, /i18n\/messages\.ts/);
+  assert.match(skill, /legacy root `messages\/en\.json` or `messages\/fr\.json`/);
+  assert.doesNotMatch(skill, /global registries/);
+  assert.doesNotMatch(skill, /merge-i18n-message\.js messages\/en\.json/);
 });
 
 for (const [directory, namespace] of DOMAIN_CATALOGS) {

@@ -66,6 +66,8 @@
 ### Blocages opérationnels actuels
 
 - [ ] Vérifier le binding DNS/domaine de `bababou.com` et le rattachement au projet Vercel ; le projet ne le rapporte pas encore parmi ses domaines attachés.
+  - [x] Audit Vercel API du 2026-09-08 : le projet `nabla-site-bababou` est bien lié au dépôt GitHub mais ne publie actuellement que ses domaines `*.vercel.app`; `bababou.com` n'est pas attaché.
+  - [ ] Attacher `bababou.com` au projet Vercel puis vérifier DNS/TLS et le comportement de `/` / `/index.html` en production.
 - [ ] Vérifier `/`, `/index.html`, les routes Next déjà migrées et Playwright Preview sur le SHA exact après chaque changement de routage/runtime.
 
 ## P1 — Stabiliser et simplifier le runtime
@@ -106,7 +108,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 
 ## P2 — Finaliser l'architecture i18n et routing
 
-- [ ] Nettoyer les derniers textes/labels copiés du site `nabla-site-alban` qui subsistent dans les catalogues legacy non chargés.
+- [x] Nettoyer les derniers textes/labels copiés du site `nabla-site-alban` qui subsistaient dans les catalogues legacy non chargés : le namespace professionnel `home` est retiré de `messages/fr.json` / `messages/en.json`, et le skill de migration interdit désormais de recréer des namespaces runtime dans ces registres racine.
   - [x] Les surfaces Next actives ne rendent plus le chrome professionnel copié.
   - [x] `contactPage`, `email` et `linkPage` n'existent plus en double dans les catalogues legacy.
 - [x] Générer le sélecteur de langue depuis `routing.locales`.
@@ -119,6 +121,8 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 - [x] Stabiliser FR et EN sur un Preview réel avant d'ajouter de nouvelles locales (#116, #118, #121).
 - [x] Ajouter `de` et `no` à `routing.locales` avec des catalogues complets et validés (#129).
 - [ ] Garder Google Translate uniquement pour les langues hors locales de premier rang.
+  - [x] Les routes Next natives restent exclusivement pilotées par `next-intl` pour FR/EN/DE/NO ; les instructions agent/Copilot interdisent d'ajouter Google Translate aux nouvelles surfaces Next.
+  - [ ] Les pages HTML legacy peuvent encore proposer Google Translate, y compris vers une locale de premier rang lorsqu'aucune route native équivalente n'a atteint la parité ; réduire cette liste au fil des migrations, sans casser le fallback legacy.
 - [x] Réconcilier les catalogues/routes legacy avec les surfaces réellement publiées : 18 routes/aliases fantômes retirés de `SITE_PAGES`, `lib/htmlRoutes.config.mjs`, `scripts/old/generate_fr_locale_html.py` et le support homelab sans route supprimés après audit d'absence de consommateur (#142).
 
 ## P3 — Migration Next.js et UI/UX
@@ -208,6 +212,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] Première comparaison #146 → #147 : `npm ci` 31 → 24 s, `node_modules` 1112 → 1041 MiB, `next build` 19,6 → 18,2 s et `.next` 69 → 66 MiB.
   - [x] Deuxième baseline #148 : 808 paquets, `npm ci` 20 s, `node_modules` 918 MiB, `npm run check` 31 s, `next build` 14,0 s et `.next` 66 MiB.
   - [x] Baseline post-merge #158 à cache `master` froid : `npm ci` 22 s, `node_modules` 723 MiB, cache npm 207 MiB, `npm run check` 42 s, `next build` 19,3 s et `.next` 66 MiB ; aucun warning npm pré-pin.
+  - [x] Baseline post-merge #167 / Quality #354 : cache npm hit, cache Next initial de `master` absent, `npm ci` 15 s, `node_modules` 723 MiB, cache npm 207 MiB, `npm run check` 44 s, `next build` 19,5 s et `.next` 67 MiB ; ce run amorce le cache Next propre à `master`.
   - [ ] Collecter plusieurs baselines post-merge et définir des seuils uniquement après observation.
 - [x] Maintenir lint JS/TS/CSS, typecheck, unit tests, `next build`, Playwright Preview, accessibilité et tests SEO comme gates.
   - [x] Exposer le gate canonique via `npm run quality:gate` et garder `scripts/quality-gate.sh` byte-for-byte aligné avec `nabla-site-alban`.

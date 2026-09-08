@@ -9,27 +9,17 @@ Migrate pages into `app/[locale]/<route>/page.tsx` without losing information or
 
 ---
 
-## IMPORTANT: i18n message file update best-practices
+## IMPORTANT: i18n message ownership
 
-**Never overwrite the global translation file!**
+First-class Next.js translations are domain-owned. The runtime loads explicit catalogs from `i18n/messages.ts`, currently under `messages/site`, `messages/contact`, `messages/email`, `messages/link` and `messages/checkout`.
 
-When adding translations for a specific page:
-- Always parse the existing `messages/en.json` and `messages/fr.json` in full, and MERGE or APPEND only the key(s) for the new/migrated page.
-- Never overwrite or truncate any unrelated translation keys/sections. These JSON files are _global registries_ for all locale strings (used by all pages and components).
-- Use a workflow that always reads and merges the full file before writing.
-- **The only supported tool in this repository for patch operations is:**
-  ```
-  node scripts/merge-i18n-message.js messages/en.json patch.json
-  ```
-  `patch.json` should contain only the new/modified keys (e.g. `{ "404": { ... } }`).
-  This deep-merges and preserves the rest.
-  All automation or manual edits MUST use this script.
-- All automations/scripts must do read-modify-write (never replace).
+When adding or migrating a page:
 
-**Rule:**
-> Any script/manual edit must only update the **subtree** for the page/component and NEVER destroy or replace other unrelated parts of the file.
-
-If unsure: always review via diff or use a linter.
+- Do **not** add new runtime namespaces to the legacy root `messages/en.json` or `messages/fr.json`; those files are versioned compatibility artifacts and are not loaded by Next.js.
+- Choose an existing domain or create a focused `messages/<domain>/{fr,en,de,no}.json` catalog.
+- Keep exactly one owner for each top-level namespace and register the domain loader in `i18n/messages.ts`.
+- Update all four first-class locales together unless the route itself is intentionally unavailable in a locale.
+- Preserve unrelated domain catalogs and validate the diff plus the i18n contract tests before publication.
 
 ---
 
@@ -57,8 +47,8 @@ If unsure: always review via diff or use a linter.
 - Apply this pattern to all migrated pages (EN/FR).
 
 **Best practice for large HTML pages (block-by-block subcomponent migration):**
-- Any migration of a large static HTML (like expertise, truenas, freenas, workstation, ...) **must** be split into multiple React subcomponents — one per logical section (Hero, Services, AI/ML, Skills, Technologies, Timeline, etc.).
-- For each section, create a separate React file (e.g. `app/components/{slug}/{Section}.tsx`), and extract all visible text labels to `messages/en.json` and `fr.json`.
+- Any migration of a large static HTML **must** be split into multiple React subcomponents — one per logical section (Hero, content groups, timeline, references, etc.).
+- For each section, create a focused React component and extract visible labels to the page's domain catalogs under `messages/<domain>/{fr,en,de,no}.json`.
 - The final page (`page.tsx`) assembles these components, eliminating risk of missing context, truncated exports, or token overflow.
 - This segmentation ensures: no section loss, maintainable UX, and industrialized i18n.
 - Use this approach **systematically** for every page too large to migrate as a single export/file.
@@ -72,11 +62,14 @@ If unsure: always review via diff or use a linter.
 
 ---
 
-## KEY RULE FOR TRANSLATION FILES (messages/en.json, fr.json, …)
+## KEY RULE FOR TRANSLATION FILES
 
 Whenever you add a new page or translation key:
-- Merge/append only the relevant section;
-- Never remove, replace, or truncate others;
-- Always validate via diff or linter before PR/merge.
+
+- update the owning domain catalog, not the retired root catalogs;
+- keep FR/EN/DE/NO structurally aligned;
+- never replace or truncate unrelated namespaces;
+- add a new loader in `i18n/messages.ts` only when introducing a genuinely new domain;
+- validate namespace uniqueness and route parity before removing any legacy HTML fallback.
 
 ---
