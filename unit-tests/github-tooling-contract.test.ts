@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { access, readFile } from "node:fs/promises";
+import { access, readFile, readdir } from "node:fs/promises";
 import test from "node:test";
 
 import githubActionsFormatter from "../scripts/eslint-github-formatter.mjs";
@@ -72,18 +72,26 @@ test("GitHub Actions formatter emits annotations and escapes workflow commands",
 });
 
 
-test("Quality and Copilot GitHub Actions are pinned to immutable SHAs", async () => {
-  for (const workflowPath of [
-    "../.github/workflows/ci.yml",
-    "../.github/workflows/copilot-setup-steps.yml",
-  ]) {
-    const workflow = await readFile(new URL(workflowPath, import.meta.url), "utf8");
+test("all versioned GitHub Actions are pinned to immutable SHAs", async () => {
+  const workflowsDirectory = new URL("../.github/workflows/", import.meta.url);
+  const workflowNames = (await readdir(workflowsDirectory))
+    .filter((name) => /\\.ya?ml$/.test(name))
+    .sort();
+
+  assert.ok(workflowNames.length > 0);
+
+  for (const workflowName of workflowNames) {
+    const workflowPath = `../.github/workflows/${workflowName}`;
+    const workflow = await readFile(
+      new URL(workflowPath, import.meta.url),
+      "utf8",
+    );
     const refs = workflow
       .split("\n")
       .map((line) => line.match(/uses:\s+([^@\s]+)@([^\s#]+)/))
       .filter((match): match is RegExpMatchArray => match !== null);
 
-    assert.ok(refs.length > 0);
+    assert.ok(refs.length > 0, `${workflowPath} should reference an action`);
     for (const ref of refs) {
       assert.match(
         ref[2],
@@ -91,5 +99,24 @@ test("Quality and Copilot GitHub Actions are pinned to immutable SHAs", async ()
         `${ref[1]} in ${workflowPath} must use an immutable commit SHA`,
       );
     }
+  }
+});
+
+test("Playwright download caches stay best-effort", async () => {
+  const workflow = await readFile(
+    new URL("../.github/workflows/playwright.yml", import.meta.url),
+    "utf8",
+  );
+
+  for (const stepName of [
+    "Cache npm downloads",
+    "Cache Playwright Chromium",
+  ]) {
+    const section = workflow
+      .split(`- name: ${stepName}`)[1]
+      ?.split("\n      - name:")[0];
+
+    assert.ok(section, `${stepName} step should exist`);
+    assert.match(section, /continue-on-error:\s+true/);
   }
 });
