@@ -61,6 +61,7 @@
 - [x] Routes/aliases fantômes `pricing`, `payment`, `startup`, `startup-thanks`, `checkout`, `checkout-tjm`, `login`, `ai`, `security`, `expertise`, `ciso`, `truenas`, `ctid`, `freenas`, `nabla`, `workstation`, `cv` et `jm` retirés du catalogue ; configuration/générateur legacy, support homelab non routé et styles dédiés `security`/`ciso`/`login`/`ctid` supprimés (#142).
 - [x] Documentation agent/outillage réconciliée avec l'architecture Next/Vercel réelle ; anciennes références `my-app`, `vue-client`, runbook frontend absent et sitemap obsolète retirées (#142).
 - [x] Manifeste secondaire `public/package.json` supprimé après preuve d'absence de consommateur ; documentation locale/Playwright/Copilot réalignée sur le runtime Next/Vercel (#143).
+- [x] Retirer aussi `main: "index.html"` du `package.json` racine privé : `public/index.html` reste une surface HTTP owner-controlled via `proxy.ts`, pas un entrypoint de package npm (#168).
 - [x] SDK Stripe Node/React retirés après confirmation qu'aucun code runtime ne les importe ; les résultats `success`/`cancel` conservent uniquement le lien Checkout hébergé (#144).
 - [x] Hardening CI post-#167 : caches npm/pre-commit/Next best-effort, réutilisation de `.next/cache`, GitHub Actions Quality/Copilot pinées sur SHA immuables et gate final 160/160 vert.
 
@@ -94,10 +95,10 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] Le D3 réellement servi aux pages legacy reste le fichier versionné `public/d3.v3.min.js`; aucun import npm `d3` n'existe.
   - [x] Retirer atomiquement `postinstall`, `copyfiles`, `d3` et leurs 47 entrées lockfile exclusivement dépendantes.
   - [x] Remplacer le contrat de conservation par un contrat d'absence.
-- [ ] Supprimer les scripts runtime redondants après preuve d'absence de consommateurs.
+- [x] Supprimer les scripts runtime redondants après preuve d'absence de consommateurs.
   - [x] Retirer `dev:v`, `build:v`, `start:v`, l'ancien `build.sh` et le package CLI `vercel`; les déploiements sont portés par la Git Integration Vercel (#146).
   - [x] Retirer `dev:wrangler`, `start:wrangler`, `deploy:wrangler` avec Wrangler (#150).
-- [ ] Conserver à terme un seul couple nominal `build: next build` / `start: next start`.
+- [x] Conserver un seul couple nominal `build` / `start` : `build` délègue exactement une fois à `next build` via le wrapper de métrique `run-next-build.mjs`, `start` reste `next start`; `dev:test`, `start:test` et `start-python` sont des helpers explicites de test/diagnostic, pas des runtimes de production concurrents (#168).
 - [x] Exécuter explicitement `next build` dans la CI GitHub de qualité afin de ne pas dépendre uniquement de Vercel pour valider la compilation.
 - [x] Contraindre le tracing de `htmlFromPublic.ts` aux fragments explicitement allowlistés (#108).
 - [x] Réduire ensuite `htmlFromPublic.ts` au seul `public/404.html` protégé et retirer le composant `PublicHtmlFragment` devenu sans consommateur après la migration native complète des policies.

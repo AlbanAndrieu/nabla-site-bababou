@@ -4,7 +4,6 @@
   "type": "module",
   "private": true,
   "description": "Bababou family site",
-  "main": "index.html",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/AlbanAndrieu/nabla-site-bababou.git"

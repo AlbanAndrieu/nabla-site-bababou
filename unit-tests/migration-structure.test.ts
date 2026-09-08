@@ -151,6 +151,38 @@ test("protected 404 loader does not retain the retired sanitize-html package", a
   assert.doesNotMatch(loader, /sanitize-html|sanitizeHtml/);
 });
 
+test("private root manifest does not advertise the legacy homepage as an npm entrypoint", async () => {
+  const packageJson = JSON.parse(
+    await readFile(new URL("../package.json", import.meta.url), "utf8"),
+  ) as {
+    private?: boolean;
+    main?: string;
+    scripts?: Record<string, string>;
+  };
+
+  assert.equal(packageJson.private, true);
+  assert.equal(packageJson.main, undefined);
+  assert.equal(packageJson.scripts?.build, "node scripts/run-next-build.mjs");
+  assert.equal(packageJson.scripts?.start, "next start");
+  assert.equal(packageJson.scripts?.["dev:test"], "next dev --hostname 127.0.0.1");
+  assert.equal(packageJson.scripts?.["start:test"], "next start --hostname 127.0.0.1");
+  assert.equal(
+    packageJson.scripts?.["start-python"],
+    "python3 -m http.server 8001 --directory public",
+  );
+
+  for (const retiredRuntimeScript of [
+    "dev:v",
+    "build:v",
+    "start:v",
+    "dev:wrangler",
+    "start:wrangler",
+    "deploy:wrangler",
+  ]) {
+    assert.equal(packageJson.scripts?.[retiredRuntimeScript], undefined);
+  }
+});
+
 test("public does not carry a second package/runtime manifest", async () => {
   await assert.rejects(access(new URL("../public/package.json", import.meta.url)));
 });
