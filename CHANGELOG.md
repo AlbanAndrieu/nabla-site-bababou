@@ -1,3 +1,10 @@
+## [0.13.2](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.13.1...0.13.2) (2026-09-08)
+
+
+### Bug Fixes
+
+* **vercel:** stabilize production smoke and retain translation fallback ([#171](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/171)) ([ef63a8a](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/ef63a8ac65edbab1ecb2b27911ede7b30b0f4ae2))
+
 ## [0.13.1](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.13.0...0.13.1) (2026-09-08)
 
 
