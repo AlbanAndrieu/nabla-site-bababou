@@ -76,7 +76,8 @@
   - [x] Sonder séparément `https://www.bababou.com/` et classer `HTTP 429` / `x-vercel-mitigated: challenge` comme Security Checkpoint informatif lorsque le deployment exact est sain.
   - [x] Observer le premier smoke production post-merge : #170 a déployé `cdf0dfa` en `READY` avec les alias `www.bababou.com` / `bababou.com`; Vercel ne remonte aucun runtime 4xx/5xx sur ce déploiement et la homepage publique répond. Le run Playwright #521 a néanmoins false-fail sur le `HTTP 307` du rewrite protégé `/ → /index.html`, pas sur une panne applicative.
   - [x] Corriger le smoke pour accepter uniquement ce `307` attendu vers `/index.html`, après avoir exclu les redirects d'authentification Vercel ; `/index.html` reste ensuite vérifié séparément en `200`.
-  - [ ] Observer le premier smoke production **corrigé** sur un nouveau `vercel.deployment.success` avant de considérer ce contrôle opérationnel comme stabilisé.
+  - [x] Observer le smoke post-#171/#172 : Playwright #523 a révélé un second faux échec, le header `x-vercel-set-bypass-cookie: true` provoquant lui-même un `307 Location: /` de handshake Vercel. Retirer ce header du smoke production et conserver le bypass header-only + OIDC ; le handshake cookie reste réservé au préflight Preview qui le gère explicitement.
+  - [ ] Observer le prochain smoke production après ce correctif avant de considérer ce contrôle opérationnel comme stabilisé.
 
 ## P1 — Stabiliser et simplifier le runtime
 
@@ -221,6 +222,9 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] Vérifier le SARIF après upgrade : 34 findings HIGH/CRITICAL sur l'ancienne base → 0 sur `nginx:1.30.4-alpine-slim`, puis activer `exit-code: 1` pour rendre le scan HIGH/CRITICAL bloquant sur le fallback Docker.
   - [x] Basculer le fallback vers l'image officielle `nginxinc/nginx-unprivileged:1.30.4-alpine-slim`, exposer 8080 et ajouter un smoke test CI prouvant un runtime non-root ainsi que le service de `/` et du `public/404.html` protégé.
   - [x] Les Preview Vercel ne déclenchent plus deux suites Playwright concurrentes et le chemin conservé réutilise le cache Chromium (#121).
+  - [x] Ajouter un OWASP ZAP Baseline GitHub sur le même `vercel.deployment.success`, filtré strictement sur `vercel-preview-pr-*` et le SHA exact de la PR ; le scanner reçoit le Protection Bypass via `ZAP_AUTH_HEADER_*`, cible uniquement l'URL `*.vercel.app` de Preview et publie le statut `OWASP ZAP Preview`.
+  - [x] Pinner `zaproxy/action-baseline` v0.15.0 sur SHA immuable et l'image ZAP sur `2.17.0`; désactiver l'ouverture automatique d'issues.
+  - [ ] Collecter la première baseline ZAP sur une Preview Vercel réelle, revoir les alertes puis promouvoir les règles pertinentes en gate bloquant au lieu de masquer des findings non observés.
   - [x] Réutiliser l'événement Vercel production jusque-là `skipped` pour un smoke `curl` ciblé et peu coûteux du SHA déployé, sans télécharger Chromium ni réexécuter la suite Playwright complète.
   - [x] Réconcilier ce smoke avec le rewrite homepage hybride protégé : sous Protection Bypass, Vercel peut matérialiser le rewrite `/ → /index.html` en `307`; accepter seulement cette destination attendue et conserver les redirects `vercel.com/login|sso-api` comme échecs (#171).
   - [x] Le workflow séparé de seed Chromium devient inutile et est retiré après validation du cache détenu par `repository_dispatch` (#122).
