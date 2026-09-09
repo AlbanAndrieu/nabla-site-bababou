@@ -25,9 +25,12 @@
 
 ## Validation
 
-- `CI (Quality and Security)` runs lint, route type generation, type-check, unit/privacy checks and the production Next build.
+- `CI (Quality and Security)` runs a changed-source Semgrep SAST before Node/npm setup, then lint, route type generation, type-check, unit/privacy checks and the production Next build. Semgrep SARIF is uploaded to Code Scanning and retained as a short-lived workflow artifact.
 - Snyk runs when `SNYK_TOKEN` is configured.
 - Preview Playwright validates deploy-relevant PR revisions on the exact Vercel checkpoint SHA.
+- Preview OWASP ZAP runs independently on the same exact checkpoint, uses the versioned `.zap/rules.tsv` policy, negotiates Vercel Automation Bypass with an OIDC trusted-source fallback, and reports H/M/L/Informational alert counts plus the top alert types.
+- Production publishes independent `Production Post-deploy Smoke` and `Production DAST` statuses. Production DAST runs after successful Vercel production deployments, on demand, and daily against `www.bababou.com`.
+- The first post-merge production DAST/smoke statuses must be observed before promoting them to mandatory pre-merge base-health requirements.
 - `npm audit` is an advisory signal; review upgrades instead of applying blind `--force` fixes.
 - Interpret CodeQL, dependency and deployment posture from current runs rather than historical vulnerability counts.
 

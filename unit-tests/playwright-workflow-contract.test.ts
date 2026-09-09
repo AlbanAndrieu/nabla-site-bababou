@@ -178,4 +178,18 @@ test("Playwright production deployment smoke stays lightweight", async () => {
   }
   assert.doesNotMatch(productionSmoke, /x-vercel-set-bypass-cookie/);
   assert.doesNotMatch(productionSmoke, /npm ci|playwright install|npm test/);
+  assert.match(productionSmoke, /Production Post-deploy Smoke/);
+  assert.match(productionSmoke, /statuses\/\$STATUS_SHA/);
+});
+
+
+test("Playwright failure summary cross-links the independent exact-SHA ZAP evidence", async () => {
+  const workflow = await readFile(
+    new URL("../.github/workflows/playwright.yml", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(workflow, /OWASP ZAP Preview/);
+  assert.match(workflow, /zap-preview-report/);
+  assert.match(workflow, /distinguish browser regressions from DAST findings/);
 });
