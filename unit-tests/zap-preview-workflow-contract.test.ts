@@ -70,6 +70,6 @@ test("ZAP baseline enforces explicit policy and publishes actionable exact-SHA d
   assert.match(workflow, /context 'OWASP ZAP Preview'/);
   assert.match(workflow, /statuses: write/);
   assert.match(workflow, /ZAP Preview access preflight failed/);
-  assert.match(workflow, /ZAP Preview baseline passed/);
+  assert.match(workflow, /ZAP Preview passed \\$counts/);
   assert.match(workflow, /ZAP Preview blocking finding or scanner error/);
 });

@@ -17,7 +17,7 @@ test("Quality automatically publishes exact PR Preview checkpoints after success
   );
   assert.match(workflow, /contents: write/);
   assert.match(workflow, /pull-requests: read/);
-  assert.match(workflow, /statuses: read/);
+  assert.match(workflow, /statuses: write/);
   assert.match(workflow, /ref: \$\{\{ steps\.preview\.outputs\.sha \}\}/);
   assert.match(
     workflow,
