@@ -13,6 +13,8 @@ test("Vercel Preview uses explicit checkpoint branches instead of PR auto-deploy
   assert.match(workflow, /workflow_dispatch:/);
   assert.match(workflow, /pr_number:/);
   assert.match(workflow, /vercel-preview-pr-/);
+  assert.match(workflow, /vercel-preview-bootstrap-pr-/);
+  assert.match(workflow, /zapBootstrap/);
   assert.match(workflow, /github\.rest\.pulls\.listFiles/);
   assert.match(workflow, /github\.rest\.actions\.listWorkflowRunsForRepo/);
   assert.match(workflow, /CI \(Quality and Security\)/);
@@ -53,6 +55,8 @@ test("closed pull requests clean up their dedicated Preview branch", async () =>
   assert.match(workflow, /pull_request:/);
   assert.match(workflow, /types:\s*\n\s*- closed/);
   assert.match(workflow, /github\.rest\.git\.deleteRef/);
+  assert.match(workflow, /heads\/vercel-preview-pr-/);
+  assert.match(workflow, /heads\/vercel-preview-bootstrap-pr-/);
   assert.match(workflow, /pull-requests: read/);
   assert.match(workflow, /contents: write/);
 });

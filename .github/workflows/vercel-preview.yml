@@ -109,8 +109,17 @@ jobs:
               .map((file) => file.filename)
               .filter((filename) => !safeOnly(filename));
 
+            const zapBootstrap = files.some(
+              (file) => file.filename === '.github/workflows/zap-preview.yml',
+            );
+
             core.setOutput('sha', pr.head.sha);
-            core.setOutput('branch', `vercel-preview-pr-${prNumber}`);
+            core.setOutput(
+              'branch',
+              zapBootstrap
+                ? `vercel-preview-bootstrap-pr-${prNumber}`
+                : `vercel-preview-pr-${prNumber}`,
+            );
             core.setOutput('deploy_relevant', deployRelevant.length > 0 ? 'true' : 'false');
 
             if (deployRelevant.length === 0) {
@@ -154,15 +163,21 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
         with:
           script: |
-            const ref = `heads/vercel-preview-pr-${process.env.PR_NUMBER}`;
-            try {
-              await github.rest.git.deleteRef({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                ref,
-              });
-              core.info(`Deleted ${ref}`);
-            } catch (error) {
-              if (error.status !== 422 && error.status !== 404) throw error;
-              core.info(`${ref} does not exist; nothing to clean up.`);
+            const refs = [
+              `heads/vercel-preview-pr-${process.env.PR_NUMBER}`,
+              `heads/vercel-preview-bootstrap-pr-${process.env.PR_NUMBER}`,
+            ];
+
+            for (const ref of refs) {
+              try {
+                await github.rest.git.deleteRef({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  ref,
+                });
+                core.info(`Deleted ${ref}`);
+              } catch (error) {
+                if (error.status !== 422 && error.status !== 404) throw error;
+                core.info(`${ref} does not exist; nothing to clean up.`);
+              }
             }
