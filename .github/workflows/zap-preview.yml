@@ -154,6 +154,7 @@ jobs:
           medium=0
           low=0
           informational=0
+
           if [[ -s report_json.json ]]; then
             report_state="available"
             high="$(jq '[.site[]?.alerts[]? | select(((.riskcode // "0") | tonumber) == 3)] | length' report_json.json)"
@@ -161,6 +162,7 @@ jobs:
             low="$(jq '[.site[]?.alerts[]? | select(((.riskcode // "0") | tonumber) == 1)] | length' report_json.json)"
             informational="$(jq '[.site[]?.alerts[]? | select(((.riskcode // "0") | tonumber) == 0)] | length' report_json.json)"
           fi
+
           {
             echo "## OWASP ZAP Preview"
             echo
@@ -173,6 +175,7 @@ jobs:
             echo "- Policy: \`.zap/rules.tsv\` (explicit FAIL/WARN rules)"
             echo "- Report artifact: **zap-preview-report-$DEPLOYED_SHA**"
             echo
+
             if [[ "$report_state" == "available" ]]; then
               echo "### Alert classes"
               echo
@@ -185,52 +188,10 @@ jobs:
               echo
               echo "### Top alert types"
               echo
-              echo "| Plugin | Risk | Alert | Instances |"
-              echo "| --- | --- | --- | ---: |"
-              jq -r '[.site[]?.alerts[]?] | sort_by(((.riskcode // "0") | tonumber)) | reverse | .[:10][] | [.pluginid, .riskdesc, .alert, ((.instances // []) | length)] | @tsv' report_json.json |
-                while IFS=
-        if: always()
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          STATUS_SHA: ${{ env.DEPLOYED_SHA }}
-          JOB_STATUS: ${{ job.status }}
-          PREFLIGHT_OUTCOME: ${{ steps.preflight.outcome }}
-          ZAP_OUTCOME: ${{ steps.zap.outcome }}
-          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        shell: bash
-        run: |
-          if [[ "$PREFLIGHT_OUTCOME" != "success" ]]; then
-            STATE=failure
-            DESCRIPTION='ZAP Preview access preflight failed'
-          elif [[ "$ZAP_OUTCOME" == "success" ]]; then
-            STATE=success
-            DESCRIPTION='ZAP Preview baseline passed'
-          elif [[ "$ZAP_OUTCOME" == "cancelled" ]]; then
-            STATE=error
-            DESCRIPTION='ZAP Preview baseline cancelled'
-          else
-            STATE=failure
-            DESCRIPTION='ZAP Preview blocking finding or scanner error'
-          fi
-
-          payload="$(jq -n \
-            --arg state "$STATE" \
-            --arg target_url "$RUN_URL" \
-            --arg description "$DESCRIPTION" \
-            --arg context 'OWASP ZAP Preview' \
-            '{state: $state, target_url: $target_url, description: $description, context: $context}')"
-
-          curl --fail-with-body --silent --show-error \
-            --request POST \
-            --header "Authorization: Bearer $GH_TOKEN" \
-            --header 'Accept: application/vnd.github+json' \
-            --header 'X-GitHub-Api-Version: 2022-11-28' \
-            "${{ github.api_url }}/repos/${{ github.repository }}/statuses/$STATUS_SHA" \
-            --data "$payload"
-\t' read -r plugin risk alert instances; do
-                  alert="${alert//|/\\|}"
-                  echo "| ${plugin:-n/a} | ${risk:-n/a} | ${alert:-n/a} | ${instances:-0} |"
-                done
+              echo '```text'
+              echo $'plugin\trisk\talert\tinstances'
+              jq -r '[.site[]?.alerts[]?] | sort_by(((.riskcode // "0") | tonumber)) | reverse | .[:10][] | [.pluginid, .riskdesc, .alert, ((.instances // []) | length)] | @tsv' report_json.json
+              echo '```'
             else
               echo "> No \`report_json.json\` was produced. The run stopped before ZAP report generation; inspect the preflight/scanner step annotations above."
             fi
@@ -247,20 +208,31 @@ jobs:
         run: |
           echo "::error::OWASP ZAP Preview reported a blocking finding or scanner failure. Review the Job Summary and zap-preview-report-$DEPLOYED_SHA artifact."
           exit 1
+
       - name: Publish ZAP Preview status
         if: always()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           STATUS_SHA: ${{ env.DEPLOYED_SHA }}
-          JOB_STATUS: ${{ job.status }}
+          PREFLIGHT_OUTCOME: ${{ steps.preflight.outcome }}
+          ZAP_OUTCOME: ${{ steps.zap.outcome }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         shell: bash
         run: |
-          case "$JOB_STATUS" in
-            success) STATE=success; DESCRIPTION='ZAP Preview baseline completed' ;;
-            cancelled) STATE=error; DESCRIPTION='ZAP Preview baseline cancelled' ;;
-            *) STATE=failure; DESCRIPTION='ZAP Preview baseline failed' ;;
-          esac
+          set -euo pipefail
+          if [[ "$PREFLIGHT_OUTCOME" != "success" ]]; then
+            STATE=failure
+            DESCRIPTION='ZAP Preview access preflight failed'
+          elif [[ "$ZAP_OUTCOME" == "success" ]]; then
+            STATE=success
+            DESCRIPTION='ZAP Preview baseline passed'
+          elif [[ "$ZAP_OUTCOME" == "cancelled" ]]; then
+            STATE=error
+            DESCRIPTION='ZAP Preview baseline cancelled'
+          else
+            STATE=failure
+            DESCRIPTION='ZAP Preview blocking finding or scanner error'
+          fi
 
           payload="$(jq -n \
             --arg state "$STATE" \
