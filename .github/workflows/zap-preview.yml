@@ -117,7 +117,12 @@ jobs:
             local headers status location mitigated
 
             headers="$(mktemp)"
-            status="$(curl --silent --show-error               --output /dev/null               --dump-header "$headers"               --write-out '%{http_code}'               --header "$header_name: $header_value"               "$PREVIEW_BASE_URL/")"
+            status="$(curl --silent --show-error \
+              --output /dev/null \
+              --dump-header "$headers" \
+              --write-out '%{http_code}' \
+              --header "$header_name: $header_value" \
+              "$PREVIEW_BASE_URL/")"
             location="$(awk 'BEGIN { IGNORECASE=1 } /^location:/ { sub(/^[^:]+:[[:space:]]*/, ""); sub(/\r$/, ""); print; exit }' "$headers")"
             mitigated="$(awk 'BEGIN { IGNORECASE=1 } /^x-vercel-mitigated:/ { sub(/^[^:]+:[[:space:]]*/, ""); sub(/\r$/, ""); print; exit }' "$headers")"
 
@@ -129,7 +134,8 @@ jobs:
               rm -f "$headers"
               return 1
             fi
-            if grep -Eiq '^location: https://vercel\.com/(login|sso-api)' "$headers" ||               [[ "$status" == "401" || "$status" == "403" ]]; then
+            if grep -Eiq '^location: https://vercel\.com/(login|sso-api)' "$headers" || \
+              [[ "$status" == "401" || "$status" == "403" ]]; then
               echo "::warning::$auth_name was rejected by Vercel (HTTP $status)."
               if [[ -n "$location" ]]; then
                 echo "Authentication redirect: ${location%%\?*}"
@@ -153,12 +159,18 @@ jobs:
             return 0
           }
 
-          if [[ -n "${VERCEL_AUTOMATION_BYPASS_SECRET:-}" ]] && verify_access             "Protection Bypass for Automation"             "x-vercel-protection-bypass"             "$VERCEL_AUTOMATION_BYPASS_SECRET"; then
+          if [[ -n "${VERCEL_AUTOMATION_BYPASS_SECRET:-}" ]] && verify_access \
+            "Protection Bypass for Automation" \
+            "x-vercel-protection-bypass" \
+            "$VERCEL_AUTOMATION_BYPASS_SECRET"; then
             exit 0
           fi
 
           echo "::warning::Automation Bypass was unavailable or rejected; trying GitHub Actions OIDC trusted-source access."
-          if [[ -n "${VERCEL_TRUSTED_OIDC_TOKEN:-}" ]] && verify_access             "GitHub Actions OIDC trusted source"             "x-vercel-trusted-oidc-idp-token"             "$VERCEL_TRUSTED_OIDC_TOKEN"; then
+          if [[ -n "${VERCEL_TRUSTED_OIDC_TOKEN:-}" ]] && verify_access \
+            "GitHub Actions OIDC trusted source" \
+            "x-vercel-trusted-oidc-idp-token" \
+            "$VERCEL_TRUSTED_OIDC_TOKEN"; then
             exit 0
           fi
 

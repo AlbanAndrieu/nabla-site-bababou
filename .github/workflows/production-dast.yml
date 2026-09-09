@@ -88,7 +88,12 @@ jobs:
             local headers status location mitigated
 
             headers="$(mktemp)"
-            status="$(curl --silent --show-error               --output /dev/null               --dump-header "$headers"               --write-out '%{http_code}'               --header "$header_name: $header_value"               "$BASE_URL/")"
+            status="$(curl --silent --show-error \
+              --output /dev/null \
+              --dump-header "$headers" \
+              --write-out '%{http_code}' \
+              --header "$header_name: $header_value" \
+              "$BASE_URL/")"
             location="$(awk 'BEGIN { IGNORECASE=1 } /^location:/ { sub(/^[^:]+:[[:space:]]*/, ""); sub(/\r$/, ""); print; exit }' "$headers")"
             mitigated="$(awk 'BEGIN { IGNORECASE=1 } /^x-vercel-mitigated:/ { sub(/^[^:]+:[[:space:]]*/, ""); sub(/\r$/, ""); print; exit }' "$headers")"
 
@@ -97,7 +102,8 @@ jobs:
               rm -f "$headers"
               return 1
             fi
-            if grep -Eiq '^location: https://vercel\.com/(login|sso-api)' "$headers" ||               [[ "$status" == "401" || "$status" == "403" ]]; then
+            if grep -Eiq '^location: https://vercel\.com/(login|sso-api)' "$headers" || \
+              [[ "$status" == "401" || "$status" == "403" ]]; then
               echo "::warning::$auth_name was rejected by Vercel (HTTP $status)."
               rm -f "$headers"
               return 1
@@ -118,11 +124,17 @@ jobs:
             return 0
           }
 
-          if [[ -n "${VERCEL_AUTOMATION_BYPASS_SECRET:-}" ]] && verify_access             "Protection Bypass for Automation"             "x-vercel-protection-bypass"             "$VERCEL_AUTOMATION_BYPASS_SECRET"; then
+          if [[ -n "${VERCEL_AUTOMATION_BYPASS_SECRET:-}" ]] && verify_access \
+            "Protection Bypass for Automation" \
+            "x-vercel-protection-bypass" \
+            "$VERCEL_AUTOMATION_BYPASS_SECRET"; then
             exit 0
           fi
 
-          if [[ -n "${VERCEL_TRUSTED_OIDC_TOKEN:-}" ]] && verify_access             "GitHub Actions OIDC trusted source"             "x-vercel-trusted-oidc-idp-token"             "$VERCEL_TRUSTED_OIDC_TOKEN"; then
+          if [[ -n "${VERCEL_TRUSTED_OIDC_TOKEN:-}" ]] && verify_access \
+            "GitHub Actions OIDC trusted source" \
+            "x-vercel-trusted-oidc-idp-token" \
+            "$VERCEL_TRUSTED_OIDC_TOKEN"; then
             exit 0
           fi
 
@@ -170,9 +182,9 @@ jobs:
             echo
             echo "- Result: preflight **${PREFLIGHT_OUTCOME:-unknown}**, scanner **${ZAP_OUTCOME:-not-run}**"
             echo "- Target: $BASE_URL"
-            echo "- Associated SHA: `$DEPLOYED_SHA`"
-            echo "- Vercel auth: `${{ steps.preflight.outputs.auth_mode || 'n/a' }}`"
-            echo "- Policy: `.zap/rules.tsv`"
+            echo "- Associated SHA: \`$DEPLOYED_SHA\`"
+            echo "- Vercel auth: \`${{ steps.preflight.outputs.auth_mode || 'n/a' }}\`"
+            echo "- Policy: \`.zap/rules.tsv\`"
             echo "- Alerts: **H$high M$medium L$low I$informational**"
             echo "- Report artifact: **zap-production-report**"
           } >> "$GITHUB_STEP_SUMMARY"
@@ -213,6 +225,17 @@ jobs:
             DESCRIPTION="Production ZAP blocked/error $counts"
           fi
 
-          payload="$(jq -n             --arg state "$STATE"             --arg target_url "$RUN_URL"             --arg description "$DESCRIPTION"             --arg context 'Production DAST'             '{state: $state, target_url: $target_url, description: $description, context: $context}')"
+          payload="$(jq -n \
+            --arg state "$STATE" \
+            --arg target_url "$RUN_URL" \
+            --arg description "$DESCRIPTION" \
+            --arg context 'Production DAST' \
+            '{state: $state, target_url: $target_url, description: $description, context: $context}')"
 
-          curl --fail-with-body --silent --show-error             --request POST             --header "Authorization: Bearer $GH_TOKEN"             --header 'Accept: application/vnd.github+json'             --header 'X-GitHub-Api-Version: 2022-11-28'             "${{ github.api_url }}/repos/${{ github.repository }}/statuses/$STATUS_SHA"             --data "$payload"
+          curl --fail-with-body --silent --show-error \
+            --request POST \
+            --header "Authorization: Bearer $GH_TOKEN" \
+            --header 'Accept: application/vnd.github+json' \
+            --header 'X-GitHub-Api-Version: 2022-11-28' \
+            "${{ github.api_url }}/repos/${{ github.repository }}/statuses/$STATUS_SHA" \
+            --data "$payload"
