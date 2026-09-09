@@ -13,6 +13,7 @@
   "git": {
     "deploymentEnabled": {
       "*": false,
+      "**": false,
       "master": true,
       "vercel-preview-*": true
     }

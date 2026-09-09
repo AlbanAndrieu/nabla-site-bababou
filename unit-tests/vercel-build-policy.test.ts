@@ -123,7 +123,7 @@ test("Vercel compares against the previous deployed SHA across multi-commit chan
   assert.match(result.stdout, /Deploy-relevant change detected: next\.config\.mjs/);
 });
 
-test("vercel.json delegates ignored-build decisions and disables slash-branch auto deploys", async () => {
+test("vercel.json delegates ignored-build decisions and disables all non-checkpoint branch auto deploys", async () => {
   const config = JSON.parse(
     await readFile(new URL("../vercel.json", import.meta.url), "utf8"),
   ) as {
@@ -135,7 +135,7 @@ test("vercel.json delegates ignored-build decisions and disables slash-branch au
   const rules = config.git?.deploymentEnabled;
   assert.ok(rules);
   assert.equal(rules["*"], false);
+  assert.equal(rules["**"], false);
   assert.equal(rules.master, true);
   assert.equal(rules["vercel-preview-*"], true);
-  assert.equal(rules["**"], undefined);
 });
