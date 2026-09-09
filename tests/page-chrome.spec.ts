@@ -84,8 +84,8 @@ test.describe("Page chrome structure regression coverage", () => {
 
       await test.step(pageCase.label, async () => {
         expect(html).toContain('data-nabla-app="next-intl"');
-        expect(html).toContain('class="route-header');
-        expect(html).toContain('class="footer text-center"');
+        expect(html).toContain('id="route-header-locale"');
+        expect(html).toMatch(/<footer[^>]*role="contentinfo"/i);
         expect(html).toContain('id="top" data-role="top-anchor"');
         expect(html).not.toContain('a name="top"');
         expect(html).not.toContain('href="/policy/legal.html"');
@@ -107,8 +107,8 @@ test.describe("Page chrome structure regression coverage", () => {
     expect(html).toContain('data-nabla-app="next-global-not-found"');
     expect(html).toContain('class="cloak__wrapper"');
     expect(html).not.toContain('a name="top"');
-    expect(html).not.toContain('class="route-header');
-    expect(html).not.toContain('class="footer text-center"');
+    expect(html).not.toContain('id="route-header-locale"');
+    expect(html).not.toMatch(/<footer[^>]*role="contentinfo"/i);
     expect(html).not.toMatch(/<script[^>]+theme-toggle\.js[^>]*><\/script>/i);
     expect(html).not.toMatch(
       /<script[^>]+site-google-translate\.js[^>]*><\/script>/i,
