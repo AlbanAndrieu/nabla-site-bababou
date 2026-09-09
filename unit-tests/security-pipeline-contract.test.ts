@@ -18,6 +18,7 @@ test("Quality runs changed-source Semgrep before the expensive Node build", asyn
   assert.match(workflow, /semgrep\/semgrep@sha256:/);
   assert.match(workflow, /--sarif/);
   assert.match(workflow, /semgrep-sast-report/);
+  assert.match(workflow, /actions: read/);
   assert.match(workflow, /security-events: write/);
 });
 
