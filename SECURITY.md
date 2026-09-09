@@ -25,7 +25,7 @@
 
 ## Validation
 
-- `CI (Quality and Security)` runs a changed-source Semgrep SAST before Node/npm setup, then lint, route type generation, type-check, unit/privacy checks and the production Next build. Semgrep itself is blocking. SARIF publication to GitHub Code Scanning is best-effort because this private repository may not have Code Scanning enabled; the `semgrep-sast-report` artifact is always retained when SARIF is produced.
+- `CI (Quality and Security)` runs a changed-source Semgrep SAST before Node/npm setup, then lint, route type generation, type-check, unit/privacy checks and the production Next build. Semgrep itself is blocking. SARIF publication to GitHub Code Scanning is opt-in because Code Scanning is currently disabled for this private repository; the `semgrep-sast-report` artifact is always retained when SARIF is produced. After enabling Code Scanning, set repository variable `ENABLE_CODE_SCANNING_SARIF=true`.
 - Snyk runs when `SNYK_TOKEN` is configured.
 - Preview Playwright validates deploy-relevant PR revisions on the exact Vercel checkpoint SHA.
 - Preview OWASP ZAP runs independently on the same exact checkpoint, uses the versioned `.zap/rules.tsv` policy, negotiates Vercel Automation Bypass with an OIDC trusted-source fallback, and reports H/M/L/Informational alert counts plus the top alert types.

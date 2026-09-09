@@ -161,28 +161,30 @@ jobs:
         id: semgrep-sarif
         if: >-
           always() &&
+          vars.ENABLE_CODE_SCANNING_SARIF == 'true' &&
           hashFiles('semgrep.sarif') != '' &&
           (github.event_name != 'pull_request' ||
            github.event.pull_request.head.repo.full_name == github.repository)
-        continue-on-error: true
         uses: github/codeql-action/upload-sarif@cdf488f595d80d6e07e03d4674febd5ab45fa938 # v4
         with:
           sarif_file: "semgrep.sarif"
           category: "semgrep-pr"
 
-      - name: Report unavailable Code Scanning integration
-        if: always() && steps.semgrep-sarif.outcome == 'failure'
+      - name: Report Code Scanning SARIF opt-in disabled
+        if: >-
+          always() &&
+          vars.ENABLE_CODE_SCANNING_SARIF != 'true' &&
+          hashFiles('semgrep.sarif') != ''
         shell: bash
         run: |
-          echo "::warning::Semgrep passed, but GitHub Code Scanning rejected the SARIF upload. The semgrep-sast-report artifact remains the authoritative report for this run."
           {
             echo "## Semgrep SARIF publication"
             echo
             echo "- Semgrep scan: passed"
-            echo "- GitHub Code Scanning upload: unavailable / rejected"
-            echo "- Fallback: **semgrep-sast-report** workflow artifact"
+            echo "- GitHub Code Scanning upload: skipped (repository feature not enabled)"
+            echo "- Report: **semgrep-sast-report** workflow artifact"
             echo
-            echo "Enable GitHub Code Scanning for this private repository to publish SARIF findings in the Security tab."
+            echo "After enabling GitHub Code Scanning for this private repository, set repository variable `ENABLE_CODE_SCANNING_SARIF=true` to publish Semgrep SARIF to the Security tab."
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Preserve Semgrep SAST report
