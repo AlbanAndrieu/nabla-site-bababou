@@ -12,6 +12,7 @@ const externalBaseUrl = process.env.BASE_URL?.trim();
 const vercelBypassSecret =
   process.env.VERCEL_AUTOMATION_BYPASS_SECRET?.trim();
 const vercelTrustedOidcToken = process.env.VERCEL_TRUSTED_OIDC_TOKEN?.trim();
+const vercelAuthMode = process.env.VERCEL_AUTH_MODE?.trim();
 const protectedVercelPreview =
   process.env.VERCEL_PREVIEW_PROTECTED === "true";
 
@@ -27,16 +28,22 @@ if (
 }
 
 const vercelProtectionHeaders: Record<string, string> | undefined =
-  vercelBypassSecret
+  vercelAuthMode === "oidc" && vercelTrustedOidcToken
     ? {
-        "x-vercel-protection-bypass": vercelBypassSecret,
-        "x-vercel-set-bypass-cookie": "true",
+        "x-vercel-trusted-oidc-idp-token": vercelTrustedOidcToken,
       }
-    : vercelTrustedOidcToken
+    : vercelBypassSecret
       ? {
-          "x-vercel-trusted-oidc-idp-token": vercelTrustedOidcToken,
+          "x-vercel-protection-bypass": vercelBypassSecret,
+          ...(vercelAuthMode === "bypass-cookie"
+            ? { "x-vercel-set-bypass-cookie": "true" }
+            : {}),
         }
-      : undefined;
+      : vercelTrustedOidcToken
+        ? {
+            "x-vercel-trusted-oidc-idp-token": vercelTrustedOidcToken,
+          }
+        : undefined;
 
 export default defineConfig({
   testDir: "./tests",
