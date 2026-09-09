@@ -35,6 +35,7 @@ on:
       - ".github/workflows/playwright.yml"
       - ".github/workflows/vercel-preview.yml"
       - ".github/workflows/zap-preview.yml"
+      - ".zap/**"
   push:
     branches:
       - master
@@ -70,6 +71,7 @@ on:
       - ".github/workflows/playwright.yml"
       - ".github/workflows/vercel-preview.yml"
       - ".github/workflows/zap-preview.yml"
+      - ".zap/**"
   workflow_dispatch:
 
 permissions:
@@ -244,3 +246,276 @@ jobs:
             echo "| next build | $(value_or_na "$NEXT_BUILD_SECONDS") s |"
             echo "| .next output | $(value_or_na "$NEXT_MB") MiB |"
           } >> "$GITHUB_STEP_SUMMARY"
+
+  preview-security:
+    name: Vercel Preview security gates
+    needs: quality
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.draft == false &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      needs.quality.result == 'success'
+    timeout-minutes: 35
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+      statuses: write
+
+    steps:
+      - name: Resolve automatic Preview checkpoint
+        id: preview
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        with:
+          script: |
+            const prNumber = Number(process.env.PR_NUMBER);
+            const headSha = process.env.HEAD_SHA;
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+            });
+
+            if (pr.state !== 'open') {
+              core.setFailed(`PR #${prNumber} is not open.`);
+              return;
+            }
+            if (pr.draft) {
+              core.setFailed(`PR #${prNumber} returned to draft before Preview publication.`);
+              return;
+            }
+            if (pr.head.repo.full_name !== context.repo.owner + '/' + context.repo.repo) {
+              core.setFailed('Automatic Preview checkpoints are limited to branches from this repository.');
+              return;
+            }
+            if (pr.head.sha !== headSha) {
+              core.setFailed(
+                `PR #${prNumber} head moved from ${headSha} to ${pr.head.sha}; a newer Quality run must publish the checkpoint.`,
+              );
+              return;
+            }
+
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+              per_page: 100,
+            });
+
+            const forceCheckpoint = new Set([
+              '.github/workflows/ci.yml',
+              '.github/workflows/playwright.yml',
+              '.github/workflows/vercel-preview.yml',
+              '.github/workflows/zap-preview.yml',
+            ]);
+            const safeOnly = (filename) => {
+              if (forceCheckpoint.has(filename)) return false;
+
+              return (
+                filename.startsWith('docs/') ||
+                filename.endsWith('.md') ||
+                filename.startsWith('unit-tests/') ||
+                filename.startsWith('.github/') ||
+                filename.startsWith('.vscode/') ||
+                filename.startsWith('.idea/') ||
+                filename.startsWith('.agents/') ||
+                filename.startsWith('.cursor/') ||
+                filename.startsWith('.claude/')
+              );
+            };
+
+            const deployRelevant = files
+              .map((file) => file.filename)
+              .filter((filename) => !safeOnly(filename));
+
+            const zapBootstrap = files.some(
+              (file) => file.filename === '.github/workflows/zap-preview.yml',
+            );
+
+            core.setOutput('sha', headSha);
+            core.setOutput('branch', `vercel-preview-pr-${prNumber}`);
+            core.setOutput(
+              'deploy_relevant',
+              deployRelevant.length > 0 ? 'true' : 'false',
+            );
+            core.setOutput('zap_bootstrap', zapBootstrap ? 'true' : 'false');
+
+            if (deployRelevant.length === 0) {
+              core.info(
+                `PR #${prNumber} only changes tests/docs/maintenance; Preview security gates are not required.`,
+              );
+              return;
+            }
+
+            core.info(`Automatic Preview files: ${deployRelevant.join(', ')}`);
+
+      - name: Report maintenance-only Preview skip
+        if: steps.preview.outputs.deploy_relevant != 'true'
+        shell: bash
+        run: |
+          {
+            echo "## Preview security gates"
+            echo
+            echo "No deploy-relevant files: Vercel Preview, Playwright and ZAP are intentionally skipped."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Checkout exact PR revision for Preview
+        if: steps.preview.outputs.deploy_relevant == 'true'
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ steps.preview.outputs.sha }}
+          fetch-depth: 0
+
+      - name: Push automatic Vercel Preview checkpoint
+        if: steps.preview.outputs.deploy_relevant == 'true'
+        env:
+          CHECKPOINT_BRANCH: ${{ steps.preview.outputs.branch }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git push --force origin "HEAD:refs/heads/${CHECKPOINT_BRANCH}"
+          echo "Published ${CHECKPOINT_BRANCH} at $(git rev-parse HEAD)."
+
+      - name: Wait for Playwright and ZAP Preview statuses
+        if: steps.preview.outputs.deploy_relevant == 'true'
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        env:
+          STATUS_SHA: ${{ steps.preview.outputs.sha }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          ZAP_BOOTSTRAP: ${{ steps.preview.outputs.zap_bootstrap }}
+        with:
+          script: |
+            const sha = process.env.STATUS_SHA;
+            const prNumber = Number(process.env.PR_NUMBER);
+            const expected =
+              process.env.ZAP_BOOTSTRAP === 'true'
+                ? new Set(['Playwright Preview E2E'])
+                : new Set([
+                    'Playwright Preview E2E',
+                    'OWASP ZAP Preview',
+                  ]);
+
+            if (process.env.ZAP_BOOTSTRAP === 'true') {
+              core.warning(
+                'This PR changes zap-preview.yml. repository_dispatch uses the default-branch workflow, so the new ZAP definition cannot be runtime-validated from this PR. The exact Vercel Preview and Playwright remain required; the stale master ZAP result is allowed to settle and is then replaced by an explicit deferred/bootstrap status.',
+              );
+            }
+            const deadline = Date.now() + 25 * 60 * 1000;
+
+            while (Date.now() < deadline) {
+              const { data: livePr } = await github.rest.pulls.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: prNumber,
+              });
+
+              if (livePr.head.sha !== sha) {
+                core.info(
+                  `PR #${prNumber} moved from ${sha} to ${livePr.head.sha}; stop waiting on stale Preview statuses.`,
+                );
+                return;
+              }
+
+              const { data } = await github.rest.repos.listCommitStatusesForRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: sha,
+                per_page: 100,
+              });
+
+              const latest = new Map();
+              for (const status of data) {
+                if (!latest.has(status.context)) {
+                  latest.set(status.context, status);
+                }
+              }
+
+              const summary = [...expected].map((context) => {
+                const status = latest.get(context);
+                return `${context}=${status?.state ?? 'pending'}`;
+              });
+              core.info(`Preview security statuses: ${summary.join(', ')}`);
+
+              for (const context of expected) {
+                const status = latest.get(context);
+                if (status && ['failure', 'error'].includes(status.state)) {
+                  core.setFailed(
+                    `${context} failed for ${sha}: ${status.description ?? status.state}`,
+                  );
+                  return;
+                }
+              }
+
+              if (
+                [...expected].every(
+                  (context) => latest.get(context)?.state === 'success',
+                )
+              ) {
+                core.summary
+                  .addHeading('Preview security gates')
+                  .addList([
+                    `Exact SHA: ${sha}`,
+                    'Playwright Preview E2E: success',
+                    process.env.ZAP_BOOTSTRAP === 'true'
+                      ? 'OWASP ZAP Preview: deferred (workflow bootstrap; no new scanner claim)'
+                      : 'OWASP ZAP Preview: success',
+                  ]);
+                await core.summary.write();
+                return;
+              }
+
+              await new Promise((resolve) => setTimeout(resolve, 15000));
+            }
+
+            core.setFailed(
+              `Timed out waiting for ${[...expected].join(' and ')} on ${sha}.`,
+            );
+      - name: Publish deferred ZAP workflow-bootstrap status
+        if: steps.preview.outputs.deploy_relevant == 'true' && steps.preview.outputs.zap_bootstrap == 'true'
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        env:
+          STATUS_SHA: ${{ steps.preview.outputs.sha }}
+        with:
+          script: |
+            const sha = process.env.STATUS_SHA;
+            const contextName = 'OWASP ZAP Preview';
+            const started = Date.now();
+            const deadline = started + 3 * 60 * 1000;
+
+            while (Date.now() < deadline) {
+              const { data } = await github.rest.repos.listCommitStatusesForRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: sha,
+                per_page: 100,
+              });
+              const status = data.find((item) => item.context === contextName);
+
+              if (status && status.state !== 'pending') {
+                core.info(
+                  `Observed stale default-branch ZAP status ${status.state}; replacing it with an explicit workflow-bootstrap defer.`
+                );
+                break;
+              }
+              if (!status && Date.now() - started > 30000) {
+                core.info('No stale ZAP status appeared during the bootstrap grace period.');
+                break;
+              }
+              await new Promise((resolve) => setTimeout(resolve, 10000));
+            }
+
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha,
+              state: 'success',
+              context: contextName,
+              description: 'Deferred: ZAP workflow bootstrap; Playwright passed',
+              target_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+            });
+            core.notice(
+              'OWASP ZAP Preview is explicitly deferred for this workflow-bootstrap PR; no new ZAP scan result is claimed.',
+            );

@@ -13,12 +13,12 @@ test.describe("Localized test page (/en/test)", () => {
 
     await expect(
       page.getByRole("heading", {
-        name: "OSINT framework placeholder",
+        name: "OSINT visualization integration",
         exact: true,
       }),
     ).toBeVisible();
     await expect(
-      page.getByText("Visualization integration pending migration.", {
+      page.getByText("Visualization integration remains pending migration.", {
         exact: true,
       }),
     ).toBeVisible();

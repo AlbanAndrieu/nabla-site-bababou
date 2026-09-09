@@ -221,8 +221,8 @@ for (const policy of NATIVE_LOCALIZED_POLICIES) {
         locale.locale,
       );
       await expect(page.locator("#main-content h1")).toHaveText(locale.heading);
-      await expect(page.locator(".route-header")).toBeVisible();
-      await expect(page.locator("footer.footer")).toBeVisible();
+      await expect(page.getByRole("banner")).toBeVisible();
+      await expect(page.getByRole("contentinfo")).toBeVisible();
       await expect(page.locator('a[href="#main-content"]')).toBeVisible();
       await expect(
         page.locator('#main-content a[href*="/policy/"][href$=".html"]'),

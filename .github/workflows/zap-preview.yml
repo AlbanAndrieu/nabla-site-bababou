@@ -34,7 +34,7 @@ jobs:
       ZAP_AUTH_HEADER_VALUE: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
 
     steps:
-      - name: Verify Preview belongs to the current PR head
+      - name: Verify Preview checkpoint exact SHA
         id: preview
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         env:
@@ -49,32 +49,26 @@ jobs:
               return;
             }
 
-            const prNumber = Number(match[1]);
-            const { data: pr } = await github.rest.pulls.get({
+            const { data: checkpoint } = await github.rest.git.getRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              pull_number: prNumber,
+              ref: `heads/${ref}`,
             });
 
-            if (pr.state !== 'open') {
-              core.setFailed(`PR #${prNumber} is not open.`);
-              return;
-            }
-            if (pr.head.repo.full_name !== context.repo.owner + '/' + context.repo.repo) {
-              core.setFailed('ZAP Preview scans are limited to branches from this repository.');
-              return;
-            }
-            if (pr.head.sha !== process.env.DEPLOYED_SHA) {
+            if (checkpoint.object.sha !== process.env.DEPLOYED_SHA) {
               core.setFailed(
-                `Preview SHA ${process.env.DEPLOYED_SHA} does not match PR #${prNumber} head ${pr.head.sha}.`,
+                `Checkpoint ${ref} points to ${checkpoint.object.sha}, not deployed SHA ${process.env.DEPLOYED_SHA}.`,
               );
               return;
             }
 
-            core.setOutput('pr_number', String(prNumber));
-            core.info(`ZAP will scan PR #${prNumber} exact head ${pr.head.sha}.`);
+            core.setOutput('pr_number', match[1]);
+            core.info(
+              `ZAP will scan exact checkpoint ${ref} at ${process.env.DEPLOYED_SHA}.`,
+            );
 
       - name: Verify protected Vercel Preview access
+        id: preflight
         shell: bash
         run: |
           set -euo pipefail
@@ -95,6 +89,7 @@ jobs:
               ;;
           esac
           echo "ZAP_AUTH_HEADER_SITE=$preview_host" >> "$GITHUB_ENV"
+          echo "host=$preview_host" >> "$GITHUB_OUTPUT"
 
           headers="$(mktemp)"
           status="$(curl --silent --show-error \
@@ -104,18 +99,25 @@ jobs:
             --header "$ZAP_AUTH_HEADER: $ZAP_AUTH_HEADER_VALUE" \
             "$PREVIEW_BASE_URL/")"
           mitigated="$(awk 'BEGIN { IGNORECASE=1 } /^x-vercel-mitigated:/ { sub(/^[^:]+:[[:space:]]*/, ""); sub(/\r$/, ""); print; exit }' "$headers")"
+          location="$(awk 'BEGIN { IGNORECASE=1 } /^location:/ { sub(/^[^:]+:[[:space:]]*/, ""); sub(/\r$/, ""); print; exit }' "$headers")"
+          echo "http_status=$status" >> "$GITHUB_OUTPUT"
+          echo "mitigated=${mitigated:-none}" >> "$GITHUB_OUTPUT"
 
           if [[ "$status" == "429" || "${mitigated,,}" == "challenge" ]]; then
-            echo "::error::ZAP target reached the Vercel Security Checkpoint instead of the Preview."
+            echo "::error::ZAP Preview preflight blocked by Vercel Security Checkpoint (HTTP $status, x-vercel-mitigated=${mitigated:-unknown})."
             exit 1
           fi
           if grep -Eiq '^location: https://vercel\.com/(login|sso-api)' "$headers" || \
             [[ "$status" == "401" || "$status" == "403" ]]; then
-            echo "::error::Vercel rejected the ZAP automation bypass."
+            echo "::error::Vercel rejected the ZAP automation bypass (HTTP $status)."
+            if [[ -n "$location" ]]; then
+              echo "Authentication redirect: ${location%%\?*}"
+            fi
+            echo "::error::Confirm that VERCEL_AUTOMATION_BYPASS_SECRET belongs to the Vercel project that produced this exact Preview."
             exit 1
           fi
           if [[ ! "$status" =~ ^[23][0-9][0-9]$ ]]; then
-            echo "::error::Preview access preflight returned unexpected HTTP $status."
+            echo "::error::ZAP Preview preflight reached $preview_host but returned unexpected HTTP $status."
             exit 1
           fi
 
@@ -123,29 +125,114 @@ jobs:
           rm -f "$headers"
 
       - name: Run OWASP ZAP baseline against Vercel Preview
+        id: zap
+        continue-on-error: true
         uses: zaproxy/action-baseline@de8ad967d3548d44ef623df22cf95c3b0baf8b25 # v0.15.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           docker_name: ghcr.io/zaproxy/zaproxy:2.17.0
           target: ${{ env.PREVIEW_BASE_URL }}
+          rules_file_name: ".zap/rules.tsv"
           allow_issue_writing: false
-          fail_action: false
-          artifact_name: zap-preview-${{ env.DEPLOYED_SHA }}
+          fail_action: true
+          artifact_name: zap-preview-report-${{ env.DEPLOYED_SHA }}
+          cmd_options: "-I -T 5 -c .zap/rules.tsv"
+
+      - name: Summarize ZAP Preview diagnostics
+        if: always()
+        env:
+          PREFLIGHT_OUTCOME: ${{ steps.preflight.outcome }}
+          ZAP_OUTCOME: ${{ steps.zap.outcome }}
+          PREVIEW_HOST: ${{ steps.preflight.outputs.host }}
+          PREFLIGHT_HTTP_STATUS: ${{ steps.preflight.outputs.http_status }}
+          PREFLIGHT_MITIGATED: ${{ steps.preflight.outputs.mitigated }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          report_state="not-produced"
+          high=0
+          medium=0
+          low=0
+          informational=0
+
+          if [[ -s report_json.json ]]; then
+            report_state="available"
+            high="$(jq '[.site[]?.alerts[]? | select(((.riskcode // "0") | tonumber) == 3)] | length' report_json.json)"
+            medium="$(jq '[.site[]?.alerts[]? | select(((.riskcode // "0") | tonumber) == 2)] | length' report_json.json)"
+            low="$(jq '[.site[]?.alerts[]? | select(((.riskcode // "0") | tonumber) == 1)] | length' report_json.json)"
+            informational="$(jq '[.site[]?.alerts[]? | select(((.riskcode // "0") | tonumber) == 0)] | length' report_json.json)"
+          fi
+
+          {
+            echo "## OWASP ZAP Preview"
+            echo
+            echo "- Preflight: **${PREFLIGHT_OUTCOME:-unknown}**"
+            echo "- Scanner: **${ZAP_OUTCOME:-not-run}**"
+            echo "- Target host: \`${PREVIEW_HOST:-unknown}\`"
+            echo "- Exact SHA: \`$DEPLOYED_SHA\`"
+            echo "- Preflight HTTP: \`${PREFLIGHT_HTTP_STATUS:-n/a}\`"
+            echo "- Vercel mitigation: \`${PREFLIGHT_MITIGATED:-n/a}\`"
+            echo "- Policy: \`.zap/rules.tsv\` (explicit FAIL/WARN rules)"
+            echo "- Report artifact: **zap-preview-report-$DEPLOYED_SHA**"
+            echo
+
+            if [[ "$report_state" == "available" ]]; then
+              echo "### Alert classes"
+              echo
+              echo "| Risk | Alert types |"
+              echo "| --- | ---: |"
+              echo "| High | $high |"
+              echo "| Medium | $medium |"
+              echo "| Low | $low |"
+              echo "| Informational | $informational |"
+              echo
+              echo "### Top alert types"
+              echo
+              echo '```text'
+              echo $'plugin\trisk\talert\tinstances'
+              jq -r '[.site[]?.alerts[]?] | sort_by(((.riskcode // "0") | tonumber)) | reverse | .[:10][] | [.pluginid, .riskdesc, .alert, ((.instances // []) | length)] | @tsv' report_json.json
+              echo '```'
+            else
+              echo "> No \`report_json.json\` was produced. The run stopped before ZAP report generation; inspect the preflight/scanner step annotations above."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Clean ZAP Preview workspace
+        if: always()
+        shell: bash
+        run: rm -f report_html.html report_json.json report_md.md zap.yaml
+
+      - name: Enforce ZAP Preview policy
+        if: steps.preflight.outcome == 'success' && steps.zap.outcome != 'success'
+        shell: bash
+        run: |
+          echo "::error::OWASP ZAP Preview reported a blocking finding or scanner failure. Review the Job Summary and zap-preview-report-$DEPLOYED_SHA artifact."
+          exit 1
 
       - name: Publish ZAP Preview status
         if: always()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           STATUS_SHA: ${{ env.DEPLOYED_SHA }}
-          JOB_STATUS: ${{ job.status }}
+          PREFLIGHT_OUTCOME: ${{ steps.preflight.outcome }}
+          ZAP_OUTCOME: ${{ steps.zap.outcome }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         shell: bash
         run: |
-          case "$JOB_STATUS" in
-            success) STATE=success; DESCRIPTION='ZAP Preview baseline completed' ;;
-            cancelled) STATE=error; DESCRIPTION='ZAP Preview baseline cancelled' ;;
-            *) STATE=failure; DESCRIPTION='ZAP Preview baseline failed' ;;
-          esac
+          set -euo pipefail
+          if [[ "$PREFLIGHT_OUTCOME" != "success" ]]; then
+            STATE=failure
+            DESCRIPTION='ZAP Preview access preflight failed'
+          elif [[ "$ZAP_OUTCOME" == "success" ]]; then
+            STATE=success
+            DESCRIPTION='ZAP Preview baseline passed'
+          elif [[ "$ZAP_OUTCOME" == "cancelled" ]]; then
+            STATE=error
+            DESCRIPTION='ZAP Preview baseline cancelled'
+          else
+            STATE=failure
+            DESCRIPTION='ZAP Preview blocking finding or scanner error'
+          fi
 
           payload="$(jq -n \
             --arg state "$STATE" \
