@@ -134,8 +134,8 @@ test("vercel.json delegates ignored-build decisions and disables slash-branch au
   assert.equal(config.ignoreCommand, "bash scripts/vercel-ignore-build.sh");
   const rules = config.git?.deploymentEnabled;
   assert.ok(rules);
-  assert.equal(rules["**"], false);
+  assert.equal(rules["*"], false);
   assert.equal(rules.master, true);
   assert.equal(rules["vercel-preview-*"], true);
-  assert.equal(rules["*"], undefined);
+  assert.equal(rules["**"], undefined);
 });
