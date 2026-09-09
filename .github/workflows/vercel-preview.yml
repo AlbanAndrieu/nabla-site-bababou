@@ -80,10 +80,17 @@ jobs:
               per_page: 100,
             });
 
+            const forceCheckpoint = new Set([
+              '.github/workflows/ci.yml',
+              '.github/workflows/playwright.yml',
+              '.github/workflows/vercel-preview.yml',
+              '.github/workflows/zap-preview.yml',
+            ]);
             const safeOnly = (filename) => {
-              // ZAP must be validated against a real exact-SHA Preview even
-              // though workflow-only changes are normally maintenance-only.
-              if (filename === '.github/workflows/zap-preview.yml') return false;
+              // Security/Preview workflow changes must validate themselves on
+              // a real exact-SHA deployment even when other .github changes
+              // remain maintenance-only.
+              if (forceCheckpoint.has(filename)) return false;
 
               return (
                 filename.startsWith('docs/') ||
