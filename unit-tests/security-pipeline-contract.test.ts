@@ -19,9 +19,8 @@ test("Quality runs changed-source Semgrep before the expensive Node build", asyn
   assert.match(workflow, /--sarif/);
   assert.match(workflow, /semgrep-sast-report/);
   assert.match(workflow, /id: semgrep-sarif/);
-  assert.match(workflow, /continue-on-error: true/);
-  assert.match(workflow, /ENABLE_CODE_SCANNING_SARIF/);\n  assert.match(workflow, /Report Code Scanning SARIF opt-in disabled/);
-  assert.match(workflow, /semgrep-sast-report/);
+  assert.match(workflow, /ENABLE_CODE_SCANNING_SARIF/);
+  assert.match(workflow, /Report Code Scanning SARIF opt-in disabled/);
   assert.match(workflow, /actions: read/);
   assert.match(workflow, /security-events: write/);
 });

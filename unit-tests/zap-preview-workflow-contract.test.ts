@@ -37,7 +37,10 @@ test("ZAP negotiates Vercel Automation Bypass or OIDC and scopes the selected he
   assert.match(workflow, /core\.getIDToken/);
   assert.match(workflow, /x-vercel-protection-bypass/);
   assert.match(workflow, /x-vercel-trusted-oidc-idp-token/);
-  assert.match(workflow, /Neither Vercel Automation Bypass nor GitHub Actions OIDC/);
+  assert.match(
+    workflow,
+    /Neither Vercel Automation Bypass nor GitHub Actions OIDC/,
+  );
   assert.match(workflow, /ZAP_AUTH_HEADER_SITE=/);
   assert.match(workflow, /x-vercel-mitigated/);
   assert.match(workflow, /Vercel Security Checkpoint/);
@@ -64,12 +67,11 @@ test("ZAP baseline enforces explicit policy and publishes actionable exact-SHA d
   assert.match(workflow, /id: summary/);
   assert.match(workflow, /high=\$high/);
   assert.match(workflow, /medium=\$medium/);
-  assert.match(workflow, /ZAP Preview passed \$counts/);
   assert.match(workflow, /Enforce ZAP Preview policy/);
   assert.match(workflow, /blocking finding or scanner failure/);
   assert.match(workflow, /context 'OWASP ZAP Preview'/);
   assert.match(workflow, /statuses: write/);
   assert.match(workflow, /ZAP Preview access preflight failed/);
-  assert.match(workflow, /ZAP Preview passed \\$counts/);
+  assert.match(workflow, /ZAP Preview passed \$counts/);
   assert.match(workflow, /ZAP Preview blocked\/error \$counts/);
 });
