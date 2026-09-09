@@ -33,14 +33,18 @@ test("Vercel Preview checkpoint keeps Bababou hybrid runtime files deploy-releva
   assert.doesNotMatch(workflow, /filename\.startsWith\('app\/'\)/);
 });
 
-test("ZAP workflow changes force an exact-SHA Vercel Preview checkpoint", async () => {
+test("security workflow changes force an exact-SHA Vercel Preview checkpoint", async () => {
   const workflow = await readFile(workflowUrl, "utf8");
 
-  assert.match(
-    workflow,
-    /filename === '\.github\/workflows\/zap-preview\.yml'/,
-  );
-  assert.match(workflow, /return false/);
+  for (const path of [
+    ".github/workflows/ci.yml",
+    ".github/workflows/playwright.yml",
+    ".github/workflows/vercel-preview.yml",
+    ".github/workflows/zap-preview.yml",
+  ]) {
+    assert.ok(workflow.includes(`'${path}'`), path);
+  }
+  assert.match(workflow, /forceCheckpoint\.has\(filename\)/);
 });
 
 test("closed pull requests clean up their dedicated Preview branch", async () => {
