@@ -397,27 +397,17 @@ jobs:
               per_page: 100,
             });
 
-            const forceCheckpoint = new Set([
-              '.github/workflows/ci.yml',
-              '.github/workflows/playwright.yml',
-              '.github/workflows/vercel-preview.yml',
-              '.github/workflows/zap-preview.yml',
-            ]);
-            const safeOnly = (filename) => {
-              if (forceCheckpoint.has(filename)) return false;
-
-              return (
-                filename.startsWith('docs/') ||
-                filename.endsWith('.md') ||
-                filename.startsWith('unit-tests/') ||
-                filename.startsWith('.github/') ||
-                filename.startsWith('.vscode/') ||
-                filename.startsWith('.idea/') ||
-                filename.startsWith('.agents/') ||
-                filename.startsWith('.cursor/') ||
-                filename.startsWith('.claude/')
-              );
-            };
+            const safeOnly = (filename) =>
+              filename.startsWith('docs/') ||
+              filename.endsWith('.md') ||
+              filename.startsWith('unit-tests/') ||
+              filename.startsWith('.github/') ||
+              filename.startsWith('.zap/') ||
+              filename.startsWith('.vscode/') ||
+              filename.startsWith('.idea/') ||
+              filename.startsWith('.agents/') ||
+              filename.startsWith('.cursor/') ||
+              filename.startsWith('.claude/');
 
             const deployRelevant = files
               .map((file) => file.filename)
