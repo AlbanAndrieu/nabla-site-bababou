@@ -51,5 +51,6 @@ test("ZAP baseline is pinned, report-only initially, and publishes exact-SHA sta
   assert.match(workflow, /fail_action: false/);
   assert.match(workflow, /artifact_name: zap-preview-/);
   assert.match(workflow, /context 'OWASP ZAP Preview'/);
+  assert.match(workflow, /pull-requests: read/);
   assert.match(workflow, /statuses: write/);
 });

@@ -377,9 +377,11 @@ jobs:
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         env:
           STATUS_SHA: ${{ steps.preview.outputs.sha }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         with:
           script: |
             const sha = process.env.STATUS_SHA;
+            const prNumber = Number(process.env.PR_NUMBER);
             const expected = new Set([
               'Playwright Preview E2E',
               'OWASP ZAP Preview',
@@ -387,6 +389,19 @@ jobs:
             const deadline = Date.now() + 25 * 60 * 1000;
 
             while (Date.now() < deadline) {
+              const { data: livePr } = await github.rest.pulls.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: prNumber,
+              });
+
+              if (livePr.head.sha !== sha) {
+                core.info(
+                  `PR #${prNumber} moved from ${sha} to ${livePr.head.sha}; stop waiting on stale Preview statuses.`,
+                );
+                return;
+              }
+
               const { data } = await github.rest.repos.listCommitStatusesForRef({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
