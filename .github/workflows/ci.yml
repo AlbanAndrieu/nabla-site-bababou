@@ -335,6 +335,14 @@ jobs:
               'deploy_relevant',
               deployRelevant.length > 0 ? 'true' : 'false',
             );
+            core.setOutput(
+              'zap_bootstrap',
+              files.some(
+                (file) => file.filename === '.github/workflows/zap-preview.yml',
+              )
+                ? 'true'
+                : 'false',
+            );
 
             if (deployRelevant.length === 0) {
               core.info(
@@ -378,14 +386,24 @@ jobs:
         env:
           STATUS_SHA: ${{ steps.preview.outputs.sha }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
+          ZAP_BOOTSTRAP: ${{ steps.preview.outputs.zap_bootstrap }}
         with:
           script: |
             const sha = process.env.STATUS_SHA;
             const prNumber = Number(process.env.PR_NUMBER);
-            const expected = new Set([
-              'Playwright Preview E2E',
-              'OWASP ZAP Preview',
-            ]);
+            const expected =
+              process.env.ZAP_BOOTSTRAP === 'true'
+                ? new Set(['Playwright Preview E2E'])
+                : new Set([
+                    'Playwright Preview E2E',
+                    'OWASP ZAP Preview',
+                  ]);
+
+            if (process.env.ZAP_BOOTSTRAP === 'true') {
+              core.warning(
+                'This PR changes zap-preview.yml. repository_dispatch uses the default-branch workflow, so the new ZAP definition can only be runtime-validated after merge. Playwright remains required for this bootstrap PR.',
+              );
+            }
             const deadline = Date.now() + 25 * 60 * 1000;
 
             while (Date.now() < deadline) {
@@ -442,7 +460,9 @@ jobs:
                   .addList([
                     `Exact SHA: ${sha}`,
                     'Playwright Preview E2E: success',
-                    'OWASP ZAP Preview: success',
+                    process.env.ZAP_BOOTSTRAP === 'true'
+                      ? 'OWASP ZAP Preview: deferred for workflow bootstrap'
+                      : 'OWASP ZAP Preview: success',
                   ]);
                 await core.summary.write();
                 return;
@@ -452,5 +472,5 @@ jobs:
             }
 
             core.setFailed(
-              `Timed out waiting for Playwright Preview E2E and OWASP ZAP Preview on ${sha}.`,
+              `Timed out waiting for ${[...expected].join(' and ')} on ${sha}.`,
             );

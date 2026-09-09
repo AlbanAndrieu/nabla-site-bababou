@@ -7,7 +7,6 @@ on:
 
 permissions:
   contents: read
-  pull-requests: read
   statuses: write
 
 concurrency:
@@ -35,7 +34,7 @@ jobs:
       ZAP_AUTH_HEADER_VALUE: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
 
     steps:
-      - name: Verify Preview belongs to the current PR head
+      - name: Verify Preview checkpoint exact SHA
         id: preview
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         env:
@@ -50,30 +49,23 @@ jobs:
               return;
             }
 
-            const prNumber = Number(match[1]);
-            const { data: pr } = await github.rest.pulls.get({
+            const { data: checkpoint } = await github.rest.git.getRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              pull_number: prNumber,
+              ref: `heads/${ref}`,
             });
 
-            if (pr.state !== 'open') {
-              core.setFailed(`PR #${prNumber} is not open.`);
-              return;
-            }
-            if (pr.head.repo.full_name !== context.repo.owner + '/' + context.repo.repo) {
-              core.setFailed('ZAP Preview scans are limited to branches from this repository.');
-              return;
-            }
-            if (pr.head.sha !== process.env.DEPLOYED_SHA) {
+            if (checkpoint.object.sha !== process.env.DEPLOYED_SHA) {
               core.setFailed(
-                `Preview SHA ${process.env.DEPLOYED_SHA} does not match PR #${prNumber} head ${pr.head.sha}.`,
+                `Checkpoint ${ref} points to ${checkpoint.object.sha}, not deployed SHA ${process.env.DEPLOYED_SHA}.`,
               );
               return;
             }
 
-            core.setOutput('pr_number', String(prNumber));
-            core.info(`ZAP will scan PR #${prNumber} exact head ${pr.head.sha}.`);
+            core.setOutput('pr_number', match[1]);
+            core.info(
+              `ZAP will scan exact checkpoint ${ref} at ${process.env.DEPLOYED_SHA}.`,
+            );
 
       - name: Verify protected Vercel Preview access
         shell: bash

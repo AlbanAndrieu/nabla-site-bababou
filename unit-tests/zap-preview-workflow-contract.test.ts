@@ -17,7 +17,8 @@ test("ZAP scans only exact Vercel Preview checkpoint deployments", async () => {
   assert.match(workflow, /git\.ref != 'master'/);
   assert.match(workflow, /github\.event\.client_payload\.url/);
   assert.match(workflow, /github\.event\.client_payload\.git\.sha/);
-  assert.match(workflow, /pr\.head\.sha !== process\.env\.DEPLOYED_SHA/);
+  assert.match(workflow, /github\.rest\.git\.getRef/);
+  assert.match(workflow, /checkpoint\.object\.sha !== process\.env\.DEPLOYED_SHA/);
   assert.match(workflow, /\.vercel\.app/);
 
   assert.doesNotMatch(workflow, /www\.bababou\.com/);
@@ -51,6 +52,5 @@ test("ZAP baseline is pinned, report-only initially, and publishes exact-SHA sta
   assert.match(workflow, /fail_action: false/);
   assert.match(workflow, /artifact_name: zap-preview-/);
   assert.match(workflow, /context 'OWASP ZAP Preview'/);
-  assert.match(workflow, /pull-requests: read/);
   assert.match(workflow, /statuses: write/);
 });

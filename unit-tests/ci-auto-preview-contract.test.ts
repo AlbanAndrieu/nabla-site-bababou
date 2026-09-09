@@ -48,6 +48,9 @@ test("Preview security gate waits for both Playwright and OWASP ZAP exact-SHA st
 
   assert.match(workflow, /Playwright Preview E2E/);
   assert.match(workflow, /OWASP ZAP Preview/);
+  assert.match(workflow, /zap_bootstrap/);
+  assert.match(workflow, /ZAP_BOOTSTRAP/);
+  assert.match(workflow, /repository_dispatch uses the default-branch workflow/);
   assert.match(workflow, /listCommitStatusesForRef/);
   assert.match(workflow, /STATUS_SHA/);
   assert.match(workflow, /PR_NUMBER/);
@@ -55,5 +58,5 @@ test("Preview security gate waits for both Playwright and OWASP ZAP exact-SHA st
   assert.match(workflow, /stop waiting on stale Preview statuses/);
   assert.match(workflow, /state === 'success'/);
   assert.match(workflow, /failure', 'error/);
-  assert.match(workflow, /Timed out waiting for Playwright Preview E2E and OWASP ZAP Preview/);
+  assert.match(workflow, /Timed out waiting for/);
 });
