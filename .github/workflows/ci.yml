@@ -34,6 +34,7 @@ on:
       - ".github/workflows/release.yml"
       - ".github/workflows/playwright.yml"
       - ".github/workflows/vercel-preview.yml"
+      - ".github/workflows/zap-preview.yml"
   push:
     branches:
       - master
@@ -68,6 +69,7 @@ on:
       - ".github/workflows/release.yml"
       - ".github/workflows/playwright.yml"
       - ".github/workflows/vercel-preview.yml"
+      - ".github/workflows/zap-preview.yml"
   workflow_dispatch:
 
 permissions:

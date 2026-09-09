@@ -80,16 +80,23 @@ jobs:
               per_page: 100,
             });
 
-            const safeOnly = (filename) =>
-              filename.startsWith('docs/') ||
-              filename.endsWith('.md') ||
-              filename.startsWith('unit-tests/') ||
-              filename.startsWith('.github/') ||
-              filename.startsWith('.vscode/') ||
-              filename.startsWith('.idea/') ||
-              filename.startsWith('.agents/') ||
-              filename.startsWith('.cursor/') ||
-              filename.startsWith('.claude/');
+            const safeOnly = (filename) => {
+              // ZAP must be validated against a real exact-SHA Preview even
+              // though workflow-only changes are normally maintenance-only.
+              if (filename === '.github/workflows/zap-preview.yml') return false;
+
+              return (
+                filename.startsWith('docs/') ||
+                filename.endsWith('.md') ||
+                filename.startsWith('unit-tests/') ||
+                filename.startsWith('.github/') ||
+                filename.startsWith('.vscode/') ||
+                filename.startsWith('.idea/') ||
+                filename.startsWith('.agents/') ||
+                filename.startsWith('.cursor/') ||
+                filename.startsWith('.claude/')
+              );
+            };
 
             const deployRelevant = files
               .map((file) => file.filename)

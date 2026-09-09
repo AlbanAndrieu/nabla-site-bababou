@@ -302,7 +302,6 @@ jobs:
           if [[ -n "${VERCEL_AUTOMATION_BYPASS_SECRET:-}" ]]; then
             auth_args+=(
               --header "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET"
-              --header 'x-vercel-set-bypass-cookie: true'
             )
           fi
           if [[ -n "${VERCEL_TRUSTED_OIDC_TOKEN:-}" ]]; then

@@ -176,5 +176,6 @@ test("Playwright production deployment smoke stays lightweight", async () => {
   ]) {
     assert.ok(productionSmoke.includes(`"${route}"`), route);
   }
+  assert.doesNotMatch(productionSmoke, /x-vercel-set-bypass-cookie/);
   assert.doesNotMatch(productionSmoke, /npm ci|playwright install|npm test/);
 });
