@@ -24,7 +24,6 @@ test("Quality automatically publishes exact PR Preview checkpoints after success
     /git push --force origin "HEAD:refs\/heads\/\$\{CHECKPOINT_BRANCH\}"/,
   );
   assert.match(workflow, /vercel-preview-pr-/);
-  assert.match(workflow, /vercel-preview-bootstrap-pr-/);
   assert.match(workflow, /zapBootstrap/);
 });
 
@@ -53,8 +52,11 @@ test("Preview security gate waits for both Playwright and OWASP ZAP exact-SHA st
   assert.match(workflow, /zap_bootstrap/);
   assert.match(workflow, /ZAP_BOOTSTRAP/);
   assert.match(workflow, /repository_dispatch uses the default-branch workflow/);
-  assert.match(workflow, /stale master ZAP workflow/);
-  assert.match(workflow, /stale master scanner not dispatched/);
+  assert.match(workflow, /stale master ZAP result/);
+  assert.match(workflow, /Publish deferred ZAP workflow-bootstrap status/);
+  assert.match(workflow, /createCommitStatus/);
+  assert.match(workflow, /Deferred: ZAP workflow bootstrap; Playwright passed/);
+  assert.match(workflow, /statuses: write/);
   assert.match(workflow, /listCommitStatusesForRef/);
   assert.match(workflow, /STATUS_SHA/);
   assert.match(workflow, /PR_NUMBER/);

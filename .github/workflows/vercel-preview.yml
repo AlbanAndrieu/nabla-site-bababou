@@ -109,17 +109,8 @@ jobs:
               .map((file) => file.filename)
               .filter((filename) => !safeOnly(filename));
 
-            const zapBootstrap = files.some(
-              (file) => file.filename === '.github/workflows/zap-preview.yml',
-            );
-
             core.setOutput('sha', pr.head.sha);
-            core.setOutput(
-              'branch',
-              zapBootstrap
-                ? `vercel-preview-bootstrap-pr-${prNumber}`
-                : `vercel-preview-pr-${prNumber}`,
-            );
+            core.setOutput('branch', `vercel-preview-pr-${prNumber}`);
             core.setOutput('deploy_relevant', deployRelevant.length > 0 ? 'true' : 'false');
 
             if (deployRelevant.length === 0) {

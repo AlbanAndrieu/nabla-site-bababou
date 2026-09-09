@@ -13,8 +13,6 @@ test("Vercel Preview uses explicit checkpoint branches instead of PR auto-deploy
   assert.match(workflow, /workflow_dispatch:/);
   assert.match(workflow, /pr_number:/);
   assert.match(workflow, /vercel-preview-pr-/);
-  assert.match(workflow, /vercel-preview-bootstrap-pr-/);
-  assert.match(workflow, /zapBootstrap/);
   assert.match(workflow, /github\.rest\.pulls\.listFiles/);
   assert.match(workflow, /github\.rest\.actions\.listWorkflowRunsForRepo/);
   assert.match(workflow, /CI \(Quality and Security\)/);
