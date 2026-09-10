@@ -1,0 +1,409 @@
+name: Post-merge Quality Follow-up
+
+on:
+  workflow_run:
+    workflows:
+      - CI (Quality and Security)
+    types:
+      - completed
+
+permissions:
+  actions: write
+  contents: write
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: post-merge-quality-${{ github.event.workflow_run.head_sha }}
+  cancel-in-progress: false
+
+jobs:
+  remediate:
+    name: Record and remediate red master
+    if: >-
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'master' &&
+      contains(fromJSON('["failure","timed_out","action_required","startup_failure"]'), github.event.workflow_run.conclusion)
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      FAILED_SHA: ${{ github.event.workflow_run.head_sha }}
+      FAILED_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+      FAILED_RUN_ID: ${{ github.event.workflow_run.id }}
+      FAILED_RUN_URL: ${{ github.event.workflow_run.html_url }}
+
+    steps:
+      - name: Verify failed SHA is still current master
+        id: guard
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        env:
+          FAILED_SHA: ${{ env.FAILED_SHA }}
+        with:
+          script: |
+            const failedSha = process.env.FAILED_SHA;
+            const { data: master } = await github.rest.repos.getBranch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              branch: 'master',
+            });
+
+            if (master.commit.sha !== failedSha) {
+              core.info(
+                `Ignoring stale red run for ${failedSha}: current master is ${master.commit.sha}. A newer master run owns follow-up.`,
+              );
+              core.setOutput('active', 'false');
+              return;
+            }
+
+            core.setOutput('active', 'true');
+            core.notice(`Current master ${failedSha} is red; starting quality follow-up.`);
+
+      - name: Open or reuse remediation issue
+        id: issue
+        if: steps.guard.outputs.active == 'true'
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        env:
+          FAILED_SHA: ${{ env.FAILED_SHA }}
+          FAILED_CONCLUSION: ${{ env.FAILED_CONCLUSION }}
+          FAILED_RUN_URL: ${{ env.FAILED_RUN_URL }}
+        with:
+          script: |
+            const failedSha = process.env.FAILED_SHA;
+            const shortSha = failedSha.slice(0, 12);
+            const title = `[quality-follow-up] master ${shortSha} is red`;
+            const issues = await github.paginate(github.rest.issues.listForRepo, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'all',
+              per_page: 100,
+            });
+            let issue = issues.find(
+              (candidate) => !candidate.pull_request && candidate.title === title,
+            );
+
+            if (issue && issue.state === 'closed') {
+              const reopened = await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'open',
+              });
+              issue = reopened.data;
+            }
+
+            if (!issue) {
+              const created = await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body: [
+                  '## Automatic post-merge quality follow-up',
+                  '',
+                  `- Failed master SHA: \`${failedSha}\``,
+                  `- Conclusion: **${process.env.FAILED_CONCLUSION}**`,
+                  `- Failed workflow: ${process.env.FAILED_RUN_URL}`,
+                  '',
+                  'The remediation workflow will attempt only deterministic formatter/pre-commit fixes derived from the failed commit delta. It will not weaken a gate or edit unrelated files.',
+                  '',
+                  'If no safe deterministic diff is produced, this issue remains open for manual classification and remediation. Do not treat the merge itself as proof of quality.',
+                ].join('\n'),
+              });
+              issue = created.data;
+            }
+
+            core.setOutput('number', String(issue.number));
+            core.setOutput('url', issue.html_url);
+            core.info(`Quality follow-up issue: ${issue.html_url}`);
+
+      - name: Checkout failed master revision
+        if: steps.guard.outputs.active == 'true'
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ env.FAILED_SHA }}
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        if: steps.guard.outputs.active == 'true'
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .nvmrc
+
+      - name: Set up Python
+        if: steps.guard.outputs.active == 'true'
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version-file: .python-version
+
+      - name: Pin npm and install remediation tooling
+        if: steps.guard.outputs.active == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "${RUNNER_TEMP}"
+          npm install --global npm@11.17.0 --no-audit --no-fund
+          cd "${GITHUB_WORKSPACE}"
+          python -m pip install --disable-pip-version-check --quiet pre-commit==4.6.2
+          npm ci --no-audit --no-fund
+          pre-commit install-hooks
+
+      - name: Attempt bounded deterministic remediation
+        id: fix
+        if: steps.guard.outputs.active == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          base_sha="$(git rev-parse "${FAILED_SHA}^")"
+          echo "base_sha=${base_sha}" >> "$GITHUB_OUTPUT"
+
+          declare -A allowed=()
+          mapfile -t original_files < <(
+            git diff --name-only --diff-filter=ACMR "${base_sha}" "${FAILED_SHA}"
+          )
+          for file in "${original_files[@]}"; do
+            allowed["${file}"]=1
+          done
+
+          set +e
+          QUALITY_BASE_REF="${base_sha}" \
+            bash scripts/agent-quality-gate.sh --fix
+          fix_rc=$?
+          set -e
+          echo "fix_rc=${fix_rc}" >> "$GITHUB_OUTPUT"
+
+          mapfile -t changed_files < <(
+            {
+              git diff --name-only
+              git diff --cached --name-only
+              git ls-files --others --exclude-standard
+            } | awk 'NF' | sort -u
+          )
+
+          if (("${#changed_files[@]}" == 0)); then
+            echo "auto_fix=false" >> "$GITHUB_OUTPUT"
+            echo "reason=no-deterministic-diff" >> "$GITHUB_OUTPUT"
+            echo "No deterministic remediation diff was produced."
+            exit 0
+          fi
+
+          if git diff --name-only --diff-filter=D | grep -q .; then
+            echo "auto_fix=false" >> "$GITHUB_OUTPUT"
+            echo "reason=unexpected-deletion" >> "$GITHUB_OUTPUT"
+            echo "::warning::A deterministic pass deleted a file; automatic remediation refuses destructive output."
+            exit 0
+          fi
+
+          unexpected=()
+          for file in "${changed_files[@]}"; do
+            if [[ -z "${allowed[${file}]+x}" ]]; then
+              unexpected+=("${file}")
+            fi
+          done
+          if (("${#unexpected[@]}" > 0)); then
+            echo "auto_fix=false" >> "$GITHUB_OUTPUT"
+            echo "reason=unexpected-path" >> "$GITHUB_OUTPUT"
+            printf '::warning::Automatic remediation changed files outside the failed commit delta: %s\n' "${unexpected[*]}"
+            exit 0
+          fi
+
+          if ((fix_rc != 0)); then
+            echo "auto_fix=false" >> "$GITHUB_OUTPUT"
+            echo "reason=fix-did-not-converge" >> "$GITHUB_OUTPUT"
+            echo "::warning::Deterministic fixes changed files but did not converge; manual review is required."
+            exit 0
+          fi
+
+          printf 'Safe deterministic remediation files:\n%s\n' "${changed_files[*]}"
+          echo "auto_fix=true" >> "$GITHUB_OUTPUT"
+          echo "reason=deterministic-diff" >> "$GITHUB_OUTPUT"
+
+      - name: Commit deterministic remediation locally
+        id: prepare
+        if: steps.fix.outputs.auto_fix == 'true'
+        shell: bash
+        env:
+          ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
+        run: |
+          set -euo pipefail
+          short_sha="${FAILED_SHA:0:12}"
+          branch="fix/quality-follow-up-${short_sha}"
+          echo "branch=${branch}" >> "$GITHUB_OUTPUT"
+
+          if git ls-remote --exit-code --heads origin "refs/heads/${branch}" >/dev/null 2>&1; then
+            echo "prepared=false" >> "$GITHUB_OUTPUT"
+            echo "reason=branch-already-exists" >> "$GITHUB_OUTPUT"
+            echo "::warning::Remediation branch ${branch} already exists; refusing to overwrite it."
+            exit 0
+          fi
+
+          git switch -c "${branch}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add --all
+          git commit -m "fix(ci): remediate red master ${short_sha}" \
+            -m "Follow-up for #${ISSUE_NUMBER}."
+          echo "prepared=true" >> "$GITHUB_OUTPUT"
+          echo "commit_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Validate remediation with strict agent gates
+        id: validate
+        if: steps.prepare.outputs.prepared == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          set +e
+          QUALITY_BASE_REF="${FAILED_SHA}" \
+            bash scripts/agent-quality-gate.sh
+          check_rc=$?
+          set -e
+          if ((check_rc != 0)); then
+            echo "validated=false" >> "$GITHUB_OUTPUT"
+            echo "reason=strict-agent-gate-failed" >> "$GITHUB_OUTPUT"
+            echo "::warning::The deterministic diff did not repair the strict agent gate."
+            exit 0
+          fi
+
+          set +e
+          QUALITY_BASE_REF="${FAILED_SHA}" \
+            bash scripts/agent-quality-gate.sh --publish
+          publish_rc=$?
+          set -e
+          if ((publish_rc != 0)); then
+            echo "validated=false" >> "$GITHUB_OUTPUT"
+            echo "reason=publication-gate-failed" >> "$GITHUB_OUTPUT"
+            echo "::warning::The deterministic diff failed publication validation."
+            exit 0
+          fi
+
+          echo "validated=true" >> "$GITHUB_OUTPUT"
+          echo "reason=validated" >> "$GITHUB_OUTPUT"
+
+      - name: Push validated remediation branch
+        if: steps.validate.outputs.validated == 'true'
+        shell: bash
+        env:
+          FOLLOWUP_BRANCH: ${{ steps.prepare.outputs.branch }}
+        run: |
+          set -euo pipefail
+          git push origin "HEAD:refs/heads/${FOLLOWUP_BRANCH}"
+
+      - name: Open remediation PR and dispatch authoritative Quality
+        id: pr
+        if: steps.validate.outputs.validated == 'true'
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        env:
+          FOLLOWUP_BRANCH: ${{ steps.prepare.outputs.branch }}
+          REMEDIATION_SHA: ${{ steps.prepare.outputs.commit_sha }}
+          ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
+          ISSUE_URL: ${{ steps.issue.outputs.url }}
+          FAILED_SHA: ${{ env.FAILED_SHA }}
+          FAILED_RUN_URL: ${{ env.FAILED_RUN_URL }}
+        with:
+          script: |
+            const branch = process.env.FOLLOWUP_BRANCH;
+            const ownerHead = `${context.repo.owner}:${branch}`;
+            const existing = await github.paginate(github.rest.pulls.list, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              head: ownerHead,
+              per_page: 100,
+            });
+
+            let pr = existing[0];
+            if (!pr) {
+              try {
+                const created = await github.rest.pulls.create({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  base: 'master',
+                  head: branch,
+                  title: `fix(ci): remediate red master ${process.env.FAILED_SHA.slice(0, 12)}`,
+                  body: [
+                    '## Automated quality remediation',
+                    '',
+                    `Closes #${process.env.ISSUE_NUMBER}`,
+                    '',
+                    `- Failed master SHA: \`${process.env.FAILED_SHA}\``,
+                    `- Failed workflow: ${process.env.FAILED_RUN_URL}`,
+                    `- Remediation SHA: \`${process.env.REMEDIATION_SHA}\``,
+                    '- Scope: deterministic formatter/pre-commit changes only, restricted to files already changed by the failed master commit.',
+                    '- Local runner validation: strict agent gate + publication gate passed before push.',
+                    '',
+                    'Do not merge solely because this PR was generated automatically. Review the diff and the explicitly dispatched authoritative CI run.',
+                  ].join('\n'),
+                });
+                pr = created.data;
+              } catch (error) {
+                core.warning(`Could not create remediation PR: ${error.message}`);
+                core.setOutput('created', 'false');
+                core.setOutput('reason', 'pr-create-failed');
+                return;
+              }
+            }
+
+            core.setOutput('created', 'true');
+            core.setOutput('url', pr.html_url);
+            core.setOutput('number', String(pr.number));
+
+            try {
+              await github.rest.actions.createWorkflowDispatch({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                workflow_id: 'ci.yml',
+                ref: branch,
+              });
+              core.info(`Explicitly dispatched CI (Quality and Security) on ${branch}.`);
+            } catch (error) {
+              core.warning(`Remediation PR exists, but CI dispatch failed: ${error.message}`);
+              core.setOutput('dispatch_warning', 'true');
+            }
+
+      - name: Record follow-up outcome on issue
+        if: always() && steps.guard.outputs.active == 'true' && steps.issue.outputs.number != ''
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        env:
+          ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
+          AUTO_FIX: ${{ steps.fix.outputs.auto_fix }}
+          FIX_REASON: ${{ steps.fix.outputs.reason }}
+          PREPARED: ${{ steps.prepare.outputs.prepared }}
+          PREPARE_REASON: ${{ steps.prepare.outputs.reason }}
+          VALIDATED: ${{ steps.validate.outputs.validated }}
+          VALIDATE_REASON: ${{ steps.validate.outputs.reason }}
+          PR_CREATED: ${{ steps.pr.outputs.created }}
+          PR_URL: ${{ steps.pr.outputs.url }}
+          PR_REASON: ${{ steps.pr.outputs.reason }}
+          DISPATCH_WARNING: ${{ steps.pr.outputs.dispatch_warning }}
+          CURRENT_JOB_STATUS: ${{ job.status }}
+        with:
+          script: |
+            const lines = [
+              '## Automated follow-up result',
+              '',
+              `- Workflow job: **${process.env.CURRENT_JOB_STATUS}**`,
+              `- Deterministic diff: **${process.env.AUTO_FIX || 'not reached'}** (${process.env.FIX_REASON || 'n/a'})`,
+              `- Remediation commit prepared: **${process.env.PREPARED || 'not reached'}** (${process.env.PREPARE_REASON || 'n/a'})`,
+              `- Strict validation: **${process.env.VALIDATED || 'not reached'}** (${process.env.VALIDATE_REASON || 'n/a'})`,
+            ];
+
+            if (process.env.PR_CREATED === 'true') {
+              lines.push(`- Remediation PR: ${process.env.PR_URL}`);
+              lines.push(
+                process.env.DISPATCH_WARNING === 'true'
+                  ? '- Authoritative CI dispatch: **warning**; inspect/dispatch CI manually.'
+                  : '- Authoritative CI dispatch: **requested** on the remediation branch.',
+              );
+            } else {
+              lines.push(
+                `- Remediation PR: **not opened automatically** (${process.env.PR_REASON || 'no validated deterministic fix'}).`,
+              );
+              lines.push('- Manual classification/remediation remains required; keep this issue open.');
+            }
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: Number(process.env.ISSUE_NUMBER),
+              body: lines.join('\n'),
+            });
