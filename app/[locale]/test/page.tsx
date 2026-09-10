@@ -56,7 +56,9 @@ export default async function TestPage({
               id="arf-viz-body"
               className={`${surface.card} ${surface.muted}`}
             >
-              <div id="arf-viz-header">{t("visualizationPending")}</div>
+              <p id="arf-viz-header" className={surface.text}>
+                {t("visualizationPending")}
+              </p>
             </div>
           </section>
 

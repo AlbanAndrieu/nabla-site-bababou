@@ -20,6 +20,9 @@ test("Next test surface is localized and remains non-indexable", async () => {
   assert.match(page, /size="compact"/);
   assert.match(page, /variant="outline"/);
   assert.match(page, /canonicalPagePath\("contact", locale\)/);
+  assert.match(page, /id="arf-viz-header"/);
+  assert.match(page, /className=\{surface\.text\}/);
+  assert.doesNotMatch(page, /<div id="arf-viz-header"/);
   assert.doesNotMatch(page, /role="main"/);
   assert.doesNotMatch(page, />OSINT framework test surface</);
   assert.match(messages, /TEST_LOADERS/);
