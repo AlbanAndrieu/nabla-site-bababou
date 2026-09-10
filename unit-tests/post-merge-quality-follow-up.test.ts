@@ -6,6 +6,7 @@ const workflowUrl = new URL(
   "../.github/workflows/post-merge-quality-follow-up.yml",
   import.meta.url,
 );
+const ciWorkflowUrl = new URL("../.github/workflows/ci.yml", import.meta.url);
 
 test("post-merge follow-up watches only red Quality pushes on master", async () => {
   const workflow = await readFile(workflowUrl, "utf8");
@@ -71,5 +72,21 @@ test("remediation PR explicitly dispatches authoritative CI", async () => {
   assert.match(workflow, /actions\.createWorkflowDispatch/);
   assert.match(workflow, /workflow_id: 'ci\.yml'/);
   assert.match(workflow, /ref: branch/);
-  assert.match(workflow, /Do not merge solely because this PR was generated automatically/);
+  assert.match(
+    workflow,
+    /Do not merge solely because this PR was generated automatically/,
+  );
+});
+
+test("Quality watches future edits to the post-merge workflow", async () => {
+  const ciWorkflow = await readFile(ciWorkflowUrl, "utf8");
+  const matches = ciWorkflow.match(
+    /\.github\/workflows\/post-merge-quality-follow-up\.yml/g,
+  );
+
+  assert.equal(
+    matches?.length,
+    2,
+    "pull_request and master push path filters must both validate the follow-up workflow",
+  );
 });
