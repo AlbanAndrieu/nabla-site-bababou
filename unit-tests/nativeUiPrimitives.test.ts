@@ -75,6 +75,19 @@ test("targeted native routes no longer depend on Bootstrap card/grid/action clas
   assert.doesNotMatch(legalPolicy, /card card-body|cursor-pointer/);
 });
 
+test("native Next runtime does not load Bootstrap while legacy HTML keeps its own dependency", async () => {
+  const [layout, legacyHome] = await Promise.all([
+    source("app/[locale]/layout.tsx"),
+    source("public/index.html"),
+  ]);
+
+  assert.doesNotMatch(layout, /bootstrap\/5\.2\.1\/css\/bootstrap\.min\.css/);
+  assert.doesNotMatch(layout, /bootstrap-icons\/1\.9\.1/);
+
+  assert.match(legacyHome, /bootstrap\/5\.2\.1\/css\/bootstrap\.min\.css/);
+  assert.match(legacyHome, /bootstrap-icons\/1\.9\.1\/font\/bootstrap-icons\.min\.css/);
+});
+
 test("shared surface and content layout use semantic design tokens", async () => {
   const [surface, layout] = await Promise.all([
     source("components/ui/Surface.module.css"),

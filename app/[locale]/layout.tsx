@@ -84,18 +84,6 @@ export default async function LocaleLayout({
         <link rel="stylesheet" href="/assets/fontawesome/css/fontawesome.css" />
         <link rel="stylesheet" href="/assets/fontawesome/css/brands.css" />
         <link rel="stylesheet" href="/assets/fontawesome/css/solid.css" />
-        <link
-          rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.1/css/bootstrap.min.css"
-          crossOrigin="anonymous"
-          referrerPolicy="no-referrer"
-        />
-        <link
-          rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.9.1/font/bootstrap-icons.min.css"
-          crossOrigin="anonymous"
-          referrerPolicy="no-referrer"
-        />
       </head>
       <body>
         <NextIntlClientProvider locale={locale} messages={{ site }}>
