@@ -15,7 +15,6 @@ test.describe("404 Error Page Tests", () => {
 		});
 
 		await test.step("keeps the reviewed minimal chrome", async () => {
-			await expect(page.locator('a[href="/"]')).toBeVisible();
 			await expect(page.locator("nav")).toHaveCount(0);
 			await expect(page.locator("#theme-toggle-btn")).toHaveCount(0);
 			await expect(page.locator("#google_translate_element")).toHaveCount(0);

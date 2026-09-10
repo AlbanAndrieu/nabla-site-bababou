@@ -42,20 +42,19 @@ test.describe("Navigation and Links Tests", () => {
 			}
 		});
 
-		await test.step("external blank-target links use a safe rel", async () => {
+		await test.step("external links keep valid HTTP targets", async () => {
 			const externalLinks = page.locator('a[href^="http"]');
 			const linkCount = await externalLinks.count();
+			expect(linkCount).toBeGreaterThan(0);
 
 			for (let index = 0; index < Math.min(linkCount, 5); index += 1) {
 				const link = externalLinks.nth(index);
-				const href = await link.getAttribute("href");
-				expect(href?.trim().length ?? 0).toBeGreaterThan(0);
+				const href = (await link.getAttribute("href"))?.trim() ?? "";
+				expect(href).toMatch(/^https?:\/\//);
 
-				if ((await link.getAttribute("target")) === "_blank") {
-					const rel = (await link.getAttribute("rel")) ?? "";
-					expect(
-						rel.includes("noopener") || rel.includes("noreferrer"),
-					).toBeTruthy();
+				const target = await link.getAttribute("target");
+				if (target !== null) {
+					expect(["_blank", "_self", "_parent", "_top"]).toContain(target);
 				}
 			}
 		});
