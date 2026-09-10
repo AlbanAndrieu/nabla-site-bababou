@@ -30,9 +30,11 @@ test.describe("Navigation and Links Tests", () => {
 					await link.getAttribute("aria-labelledby")
 				)?.trim();
 				const title = (await link.getAttribute("title"))?.trim();
-				const imageAlt = (
-					await link.locator("img").first().getAttribute("alt")
-				)?.trim();
+				const image = link.locator("img").first();
+				const imageAlt =
+					(await image.count()) > 0
+						? (await image.getAttribute("alt"))?.trim()
+						: undefined;
 
 				expect(
 					Boolean(text || ariaLabel || ariaLabelledby || title || imageAlt),
