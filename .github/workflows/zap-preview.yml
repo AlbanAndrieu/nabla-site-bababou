@@ -81,6 +81,15 @@ jobs:
               `ZAP will scan exact checkpoint ${ref} at ${process.env.DEPLOYED_SHA}.`,
             );
 
+      - name: Checkout exact deployed ZAP policy
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ env.DEPLOYED_SHA }}
+          persist-credentials: false
+          sparse-checkout: |
+            .zap/rules.tsv
+          sparse-checkout-cone-mode: false
+
       - name: Request GitHub OIDC token for Vercel
         id: vercel-oidc
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
@@ -204,6 +213,7 @@ jobs:
         run: |
           set -euo pipefail
           report_state="not-produced"
+          report_available=false
           high=0
           medium=0
           low=0
@@ -211,6 +221,7 @@ jobs:
 
           if [[ -s report_json.json ]]; then
             report_state="available"
+            report_available=true
             high="$(jq '[.site[]?.alerts[]? | select(((.riskcode // "0") | tonumber) == 3)] | length' report_json.json)"
             medium="$(jq '[.site[]?.alerts[]? | select(((.riskcode // "0") | tonumber) == 2)] | length' report_json.json)"
             low="$(jq '[.site[]?.alerts[]? | select(((.riskcode // "0") | tonumber) == 1)] | length' report_json.json)"
@@ -248,14 +259,15 @@ jobs:
               jq -r '[.site[]?.alerts[]?] | sort_by(((.riskcode // "0") | tonumber)) | reverse | .[:10][] | [.pluginid, .riskdesc, .alert, ((.instances // []) | length)] | @tsv' report_json.json
               echo '```'
             else
-              echo "> No \`report_json.json\` was produced. The run stopped before ZAP report generation; inspect the preflight/scanner step annotations above."
+              echo "> No \`report_json.json\` was produced. This is a scanner/configuration failure, not a zero-finding security baseline."
             fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          echo "report_available=$report_available" >> "$GITHUB_OUTPUT"
           echo "high=$high" >> "$GITHUB_OUTPUT"
           echo "medium=$medium" >> "$GITHUB_OUTPUT"
           echo "low=$low" >> "$GITHUB_OUTPUT"
           echo "informational=$informational" >> "$GITHUB_OUTPUT"
-
-          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Clean ZAP Preview workspace
         if: always()
@@ -264,9 +276,15 @@ jobs:
 
       - name: Enforce ZAP Preview policy
         if: steps.preflight.outcome == 'success' && steps.zap.outcome != 'success'
+        env:
+          REPORT_AVAILABLE: ${{ steps.summary.outputs.report_available }}
         shell: bash
         run: |
-          echo "::error::OWASP ZAP Preview reported a blocking finding or scanner failure. Review the Job Summary and zap-preview-report artifact."
+          if [[ "$REPORT_AVAILABLE" != "true" ]]; then
+            echo "::error::OWASP ZAP Preview failed before producing a report; this is a scanner/configuration error, not a security finding."
+          else
+            echo "::error::OWASP ZAP Preview reported a blocking finding. Review the Job Summary and zap-preview-report artifact."
+          fi
           exit 1
 
       - name: Publish ZAP Preview status
@@ -276,6 +294,7 @@ jobs:
           STATUS_SHA: ${{ env.DEPLOYED_SHA }}
           PREFLIGHT_OUTCOME: ${{ steps.preflight.outcome }}
           ZAP_OUTCOME: ${{ steps.zap.outcome }}
+          REPORT_AVAILABLE: ${{ steps.summary.outputs.report_available }}
           ZAP_HIGH: ${{ steps.summary.outputs.high }}
           ZAP_MEDIUM: ${{ steps.summary.outputs.medium }}
           ZAP_LOW: ${{ steps.summary.outputs.low }}
@@ -294,9 +313,12 @@ jobs:
           elif [[ "$ZAP_OUTCOME" == "cancelled" ]]; then
             STATE=error
             DESCRIPTION='ZAP Preview baseline cancelled'
+          elif [[ "$REPORT_AVAILABLE" != "true" ]]; then
+            STATE=error
+            DESCRIPTION='ZAP Preview scanner error: no report'
           else
             STATE=failure
-            DESCRIPTION="ZAP Preview blocked/error $counts"
+            DESCRIPTION="ZAP Preview blocked $counts"
           fi
 
           payload="$(jq -n \
