@@ -78,6 +78,15 @@ test("remediation PR explicitly dispatches authoritative CI", async () => {
   );
 });
 
+test("workflow-dispatched remediation CI still scans the remediation delta with Semgrep", async () => {
+  const ciWorkflow = await readFile(ciWorkflowUrl, "utf8");
+
+  assert.match(
+    ciWorkflow,
+    /\[\[ "\$base_sha" == "\$HEAD_SHA" \]\]; then\s+base_sha="\$\(git rev-parse "\$HEAD_SHA\^"\)"/s,
+  );
+});
+
 test("Quality watches future edits to the post-merge workflow", async () => {
   const ciWorkflow = await readFile(ciWorkflowUrl, "utf8");
   const matches = ciWorkflow.match(
