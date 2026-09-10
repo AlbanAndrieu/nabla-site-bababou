@@ -1,3 +1,10 @@
+# [0.14.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.13.2...0.14.0) (2026-09-10)
+
+
+### Features
+
+* **security:** harden ZAP SAST and production DAST ([#175](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/175)) ([a7e6797](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/a7e67977a505060d5c0b1f3002858753410f8765))
+
 ## [0.13.2](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.13.1...0.13.2) (2026-09-08)
 
 
