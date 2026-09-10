@@ -36,6 +36,7 @@ on:
       - ".github/workflows/vercel-preview.yml"
       - ".github/workflows/zap-preview.yml"
       - ".github/workflows/production-dast.yml"
+      - ".github/workflows/post-merge-quality-follow-up.yml"
       - ".zap/**"
   push:
     branches:
@@ -73,6 +74,7 @@ on:
       - ".github/workflows/vercel-preview.yml"
       - ".github/workflows/zap-preview.yml"
       - ".github/workflows/production-dast.yml"
+      - ".github/workflows/post-merge-quality-follow-up.yml"
       - ".zap/**"
   workflow_dispatch:
 
