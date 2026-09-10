@@ -1,126 +1,85 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("Navigation and Links Tests", () => {
-	test("should have working internal links", async ({ page }) => {
+	test("keeps homepage navigation and link semantics valid", async ({ page }) => {
 		await page.goto("/");
 
-		// Internal links: relative paths only (exclude fragments, mailto, tel, javascript, absolute URLs)
-		const internalLinks = page.locator(
-			'a[href]:not([href^="http"]):not([href^="//"]):not([href^="#"]):not([href^="mailto"]):not([href^="tel"]):not([href^="javascript:"])',
-		);
-		const linkCount = await internalLinks.count();
-		expect(linkCount).toBeGreaterThan(0);
+		await test.step("internal links have non-empty targets", async () => {
+			const internalLinks = page.locator(
+				'a[href]:not([href^="http"]):not([href^="//"]):not([href^="#"]):not([href^="mailto"]):not([href^="tel"]):not([href^="javascript:"])',
+			);
+			const linkCount = await internalLinks.count();
+			expect(linkCount).toBeGreaterThan(0);
 
-		const linksToCheck = Math.min(linkCount, 12);
-		for (let i = 0; i < linksToCheck; i++) {
-			const href = await internalLinks.nth(i).getAttribute("href");
-			expect(href).toBeTruthy();
-			expect(href?.trim().length).toBeGreaterThan(0);
-		}
-	});
-
-	test("should have descriptive link text", async ({ page }) => {
-		await page.goto("/");
-
-		// Get all links
-		const links = page.locator("a[href]");
-		const linkCount = await links.count();
-
-		// Check that links have text or aria-label
-		for (let i = 0; i < Math.min(linkCount, 10); i++) {
-			const link = links.nth(i);
-			const text = await link.textContent();
-			const ariaLabel = await link.getAttribute("aria-label");
-			const ariaLabelledby = await link.getAttribute("aria-labelledby");
-			const title = await link.getAttribute("title");
-
-			// Images inside links should have alt text
-			const img = link.locator("img");
-			const imgCount = await img.count();
-
-			if (imgCount > 0) {
-				const alt = await img.first().getAttribute("alt");
-				const hasAccessibleName =
-					text || ariaLabel || ariaLabelledby || title || alt;
-				expect(hasAccessibleName).toBeTruthy();
-			} else {
-				// Text links should have text content
-				const hasAccessibleName = text || ariaLabel || ariaLabelledby || title;
-				expect(hasAccessibleName).toBeTruthy();
+			for (let index = 0; index < Math.min(linkCount, 12); index += 1) {
+				const href = await internalLinks.nth(index).getAttribute("href");
+				expect(href?.trim().length ?? 0).toBeGreaterThan(0);
 			}
-		}
-	});
+		});
 
-	test("should have external links with proper attributes", async ({
-		page,
-	}) => {
-		await page.goto("/");
+		await test.step("sampled links expose an accessible name", async () => {
+			const links = page.locator("a[href]");
+			const linkCount = await links.count();
+			expect(linkCount).toBeGreaterThan(0);
 
-		// Get external links
-		const externalLinks = page.locator('a[href^="http"]');
-		const linkCount = await externalLinks.count();
+			for (let index = 0; index < Math.min(linkCount, 10); index += 1) {
+				const link = links.nth(index);
+				const text = (await link.textContent())?.trim();
+				const ariaLabel = (await link.getAttribute("aria-label"))?.trim();
+				const ariaLabelledby = (
+					await link.getAttribute("aria-labelledby")
+				)?.trim();
+				const title = (await link.getAttribute("title"))?.trim();
+				const imageAlt = (
+					await link.locator("img").first().getAttribute("alt")
+				)?.trim();
 
-		// Check first few external links
-		for (let i = 0; i < Math.min(linkCount, 5); i++) {
-			const link = externalLinks.nth(i);
-			const href = await link.getAttribute("href");
+				expect(
+					Boolean(text || ariaLabel || ariaLabelledby || title || imageAlt),
+				).toBeTruthy();
+			}
+		});
 
-			// External links should have href
-			expect(href).toBeTruthy();
+		await test.step("external blank-target links use a safe rel", async () => {
+			const externalLinks = page.locator('a[href^="http"]');
+			const linkCount = await externalLinks.count();
 
-			// Check if it has target="_blank" (optional but common)
-			const target = await link.getAttribute("target");
-			if (target === "_blank") {
-				// If target="_blank", should have rel attribute for security
-				const rel = await link.getAttribute("rel");
-				// rel should contain noopener or noreferrer for security
-				if (rel) {
-					const hasSecureRel =
-						rel.includes("noopener") || rel.includes("noreferrer");
-					expect(hasSecureRel).toBeTruthy();
+			for (let index = 0; index < Math.min(linkCount, 5); index += 1) {
+				const link = externalLinks.nth(index);
+				const href = await link.getAttribute("href");
+				expect(href?.trim().length ?? 0).toBeGreaterThan(0);
+
+				if ((await link.getAttribute("target")) === "_blank") {
+					const rel = (await link.getAttribute("rel")) ?? "";
+					expect(
+						rel.includes("noopener") || rel.includes("noreferrer"),
+					).toBeTruthy();
 				}
 			}
-		}
+		});
+
+		await test.step("homepage exposes navigation and footer links", async () => {
+			const nav = page.locator(
+				'nav, [role="navigation"], header nav, .nav, .navigation',
+			);
+			await expect(nav.first()).toBeVisible();
+			expect(await nav.count()).toBeGreaterThan(0);
+
+			const footer = page.locator('footer, [role="contentinfo"], .footer');
+			await expect(footer.first()).toBeVisible();
+			expect(await footer.locator("a[href]").count()).toBeGreaterThan(0);
+		});
 	});
 
-	test("should have navigation menu", async ({ page }) => {
+	test("keeps the primary content link interactable", async ({ page }) => {
 		await page.goto("/");
 
-		// Look for navigation elements
-		const nav = page.locator(
-			'nav, [role="navigation"], header nav, .nav, .navigation',
-		);
-		const navCount = await nav.count();
-
-		// Should have at least some navigation structure
-		expect(navCount).toBeGreaterThanOrEqual(0);
-	});
-
-	test("should have footer with links", async ({ page }) => {
-		await page.goto("/");
-
-		// Look for footer
-		const footer = page.locator('footer, [role="contentinfo"], .footer');
-		const footerCount = await footer.count();
-
-		// Footer is optional but common
-		expect(footerCount).toBeGreaterThanOrEqual(0);
-	});
-
-	test("should handle link hover states", async ({ page }) => {
-		await page.goto("/");
-
-		// Scope to primary main: index.html has two <main> blocks (#main-content, #second-content)
-		const inMain = page.locator("#main-content a[href]");
-		await expect(inMain.first()).toBeVisible();
-		const link = inMain.first();
+		const link = page.locator("#main-content a[href]").first();
 		await expect(link).toBeVisible();
 		await link.scrollIntoViewIfNeeded();
 
 		const width = page.viewportSize()?.width ?? 1024;
-		const isCoarsePointer = width < 768;
-
-		if (isCoarsePointer) {
+		if (width < 768) {
 			await link.focus();
 		} else {
 			await link.hover({ force: true });
