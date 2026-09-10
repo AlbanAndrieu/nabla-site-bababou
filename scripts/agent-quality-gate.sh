@@ -29,13 +29,14 @@ Usage:
 
 Modes:
   default      strict agent validation on a clean committed branch
-  --fix        apply/check pre-commit hooks on branch and working-tree changes
+  --fix        converge deterministic pre-commit fixes on branch/worktree changes
   --preflight  Git-only checks; safe to run before dependency installation
   --publish    strict agent validation for the pre-push publication hook
 
 Environment:
   QUALITY_BASE_REF                 override comparison base
   QUALITY_LOG_TAIL                 failure log lines to print (default: 80)
+  QUALITY_FIX_MAX_PASSES           max deterministic --fix passes (default: 5)
   QUALITY_ALLOW_LARGE_DELETION=1   acknowledge an intentional large truncation/deletion
 USAGE
 		exit 0
@@ -54,6 +55,7 @@ if (($# > 0)); then
 fi
 
 LOG_TAIL="${QUALITY_LOG_TAIL:-80}"
+FIX_MAX_PASSES="${QUALITY_FIX_MAX_PASSES:-5}"
 
 resolve_base_ref() {
 	if [[ -n "${QUALITY_BASE_REF:-}" ]]; then
@@ -133,6 +135,77 @@ collect_deleted_files() {
 mapfile -t CHANGED_FILES < <(collect_changed_files)
 mapfile -t DELETED_FILES < <(collect_deleted_files)
 
+snapshot_changed_files() {
+	{
+		for file in "${CHANGED_FILES[@]}"; do
+			if [[ -f "${file}" ]]; then
+				printf '%s\t%s\n' "${file}" "$(git hash-object -- "${file}")"
+			else
+				printf '%s\t<missing>\n' "${file}"
+			fi
+		done
+	} | git hash-object --stdin
+}
+
+run_fix_until_stable() {
+	command -v pre-commit >/dev/null 2>&1 || {
+		echo "❌ pre-commit is required; run 'mise run hooks' first" >&2
+		exit 1
+	}
+
+	if [[ ! "${FIX_MAX_PASSES}" =~ ^[1-9][0-9]*$ ]]; then
+		printf '❌ QUALITY_FIX_MAX_PASSES must be a positive integer, got: %s\n' "${FIX_MAX_PASSES}" >&2
+		exit 2
+	fi
+
+	if (("${#CHANGED_FILES[@]}" == 0)); then
+		echo "✅ no changed files require deterministic pre-commit fixes"
+		return 0
+	fi
+
+	local pass=1
+	local before
+	local after
+	local log
+	local rc
+
+	while ((pass <= FIX_MAX_PASSES)); do
+		before="$(snapshot_changed_files)"
+		log="$(mktemp)"
+		set +e
+		pre-commit run --hook-stage pre-commit \
+			--files "${CHANGED_FILES[@]}" --show-diff-on-failure >"${log}" 2>&1
+		rc=$?
+		set -e
+		after="$(snapshot_changed_files)"
+
+		if ((rc == 0)); then
+			rm -f "${log}"
+			printf '✅ deterministic pre-commit fix convergence (%d pass(es))\n' "${pass}"
+			return 0
+		fi
+
+		if [[ "${after}" != "${before}" ]]; then
+			printf '🔁 deterministic fix pass %d/%d changed files; retrying\n' \
+				"${pass}" "${FIX_MAX_PASSES}"
+			if ((pass == FIX_MAX_PASSES)); then
+				printf '❌ deterministic fixes did not converge after %d passes\n' "${FIX_MAX_PASSES}" >&2
+				tail -n "${LOG_TAIL}" "${log}" >&2 || true
+				rm -f "${log}"
+				return "${rc}"
+			fi
+			rm -f "${log}"
+			((pass += 1))
+			continue
+		fi
+
+		printf '❌ pre-commit failed on pass %d without changing files; manual correction is required\n' "${pass}" >&2
+		tail -n "${LOG_TAIL}" "${log}" >&2 || true
+		rm -f "${log}"
+		return "${rc}"
+	done
+}
+
 is_guarded_path() {
 	case "$1" in
 		package-lock.json | public/assets/* | public/checklist/* | public/d3.v3.min.js)
@@ -210,15 +283,7 @@ if [[ "${MODE}" == "preflight" ]]; then
 fi
 
 if [[ "${MODE}" == "fix" ]]; then
-	command -v pre-commit >/dev/null 2>&1 || {
-		echo "❌ pre-commit is required; run 'mise run hooks' first" >&2
-		exit 1
-	}
-	if (("${#CHANGED_FILES[@]}" > 0)); then
-		run_compact "apply/check pre-commit hooks on changed files" \
-			pre-commit run --hook-stage pre-commit \
-			--files "${CHANGED_FILES[@]}" --show-diff-on-failure
-	fi
+	run_fix_until_stable
 	echo "ℹ️  review git diff/status, commit deterministic changes, then run the strict agent gate"
 	exit 0
 fi
@@ -245,7 +310,12 @@ if [[ ! -d node_modules ]]; then
 fi
 
 run_compact "Next/npm lint, types, unit, privacy and production build gate" npm run check
-run_compact "canonical formatter/linter/security gate" bash scripts/quality-gate.sh
+if [[ "${MODE}" == "publish" ]]; then
+	run_compact "canonical formatter/linter/security publication gate" \
+		bash scripts/quality-gate.sh --publish
+else
+	run_compact "canonical formatter/linter/security gate" bash scripts/quality-gate.sh
+fi
 
 if [[ "${MODE}" == "publish" ]]; then
 	echo "✅ Agent publication gate passed; branch is clean and ready to push."

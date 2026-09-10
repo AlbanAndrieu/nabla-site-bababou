@@ -16,6 +16,7 @@
 - La homepage `/` et `public/index.html` sont des exceptions de publication contrôlées par le propriétaire : toute modification de pseudonymisation, caviardage ou disclosure sensible sur ces surfaces nécessite un accord explicite préalable.
 - Le privacy hardening global hors homepage est volontairement reporté à la dernière phase de cette roadmap ; les contrôles déjà en place restent actifs entre-temps.
 - `public/404.html` est une exception protégée : il reste la source visuelle revue de la 404 et doit être servi via le mécanisme `global-not-found`, sans réécriture React native non approuvée.
+- Un agent ne peut pas déclarer un travail terminé tant que chaque reliquat, dette découverte, warning différé ou validation non exécutée qui demande encore une action projet n'est pas représenté par un item non coché de cette roadmap ; un merge malgré un gate non bloquant en échec ne solde jamais ce reliquat.
 
 ## Ordre d'exécution prioritaire — décision du 2026-08-26
 
@@ -195,6 +196,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 
 - [x] Aligner package/lockfile et retirer les dépendances confirmées orphelines (#123).
   - [x] Retirer `stripe`, `@stripe/stripe-js` et `@stripe/react-stripe-js` devenus sans consommateur après la migration/suppression des surfaces checkout (#144).
+  - [ ] Auditer `tailwindcss` et `@tailwindcss/postcss` après le retrait de Bootstrap du runtime Next (#177) : confirmer l'absence d'utility Tailwind réellement consommée, mesurer l'impact CSS/build, puis retirer Tailwind/PostCSS uniquement si le reset et les styles nécessaires restent couverts par les styles projet sans régression Preview/Playwright.
 - [ ] Retirer progressivement les runtimes/scripts legacy après preuve d'absence de consommateurs.
   - [x] Retirer les scaffolds Next orphelins non publiés `app/components/Hero.tsx`, les deux anciens `LocaleSwitcher.tsx` et `i18n/navigation.ts` après preuve d'absence d'import ; `RouteHeader` reste l'unique owner du switcher FR/EN/DE/NO et `/` continue d'être réécrit vers `public/index.html` (#168).
   - [x] Conserver OpenCommit sur décision explicite du propriétaire : wrapper/config et scripts `oco` / `opencommit` restaurés, dev-only et hors runtime (#150).
@@ -208,6 +210,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] Retirer les routes/catalogues fantômes confirmés, `lib/htmlRoutes.config.mjs` et l'ancien générateur FR après preuve d'absence de consommateur ; conserver les CTA homepage orphelins comme dette explicite jusqu'au cutover contrôlé (#142).
 - [x] Réduire les téléchargements et jobs CI inutiles.
   - [x] Ajouter un gate agent-first inspiré de `nabla-compose#132` : préflight Git sans dépendances avant `npm ci`, garde de fraîcheur/troncature/bit exécutable, workflow `--fix` → check → `--publish`, sortie compacte et pre-push dédié, sans dupliquer le gate Nabla canonique.
+  - [x] Porter dans #177 le Follow-up post-merge de `nabla-site-alban#173` : classifier les échecs, rejouer automatiquement les fixes déterministes jusqu'à convergence, arrêter les échecs sans mutation, exposer `quality:agent:*`, réaligner le gate canonique `--publish` et rendre obligatoire l'enregistrement des reliquats dans cette roadmap avant toute déclaration de fin de travail.
   - [x] Sur les PR en draft, limiter Quality au préflight Git sans installer Node/npm ni construire Next ; `ready_for_review` relance automatiquement le gate complet, afin que l'itération agent ne consomme une build qu'au checkpoint de publication.
   - [x] Snyk ne prépare plus/pull plus son image Docker lorsque `SNYK_TOKEN` est absent.
   - [x] Remplacer le cache npm implicite de `setup-node` par `actions/cache` sur `~/.npm` dans les workflows qui installent le projet ; pinner npm depuis `$RUNNER_TEMP` dans tous les workflows GitHub afin que le npm embarqué ne lise pas `.npmrc` avant npm 11.17, tout en conservant `strict-allow-scripts` et le cache.
@@ -232,7 +235,8 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] Porter les améliorations sécurité de `nabla-site-alban#168/#169` dans #175 : Semgrep changed-source avant le build avec SARIF + artefact, ZAP Preview rejouable manuellement, fallback OIDC Trusted Source, statut enrichi avec compteurs H/M/L/I, et DAST production indépendant quotidien/post-déploiement.
   - [x] Publier un statut `Production Post-deploy Smoke` depuis le smoke léger existant afin de préparer le futur gate de santé de la base `master` sans dupliquer les probes.
   - [ ] Observer au moins une baseline `Production Post-deploy Smoke` et une baseline `Production DAST` vertes sur un `master` post-#175 avant de rendre ces deux statuts obligatoires au début de chaque PR, comme dans `nabla-site-alban#169`.
-  - [ ] Collecter la première baseline ZAP effectivement scannée sur une Preview Vercel réelle avec la définition post-#175, revoir les alertes et ajuster uniquement les règles dont la sévérité observée le justifie.
+  - [x] Collecter la première baseline ZAP effectivement scannée sur une Preview Vercel réelle avec la définition post-#175 : #177 a produit un rapport réel `H0 M4 L6 I5`; les deux alertes bloquantes `10020`/`10021` ont été corrigées sans affaiblir la policy et le nouveau scan a `FAIL-NEW: 0`.
+    - [ ] Trier puis réduire les warnings ZAP restant réellement applicables (notamment CSP, SRI, cookies, cache et cross-origin) sans casser le corpus hybride ni le fallback Google Translate ; toute promotion WARN→FAIL doit être justifiée par la baseline et validée sur Preview exact-SHA.
   - [x] Réutiliser l'événement Vercel production jusque-là `skipped` pour un smoke `curl` ciblé et peu coûteux du SHA déployé, sans télécharger Chromium ni réexécuter la suite Playwright complète.
   - [x] Réconcilier ce smoke avec le rewrite homepage hybride protégé : sous Protection Bypass, Vercel peut matérialiser le rewrite `/ → /index.html` en `307`; accepter seulement cette destination attendue et conserver les redirects `vercel.com/login|sso-api` comme échecs (#171).
   - [x] Le workflow séparé de seed Chromium devient inutile et est retiré après validation du cache détenu par `repository_dispatch` (#122).
@@ -308,6 +312,7 @@ Cette phase est volontairement placée après migration, UI/UX, SEO, nettoyage e
   - [x] Retirer `scripts/run-install.sh` et `scripts/run-test.sh` après audit : aucun consommateur externe, le premier réinstallait des packages Font Awesome hors manifeste et le second dupliquait des sous-ensembles Playwright déjà couverts par les scripts npm canoniques (#170).
   - [x] Conserver `public/google-translate-config.js` comme shim de compatibilité qui délègue vers `site-google-translate.js`; ne pas réintroduire de loader Google direct ni supprimer le fallback tant qu'il existe du contenu/langues sans traduction i18n native paritaire (#171).
   - [x] Dédupliquer le runtime traduction entre `site-widgets.js` et `site-google-translate.js`, avec ownership runtime unique, shim de compatibilité conservé et contrat garantissant le fallback Google Translate sur les consommateurs legacy sans parité i18n (#171).
+  - [ ] Auditer puis retirer Tailwind/PostCSS du runtime Next uniquement si l'absence de consommateurs et l'absence de régression CSS sont prouvées sur Preview exact-SHA (#177).
   - [ ] Retrait des runtimes/scripts/assets legacy restants après preuve d'absence de consommateurs externes.
 - [ ] **Migration 8 / P3** — extraction progressive de sections homepage en conservant les disclosures approuvées, sans changement sensible non validé.
 - [ ] **Migration finale / P6** — confidentialité hors homepage : pseudonymisation/caviardage du corpus restant et extension complète du privacy gate.
@@ -316,5 +321,6 @@ Cette phase est volontairement placée après migration, UI/UX, SEO, nettoyage e
 
 - Chaque nouvelle dette de migration/refactoring doit être ajoutée ici avec priorité et, si possible, numéro de PR/issue.
 - Une PR coche uniquement les éléments réellement vérifiés par CI/Preview/production.
+- Avant de déclarer un travail terminé, l'agent doit vérifier que tout reliquat nécessitant encore une action projet est représenté par un item non coché ici ; une dette seulement mentionnée en chat, dans un log CI, un artefact éphémère ou une description de PR n'est pas considérée comme enregistrée.
 - Ne jamais déplacer des données sensibles dans ce fichier pour documenter un défaut : décrire la catégorie de donnée, pas sa valeur.
 - Supprimer les TODO obsolètes du code lorsqu'ils sont représentés ici ; garder dans le code uniquement les TODO locaux dont le contexte est nécessaire à l'implémentation.
