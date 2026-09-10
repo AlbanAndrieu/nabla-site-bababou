@@ -7,6 +7,7 @@ const skillUrl = new URL(
   import.meta.url,
 );
 const gateUrl = new URL("../scripts/agent-quality-gate.sh", import.meta.url);
+const canonicalGateUrl = new URL("../scripts/quality-gate.sh", import.meta.url);
 const packageUrl = new URL("../package.json", import.meta.url);
 
 test("quality follow-up skill makes unfinished work a roadmap obligation", async () => {
@@ -43,6 +44,15 @@ test("agent fix mode converges formatter passes and publish mode uses publicatio
   assert.match(gate, /changed files; retrying/);
   assert.match(gate, /failed on pass %d without changing files/);
   assert.match(gate, /bash scripts\/quality-gate\.sh --publish/);
+});
+
+test("canonical quality gate keeps publication mode aligned with Site Alban", async () => {
+  const canonicalGate = await readFile(canonicalGateUrl, "utf8");
+
+  assert.match(canonicalGate, /PUBLISH=false/);
+  assert.match(canonicalGate, /"\$\{1:-\}" == "--publish"/);
+  assert.match(canonicalGate, /Working tree is not clean enough to publish/);
+  assert.match(canonicalGate, /Publication quality gate passed/);
 });
 
 test("Bababou exposes the same agent quality command family as Site Alban", async () => {
