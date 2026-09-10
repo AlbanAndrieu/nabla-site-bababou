@@ -1,3 +1,10 @@
+## [0.14.1](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.14.0...0.14.1) (2026-09-10)
+
+
+### Performance Improvements
+
+* **next:** remove Bootstrap from native runtime ([#177](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/177)) ([dedf4bb](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/dedf4bb75ff83ba98884e82a93d151961477fa8d))
+
 # [0.14.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.13.2...0.14.0) (2026-09-10)
 
 
