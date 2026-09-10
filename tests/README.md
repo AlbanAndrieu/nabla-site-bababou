@@ -8,7 +8,6 @@ This directory contains end-to-end tests using [Playwright](https://playwright.d
 - `404.spec.ts` - Tests for the 404 error page
 - `theme-toggle.spec.ts` - Tests for dark/light theme switching
 - `google-translate.spec.ts` - Tests for Google Translate widget functionality
-
 - `accessibility.spec.ts` - Tests for accessibility features (WCAG compliance, ARIA, keyboard navigation, etc.)
 - `responsive.spec.ts` - Tests for responsive design across different viewports
 - `navigation.spec.ts` - Tests for links, navigation, and routing
@@ -43,10 +42,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Feature Name', () => {
   test('should do something specific', async ({ page }) => {
-    // Navigate to page
     await page.goto('/');
-
-    // Perform actions and assertions
     await expect(page.locator('selector')).toBeVisible();
   });
 });
@@ -54,14 +50,14 @@ test.describe('Feature Name', () => {
 
 ### Best Practices
 
-1. **Use descriptive test names** - Describe what the test validates, make it clear what each test is checking
-2. **Test user behavior** - Focus on what users see and interact with the site, not implementation details
-3. **Keep tests independent** - Each test should be able to run on its own
-4. **Use appropriate selectors** - Prefer accessible selectors (role, label) over CSS
-5. **Wait for elements** - Playwright auto-waits, but use `waitForLoadState` when needed
-6. **Use page objects for complex pages** - Extract common page interactions into reusable functions
-7. **Test responsive design** - Tests run on multiple viewports (desktop and mobile)
-8. **Check accessibility** - Ensure all features are keyboard-accessible and screen-reader friendly, include ARIA labels, keyboard navigation, etc.
+1. **Use descriptive test names** - Describe the user-visible contract being validated.
+2. **Test user behavior** - Focus on what users see and interact with, not implementation details.
+3. **Keep tests independent** - Each test must be able to run on its own.
+4. **Prefer accessible selectors** - Use roles, labels and stable IDs before CSS implementation details.
+5. **Use event-driven waits** - Prefer Playwright locator assertions and auto-waiting. Avoid fixed sleeps and avoid `networkidle` for pages that intentionally load third-party resources.
+6. **Use page objects for complex pages** - Extract common page interactions into reusable helpers when it improves clarity.
+7. **Test responsive design** - Keep mobile-only assertions explicitly scoped so desktop runs do not perform unnecessary navigation.
+8. **Check accessibility** - Ensure features remain keyboard-accessible and screen-reader friendly.
 
 ### Common Patterns
 
@@ -77,24 +73,20 @@ await expect(page.locator('h1')).toContainText(/Expected Text/i);
 
 #### Testing attributes
 ```typescript
-const alt = await page.locator('img').getAttribute('alt');
-expect(alt).toBeTruthy();
+await expect(page.locator('img')).toHaveAttribute('alt', /.+/);
 ```
 
 #### Testing for meta tags (SEO)
 ```typescript
-const description = await page.locator('meta[name="description"]').getAttribute('content');
-expect(description).toBeTruthy();
+await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /.+/);
 ```
 
 #### Testing responsive behavior
 ```typescript
 test('should work on mobile', async ({ page, viewport }) => {
+  test.skip(!viewport || viewport.width >= 768, 'Mobile-only coverage');
   await page.goto('/');
-
-  if (viewport && viewport.width < 768) {
-    // Mobile-specific assertions
-  }
+  // Mobile-specific assertions
 });
 ```
 
@@ -102,9 +94,7 @@ test('should work on mobile', async ({ page, viewport }) => {
 ```typescript
 const button = page.locator('.theme-toggle');
 await button.click();
-await page.waitForTimeout(300); // Allow animation
-const theme = await page.locator('html').getAttribute('data-theme');
-expect(theme).toBe('dark');
+await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 ```
 
 ## Configuration
@@ -148,14 +138,15 @@ Opens an interactive UI to run and debug tests with time-travel debugging.
 
 ## CI/CD Integration
 
-Tests run automatically on GitHub Actions for:
-- Pushes to main branches
-- Pull requests to main branches
-- Manual workflow dispatch
+The dedicated Playwright workflow runs against an already-built Vercel deployment:
+- automatically on `vercel.deployment.success` repository-dispatch events;
+- manually through `workflow_dispatch` with an explicit deployment URL;
+- Preview runs target the exact deployed SHA and use Vercel Automation Bypass or the trusted OIDC fallback;
+- production deployments run the lightweight production route smoke instead of reinstalling and launching the full browser suite.
 
-See `.github/workflows/playwright.yml` for the workflow configuration.
+Pull-request Quality has its own project/unit/build checks before the automatic Vercel Preview checkpoint is published. See `.github/workflows/playwright.yml` and `.github/workflows/ci.yml` for the exact orchestration.
 
-Test reports and results are uploaded as artifacts and retained for 30 days.
+Playwright traces/screenshots are uploaded on failure with short retention (currently 3 days) to reduce artifact storage cost.
 
 ## Troubleshooting
 
@@ -164,14 +155,15 @@ Test reports and results are uploaded as artifacts and retained for 30 days.
 - Check that the Next.js dev server is reachable on `http://localhost:3000`
 
 ### Flaky tests
-- Increase wait times for slow animations
-- Use `waitForLoadState('networkidle')` for pages with async loading
-- Add retries to the test configuration
+- Inspect the trace and identify the actual readiness condition before increasing timeouts.
+- Replace fixed sleeps and broad `networkidle` waits with locator assertions, URL assertions, response waits, or another explicit application signal.
+- Keep retries as a diagnostic safety net, not as a substitute for deterministic synchronization.
 
 ### Element not found
 - Use Playwright Inspector to find correct selectors
-- Check if element is created dynamically (wait for it)
-- Verify element exists on the page you're testing
+- Prefer an accessible locator or stable ID
+- If an element is created dynamically, assert the concrete state that proves it is ready
+- Verify the expected route/deployment SHA before debugging selectors
 
 ## Resources
 
