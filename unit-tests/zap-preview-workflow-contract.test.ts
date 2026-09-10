@@ -30,6 +30,26 @@ test("ZAP scans only exact Vercel Preview checkpoint deployments", async () => {
   assert.doesNotMatch(workflow, /localhost|127\.0\.0\.1/);
 });
 
+test("ZAP checks out the exact deployed policy before scanning", async () => {
+  const workflow = await readFile(workflowUrl, "utf8");
+
+  const verify = workflow.indexOf("Verify Preview checkpoint exact SHA");
+  const checkout = workflow.indexOf("Checkout exact deployed ZAP policy");
+  const scan = workflow.indexOf("Run OWASP ZAP baseline against Vercel Preview");
+
+  assert.ok(verify >= 0);
+  assert.ok(checkout > verify);
+  assert.ok(scan > checkout);
+  assert.match(
+    workflow,
+    /actions\/checkout@d23441a48e516b6c34aea4fa41551a30e30af803/,
+  );
+  assert.match(workflow, /ref: \$\{\{ env\.DEPLOYED_SHA \}\}/);
+  assert.match(workflow, /persist-credentials: false/);
+  assert.match(workflow, /sparse-checkout:[\s\S]*\.zap\/rules\.tsv/);
+  assert.match(workflow, /sparse-checkout-cone-mode: false/);
+});
+
 test("ZAP negotiates Vercel Automation Bypass or OIDC and scopes the selected header to the scanner", async () => {
   const workflow = await readFile(workflowUrl, "utf8");
 
@@ -65,13 +85,16 @@ test("ZAP baseline enforces explicit policy and publishes actionable exact-SHA d
   assert.match(workflow, /report_json\.json/);
   assert.match(workflow, /Top alert types/);
   assert.match(workflow, /id: summary/);
+  assert.match(workflow, /report_available=\$report_available/);
   assert.match(workflow, /high=\$high/);
   assert.match(workflow, /medium=\$medium/);
   assert.match(workflow, /Enforce ZAP Preview policy/);
-  assert.match(workflow, /blocking finding or scanner failure/);
+  assert.match(workflow, /scanner\/configuration error, not a security finding/);
+  assert.match(workflow, /blocking finding/);
   assert.match(workflow, /context 'OWASP ZAP Preview'/);
   assert.match(workflow, /statuses: write/);
   assert.match(workflow, /ZAP Preview access preflight failed/);
   assert.match(workflow, /ZAP Preview passed \$counts/);
-  assert.match(workflow, /ZAP Preview blocked\/error \$counts/);
+  assert.match(workflow, /ZAP Preview scanner error: no report/);
+  assert.match(workflow, /ZAP Preview blocked \$counts/);
 });

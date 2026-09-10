@@ -4,6 +4,7 @@ import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import SkipToMainContent from "@/components/SkipToMainContent";
 import TopAnchor from "@/components/TopAnchor";
+import ActionLink from "@/components/ui/ActionLink";
 import Container from "@/components/ui/Container";
 import layout from "@/components/ui/ContentLayout.module.css";
 import surface from "@/components/ui/Surface.module.css";
@@ -40,7 +41,7 @@ export default async function TestPage({
     <div className="site-content-page page-dark">
       <TopAnchor />
       <SkipToMainContent />
-      <main id="main-content" role="main" className={layout.main}>
+      <main id="main-content" className={layout.main}>
         <Container>
           <header className={layout.header}>
             <h1 className={layout.title}>{t("title")}</h1>
@@ -55,7 +56,9 @@ export default async function TestPage({
               id="arf-viz-body"
               className={`${surface.card} ${surface.muted}`}
             >
-              <div id="arf-viz-header">{t("visualizationPending")}</div>
+              <p id="arf-viz-header" className={surface.text}>
+                {t("visualizationPending")}
+              </p>
             </div>
           </section>
 
@@ -66,11 +69,13 @@ export default async function TestPage({
             <h2 id="test-contact-heading" className={layout.sectionTitle}>
               {t("contactTitle")}
             </h2>
-            <p>
-              <a href={canonicalPagePath("contact", locale)}>
-                {t("contactLink")}
-              </a>
-            </p>
+            <ActionLink
+              href={canonicalPagePath("contact", locale)}
+              size="compact"
+              variant="outline"
+            >
+              {t("contactLink")}
+            </ActionLink>
           </section>
         </Container>
       </main>

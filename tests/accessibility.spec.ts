@@ -1,157 +1,138 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("Accessibility Tests", () => {
-	test("should have valid HTML structure", async ({ page }) => {
+	test("exposes accessible document semantics and landmarks", async ({ page }) => {
 		await page.goto("/");
 
-		// Check for doctype
-		const doctype = await page.evaluate(() => {
-			return document.doctype !== null;
+		await test.step("has valid document metadata", async () => {
+			const hasDoctype = await page.evaluate(() => document.doctype !== null);
+			expect(hasDoctype).toBeTruthy();
+			await expect(page.locator("html")).toHaveAttribute("lang", /.+/);
+			await expect(page.locator('meta[name="viewport"]')).toHaveAttribute(
+				"content",
+				/width=device-width/,
+			);
 		});
-		expect(doctype).toBeTruthy();
 
-		// Check for html lang attribute
-		const htmlLang = await page.locator("html").getAttribute("lang");
-		expect(htmlLang).toBeTruthy();
-	});
-
-	test("should have only one h1 tag", async ({ page }) => {
-		await page.goto("/");
-
-		// Count h1 in the main document only (not iframe documents). Exclude rare injected UI.
-		const h1Count = await page.evaluate(() => {
-			return Array.from(document.querySelectorAll("h1")).filter((h) => {
-				if (h.getRootNode() !== document) return false;
-				if (
-					h.closest(
-						"#google_translate_element, .google-translate-widget, .goog-te-banner-frame, [class*='goog-te']",
+		await test.step("keeps a coherent heading structure", async () => {
+			const h1Count = await page.evaluate(() => {
+				return Array.from(document.querySelectorAll("h1")).filter((h) => {
+					if (h.getRootNode() !== document) return false;
+					if (
+						h.closest(
+							"#google_translate_element, .google-translate-widget, .goog-te-banner-frame, [class*='goog-te']",
+						)
 					)
-				)
-					return false;
-				return true;
-			}).length;
-		});
-		expect(h1Count).toBeLessThanOrEqual(1);
-	});
+						return false;
+					return true;
+				}).length;
+			});
+			expect(h1Count).toBeLessThanOrEqual(1);
 
-	test("should have proper heading hierarchy", async ({ page }) => {
-		await page.goto("/");
-
-		// Get all headings
-		const headings = await page.locator("h1, h2, h3, h4, h5, h6").all();
-
-		if (headings.length > 0) {
+			const headings = await page.locator("h1, h2, h3, h4, h5, h6").all();
+			expect(headings.length).toBeGreaterThan(0);
 			const headingLevels = await Promise.all(
-				headings.map(async (h) => {
-					const tagName = await h.evaluate((el) => el.tagName.toLowerCase());
+				headings.map(async (heading) => {
+					const tagName = await heading.evaluate((el) => el.tagName.toLowerCase());
 					return Number.parseInt(tagName.replace("h", ""), 10);
 				}),
 			);
 
-			// Check that we don't skip heading levels
 			for (let i = 1; i < headingLevels.length; i++) {
 				const diff = headingLevels[i] - headingLevels[i - 1];
 				expect(diff).toBeLessThanOrEqual(1);
 			}
-		}
-	});
+		});
 
-	test("should have alt text on all images", async ({ page }) => {
-		await page.goto("/");
+		await test.step("labels site-owned images and form controls", async () => {
+			const images = await page
+				.locator("main img, header img, .container img, body > .container img")
+				.all();
 
-		// Only check images in main content (exclude third-party widgets e.g. Google Translate)
-		const images = await page
-			.locator("main img, header img, .container img, body > .container img")
-			.all();
+			for (const img of images) {
+				const alt = await img.getAttribute("alt");
+				const ariaHidden = await img.getAttribute("aria-hidden");
+				expect(alt !== null || ariaHidden === "true").toBeTruthy();
+			}
 
-		for (const img of images) {
-			const alt = await img.getAttribute("alt");
-			const ariaHidden = await img.getAttribute("aria-hidden");
+			const violations = await page.evaluate(() => {
+				const thirdPartySelector =
+					"#google_translate_element, [id*='goog-te'], [id*='goog-gt'], [id*='google_translate'], [class*='goog-te'], [class*='goog-gt'], [class*='grecaptcha'], .cf-turnstile, [data-sitekey], .google-translate-widget, [role='combobox'], [class*='skiptranslate']";
 
-			// Image should either have alt text or be aria-hidden
-			expect(alt !== null || ariaHidden === "true").toBeTruthy();
-		}
-	});
-
-	test("should have accessible form labels", async ({ page }) => {
-		await page.goto("/");
-
-		// Check only inputs in main/header/form, excluding third-party widgets. Use the DOM API for
-		// accessible names (labels property, aria-*) so wrapped <label><input></label> is valid.
-		const violations = await page.evaluate(() => {
-			const thirdPartySelector =
-				"#google_translate_element, [id*='goog-te'], [id*='goog-gt'], [id*='google_translate'], [class*='goog-te'], [class*='goog-gt'], [class*='grecaptcha'], .cf-turnstile, [data-sitekey], .google-translate-widget, [role='combobox'], [class*='skiptranslate']";
-
-			function hasAccessibleName(el: HTMLInputElement): boolean {
-				if (el.getAttribute("aria-hidden") === "true") return true;
-				const al = el.getAttribute("aria-label")?.trim();
-				if (al) return true;
-				const title = el.getAttribute("title")?.trim();
-				if (title) return true;
-				if (el.type === "image" && el.getAttribute("alt")?.trim()) return true;
-				const lb = el.getAttribute("aria-labelledby");
-				if (lb) {
-					for (const id of lb.split(/\s+/).filter(Boolean)) {
-						const ref = document.getElementById(id);
-						if (ref?.textContent?.trim()) return true;
+				function hasAccessibleName(el: HTMLInputElement): boolean {
+					if (el.getAttribute("aria-hidden") === "true") return true;
+					const ariaLabel = el.getAttribute("aria-label")?.trim();
+					if (ariaLabel) return true;
+					const title = el.getAttribute("title")?.trim();
+					if (title) return true;
+					if (el.type === "image" && el.getAttribute("alt")?.trim()) return true;
+					const labelledBy = el.getAttribute("aria-labelledby");
+					if (labelledBy) {
+						for (const id of labelledBy.split(/\s+/).filter(Boolean)) {
+							const ref = document.getElementById(id);
+							if (ref?.textContent?.trim()) return true;
+						}
 					}
+					if (el.labels && el.labels.length > 0) return true;
+					if (el.id) {
+						const label = document.querySelector(
+							`label[for="${CSS.escape(el.id)}"]`,
+						);
+						if (label?.textContent?.trim()) return true;
+					}
+					return false;
 				}
-				if (el.labels && el.labels.length > 0) return true;
-				const id = el.id;
-				if (id) {
-					const lab = document.querySelector(`label[for="${CSS.escape(id)}"]`);
-					if (lab?.textContent?.trim()) return true;
+
+				function looksLikeThirdPartyWidget(el: HTMLInputElement): boolean {
+					if (el.closest(thirdPartySelector)) return true;
+					const name = (el.getAttribute("name") || "").toLowerCase();
+					if (/turnstile|cf-turnstile|g-recaptcha|__hstc|__utm/.test(name)) {
+						return true;
+					}
+					const id = (el.id || "").toLowerCase();
+					return /turnstile|recaptcha|goog-te|goog-gt|gtm-|vwo_|mixpanel/.test(
+						id,
+					);
 				}
-				return false;
-			}
 
-			function looksLikeThirdPartyWidget(el: HTMLInputElement): boolean {
-				if (el.closest(thirdPartySelector)) return true;
-				const name = (el.getAttribute("name") || "").toLowerCase();
-				if (/turnstile|cf-turnstile|g-recaptcha|__hstc|__utm/.test(name))
-					return true;
-				const pid = (el.id || "").toLowerCase();
-				if (/turnstile|recaptcha|goog-te|goog-gt|gtm-|vwo_|mixpanel/.test(pid))
-					return true;
-				return false;
-			}
-
-			const roots = document.querySelectorAll("main, header, form");
-			const bad: string[] = [];
-			roots.forEach((root) => {
-				root.querySelectorAll('input:not([type="hidden"])').forEach((node) => {
-					const el = node as HTMLInputElement;
-					if (el.getRootNode() !== document) return;
-					if (looksLikeThirdPartyWidget(el)) return;
-					if (!hasAccessibleName(el)) bad.push(el.outerHTML.slice(0, 120));
+				const roots = document.querySelectorAll("main, header, form");
+				const bad: string[] = [];
+				roots.forEach((root) => {
+					root.querySelectorAll('input:not([type="hidden"])').forEach((node) => {
+						const el = node as HTMLInputElement;
+						if (el.getRootNode() !== document) return;
+						if (looksLikeThirdPartyWidget(el)) return;
+						if (!hasAccessibleName(el)) bad.push(el.outerHTML.slice(0, 120));
+					});
 				});
+				return bad;
 			});
-			return bad;
+
+			expect(violations).toEqual([]);
 		});
 
-		expect(violations).toEqual([]);
-	});
+		await test.step("keeps readable theme tokens and structural landmarks", async () => {
+			const { backgroundColor, color } = await page.evaluate(() => {
+				const styles = window.getComputedStyle(document.body);
+				return {
+					backgroundColor: styles.backgroundColor,
+					color: styles.color,
+				};
+			});
 
-	test("should have sufficient color contrast", async ({ page }) => {
-		await page.goto("/");
-
-		// This is a basic check - for thorough contrast checking, use axe-core
-		const { backgroundColor, color } = await page.evaluate(() => {
-			const s = window.getComputedStyle(document.body);
-			return { backgroundColor: s.backgroundColor, color: s.color };
+			expect(backgroundColor).toBeTruthy();
+			expect(color).toBeTruthy();
+			expect(backgroundColor).not.toBe("rgba(0, 0, 0, 0)");
+			expect(backgroundColor).not.toBe("transparent");
+			await expect(page.locator('main, [role="main"]')).not.toHaveCount(0);
+			await expect(page.locator("header")).not.toHaveCount(0);
 		});
-
-		// Both must be set and non-transparent (non-empty and not fully transparent)
-		expect(backgroundColor).toBeTruthy();
-		expect(color).toBeTruthy();
-		expect(backgroundColor).not.toBe("rgba(0, 0, 0, 0)");
-		expect(backgroundColor).not.toBe("transparent");
 	});
 
-	test("should be keyboard navigable", async ({ page }) => {
+	test("supports keyboard navigation and explicit focus", async ({ page }) => {
 		await page.goto("/");
 
-		const interactive = [
+		const interactiveTags = [
 			"a",
 			"button",
 			"input",
@@ -159,15 +140,10 @@ test.describe("Accessibility Tests", () => {
 			"textarea",
 			"iframe",
 		];
+		const focusableSelector =
+			'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled])';
 
-		const hasFocusable = await page.evaluate(() => {
-			return (
-				document.querySelector(
-					'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled])',
-				) !== null
-			);
-		});
-		expect(hasFocusable).toBeTruthy();
+		await expect(page.locator(focusableSelector).first()).toBeAttached();
 
 		let tag: string | null = null;
 		for (let i = 0; i < 40; i++) {
@@ -175,65 +151,26 @@ test.describe("Accessibility Tests", () => {
 			tag = await page.evaluate(
 				() => document.activeElement?.tagName?.toLowerCase() ?? null,
 			);
-			if (tag && interactive.includes(tag)) break;
+			if (tag && interactiveTags.includes(tag)) break;
 		}
 
-		// WebKit / some configs skip links on Tab; fall back to programmatic focus
-		if (!tag || !interactive.includes(tag)) {
-			const first = page
-				.locator(
-					'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled])',
-				)
-				.first();
-			await first.focus();
+		if (!tag || !interactiveTags.includes(tag)) {
+			await page.locator(focusableSelector).first().focus();
 			tag = await page.evaluate(
 				() => document.activeElement?.tagName?.toLowerCase() ?? null,
 			);
 		}
 
 		expect(tag).toBeTruthy();
-		expect(interactive).toContain(tag);
-	});
+		expect(interactiveTags).toContain(tag);
 
-	test("should have proper viewport meta tag", async ({ page }) => {
-		await page.goto("/");
-
-		const viewportMeta = await page
-			.locator('meta[name="viewport"]')
-			.getAttribute("content");
-		expect(viewportMeta).toBeTruthy();
-		expect(viewportMeta).toContain("width=device-width");
-	});
-
-	test("should have landmark main", async ({ page }) => {
-		await page.goto("/");
-
-		// Check for main landmark
-		const main = await page.locator('main, [role="main"]').count();
-		expect(main).toBeGreaterThan(0);
-	});
-
-	test("should have landmark header", async ({ page }) => {
-		await page.goto("/");
-
-		// Header landmark (homepage has no persistent top nav)
-		const header = await page.locator("header").count();
-		expect(header).toBeGreaterThan(0);
-	});
-
-	test("should have focus indicators", async ({ page }) => {
-		await page.goto("/");
-
-		// Skip link / first `a` in DOM is often not focusable the same way in WebKit; use a visible control
 		const focusTarget = page.locator(
 			'#theme-toggle-root .theme-toggle__btn[data-theme="light"]',
 		);
 		await expect(focusTarget).toBeVisible();
 		await focusTarget.focus();
-
-		const hasFocus = await focusTarget.evaluate((el) => {
-			return document.activeElement === el;
-		});
-		expect(hasFocus).toBeTruthy();
+		expect(
+			await focusTarget.evaluate((el) => document.activeElement === el),
+		).toBeTruthy();
 	});
 });
