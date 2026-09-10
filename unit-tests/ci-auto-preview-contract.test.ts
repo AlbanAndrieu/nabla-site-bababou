@@ -17,7 +17,7 @@ test("Quality automatically publishes exact PR Preview checkpoints after success
   );
   assert.match(workflow, /contents: write/);
   assert.match(workflow, /pull-requests: read/);
-  assert.match(workflow, /statuses: read/);
+  assert.match(workflow, /statuses: write/);
   assert.match(workflow, /ref: \$\{\{ steps\.preview\.outputs\.sha \}\}/);
   assert.match(
     workflow,
@@ -27,21 +27,16 @@ test("Quality automatically publishes exact PR Preview checkpoints after success
   assert.match(workflow, /zapBootstrap/);
 });
 
-test("automatic Preview policy preserves maintenance skips but forces security workflows", async () => {
+test("automatic Preview policy skips repository-security maintenance without hiding deploy-relevant app changes", async () => {
   const workflow = await readFile(ciUrl, "utf8");
-
-  for (const path of [
-    ".github/workflows/ci.yml",
-    ".github/workflows/playwright.yml",
-    ".github/workflows/vercel-preview.yml",
-    ".github/workflows/zap-preview.yml",
-  ]) {
-    assert.ok(workflow.includes(`'${path}'`), path);
-  }
 
   assert.match(workflow, /filename\.startsWith\('docs\/'\)/);
   assert.match(workflow, /filename\.startsWith\('unit-tests\/'\)/);
+  assert.match(workflow, /filename\.startsWith\('\.github\/'\)/);
+  assert.match(workflow, /filename\.startsWith\('\.zap\/'\)/);
+  assert.doesNotMatch(workflow, /forceCheckpoint/);
   assert.match(workflow, /No deploy-relevant files/);
+  assert.match(workflow, /deployRelevant/);
 });
 
 test("Preview security gate waits for both Playwright and OWASP ZAP exact-SHA statuses", async () => {

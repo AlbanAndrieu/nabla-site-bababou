@@ -11,6 +11,10 @@ test("ZAP scans only exact Vercel Preview checkpoint deployments", async () => {
   const workflow = await readFile(workflowUrl, "utf8");
 
   assert.match(workflow, /repository_dispatch:/);
+  assert.match(workflow, /workflow_dispatch:/);
+  assert.match(workflow, /base_url:/);
+  assert.match(workflow, /git_sha:/);
+  assert.match(workflow, /preview_ref:/);
   assert.match(workflow, /vercel\.deployment\.success/);
   assert.match(workflow, /vercel-preview-pr-/);
   assert.match(workflow, /environment != 'production'/);
@@ -26,13 +30,16 @@ test("ZAP scans only exact Vercel Preview checkpoint deployments", async () => {
   assert.doesNotMatch(workflow, /localhost|127\.0\.0\.1/);
 });
 
-test("ZAP uses the Vercel automation bypass inside the scanner container", async () => {
+test("ZAP negotiates Vercel Automation Bypass or OIDC and scopes the selected header to the scanner", async () => {
   const workflow = await readFile(workflowUrl, "utf8");
 
-  assert.match(workflow, /ZAP_AUTH_HEADER: x-vercel-protection-bypass/);
+  assert.match(workflow, /id-token: write/);
+  assert.match(workflow, /core\.getIDToken/);
+  assert.match(workflow, /x-vercel-protection-bypass/);
+  assert.match(workflow, /x-vercel-trusted-oidc-idp-token/);
   assert.match(
     workflow,
-    /ZAP_AUTH_HEADER_VALUE: \$\{\{ secrets\.VERCEL_AUTOMATION_BYPASS_SECRET \}\}/,
+    /Neither Vercel Automation Bypass nor GitHub Actions OIDC/,
   );
   assert.match(workflow, /ZAP_AUTH_HEADER_SITE=/);
   assert.match(workflow, /x-vercel-mitigated/);
@@ -53,15 +60,18 @@ test("ZAP baseline enforces explicit policy and publishes actionable exact-SHA d
   assert.match(workflow, /fail_action: true/);
   assert.match(workflow, /cmd_options: "-I -T 5 -c \.zap\/rules\.tsv"/);
   assert.match(workflow, /continue-on-error: true/);
-  assert.match(workflow, /artifact_name: zap-preview-report-/);
+  assert.match(workflow, /artifact_name: zap-preview-report/);
   assert.match(workflow, /Summarize ZAP Preview diagnostics/);
   assert.match(workflow, /report_json\.json/);
   assert.match(workflow, /Top alert types/);
+  assert.match(workflow, /id: summary/);
+  assert.match(workflow, /high=\$high/);
+  assert.match(workflow, /medium=\$medium/);
   assert.match(workflow, /Enforce ZAP Preview policy/);
   assert.match(workflow, /blocking finding or scanner failure/);
   assert.match(workflow, /context 'OWASP ZAP Preview'/);
   assert.match(workflow, /statuses: write/);
   assert.match(workflow, /ZAP Preview access preflight failed/);
-  assert.match(workflow, /ZAP Preview baseline passed/);
-  assert.match(workflow, /ZAP Preview blocking finding or scanner error/);
+  assert.match(workflow, /ZAP Preview passed \$counts/);
+  assert.match(workflow, /ZAP Preview blocked\/error \$counts/);
 });

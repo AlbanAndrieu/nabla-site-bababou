@@ -1,0 +1,241 @@
+name: Production DAST
+
+on:
+  repository_dispatch:
+    types:
+      - vercel.deployment.success
+  schedule:
+    - cron: "23 3 * * *"
+  workflow_dispatch:
+    inputs:
+      git_sha:
+        description: "Production Git SHA to associate with this DAST run"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+  statuses: write
+
+concurrency:
+  group: production-dast
+  cancel-in-progress: true
+
+jobs:
+  zap-baseline:
+    name: OWASP ZAP baseline on production
+    if: >-
+      github.event_name == 'schedule' ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'repository_dispatch' &&
+       github.event.client_payload.url != '' &&
+       github.event.client_payload.git.sha != '' &&
+       (github.event.client_payload.git.ref == 'master' ||
+        github.event.client_payload.environment == 'production'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      BASE_URL: "https://www.bababou.com"
+      DEPLOYED_SHA: >-
+        ${{
+          inputs.git_sha ||
+          github.event.client_payload.git.sha ||
+          github.sha
+        }}
+
+    steps:
+      - name: Validate associated SHA
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ ! "$DEPLOYED_SHA" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "::error::DEPLOYED_SHA must be a full lowercase 40-character Git SHA."
+            exit 1
+          fi
+
+      - name: Checkout production ZAP policy
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ env.DEPLOYED_SHA }}
+          persist-credentials: false
+          sparse-checkout: |
+            .zap/rules.tsv
+          sparse-checkout-cone-mode: false
+
+      - name: Request GitHub OIDC token for Vercel
+        id: vercel-oidc
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        with:
+          script: |
+            const token = await core.getIDToken();
+            core.setSecret(token);
+            core.setOutput('token', token);
+
+      - name: Verify production DAST access
+        id: preflight
+        env:
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+          VERCEL_TRUSTED_OIDC_TOKEN: ${{ steps.vercel-oidc.outputs.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          verify_access() {
+            local auth_name="$1"
+            local header_name="$2"
+            local header_value="$3"
+            local headers status location mitigated
+
+            headers="$(mktemp)"
+            status="$(curl --silent --show-error \
+              --output /dev/null \
+              --dump-header "$headers" \
+              --write-out '%{http_code}' \
+              --header "$header_name: $header_value" \
+              "$BASE_URL/")"
+            location="$(awk 'BEGIN { IGNORECASE=1 } /^location:/ { sub(/^[^:]+:[[:space:]]*/, ""); sub(/\r$/, ""); print; exit }' "$headers")"
+            mitigated="$(awk 'BEGIN { IGNORECASE=1 } /^x-vercel-mitigated:/ { sub(/^[^:]+:[[:space:]]*/, ""); sub(/\r$/, ""); print; exit }' "$headers")"
+
+            if [[ "$status" == "429" || "${mitigated,,}" == "challenge" ]]; then
+              echo "::warning::$auth_name reached the Vercel Security Checkpoint (HTTP $status)."
+              rm -f "$headers"
+              return 1
+            fi
+            if grep -Eiq '^location: https://vercel\.com/(login|sso-api)' "$headers" || \
+              [[ "$status" == "401" || "$status" == "403" ]]; then
+              echo "::warning::$auth_name was rejected by Vercel (HTTP $status)."
+              rm -f "$headers"
+              return 1
+            fi
+            if [[ ! "$status" =~ ^[23][0-9][0-9]$ ]]; then
+              echo "::warning::$auth_name reached production but returned unexpected HTTP $status."
+              rm -f "$headers"
+              return 1
+            fi
+
+            echo "ZAP_AUTH_HEADER=$header_name" >> "$GITHUB_ENV"
+            echo "ZAP_AUTH_HEADER_VALUE=$header_value" >> "$GITHUB_ENV"
+            echo "ZAP_AUTH_HEADER_SITE=www.bababou.com" >> "$GITHUB_ENV"
+            echo "auth_mode=$auth_name" >> "$GITHUB_OUTPUT"
+            echo "http_status=$status" >> "$GITHUB_OUTPUT"
+            echo "mitigated=${mitigated:-none}" >> "$GITHUB_OUTPUT"
+            rm -f "$headers"
+            return 0
+          }
+
+          if [[ -n "${VERCEL_AUTOMATION_BYPASS_SECRET:-}" ]] && verify_access \
+            "Protection Bypass for Automation" \
+            "x-vercel-protection-bypass" \
+            "$VERCEL_AUTOMATION_BYPASS_SECRET"; then
+            exit 0
+          fi
+
+          if [[ -n "${VERCEL_TRUSTED_OIDC_TOKEN:-}" ]] && verify_access \
+            "GitHub Actions OIDC trusted source" \
+            "x-vercel-trusted-oidc-idp-token" \
+            "$VERCEL_TRUSTED_OIDC_TOKEN"; then
+            exit 0
+          fi
+
+          echo "::error::Production DAST could not authenticate to www.bababou.com."
+          exit 1
+
+      - name: Run OWASP ZAP baseline on canonical production
+        id: zap
+        continue-on-error: true
+        uses: zaproxy/action-baseline@de8ad967d3548d44ef623df22cf95c3b0baf8b25 # v0.15.0
+        with:
+          target: ${{ env.BASE_URL }}
+          rules_file_name: ".zap/rules.tsv"
+          allow_issue_writing: false
+          fail_action: true
+          artifact_name: zap-production-report
+          cmd_options: "-I -T 5 -c .zap/rules.tsv"
+
+      - name: Summarize production DAST
+        id: summary
+        if: always()
+        env:
+          PREFLIGHT_OUTCOME: ${{ steps.preflight.outcome }}
+          ZAP_OUTCOME: ${{ steps.zap.outcome }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          high=0
+          medium=0
+          low=0
+          informational=0
+          if [[ -s report_json.json ]]; then
+            high="$(jq '[.site[]?.alerts[]? | select(((.riskcode // "0") | tonumber) == 3)] | length' report_json.json)"
+            medium="$(jq '[.site[]?.alerts[]? | select(((.riskcode // "0") | tonumber) == 2)] | length' report_json.json)"
+            low="$(jq '[.site[]?.alerts[]? | select(((.riskcode // "0") | tonumber) == 1)] | length' report_json.json)"
+            informational="$(jq '[.site[]?.alerts[]? | select(((.riskcode // "0") | tonumber) == 0)] | length' report_json.json)"
+          fi
+          echo "high=$high" >> "$GITHUB_OUTPUT"
+          echo "medium=$medium" >> "$GITHUB_OUTPUT"
+          echo "low=$low" >> "$GITHUB_OUTPUT"
+          echo "informational=$informational" >> "$GITHUB_OUTPUT"
+
+          {
+            echo "## Production DAST"
+            echo
+            echo "- Result: preflight **${PREFLIGHT_OUTCOME:-unknown}**, scanner **${ZAP_OUTCOME:-not-run}**"
+            echo "- Target: $BASE_URL"
+            echo "- Associated SHA: \`$DEPLOYED_SHA\`"
+            echo "- Vercel auth: \`${{ steps.preflight.outputs.auth_mode || 'n/a' }}\`"
+            echo "- Policy: \`.zap/rules.tsv\`"
+            echo "- Alerts: **H$high M$medium L$low I$informational**"
+            echo "- Report artifact: **zap-production-report**"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Clean ZAP production workspace
+        if: always()
+        shell: bash
+        run: rm -f report_html.html report_json.json report_md.md zap.yaml
+
+      - name: Enforce production DAST policy
+        if: steps.preflight.outcome != 'success' || steps.zap.outcome != 'success'
+        shell: bash
+        run: |
+          echo "::error::Production DAST preflight, scanner, or blocking rule failed. Review the Job Summary and zap-production-report artifact."
+          exit 1
+
+      - name: Publish production DAST status
+        if: always() && github.event_name != 'schedule'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          STATUS_SHA: ${{ env.DEPLOYED_SHA }}
+          PREFLIGHT_OUTCOME: ${{ steps.preflight.outcome }}
+          ZAP_OUTCOME: ${{ steps.zap.outcome }}
+          HIGH: ${{ steps.summary.outputs.high }}
+          MEDIUM: ${{ steps.summary.outputs.medium }}
+          LOW: ${{ steps.summary.outputs.low }}
+          INFO: ${{ steps.summary.outputs.informational }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          counts="H${HIGH:-?} M${MEDIUM:-?} L${LOW:-?} I${INFO:-?}"
+          if [[ "$PREFLIGHT_OUTCOME" == "success" && "$ZAP_OUTCOME" == "success" ]]; then
+            STATE=success
+            DESCRIPTION="Production ZAP passed $counts"
+          else
+            STATE=failure
+            DESCRIPTION="Production ZAP blocked/error $counts"
+          fi
+
+          payload="$(jq -n \
+            --arg state "$STATE" \
+            --arg target_url "$RUN_URL" \
+            --arg description "$DESCRIPTION" \
+            --arg context 'Production DAST' \
+            '{state: $state, target_url: $target_url, description: $description, context: $context}')"
+
+          curl --fail-with-body --silent --show-error \
+            --request POST \
+            --header "Authorization: Bearer $GH_TOKEN" \
+            --header 'Accept: application/vnd.github+json' \
+            --header 'X-GitHub-Api-Version: 2022-11-28' \
+            "${{ github.api_url }}/repos/${{ github.repository }}/statuses/$STATUS_SHA" \
+            --data "$payload"
