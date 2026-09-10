@@ -182,82 +182,53 @@ test.describe("Google Translate widget regression coverage", () => {
 	});
 
 	test.describe("Google Translate homepage fallback integration", () => {
-		test("should have Google Translate widget container", async ({ page }) => {
+		test("keeps the retained fallback wired, initialized and positioned", async ({
+			page,
+		}) => {
 			await page.goto("/");
 
-			// Wrapper is injected by the dedicated /site-google-translate.js runtime, not SSR.
 			const wrapper = page.locator(".google-translate-widget");
-			await expect(wrapper).toBeVisible({ timeout: 15_000 });
 			const translateElement = page.locator("#google_translate_element");
-			await expect(translateElement).toBeAttached();
-		});
 
-		test("retains the site bootstrap and injects exactly one Google loader", async ({
-			page,
-		}) => {
-			await page.goto("/");
-
-			await expect(
-				page.locator('script[src="/site-google-translate.js"]'),
-			).toHaveCount(1);
-			await expect(
-				page.locator(
-					'script[src^="https://translate.google.com/translate_a/element.js"]',
-				),
-			).toHaveCount(1);
-		});
-
-		test("exposes the retained Google Translate initialization callback", async ({
-			page,
-		}) => {
-			await page.goto("/");
-			await expect(page.locator(".google-translate-widget")).toBeAttached({
-				timeout: 15_000,
+			await test.step("site-owned bootstrap remains present", async () => {
+				await expect(
+					page.locator('script[src="/site-google-translate.js"]'),
+				).toHaveCount(1);
 			});
 
-			const callbackType = await page.evaluate(
-				() => typeof (window as any).googleTranslateElementInit,
-			);
-			expect(callbackType).toBe("function");
-		});
-
-		test("should be positioned correctly", async ({ page }) => {
-			await page.goto("/");
-
-			const translateElement = page.locator("#google_translate_element");
-			await expect(translateElement).toBeAttached({ timeout: 15_000 });
-
-			const vw = page.viewportSize()?.width ?? 1280;
-			if (vw <= 575) {
-				const toggle = page.locator(".google-translate-widget__toggle");
-				await expect(toggle).toBeVisible();
-				await toggle.click();
-			}
-
-			await expect(translateElement).toBeInViewport();
-
-			const position = await translateElement.evaluate((el) => {
-				return window.getComputedStyle(el).position;
+			await test.step("runtime injects the widget and exactly one Google loader", async () => {
+				await expect(wrapper).toBeVisible({ timeout: 15_000 });
+				await expect(translateElement).toBeAttached();
+				await expect(
+					page.locator(
+						'script[src^="https://translate.google.com/translate_a/element.js"]',
+					),
+				).toHaveCount(1);
 			});
 
-			expect(["fixed", "absolute", "relative", "sticky"]).toContain(position);
-		});
+			await test.step("initialization callback is exposed", async () => {
+				const callbackType = await page.evaluate(
+					() => typeof (window as any).googleTranslateElementInit,
+				);
+				expect(callbackType).toBe("function");
+			});
 
-		test("should be accessible on mobile", async ({ page, viewport }) => {
-			test.skip(!viewport || viewport.width >= 768, "Mobile-only coverage");
-			await page.goto("/");
+			await test.step("widget remains usable in the current viewport", async () => {
+				const vw = page.viewportSize()?.width ?? 1280;
+				if (vw <= 575) {
+					const toggle = page.locator(".google-translate-widget__toggle");
+					await expect(toggle).toBeVisible();
+					await toggle.click();
+				}
 
-			const translateElement = page.locator("#google_translate_element");
-			await expect(translateElement).toBeAttached({ timeout: 15_000 });
+				await translateElement.scrollIntoViewIfNeeded();
+				await expect(translateElement).toBeInViewport({ ratio: 0.01 });
 
-			if ((viewport?.width ?? 1280) <= 575) {
-				const toggle = page.locator(".google-translate-widget__toggle");
-				await expect(toggle).toBeVisible();
-				await toggle.click();
-			}
-
-			await translateElement.scrollIntoViewIfNeeded();
-			await expect(translateElement).toBeInViewport({ ratio: 0.01 });
+				const position = await translateElement.evaluate((el) => {
+					return window.getComputedStyle(el).position;
+				});
+				expect(["fixed", "absolute", "relative", "sticky"]).toContain(position);
+			});
 		});
 	});
 });
