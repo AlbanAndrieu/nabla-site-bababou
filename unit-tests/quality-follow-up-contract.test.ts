@@ -30,7 +30,7 @@ test("quality follow-up distinguishes deterministic fixes from real failures", a
   assert.match(skill, /deterministic validation/);
   assert.match(skill, /runtime\/deployment regression/);
   assert.match(skill, /transient infrastructure/);
-  assert.match(skill, /exact diff emitted by the failed gate/);
+  assert.match(skill, /exact diff emitted by\s+the failed gate/);
   assert.match(skill, /current `master`/);
   assert.match(skill, /Do not weaken,/i);
 });
