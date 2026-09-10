@@ -60,11 +60,12 @@ test.describe("Navigation and Links Tests", () => {
 		});
 
 		await test.step("homepage exposes navigation and footer links", async () => {
-			const nav = page.locator(
-				'nav, [role="navigation"], header nav, .nav, .navigation',
-			);
-			await expect(nav.first()).toBeVisible();
-			expect(await nav.count()).toBeGreaterThan(0);
+			// The legacy homepage deliberately starts with its Bootstrap collapse
+			// navigation hidden. Require the semantic navigation contract without
+			// treating the initial collapsed state as a rendering failure.
+			const nav = page.locator('nav#navbarHeader[aria-label="Main navigation"]');
+			await expect(nav).toBeAttached();
+			await expect(nav).toHaveCount(1);
 
 			const footer = page.locator('footer, [role="contentinfo"], .footer');
 			await expect(footer.first()).toBeVisible();

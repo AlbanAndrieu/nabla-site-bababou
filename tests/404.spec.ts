@@ -31,7 +31,9 @@ test.describe("404 Error Page Tests", () => {
 		await test.step("renders a valid visible HTML document", async () => {
 			await expect(page.locator("html")).toHaveCount(1);
 			await expect(page.locator("body")).toBeVisible();
-			await expect(page.locator(".info")).toBeVisible();
+			// Do not couple this direct /404.html endpoint check to the internal
+			// markup of the protected source. Unknown Next routes verify the full
+			// reviewed public/404.html presentation in next-not-found.spec.ts.
 		});
 	});
 });
