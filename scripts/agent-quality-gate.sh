@@ -209,10 +209,9 @@ run_fix_until_stable() {
 		return 0
 	fi
 
-	# Let repository pre-commit hooks converge first. npm-backed lint fixes then
-	# run only on changed JS/TS/CSS files, unless their configuration changed.
-	precommit_fix_until_stable
-
+	# Run npm-backed lint fixes only on changed JS/TS/CSS files, unless their
+	# configuration changed. Pre-commit still owns additional deterministic hooks
+	# (including the current CSS hook), so it converges after npm fixes.
 	local javascript_lint_all=false
 	local stylelint_all=false
 	local file
@@ -254,14 +253,16 @@ run_fix_until_stable() {
 				run_compact "Stylelint changed-file auto-fix" \
 					npx stylelint --fix "${stylelint_files[@]}"
 			fi
-
-			# npm lint auto-fixes may create changes covered by Biome/other hooks.
-			precommit_fix_until_stable
 		else
-			echo "⚠️ QG_NODE_FIX_SKIPPED: node_modules unavailable; pre-commit fixes ran, but npm lint auto-fixes were skipped." >&2
+			echo "⚠️ QG_NODE_FIX_SKIPPED: node_modules unavailable; npm lint auto-fixes were skipped." >&2
 			echo "   Run 'npm ci --no-audit --no-fund' before the strict publication gate." >&2
 		fi
 	fi
+
+	# npm fixes can create changes covered by Biome/other hooks; converge those
+	# hooks last. This ordering also keeps the existing pre-commit Stylelint hook
+	# from blocking npm's --fix pass before the single-authority cleanup lands.
+	precommit_fix_until_stable
 
 	echo "✅ deterministic local auto-fix phase converged."
 	git status --short
