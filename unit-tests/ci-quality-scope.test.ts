@@ -150,7 +150,7 @@ test("explicit npm cache owners disable setup-node automatic npm caching", async
 	}
 });
 
-test("pre-commit keeps one Ruff lint path and delegates CSS authority to npm Stylelint", async () => {
+test("pre-commit keeps one authority per Ruff, CSS and shell formatting concern", async () => {
 	const [preCommit, mise, packageRaw] = await Promise.all([
 		read("../.pre-commit-config.yaml"),
 		read("../mise.toml"),
@@ -168,6 +168,8 @@ test("pre-commit keeps one Ruff lint path and delegates CSS authority to npm Sty
 	assert.match(preCommit, /args: \[--fix, --unsafe-fixes\]/);
 	assert.doesNotMatch(preCommit, /id: ruff\n/);
 	assert.doesNotMatch(preCommit, /pre-commit-stylelint|id: stylelint|stylelint@/);
+	assert.match(preCommit, /id: shfmt-docker[\s\S]*?args: \["-i", "4", "-ci"\]/);
+	assert.match(preCommit, /id: bashate[\s\S]*?args: \[-i, "E003,E006"\]/);
 	assert.equal(pkg.devDependencies?.stylelint, "^17.14.1");
 	assert.match(pkg.scripts?.["lint:css"] ?? "", /^stylelint /);
 	assert.doesNotMatch(mise, /--hook-type commit-msg/);
