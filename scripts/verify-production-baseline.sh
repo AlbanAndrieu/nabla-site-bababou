@@ -50,13 +50,6 @@ latest_status() {
 		<<<"${json}"
 }
 
-has_ignored_vercel_status() {
-	local json="$1"
-	jq -e \
-		'any(.statuses[]?; .context == "Vercel" and .description == "Canceled by Ignored Build Step")' \
-		<<<"${json}" >/dev/null
-}
-
 release_only_hop() {
 	local parent="$1"
 	local child="$2"
@@ -130,11 +123,15 @@ while :; do
 	json="$(status_json "${candidate}")"
 	missing=()
 	failed=()
+	vercel_state="missing"
 
 	for context in "${required_contexts[@]}"; do
 		status="$(latest_status "${json}" "${context}")"
 		state="$(jq -r '.state // "missing"' <<<"${status}")"
 		description="$(jq -r '.description // ""' <<<"${status}")"
+		if [[ "${context}" == "Vercel" ]]; then
+			vercel_state="${state}"
+		fi
 
 		case "${state}" in
 			success)
@@ -179,8 +176,8 @@ while :; do
 		exit 1
 	fi
 
-	if ! has_ignored_vercel_status "${json}"; then
-		printf '❌ PROD_BASE_MISSING: %s is missing %s and has no ignored Vercel release status\n' \
+	if [[ "${vercel_state}" != "success" ]]; then
+		printf '❌ PROD_BASE_MISSING: %s is missing %s and Vercel is not successful\n' \
 			"${candidate}" "${missing[*]}" >&2
 		exit 1
 	fi
@@ -191,7 +188,7 @@ while :; do
 		exit 1
 	fi
 
-	printf 'ℹ️  ignored Vercel production status found in %s history; later Preview statuses do not block release-baseline inheritance\n' "${candidate}"
+	printf 'ℹ️  Vercel is successful but production-only statuses are absent on metadata-only release %s; inheriting the parent production baseline\n' "${candidate}"
 	candidate="${parent}"
 	((release_hops += 1))
 done

@@ -145,11 +145,7 @@ esac
 	return bin;
 }
 
-function runBaseline(
-	directory: string,
-	bin: string,
-	releaseSha: string,
-) {
+function runBaseline(directory: string, bin: string, releaseSha: string) {
 	return spawnSync("bash", [baselineScript], {
 		cwd: directory,
 		encoding: "utf8",
@@ -165,13 +161,7 @@ function runBaseline(
 	});
 }
 
-const ignoredThenPreview: Status[] = [
-	{
-		context: "Vercel",
-		state: "success",
-		description: "Canceled by Ignored Build Step",
-		created_at: "2026-09-11T16:00:00Z",
-	},
+const previewVercelSuccess: Status[] = [
 	{
 		context: "Vercel",
 		state: "success",
@@ -180,54 +170,50 @@ const ignoredThenPreview: Status[] = [
 	},
 ];
 
-test("production baseline inherits across a release commit after a later Preview Vercel status", async (t) => {
+test("production baseline inherits across metadata-only release when latest Vercel status is Preview success", async (t) => {
 	const fixture = await createReleaseRepo();
 	t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
 	const bin = await installCurlMock(
 		fixture.directory,
 		fixture.releaseSha,
 		fixture.parentSha,
-		ignoredThenPreview,
+		previewVercelSuccess,
 	);
 
 	const result = runBaseline(fixture.directory, bin, fixture.releaseSha);
 
 	assert.equal(result.status, 0, result.stderr);
-	assert.match(result.stdout, /ignored Vercel production status found/);
-	assert.match(result.stdout, new RegExp(`production baseline healthy at ${fixture.parentSha}`));
+	assert.match(result.stdout, /production-only statuses are absent on metadata-only release/);
+	assert.match(
+		result.stdout,
+		new RegExp(`production baseline healthy at ${fixture.parentSha}`),
+	);
 });
 
-test("production baseline does not inherit from a release commit without an ignored production status", async (t) => {
+test("production baseline does not inherit a metadata-only release without a successful Vercel signal", async (t) => {
 	const fixture = await createReleaseRepo();
 	t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
 	const bin = await installCurlMock(
 		fixture.directory,
 		fixture.releaseSha,
 		fixture.parentSha,
-		[
-			{
-				context: "Vercel",
-				state: "success",
-				description: "Deployment has completed",
-				created_at: "2026-09-11T16:05:00Z",
-			},
-		],
+		[],
 	);
 
 	const result = runBaseline(fixture.directory, bin, fixture.releaseSha);
 
 	assert.equal(result.status, 1);
-	assert.match(result.stderr, /has no ignored Vercel release status/);
+	assert.match(result.stderr, /Vercel is not successful/);
 });
 
-test("production baseline still rejects non-metadata release scope even with ignored Vercel history", async (t) => {
+test("production baseline still rejects release commits that change runtime scope", async (t) => {
 	const fixture = await createReleaseRepo(true);
 	t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
 	const bin = await installCurlMock(
 		fixture.directory,
 		fixture.releaseSha,
 		fixture.parentSha,
-		ignoredThenPreview,
+		previewVercelSuccess,
 	);
 
 	const result = runBaseline(fixture.directory, bin, fixture.releaseSha);
