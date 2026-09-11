@@ -17,21 +17,32 @@ type Status = {
 	created_at: string;
 };
 
-async function writePackageVersion(directory: string, version: string) {
+type ReleaseRepoOptions = {
+	extraReleaseFile?: boolean;
+	childVersion?: string;
+	lockVersion?: string;
+	subjectVersion?: string;
+};
+
+async function writePackageVersion(
+	directory: string,
+	packageVersion: string,
+	lockVersion = packageVersion,
+) {
 	const packageJson = {
 		name: "production-baseline-fixture",
-		version,
+		version: packageVersion,
 		private: true,
 	};
 	const packageLock = {
 		name: "production-baseline-fixture",
-		version,
+		version: lockVersion,
 		lockfileVersion: 3,
 		requires: true,
 		packages: {
 			"": {
 				name: "production-baseline-fixture",
-				version,
+				version: lockVersion,
 			},
 		},
 	};
@@ -46,7 +57,13 @@ async function writePackageVersion(directory: string, version: string) {
 	);
 }
 
-async function createReleaseRepo(extraReleaseFile = false) {
+async function createReleaseRepo(options: ReleaseRepoOptions = {}) {
+	const {
+		extraReleaseFile = false,
+		childVersion = "1.0.1",
+		lockVersion = childVersion,
+		subjectVersion = childVersion,
+	} = options;
 	const directory = await mkdtemp(join(tmpdir(), "bababou-production-baseline-"));
 	execFileSync("git", ["init"], { cwd: directory, stdio: "ignore" });
 	execFileSync("git", ["config", "user.name", "CI"], {
@@ -70,16 +87,16 @@ async function createReleaseRepo(extraReleaseFile = false) {
 		encoding: "utf8",
 	}).trim();
 
-	await writePackageVersion(directory, "1.0.1");
+	await writePackageVersion(directory, childVersion, lockVersion);
 	await writeFile(
 		join(directory, "CHANGELOG.md"),
-		"# Changelog\n\n## 1.0.1\n\n- release metadata\n",
+		`# Changelog\n\n## ${childVersion}\n\n- release metadata\n`,
 	);
 	if (extraReleaseFile) {
 		await writeFile(join(directory, "runtime.txt"), "unexpected runtime change\n");
 	}
 	execFileSync("git", ["add", "."], { cwd: directory, stdio: "ignore" });
-	execFileSync("git", ["commit", "-m", "chore(release): 1.0.1 [skip ci]"], {
+	execFileSync("git", ["commit", "-m", `chore(release): ${subjectVersion} [skip ci]`], {
 		cwd: directory,
 		stdio: "ignore",
 	});
@@ -207,7 +224,7 @@ test("production baseline does not inherit a metadata-only release without a suc
 });
 
 test("production baseline still rejects release commits that change runtime scope", async (t) => {
-	const fixture = await createReleaseRepo(true);
+	const fixture = await createReleaseRepo({ extraReleaseFile: true });
 	t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
 	const bin = await installCurlMock(
 		fixture.directory,
@@ -220,5 +237,39 @@ test("production baseline still rejects release commits that change runtime scop
 
 	assert.equal(result.status, 1);
 	assert.match(result.stderr, /changes unexpected file runtime\.txt/);
+	assert.match(result.stderr, /cannot inherit an older production baseline/);
+});
+
+test("production baseline rejects release metadata when package and lock versions diverge", async (t) => {
+	const fixture = await createReleaseRepo({ lockVersion: "1.0.2" });
+	t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
+	const bin = await installCurlMock(
+		fixture.directory,
+		fixture.releaseSha,
+		fixture.parentSha,
+		previewVercelSuccess,
+	);
+
+	const result = runBaseline(fixture.directory, bin, fixture.releaseSha);
+
+	assert.equal(result.status, 1);
+	assert.match(result.stderr, /inconsistent package\/lock versions/);
+	assert.match(result.stderr, /cannot inherit an older production baseline/);
+});
+
+test("production baseline rejects a semantic-release subject that does not match the published version", async (t) => {
+	const fixture = await createReleaseRepo({ subjectVersion: "1.0.2" });
+	t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
+	const bin = await installCurlMock(
+		fixture.directory,
+		fixture.releaseSha,
+		fixture.parentSha,
+		previewVercelSuccess,
+	);
+
+	const result = runBaseline(fixture.directory, bin, fixture.releaseSha);
+
+	assert.equal(result.status, 1);
+	assert.match(result.stderr, /release subject does not match package version 1\.0\.1/);
 	assert.match(result.stderr, /cannot inherit an older production baseline/);
 });
