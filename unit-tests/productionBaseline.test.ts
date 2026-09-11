@@ -162,7 +162,12 @@ esac
 	return bin;
 }
 
-function runBaseline(directory: string, bin: string, releaseSha: string) {
+function runBaseline(
+	directory: string,
+	bin: string,
+	releaseSha: string,
+	releaseHops = "3",
+) {
 	return spawnSync("bash", [baselineScript], {
 		cwd: directory,
 		encoding: "utf8",
@@ -173,7 +178,7 @@ function runBaseline(directory: string, bin: string, releaseSha: string) {
 			GH_TOKEN: "test-token",
 			GITHUB_API_URL: "https://api.github.test",
 			GITHUB_REPOSITORY: "example/repository",
-			QUALITY_BASELINE_RELEASE_HOPS: "3",
+			QUALITY_BASELINE_RELEASE_HOPS: releaseHops,
 		},
 	});
 }
@@ -221,6 +226,76 @@ test("production baseline does not inherit a metadata-only release without a suc
 
 	assert.equal(result.status, 1);
 	assert.match(result.stderr, /Vercel is not successful/);
+});
+
+test("production baseline rejects non-success Vercel states before release inheritance", async (t) => {
+	const fixture = await createReleaseRepo();
+	t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
+	const bin = await installCurlMock(
+		fixture.directory,
+		fixture.releaseSha,
+		fixture.parentSha,
+		[
+			{
+				context: "Vercel",
+				state: "pending",
+				description: "Deployment is pending",
+				created_at: "2026-09-11T16:05:00Z",
+			},
+		],
+	);
+
+	const result = runBaseline(fixture.directory, bin, fixture.releaseSha);
+
+	assert.equal(result.status, 1);
+	assert.match(result.stderr, /PROD_BASE_UNHEALTHY/);
+	assert.match(result.stderr, /Vercel=pending/);
+	assert.doesNotMatch(result.stdout, /inheriting the parent production baseline/);
+});
+
+test("production baseline rejects a partial production-only status set", async (t) => {
+	const fixture = await createReleaseRepo();
+	t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
+	const bin = await installCurlMock(
+		fixture.directory,
+		fixture.releaseSha,
+		fixture.parentSha,
+		[
+			...previewVercelSuccess,
+			{
+				context: "Production DAST",
+				state: "success",
+				description: "Production ZAP passed",
+				created_at: "2026-09-11T16:06:00Z",
+			},
+		],
+	);
+
+	const result = runBaseline(fixture.directory, bin, fixture.releaseSha);
+
+	assert.equal(result.status, 1);
+	assert.match(result.stderr, /PROD_BASE_PARTIAL/);
+	assert.match(result.stderr, /Production Post-deploy Smoke/);
+	assert.doesNotMatch(result.stdout, /inheriting the parent production baseline/);
+});
+
+test("production baseline honors a zero semantic-release hop budget", async (t) => {
+	const fixture = await createReleaseRepo();
+	t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
+	const bin = await installCurlMock(
+		fixture.directory,
+		fixture.releaseSha,
+		fixture.parentSha,
+		previewVercelSuccess,
+	);
+
+	const result = runBaseline(fixture.directory, bin, fixture.releaseSha, "0");
+
+	assert.equal(result.status, 1);
+	assert.match(result.stderr, /PROD_BASE_MISSING/);
+	assert.match(result.stderr, /Production Post-deploy Smoke/);
+	assert.match(result.stderr, /Production DAST/);
+	assert.doesNotMatch(result.stdout, /inheriting the parent production baseline/);
 });
 
 test("production baseline still rejects release commits that change runtime scope", async (t) => {
