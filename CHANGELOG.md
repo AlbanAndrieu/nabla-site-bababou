@@ -1,3 +1,10 @@
+## [0.15.1](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.15.0...0.15.1) (2026-09-11)
+
+
+### Performance Improvements
+
+* **ci:** make local quality gate the fast path ([#179](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/179)) ([87be216](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/87be216c29e562c1c69aa2cda5c5ac07fae4395d))
+
 # [0.15.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.14.1...0.15.0) (2026-09-11)
 
 
