@@ -150,17 +150,26 @@ test("explicit npm cache owners disable setup-node automatic npm caching", async
 	}
 });
 
-test("pre-commit converges deterministic hooks without version drift", async () => {
-	const [preCommit, mise] = await Promise.all([
+test("pre-commit keeps one Ruff lint path and delegates CSS authority to npm Stylelint", async () => {
+	const [preCommit, mise, packageRaw] = await Promise.all([
 		read("../.pre-commit-config.yaml"),
 		read("../mise.toml"),
+		read("../package.json"),
 	]);
+	const pkg = JSON.parse(packageRaw) as {
+		devDependencies?: Record<string, string>;
+		scripts?: Record<string, string>;
+	};
 
 	assert.match(preCommit, /^fail_fast: false/m);
 	assert.doesNotMatch(preCommit, /pre-commit-update/);
-	assert.match(preCommit, /stylelint@17\.14\.1/);
-	assert.doesNotMatch(preCommit, /stylelint@14\.4\.0/);
-	assert.doesNotMatch(preCommit, /stylelint-config-standard-scss/);
+	assert.match(preCommit, /id: ruff-format/);
+	assert.match(preCommit, /id: ruff-check/);
+	assert.match(preCommit, /args: \[--fix, --unsafe-fixes\]/);
+	assert.doesNotMatch(preCommit, /id: ruff\n/);
+	assert.doesNotMatch(preCommit, /pre-commit-stylelint|id: stylelint|stylelint@/);
+	assert.equal(pkg.devDependencies?.stylelint, "^17.14.1");
+	assert.match(pkg.scripts?.["lint:css"] ?? "", /^stylelint /);
 	assert.doesNotMatch(mise, /--hook-type commit-msg/);
 	assert.match(mise, /\[tasks\.hooks-update\]/);
 	assert.match(mise, /pre-commit autoupdate/);
