@@ -7,6 +7,7 @@ const productionDastUrl = new URL(
   "../.github/workflows/production-dast.yml",
   import.meta.url,
 );
+const zapRulesUrl = new URL("../.zap/rules.tsv", import.meta.url);
 
 test("Quality runs changed-source Semgrep before the expensive Node build", async () => {
   const workflow = await readFile(ciUrl, "utf8");
@@ -58,4 +59,46 @@ test("Production DAST runs after production deployments and daily with the share
   assert.match(workflow, /artifact_name: zap-production-report/);
   assert.match(workflow, /context 'Production DAST'/);
   assert.match(workflow, /H\$high M\$medium L\$low I\$informational/);
+});
+
+test("ZAP suppresses only deterministic informational noise while keeping security debt visible", async () => {
+  const rules = await readFile(zapRulesUrl, "utf8");
+  const policy = new Map(
+    rules
+      .trim()
+      .split("\n")
+      .map((line) => {
+        const [id, action, note] = line.split("\t", 3);
+        return [id, { action, note }] as const;
+      }),
+  );
+
+  const ignored = [...policy.entries()]
+    .filter(([, rule]) => rule.action === "IGNORE")
+    .map(([id]) => id)
+    .sort();
+  assert.deepEqual(ignored, ["10049", "10050", "10109"]);
+
+  for (const id of ["10020", "10021", "10033", "10035"]) {
+    assert.equal(policy.get(id)?.action, "FAIL", `${id} must remain blocking`);
+  }
+
+  for (const id of [
+    "10010",
+    "10011",
+    "10015",
+    "10017",
+    "10027",
+    "10038",
+    "10044",
+    "10098",
+    "10099",
+    "90003",
+    "90004",
+  ]) {
+    assert.equal(policy.get(id)?.action, "WARN", `${id} must remain visible`);
+  }
+
+  assert.match(policy.get("10010")?.note ?? "", /NEXT_LOCALE/);
+  assert.match(policy.get("10050")?.note ?? "", /Vercel CDN Age header/);
 });
