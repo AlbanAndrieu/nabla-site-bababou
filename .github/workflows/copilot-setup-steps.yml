@@ -1,8 +1,8 @@
 ---
 name: "Copilot Setup Steps"
 
-# Automatically run the setup steps when they are changed to allow for easy validation, and
-# allow manual testing through the repository's "Actions" tab
+# Automatically validate the setup when its inputs change, while keeping draft
+# iteration cheap. workflow_dispatch stays available to Copilot/operators.
 on:
   workflow_dispatch:
   push:
@@ -28,10 +28,16 @@ on:
       - package-lock.json
       - scripts/agent-quality-gate.sh
 
+concurrency:
+  group: copilot-setup-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   # The job MUST be called `copilot-setup-steps` or it will not be picked up by Copilot.
   copilot-setup-steps:
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     permissions:
       contents: read

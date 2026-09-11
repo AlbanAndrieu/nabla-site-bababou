@@ -78,6 +78,19 @@ test("pre-commit converges deterministic hooks without version drift", async () 
 	assert.match(mise, /pre-commit autoupdate/);
 });
 
+test("Copilot setup stays available but does not spend installs on draft synchronization", async () => {
+	const setup = await read("../.github/workflows/copilot-setup-steps.yml");
+
+	assert.match(setup, /workflow_dispatch:/);
+	assert.match(setup, /group: copilot-setup-\$\{\{ github\.event\.pull_request\.number \|\| github\.ref \}\}/);
+	assert.match(setup, /cancel-in-progress: true/);
+	assert.match(
+		setup,
+		/if: github\.event_name != 'pull_request' \|\| github\.event\.pull_request\.draft == false/,
+	);
+	assert.match(setup, /timeout-minutes: 15/);
+});
+
 test("quality-only files do not trigger an application Preview checkpoint", async () => {
 	const workflow = await read("../.github/workflows/ci.yml");
 
