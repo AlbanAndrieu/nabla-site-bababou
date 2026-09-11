@@ -163,13 +163,14 @@ test("pre-commit keeps one authority per Ruff, CSS and shell formatting concern"
 
 	assert.match(preCommit, /^fail_fast: false/m);
 	assert.doesNotMatch(preCommit, /pre-commit-update/);
+	assert.match(preCommit, /repo: https:\/\/github\.com\/pre-commit\/pre-commit\.git[\s\S]*?rev: v4\.6\.2/);
 	assert.match(preCommit, /id: ruff-format/);
 	assert.match(preCommit, /id: ruff-check/);
 	assert.match(preCommit, /args: \[--fix, --unsafe-fixes\]/);
 	assert.doesNotMatch(preCommit, /id: ruff\n/);
 	assert.doesNotMatch(preCommit, /pre-commit-stylelint|id: stylelint|stylelint@/);
 	assert.match(preCommit, /id: shfmt-docker[\s\S]*?args: \["-i", "4", "-ci"\]/);
-	assert.match(preCommit, /id: bashate[\s\S]*?args: \[-i, "E003,E006"\]/);
+	assert.match(preCommit, /id: bashate[\s\S]*?args: \[-i, "E002,E003,E006"\]/);
 	assert.equal(pkg.devDependencies?.stylelint, "^17.14.1");
 	assert.match(pkg.scripts?.["lint:css"] ?? "", /^stylelint /);
 	assert.doesNotMatch(mise, /--hook-type commit-msg/);
