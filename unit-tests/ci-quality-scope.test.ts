@@ -29,7 +29,7 @@ test("known quality orchestration files stay maintenance-only", async () => {
 
 	assert.match(
 		source,
-		/scripts\/agent-quality-gate\.sh \| scripts\/quality-gate\.sh \| scripts\/ci-quality-scope\.sh/,
+		/scripts\/agent-quality-gate\.sh \| scripts\/quality-gate\.sh \| scripts\/ci-quality-scope\.sh \| scripts\/verify-production-baseline\.sh/,
 	);
 	assert.doesNotMatch(source, /\.github\/workflows\/.*SAST=true/s);
 });
@@ -60,6 +60,34 @@ test("draft Semgrep enforcement cannot fail a skipped scan", async () => {
 	assert.match(block, /github\.event\.pull_request\.draft == false/);
 	assert.match(block, /steps\.scope\.outputs\.sast == 'true'/);
 	assert.match(block, /steps\.semgrep-sast\.outcome != 'success'/);
+});
+
+test("production baseline is checked before dependency installation", async () => {
+	const [workflow, baseline, info] = await Promise.all([
+		read("../.github/workflows/ci.yml"),
+		read("../scripts/verify-production-baseline.sh"),
+		stat(new URL("../scripts/verify-production-baseline.sh", import.meta.url)),
+	]);
+
+	assert.notEqual(info.mode & 0o100, 0);
+	const preflight = workflow.indexOf("- name: Run agent preflight before dependency install");
+	const baselineGate = workflow.indexOf("- name: Verify current production baseline before PR build");
+	const setupNode = workflow.indexOf("- name: Setup Node.js");
+	assert.ok(preflight >= 0 && baselineGate > preflight && setupNode > baselineGate);
+	assert.match(workflow, /statuses:\s*read/);
+	assert.match(workflow, /BASE_SHA: \$\{\{ github\.event\.pull_request\.base\.sha \}\}/);
+	assert.match(workflow, /bash scripts\/verify-production-baseline\.sh/);
+
+	for (const context of ["Vercel", "Production Post-deploy Smoke", "Production DAST"]) {
+		assert.ok(baseline.includes(`\"${context}\"`));
+	}
+	assert.match(baseline, /Canceled by Ignored Build Step/);
+	assert.match(baseline, /chore\\\(release\\\):/);
+	assert.match(baseline, /\[skip ci\]/);
+	assert.match(baseline, /package\.json changed beyond version metadata/);
+	assert.match(baseline, /package-lock\.json changed beyond root version metadata/);
+	assert.match(baseline, /PROD_BASE_UNHEALTHY/);
+	assert.match(baseline, /PROD_BASE_RELEASE_SCOPE/);
 });
 
 test("pre-commit converges deterministic hooks without version drift", async () => {
@@ -101,6 +129,7 @@ test("quality-only files do not trigger an application Preview checkpoint", asyn
 		"mise.toml",
 		"scripts/agent-quality-gate.sh",
 		"scripts/ci-quality-scope.sh",
+		"scripts/verify-production-baseline.sh",
 		"scripts/quality-gate.sh",
 	]) {
 		assert.ok(workflow.includes(`filename === '${path}'`));

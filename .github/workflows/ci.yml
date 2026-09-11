@@ -81,6 +81,7 @@ on:
 permissions:
   actions: read
   contents: read
+  statuses: read
   security-events: write
 
 concurrency:
@@ -119,6 +120,16 @@ jobs:
             echo
             echo "Git-only agent preflight passed. Node/npm installation and the full Next quality gate are deferred until the PR is ready for review."
           } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Verify current production baseline before PR build
+        id: production-baseline
+        if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
+        shell: bash
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          QUALITY_BASELINE_RELEASE_HOPS: "3"
+        run: bash scripts/verify-production-baseline.sh
 
       - name: Classify quality scope
         id: scope
@@ -465,6 +476,7 @@ jobs:
               filename === 'stylelint.config.cjs' ||
               filename === 'scripts/agent-quality-gate.sh' ||
               filename === 'scripts/ci-quality-scope.sh' ||
+              filename === 'scripts/verify-production-baseline.sh' ||
               filename === 'scripts/quality-gate.sh' ||
               filename === 'scripts/eslint-github-formatter.mjs';
 
