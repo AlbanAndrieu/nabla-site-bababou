@@ -36,8 +36,8 @@ Modes:
 
 Environment:
   QUALITY_BASE_REF                 override comparison base
-  QUALITY_LOG_TAIL                 failure log lines to print (default: 80)
-  QUALITY_FIX_MAX_PASSES           max deterministic --fix passes (default: 5)
+  QUALITY_LOG_TAIL                 failure log lines to print (default: 40)
+  QUALITY_FIX_MAX_PASSES           max deterministic --fix passes (default: 12)
   QUALITY_ALLOW_LARGE_DELETION=1   acknowledge an intentional large truncation/deletion
   QUALITY_FORCE_PUBLISH=1          ignore the local exact-SHA publication proof
 USAGE
@@ -56,8 +56,8 @@ if (($# > 0)); then
 	exit 2
 fi
 
-LOG_TAIL="${QUALITY_LOG_TAIL:-80}"
-FIX_MAX_PASSES="${QUALITY_FIX_MAX_PASSES:-5}"
+LOG_TAIL="${QUALITY_LOG_TAIL:-40}"
+FIX_MAX_PASSES="${QUALITY_FIX_MAX_PASSES:-12}"
 STAMP_PATH="$(git rev-parse --git-path nabla-agent-quality.stamp)"
 
 resolve_base_ref() {
@@ -150,6 +150,49 @@ snapshot_changed_files() {
 	} | git hash-object --stdin
 }
 
+precommit_fix_until_stable() {
+	local pass=1
+	local before
+	local after
+	local log
+	local rc
+
+	while ((pass <= FIX_MAX_PASSES)); do
+		before="$(snapshot_changed_files)"
+		log="$(mktemp)"
+		set +e
+		pre-commit run --hook-stage pre-commit \
+			--files "${CHANGED_FILES[@]}" >"${log}" 2>&1
+		rc=$?
+		set -e
+		after="$(snapshot_changed_files)"
+
+		if ((rc == 0)); then
+			rm -f "${log}"
+			printf '✅ pre-commit auto-fix converged after pass %d\n' "${pass}"
+			return 0
+		fi
+
+		if [[ "${after}" != "${before}" ]]; then
+			printf '🔧 pre-commit pass %d/%d applied deterministic fixes; retrying without log analysis\n' \
+				"${pass}" "${FIX_MAX_PASSES}"
+			rm -f "${log}"
+			((pass += 1))
+			continue
+		fi
+
+		echo "❌ QG_PRECOMMIT_FAILED: auto-fix made no further progress." >&2
+		tail -n "${LOG_TAIL}" "${log}" >&2 || true
+		rm -f "${log}"
+		return "${rc}"
+	done
+
+	echo "❌ QG_FIX_DID_NOT_CONVERGE: pre-commit kept changing files after ${FIX_MAX_PASSES} passes." >&2
+	echo "   Inspect 'git status --short' and only the relevant changed files." >&2
+	git status --short >&2
+	return 1
+}
+
 run_fix_until_stable() {
 	command -v pre-commit >/dev/null 2>&1 || {
 		echo "❌ pre-commit is required; run 'mise run hooks' first" >&2
@@ -166,59 +209,62 @@ run_fix_until_stable() {
 		return 0
 	fi
 
-	# Reuse the repository's exact npm linters when dependencies are already
-	# installed. Their deterministic fixes run before the broader pre-commit
-	# suite, so CI should not be the first place ESLint/Stylelint formatting is
-	# discovered. A missing node_modules remains valid for Git-only/pre-commit
-	# maintenance changes.
-	if command -v npm >/dev/null 2>&1 && [[ -d node_modules ]]; then
-		set +e
-		npm exec -- eslint --fix . >/dev/null 2>&1
-		npm exec -- stylelint --fix 'public/*.css' >/dev/null 2>&1
-		set -e
+	# Let repository pre-commit hooks converge first. npm-backed lint fixes then
+	# run only on changed JS/TS/CSS files, unless their configuration changed.
+	precommit_fix_until_stable
+
+	local javascript_lint_all=false
+	local stylelint_all=false
+	local file
+	local -a javascript_lint_files=()
+	local -a stylelint_files=()
+
+	for file in "${CHANGED_FILES[@]}"; do
+		case "${file}" in
+			eslint.config.js)
+				javascript_lint_all=true
+				;;
+			*.js | *.jsx | *.mjs | *.cjs | *.ts | *.tsx)
+				javascript_lint_files+=("${file}")
+				;;
+		esac
+		case "${file}" in
+			stylelint.config.cjs)
+				stylelint_all=true
+				;;
+			*.css)
+				stylelint_files+=("${file}")
+				;;
+		esac
+	done
+
+	if [[ "${javascript_lint_all}" == true || "${stylelint_all}" == true ||
+		"${#javascript_lint_files[@]}" -gt 0 || "${#stylelint_files[@]}" -gt 0 ]]; then
+		if command -v npm >/dev/null 2>&1 && [[ -d node_modules ]]; then
+			if [[ "${javascript_lint_all}" == true ]]; then
+				run_compact "ESLint local auto-fix" npm run lint:fix
+			elif (("${#javascript_lint_files[@]}" > 0)); then
+				run_compact "ESLint changed-file auto-fix" \
+					npx eslint --fix --format ./scripts/eslint-github-formatter.mjs "${javascript_lint_files[@]}"
+			fi
+
+			if [[ "${stylelint_all}" == true ]]; then
+				run_compact "Stylelint local auto-fix" npm run lint:css:fix
+			elif (("${#stylelint_files[@]}" > 0)); then
+				run_compact "Stylelint changed-file auto-fix" \
+					npx stylelint --fix "${stylelint_files[@]}"
+			fi
+
+			# npm lint auto-fixes may create changes covered by Biome/other hooks.
+			precommit_fix_until_stable
+		else
+			echo "⚠️ QG_NODE_FIX_SKIPPED: node_modules unavailable; pre-commit fixes ran, but npm lint auto-fixes were skipped." >&2
+			echo "   Run 'npm ci --no-audit --no-fund' before the strict publication gate." >&2
+		fi
 	fi
 
-	local pass=1
-	local before
-	local after
-	local log
-	local rc
-
-	while ((pass <= FIX_MAX_PASSES)); do
-		before="$(snapshot_changed_files)"
-		log="$(mktemp)"
-		set +e
-		pre-commit run --hook-stage pre-commit \
-			--files "${CHANGED_FILES[@]}" --show-diff-on-failure >"${log}" 2>&1
-		rc=$?
-		set -e
-		after="$(snapshot_changed_files)"
-
-		if ((rc == 0)); then
-			rm -f "${log}"
-			printf '✅ deterministic formatter/linter convergence (%d pass(es))\n' "${pass}"
-			return 0
-		fi
-
-		if [[ "${after}" != "${before}" ]]; then
-			printf '🔁 deterministic fix pass %d/%d changed files; retrying\n' \
-				"${pass}" "${FIX_MAX_PASSES}"
-			if ((pass == FIX_MAX_PASSES)); then
-				printf '❌ deterministic fixes did not converge after %d passes\n' "${FIX_MAX_PASSES}" >&2
-				tail -n "${LOG_TAIL}" "${log}" >&2 || true
-				rm -f "${log}"
-				return "${rc}"
-			fi
-			rm -f "${log}"
-			((pass += 1))
-			continue
-		fi
-
-		printf '❌ pre-commit failed on pass %d without changing files; manual correction is required\n' "${pass}" >&2
-		tail -n "${LOG_TAIL}" "${log}" >&2 || true
-		rm -f "${log}"
-		return "${rc}"
-	done
+	echo "✅ deterministic local auto-fix phase converged."
+	git status --short
 }
 
 is_guarded_path() {
