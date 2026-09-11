@@ -11,20 +11,20 @@ cd "${ROOT}"
 
 MODE="check"
 case "${1:-}" in
-	--fix)
-		MODE="fix"
-		shift
-		;;
-	--preflight)
-		MODE="preflight"
-		shift
-		;;
-	--publish)
-		MODE="publish"
-		shift
-		;;
-	-h | --help)
-		cat <<'USAGE'
+--fix)
+	MODE="fix"
+	shift
+	;;
+--preflight)
+	MODE="preflight"
+	shift
+	;;
+--publish)
+	MODE="publish"
+	shift
+	;;
+-h | --help)
+	cat <<'USAGE'
 Usage:
   bash scripts/agent-quality-gate.sh [--fix|--preflight|--publish]
 
@@ -41,14 +41,14 @@ Environment:
   QUALITY_ALLOW_LARGE_DELETION=1   acknowledge an intentional large truncation/deletion
   QUALITY_FORCE_PUBLISH=1          ignore the local exact-SHA publication proof
 USAGE
-		exit 0
-		;;
-	"")
-		;;
-	*)
-		printf '❌ unknown argument: %s\n' "$1" >&2
-		exit 2
-		;;
+	exit 0
+	;;
+"")
+	;;
+*)
+	printf '❌ unknown argument: %s\n' "$1" >&2
+	exit 2
+	;;
 esac
 
 if (($# > 0)); then
@@ -210,8 +210,8 @@ run_fix_until_stable() {
 	fi
 
 	# Run npm-backed lint fixes only on changed JS/TS/CSS files, unless their
-	# configuration changed. Pre-commit still owns additional deterministic hooks
-	# (including the current CSS hook), so it converges after npm fixes.
+	# configuration changed. Pre-commit owns the remaining deterministic hooks
+	# and converges after npm-backed fixes.
 	local javascript_lint_all=false
 	local stylelint_all=false
 	local file
@@ -220,20 +220,20 @@ run_fix_until_stable() {
 
 	for file in "${CHANGED_FILES[@]}"; do
 		case "${file}" in
-			eslint.config.js)
-				javascript_lint_all=true
-				;;
-			*.js | *.jsx | *.mjs | *.cjs | *.ts | *.tsx)
-				javascript_lint_files+=("${file}")
-				;;
+		eslint.config.js)
+			javascript_lint_all=true
+			;;
+		*.js | *.jsx | *.mjs | *.cjs | *.ts | *.tsx)
+			javascript_lint_files+=("${file}")
+			;;
 		esac
 		case "${file}" in
-			stylelint.config.cjs)
-				stylelint_all=true
-				;;
-			*.css)
-				stylelint_files+=("${file}")
-				;;
+		stylelint.config.cjs)
+			stylelint_all=true
+			;;
+		*.css)
+			stylelint_files+=("${file}")
+			;;
 		esac
 	done
 
@@ -260,8 +260,7 @@ run_fix_until_stable() {
 	fi
 
 	# npm fixes can create changes covered by Biome/other hooks; converge those
-	# hooks last. This ordering also keeps the existing pre-commit Stylelint hook
-	# from blocking npm's --fix pass before the single-authority cleanup lands.
+	# hooks last.
 	precommit_fix_until_stable
 
 	echo "✅ deterministic local auto-fix phase converged."
@@ -270,17 +269,17 @@ run_fix_until_stable() {
 
 is_guarded_path() {
 	case "$1" in
-		package-lock.json | public/assets/* | public/checklist/* | public/d3.v3.min.js | .github/copilot-instructions.md)
-			# Generated/vendor-heavy or deliberately thin instruction surfaces have
-			# dedicated contracts; large-deletion heuristics would create false positives.
-			return 1
-			;;
-		*.md | *.ts | *.tsx | *.js | *.mjs | *.cjs | *.json | *.yml | *.yaml | *.toml | *.sh | *.css | *.html)
-			return 0
-			;;
-		*)
-			return 1
-			;;
+	package-lock.json | public/assets/* | public/checklist/* | public/d3.v3.min.js | .github/copilot-instructions.md)
+		# Generated/vendor-heavy or deliberately thin instruction surfaces have
+		# dedicated contracts; large-deletion heuristics would create false positives.
+		return 1
+		;;
+	*.md | *.ts | *.tsx | *.js | *.mjs | *.cjs | *.json | *.yml | *.yaml | *.toml | *.sh | *.css | *.html)
+		return 0
+		;;
+	*)
+		return 1
+		;;
 	esac
 }
 
