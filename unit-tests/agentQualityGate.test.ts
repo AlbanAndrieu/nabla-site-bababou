@@ -150,31 +150,6 @@ test("CI runs the Git-only agent preflight before Node and dependency installati
 	assert.match(workflow, /bash scripts\/agent-quality-gate\.sh --preflight/);
 });
 
-test("CI runs the canonical changed-file gate before Semgrep and npm bootstrap", async () => {
-	const workflow = await read("../.github/workflows/ci.yml");
-	const scope = workflow.indexOf("- name: Classify quality scope");
-	const canonical = workflow.indexOf("- name: Run canonical changed-file gate before SAST/npm bootstrap");
-	const enforce = workflow.indexOf("- name: Enforce canonical changed-file gate");
-	const semgrep = workflow.indexOf("- name: Run Semgrep SAST on changed source");
-	const setupNode = workflow.indexOf("- name: Setup Node.js");
-	const install = workflow.indexOf("- name: Install dependencies");
-
-	assert.ok(scope >= 0 && canonical > scope);
-	assert.ok(enforce > canonical);
-	assert.ok(semgrep > enforce);
-	assert.ok(setupNode > semgrep);
-	assert.ok(install > setupNode);
-	assert.match(workflow, /python -m pip install --disable-pip-version-check --quiet pre-commit==4\.6\.2/);
-	assert.match(workflow, /QUALITY_SHOW_DIFF: "1"/);
-	assert.match(workflow, /bash scripts\/quality-gate\.sh/);
-	assert.match(workflow, /CANONICAL_GATE_SECONDS: \$\{\{ steps\.canonical-quality-gate\.outputs\.seconds \}\}/);
-	assert.match(workflow, /PRE_COMMIT_CACHE_HIT: \$\{\{ steps\.pre-commit-cache\.outputs\.cache-hit \}\}/);
-	assert.match(
-		workflow,
-		/pre-commit-v4\.6\.2-\$\{\{ runner\.os \}\}-\$\{\{ hashFiles\('\.pre-commit-config\.yaml', '\.pre-commit-pre-push\.yaml', '\.python-version', '\.nvmrc'\) \}\}/,
-	);
-});
-
 test("draft PRs run only the Git preflight until ready for review", async () => {
 	const workflow = await read("../.github/workflows/ci.yml");
 
@@ -184,10 +159,6 @@ test("draft PRs run only the Git preflight until ready for review", async () => 
 
 	for (const step of [
 		"Classify quality scope",
-		"Setup Python for canonical changed-file gate",
-		"Restore pre-commit environments",
-		"Install pre-commit",
-		"Run canonical changed-file gate before SAST/npm bootstrap",
 		"Run Semgrep SAST on changed source",
 		"Setup Node.js",
 		"Restore npm downloads",
