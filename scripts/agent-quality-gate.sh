@@ -270,7 +270,9 @@ run_fix_until_stable() {
 
 is_guarded_path() {
 	case "$1" in
-		package-lock.json | public/assets/* | public/checklist/* | public/d3.v3.min.js)
+		package-lock.json | public/assets/* | public/checklist/* | public/d3.v3.min.js | .github/copilot-instructions.md)
+			# Generated/vendor-heavy or deliberately thin instruction surfaces have
+			# dedicated contracts; large-deletion heuristics would create false positives.
 			return 1
 			;;
 		*.md | *.ts | *.tsx | *.js | *.mjs | *.cjs | *.json | *.yml | *.yaml | *.toml | *.sh | *.css | *.html)
