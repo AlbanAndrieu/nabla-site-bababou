@@ -70,7 +70,7 @@ repos:
     -   id: check-executables-have-shebangs
         name: "📁 filesystem/⚙️ exec · Verify shebang preset"
     -   id: check-shebang-scripts-are-executable
-        name: "📁 filesystem/⚙️ exec · Verify script permissions"
+        name: "📁 filesystem/🔗 symlink · Verify script permissions"
     -   id: check-symlinks
         name: "📁 filesystem/🔗 symlink · Check symlink validity"
     -   id: destroyed-symlinks
@@ -205,6 +205,9 @@ repos:
     hooks:
     -   id: shfmt-docker
         name: "🐚 🐳 shell · Format shell scripts"
+        # Keep shfmt as the single indentation authority and match Site Alban #177.
+        # Four-space indentation stays compatible with bashate E002.
+        args: ["-i", "4", "-ci"]
 -   repo: https://github.com/detailyang/pre-commit-shell
     rev: v1.0.6
     hooks:
