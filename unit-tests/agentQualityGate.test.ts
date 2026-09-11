@@ -38,12 +38,14 @@ test("cheap formatter/linter gate runs before the expensive npm/Next gate", asyn
 	assert.ok(full > canonical);
 });
 
-test("fix mode uses project ESLint and Stylelint before pre-commit convergence when available", async () => {
+test("fix mode scopes project ESLint and Stylelint before pre-commit convergence", async () => {
 	const source = await read("../scripts/agent-quality-gate.sh");
 
-	assert.match(source, /npm exec -- eslint --fix \./);
-	assert.match(source, /npm exec -- stylelint --fix 'public\/\*\.css'/);
-	assert.match(source, /deterministic formatter\/linter convergence/);
+	assert.match(source, /run_compact "ESLint local auto-fix" npm run lint:fix/);
+	assert.match(source, /npx eslint --fix --format \.\/scripts\/eslint-github-formatter\.mjs "\$\{javascript_lint_files\[@\]\}"/);
+	assert.match(source, /run_compact "Stylelint local auto-fix" npm run lint:css:fix/);
+	assert.match(source, /npx stylelint --fix "\$\{stylelint_files\[@\]\}"/);
+	assert.match(source, /precommit_fix_until_stable/);
 });
 
 test("strict validation records an exact local proof reusable by publish and pre-push", async () => {
@@ -97,6 +99,7 @@ test("agent bootstrap toolchain is pinned and complete", async () => {
 		".nvmrc",
 		".python-version",
 		".pre-commit-config.yaml",
+		".pre-commit-pre-push.yaml",
 		"mise.toml",
 		"package.json",
 		"package-lock.json",
@@ -122,7 +125,10 @@ test("CI and Copilot caches are best effort and Next build cache is reusable", a
 	}
 
 	assert.match(setup, /pre-commit install-hooks/);
-	assert.match(setup, /hashFiles\('\.pre-commit-config\.yaml', '\.python-version'\)/);
+	assert.match(
+		setup,
+		/pre-commit-v4\.6\.2-\$\{\{ runner\.os \}\}-\$\{\{ hashFiles\('\.pre-commit-config\.yaml', '\.pre-commit-pre-push\.yaml', '\.python-version', '\.nvmrc'\) \}\}/,
+	);
 	assert.match(ci, /Restore Next build cache/);
 	assert.match(ci, /Save Next build cache/);
 	assert.match(ci, /path: \.next\/cache/);
