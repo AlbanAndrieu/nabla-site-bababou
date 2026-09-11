@@ -16,34 +16,41 @@ async function cssFiles(directory: URL): Promise<URL[]> {
 	return files.flat();
 }
 
-test("Tailwind stays reset-only until the project owns an equivalent reset", async () => {
-	const globals = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
-	const postcss = await readFile(new URL("../postcss.config.mjs", import.meta.url), "utf8");
-	const packageJson = JSON.parse(
-		await readFile(new URL("../package.json", import.meta.url), "utf8"),
-	) as { devDependencies?: Record<string, string> };
+test("the app owns its browser reset instead of importing Tailwind Preflight", async () => {
+	const [globals, reset, packageRaw] = await Promise.all([
+		readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+		readFile(new URL("../app/reset.css", import.meta.url), "utf8"),
+		readFile(new URL("../package.json", import.meta.url), "utf8"),
+	]);
+	const pkg = JSON.parse(packageRaw) as { scripts?: Record<string, string> };
 
-	assert.match(globals, /^@import "tailwindcss\/preflight\.css" layer\(base\);$/m);
-	assert.doesNotMatch(globals, /@import\s+["']tailwindcss["']/);
-	assert.doesNotMatch(globals, /tailwindcss\/(?:theme|utilities)\.css/);
-	assert.match(postcss, /["']@tailwindcss\/postcss["']/);
-	assert.ok(packageJson.devDependencies?.tailwindcss);
-	assert.ok(packageJson.devDependencies?.["@tailwindcss/postcss"]);
+	assert.match(globals, /^@import "\.\/reset\.css";$/m);
+	assert.doesNotMatch(globals, /tailwindcss|@(?:apply|theme|utility|source|variant|custom-variant)\b/);
+	assert.doesNotMatch(reset, /--theme\(|@import\s+["']tailwindcss|@(?:apply|theme|utility|source|variant|custom-variant)\b/);
+	assert.match(reset, /box-sizing:\s*border-box/);
+	assert.match(reset, /h1,[\s\S]*h6[\s\S]*font-size:\s*inherit/);
+	assert.match(reset, /ol,[\s\S]*menu[\s\S]*list-style:\s*none/);
+	assert.match(reset, /img,[\s\S]*object[\s\S]*display:\s*block/);
+	assert.match(reset, /button,[\s\S]*::file-selector-button[\s\S]*font:\s*inherit/);
+	assert.match(reset, /\[hidden\]:where\(:not\(\[hidden="until-found"\]\)\)[\s\S]*display:\s*none !important/);
+	assert.match(pkg.scripts?.["lint:css"] ?? "", /stylelint \"app\/\*\.css\"/);
+	assert.match(pkg.scripts?.["lint:css:fix"] ?? "", /stylelint --fix \"app\/\*\.css\"/);
+
+	await assert.rejects(
+		() => readFile(new URL("../postcss.config.mjs", import.meta.url), "utf8"),
+		(error: NodeJS.ErrnoException) => error.code === "ENOENT",
+	);
 });
 
-test("maintained CSS does not depend on Tailwind directives or generated utilities", async () => {
+test("maintained CSS does not depend on Tailwind directives or generated layers", async () => {
 	const roots = [new URL("../app/", import.meta.url), new URL("../components/", import.meta.url)];
 	const files = (await Promise.all(roots.map(cssFiles))).flat();
 	const tailwindDirective = /@(apply|theme|utility|source|variant|custom-variant)\b/;
-	const generatedLayerImport = /tailwindcss\/(?:theme|utilities)\.css/;
+	const tailwindImport = /@import\s+["'][^"']*tailwindcss|tailwindcss\/(?:preflight|theme|utilities)\.css/;
 
 	for (const file of files) {
 		const source = await readFile(file, "utf8");
 		assert.doesNotMatch(source, tailwindDirective, `${file.pathname} must stay Tailwind-directive free`);
-		assert.doesNotMatch(
-			source,
-			generatedLayerImport,
-			`${file.pathname} must not re-enable Tailwind theme/utilities generation`,
-		);
+		assert.doesNotMatch(source, tailwindImport, `${file.pathname} must not import Tailwind CSS layers`);
 	}
 });
