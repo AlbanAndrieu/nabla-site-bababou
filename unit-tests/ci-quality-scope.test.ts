@@ -82,6 +82,7 @@ test("Copilot setup stays available but does not spend installs on draft synchro
 	const setup = await read("../.github/workflows/copilot-setup-steps.yml");
 
 	assert.match(setup, /workflow_dispatch:/);
+	assert.match(setup, /types: \[opened, synchronize, reopened, ready_for_review\]/);
 	assert.match(setup, /group: copilot-setup-\$\{\{ github\.event\.pull_request\.number \|\| github\.ref \}\}/);
 	assert.match(setup, /cancel-in-progress: true/);
 	assert.match(
