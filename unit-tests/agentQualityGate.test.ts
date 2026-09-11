@@ -146,29 +146,35 @@ test("CI runs the Git-only agent preflight before Node and dependency installati
 
 test("draft PRs run only the Git preflight until ready for review", async () => {
 	const workflow = await read("../.github/workflows/ci.yml");
-	const fullGateCondition =
-		"github.event_name != 'pull_request' || github.event.pull_request.draft == false";
 
 	assert.match(workflow, /types: \[opened, synchronize, reopened, ready_for_review\]/);
 	assert.match(workflow, /github\.event\.pull_request\.draft == true/);
 	assert.match(workflow, /Draft PR preflight/);
 
 	for (const step of [
+		"Classify quality scope",
+		"Run Semgrep SAST on changed source",
 		"Setup Node.js",
 		"Restore npm downloads",
 		"Restore Next build cache",
 		"Pin npm",
 		"Install dependencies",
+		"Run maintenance project checks",
 		"Run canonical project checks",
 	]) {
-		assert.ok(
-			workflow.includes("- name: " + step + "\n        if: " + fullGateCondition),
-			step + " must be deferred for draft PRs",
+		const index = workflow.indexOf(`- name: ${step}`);
+		assert.ok(index >= 0, `${step} must exist`);
+		const nextStep = workflow.indexOf("\n      - name:", index + 1);
+		const block = workflow.slice(index, nextStep >= 0 ? nextStep : undefined);
+		assert.match(
+			block,
+			/github\.event_name != 'pull_request' \|\| github\.event\.pull_request\.draft == false/,
+			`${step} must be deferred for draft PRs`,
 		);
 	}
 });
 
-test("agent policy requires fix-check-publish and preserves API-only disclosure", async () => {
+test("agent policy keeps local-first validation and API-only disclosure", async () => {
 	const agents = await read("../AGENTS.md");
 
 	assert.match(agents, /scripts\/agent-quality-gate\.sh --fix/);
