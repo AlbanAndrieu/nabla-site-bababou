@@ -120,9 +120,20 @@ jobs:
             echo "Git-only agent preflight passed. Node/npm installation and the full Next quality gate are deferred until the PR is ready for review."
           } >> "$GITHUB_STEP_SUMMARY"
 
+      - name: Classify quality scope
+        id: scope
+        if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+        shell: bash
+        env:
+          QUALITY_SCOPE_BASE_REF: ${{ github.event.pull_request.base.sha || github.event.before || '' }}
+          QUALITY_SCOPE_HEAD_REF: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: bash scripts/ci-quality-scope.sh
+
       - name: Run Semgrep SAST on changed source
         id: semgrep-sast
-        if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+        if: >-
+          (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
+          steps.scope.outputs.sast == 'true'
         continue-on-error: true
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before || github.sha }}
@@ -137,11 +148,11 @@ jobs:
 
           mapfile -t files < <(
             git diff --name-only --diff-filter=ACMR "$base_sha" "$HEAD_SHA" |
-              grep -E '^(app|components|i18n|lib|scripts|api)/.*\.(cjs|js|jsx|mjs|py|ts|tsx)$|^\.github/workflows/.*\.ya?ml$|^(next\.config\.mjs|proxy\.ts)$' || true
+              grep -E '^(app|components|i18n|lib|scripts|api)/.*\.(cjs|js|jsx|mjs|py|ts|tsx)$|^(next\.config\.mjs|proxy\.ts)$' || true
           )
 
           if (("${#files[@]}" == 0)); then
-            echo "No changed application or workflow source files require Semgrep."
+            echo "No changed application/source files require Semgrep."
             exit 0
           fi
 
@@ -163,6 +174,7 @@ jobs:
         id: semgrep-sarif
         if: >-
           always() &&
+          steps.scope.outputs.sast == 'true' &&
           vars.ENABLE_CODE_SCANNING_SARIF == 'true' &&
           hashFiles('semgrep.sarif') != '' &&
           (github.event_name != 'pull_request' ||
@@ -175,6 +187,7 @@ jobs:
       - name: Report Code Scanning SARIF opt-in disabled
         if: >-
           always() &&
+          steps.scope.outputs.sast == 'true' &&
           vars.ENABLE_CODE_SCANNING_SARIF != 'true' &&
           hashFiles('semgrep.sarif') != ''
         shell: bash
@@ -190,7 +203,7 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Preserve Semgrep SAST report
-        if: always() && hashFiles('semgrep.sarif') != ''
+        if: always() && steps.scope.outputs.sast == 'true' && hashFiles('semgrep.sarif') != ''
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: semgrep-sast-report
@@ -199,12 +212,15 @@ jobs:
           if-no-files-found: error
 
       - name: Clean Semgrep SAST workspace
-        if: always() && hashFiles('semgrep.sarif') != ''
+        if: always() && steps.scope.outputs.sast == 'true' && hashFiles('semgrep.sarif') != ''
         shell: bash
         run: rm -f semgrep.sarif
 
       - name: Enforce Semgrep SAST
-        if: steps.semgrep-sast.outcome != 'success'
+        if: >-
+          (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
+          steps.scope.outputs.sast == 'true' &&
+          steps.semgrep-sast.outcome != 'success'
         run: exit 1
 
       - name: Setup Node.js
@@ -225,7 +241,9 @@ jobs:
             npm-${{ runner.os }}-${{ runner.arch }}-
 
       - name: Restore Next build cache
-        if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+        if: >-
+          (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
+          steps.scope.outputs.full_project == 'true'
         id: next-cache
         continue-on-error: true
         uses: actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25 # v5
@@ -265,8 +283,24 @@ jobs:
           path: ~/.npm
           key: npm-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('package-lock.json') }}
 
+      - name: Run maintenance project checks
+        if: >-
+          (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
+          steps.scope.outputs.full_project != 'true'
+        id: maintenance-checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          started_at="$SECONDS"
+          npm run lint
+          npm run lint:css
+          npm run test:unit
+          echo "seconds=$((SECONDS - started_at))" >> "$GITHUB_OUTPUT"
+
       - name: Run canonical project checks
-        if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+        if: >-
+          (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
+          steps.scope.outputs.full_project == 'true'
         id: checks
         shell: bash
         run: |
@@ -291,29 +325,38 @@ jobs:
           echo "next_mb=$(du -sm .next | awk '{print $1}')" >> "$GITHUB_OUTPUT"
 
       - name: Save Next build cache
-        if: (github.event_name != 'pull_request' || github.event.pull_request.draft == false) && steps.next-cache.outputs.cache-hit != 'true'
+        if: >-
+          (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
+          steps.scope.outputs.full_project == 'true' &&
+          steps.next-cache.outputs.cache-hit != 'true'
         continue-on-error: true
         uses: actions/cache/save@caa296126883cff596d87d8935842f9db880ef25 # v5
         with:
           path: .next/cache
           key: next-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('package-lock.json') }}-${{ hashFiles('app/**', 'components/**', 'i18n/**', 'lib/**', 'messages/**', 'next.config.*', 'proxy.ts', 'tsconfig.json') }}
 
-      # Keep Snyk as an optional gate without referencing its Docker-based
-      # GitHub Action. GitHub may prepare container actions before evaluating
-      # the step-level condition, which pulled the image even with no token.
+      # Keep Snyk as an optional dependency-change gate without referencing its
+      # Docker GitHub Action. No dependency delta means no Snyk process/download.
       - name: Run Snyk vulnerability scan
-        if: (github.event_name != 'pull_request' || github.event.pull_request.draft == false) && env.SNYK_TOKEN != ''
+        if: >-
+          (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
+          steps.scope.outputs.dependencies == 'true' &&
+          env.SNYK_TOKEN != ''
         run: npx --yes snyk test
 
       - name: Publish CI performance summary
         if: always() && !cancelled() && (github.event_name != 'pull_request' || github.event.pull_request.draft == false)
         shell: bash
         env:
+          QUALITY_SCOPE: ${{ steps.scope.outputs.full_project }}
+          SAST_SCOPE: ${{ steps.scope.outputs.sast }}
+          DEPENDENCY_SCOPE: ${{ steps.scope.outputs.dependencies }}
           NPM_CI_SECONDS: ${{ steps.install.outputs.seconds }}
           NODE_MODULES_MB: ${{ steps.install.outputs.node_modules_mb }}
           NPM_CACHE_MB: ${{ steps.install.outputs.npm_cache_mb }}
           NPM_CACHE_HIT: ${{ steps.npm-cache.outputs.cache-hit }}
           NEXT_CACHE_HIT: ${{ steps.next-cache.outputs.cache-hit }}
+          MAINTENANCE_CHECK_SECONDS: ${{ steps.maintenance-checks.outputs.seconds }}
           CHECK_SECONDS: ${{ steps.checks.outputs.seconds }}
           NEXT_BUILD_SECONDS: ${{ steps.checks.outputs.next_build_seconds }}
           NEXT_MB: ${{ steps.checks.outputs.next_mb }}
@@ -331,10 +374,14 @@ jobs:
             echo
             echo "| Metric | Value |"
             echo "| --- | ---: |"
+            echo "| full project gate | $(value_or_na "$QUALITY_SCOPE") |"
+            echo "| Semgrep source gate | $(value_or_na "$SAST_SCOPE") |"
+            echo "| dependency gate | $(value_or_na "$DEPENDENCY_SCOPE") |"
             echo "| npm ci | $(value_or_na "$NPM_CI_SECONDS") s |"
             echo "| node_modules | $(value_or_na "$NODE_MODULES_MB") MiB |"
             echo "| npm cache | $(value_or_na "$NPM_CACHE_MB") MiB |"
             echo "| npm cache hit | $(value_or_na "$NPM_CACHE_HIT") |"
+            echo "| maintenance checks | $(value_or_na "$MAINTENANCE_CHECK_SECONDS") s |"
             echo "| Next build cache hit | $(value_or_na "$NEXT_CACHE_HIT") |"
             echo "| npm run check | $(value_or_na "$CHECK_SECONDS") s |"
             echo "| next build | $(value_or_na "$NEXT_BUILD_SECONDS") s |"
@@ -409,7 +456,17 @@ jobs:
               filename.startsWith('.idea/') ||
               filename.startsWith('.agents/') ||
               filename.startsWith('.cursor/') ||
-              filename.startsWith('.claude/');
+              filename.startsWith('.claude/') ||
+              filename === '.pre-commit-config.yaml' ||
+              filename === '.pre-commit-pre-push.yaml' ||
+              filename === '.python-version' ||
+              filename === 'mise.toml' ||
+              filename === 'eslint.config.js' ||
+              filename === 'stylelint.config.cjs' ||
+              filename === 'scripts/agent-quality-gate.sh' ||
+              filename === 'scripts/ci-quality-scope.sh' ||
+              filename === 'scripts/quality-gate.sh' ||
+              filename === 'scripts/eslint-github-formatter.mjs';
 
             const deployRelevant = files
               .map((file) => file.filename)
@@ -559,6 +616,7 @@ jobs:
             core.setFailed(
               `Timed out waiting for ${[...expected].join(' and ')} on ${sha}.`,
             );
+
       - name: Publish deferred ZAP workflow-bootstrap status
         if: steps.preview.outputs.deploy_relevant == 'true' && steps.preview.outputs.zap_bootstrap == 'true'
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
