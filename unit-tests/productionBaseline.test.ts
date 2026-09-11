@@ -207,6 +207,19 @@ esac
 	return bin;
 }
 
+async function installBrokenCurlMock(directory: string, mode: "transport" | "json") {
+	const bin = join(directory, `bin-${mode}`);
+	await mkdir(bin, { recursive: true });
+	const curl = join(bin, "curl");
+	const script =
+		mode === "transport"
+			? `#!/usr/bin/env bash\nset -euo pipefail\necho "forced status API failure" >&2\nexit 22\n`
+			: `#!/usr/bin/env bash\nset -euo pipefail\nprintf '%s\\n' '{"state":"success"}'\n`;
+	await writeFile(curl, script);
+	await chmod(curl, 0o755);
+	return bin;
+}
+
 function runBaseline(
 	directory: string,
 	bin: string,
@@ -255,6 +268,32 @@ test("production baseline inherits across metadata-only release when latest Verc
 		result.stdout,
 		new RegExp(`production baseline healthy at ${fixture.parentSha}`),
 	);
+});
+
+test("production baseline classifies commit-status API transport failures", async (t) => {
+	const fixture = await createReleaseRepo();
+	t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
+	const bin = await installBrokenCurlMock(fixture.directory, "transport");
+
+	const result = runBaseline(fixture.directory, bin, fixture.releaseSha);
+
+	assert.equal(result.status, 2);
+	assert.match(result.stderr, /PROD_BASE_STATUS_API/);
+	assert.match(result.stderr, new RegExp(fixture.releaseSha));
+	assert.doesNotMatch(result.stdout, /inheriting the parent production baseline/);
+});
+
+test("production baseline classifies malformed commit-status payloads", async (t) => {
+	const fixture = await createReleaseRepo();
+	t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
+	const bin = await installBrokenCurlMock(fixture.directory, "json");
+
+	const result = runBaseline(fixture.directory, bin, fixture.releaseSha);
+
+	assert.equal(result.status, 2);
+	assert.match(result.stderr, /PROD_BASE_STATUS_JSON/);
+	assert.match(result.stderr, new RegExp(fixture.releaseSha));
+	assert.doesNotMatch(result.stdout, /inheriting the parent production baseline/);
 });
 
 test("production baseline does not inherit a metadata-only release without a successful Vercel signal", async (t) => {
