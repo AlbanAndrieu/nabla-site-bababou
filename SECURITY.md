@@ -10,7 +10,7 @@
 
 ## Dependency supply-chain controls
 
-- Node.js is constrained to `>=24.11.0 <25`.
+- The Node.js package engine is `>=24.11.0 <26`; local/CI validation is pinned by `.nvmrc` to `v25.9.0`, while Vercel production uses its supported Node 24.x runtime.
 - npm is constrained to `>=11.17.0 <12`.
 - `.npmrc` enables `strict-allow-scripts=true`.
 - Packages with reviewed install scripts are explicitly denied through `package.json#allowScripts`; any new install script must fail until reviewed.
@@ -25,12 +25,13 @@
 
 ## Validation
 
-- `CI (Quality and Security)` runs a changed-source Semgrep SAST before Node/npm setup, then lint, route type generation, type-check, unit/privacy checks and the production Next build. Semgrep itself is blocking. SARIF publication to GitHub Code Scanning is opt-in because Code Scanning is currently disabled for this private repository. Successful scans do not retain a redundant SARIF workflow artifact when Code Scanning is disabled; a failed scan keeps `semgrep-sast-report` for 7 days for diagnosis. After enabling Code Scanning, set repository variable `ENABLE_CODE_SCANNING_SARIF=true`.
-- Snyk runs when `SNYK_TOKEN` is configured.
+- Ready PR Quality validates the current production base and canonical live smoke before dependency installation. Changed-source Semgrep runs before Node/npm only when source scope requires SAST; maintenance-only changes intentionally skip Semgrep, the production Next build and dependency scanning while still running lint/CSS/unit checks.
+- Semgrep remains blocking whenever its source scope is active. SARIF publication to GitHub Code Scanning is opt-in because Code Scanning is currently disabled for this private repository. Successful scans do not retain a redundant SARIF workflow artifact when Code Scanning is disabled; a failed scan keeps `semgrep-sast-report` for 7 days for diagnosis. After enabling Code Scanning, set repository variable `ENABLE_CODE_SCANNING_SARIF=true`.
+- Snyk runs only for dependency-scope Quality changes when `SNYK_TOKEN` is configured; otherwise it is skipped to avoid unnecessary process/download cost.
 - Preview Playwright validates deploy-relevant PR revisions on the exact Vercel checkpoint SHA.
 - Preview OWASP ZAP runs independently on the same exact checkpoint, uses the versioned `.zap/rules.tsv` policy, negotiates Vercel Automation Bypass with an OIDC trusted-source fallback, and reports H/M/L/Informational alert counts plus the top alert types.
 - Production publishes independent `Production Post-deploy Smoke` and `Production DAST` statuses. Production DAST runs after successful Vercel production deployments, on demand, and daily against `www.bababou.com`.
-- The first post-merge production DAST/smoke statuses must be observed before promoting them to mandatory pre-merge base-health requirements.
+- Pre-merge Quality requires a healthy production base with Vercel, `Production Post-deploy Smoke` and `Production DAST`; a metadata-only semantic-release commit may inherit its parent production baseline only under the strict bounded release-hop contract.
 - `npm audit` is an advisory signal; review upgrades instead of applying blind `--force` fixes.
 - Interpret CodeQL, dependency and deployment posture from current runs rather than historical vulnerability counts.
 

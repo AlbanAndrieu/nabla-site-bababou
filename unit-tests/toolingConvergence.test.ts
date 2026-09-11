@@ -119,10 +119,31 @@ test("public/contributor guidance does not restore the retired standalone-static
 });
 
 test("security guidance reflects the current dependency and deployment boundary", async () => {
-  const security = await read("SECURITY.md");
+  const [security, packageRaw, nvmrc] = await Promise.all([
+    read("SECURITY.md"),
+    read("package.json"),
+    read(".nvmrc"),
+  ]);
+  const packageJson = JSON.parse(packageRaw) as {
+    engines?: { node?: string; npm?: string };
+  };
 
   assert.match(security, /strict-allow-scripts=true/);
   assert.match(security, /Vercel Git Integration/);
   assert.match(security, /privacy gate/);
+  assert.ok(packageJson.engines?.node);
+  assert.ok(packageJson.engines?.npm);
+  assert.ok(security.includes(`\`${packageJson.engines.node}\``));
+  assert.ok(security.includes(`\`${packageJson.engines.npm}\``));
+  assert.ok(security.includes(`\`${nvmrc.trim()}\``));
+  assert.match(security, /Vercel production uses its supported Node 24\.x runtime/);
+  assert.match(security, /maintenance-only changes intentionally skip Semgrep, the production Next build and dependency scanning/);
+  assert.match(security, /Snyk runs only for dependency-scope Quality changes when `SNYK_TOKEN` is configured/);
+  assert.match(security, /Pre-merge Quality requires a healthy production base/);
+  assert.match(security, /Production Post-deploy Smoke/);
+  assert.match(security, /Production DAST/);
+  assert.match(security, /metadata-only semantic-release commit may inherit its parent production baseline/);
+  assert.doesNotMatch(security, />=24\.11\.0 <25/);
+  assert.doesNotMatch(security, /first post-merge production DAST\/smoke statuses must be observed/);
   assert.doesNotMatch(security, /Initial State:|Final State:|remaining vulnerabilities are in deployment tooling/);
 });
