@@ -159,7 +159,7 @@ repos:
         name: "🔒 security · Detect private keys"
 
 -   repo: https://github.com/pre-commit/pre-commit.git
-    rev: v4.6.1
+    rev: v4.6.2
     hooks:
     -   id: validate_manifest
         name: "🤖 manifest · Validate manifest scripts"
@@ -188,13 +188,9 @@ repos:
     -   id: ruff-format
         name: "🐍 python · Format with Ruff"
 
-    -   id: ruff
-        name: "🐍 python · Lint and perform unsafe auto-fixes with Ruff"
-        args: [--unsafe-fixes]
-
     -   id: ruff-check
-        name: "🐍 python · Check with Ruff"
-        args: [--fix]
+        name: "🐍 python · Check and perform unsafe auto-fixes with Ruff"
+        args: [--fix, --unsafe-fixes]
 
 -   repo: https://github.com/abravalheri/validate-pyproject
     rev: v0.25
@@ -209,6 +205,8 @@ repos:
     hooks:
     -   id: shfmt-docker
         name: "🐚 🐳 shell · Format shell scripts"
+        # shfmt is the single shell-indentation authority, aligned with Site Alban #177.
+        args: ["-i", "4", "-ci"]
 -   repo: https://github.com/detailyang/pre-commit-shell
     rev: v1.0.6
     hooks:
@@ -232,7 +230,8 @@ repos:
     hooks:
     -   id: bashate
         name: "🐚 shell · Check shell script code style"
-        args: [-i, "E003,E006"]
+        # E002 is indentation, already canonicalized by shfmt above.
+        args: [-i, "E002,E003,E006"]
         exclude: >
           (?x)^(
             trunk|
@@ -277,7 +276,6 @@ repos:
               trivy-sbom.json|
               public/assets/fontawesome-free-7.1.0-web/.*|
               public/assets/fontawesome/.*|
-              public/assets/.*|
               public/cv-markdown-export.js|
               public/arf.js|
               public/index.js|
@@ -312,14 +310,6 @@ repos:
     -   id: markdown-toc
         name: "📝 markdown · Toc markdown"
         args: [--maxdepth, "3", -i]
-
--   repo: https://github.com/thibaudcolas/pre-commit-stylelint
-    rev: v17.14.1
-    hooks:
-    -   id: stylelint
-        name: "🟦 css · Lint with Stylelint"
-        additional_dependencies:
-        -   stylelint@17.14.1
 
     ### Additional File Types ###
 -   repo: https://github.com/pre-commit/mirrors-prettier

@@ -20,7 +20,9 @@
   },
   "scripts": {
     "lint": "eslint --format ./scripts/eslint-github-formatter.mjs .",
-    "lint:css": "stylelint public/*.css",
+    "lint:fix": "eslint --fix --format ./scripts/eslint-github-formatter.mjs .",
+    "lint:css": "stylelint \"app/globals.css\" \"app/**/*.module.css\" \"components/**/*.module.css\" \"public/*.css\"",
+    "lint:css:fix": "stylelint --fix \"app/globals.css\" \"app/**/*.module.css\" \"components/**/*.module.css\" \"public/*.css\"",
     "typecheck": "tsc --noEmit",
     "test:unit": "node --import tsx --test \"unit-tests/**/*.test.ts\"",
     "privacy:check": "node --import tsx scripts/privacy-gate.ts",
