@@ -95,7 +95,8 @@ test("production baseline and live smoke run before dependency installation", as
 	for (const context of ["Vercel", "Production Post-deploy Smoke", "Production DAST"]) {
 		assert.ok(baseline.includes(`\"${context}\"`));
 	}
-	assert.match(baseline, /Canceled by Ignored Build Step/);
+	assert.match(baseline, /vercel_state/);
+	assert.match(baseline, /production-only statuses are absent on metadata-only release/);
 	assert.match(baseline, /chore\\\(release\\\):/);
 	assert.match(baseline, /\[skip ci\]/);
 	assert.match(baseline, /package\.json changed beyond version metadata/);
