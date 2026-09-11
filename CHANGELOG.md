@@ -1,3 +1,10 @@
+# [0.15.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.14.1...0.15.0) (2026-09-11)
+
+
+### Features
+
+* **ci:** automate post-merge quality remediation ([#178](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/178)) ([7f43739](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/7f43739e4b7c71746c85e3bfc8536a5675fb2f43))
+
 ## [0.14.1](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.14.0...0.14.1) (2026-09-10)
 
 
