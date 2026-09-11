@@ -22,6 +22,7 @@ type ReleaseRepoOptions = {
 	childVersion?: string;
 	lockVersion?: string;
 	subjectVersion?: string;
+	mergeRelease?: boolean;
 };
 
 async function writePackageVersion(
@@ -63,6 +64,7 @@ async function createReleaseRepo(options: ReleaseRepoOptions = {}) {
 		childVersion = "1.0.1",
 		lockVersion = childVersion,
 		subjectVersion = childVersion,
+		mergeRelease = false,
 	} = options;
 	const directory = await mkdtemp(join(tmpdir(), "bababou-production-baseline-"));
 	execFileSync("git", ["init"], { cwd: directory, stdio: "ignore" });
@@ -87,6 +89,22 @@ async function createReleaseRepo(options: ReleaseRepoOptions = {}) {
 		encoding: "utf8",
 	}).trim();
 
+	let secondParentSha: string | undefined;
+	if (mergeRelease) {
+		execFileSync("git", ["commit", "--allow-empty", "-m", "chore: alternate parent"], {
+			cwd: directory,
+			stdio: "ignore",
+		});
+		secondParentSha = execFileSync("git", ["rev-parse", "HEAD"], {
+			cwd: directory,
+			encoding: "utf8",
+		}).trim();
+		execFileSync("git", ["reset", "--hard", parentSha], {
+			cwd: directory,
+			stdio: "ignore",
+		});
+	}
+
 	await writePackageVersion(directory, childVersion, lockVersion);
 	await writeFile(
 		join(directory, "CHANGELOG.md"),
@@ -96,14 +114,41 @@ async function createReleaseRepo(options: ReleaseRepoOptions = {}) {
 		await writeFile(join(directory, "runtime.txt"), "unexpected runtime change\n");
 	}
 	execFileSync("git", ["add", "."], { cwd: directory, stdio: "ignore" });
-	execFileSync("git", ["commit", "-m", `chore(release): ${subjectVersion} [skip ci]`], {
-		cwd: directory,
-		stdio: "ignore",
-	});
-	const releaseSha = execFileSync("git", ["rev-parse", "HEAD"], {
-		cwd: directory,
-		encoding: "utf8",
-	}).trim();
+
+	let releaseSha: string;
+	if (secondParentSha) {
+		const treeSha = execFileSync("git", ["write-tree"], {
+			cwd: directory,
+			encoding: "utf8",
+		}).trim();
+		releaseSha = execFileSync(
+			"git",
+			[
+				"commit-tree",
+				treeSha,
+				"-p",
+				parentSha,
+				"-p",
+				secondParentSha,
+				"-m",
+				`chore(release): ${subjectVersion} [skip ci]`,
+			],
+			{ cwd: directory, encoding: "utf8" },
+		).trim();
+		execFileSync("git", ["reset", "--hard", releaseSha], {
+			cwd: directory,
+			stdio: "ignore",
+		});
+	} else {
+		execFileSync("git", ["commit", "-m", `chore(release): ${subjectVersion} [skip ci]`], {
+			cwd: directory,
+			stdio: "ignore",
+		});
+		releaseSha = execFileSync("git", ["rev-parse", "HEAD"], {
+			cwd: directory,
+			encoding: "utf8",
+		}).trim();
+	}
 
 	return { directory, parentSha, releaseSha };
 }
@@ -346,5 +391,40 @@ test("production baseline rejects a semantic-release subject that does not match
 
 	assert.equal(result.status, 1);
 	assert.match(result.stderr, /release subject does not match package version 1\.0\.1/);
+	assert.match(result.stderr, /cannot inherit an older production baseline/);
+});
+
+test("production baseline rejects metadata-only release merge commits", async (t) => {
+	const fixture = await createReleaseRepo({ mergeRelease: true });
+	t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
+	const bin = await installCurlMock(
+		fixture.directory,
+		fixture.releaseSha,
+		fixture.parentSha,
+		previewVercelSuccess,
+	);
+
+	const result = runBaseline(fixture.directory, bin, fixture.releaseSha);
+
+	assert.equal(result.status, 1);
+	assert.match(result.stderr, /PROD_BASE_RELEASE_GRAPH/);
+	assert.match(result.stderr, /baseline inheritance requires a linear single-parent release commit/);
+	assert.match(result.stderr, /cannot inherit an older production baseline/);
+});
+
+test("production baseline rejects regressive release versions", async (t) => {
+	const fixture = await createReleaseRepo({ childVersion: "0.9.9" });
+	t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
+	const bin = await installCurlMock(
+		fixture.directory,
+		fixture.releaseSha,
+		fixture.parentSha,
+		previewVercelSuccess,
+	);
+
+	const result = runBaseline(fixture.directory, bin, fixture.releaseSha);
+
+	assert.equal(result.status, 1);
+	assert.match(result.stderr, /does not monotonically advance package version 1\.0\.0 -> 0\.9\.9/);
 	assert.match(result.stderr, /cannot inherit an older production baseline/);
 });
