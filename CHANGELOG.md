@@ -1,3 +1,10 @@
+## [0.15.2](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.15.1...0.15.2) (2026-09-11)
+
+
+### Performance Improvements
+
+* **ci:** continue P5 agent quality efficiency ([#180](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/180)) ([b4b7c2f](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/b4b7c2ff9103a2ab2e7f0bc87f8fcc8be5a037ca))
+
 ## [0.15.1](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.15.0...0.15.1) (2026-09-11)
 
 
