@@ -66,9 +66,14 @@ fi
 
 # GITHUB_SHA is a synthetic merge SHA on pull_request events. The workflow checks
 # out the exact PR revision, so HEAD is the canonical revision for comparable
-# PR and post-merge performance records.
+# PR and post-merge performance records. Record the effective branch/ref and the
+# exact Node/npm toolchain too so performance drift can be separated from runtime
+# changes without reopening the full job log.
 checkout_sha="$(git rev-parse HEAD 2>/dev/null || true)"
-baseline_record="CI_PERF_BASELINE schema=1 run=$(value_or_na "${GITHUB_RUN_ID:-}") attempt=$(value_or_na "${GITHUB_RUN_ATTEMPT:-}") sha=$(value_or_na "${checkout_sha}") event=$(value_or_na "${GITHUB_EVENT_NAME:-}") runner=$(value_or_na "${RUNNER_OS:-}")-$(value_or_na "${RUNNER_ARCH:-}") scope=${quality_scope} npm_ci_s=$(value_or_na "${NPM_CI_SECONDS:-}") node_modules_mb=$(value_or_na "${NODE_MODULES_MB:-}") full_checks_s=$(value_or_na "${CHECK_SECONDS:-}") next_build_s=$(value_or_na "${NEXT_BUILD_SECONDS:-}") next_output_mb=$(value_or_na "${NEXT_MB:-}")"
+baseline_ref="${GITHUB_HEAD_REF:-${GITHUB_REF_NAME:-}}"
+node_version="$(node --version 2>/dev/null || true)"
+npm_version="$(npm --version 2>/dev/null || true)"
+baseline_record="CI_PERF_BASELINE schema=2 run=$(value_or_na "${GITHUB_RUN_ID:-}") run_number=$(value_or_na "${GITHUB_RUN_NUMBER:-}") attempt=$(value_or_na "${GITHUB_RUN_ATTEMPT:-}") sha=$(value_or_na "${checkout_sha}") ref=$(value_or_na "${baseline_ref}") event=$(value_or_na "${GITHUB_EVENT_NAME:-}") runner=$(value_or_na "${RUNNER_OS:-}")-$(value_or_na "${RUNNER_ARCH:-}") node=$(value_or_na "${node_version}") npm=$(value_or_na "${npm_version}") scope=${quality_scope} npm_ci_s=$(value_or_na "${NPM_CI_SECONDS:-}") node_modules_mb=$(value_or_na "${NODE_MODULES_MB:-}") full_checks_s=$(value_or_na "${CHECK_SECONDS:-}") next_build_s=$(value_or_na "${NEXT_BUILD_SECONDS:-}") next_output_mb=$(value_or_na "${NEXT_MB:-}")"
 printf '%s\n' "${baseline_record}"
 
 if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then

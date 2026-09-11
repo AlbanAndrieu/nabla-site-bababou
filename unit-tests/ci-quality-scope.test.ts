@@ -142,21 +142,30 @@ test("CI performance budgets are warning-only and derived from observed headroom
 	assert.doesNotMatch(budget, /exit 1/);
 });
 
-test("CI performance emits a versioned exact-checkout baseline record without artifacts", async () => {
+test("CI performance emits a toolchain-aware exact-checkout baseline record without artifacts", async () => {
 	const [workflow, budget] = await Promise.all([
 		read("../.github/workflows/ci.yml"),
 		read("../scripts/ci-performance-budget.sh"),
 	]);
 
-	assert.match(budget, /CI_PERF_BASELINE schema=1 run=/);
+	assert.match(budget, /CI_PERF_BASELINE schema=2 run=/);
+	assert.doesNotMatch(budget, /CI_PERF_BASELINE schema=1 run=/);
 	assert.match(budget, /GITHUB_RUN_ID/);
+	assert.match(budget, /GITHUB_RUN_NUMBER/);
 	assert.match(budget, /GITHUB_RUN_ATTEMPT/);
+	assert.match(budget, /GITHUB_HEAD_REF/);
+	assert.match(budget, /GITHUB_REF_NAME/);
 	assert.match(budget, /RUNNER_OS/);
 	assert.match(budget, /RUNNER_ARCH/);
+	assert.match(budget, /node --version/);
+	assert.match(budget, /npm --version/);
 	assert.match(budget, /git rev-parse HEAD/);
 	assert.doesNotMatch(budget, /sha=\$\(value_or_na "\$\{GITHUB_SHA/);
 	assert.match(budget, /GITHUB_EVENT_NAME/);
 	assert.match(budget, /scope=\$\{quality_scope\}/);
+	for (const field of ["run_number=", "ref=", "node=", "npm="]) {
+		assert.ok(budget.includes(field));
+	}
 	for (const metric of [
 		"npm_ci_s=",
 		"node_modules_mb=",
