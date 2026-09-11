@@ -68,7 +68,7 @@ fi
 # out the exact PR revision, so HEAD is the canonical revision for comparable
 # PR and post-merge performance records.
 checkout_sha="$(git rev-parse HEAD 2>/dev/null || true)"
-baseline_record="CI_PERF_BASELINE run=$(value_or_na "${GITHUB_RUN_ID:-}") sha=$(value_or_na "${checkout_sha}") event=$(value_or_na "${GITHUB_EVENT_NAME:-}") scope=${quality_scope} npm_ci_s=$(value_or_na "${NPM_CI_SECONDS:-}") node_modules_mb=$(value_or_na "${NODE_MODULES_MB:-}") full_checks_s=$(value_or_na "${CHECK_SECONDS:-}") next_build_s=$(value_or_na "${NEXT_BUILD_SECONDS:-}") next_output_mb=$(value_or_na "${NEXT_MB:-}")"
+baseline_record="CI_PERF_BASELINE schema=1 run=$(value_or_na "${GITHUB_RUN_ID:-}") attempt=$(value_or_na "${GITHUB_RUN_ATTEMPT:-}") sha=$(value_or_na "${checkout_sha}") event=$(value_or_na "${GITHUB_EVENT_NAME:-}") runner=$(value_or_na "${RUNNER_OS:-}")-$(value_or_na "${RUNNER_ARCH:-}") scope=${quality_scope} npm_ci_s=$(value_or_na "${NPM_CI_SECONDS:-}") node_modules_mb=$(value_or_na "${NODE_MODULES_MB:-}") full_checks_s=$(value_or_na "${CHECK_SECONDS:-}") next_build_s=$(value_or_na "${NEXT_BUILD_SECONDS:-}") next_output_mb=$(value_or_na "${NEXT_MB:-}")"
 printf '%s\n' "${baseline_record}"
 
 if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then

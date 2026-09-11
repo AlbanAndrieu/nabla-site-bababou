@@ -142,14 +142,17 @@ test("CI performance budgets are warning-only and derived from observed headroom
 	assert.doesNotMatch(budget, /exit 1/);
 });
 
-test("CI performance emits a compact exact-checkout baseline record without artifacts", async () => {
+test("CI performance emits a versioned exact-checkout baseline record without artifacts", async () => {
 	const [workflow, budget] = await Promise.all([
 		read("../.github/workflows/ci.yml"),
 		read("../scripts/ci-performance-budget.sh"),
 	]);
 
-	assert.match(budget, /CI_PERF_BASELINE run=/);
+	assert.match(budget, /CI_PERF_BASELINE schema=1 run=/);
 	assert.match(budget, /GITHUB_RUN_ID/);
+	assert.match(budget, /GITHUB_RUN_ATTEMPT/);
+	assert.match(budget, /RUNNER_OS/);
+	assert.match(budget, /RUNNER_ARCH/);
 	assert.match(budget, /git rev-parse HEAD/);
 	assert.doesNotMatch(budget, /sha=\$\(value_or_na "\$\{GITHUB_SHA/);
 	assert.match(budget, /GITHUB_EVENT_NAME/);
