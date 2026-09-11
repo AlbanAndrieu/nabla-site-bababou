@@ -142,6 +142,31 @@ test("CI performance budgets are warning-only and derived from observed headroom
 	assert.doesNotMatch(budget, /exit 1/);
 });
 
+test("CI performance emits a compact exact-checkout baseline record without artifacts", async () => {
+	const [workflow, budget] = await Promise.all([
+		read("../.github/workflows/ci.yml"),
+		read("../scripts/ci-performance-budget.sh"),
+	]);
+
+	assert.match(budget, /CI_PERF_BASELINE run=/);
+	assert.match(budget, /GITHUB_RUN_ID/);
+	assert.match(budget, /git rev-parse HEAD/);
+	assert.doesNotMatch(budget, /sha=\$\(value_or_na "\$\{GITHUB_SHA/);
+	assert.match(budget, /GITHUB_EVENT_NAME/);
+	assert.match(budget, /scope=\$\{quality_scope\}/);
+	for (const metric of [
+		"npm_ci_s=",
+		"node_modules_mb=",
+		"full_checks_s=",
+		"next_build_s=",
+		"next_output_mb=",
+	]) {
+		assert.ok(budget.includes(metric));
+	}
+	assert.match(budget, /Copy-ready baseline record/);
+	assert.doesNotMatch(workflow, /ci-performance.*upload-artifact/is);
+});
+
 test("explicit npm cache owners disable setup-node automatic npm caching", async () => {
 	const [ci, copilot, playwright] = await Promise.all([
 		read("../.github/workflows/ci.yml"),
