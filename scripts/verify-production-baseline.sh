@@ -10,10 +10,13 @@ API_URL="${GITHUB_API_URL:-https://api.github.com}"
 REPOSITORY="${GITHUB_REPOSITORY:-}"
 MAX_RELEASE_HOPS="${QUALITY_BASELINE_RELEASE_HOPS:-3}"
 
-required_contexts=(
-	"Vercel"
+production_contexts=(
 	"Production Post-deploy Smoke"
 	"Production DAST"
+)
+required_contexts=(
+	"Vercel"
+	"${production_contexts[@]}"
 )
 
 if [[ ! "${BASE_SHA}" =~ ^[0-9a-f]{40}$ ]]; then
@@ -155,6 +158,7 @@ release_hops=0
 while :; do
 	json="$(status_json "${candidate}")"
 	missing=()
+	production_missing=()
 	failed=()
 	vercel_state="missing"
 
@@ -172,6 +176,9 @@ while :; do
 				;;
 			missing)
 				missing+=("${context}")
+				if [[ "${context}" != "Vercel" ]]; then
+					production_missing+=("${context}")
+				fi
 				;;
 			*)
 				failed+=("${context}=${state}")
@@ -201,6 +208,12 @@ while :; do
 			} >>"${GITHUB_STEP_SUMMARY}"
 		fi
 		exit 0
+	fi
+
+	if [[ "${vercel_state}" == "success" ]] && (("${#production_missing[@]}" > 0 && "${#production_missing[@]}" != "${#production_contexts[@]}")); then
+		printf '❌ PROD_BASE_PARTIAL: %s has an inconsistent partial production status set; missing: %s\n' \
+			"${candidate}" "${production_missing[*]}" >&2
+		exit 1
 	fi
 
 	if ((release_hops >= MAX_RELEASE_HOPS)); then
