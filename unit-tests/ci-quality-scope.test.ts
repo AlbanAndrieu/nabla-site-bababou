@@ -105,6 +105,10 @@ test("production baseline and live smoke run before dependency installation", as
 	assert.match(baseline, /release .* has inconsistent package\/lock versions/);
 	assert.match(baseline, /release subject does not match package version/);
 	assert.match(baseline, /PROD_BASE_RELEASE_VERSION/);
+	assert.match(baseline, /PROD_BASE_RELEASE_GRAPH/);
+	assert.match(baseline, /baseline inheritance requires a linear single-parent release commit/);
+	assert.match(baseline, /production release hop must use stable numeric SemVer/);
+	assert.match(baseline, /does not monotonically advance package version/);
 	assert.match(baseline, /PROD_BASE_UNHEALTHY/);
 	assert.match(baseline, /PROD_BASE_RELEASE_SCOPE/);
 
