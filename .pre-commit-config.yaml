@@ -1,4 +1,4 @@
-fail_fast: true
+fail_fast: false
 minimum_pre_commit_version: 4.2.0
 exclude: |
   (?x)^(
@@ -32,11 +32,7 @@ ci:
   -   schemas
   submodules: true
 default_install_hook_types:
--   pre-commit # gitleak
-    # make sure you include `prepare-commit-msg` in `default_install_hook_types`
-    # prepare-commit-msg made by oco
-    # - prepare-commit-msg
--   commit-msg
+-   pre-commit
 -   pre-push
 
 default_stages:
@@ -46,15 +42,8 @@ repos:
   # ---------------------------------------------------------------------------- #
   #                              🔄 Pre-Commit Hooks                             #
   # ---------------------------------------------------------------------------- #
-  # - repo: meta
-  #   hooks:
-  #     - id: check-hooks-apply
-  #     - id: check-useless-excludes
-
--   repo: https://gitlab.com/vojko.pribudic.foss/pre-commit-update
-    rev: v0.9.0
-    hooks:
-    -   id: pre-commit-update
+  # Hook revision maintenance is deliberately not executed during every commit.
+  # Keep `pre-commit autoupdate` as an explicit maintenance operation instead.
 
     # ---------------------------- 📁 Filesystem Tools --------------------------- #
 -   repo: https://github.com/pre-commit/pre-commit-hooks.git
@@ -80,12 +69,6 @@ repos:
           )$
     -   id: check-executables-have-shebangs
         name: "📁 filesystem/⚙️ exec · Verify shebang preset"
-        # exclude: >
-        #   (?x)^(
-        #       .mvn/|
-        #       .venv|
-        #       .direnv|
-        #   )$
     -   id: check-shebang-scripts-are-executable
         name: "📁 filesystem/⚙️ exec · Verify script permissions"
     -   id: check-symlinks
@@ -110,7 +93,6 @@ repos:
           (?x)^(
               tests/.*|
           )$
-        # --------------------------- 🔍 Code Quality Tools -------------------------- #
     -   id: check-json
         name: "📁 filesystem/📝 json · Check json"
         exclude: >
@@ -136,14 +118,10 @@ repos:
         name: "🔀 sort/📜 file · Sort contents"
     -   id: requirements-txt-fixer
         name: "🔀 sort/🐍 json · Sort requirements"
-        # ------------------------------- 🌳 Git Tools ------------------------------- #
     -   id: check-merge-conflict
         name: "🌳 git · Detect conflict markers"
     -   id: forbid-new-submodules
         name: "🌳 git · Prevent submodule creation"
-        # - id: no-commit-to-branch
-        #   name: "🌳 git · Protect main branches"
-        #   args: [--branch, main, --branch, master, --branch, release/*]
     -   id: check-added-large-files
         name: "🌳 git · Block large file commits"
         args: [--maxkb=123]
@@ -177,7 +155,6 @@ repos:
             public/checklist/index.html|
             public/checklist/checklist/index.html|
           )$
-        # ----------------------------- 🔒 Security Tools ---------------------------- #
     -   id: detect-private-key
         name: "🔒 security · Detect private keys"
 
@@ -199,8 +176,6 @@ repos:
     -   id: add-trailing-comma
         name: "🤖 comma · Add trailing comma"
 
-    # --------------------------- 🔍 Code Quality Tools -------------------------- #
-
     ### Python Tools ###
 -   repo: https://github.com/asottile/pyupgrade
     rev: v3.21.2
@@ -221,12 +196,6 @@ repos:
         name: "🐍 python · Check with Ruff"
         args: [--fix]
 
-    # - repo: https://github.com/RobertCraigie/pyright-python
-    #   rev: v1.1.406
-    #   hooks:
-    #     - id: pyright
-    #       name: "🐍 python · Check types"
-
 -   repo: https://github.com/abravalheri/validate-pyproject
     rev: v0.25
     hooks:
@@ -238,9 +207,7 @@ repos:
 -   repo: https://github.com/scop/pre-commit-shfmt
     rev: v3.13.1-1
     hooks:
-      # Choose one of:
-      # - id: shfmt         # native (requires Go to build)
-    -   id: shfmt-docker # Docker image (requires Docker to run)
+    -   id: shfmt-docker
         name: "🐚 🐳 shell · Format shell scripts"
 -   repo: https://github.com/detailyang/pre-commit-shell
     rev: v1.0.6
@@ -297,33 +264,6 @@ repos:
         -   mdformat-ruff
         -   mdformat-frontmatter
         -   ruff
-        # - id: nbqa-mypy
-        #   name: "📓 notebook · Type-check cells"
-
-    ### Markdown ###
-    # mdformat --check README.md CHANGELOG.md
-    # - repo: https://github.com/hukkin/mdformat
-    #   rev: 1.0.0
-    #   hooks:
-    #     - id: mdformat
-    #       name: "📝 markdown · Format markdown"
-    #       additional_dependencies:
-    #         - mdformat-gfm # GitHub-Flavored Markdown support
-    #         - mdformat-ruff # Python code formatting
-    #         - mdformat-frontmatter # YAML frontmatter support
-    #         - ruff # Required for mdformat-ruff
-    # NOK with ruby 3.4.7
-    # gem install mdl
-    # - repo: https://github.com/markdownlint/markdownlint
-    #   rev: v0.15.0
-    #   hooks:
-    #     - id: markdownlint
-    #       name: "📝 markdown · Lint markdown"
-    #       exclude: >
-    #         (?x)^(
-    #             CHANGELOG.md|
-    #             README.md|
-    #         )$
 
     ### Javascript & Web Tools ###
 -   repo: https://github.com/biomejs/pre-commit
@@ -379,18 +319,7 @@ repos:
     -   id: stylelint
         name: "🟦 css · Lint with Stylelint"
         additional_dependencies:
-          # stylelint itself needs to be here when using additional_dependencies.
-        -   stylelint@14.4.0
-        -   stylelint-config-standard-scss@3.0.0
-          # Package names starting with `@` need to be quoted.
-          # - "@scope/my-awesome-plugin@0.12.0"
-    ### PNG Images ###
-    # - repo: https://github.com/shssoichiro/oxipng
-    #   rev: v9.1.5
-    #   hooks:
-    #     - id: oxipng
-    #       name: "🖼️ images · Optimize PNG files"
-    #       args: ["-o", "4", "--strip", "safe", "--alpha"]
+        -   stylelint@17.14.1
 
     ### Additional File Types ###
 -   repo: https://github.com/pre-commit/mirrors-prettier
@@ -425,15 +354,14 @@ repos:
     -   id: check-taskfile
         name: "✅ taskfile · Validate Task configuration"
 
-    # ----------------------------- 🔒 Deployment Tools ---------------------------- #
+    ### Deployment Tools ###
 -   repo: https://github.com/hadolint/hadolint
     rev: v2.15.0
     hooks:
     -   id: hadolint-docker
         name: "🐳 hadolint · Validate Dockerfile"
 
-    # ----------------------------- 🔒 Security Tools ---------------------------- #
-
+    ### Security Tools ###
 -   repo: https://github.com/PyCQA/bandit
     rev: 1.9.4
     hooks:
@@ -477,31 +405,7 @@ repos:
     #   hooks:
     #     - id: ansible-lint
     #       name: "📜 ansible - Lint Ansible"
-    #       # args: [--verbose]
-    #       files: \.(yaml|yml)$
-    #       exclude: >
-    #         (?x)^(
-    #            .*\{\{.*\}\}.*|     # Exclude any files with cookiecutter variables
-    #            docs/site/.*|       # Exclude mkdocs compiled files
-    #            docs/_build/.*|
-    #            \.history/.*|       # Exclude history files
-    #            .*cache.*/.*|       # Exclude cache directories
-    #            .*venv.*/.*|        # Exclude virtual environment directories
-    #            .direnv/.*|
-    #            .yarn/.*|
-    #            .ansible/.*|
-    #            node_modules/.*|
-    #            reports/.*|
-    #            .npm/.*|
-    #            .nuxt/.*|
-    #            .netlify.*|
-    #            .vercel/.*|
-    #            .travis.yml|
-    #            docker/|
-    #            requirements.yml|
-    #           playbooks/group_vars/all/vault.yml|
-    #            .gitlab-ci.yml|
-    #          )$
+
 -   repo: https://github.com/adrienverge/yamllint.git
     rev: v1.38.0
     hooks:
@@ -524,63 +428,10 @@ repos:
     # ---------------------------------------------------------------------------- #
     #                            📝 Commit Message Hooks                           #
     # ---------------------------------------------------------------------------- #
-    #
-    # --------------------------- ✍️ Git Commit Quality -------------------------- #
+    # Commit-message validation remains intentionally disabled in this repository.
 
-    ### Commit Message Standards ###
-  # - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
-  #   rev: v9.23.0
-  #   hooks:
-  #     - id: commitlint
-  #       stages: [commit-msg]
-  #       additional_dependencies:
-  #         - "@commitlint/config-conventional"
-  #         - conventional-changelog-conventionalcommits
-
-  # - repo: https://github.com/commitizen-tools/commitizen
-  #   rev: v4.11.2
-  #   hooks:
-  #     - id: commitizen
-  #       name: "🌳 git · Validate commit message"
-  #       # stages: [commit-msg]
-  #       stages: [pre-push]
-  #       additional_dependencies: [cz-conventional-gitmoji]
-  #     - id: commitizen-branch
-  #       # stages: [pre-push]
-  #       stages: [post-commit]
-
-  # - repo: https://github.com/jorisroovers/gitlint
-  #   rev: v0.19.1
-  #   hooks:
-  #     - id: gitlint
-  #       name: "🌳 git · Lint"
-  #     - id: gitlint-ci
-  #       name: "🌳 git · Lint in CI"
-  #       args: [--debug, --commits, mybranch] # enable debug mode, lint all commits in mybranch
-
-  # ---------------------------------------------------------------------------- #
-  #                            👑 Mega linter                                    #
-  # ---------------------------------------------------------------------------- #
-
-  # - repo: https://github.com/oxsecurity/megalinter
-  #   rev: v9.0.1
-  #   hooks:
-  #     - id: megalinter-incremental  # Faster, less thorough
-  #       name: "👑 🐳 megalinter - All in linter"
-  #       stages:
-  #         - pre-commit
-  #       args:
-  #         - mega-linter-runner
-  #         - --containername
-  #         - "megalinter-incremental"
-  #         - --remove-container
-  #         # - --fix
-  #         # - --env
-  #         # - "'APPLY_FIXES=all'"
-  #         - --env
-  #         - "'CLEAR_REPORT_FOLDER=true'"
-  #         - --env
-  #         - "'LOG_LEVEL=warning'"
-  #         - --filesonly
-  #         - --flavor
-  #         - "python"
+    # ---------------------------------------------------------------------------- #
+    #                            👑 Mega linter                                    #
+    # ---------------------------------------------------------------------------- #
+    # MegaLinter remains disabled here because the incremental local/project gates
+    # are substantially cheaper and already cover the active source surfaces.
