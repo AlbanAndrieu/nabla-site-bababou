@@ -190,7 +190,15 @@ candidate="${BASE_SHA}"
 release_hops=0
 
 while :; do
-	json="$(status_json "${candidate}")"
+	if ! json="$(status_json "${candidate}")"; then
+		printf '❌ PROD_BASE_STATUS_API: failed to fetch commit statuses for %s\n' "${candidate}" >&2
+		exit 2
+	fi
+	if ! jq -e '.statuses | type == "array"' >/dev/null 2>&1 <<<"${json}"; then
+		printf '❌ PROD_BASE_STATUS_JSON: invalid commit status payload for %s\n' "${candidate}" >&2
+		exit 2
+	fi
+
 	missing=()
 	production_missing=()
 	failed=()
