@@ -53,6 +53,26 @@ latest_status() {
 		<<<"${json}"
 }
 
+stable_semver_gt() {
+	local parent_version="$1"
+	local child_version="$2"
+	local parent_major parent_minor parent_patch
+	local child_major child_minor child_patch
+
+	IFS=. read -r parent_major parent_minor parent_patch <<<"${parent_version}"
+	IFS=. read -r child_major child_minor child_patch <<<"${child_version}"
+
+	if ((10#${child_major} != 10#${parent_major})); then
+		((10#${child_major} > 10#${parent_major}))
+		return
+	fi
+	if ((10#${child_minor} != 10#${parent_minor})); then
+		((10#${child_minor} > 10#${parent_minor}))
+		return
+	fi
+	((10#${child_patch} > 10#${parent_patch}))
+}
+
 release_only_hop() {
 	local parent="$1"
 	local child="$2"
@@ -69,10 +89,18 @@ release_only_hop() {
 	local child_lock_version
 	local parent_lock_root_version
 	local child_lock_root_version
+	local parent_count
 
 	message="$(git log -1 --format=%B "${child}")"
 	subject="${message%%$'\n'*}"
 	if [[ "${subject}" != chore\(release\):* ]] || ! grep -Fq '[skip ci]' <<<"${message}"; then
+		return 1
+	fi
+
+	parent_count="$(git rev-list --parents -n 1 "${child}" | awk '{print NF - 1}')"
+	if [[ "${parent_count}" != "1" ]]; then
+		printf '❌ PROD_BASE_RELEASE_GRAPH: release %s has %s parents; baseline inheritance requires a linear single-parent release commit\n' \
+			"${child}" "${parent_count}" >&2
 		return 1
 	fi
 
@@ -134,8 +162,14 @@ release_only_hop() {
 		printf '❌ PROD_BASE_RELEASE_VERSION: release %s has inconsistent package/lock versions\n' "${child}" >&2
 		return 1
 	fi
-	if [[ "${parent_package_version}" == "${child_package_version}" ]]; then
-		printf '❌ PROD_BASE_RELEASE_VERSION: release %s does not advance the package version\n' "${child}" >&2
+	if [[ ! "${parent_package_version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ || ! "${child_package_version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+		printf '❌ PROD_BASE_RELEASE_VERSION: production release hop must use stable numeric SemVer, got %s -> %s\n' \
+			"${parent_package_version}" "${child_package_version}" >&2
+		return 1
+	fi
+	if ! stable_semver_gt "${parent_package_version}" "${child_package_version}"; then
+		printf '❌ PROD_BASE_RELEASE_VERSION: release %s does not monotonically advance package version %s -> %s\n' \
+			"${child}" "${parent_package_version}" "${child_package_version}" >&2
 		return 1
 	fi
 	if [[ "${subject}" != "chore(release): ${child_package_version} [skip ci]" ]]; then
