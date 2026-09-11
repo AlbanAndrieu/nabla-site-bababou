@@ -101,6 +101,10 @@ test("production baseline and live smoke run before dependency installation", as
 	assert.match(baseline, /\[skip ci\]/);
 	assert.match(baseline, /package\.json changed beyond version metadata/);
 	assert.match(baseline, /package-lock\.json changed beyond root version metadata/);
+	assert.match(baseline, /parent .* has inconsistent package\/lock versions/);
+	assert.match(baseline, /release .* has inconsistent package\/lock versions/);
+	assert.match(baseline, /release subject does not match package version/);
+	assert.match(baseline, /PROD_BASE_RELEASE_VERSION/);
 	assert.match(baseline, /PROD_BASE_UNHEALTHY/);
 	assert.match(baseline, /PROD_BASE_RELEASE_SCOPE/);
 
