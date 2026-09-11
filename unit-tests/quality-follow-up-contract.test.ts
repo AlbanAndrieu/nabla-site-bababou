@@ -41,8 +41,9 @@ test("agent fix mode converges formatter passes and publish mode uses publicatio
   assert.match(gate, /QUALITY_FIX_MAX_PASSES/);
   assert.match(gate, /while \(\(pass <= FIX_MAX_PASSES\)\)/);
   assert.match(gate, /snapshot_changed_files/);
-  assert.match(gate, /changed files; retrying/);
-  assert.match(gate, /failed on pass %d without changing files/);
+  assert.match(gate, /applied deterministic fixes; retrying without log analysis/);
+  assert.match(gate, /QG_PRECOMMIT_FAILED: auto-fix made no further progress/);
+  assert.match(gate, /QG_FIX_DID_NOT_CONVERGE/);
   assert.match(gate, /bash scripts\/quality-gate\.sh --publish/);
 });
 
