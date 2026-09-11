@@ -25,6 +25,24 @@ test("Quality runs changed-source Semgrep before the expensive Node build", asyn
   assert.match(workflow, /security-events: write/);
 });
 
+test("Quality retains Semgrep SARIF artifacts only for failed scans", async () => {
+  const workflow = await readFile(ciUrl, "utf8");
+  const preserveStart = workflow.indexOf("- name: Preserve failed Semgrep SAST report");
+  const cleanStart = workflow.indexOf("- name: Clean Semgrep SAST workspace", preserveStart);
+  const preserveBlock = workflow.slice(preserveStart, cleanStart);
+
+  assert.ok(preserveStart >= 0);
+  assert.ok(cleanStart > preserveStart);
+  assert.match(preserveBlock, /steps\.semgrep-sast\.outcome != 'success'/);
+  assert.match(preserveBlock, /retention-days: 7/);
+  assert.match(workflow, /SARIF artifact: not retained for successful scans/);
+  assert.match(
+    workflow,
+    /Diagnostic report: \*\*semgrep-sast-report\*\* workflow artifact \(7 days\)/,
+  );
+  assert.doesNotMatch(workflow, /- name: Preserve Semgrep SAST report\n/);
+});
+
 test("Production DAST runs after production deployments and daily with the shared ZAP policy", async () => {
   const workflow = await readFile(productionDastUrl, "utf8");
 

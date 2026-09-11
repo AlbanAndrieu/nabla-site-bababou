@@ -210,19 +210,31 @@ jobs:
           vars.ENABLE_CODE_SCANNING_SARIF != 'true' &&
           hashFiles('semgrep.sarif') != ''
         shell: bash
+        env:
+          SEMGREP_OUTCOME: ${{ steps.semgrep-sast.outcome }}
         run: |
           {
             echo "## Semgrep SARIF publication"
             echo
-            echo "- Semgrep scan: passed"
-            echo "- GitHub Code Scanning upload: skipped (repository feature not enabled)"
-            echo "- Report: **semgrep-sast-report** workflow artifact"
+            if [[ "$SEMGREP_OUTCOME" == "success" ]]; then
+              echo "- Semgrep scan: passed"
+              echo "- GitHub Code Scanning upload: skipped (repository feature not enabled)"
+              echo "- SARIF artifact: not retained for successful scans"
+            else
+              echo "- Semgrep scan: $SEMGREP_OUTCOME"
+              echo "- GitHub Code Scanning upload: skipped (repository feature not enabled)"
+              echo "- Diagnostic report: **semgrep-sast-report** workflow artifact (7 days)"
+            fi
             echo
             echo "After enabling GitHub Code Scanning for this private repository, set repository variable `ENABLE_CODE_SCANNING_SARIF=true` to publish Semgrep SARIF to the Security tab."
           } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Preserve Semgrep SAST report
-        if: always() && steps.scope.outputs.sast == 'true' && hashFiles('semgrep.sarif') != ''
+      - name: Preserve failed Semgrep SAST report
+        if: >-
+          always() &&
+          steps.scope.outputs.sast == 'true' &&
+          steps.semgrep-sast.outcome != 'success' &&
+          hashFiles('semgrep.sarif') != ''
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: semgrep-sast-report
