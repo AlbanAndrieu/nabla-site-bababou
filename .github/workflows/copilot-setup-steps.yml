@@ -13,6 +13,7 @@ on:
       - .nvmrc
       - .python-version
       - .pre-commit-config.yaml
+      - .pre-commit-pre-push.yaml
       - mise.toml
       - package.json
       - package-lock.json
@@ -24,6 +25,7 @@ on:
       - .nvmrc
       - .python-version
       - .pre-commit-config.yaml
+      - .pre-commit-pre-push.yaml
       - mise.toml
       - package.json
       - package-lock.json
@@ -74,7 +76,7 @@ jobs:
         uses: actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25 # v5
         with:
           path: ~/.cache/pre-commit
-          key: pre-commit-${{ runner.os }}-${{ hashFiles('.pre-commit-config.yaml', '.python-version') }}
+          key: pre-commit-v4.6.2-${{ runner.os }}-${{ hashFiles('.pre-commit-config.yaml', '.pre-commit-pre-push.yaml', '.python-version', '.nvmrc') }}
 
       - name: Pin npm
         shell: bash
@@ -82,9 +84,17 @@ jobs:
           set -euo pipefail
           cd "${RUNNER_TEMP}"
           npm install --global npm@11.17.0 --no-audit --no-fund
+          npm --version
 
       - name: Install pre-commit
         run: python -m pip install --disable-pip-version-check --quiet pre-commit==4.6.2
+
+      - name: Install repository Git hooks
+        shell: bash
+        run: |
+          set -euo pipefail
+          pre-commit install --hook-type pre-commit
+          pre-commit install --config .pre-commit-pre-push.yaml --hook-type pre-push
 
       - name: Prepare pre-commit hook environments
         if: steps.pre-commit-cache.outputs.cache-hit != 'true'
@@ -96,7 +106,7 @@ jobs:
         uses: actions/cache/save@caa296126883cff596d87d8935842f9db880ef25 # v5
         with:
           path: ~/.cache/pre-commit
-          key: pre-commit-${{ runner.os }}-${{ hashFiles('.pre-commit-config.yaml', '.python-version') }}
+          key: pre-commit-v4.6.2-${{ runner.os }}-${{ hashFiles('.pre-commit-config.yaml', '.pre-commit-pre-push.yaml', '.python-version', '.nvmrc') }}
 
       - name: Install JavaScript dependencies
         run: npm ci --no-audit --no-fund
