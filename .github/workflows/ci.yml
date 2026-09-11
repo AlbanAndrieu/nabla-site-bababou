@@ -36,6 +36,7 @@ on:
       - ".github/workflows/vercel-preview.yml"
       - ".github/workflows/zap-preview.yml"
       - ".github/workflows/production-dast.yml"
+      - ".github/workflows/post-merge-quality-follow-up.yml"
       - ".zap/**"
   push:
     branches:
@@ -73,6 +74,7 @@ on:
       - ".github/workflows/vercel-preview.yml"
       - ".github/workflows/zap-preview.yml"
       - ".github/workflows/production-dast.yml"
+      - ".github/workflows/post-merge-quality-follow-up.yml"
       - ".zap/**"
   workflow_dispatch:
 
@@ -129,7 +131,7 @@ jobs:
         run: |
           set -euo pipefail
           base_sha="${BASE_SHA:-}"
-          if [[ ! "$base_sha" =~ ^[0-9a-f]{40}$ ]] || [[ "$base_sha" =~ ^0+$ ]]; then
+          if [[ ! "$base_sha" =~ ^[0-9a-f]{40}$ ]] || [[ "$base_sha" =~ ^0+$ ]] || [[ "$base_sha" == "$HEAD_SHA" ]]; then
             base_sha="$(git rev-parse "$HEAD_SHA^")"
           fi
 
@@ -461,7 +463,7 @@ jobs:
           git push --force origin "HEAD:refs/heads/${CHECKPOINT_BRANCH}"
           echo "Published ${CHECKPOINT_BRANCH} at $(git rev-parse HEAD)."
 
-      - name: Wait for Playwright and ZAP Preview statuses
+      - name: Wait for Vercel, Playwright and ZAP Preview statuses
         if: steps.preview.outputs.deploy_relevant == 'true'
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         env:
@@ -474,8 +476,9 @@ jobs:
             const prNumber = Number(process.env.PR_NUMBER);
             const expected =
               process.env.ZAP_BOOTSTRAP === 'true'
-                ? new Set(['Playwright Preview E2E'])
+                ? new Set(['Vercel', 'Playwright Preview E2E'])
                 : new Set([
+                    'Vercel',
                     'Playwright Preview E2E',
                     'OWASP ZAP Preview',
                   ]);
@@ -540,6 +543,7 @@ jobs:
                   .addHeading('Preview security gates')
                   .addList([
                     `Exact SHA: ${sha}`,
+                    'Vercel Preview: success',
                     'Playwright Preview E2E: success',
                     process.env.ZAP_BOOTSTRAP === 'true'
                       ? 'OWASP ZAP Preview: deferred (workflow bootstrap; no new scanner claim)'
