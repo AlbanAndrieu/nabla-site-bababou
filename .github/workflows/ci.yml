@@ -131,6 +131,14 @@ jobs:
           QUALITY_BASELINE_RELEASE_HOPS: "3"
         run: bash scripts/verify-production-baseline.sh
 
+      - name: Revalidate canonical production smoke before PR build
+        if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
+        shell: bash
+        env:
+          PRODUCTION_BASE_URL: https://www.bababou.com
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+        run: bash scripts/verify-production-live.sh
+
       - name: Classify quality scope
         id: scope
         if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
@@ -239,6 +247,7 @@ jobs:
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version-file: ".nvmrc"
+          package-manager-cache: false
 
       - name: Restore npm downloads
         if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
@@ -399,6 +408,17 @@ jobs:
             echo "| .next output | $(value_or_na "$NEXT_MB") MiB |"
           } >> "$GITHUB_STEP_SUMMARY"
 
+      - name: Check CI performance warning budgets
+        if: always() && !cancelled() && (github.event_name != 'pull_request' || github.event.pull_request.draft == false)
+        shell: bash
+        env:
+          NPM_CI_SECONDS: ${{ steps.install.outputs.seconds }}
+          NODE_MODULES_MB: ${{ steps.install.outputs.node_modules_mb }}
+          CHECK_SECONDS: ${{ steps.checks.outputs.seconds }}
+          NEXT_BUILD_SECONDS: ${{ steps.checks.outputs.next_build_seconds }}
+          NEXT_MB: ${{ steps.checks.outputs.next_mb }}
+        run: bash scripts/ci-performance-budget.sh
+
   preview-security:
     name: Vercel Preview security gates
     needs: quality
@@ -477,6 +497,8 @@ jobs:
               filename === 'scripts/agent-quality-gate.sh' ||
               filename === 'scripts/ci-quality-scope.sh' ||
               filename === 'scripts/verify-production-baseline.sh' ||
+              filename === 'scripts/verify-production-live.sh' ||
+              filename === 'scripts/ci-performance-budget.sh' ||
               filename === 'scripts/quality-gate.sh' ||
               filename === 'scripts/eslint-github-formatter.mjs';
 
