@@ -17,6 +17,8 @@ test("agent gate is executable and wraps the canonical site checks", async () =>
 		"QG_LARGE_DELETION",
 		"QG_EXEC_BIT",
 		"QG_DIRTY_TREE",
+		"QG_PUBLISH_CACHE",
+		"QUALITY_FORCE_PUBLISH",
 		"--preflight",
 		"--fix",
 		"--publish",
@@ -25,6 +27,35 @@ test("agent gate is executable and wraps the canonical site checks", async () =>
 	]) {
 		assert.match(source, new RegExp(token.replace(/[.*+?^$\{\}()|[\]\\]/g, "\\$&")));
 	}
+});
+
+test("cheap formatter/linter gate runs before the expensive npm/Next gate", async () => {
+	const source = await read("../scripts/agent-quality-gate.sh");
+	const canonical = source.lastIndexOf('run_compact "canonical formatter/linter/security');
+	const full = source.lastIndexOf('run_compact "Next/npm lint, types, unit, privacy and production build gate"');
+
+	assert.ok(canonical >= 0);
+	assert.ok(full > canonical);
+});
+
+test("fix mode uses project ESLint and Stylelint before pre-commit convergence when available", async () => {
+	const source = await read("../scripts/agent-quality-gate.sh");
+
+	assert.match(source, /npm exec -- eslint --fix \./);
+	assert.match(source, /npm exec -- stylelint --fix 'public\/\*\.css'/);
+	assert.match(source, /deterministic formatter\/linter convergence/);
+});
+
+test("strict validation records an exact local proof reusable by publish and pre-push", async () => {
+	const source = await read("../scripts/agent-quality-gate.sh");
+
+	assert.match(source, /git rev-parse --git-path nabla-agent-quality\.stamp/);
+	assert.match(source, /node_modules\/\.package-lock\.json/);
+	assert.match(source, /node --version/);
+	assert.match(source, /npm --version/);
+	assert.match(source, /pre-commit --version/);
+	assert.match(source, /printf '%s\\n' "\$\{STAMP_KEY\}" >"\$\{STAMP_PATH\}"/);
+	assert.match(source, /QUALITY_FORCE_PUBLISH:-0/);
 });
 
 test("npm, mise and pre-push expose the agent workflow", async () => {

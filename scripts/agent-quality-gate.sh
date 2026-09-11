@@ -3,7 +3,8 @@ set -euo pipefail
 
 # Repository-specific agent-first gate for nabla-site-bababou.
 # Keep scripts/quality-gate.sh canonical across Nabla repositories; this wrapper
-# adds cheap Git preflight checks and the project npm validation used by CI.
+# adds cheap Git preflight checks, deterministic local fixes and the project npm
+# validation used before publication.
 
 ROOT="$(git rev-parse --show-toplevel)"
 cd "${ROOT}"
@@ -29,15 +30,16 @@ Usage:
 
 Modes:
   default      strict agent validation on a clean committed branch
-  --fix        converge deterministic pre-commit fixes on branch/worktree changes
+  --fix        converge deterministic formatter/linter fixes on changed files
   --preflight  Git-only checks; safe to run before dependency installation
-  --publish    strict agent validation for the pre-push publication hook
+  --publish    strict publication validation; reuses an exact local proof when valid
 
 Environment:
   QUALITY_BASE_REF                 override comparison base
   QUALITY_LOG_TAIL                 failure log lines to print (default: 80)
   QUALITY_FIX_MAX_PASSES           max deterministic --fix passes (default: 5)
   QUALITY_ALLOW_LARGE_DELETION=1   acknowledge an intentional large truncation/deletion
+  QUALITY_FORCE_PUBLISH=1          ignore the local exact-SHA publication proof
 USAGE
 		exit 0
 		;;
@@ -56,6 +58,7 @@ fi
 
 LOG_TAIL="${QUALITY_LOG_TAIL:-80}"
 FIX_MAX_PASSES="${QUALITY_FIX_MAX_PASSES:-5}"
+STAMP_PATH="$(git rev-parse --git-path nabla-agent-quality.stamp)"
 
 resolve_base_ref() {
 	if [[ -n "${QUALITY_BASE_REF:-}" ]]; then
@@ -159,8 +162,20 @@ run_fix_until_stable() {
 	fi
 
 	if (("${#CHANGED_FILES[@]}" == 0)); then
-		echo "✅ no changed files require deterministic pre-commit fixes"
+		echo "✅ no changed files require deterministic formatter/linter fixes"
 		return 0
+	fi
+
+	# Reuse the repository's exact npm linters when dependencies are already
+	# installed. Their deterministic fixes run before the broader pre-commit
+	# suite, so CI should not be the first place ESLint/Stylelint formatting is
+	# discovered. A missing node_modules remains valid for Git-only/pre-commit
+	# maintenance changes.
+	if command -v npm >/dev/null 2>&1 && [[ -d node_modules ]]; then
+		set +e
+		npm exec -- eslint --fix . >/dev/null 2>&1
+		npm exec -- stylelint --fix 'public/*.css' >/dev/null 2>&1
+		set -e
 	fi
 
 	local pass=1
@@ -181,7 +196,7 @@ run_fix_until_stable() {
 
 		if ((rc == 0)); then
 			rm -f "${log}"
-			printf '✅ deterministic pre-commit fix convergence (%d pass(es))\n' "${pass}"
+			printf '✅ deterministic formatter/linter convergence (%d pass(es))\n' "${pass}"
 			return 0
 		fi
 
@@ -300,6 +315,10 @@ command -v npm >/dev/null 2>&1 || {
 	echo "❌ npm is required; activate the repository toolchain with mise" >&2
 	exit 1
 }
+command -v node >/dev/null 2>&1 || {
+	echo "❌ node is required; activate the repository toolchain with mise" >&2
+	exit 1
+}
 command -v pre-commit >/dev/null 2>&1 || {
 	echo "❌ pre-commit is required; run 'mise run hooks' first" >&2
 	exit 1
@@ -309,16 +328,51 @@ if [[ ! -d node_modules ]]; then
 	exit 1
 fi
 
-run_compact "Next/npm lint, types, unit, privacy and production build gate" npm run check
+publication_key() {
+	local base_sha
+	local deps_hash="missing"
+	if [[ "${BASE_REF}" == "HEAD" ]]; then
+		base_sha="$(git rev-parse HEAD)"
+	else
+		base_sha="$(git rev-parse "${BASE_REF}^{commit}")"
+	fi
+	if [[ -f node_modules/.package-lock.json ]]; then
+		deps_hash="$(git hash-object -- node_modules/.package-lock.json)"
+	fi
+	{
+		printf 'head=%s\n' "$(git rev-parse HEAD)"
+		printf 'base=%s\n' "${base_sha}"
+		printf 'node=%s\n' "$(node --version)"
+		printf 'npm=%s\n' "$(npm --version)"
+		printf 'precommit=%s\n' "$(pre-commit --version)"
+		printf 'deps=%s\n' "${deps_hash}"
+	} | git hash-object --stdin
+}
+
+STAMP_KEY="$(publication_key)"
+if [[ "${MODE}" == "publish" && "${QUALITY_FORCE_PUBLISH:-0}" != "1" && -f "${STAMP_PATH}" ]]; then
+	if [[ "$(cat "${STAMP_PATH}")" == "${STAMP_KEY}" ]]; then
+		echo "✅ QG_PUBLISH_CACHE: exact HEAD/base/toolchain already passed the strict local gate."
+		exit 0
+	fi
+fi
+
+# Run the formatter/linter/security gate before type generation, tests and the
+# production build. Cheap deterministic failures should be discovered before
+# expensive work.
 if [[ "${MODE}" == "publish" ]]; then
 	run_compact "canonical formatter/linter/security publication gate" \
 		bash scripts/quality-gate.sh --publish
 else
 	run_compact "canonical formatter/linter/security gate" bash scripts/quality-gate.sh
 fi
+run_compact "Next/npm lint, types, unit, privacy and production build gate" npm run check
+
+mkdir -p "$(dirname "${STAMP_PATH}")"
+printf '%s\n' "${STAMP_KEY}" >"${STAMP_PATH}"
 
 if [[ "${MODE}" == "publish" ]]; then
-	echo "✅ Agent publication gate passed; branch is clean and ready to push."
+	echo "✅ Agent publication gate passed; exact local proof recorded for pre-push reuse."
 else
-	echo "✅ Agent quality gate passed."
+	echo "✅ Agent quality gate passed; exact local proof recorded for a subsequent publish/pre-push."
 fi
