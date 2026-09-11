@@ -6,6 +6,11 @@ import { routing } from "@/i18n/routing";
 
 const intlMiddleware = createMiddleware(routing);
 const defaultLocalePrefix = `/${routing.defaultLocale}`;
+const localeRootRedirects = new Set(
+  routing.locales
+    .filter((locale) => locale !== routing.defaultLocale)
+    .map((locale) => `/${locale}`),
+);
 
 /**
  * Next.js 16+ uses the `proxy` convention (formerly `middleware`).
@@ -23,6 +28,15 @@ export default function proxy(request: NextRequest) {
 
   if (request.nextUrl.pathname === "/") {
     return NextResponse.rewrite(new URL("/index.html", request.url));
+  }
+
+  /*
+   * There is no localized native homepage yet. Keep locale roots converging on
+   * the approved legacy root, but emit the redirect directly instead of asking
+   * next-intl to render a full response body before redirecting it.
+   */
+  if (localeRootRedirects.has(request.nextUrl.pathname)) {
+    return NextResponse.redirect(new URL("/", request.url), 307);
   }
 
   /*
