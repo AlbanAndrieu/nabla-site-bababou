@@ -14,16 +14,19 @@ _.file = [".env.secrets", ".env.local"]
 ENV = "dev"
 
 [tasks.hooks]
-description = "Install canonical pre-commit, commit-msg and pre-push Git hooks"
+description = "Install canonical pre-commit and pre-push Git hooks"
 run = '''
-pre-commit install --install-hooks --hook-type pre-commit --hook-type commit-msg
+pre-commit install --install-hooks --hook-type pre-commit
 pre-commit install --config .pre-commit-pre-push.yaml --install-hooks --hook-type pre-push
 '''
+
+[tasks.hooks-update]
+description = "Explicitly update pinned pre-commit hook revisions"
+run = "pre-commit autoupdate"
 
 [tasks.quality]
 description = "Run the canonical publication quality gate"
 run = "bash scripts/quality-gate.sh"
-
 
 [tasks.agent-fix]
 description = "Apply/check deterministic pre-commit fixes for agent changes"

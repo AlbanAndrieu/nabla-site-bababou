@@ -40,18 +40,20 @@ When recovering a merged PR with a failed quality gate:
    the failed gate as the starting evidence. Create or reuse a dedicated
    non-default follow-up branch based on the current `master`; do not resurrect
    the old pre-merge base.
-4. Run the deterministic fix gate until it converges:
+4. Run deterministic fixes until they converge, review/commit them, then run one
+   strict publication pass:
 
    ```bash
    npm run quality:agent:fix
    # Review the resulting diff and commit it.
-   npm run quality:agent
    npm run quality:agent:publish
    ```
 
    `quality:agent:fix` may need several formatter passes. The Bababou wrapper
    retries only while file contents are actually changing and stops immediately
-   when a failing pass produces no deterministic change.
+   when a failing pass produces no deterministic change. A successful strict
+   gate records an exact local proof; the pre-push `--publish` hook reuses that
+   proof instead of rebuilding when HEAD/base/toolchain are unchanged.
 5. Fix deterministic validation/runtime failures at their cause. Do not weaken,
    skip, downgrade or remove a rule simply because the predecessor PR was
    already merged.
@@ -74,6 +76,11 @@ For a deterministic CI mutation, it may apply the exact formatter/linter diff
 reported by CI to a non-default branch, preferably as one atomic commit, then use
 remote CI as the authoritative validation. It must state the local-execution
 limitation and inspect the resulting CI immediately.
+
+Keep API-driven iterative PRs draft while assembling the patch so Quality stays
+on its Git-only preflight. Move to ready only at the publication checkpoint;
+maintenance-only changes then use the lightweight remote gate while
+runtime/source changes retain the full build/security path.
 
 ## Completion rule — mandatory
 

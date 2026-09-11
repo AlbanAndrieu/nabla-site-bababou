@@ -27,7 +27,7 @@
 5. **Performance et CI** : réduire tracing, builds, téléchargements inutiles et coûts de validation.
 6. **Confidentialité finale hors homepage** : pseudonymisation/caviardage du corpus restant, extension du gate et vérification irréversible des documents/assets concernés.
 
-## État de référence — 2026-09-08
+## État de référence — 2026-09-11
 
 ### Terminé
 
@@ -215,6 +215,12 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
     - [x] Implémentation et contrats statiques ajoutés dans #178, y compris le refus d'écraser une branche de remediation existante et l'inscription du nouveau workflow dans les path filters Quality.
     - [ ] Après merge de #178, observer le premier `master` réellement rouge sans provoquer volontairement une panne de production et confirmer de bout en bout issue dédupliquée → correctif déterministe éventuel → PR automatique → CI explicitement dispatchée ; si GitHub refuse la création de PR avec `GITHUB_TOKEN`, documenter/configurer le mécanisme d'autorisation avant de considérer ce chemin opérationnel comme validé.
   - [x] Sur les PR en draft, limiter Quality au préflight Git sans installer Node/npm ni construire Next ; `ready_for_review` relance automatiquement le gate complet, afin que l'itération agent ne consomme une build qu'au checkpoint de publication.
+  - [x] #179 rend le chemin agent réellement local-first : formatter/linter/security avant les checks npm/Next coûteux, `--fix` convergent, preuve locale liée au HEAD/base/toolchain réutilisable par `--publish`/pre-push et `QUALITY_FORCE_PUBLISH=1` pour forcer une validation complète.
+    - [x] Vérifier la santé de la base production avant `npm ci`, en exigeant Vercel + `Production Post-deploy Smoke` + `Production DAST`; n'autoriser un fallback vers un parent que pour un hop semantic-release prouvé version/changelog-only et borné.
+    - [x] Revalider ensuite `https://www.bababou.com` par smoke live léger avant installation des dépendances.
+    - [x] Conserver les scopes maintenance-only sans Semgrep, Next build, dependency scan, Vercel Preview, Playwright ni ZAP inutiles.
+    - [x] Rendre explicite l'ownership du cache npm (`package-manager-cache: false` + `actions/cache`) et ajouter des budgets CI warning-only, sans transformer les variations de performance en échec Quality.
+    - [x] Checkpoint distant `ad440fc8e3911c9813e0a5a0972bab0e1b79d004` validé : Quality #472 et Copilot Setup #88 verts. En environnement API-only, aucune exécution workstation locale n'est revendiquée.
   - [x] Snyk ne prépare plus/pull plus son image Docker lorsque `SNYK_TOKEN` est absent.
   - [x] Remplacer le cache npm implicite de `setup-node` par `actions/cache` sur `~/.npm` dans les workflows qui installent le projet ; pinner npm depuis `$RUNNER_TEMP` dans tous les workflows GitHub afin que le npm embarqué ne lise pas `.npmrc` avant npm 11.17, tout en conservant `strict-allow-scripts` et le cache.
   - [x] Rendre les caches npm/pre-commit/Next best-effort : une panne du backend GitHub Cache ne doit jamais rendre Quality rouge ; séparer restore/save, préchauffer les hooks pre-commit sur cache miss et réutiliser `.next/cache` entre builds afin d'éviter les compilations systématiquement froides.
@@ -237,7 +243,9 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] Aligner le coût Preview sur `nabla-site-alban#168` : les changements uniquement workflows / `.zap/**` ne forcent plus un déploiement applicatif Vercel ; le gate exact-SHA reste obligatoire dès qu'un fichier réellement déployable est modifié.
   - [x] Porter les améliorations sécurité de `nabla-site-alban#168/#169` dans #175 : Semgrep changed-source avant le build avec SARIF + artefact, ZAP Preview rejouable manuellement, fallback OIDC Trusted Source, statut enrichi avec compteurs H/M/L/I, et DAST production indépendant quotidien/post-déploiement.
   - [x] Publier un statut `Production Post-deploy Smoke` depuis le smoke léger existant afin de préparer le futur gate de santé de la base `master` sans dupliquer les probes.
-  - [ ] Observer au moins une baseline `Production Post-deploy Smoke` et une baseline `Production DAST` vertes sur un `master` post-#175 avant de rendre ces deux statuts obligatoires au début de chaque PR, comme dans `nabla-site-alban#169`.
+  - [x] Observer au moins une baseline `Production Post-deploy Smoke` et une baseline `Production DAST` vertes sur un `master` post-#175 avant de rendre ces deux statuts obligatoires au début de chaque PR, comme dans `nabla-site-alban#169`.
+    - [x] Baseline saine observée sur `7f43739e4b7c71746c85e3bfc8536a5675fb2f43` : Vercel success, `Production Post-deploy Smoke` success et `Production DAST` success (`H0 M4 L6 I5`).
+    - [x] #179 a exécuté le nouveau gate en début de PR et reconnu uniquement le hop `7f43739... → 6cfd2db...` comme semantic-release version/changelog-only avant de valider la baseline puis le smoke live.
   - [x] Collecter la première baseline ZAP effectivement scannée sur une Preview Vercel réelle avec la définition post-#175 : #177 a produit un rapport réel `H0 M4 L6 I5`; les deux alertes bloquantes `10020`/`10021` ont été corrigées sans affaiblir la policy et le nouveau scan a `FAIL-NEW: 0`.
     - [ ] Trier puis réduire les warnings ZAP restant réellement applicables (notamment CSP, SRI, cookies, cache et cross-origin) sans casser le corpus hybride ni le fallback Google Translate ; toute promotion WARN→FAIL doit être justifiée par la baseline et validée sur Preview exact-SHA.
   - [x] Réutiliser l'événement Vercel production jusque-là `skipped` pour un smoke `curl` ciblé et peu coûteux du SHA déployé, sans télécharger Chromium ni réexécuter la suite Playwright complète.
@@ -256,7 +264,9 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] Baseline post-merge #158 à cache `master` froid : `npm ci` 22 s, `node_modules` 723 MiB, cache npm 207 MiB, `npm run check` 42 s, `next build` 19,3 s et `.next` 66 MiB ; aucun warning npm pré-pin.
   - [x] Baseline post-merge #167 / Quality #354 : cache npm hit, cache Next initial de `master` absent, `npm ci` 15 s, `node_modules` 723 MiB, cache npm 207 MiB, `npm run check` 44 s, `next build` 19,5 s et `.next` 67 MiB ; ce run amorce le cache Next propre à `master`.
   - [x] Baseline post-merge #168 / Quality #367 : 168/168 tests, cache npm hit, cache Next miss après changement de clé/runtime, `npm ci` 10 s, `node_modules` 723 MiB, cache npm 207 MiB, checks 23 s, `next build` 6,5 s et `.next` 72 MiB.
-  - [ ] Collecter plusieurs baselines post-merge et définir des seuils uniquement après observation.
+  - [x] Après les baselines #158/#167/#168 et la baseline post-#178, définir dans #179 des budgets **warning-only** avec marge : `npm ci` > 30 s, `node_modules` > 800 MiB, `npm run check` > 60 s, `next build` > 30 s et `.next` > 80 MiB. Ils restent informatifs et ne sont pas des gates bloquants.
+  - [x] Baseline maintenance-only #179 : `npm ci` 17 s, `node_modules` 723 MiB, cache npm 234 MiB (hit), lint/CSS/unit tests 12 s, 230/230 tests ; Next build non mesuré car volontairement skippé pour ce scope.
+  - [ ] Continuer à collecter les baselines post-merge avant toute promotion éventuelle d'un budget vers un seuil bloquant.
 - [x] Maintenir lint JS/TS/CSS, typecheck, unit tests, `next build`, Playwright Preview, accessibilité et tests SEO comme gates.
   - [x] Exposer le gate canonique via `npm run quality:gate` et garder `scripts/quality-gate.sh` byte-for-byte aligné avec `nabla-site-alban`.
 - [x] Aligner le cycle release sur `nabla-site-alban` (#131) sans changer l’historique Bababou : CI post-merge sur `master`, release uniquement après CI verte et contrôle que le SHA validé est toujours le `master` courant.
@@ -315,6 +325,7 @@ Cette phase est volontairement placée après migration, UI/UX, SEO, nettoyage e
   - [x] Retirer `scripts/run-install.sh` et `scripts/run-test.sh` après audit : aucun consommateur externe, le premier réinstallait des packages Font Awesome hors manifeste et le second dupliquait des sous-ensembles Playwright déjà couverts par les scripts npm canoniques (#170).
   - [x] Conserver `public/google-translate-config.js` comme shim de compatibilité qui délègue vers `site-google-translate.js`; ne pas réintroduire de loader Google direct ni supprimer le fallback tant qu'il existe du contenu/langues sans traduction i18n native paritaire (#171).
   - [x] Dédupliquer le runtime traduction entre `site-widgets.js` et `site-google-translate.js`, avec ownership runtime unique, shim de compatibilité conservé et contrat garantissant le fallback Google Translate sur les consommateurs legacy sans parité i18n (#171).
+  - [x] #179 : quality gate local-first, base production saine avant npm, smoke live, budgets CI warning-only, cache npm explicitement possédé et fast path maintenance-only validés sur le checkpoint distant.
   - [ ] Auditer puis retirer Tailwind/PostCSS du runtime Next uniquement si l'absence de consommateurs et l'absence de régression CSS sont prouvées sur Preview exact-SHA (#177).
   - [ ] Retrait des runtimes/scripts/assets legacy restants après preuve d'absence de consommateurs externes.
 - [ ] **Migration 8 / P3** — extraction progressive de sections homepage en conservant les disclosures approuvées, sans changement sensible non validé.

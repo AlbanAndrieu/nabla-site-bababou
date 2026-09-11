@@ -17,6 +17,8 @@ test("agent gate is executable and wraps the canonical site checks", async () =>
 		"QG_LARGE_DELETION",
 		"QG_EXEC_BIT",
 		"QG_DIRTY_TREE",
+		"QG_PUBLISH_CACHE",
+		"QUALITY_FORCE_PUBLISH",
 		"--preflight",
 		"--fix",
 		"--publish",
@@ -25,6 +27,35 @@ test("agent gate is executable and wraps the canonical site checks", async () =>
 	]) {
 		assert.match(source, new RegExp(token.replace(/[.*+?^$\{\}()|[\]\\]/g, "\\$&")));
 	}
+});
+
+test("cheap formatter/linter gate runs before the expensive npm/Next gate", async () => {
+	const source = await read("../scripts/agent-quality-gate.sh");
+	const canonical = source.lastIndexOf('run_compact "canonical formatter/linter/security');
+	const full = source.lastIndexOf('run_compact "Next/npm lint, types, unit, privacy and production build gate"');
+
+	assert.ok(canonical >= 0);
+	assert.ok(full > canonical);
+});
+
+test("fix mode uses project ESLint and Stylelint before pre-commit convergence when available", async () => {
+	const source = await read("../scripts/agent-quality-gate.sh");
+
+	assert.match(source, /npm exec -- eslint --fix \./);
+	assert.match(source, /npm exec -- stylelint --fix 'public\/\*\.css'/);
+	assert.match(source, /deterministic formatter\/linter convergence/);
+});
+
+test("strict validation records an exact local proof reusable by publish and pre-push", async () => {
+	const source = await read("../scripts/agent-quality-gate.sh");
+
+	assert.match(source, /git rev-parse --git-path nabla-agent-quality\.stamp/);
+	assert.match(source, /node_modules\/\.package-lock\.json/);
+	assert.match(source, /node --version/);
+	assert.match(source, /npm --version/);
+	assert.match(source, /pre-commit --version/);
+	assert.match(source, /printf '%s\\n' "\$\{STAMP_KEY\}" >"\$\{STAMP_PATH\}"/);
+	assert.match(source, /QUALITY_FORCE_PUBLISH:-0/);
 });
 
 test("npm, mise and pre-push expose the agent workflow", async () => {
@@ -115,29 +146,35 @@ test("CI runs the Git-only agent preflight before Node and dependency installati
 
 test("draft PRs run only the Git preflight until ready for review", async () => {
 	const workflow = await read("../.github/workflows/ci.yml");
-	const fullGateCondition =
-		"github.event_name != 'pull_request' || github.event.pull_request.draft == false";
 
 	assert.match(workflow, /types: \[opened, synchronize, reopened, ready_for_review\]/);
 	assert.match(workflow, /github\.event\.pull_request\.draft == true/);
 	assert.match(workflow, /Draft PR preflight/);
 
 	for (const step of [
+		"Classify quality scope",
+		"Run Semgrep SAST on changed source",
 		"Setup Node.js",
 		"Restore npm downloads",
 		"Restore Next build cache",
 		"Pin npm",
 		"Install dependencies",
+		"Run maintenance project checks",
 		"Run canonical project checks",
 	]) {
-		assert.ok(
-			workflow.includes("- name: " + step + "\n        if: " + fullGateCondition),
-			step + " must be deferred for draft PRs",
+		const index = workflow.indexOf(`- name: ${step}`);
+		assert.ok(index >= 0, `${step} must exist`);
+		const nextStep = workflow.indexOf("\n      - name:", index + 1);
+		const block = workflow.slice(index, nextStep >= 0 ? nextStep : undefined);
+		assert.match(
+			block,
+			/github\.event_name != 'pull_request' \|\| github\.event\.pull_request\.draft == false/,
+			`${step} must be deferred for draft PRs`,
 		);
 	}
 });
 
-test("agent policy requires fix-check-publish and preserves API-only disclosure", async () => {
+test("agent policy keeps local-first validation and API-only disclosure", async () => {
 	const agents = await read("../AGENTS.md");
 
 	assert.match(agents, /scripts\/agent-quality-gate\.sh --fix/);
