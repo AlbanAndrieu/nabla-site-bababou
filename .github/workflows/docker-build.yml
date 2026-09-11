@@ -44,6 +44,7 @@ env:
 jobs:
   build:
     name: Build static fallback
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.draft == false }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -90,7 +91,9 @@ jobs:
           done
 
           grep --ignore-case --quiet "<html" /tmp/fallback-index.html
-          curl --fail --silent --show-error             http://127.0.0.1:18080/404.html             --output /tmp/fallback-404.html
+          curl --fail --silent --show-error \
+            http://127.0.0.1:18080/404.html \
+            --output /tmp/fallback-404.html
           grep --ignore-case --quiet "<html" /tmp/fallback-404.html
 
           for asset in fontawesome.js solid.js brands.js; do
@@ -108,6 +111,8 @@ jobs:
           echo "Fallback container smoke test passed as UID ${runtime_uid}."
 
       - name: Run Trivy vulnerability scanner
+        id: trivy-scan
+        continue-on-error: true
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: ${{ env.LOCAL_IMAGE }}
@@ -121,33 +126,46 @@ jobs:
           vuln-type: "os,library"
           severity: "CRITICAL,HIGH"
 
-      - name: Preserve Trivy SARIF report
+      - name: Preserve failed Trivy SARIF report
+        if: ${{ steps.trivy-scan.outcome != 'success' && hashFiles('trivy-results.sarif') != '' }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: trivy-sarif-${{ github.sha }}
           path: trivy-results.sarif
           if-no-files-found: error
-          retention-days: 14
+          retention-days: 7
 
       - name: Detect GitHub Code Scanning availability
+        if: ${{ always() && steps.trivy-scan.outcome != 'skipped' }}
         id: code-scanning
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          if gh api             -H "Accept: application/vnd.github+json"             "/repos/${GITHUB_REPOSITORY}/code-scanning/alerts?per_page=1"             >/dev/null 2>&1; then
+          if gh api \
+            -H "Accept: application/vnd.github+json" \
+            "/repos/${GITHUB_REPOSITORY}/code-scanning/alerts?per_page=1" \
+            >/dev/null 2>&1; then
             echo "enabled=true" >> "${GITHUB_OUTPUT}"
           else
             echo "enabled=false" >> "${GITHUB_OUTPUT}"
-            echo "Code Scanning is unavailable; SARIF remains attached as a workflow artifact."
+            echo "Code Scanning is unavailable; failed scans retain SARIF as a 7-day diagnostic artifact."
           fi
 
       - name: Upload Trivy scan results to GitHub Code Scanning
-        if: steps.code-scanning.outputs.enabled == 'true'
+        if: ${{ steps.code-scanning.outputs.enabled == 'true' && hashFiles('trivy-results.sarif') != '' }}
         uses: github/codeql-action/upload-sarif@cdf488f595d80d6e07e03d4674febd5ab45fa938 # v4
         with:
           sarif_file: "trivy-results.sarif"
+
+      - name: Enforce Trivy vulnerability scan
+        if: ${{ always() && steps.trivy-scan.outcome == 'failure' }}
+        shell: bash
+        run: |
+          echo "Trivy found a blocking HIGH/CRITICAL vulnerability or failed to complete."
+          echo "Diagnostic SARIF was preserved when available before enforcement."
+          exit 1
 
       - name: Login to GitHub Container Registry
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
