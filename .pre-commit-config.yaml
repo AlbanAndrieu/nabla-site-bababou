@@ -70,7 +70,7 @@ repos:
     -   id: check-executables-have-shebangs
         name: "📁 filesystem/⚙️ exec · Verify shebang preset"
     -   id: check-shebang-scripts-are-executable
-        name: "📁 filesystem/🔗 symlink · Verify script permissions"
+        name: "📁 filesystem/⚙️ exec · Verify script permissions"
     -   id: check-symlinks
         name: "📁 filesystem/🔗 symlink · Check symlink validity"
     -   id: destroyed-symlinks
@@ -159,7 +159,7 @@ repos:
         name: "🔒 security · Detect private keys"
 
 -   repo: https://github.com/pre-commit/pre-commit.git
-    rev: v4.6.1
+    rev: v4.6.2
     hooks:
     -   id: validate_manifest
         name: "🤖 manifest · Validate manifest scripts"
@@ -205,8 +205,7 @@ repos:
     hooks:
     -   id: shfmt-docker
         name: "🐚 🐳 shell · Format shell scripts"
-        # Keep shfmt as the single indentation authority and match Site Alban #177.
-        # Four-space indentation stays compatible with bashate E002.
+        # shfmt is the single shell-indentation authority, aligned with Site Alban #177.
         args: ["-i", "4", "-ci"]
 -   repo: https://github.com/detailyang/pre-commit-shell
     rev: v1.0.6
@@ -231,7 +230,8 @@ repos:
     hooks:
     -   id: bashate
         name: "🐚 shell · Check shell script code style"
-        args: [-i, "E003,E006"]
+        # E002 is indentation, already canonicalized by shfmt above.
+        args: [-i, "E002,E003,E006"]
         exclude: >
           (?x)^(
             trunk|
