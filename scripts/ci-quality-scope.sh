@@ -51,7 +51,7 @@ for file in "${FILES[@]}"; do
 		app/* | components/* | i18n/* | lib/* | messages/* | public/* | api/*)
 			FULL_PROJECT=true
 			;;
-		scripts/agent-quality-gate.sh | scripts/quality-gate.sh | scripts/ci-quality-scope.sh | scripts/verify-production-baseline.sh | scripts/eslint-github-formatter.mjs | scripts/vercel-ignore-build.sh)
+		scripts/agent-quality-gate.sh | scripts/quality-gate.sh | scripts/ci-quality-scope.sh | scripts/verify-production-baseline.sh | scripts/verify-production-live.sh | scripts/ci-performance-budget.sh | scripts/eslint-github-formatter.mjs | scripts/vercel-ignore-build.sh)
 			# Quality/deployment orchestration: validate with lint/unit contracts,
 			# but it does not require rebuilding the application.
 			;;
