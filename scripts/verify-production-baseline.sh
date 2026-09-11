@@ -54,14 +54,22 @@ release_only_hop() {
 	local parent="$1"
 	local child="$2"
 	local message
+	local subject
 	local file
 	local package_changed=false
 	local lock_changed=false
 	local changelog_changed=false
 	local normalized_filter
+	local parent_package_version
+	local child_package_version
+	local parent_lock_version
+	local child_lock_version
+	local parent_lock_root_version
+	local child_lock_root_version
 
 	message="$(git log -1 --format=%B "${child}")"
-	if [[ "${message%%$'\n'*}" != chore\(release\):* ]] || ! grep -Fq '[skip ci]' <<<"${message}"; then
+	subject="${message%%$'\n'*}"
+	if [[ "${subject}" != chore\(release\):* ]] || ! grep -Fq '[skip ci]' <<<"${message}"; then
 		return 1
 	fi
 
@@ -105,6 +113,31 @@ release_only_hop() {
 		<(git show "${parent}:package-lock.json" | jq -S "${normalized_filter}") \
 		<(git show "${child}:package-lock.json" | jq -S "${normalized_filter}"); then
 		printf '❌ PROD_BASE_RELEASE_SCOPE: package-lock.json changed beyond root version metadata in %s\n' "${child}" >&2
+		return 1
+	fi
+
+	parent_package_version="$(git show "${parent}:package.json" | jq -er '.version | select(type == "string" and length > 0)')"
+	child_package_version="$(git show "${child}:package.json" | jq -er '.version | select(type == "string" and length > 0)')"
+	parent_lock_version="$(git show "${parent}:package-lock.json" | jq -er '.version | select(type == "string" and length > 0)')"
+	child_lock_version="$(git show "${child}:package-lock.json" | jq -er '.version | select(type == "string" and length > 0)')"
+	parent_lock_root_version="$(git show "${parent}:package-lock.json" | jq -er '.packages[""].version | select(type == "string" and length > 0)')"
+	child_lock_root_version="$(git show "${child}:package-lock.json" | jq -er '.packages[""].version | select(type == "string" and length > 0)')"
+
+	if [[ "${parent_package_version}" != "${parent_lock_version}" || "${parent_package_version}" != "${parent_lock_root_version}" ]]; then
+		printf '❌ PROD_BASE_RELEASE_VERSION: parent %s has inconsistent package/lock versions\n' "${parent}" >&2
+		return 1
+	fi
+	if [[ "${child_package_version}" != "${child_lock_version}" || "${child_package_version}" != "${child_lock_root_version}" ]]; then
+		printf '❌ PROD_BASE_RELEASE_VERSION: release %s has inconsistent package/lock versions\n' "${child}" >&2
+		return 1
+	fi
+	if [[ "${parent_package_version}" == "${child_package_version}" ]]; then
+		printf '❌ PROD_BASE_RELEASE_VERSION: release %s does not advance the package version\n' "${child}" >&2
+		return 1
+	fi
+	if [[ "${subject}" != "chore(release): ${child_package_version} [skip ci]" ]]; then
+		printf '❌ PROD_BASE_RELEASE_VERSION: release subject does not match package version %s in %s\n' \
+			"${child_package_version}" "${child}" >&2
 		return 1
 	fi
 
