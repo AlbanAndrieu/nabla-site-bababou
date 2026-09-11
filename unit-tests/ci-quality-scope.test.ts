@@ -238,10 +238,19 @@ test("Copilot setup stays available but does not spend installs on draft synchro
 	assert.match(setup, /timeout-minutes: 15/);
 });
 
+test("retired asset metadata stays maintenance-only and absent", async () => {
+	const workflow = await read("../.github/workflows/ci.yml");
+
+	assert.equal((workflow.match(/- "\.assetsignore"/g) ?? []).length, 2);
+	assert.ok(workflow.includes("filename === '.assetsignore'"));
+	await assert.rejects(stat(new URL("../.assetsignore", import.meta.url)), /ENOENT/);
+});
+
 test("quality-only files do not trigger an application Preview checkpoint", async () => {
 	const workflow = await read("../.github/workflows/ci.yml");
 
 	for (const path of [
+		".assetsignore",
 		".pre-commit-config.yaml",
 		".pre-commit-pre-push.yaml",
 		"mise.toml",

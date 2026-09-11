@@ -95,7 +95,17 @@ test("Vercel still skips documentation-only commits", async (t) => {
   const result = runPolicy(directory);
 
   assert.equal(result.status, 0, result.stderr);
-  assert.match(result.stdout, /Only documentation, tests, editor metadata, agent instructions, or GitHub maintenance changed/);
+  assert.match(result.stdout, /skip Vercel deployment/);
+});
+
+test("Vercel skips retired Cloudflare asset metadata", async (t) => {
+  const directory = await createRepo("chore: retire asset metadata", ".assetsignore");
+  t.after(async () => rm(directory, { recursive: true, force: true }));
+
+  const result = runPolicy(directory);
+
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /retired asset metadata/);
 });
 
 test("Vercel compares against the previous deployed SHA across multi-commit changes", async (t) => {

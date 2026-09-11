@@ -15,6 +15,7 @@ on:
       - "AGENTS.md"
       - "CHANGELOG.md"
       - ".dockerignore"
+      - ".assetsignore"
       - "Dockerfile"
       - "app/**"
       - "components/**"
@@ -53,6 +54,7 @@ on:
       - "AGENTS.md"
       - "CHANGELOG.md"
       - ".dockerignore"
+      - ".assetsignore"
       - "Dockerfile"
       - "app/**"
       - "components/**"
@@ -500,6 +502,7 @@ jobs:
               filename.startsWith('.agents/') ||
               filename.startsWith('.cursor/') ||
               filename.startsWith('.claude/') ||
+              filename === '.assetsignore' ||
               filename === '.pre-commit-config.yaml' ||
               filename === '.pre-commit-pre-push.yaml' ||
               filename === '.python-version' ||
