@@ -1,4 +1,5 @@
 @import "tailwindcss/preflight.css" layer(base);
+/* Tailwind is intentionally reset-only here; do not re-enable theme/utilities without audited consumers. */
 /* Reserved for app-level overrides; site styles load from /public via layout <link>. */
 
 .google-translate-widget {
