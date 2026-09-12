@@ -5,7 +5,7 @@ import test from "node:test";
 const read = (path: string) =>
   readFile(new URL(`../${path}`, import.meta.url), "utf8");
 
-test("shared agent tooling follows the Node 24 LTS root-runtime contract", async () => {
+test("shared agent tooling follows the Node 26 Current development contract", async () => {
   const [setup, vscode, cursor, nextjs] = await Promise.all([
     read(".github/workflows/copilot-setup-steps.yml"),
     read(".vscode/copilot-instructions.md"),
@@ -35,7 +35,7 @@ test("shared agent tooling follows the Node 24 LTS root-runtime contract", async
 });
 
 
-test("GitHub Node workflows share .nvmrc as their source of truth", async () => {
+test("GitHub primary Node workflows share .nvmrc as their source of truth", async () => {
   const [nvmrc, quality, playwright, copilot, release] = await Promise.all([
     read(".nvmrc"),
     read(".github/workflows/ci.yml"),
@@ -44,7 +44,7 @@ test("GitHub Node workflows share .nvmrc as their source of truth", async () => 
     read(".github/workflows/release.yml"),
   ]);
 
-  assert.equal(nvmrc.trim(), "v24.21.0");
+  assert.equal(nvmrc.trim(), "v26.8.2");
 
   for (const workflow of [quality, playwright, copilot, release]) {
     assert.match(workflow, /node-version-file:\s*"\.nvmrc"/);
@@ -137,13 +137,14 @@ test("security guidance reflects the current dependency and deployment boundary"
   assert.ok(security.includes(`\`${packageJson.engines.npm}\``));
   assert.ok(security.includes(`\`${nvmrc.trim()}\``));
   assert.match(security, /Vercel production uses its supported Node 24\.x runtime/);
+  assert.match(security, /Node 26 Current/);
   assert.match(security, /maintenance-only changes intentionally skip Semgrep, the production Next build and dependency scanning/);
   assert.match(security, /Snyk runs only for dependency-scope Quality changes when `SNYK_TOKEN` is configured/);
   assert.match(security, /Pre-merge Quality requires a healthy production base/);
   assert.match(security, /Production Post-deploy Smoke/);
   assert.match(security, /Production DAST/);
   assert.match(security, /metadata-only semantic-release commit may inherit its parent production baseline/);
-  assert.doesNotMatch(security, />=24\.11\.0 <25/);
+  assert.doesNotMatch(security, />=24\.11\.0 <26/);
   assert.doesNotMatch(security, /first post-merge production DAST\/smoke statuses must be observed/);
   assert.doesNotMatch(security, /Initial State:|Final State:|remaining vulnerabilities are in deployment tooling/);
 });
