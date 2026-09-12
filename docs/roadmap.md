@@ -86,8 +86,10 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 
 - [x] Remplacer l'ancienne version preview de Next.js par une version stable ; le projet utilise désormais Next `16.3.4` (Active LTS), au-delà du minimum `16.3.3` de la security release d'août 2026.
 - [x] Aligner explicitement `next` et `eslint-config-next` dans le manifeste/lockfile et vérifier leur résolution effective (#123), puis converger vers `16.3.4` comme `nabla-site-alban`.
-- [x] Aligner local/CI et Vercel sur une ligne Node supportée : #182 remplace Node `25.9.0` EOL par Node `24.21.0` LTS dans `.nvmrc`, mise, direnv, tests et instructions agents ; `package.json#engines.node` reste `>=24.11.0 <26` et npm `>=11.17.0 <12`.
-  - [x] Réconcilier les métadonnées `engines` racine du lockfile lors de la régénération atomique du lockfile (#123), puis après le correctif de compatibilité Vercel post-#150.
+- [ ] Séparer le runtime de développement/CI du runtime Vercel : #185 aligne dev/agents/CI principale sur Node `26.8.2` Current tout en conservant Vercel `24.x` comme cible de compatibilité production ; `package.json#engines.node` devient `>=24.11.0 <27` et npm reste `>=11.17.0 <12`.
+  - [x] Synchroniser proprement les métadonnées `engines` racine de `package-lock.json` avec le manifeste via npm 11.17, sans changement du graphe de dépendances.
+  - [x] Ajouter un check Node 24 ciblé et peu coûteux (`v24.11.0`, `npm ci`, tests unitaires seulement), skippé en Draft et sans dupliquer Next/Docker/SAST/DAST.
+  - [ ] Au checkpoint Ready de #185, prouver la Quality complète sous Node 26 et la compatibilité Node 24 avant publication.
 - [x] Supprimer `express` et `@types/express` après confirmation de l'absence de consommateur (#123).
   - [x] Audit du code versionné : aucun import ESM, `require()` ou appel `express()` trouvé.
   - [x] Retrait effectif avec régénération atomique du lockfile (#123).
@@ -194,6 +196,17 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 
 ## P5 — Nettoyage technique, performance et CI
 
+### Checkpoint post-#182 et lot Node #185
+
+- [x] #182 a été mergée sur `master` au SHA `1330279fae1db3006221d6d191173ea22d361614`; Vercel, `Production Post-deploy Smoke` et `Production DAST` sont verts sur cette baseline production.
+- [x] La baseline DAST production post-#182 est `H0 M4 L4 I5`, contre `H0 M4 L6 I5` avant #182 : les LOW passent réellement de 6 à 4 sans masquer artificiellement les alertes restantes.
+- [x] Docker CI #72 sur le merge SHA est verte : build, smoke du fallback et Trivy ont réellement tourné avec succès.
+- [x] Diagnostiquer la Quality `master` #594 (`34668252882`) : elle est rouge sur trois contrats unitaires devenus obsolètes après #182 ; #185 corrige ces trois régressions. La baseline exploitable reste `npm ci=18s`, `node_modules=693 MiB`; `full_checks`, Next build et `.next` sont `n/a` car les tests unitaires ont arrêté le job avant build.
+- [ ] Collecter plusieurs nouvelles baselines complètes et vertes avant toute promotion des budgets CI warning-only vers des seuils bloquants.
+- [x] #181 est fermée sans merge : son travail Tailwind/PostCSS est superseded par #182, donc aucun rebase artificiel n'est requis.
+- [ ] Terminer #185 en Draft à faible coût, puis seulement au checkpoint Ready exécuter Quality Node 26, compatibilité Node 24, Docker/Trivy, Vercel exact-SHA, Playwright et ZAP ; ne pas merger automatiquement.
+
+
 - [x] Aligner package/lockfile et retirer les dépendances confirmées orphelines (#123).
   - [x] Retirer `stripe`, `@stripe/stripe-js` et `@stripe/react-stripe-js` devenus sans consommateur après la migration/suppression des surfaces checkout (#144).
   - [ ] Finaliser le retrait de `tailwindcss` et `@tailwindcss/postcss` : #182 retire déjà les deux dépendances, `postcss.config.mjs` et remplace Preflight par `app/reset.css` avec contrats unitaires ; garder l'item ouvert jusqu'au checkpoint Ready et à la preuve Preview exact-SHA + Playwright/ZAP sans régression CSS/build.
@@ -229,13 +242,13 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] Étendre le pinning SHA à tous les workflows GitHub actifs (Docker, Playwright, Vercel Preview et Release déjà conforme) et étendre le contrat pour empêcher toute nouvelle référence distante flottante.
   - [x] Rendre les caches npm et Chromium du workflow Playwright best-effort afin qu'une panne GitHub Cache ne transforme pas un Preview fonctionnel en faux échec E2E.
   - [x] Retirer le workflow GitHub MegaLinter dormant, encore câblé sur l'ancien `main`, plutôt que réactiver un job lourd et redondant ; conserver `.mega-linter.yml` aligné sur `master` uniquement pour le fallback `.gitlab-ci.yml`.
-  - [x] Centraliser la version Node des workflows GitHub sur `.nvmrc` (`v25.9.0`) ; conserver séparément l'engine package compatible Vercel `>=24.11.0 <26`.
+  - [x] #185 fait de Node `26.8.2` Current la source de vérité dev/agents/CI via `.nvmrc`, mise et direnv, tout en conservant Vercel Node `24.x` comme cible de compatibilité production explicite et testée séparément.
   - [x] Réconcilier le fallback Docker statique avec le repo réel : `master`, image Bababou, contexte limité à `public/`, BuildKit cache + Trivy, publication GHCR sur les changements du fallback et Docker Hub uniquement en opt-in manuel ; supprimer la dette `pgclient`/`PG_MAJOR`/Node inutile sans en faire le runtime principal.
   - [x] Mettre à niveau la base du fallback de `nginx:1.27-alpine` vers la stable `nginx:1.30.4-alpine-slim` avant d'envisager un gate Trivy bloquant ; l'ancienne base exposait des findings HIGH/CRITICAL corrigés dans des packages plus récents.
   - [x] Vérifier le SARIF après upgrade : 34 findings HIGH/CRITICAL sur l'ancienne base → 0 sur `nginx:1.30.4-alpine-slim`, puis activer `exit-code: 1` pour rendre le scan HIGH/CRITICAL bloquant sur le fallback Docker.
   - [x] Basculer le fallback vers l'image officielle `nginxinc/nginx-unprivileged:1.30.4-alpine-slim`, exposer 8080 et ajouter un smoke test CI prouvant un runtime non-root ainsi que le service de `/` et du `public/404.html` protégé.
   - [x] #182 aligne Docker CI sur le cycle Draft/Ready : les PR Draft ne consomment plus Buildx/build/smoke/Trivy ; Trivy conserve désormais un SARIF d'échec 7 jours et alimente Code Scanning avant l'enforcement HIGH/CRITICAL. Quality Draft #576 et Docker #55 ont prouvé le skip réel.
-  - [ ] Au prochain checkpoint Ready de #182, exécuter réellement Docker CI sur le HEAD exact pour valider le smoke étendu aux JS, CSS et webfonts Font Awesome vendus ainsi que le chemin Trivy report-before-fail avant publication.
+  - [x] Preuve post-merge #182 sur `1330279fae1db3006221d6d191173ea22d361614` : Docker CI #72 est verte ; build, smoke étendu du fallback et scan Trivy ont réellement réussi, avec conservation SARIF d'échec et enforcement naturellement skippés puisque le scan est sain.
   - [x] Les Preview Vercel ne déclenchent plus deux suites Playwright concurrentes et le chemin conservé réutilise le cache Chromium (#121).
   - [x] Ajouter un OWASP ZAP Baseline GitHub sur le même `vercel.deployment.success`, filtré strictement sur `vercel-preview-pr-*` et le SHA exact de la PR ; le scanner reçoit le Protection Bypass via `ZAP_AUTH_HEADER_*`, cible uniquement l'URL `*.vercel.app` de Preview et publie le statut `OWASP ZAP Preview`.
   - [x] Pinner `zaproxy/action-baseline` v0.15.0 sur SHA immuable et l'image ZAP sur `2.17.0`; désactiver l'ouverture automatique d'issues.
