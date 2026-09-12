@@ -7,6 +7,10 @@ const productionDastUrl = new URL(
   "../.github/workflows/production-dast.yml",
   import.meta.url,
 );
+const zapPreviewUrl = new URL(
+  "../.github/workflows/zap-preview.yml",
+  import.meta.url,
+);
 const zapRulesUrl = new URL("../.zap/rules.tsv", import.meta.url);
 
 test("Quality runs changed-source Semgrep before the expensive Node build", async () => {
@@ -55,10 +59,25 @@ test("Production DAST runs after production deployments and daily with the share
   assert.match(workflow, /x-vercel-protection-bypass/);
   assert.match(workflow, /x-vercel-trusted-oidc-idp-token/);
   assert.match(workflow, /rules_file_name: "\.zap\/rules\.tsv"/);
+  assert.match(workflow, /cmd_options: "-I -T 5"/);
+  assert.doesNotMatch(workflow, /cmd_options:.*-c \.zap\/rules\.tsv/);
   assert.match(workflow, /fail_action: true/);
   assert.match(workflow, /artifact_name: zap-production-report/);
   assert.match(workflow, /context 'Production DAST'/);
   assert.match(workflow, /H\$high M\$medium L\$low I\$informational/);
+});
+
+test("Preview and production ZAP load the shared policy exactly once", async () => {
+  const [preview, production] = await Promise.all([
+    readFile(zapPreviewUrl, "utf8"),
+    readFile(productionDastUrl, "utf8"),
+  ]);
+
+  for (const workflow of [preview, production]) {
+    assert.match(workflow, /rules_file_name: "\.zap\/rules\.tsv"/);
+    assert.match(workflow, /cmd_options: "-I -T 5"/);
+    assert.doesNotMatch(workflow, /cmd_options:.*-c \.zap\/rules\.tsv/);
+  }
 });
 
 test("ZAP suppresses only deterministic informational noise while keeping security debt visible", async () => {
