@@ -79,6 +79,11 @@ test("shared Next chrome uses semantic tokens and scoped styles", async () => {
     /grid-template-columns:\s*repeat\(auto-fit, minmax\(min\(100%, 12rem\), 1fr\)\)/,
   );
   assert.match(globals, /height:\s*clamp\(18rem, 45vw, 28\.125rem\)/);
+  assert.match(globals, /@media \(prefers-reduced-motion:\s*reduce\)/);
+  assert.match(globals, /animation-duration:\s*0\.01ms\s*!important/);
+  assert.match(globals, /animation-iteration-count:\s*1\s*!important/);
+  assert.match(globals, /transition-duration:\s*0\.01ms\s*!important/);
+  assert.match(globals, /scroll-behavior:\s*auto\s*!important/);
   assert.doesNotMatch(globals, /\.route-header(?:\s|\{|__|--)/);
   assert.doesNotMatch(
     globals,
