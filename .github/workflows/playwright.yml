@@ -81,7 +81,7 @@ jobs:
         run: |
           set -euo pipefail
           cd "${RUNNER_TEMP}"
-          npm install --global npm@11.17.0 --no-audit --no-fund
+          npm install --global npm@11.19.1 --no-audit --no-fund
 
       # This job exercises an already-built remote Preview. Skip lifecycle
       # scripts to keep dependency installation deterministic and minimal.

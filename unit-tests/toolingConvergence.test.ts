@@ -5,7 +5,7 @@ import test from "node:test";
 const read = (path: string) =>
   readFile(new URL(`../${path}`, import.meta.url), "utf8");
 
-test("shared agent tooling follows the Node 24 LTS root-runtime contract", async () => {
+test("shared agent tooling follows the Node Current root-runtime contract", async () => {
   const [setup, vscode, cursor, nextjs] = await Promise.all([
     read(".github/workflows/copilot-setup-steps.yml"),
     read(".vscode/copilot-instructions.md"),
@@ -44,7 +44,7 @@ test("GitHub Node workflows share .nvmrc as their source of truth", async () => 
     read(".github/workflows/release.yml"),
   ]);
 
-  assert.equal(nvmrc.trim(), "v24.21.0");
+  assert.equal(nvmrc.trim(), "v26.8.2");
 
   for (const workflow of [quality, playwright, copilot, release]) {
     assert.match(workflow, /node-version-file:\s*"\.nvmrc"/);
@@ -126,6 +126,7 @@ test("security guidance reflects the current dependency and deployment boundary"
   ]);
   const packageJson = JSON.parse(packageRaw) as {
     engines?: { node?: string; npm?: string };
+    devDependencies?: Record<string, string>;
   };
 
   assert.match(security, /strict-allow-scripts=true/);
@@ -133,6 +134,7 @@ test("security guidance reflects the current dependency and deployment boundary"
   assert.match(security, /privacy gate/);
   assert.ok(packageJson.engines?.node);
   assert.ok(packageJson.engines?.npm);
+  assert.match(packageJson.devDependencies?.["@types/node"] ?? "", /^\^24\./);
   assert.ok(security.includes(`\`${packageJson.engines.node}\``));
   assert.ok(security.includes(`\`${packageJson.engines.npm}\``));
   assert.ok(security.includes(`\`${nvmrc.trim()}\``));

@@ -26,14 +26,16 @@ test("npm install scripts stay explicitly denied and strict", async () => {
 
   const packageJson = JSON.parse(packageJsonSource) as {
     engines?: { node?: string; npm?: string };
+    devDependencies?: Record<string, string>;
     allowScripts?: Record<string, boolean>;
   };
   const lock = JSON.parse(lockSource) as {
     packages: Record<string, { version?: string }>;
   };
 
-  assert.equal(packageJson.engines?.node, ">=24.11.0 <26");
-  assert.equal(packageJson.engines?.npm, ">=11.17.0 <12");
+  assert.equal(packageJson.engines?.node, ">=24.11.0 <25 || >=26.0.0 <27");
+  assert.equal(packageJson.engines?.npm, ">=11.19.1 <12");
+  assert.match(packageJson.devDependencies?.["@types/node"] ?? "", /^\^24\./);
   assert.deepEqual(packageJson.allowScripts, {
     "@parcel/watcher": false,
     "@swc/core": false,

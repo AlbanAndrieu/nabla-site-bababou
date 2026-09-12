@@ -10,8 +10,8 @@
 
 ## Dependency supply-chain controls
 
-- The Node.js package engine is `>=24.11.0 <26`; local/CI validation is pinned by `.nvmrc` to supported Node `v24.21.0` LTS, aligned with Vercel production's supported Node 24.x runtime. Node 25 is EOL and must not be reintroduced.
-- npm is constrained to `>=11.17.0 <12`.
+- Primary local/agent/CI validation follows Node Current and is pinned by `.nvmrc` to `v26.8.2`. Vercel production remains on its supported Node 24.x runtime, so the package engine is `>=24.11.0 <25 || >=26.0.0 <27`: supported 24.x and 26.x are allowed while EOL Node 25 stays excluded. `@types/node` intentionally remains on 24.x to keep the production API floor visible during development.
+- npm is constrained to `>=11.19.1 <12` and CI pins npm `11.19.1` to match the Node 26.8.2 bundled toolchain.
 - `.npmrc` enables `strict-allow-scripts=true`.
 - Packages with reviewed install scripts are explicitly denied through `package.json#allowScripts`; any new install script must fail until reviewed.
 - Never enable `dangerously-allow-all-scripts`.
