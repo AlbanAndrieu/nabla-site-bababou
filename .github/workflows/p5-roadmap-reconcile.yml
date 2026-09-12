@@ -1,0 +1,41 @@
+name: P5 roadmap reconcile
+
+on:
+  pull_request:
+    types: [synchronize]
+
+permissions:
+  contents: write
+
+jobs:
+  reconcile:
+    if: github.repository == 'AlbanAndrieu/nabla-site-bababou' && github.event.pull_request.number == 185 && github.event.pull_request.draft == true && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+
+      - name: Reconcile superseded #182 roadmap lines
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -c 'from pathlib import Path; p=Path("docs/roadmap.md"); s=p.read_text(); old="  - [x] #182 : retirer Node 25 EOL de la toolchain active et converger `.nvmrc`, mise/direnv, CI et instructions agents vers Node `24.21.0` LTS, dans la plage package/Vercel déjà supportée."; new="  - [x] #182 : retrait de Node 25 EOL et passage transitoire à Node 24 LTS ; #185 supersède cette cible comme source de vérité dev/agents/CI avec Node `26.8.2`, tout en conservant Node 24.x comme compatibilité Vercel production."; assert s.count(old) == 1, s.count(old); s=s.replace(old,new); old2="  - [ ] #182 : valider le HEAD final Ready sur Quality complète, Docker build/smoke/Trivy, Vercel Preview exact-SHA, Playwright et ZAP avant de solder Tailwind, les nouveaux redirects et la déduplication Font Awesome."; new2="  - [x] #182 : dette de checkpoint Ready reclassifiée post-merge : Vercel production, smoke, DAST et Docker/Trivy sont prouvés sur `1330279fae1db3006221d6d191173ea22d361614`, avec DAST `H0 M4 L4 I5` ; aucune preuve Playwright Preview post-merge sur ce SHA ne doit être revendiquée et la validation navigateur/CSS restante est reportée au checkpoint #185."; assert s.count(old2) == 1, s.count(old2); p.write_text(s.replace(old2,new2))'
+          rm .github/workflows/p5-roadmap-reconcile.yml
+          git diff --check
+          git diff --name-only | sort > "${RUNNER_TEMP}/changed.txt"
+          printf '%s\n' .github/workflows/p5-roadmap-reconcile.yml docs/roadmap.md | sort > "${RUNNER_TEMP}/expected.txt"
+          diff -u "${RUNNER_TEMP}/expected.txt" "${RUNNER_TEMP}/changed.txt"
+
+      - name: Commit roadmap reconciliation and remove one-shot workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A .github/workflows/p5-roadmap-reconcile.yml docs/roadmap.md
+          git commit -m "docs(p5): reconcile post-182 runtime checkpoint"
+          git push origin "HEAD:${{ github.event.pull_request.head.ref }}"
