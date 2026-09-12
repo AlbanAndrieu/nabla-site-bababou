@@ -103,6 +103,20 @@ jobs:
             test -s "/tmp/${asset}"
           done
 
+          for asset in fontawesome.css solid.css brands.css; do
+            curl --fail --silent --show-error \
+              "http://127.0.0.1:18080/assets/fontawesome/css/${asset}" \
+              --output "/tmp/${asset}"
+            test -s "/tmp/${asset}"
+          done
+
+          for asset in fa-solid-900.woff2 fa-brands-400.woff2; do
+            curl --fail --silent --show-error \
+              "http://127.0.0.1:18080/assets/fontawesome/webfonts/${asset}" \
+              --output "/tmp/${asset}"
+            test -s "/tmp/${asset}"
+          done
+
           runtime_uid="$(docker exec "${container_id}" id -u)"
           if [[ "${runtime_uid}" == "0" ]]; then
             echo "Fallback container unexpectedly runs as root."

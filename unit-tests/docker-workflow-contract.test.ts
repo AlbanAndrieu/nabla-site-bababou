@@ -103,7 +103,7 @@ test("Docker fallback builds and scans the Bababou image without Node or pgclien
   assert.doesNotMatch(workflow, /GITHUB_CONTEXT/);
 });
 
-test("Docker fallback smoke test proves non-root runtime and protected static assets", async () => {
+test("Docker fallback smoke test proves non-root runtime and vendored Font Awesome assets", async () => {
   const workflow = await read(".github/workflows/docker-build.yml");
 
   assert.match(workflow, /Smoke test fallback container/);
@@ -117,6 +117,25 @@ test("Docker fallback smoke test proves non-root runtime and protected static as
       '"http://127.0.0.1:18080/assets/fontawesome-free-7.1.0-web/js/${asset}"',
     ),
   );
+  assert.ok(
+    workflow.includes(
+      '"http://127.0.0.1:18080/assets/fontawesome/css/${asset}"',
+    ),
+  );
+  assert.ok(
+    workflow.includes(
+      '"http://127.0.0.1:18080/assets/fontawesome/webfonts/${asset}"',
+    ),
+  );
+  for (const asset of [
+    "fontawesome.css",
+    "solid.css",
+    "brands.css",
+    "fa-solid-900.woff2",
+    "fa-brands-400.woff2",
+  ]) {
+    assert.match(workflow, new RegExp(asset.replace(".", "\\.")));
+  }
   assert.match(workflow, /docker exec "\$\{container_id\}" id -u/);
   assert.match(workflow, /runtime_uid.*== "0"/s);
   assert.ok(
