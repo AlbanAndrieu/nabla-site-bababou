@@ -59,5 +59,10 @@ test("Preview security gate waits for both Playwright and OWASP ZAP exact-SHA st
   assert.match(workflow, /stop waiting on stale Preview statuses/);
   assert.match(workflow, /state === 'success'/);
   assert.match(workflow, /failure', 'error/);
+  assert.match(workflow, /vercelRegistrationDeadline/);
+  assert.match(workflow, /2 \* 60 \* 1000/);
+  assert.match(workflow, /status\?\.state \?\? 'absent'/);
+  assert.match(workflow, /Vercel status was not registered within 2 minutes/);
+  assert.doesNotMatch(workflow, /status\?\.state \?\? 'pending'/);
   assert.match(workflow, /Timed out waiting for/);
 });
