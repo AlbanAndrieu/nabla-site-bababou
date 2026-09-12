@@ -436,6 +436,10 @@ jobs:
         env:
           NPM_CI_SECONDS: ${{ steps.install.outputs.seconds }}
           NODE_MODULES_MB: ${{ steps.install.outputs.node_modules_mb }}
+          NPM_CACHE_MB: ${{ steps.install.outputs.npm_cache_mb }}
+          NPM_CACHE_HIT: ${{ steps.npm-cache.outputs.cache-hit }}
+          MAINTENANCE_CHECK_SECONDS: ${{ steps.maintenance-checks.outputs.seconds }}
+          NEXT_CACHE_HIT: ${{ steps.next-cache.outputs.cache-hit }}
           CHECK_SECONDS: ${{ steps.checks.outputs.seconds }}
           NEXT_BUILD_SECONDS: ${{ steps.checks.outputs.next_build_seconds }}
           NEXT_MB: ${{ steps.checks.outputs.next_mb }}
@@ -510,6 +514,7 @@ jobs:
               filename.startsWith('.agents/') ||
               filename.startsWith('.cursor/') ||
               filename.startsWith('.claude/') ||
+              filename === '.envrc' ||
               filename === '.assetsignore' ||
               filename === '.pre-commit-config.yaml' ||
               filename === '.pre-commit-pre-push.yaml' ||

@@ -4,15 +4,17 @@ import test from "node:test";
 
 const ciWorkflowUrl = new URL("../.github/workflows/ci.yml", import.meta.url);
 const packageJsonUrl = new URL("../package.json", import.meta.url);
+const performanceBudgetUrl = new URL("../scripts/ci-performance-budget.sh", import.meta.url);
 const retiredBuildWrapperUrl = new URL(
   "../scripts/run-next-build.mjs",
   import.meta.url,
 );
 
 test("quality CI records performance around the single canonical Next build", async () => {
-  const [workflow, packageJsonSource] = await Promise.all([
+  const [workflow, packageJsonSource, performanceBudget] = await Promise.all([
     readFile(ciWorkflowUrl, "utf8"),
     readFile(packageJsonUrl, "utf8"),
+    readFile(performanceBudgetUrl, "utf8"),
   ]);
   const packageJson = JSON.parse(packageJsonSource) as {
     scripts: Record<string, string>;
@@ -58,7 +60,7 @@ test("quality CI records performance around the single canonical Next build", as
   assert.match(workflow, /cd "\$\{RUNNER_TEMP\}"/);
   assert.match(
     workflow,
-    /npm install --global npm@11\.17\.0 --no-audit --no-fund/,
+    /npm install --global npm@11\.19\.1 --no-audit --no-fund/,
   );
 
   assert.match(workflow, /id: checks/);
@@ -75,6 +77,13 @@ test("quality CI records performance around the single canonical Next build", as
   assert.match(workflow, /node_modules_mb/);
   assert.match(workflow, /next_mb/);
   assert.match(workflow, /NEXT_BUILD_SECONDS/);
-  assert.match(workflow, /NEXT_CACHE_HIT/);
+  assert.match(workflow, /NPM_CACHE_MB: \$\{\{ steps\.install\.outputs\.npm_cache_mb \}\}/);
+  assert.match(workflow, /NPM_CACHE_HIT: \$\{\{ steps\.npm-cache\.outputs\.cache-hit \}\}/);
+  assert.match(workflow, /MAINTENANCE_CHECK_SECONDS: \$\{\{ steps\.maintenance-checks\.outputs\.seconds \}\}/);
+  assert.match(workflow, /NEXT_CACHE_HIT: \$\{\{ steps\.next-cache\.outputs\.cache-hit \}\}/);
   assert.match(workflow, /path: \.next\/cache/);
+  assert.match(performanceBudget, /CI_PERF_BASELINE schema=3/);
+  for (const field of ["npm_cache_mb", "npm_cache_hit", "maintenance_checks_s", "next_cache_hit"]) {
+    assert.ok(performanceBudget.includes(`${field}=`), `${field} must be machine-readable`);
+  }
 });

@@ -78,7 +78,7 @@
   - [x] Observer le premier smoke production post-merge : #170 a déployé `cdf0dfa` en `READY` avec les alias `www.bababou.com` / `bababou.com`; Vercel ne remonte aucun runtime 4xx/5xx sur ce déploiement et la homepage publique répond. Le run Playwright #521 a néanmoins false-fail sur le `HTTP 307` du rewrite protégé `/ → /index.html`, pas sur une panne applicative.
   - [x] Corriger le smoke pour accepter uniquement ce `307` attendu vers `/index.html`, après avoir exclu les redirects d'authentification Vercel ; `/index.html` reste ensuite vérifié séparément en `200`.
   - [x] Observer le smoke post-#171/#172 : Playwright #523 a révélé un second faux échec, le header `x-vercel-set-bypass-cookie: true` provoquant lui-même un `307 Location: /` de handshake Vercel. Retirer ce header du smoke production et conserver le bypass header-only + OIDC ; le handshake cookie reste réservé au préflight Preview qui le gère explicitement.
-  - [ ] Observer le prochain smoke production après ce correctif avant de considérer ce contrôle opérationnel comme stabilisé.
+  - [x] Observer le prochain smoke production après ce correctif : le run `34668278623` sur le SHA exact `1330279fae1db3006221d6d191173ea22d361614` valide en HTTP 200 `/`, `/index.html`, `/test`, `/en/test`, `/de/test`, `/no/test`, `/test.html`, `/contact`, `/policy` ainsi que `www.bababou.com`; le contrôle opérationnel est stabilisé.
 
 ## P1 — Stabiliser et simplifier le runtime
 

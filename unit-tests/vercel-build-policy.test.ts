@@ -108,6 +108,36 @@ test("Vercel skips retired Cloudflare asset metadata", async (t) => {
   assert.match(result.stdout, /retired asset metadata/);
 });
 
+test("Vercel skips local and CI maintenance-only paths", async (t) => {
+  const maintenancePaths = [
+    ".envrc",
+    ".python-version",
+    "mise.toml",
+    ".zap/rules.tsv",
+    ".pre-commit-config.yaml",
+    "eslint.config.js",
+    "scripts/ci-performance-budget.sh",
+  ];
+
+  for (const [index, changedPath] of maintenancePaths.entries()) {
+    const directory = await createRepo(`chore: maintenance ${index}`, changedPath);
+    t.after(async () => rm(directory, { recursive: true, force: true }));
+    const result = runPolicy(directory);
+    assert.equal(result.status, 0, `${changedPath}: ${result.stderr}`);
+    assert.match(result.stdout, /skip Vercel deployment/);
+  }
+});
+
+test("Vercel keeps build-affecting toolchain metadata deploy-relevant", async (t) => {
+  for (const [index, changedPath] of [".nvmrc", ".npmrc"].entries()) {
+    const directory = await createRepo(`chore: runtime toolchain ${index}`, changedPath);
+    t.after(async () => rm(directory, { recursive: true, force: true }));
+    const result = runPolicy(directory);
+    assert.equal(result.status, 1, `${changedPath}: ${result.stderr}`);
+    assert.match(result.stdout, /Deploy-relevant change detected/);
+  }
+});
+
 test("Vercel compares against the previous deployed SHA across multi-commit changes", async (t) => {
   const directory = await createRepo("fix: runtime baseline", "next.config.mjs");
   t.after(async () => rm(directory, { recursive: true, force: true }));

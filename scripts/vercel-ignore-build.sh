@@ -53,7 +53,7 @@ printf '%s\n' "$changed_files"
 
 while IFS= read -r file; do
   case "$file" in
-    .assetsignore|docs/*|unit-tests/*|*.md|.github/*|.github/**/*|.vscode/*|.idea/*|.agents/*|.agents/**/*|.cursor/*|.cursor/**/*|.claude/*|.claude/**/*)
+    .envrc|.assetsignore|.python-version|.pre-commit-config.yaml|.pre-commit-pre-push.yaml|mise.toml|eslint.config.js|stylelint.config.cjs|docs/*|unit-tests/*|*.md|.github/*|.github/**/*|.zap/*|.zap/**/*|.vscode/*|.idea/*|.agents/*|.agents/**/*|.cursor/*|.cursor/**/*|.claude/*|.claude/**/*|scripts/agent-quality-gate.sh|scripts/ci-quality-scope.sh|scripts/verify-production-baseline.sh|scripts/verify-production-live.sh|scripts/ci-performance-budget.sh|scripts/quality-gate.sh|scripts/eslint-github-formatter.mjs)
       ;;
     *)
       echo "Deploy-relevant change detected: $file"
@@ -62,5 +62,5 @@ while IFS= read -r file; do
   esac
 done <<< "$changed_files"
 
-echo "Only documentation, tests, editor metadata, agent instructions, retired asset metadata, or GitHub maintenance changed; skip Vercel deployment."
+echo "Only documentation, tests, local/editor metadata, agent instructions, or CI maintenance changed; skip Vercel deployment."
 exit 0

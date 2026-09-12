@@ -34,6 +34,11 @@ test("automatic Preview policy skips repository-security maintenance without hid
   assert.match(workflow, /filename\.startsWith\('unit-tests\/'\)/);
   assert.match(workflow, /filename\.startsWith\('\.github\/'\)/);
   assert.match(workflow, /filename\.startsWith\('\.zap\/'\)/);
+  assert.match(workflow, /filename === '\.envrc'/);
+  assert.match(workflow, /filename === '\.python-version'/);
+  assert.match(workflow, /filename === 'mise\.toml'/);
+  assert.doesNotMatch(workflow, /filename === '\.nvmrc'/);
+  assert.doesNotMatch(workflow, /filename === '\.npmrc'/);
   assert.doesNotMatch(workflow, /forceCheckpoint/);
   assert.match(workflow, /No deploy-relevant files/);
   assert.match(workflow, /deployRelevant/);
