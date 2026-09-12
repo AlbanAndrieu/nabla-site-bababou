@@ -1,3 +1,12 @@
+## [0.15.4](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.15.3...0.15.4) (2026-09-12)
+
+
+### Performance Improvements
+
+* **ci:** publish Vercel absent-status fail-fast on master ([#187](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/187)) ([f56a54b](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/f56a54b9eccddb1263e2f0e9ce72c6857e10de32))
+* **ci:** scope Node 24 checks to runtime inputs ([#189](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/189)) ([3001408](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/3001408fdd4a91499b3a7bb55bb0fcaf1ab37e03))
+* **zap:** load shared policy once per scan ([#188](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/188)) ([a029361](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/a0293617c52e58a165abfbc07d7acfd248bc8513))
+
 ## [0.15.3](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.15.2...0.15.3) (2026-09-12)
 
 
