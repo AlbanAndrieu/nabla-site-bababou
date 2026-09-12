@@ -1,3 +1,10 @@
+# [0.16.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.15.4...0.16.0) (2026-09-12)
+
+
+### Features
+
+* **ui:** improve responsive Next layouts ([#190](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/190)) ([9bf8d4f](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/9bf8d4f3826e20989247c5fb79bdc3806307d99a))
+
 ## [0.15.4](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.15.3...0.15.4) (2026-09-12)
 
 
