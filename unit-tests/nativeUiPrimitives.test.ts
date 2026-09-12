@@ -104,6 +104,8 @@ test("shared surface and content layout use semantic design tokens", async () =>
   }
 
   assert.match(layout, /grid-template-columns:\s*repeat\(2/);
-  assert.match(layout, /@media \(max-width: 760px\)/);
+  assert.match(layout, /@media \(max-width: 900px\)/);
+  assert.match(layout, /@media \(max-width: 575\.98px\)/);
+  assert.match(layout, /grid-template-columns:\s*1fr/);
   assert.match(layout, /\.visuallyHidden/);
 });
