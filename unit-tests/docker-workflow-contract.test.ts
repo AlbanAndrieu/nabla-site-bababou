@@ -164,17 +164,21 @@ test("Docker fallback publishing is safe by default", async () => {
   );
 });
 
-test("Docker context contains only the reviewed public fallback", async () => {
+test("Docker context contains only the reviewed public fallback and pins its base image", async () => {
   const [dockerignore, dockerfile] = await Promise.all([
     read(".dockerignore"),
     read("Dockerfile"),
   ]);
 
+  const pinnedBase =
+    "FROM nginxinc/nginx-unprivileged:1.30.4-alpine-slim@sha256:3a4485bf084957d56674ee22db07d77d5a281418815c5852827419d6d629d440";
+
   assert.equal(dockerignore, "**\n!public/\n!public/**\n");
   assert.match(dockerfile, /Static fallback only/);
-  assert.match(
+  assert.ok(dockerfile.includes(pinnedBase));
+  assert.doesNotMatch(
     dockerfile,
-    /FROM nginxinc\/nginx-unprivileged:1\.30\.4-alpine-slim/,
+    /^FROM nginxinc\/nginx-unprivileged:1\.30\.4-alpine-slim\s*$/m,
   );
   assert.doesNotMatch(dockerfile, /nginx:1\.27-alpine/);
   assert.match(dockerfile, /EXPOSE 8080/);
