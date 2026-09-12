@@ -9,6 +9,7 @@ GH_TOKEN="${GH_TOKEN:-${GITHUB_TOKEN:-}}"
 API_URL="${GITHUB_API_URL:-https://api.github.com}"
 REPOSITORY="${GITHUB_REPOSITORY:-}"
 MAX_RELEASE_HOPS="${QUALITY_BASELINE_RELEASE_HOPS:-3}"
+MAX_MAINTENANCE_HOPS="${QUALITY_BASELINE_MAINTENANCE_HOPS:-5}"
 
 production_contexts=(
 	"Production Post-deploy Smoke"
@@ -33,6 +34,10 @@ if [[ ! "${REPOSITORY}" =~ ^[^/]+/[^/]+$ ]]; then
 fi
 if [[ ! "${MAX_RELEASE_HOPS}" =~ ^[0-9]+$ ]]; then
 	printf '❌ QUALITY_BASELINE_RELEASE_HOPS must be a non-negative integer, got %s\n' "${MAX_RELEASE_HOPS}" >&2
+	exit 2
+fi
+if [[ ! "${MAX_MAINTENANCE_HOPS}" =~ ^[0-9]+$ ]]; then
+	printf '❌ QUALITY_BASELINE_MAINTENANCE_HOPS must be a non-negative integer, got %s\n' "${MAX_MAINTENANCE_HOPS}" >&2
 	exit 2
 fi
 
@@ -104,7 +109,7 @@ release_only_hop() {
 		return 1
 	fi
 
-	mapfile -t release_files < <(git diff --name-only --diff-filter=ACMR "${parent}" "${child}" | awk 'NF' | sort -u)
+	mapfile -t release_files < <(git diff --name-only --diff-filter=ACMRD "${parent}" "${child}" | awk 'NF' | sort -u)
 	if (("${#release_files[@]}" == 0)); then
 		return 1
 	fi
@@ -186,8 +191,42 @@ release_only_hop() {
 	return 0
 }
 
+maintenance_only_hop() {
+	local parent="$1"
+	local child="$2"
+	local parent_count
+	local file
+
+	parent_count="$(git rev-list --parents -n 1 "${child}" | awk '{print NF - 1}')"
+	if [[ "${parent_count}" != "1" ]]; then
+		printf '❌ PROD_BASE_MAINTENANCE_GRAPH: maintenance candidate %s has %s parents; baseline inheritance requires a linear single-parent commit\n' \
+			"${child}" "${parent_count}" >&2
+		return 1
+	fi
+
+	mapfile -t maintenance_files < <(git diff --name-only --diff-filter=ACMRD "${parent}" "${child}" | awk 'NF' | sort -u)
+	if (("${#maintenance_files[@]}" == 0)); then
+		return 1
+	fi
+
+	for file in "${maintenance_files[@]}"; do
+		case "${file}" in
+			.assetsignore | docs/* | unit-tests/* | *.md | .github/* | .vscode/* | .idea/* | .agents/* | .cursor/* | .claude/* | .zap/* | .pre-commit-config.yaml | .pre-commit-pre-push.yaml | .python-version | mise.toml | eslint.config.js | stylelint.config.cjs | scripts/agent-quality-gate.sh | scripts/ci-quality-scope.sh | scripts/verify-production-baseline.sh | scripts/verify-production-live.sh | scripts/ci-performance-budget.sh | scripts/quality-gate.sh | scripts/eslint-github-formatter.mjs)
+				;;
+			*)
+				printf '❌ PROD_BASE_MAINTENANCE_SCOPE: %s changes deploy-relevant file %s\n' "${child}" "${file}" >&2
+				return 1
+				;;
+		esac
+	done
+
+	printf 'ℹ️  accepted maintenance-only baseline hop %s -> %s\n' "${parent}" "${child}"
+	return 0
+}
+
 candidate="${BASE_SHA}"
 release_hops=0
+maintenance_hops=0
 
 while :; do
 	if ! json="$(status_json "${candidate}")"; then
@@ -237,7 +276,8 @@ while :; do
 	if (("${#missing[@]}" == 0)); then
 		printf '✅ production baseline healthy at %s\n' "${candidate}"
 		if [[ -n "${GITHUB_OUTPUT:-}" ]]; then
-			printf 'baseline_sha=%s\nrelease_hops=%d\n' "${candidate}" "${release_hops}" >>"${GITHUB_OUTPUT}"
+			printf 'baseline_sha=%s\nrelease_hops=%d\nmaintenance_hops=%d\n' \
+				"${candidate}" "${release_hops}" "${maintenance_hops}" >>"${GITHUB_OUTPUT}"
 		fi
 		if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then
 			{
@@ -246,6 +286,7 @@ while :; do
 				echo "- PR base: \`${BASE_SHA}\`"
 				echo "- healthy production baseline: \`${candidate}\`"
 				echo "- semantic-release metadata hops: ${release_hops}"
+				echo "- maintenance-only hops: ${maintenance_hops}"
 				echo "- required statuses: Vercel, Production Post-deploy Smoke, Production DAST"
 			} >>"${GITHUB_STEP_SUMMARY}"
 		fi
@@ -258,12 +299,6 @@ while :; do
 		exit 1
 	fi
 
-	if ((release_hops >= MAX_RELEASE_HOPS)); then
-		printf '❌ PROD_BASE_MISSING: %s is missing required production status(es): %s\n' \
-			"${candidate}" "${missing[*]}" >&2
-		exit 1
-	fi
-
 	if [[ "${vercel_state}" != "success" ]]; then
 		printf '❌ PROD_BASE_MISSING: %s is missing %s and Vercel is not successful\n' \
 			"${candidate}" "${missing[*]}" >&2
@@ -271,12 +306,30 @@ while :; do
 	fi
 
 	parent="$(git rev-parse "${candidate}^")"
-	if ! release_only_hop "${parent}" "${candidate}"; then
-		printf '❌ PROD_BASE_RELEASE_SCOPE: cannot inherit an older production baseline across %s\n' "${candidate}" >&2
-		exit 1
+	if release_only_hop "${parent}" "${candidate}"; then
+		if ((release_hops >= MAX_RELEASE_HOPS)); then
+			printf '❌ PROD_BASE_MISSING: %s exceeds the semantic-release metadata hop budget %s while missing: %s\n' \
+				"${candidate}" "${MAX_RELEASE_HOPS}" "${missing[*]}" >&2
+			exit 1
+		fi
+		printf 'ℹ️  Vercel is successful but production-only statuses are absent on metadata-only release %s; inheriting the parent production baseline\n' "${candidate}"
+		candidate="${parent}"
+		((release_hops += 1))
+		continue
 	fi
 
-	printf 'ℹ️  Vercel is successful but production-only statuses are absent on metadata-only release %s; inheriting the parent production baseline\n' "${candidate}"
-	candidate="${parent}"
-	((release_hops += 1))
+	if maintenance_only_hop "${parent}" "${candidate}"; then
+		if ((maintenance_hops >= MAX_MAINTENANCE_HOPS)); then
+			printf '❌ PROD_BASE_MAINTENANCE_HOPS: %s exceeds the maintenance-only hop budget %s while missing: %s\n' \
+				"${candidate}" "${MAX_MAINTENANCE_HOPS}" "${missing[*]}" >&2
+			exit 1
+		fi
+		printf 'ℹ️  Vercel is successful but production-only statuses are absent on maintenance-only commit %s; inheriting the parent production baseline\n' "${candidate}"
+		candidate="${parent}"
+		((maintenance_hops += 1))
+		continue
+	fi
+
+	printf '❌ PROD_BASE_RELEASE_SCOPE: cannot inherit an older production baseline across %s\n' "${candidate}" >&2
+	exit 1
 done
