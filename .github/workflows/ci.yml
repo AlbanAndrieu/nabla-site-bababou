@@ -603,6 +603,7 @@ jobs:
               );
             }
             const deadline = Date.now() + 25 * 60 * 1000;
+            const vercelRegistrationDeadline = Date.now() + 2 * 60 * 1000;
 
             while (Date.now() < deadline) {
               const { data: livePr } = await github.rest.pulls.get({
@@ -634,9 +635,20 @@ jobs:
 
               const summary = [...expected].map((context) => {
                 const status = latest.get(context);
-                return `${context}=${status?.state ?? 'pending'}`;
+                return `${context}=${status?.state ?? 'absent'}`;
               });
               core.info(`Preview security statuses: ${summary.join(', ')}`);
+
+              const vercelStatus = latest.get('Vercel');
+              if (
+                !vercelStatus &&
+                Date.now() >= vercelRegistrationDeadline
+              ) {
+                core.setFailed(
+                  `Vercel status was not registered within 2 minutes for ${sha}; no Preview deployment evidence was created.`,
+                );
+                return;
+              }
 
               for (const context of expected) {
                 const status = latest.get(context);
