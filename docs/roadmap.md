@@ -27,7 +27,7 @@
 5. **Performance et CI** : réduire tracing, builds, téléchargements inutiles et coûts de validation.
 6. **Confidentialité finale hors homepage** : pseudonymisation/caviardage du corpus restant, extension du gate et vérification irréversible des documents/assets concernés.
 
-## État de référence — 2026-09-11
+## État de référence — 2026-09-12
 
 ### Terminé
 
@@ -86,7 +86,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 
 - [x] Remplacer l'ancienne version preview de Next.js par une version stable ; le projet utilise désormais Next `16.3.4` (Active LTS), au-delà du minimum `16.3.3` de la security release d'août 2026.
 - [x] Aligner explicitement `next` et `eslint-config-next` dans le manifeste/lockfile et vérifier leur résolution effective (#123), puis converger vers `16.3.4` comme `nabla-site-alban`.
-- [x] Séparer la cible de validation Node 25 du runtime Vercel : local/CI restent sur Node `25.9.0`, tandis que `package.json#engines.node` accepte `>=24.11.0 <26` afin que Vercel puisse utiliser son runtime Node 24.x supporté ; npm reste `>=11.17.0 <12`.
+- [x] Aligner local/CI et Vercel sur une ligne Node supportée : #182 remplace Node `25.9.0` EOL par Node `24.21.0` LTS dans `.nvmrc`, mise, direnv, tests et instructions agents ; `package.json#engines.node` reste `>=24.11.0 <26` et npm `>=11.17.0 <12`.
   - [x] Réconcilier les métadonnées `engines` racine du lockfile lors de la régénération atomique du lockfile (#123), puis après le correctif de compatibilité Vercel post-#150.
 - [x] Supprimer `express` et `@types/express` après confirmation de l'absence de consommateur (#123).
   - [x] Audit du code versionné : aucun import ESM, `require()` ou appel `express()` trouvé.
@@ -196,13 +196,14 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 
 - [x] Aligner package/lockfile et retirer les dépendances confirmées orphelines (#123).
   - [x] Retirer `stripe`, `@stripe/stripe-js` et `@stripe/react-stripe-js` devenus sans consommateur après la migration/suppression des surfaces checkout (#144).
-  - [ ] Auditer `tailwindcss` et `@tailwindcss/postcss` après le retrait de Bootstrap du runtime Next (#177) : confirmer l'absence d'utility Tailwind réellement consommée, mesurer l'impact CSS/build, puis retirer Tailwind/PostCSS uniquement si le reset et les styles nécessaires restent couverts par les styles projet sans régression Preview/Playwright.
+  - [ ] Finaliser le retrait de `tailwindcss` et `@tailwindcss/postcss` : #182 retire déjà les deux dépendances, `postcss.config.mjs` et remplace Preflight par `app/reset.css` avec contrats unitaires ; garder l'item ouvert jusqu'au checkpoint Ready et à la preuve Preview exact-SHA + Playwright/ZAP sans régression CSS/build.
 - [ ] Retirer progressivement les runtimes/scripts legacy après preuve d'absence de consommateurs.
   - [x] Retirer les scaffolds Next orphelins non publiés `app/components/Hero.tsx`, les deux anciens `LocaleSwitcher.tsx` et `i18n/navigation.ts` après preuve d'absence d'import ; `RouteHeader` reste l'unique owner du switcher FR/EN/DE/NO et `/` continue d'être réécrit vers `public/index.html` (#168).
   - [x] Conserver OpenCommit sur décision explicite du propriétaire : wrapper/config et scripts `oco` / `opencommit` restaurés, dev-only et hors runtime (#150).
   - [x] Utiliser GitHub Actions comme CI principale et des annotations ESLint GitHub pour le workflow courant, tout en conservant `.gitlab-ci.yml` et son formatter comme fallback réactivable.
   - [x] Formaliser la policy npm 11.17+ d'installation : scripts transitoires actuellement bloqués explicitement refusés via `allowScripts`, mode `strict-allow-scripts` activé et `.npmrc` ajouté aux déclencheurs Quality.
   - [x] Réconcilier le contrat supply-chain après Dependabot #151 : `esbuild` `0.28.2` est la version transitive revue et explicitement attendue par le test d'installation, au lieu de laisser un merge dependency invalider Quality.
+  - [x] Retirer le reliquat racine `.assetsignore` de l'ancien pipeline Cloudflare Workers/assets : #182 confirme l'absence de consommateur versionné, supprime le fichier, classe ce metadata path maintenance-only et a validé ce retrait par Quality ainsi qu'un checkpoint Vercel/Playwright/ZAP exact-SHA.
 - [x] Retirer le bridge HTML des policies et le composant `PublicHtmlFragment` devenu orphelin ; conserver `htmlFromPublic` uniquement pour l'exception 404 imposée par la policy du repo.
   - [x] Retirer `sanitize-html` et son wrapper `check:sanitize-html` après preuve que `htmlFromPublic` n'en dépend plus ; élaguer les 12 entrées lockfile devenues exclusivement orphelines.
 - [ ] Supprimer les pages `.html` et assets orphelins après validation des redirects et de la parité Next.
@@ -233,6 +234,8 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] Mettre à niveau la base du fallback de `nginx:1.27-alpine` vers la stable `nginx:1.30.4-alpine-slim` avant d'envisager un gate Trivy bloquant ; l'ancienne base exposait des findings HIGH/CRITICAL corrigés dans des packages plus récents.
   - [x] Vérifier le SARIF après upgrade : 34 findings HIGH/CRITICAL sur l'ancienne base → 0 sur `nginx:1.30.4-alpine-slim`, puis activer `exit-code: 1` pour rendre le scan HIGH/CRITICAL bloquant sur le fallback Docker.
   - [x] Basculer le fallback vers l'image officielle `nginxinc/nginx-unprivileged:1.30.4-alpine-slim`, exposer 8080 et ajouter un smoke test CI prouvant un runtime non-root ainsi que le service de `/` et du `public/404.html` protégé.
+  - [x] #182 aligne Docker CI sur le cycle Draft/Ready : les PR Draft ne consomment plus Buildx/build/smoke/Trivy ; Trivy conserve désormais un SARIF d'échec 7 jours et alimente Code Scanning avant l'enforcement HIGH/CRITICAL. Quality Draft #576 et Docker #55 ont prouvé le skip réel.
+  - [ ] Au prochain checkpoint Ready de #182, exécuter réellement Docker CI sur le HEAD exact pour valider le smoke étendu aux JS, CSS et webfonts Font Awesome vendus ainsi que le chemin Trivy report-before-fail avant publication.
   - [x] Les Preview Vercel ne déclenchent plus deux suites Playwright concurrentes et le chemin conservé réutilise le cache Chromium (#121).
   - [x] Ajouter un OWASP ZAP Baseline GitHub sur le même `vercel.deployment.success`, filtré strictement sur `vercel-preview-pr-*` et le SHA exact de la PR ; le scanner reçoit le Protection Bypass via `ZAP_AUTH_HEADER_*`, cible uniquement l'URL `*.vercel.app` de Preview et publie le statut `OWASP ZAP Preview`.
   - [x] Pinner `zaproxy/action-baseline` v0.15.0 sur SHA immuable et l'image ZAP sur `2.17.0`; désactiver l'ouverture automatique d'issues.
@@ -248,6 +251,8 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
     - [x] #179 a exécuté le nouveau gate en début de PR et reconnu uniquement le hop `7f43739... → 6cfd2db...` comme semantic-release version/changelog-only avant de valider la baseline puis le smoke live.
   - [x] Collecter la première baseline ZAP effectivement scannée sur une Preview Vercel réelle avec la définition post-#175 : #177 a produit un rapport réel `H0 M4 L6 I5`; les deux alertes bloquantes `10020`/`10021` ont été corrigées sans affaiblir la policy et le nouveau scan a `FAIL-NEW: 0`.
     - [ ] Trier puis réduire les warnings ZAP restant réellement applicables (notamment CSP, SRI, cookies, cache et cross-origin) sans casser le corpus hybride ni le fallback Google Translate ; toute promotion WARN→FAIL doit être justifiée par la baseline et validée sur Preview exact-SHA.
+      - [x] #182 retire la feuille Font Awesome cdnjs 7.0.1 redondante des HTML qui possèdent déjà le bundle local 7.1.0, et rend les redirects locale-root `/en|/de|/no → /` explicites avant `next-intl` pour cibler les causes observées de dépendance tierce et de Big Redirect sans modifier le fallback Google Translate.
+      - [ ] Rejouer OWASP ZAP sur le HEAD Ready exact de #182 et comparer la nouvelle baseline H/M/L/I, en particulier le Big Redirect et les warnings liés aux ressources tierces ; conserver séparément les sujets CSP/cache/cross-origin encore justifiés par le corpus hybride ou la plateforme.
   - [x] Réutiliser l'événement Vercel production jusque-là `skipped` pour un smoke `curl` ciblé et peu coûteux du SHA déployé, sans télécharger Chromium ni réexécuter la suite Playwright complète.
   - [x] Réconcilier ce smoke avec le rewrite homepage hybride protégé : sous Protection Bypass, Vercel peut matérialiser le rewrite `/ → /index.html` en `307`; accepter seulement cette destination attendue et conserver les redirects `vercel.com/login|sso-api` comme échecs (#171).
   - [x] Le workflow séparé de seed Chromium devient inutile et est retiré après validation du cache détenu par `repository_dispatch` (#122).
@@ -314,7 +319,7 @@ Cette phase est volontairement placée après migration, UI/UX, SEO, nettoyage e
   - [x] Retirer 10 dépendances directes observabilité/devtools sans import, déplacer `lodash-es` en devDependency et élaguer 144 entrées lockfile supplémentaires (#147).
   - [x] Restaurer OpenCommit comme outil local optionnel sans recréer de workflow OpenCommit obligatoire (#150).
   - [x] Durcir npm install avec une denylist explicite des scripts déjà bloqués et un échec strict pour toute nouvelle dépendance à script non revue.
-  - [x] Converger avec le cleanup agent/tooling d’Alban #133 : Copilot Setup sur Node 25 et adapters VS Code/Cursor/Next.js/Security réduits vers `AGENTS.md`, sans anciennes instructions Vercel CLI/Git Flow/sitemap.
+  - [x] Converger avec le cleanup agent/tooling d’Alban #133 : Copilot Setup piloté par `.nvmrc` et adapters VS Code/Cursor/Next.js/Security réduits vers `AGENTS.md`, sans anciennes instructions Vercel CLI/Git Flow/sitemap ; #182 réaligne ensuite `.nvmrc` sur Node 24 LTS après EOL de Node 25.
   - [x] Sortir la toolchain semantic-release du graphe npm normal comme Alban #133 : 4 dépendances directes et 412 entrées lockfile retirées, versions pinées et téléchargées uniquement dans le job release.
   - [x] Retirer les scaffolds Next homepage/locale orphelins et leur helper de navigation après preuve d'absence de consommateurs (#168).
   - [x] Retirer le wrapper de build métrique `scripts/run-next-build.mjs` et aligner le manifeste sur `build: next build` / `start: next start`, tout en gardant une mesure CI sans build dupliqué (#168).
@@ -326,7 +331,10 @@ Cette phase est volontairement placée après migration, UI/UX, SEO, nettoyage e
   - [x] Conserver `public/google-translate-config.js` comme shim de compatibilité qui délègue vers `site-google-translate.js`; ne pas réintroduire de loader Google direct ni supprimer le fallback tant qu'il existe du contenu/langues sans traduction i18n native paritaire (#171).
   - [x] Dédupliquer le runtime traduction entre `site-widgets.js` et `site-google-translate.js`, avec ownership runtime unique, shim de compatibilité conservé et contrat garantissant le fallback Google Translate sur les consommateurs legacy sans parité i18n (#171).
   - [x] #179 : quality gate local-first, base production saine avant npm, smoke live, budgets CI warning-only, cache npm explicitement possédé et fast path maintenance-only validés sur le checkpoint distant.
-  - [ ] Auditer puis retirer Tailwind/PostCSS du runtime Next uniquement si l'absence de consommateurs et l'absence de régression CSS sont prouvées sur Preview exact-SHA (#177).
+  - [x] #182 : héritage de baseline production durci, SARIF Semgrep succès dédupliqué, baseline CI versionnée, `.assetsignore` retiré, Node/runtime documenté et coût Docker Draft supprimé.
+  - [x] #182 : retirer Node 25 EOL de la toolchain active et converger `.nvmrc`, mise/direnv, CI et instructions agents vers Node `24.21.0` LTS, dans la plage package/Vercel déjà supportée.
+  - [ ] #182 : valider le HEAD final Ready sur Quality complète, Docker build/smoke/Trivy, Vercel Preview exact-SHA, Playwright et ZAP avant de solder Tailwind, les nouveaux redirects et la déduplication Font Awesome.
+  - [ ] Finaliser Tailwind/PostCSS : retrait code/lock/config déjà présent dans #182 avec reset projet et contrats ; validation Ready + Preview exact-SHA/Playwright/ZAP encore requise avant de solder l'item (#177/#182).
   - [ ] Retrait des runtimes/scripts/assets legacy restants après preuve d'absence de consommateurs externes.
 - [ ] **Migration 8 / P3** — extraction progressive de sections homepage en conservant les disclosures approuvées, sans changement sensible non validé.
 - [ ] **Migration finale / P6** — confidentialité hors homepage : pseudonymisation/caviardage du corpus restant et extension complète du privacy gate.

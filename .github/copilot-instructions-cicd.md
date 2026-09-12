@@ -17,7 +17,7 @@ MegaLinter is intentionally not a GitHub workflow: `.mega-linter.yml` remains on
 
 ## Runtime
 
-- Node.js major: **25** (25.9.0 baseline).
+- Node.js major: **24 LTS** (24.21.0 baseline); Node 25 is EOL and must not be reintroduced.
 - npm: **>=11.17.0 <12**; install scripts are governed by the repository `allowScripts` policy.
 - Run Node/npm commands from the repository root.
 - `package.json` and `package-lock.json` at the root are the only application npm manifests.

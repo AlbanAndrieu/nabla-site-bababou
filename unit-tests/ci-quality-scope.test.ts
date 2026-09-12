@@ -95,11 +95,20 @@ test("production baseline and live smoke run before dependency installation", as
 	for (const context of ["Vercel", "Production Post-deploy Smoke", "Production DAST"]) {
 		assert.ok(baseline.includes(`\"${context}\"`));
 	}
-	assert.match(baseline, /Canceled by Ignored Build Step/);
+	assert.match(baseline, /vercel_state/);
+	assert.match(baseline, /production-only statuses are absent on metadata-only release/);
 	assert.match(baseline, /chore\\\(release\\\):/);
 	assert.match(baseline, /\[skip ci\]/);
 	assert.match(baseline, /package\.json changed beyond version metadata/);
 	assert.match(baseline, /package-lock\.json changed beyond root version metadata/);
+	assert.match(baseline, /parent .* has inconsistent package\/lock versions/);
+	assert.match(baseline, /release .* has inconsistent package\/lock versions/);
+	assert.match(baseline, /release subject does not match package version/);
+	assert.match(baseline, /PROD_BASE_RELEASE_VERSION/);
+	assert.match(baseline, /PROD_BASE_RELEASE_GRAPH/);
+	assert.match(baseline, /baseline inheritance requires a linear single-parent release commit/);
+	assert.match(baseline, /production release hop must use stable numeric SemVer/);
+	assert.match(baseline, /does not monotonically advance package version/);
 	assert.match(baseline, /PROD_BASE_UNHEALTHY/);
 	assert.match(baseline, /PROD_BASE_RELEASE_SCOPE/);
 
@@ -131,6 +140,43 @@ test("CI performance budgets are warning-only and derived from observed headroom
 	assert.match(budget, /::warning::CI performance regression candidate/);
 	assert.match(budget, /quality result remains non-blocking/);
 	assert.doesNotMatch(budget, /exit 1/);
+});
+
+test("CI performance emits a toolchain-aware exact-checkout baseline record without artifacts", async () => {
+	const [workflow, budget] = await Promise.all([
+		read("../.github/workflows/ci.yml"),
+		read("../scripts/ci-performance-budget.sh"),
+	]);
+
+	assert.match(budget, /CI_PERF_BASELINE schema=2 run=/);
+	assert.doesNotMatch(budget, /CI_PERF_BASELINE schema=1 run=/);
+	assert.match(budget, /GITHUB_RUN_ID/);
+	assert.match(budget, /GITHUB_RUN_NUMBER/);
+	assert.match(budget, /GITHUB_RUN_ATTEMPT/);
+	assert.match(budget, /GITHUB_HEAD_REF/);
+	assert.match(budget, /GITHUB_REF_NAME/);
+	assert.match(budget, /RUNNER_OS/);
+	assert.match(budget, /RUNNER_ARCH/);
+	assert.match(budget, /node --version/);
+	assert.match(budget, /npm --version/);
+	assert.match(budget, /git rev-parse HEAD/);
+	assert.doesNotMatch(budget, /sha=\$\(value_or_na "\$\{GITHUB_SHA/);
+	assert.match(budget, /GITHUB_EVENT_NAME/);
+	assert.match(budget, /scope=\$\{quality_scope\}/);
+	for (const field of ["run_number=", "ref=", "node=", "npm="]) {
+		assert.ok(budget.includes(field));
+	}
+	for (const metric of [
+		"npm_ci_s=",
+		"node_modules_mb=",
+		"full_checks_s=",
+		"next_build_s=",
+		"next_output_mb=",
+	]) {
+		assert.ok(budget.includes(metric));
+	}
+	assert.match(budget, /Copy-ready baseline record/);
+	assert.doesNotMatch(workflow, /ci-performance.*upload-artifact/is);
 });
 
 test("explicit npm cache owners disable setup-node automatic npm caching", async () => {
@@ -192,10 +238,19 @@ test("Copilot setup stays available but does not spend installs on draft synchro
 	assert.match(setup, /timeout-minutes: 15/);
 });
 
+test("retired asset metadata stays maintenance-only and absent", async () => {
+	const workflow = await read("../.github/workflows/ci.yml");
+
+	assert.equal((workflow.match(/- "\.assetsignore"/g) ?? []).length, 2);
+	assert.ok(workflow.includes("filename === '.assetsignore'"));
+	await assert.rejects(stat(new URL("../.assetsignore", import.meta.url)), /ENOENT/);
+});
+
 test("quality-only files do not trigger an application Preview checkpoint", async () => {
 	const workflow = await read("../.github/workflows/ci.yml");
 
 	for (const path of [
+		".assetsignore",
 		".pre-commit-config.yaml",
 		".pre-commit-pre-push.yaml",
 		"mise.toml",

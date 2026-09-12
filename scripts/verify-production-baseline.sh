@@ -10,10 +10,13 @@ API_URL="${GITHUB_API_URL:-https://api.github.com}"
 REPOSITORY="${GITHUB_REPOSITORY:-}"
 MAX_RELEASE_HOPS="${QUALITY_BASELINE_RELEASE_HOPS:-3}"
 
-required_contexts=(
-	"Vercel"
+production_contexts=(
 	"Production Post-deploy Smoke"
 	"Production DAST"
+)
+required_contexts=(
+	"Vercel"
+	"${production_contexts[@]}"
 )
 
 if [[ ! "${BASE_SHA}" =~ ^[0-9a-f]{40}$ ]]; then
@@ -50,18 +53,54 @@ latest_status() {
 		<<<"${json}"
 }
 
+stable_semver_gt() {
+	local parent_version="$1"
+	local child_version="$2"
+	local parent_major parent_minor parent_patch
+	local child_major child_minor child_patch
+
+	IFS=. read -r parent_major parent_minor parent_patch <<<"${parent_version}"
+	IFS=. read -r child_major child_minor child_patch <<<"${child_version}"
+
+	if ((10#${child_major} != 10#${parent_major})); then
+		((10#${child_major} > 10#${parent_major}))
+		return
+	fi
+	if ((10#${child_minor} != 10#${parent_minor})); then
+		((10#${child_minor} > 10#${parent_minor}))
+		return
+	fi
+	((10#${child_patch} > 10#${parent_patch}))
+}
+
 release_only_hop() {
 	local parent="$1"
 	local child="$2"
 	local message
+	local subject
 	local file
 	local package_changed=false
 	local lock_changed=false
 	local changelog_changed=false
 	local normalized_filter
+	local parent_package_version
+	local child_package_version
+	local parent_lock_version
+	local child_lock_version
+	local parent_lock_root_version
+	local child_lock_root_version
+	local parent_count
 
 	message="$(git log -1 --format=%B "${child}")"
-	if [[ "${message%%$'\n'*}" != chore\(release\):* ]] || ! grep -Fq '[skip ci]' <<<"${message}"; then
+	subject="${message%%$'\n'*}"
+	if [[ "${subject}" != chore\(release\):* ]] || ! grep -Fq '[skip ci]' <<<"${message}"; then
+		return 1
+	fi
+
+	parent_count="$(git rev-list --parents -n 1 "${child}" | awk '{print NF - 1}')"
+	if [[ "${parent_count}" != "1" ]]; then
+		printf '❌ PROD_BASE_RELEASE_GRAPH: release %s has %s parents; baseline inheritance requires a linear single-parent release commit\n' \
+			"${child}" "${parent_count}" >&2
 		return 1
 	fi
 
@@ -108,6 +147,37 @@ release_only_hop() {
 		return 1
 	fi
 
+	parent_package_version="$(git show "${parent}:package.json" | jq -er '.version | select(type == "string" and length > 0)')"
+	child_package_version="$(git show "${child}:package.json" | jq -er '.version | select(type == "string" and length > 0)')"
+	parent_lock_version="$(git show "${parent}:package-lock.json" | jq -er '.version | select(type == "string" and length > 0)')"
+	child_lock_version="$(git show "${child}:package-lock.json" | jq -er '.version | select(type == "string" and length > 0)')"
+	parent_lock_root_version="$(git show "${parent}:package-lock.json" | jq -er '.packages[""].version | select(type == "string" and length > 0)')"
+	child_lock_root_version="$(git show "${child}:package-lock.json" | jq -er '.packages[""].version | select(type == "string" and length > 0)')"
+
+	if [[ "${parent_package_version}" != "${parent_lock_version}" || "${parent_package_version}" != "${parent_lock_root_version}" ]]; then
+		printf '❌ PROD_BASE_RELEASE_VERSION: parent %s has inconsistent package/lock versions\n' "${parent}" >&2
+		return 1
+	fi
+	if [[ "${child_package_version}" != "${child_lock_version}" || "${child_package_version}" != "${child_lock_root_version}" ]]; then
+		printf '❌ PROD_BASE_RELEASE_VERSION: release %s has inconsistent package/lock versions\n' "${child}" >&2
+		return 1
+	fi
+	if [[ ! "${parent_package_version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ || ! "${child_package_version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+		printf '❌ PROD_BASE_RELEASE_VERSION: production release hop must use stable numeric SemVer, got %s -> %s\n' \
+			"${parent_package_version}" "${child_package_version}" >&2
+		return 1
+	fi
+	if ! stable_semver_gt "${parent_package_version}" "${child_package_version}"; then
+		printf '❌ PROD_BASE_RELEASE_VERSION: release %s does not monotonically advance package version %s -> %s\n' \
+			"${child}" "${parent_package_version}" "${child_package_version}" >&2
+		return 1
+	fi
+	if [[ "${subject}" != "chore(release): ${child_package_version} [skip ci]" ]]; then
+		printf '❌ PROD_BASE_RELEASE_VERSION: release subject does not match package version %s in %s\n' \
+			"${child_package_version}" "${child}" >&2
+		return 1
+	fi
+
 	if [[ "${changelog_changed}" == true ]]; then
 		printf 'ℹ️  accepted semantic-release metadata hop %s -> %s (version + changelog only)\n' "${parent}" "${child}"
 	else
@@ -120,17 +190,26 @@ candidate="${BASE_SHA}"
 release_hops=0
 
 while :; do
-	json="$(status_json "${candidate}")"
+	if ! json="$(status_json "${candidate}")"; then
+		printf '❌ PROD_BASE_STATUS_API: failed to fetch commit statuses for %s\n' "${candidate}" >&2
+		exit 2
+	fi
+	if ! jq -e '.statuses | type == "array"' >/dev/null 2>&1 <<<"${json}"; then
+		printf '❌ PROD_BASE_STATUS_JSON: invalid commit status payload for %s\n' "${candidate}" >&2
+		exit 2
+	fi
+
 	missing=()
+	production_missing=()
 	failed=()
-	vercel_description=""
+	vercel_state="missing"
 
 	for context in "${required_contexts[@]}"; do
 		status="$(latest_status "${json}" "${context}")"
 		state="$(jq -r '.state // "missing"' <<<"${status}")"
 		description="$(jq -r '.description // ""' <<<"${status}")"
 		if [[ "${context}" == "Vercel" ]]; then
-			vercel_description="${description}"
+			vercel_state="${state}"
 		fi
 
 		case "${state}" in
@@ -139,6 +218,9 @@ while :; do
 				;;
 			missing)
 				missing+=("${context}")
+				if [[ "${context}" != "Vercel" ]]; then
+					production_missing+=("${context}")
+				fi
 				;;
 			*)
 				failed+=("${context}=${state}")
@@ -170,14 +252,20 @@ while :; do
 		exit 0
 	fi
 
+	if [[ "${vercel_state}" == "success" ]] && (("${#production_missing[@]}" > 0 && "${#production_missing[@]}" != "${#production_contexts[@]}")); then
+		printf '❌ PROD_BASE_PARTIAL: %s has an inconsistent partial production status set; missing: %s\n' \
+			"${candidate}" "${production_missing[*]}" >&2
+		exit 1
+	fi
+
 	if ((release_hops >= MAX_RELEASE_HOPS)); then
 		printf '❌ PROD_BASE_MISSING: %s is missing required production status(es): %s\n' \
 			"${candidate}" "${missing[*]}" >&2
 		exit 1
 	fi
 
-	if [[ "${vercel_description}" != "Canceled by Ignored Build Step" ]]; then
-		printf '❌ PROD_BASE_MISSING: %s is missing %s and is not an ignored Vercel release commit\n' \
+	if [[ "${vercel_state}" != "success" ]]; then
+		printf '❌ PROD_BASE_MISSING: %s is missing %s and Vercel is not successful\n' \
 			"${candidate}" "${missing[*]}" >&2
 		exit 1
 	fi
@@ -188,6 +276,7 @@ while :; do
 		exit 1
 	fi
 
+	printf 'ℹ️  Vercel is successful but production-only statuses are absent on metadata-only release %s; inheriting the parent production baseline\n' "${candidate}"
 	candidate="${parent}"
 	((release_hops += 1))
 done

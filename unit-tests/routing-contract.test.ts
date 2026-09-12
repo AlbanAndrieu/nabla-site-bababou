@@ -13,6 +13,16 @@ test("unprefixed canonical Next routes are deterministically French", async () =
   assert.match(routing, /localeDetection:\s*false/);
 });
 
+test("locale persistence keeps local development usable and deployed cookies Secure", async () => {
+  const routing = await read("i18n/routing.ts");
+
+  assert.match(
+    routing,
+    /localeCookie:\s*\{[\s\S]*secure:\s*process\.env\.NODE_ENV\s*===\s*["']production["']/,
+  );
+  assert.match(routing, /HttpOnly[\s\S]*unsupported/);
+});
+
 test("unknown localized routes fall through to the protected global 404", async () => {
   const globalNotFound = await read("app/global-not-found.tsx");
 
