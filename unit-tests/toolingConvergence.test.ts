@@ -14,7 +14,7 @@ test("shared agent tooling follows the Node 24 LTS root-runtime contract", async
   ]);
 
   assert.match(setup, /node-version-file:\s*"\.nvmrc"/);
-  assert.doesNotMatch(setup, /node-version:\s*"?(?:24|25\.9\.0)"?/);
+  assert.doesNotMatch(setup, /node-version:\s*"?\d/);
   assert.match(setup, /- name: Restore npm downloads/);
   assert.ok(setup.includes("actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25"));
   assert.ok(setup.includes("actions/cache/save@caa296126883cff596d87d8935842f9db880ef25"));
@@ -48,7 +48,7 @@ test("GitHub Node workflows share .nvmrc as their source of truth", async () => 
 
   for (const workflow of [quality, playwright, copilot, release]) {
     assert.match(workflow, /node-version-file:\s*"\.nvmrc"/);
-    assert.doesNotMatch(workflow, /node-version:\s*"?25\.9\.0"?/);
+    assert.doesNotMatch(workflow, /node-version:\s*"?\d/);
   }
 
   assert.match(quality, /\.github\/workflows\/copilot-setup-steps\.yml/);

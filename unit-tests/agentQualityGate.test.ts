@@ -107,8 +107,21 @@ test("agent bootstrap toolchain is pinned and complete", async () => {
 	]) {
 		assert.ok(setup.includes("- " + input), "Copilot bootstrap trigger must include " + input);
 	}
-	assert.match(ci, /- "\.nvmrc"/);
-	assert.match(ci, /- "\.python-version"/);
+	for (const trigger of [
+		'- ".envrc"',
+		'- ".nvmrc"',
+		'- ".python-version"',
+		'- ".vscode/**"',
+		'- ".github/copilot-instructions*.md"',
+		'- "SECURITY.md"',
+		'- "mise.toml"',
+	]) {
+		assert.equal(
+			ci.split(trigger).length - 1,
+			2,
+			`${trigger} must trigger Quality on pull_request and master push`,
+		);
+	}
 });
 
 test("CI and Copilot caches are best effort and Next build cache is reusable", async () => {
