@@ -1,3 +1,11 @@
+## [0.15.3](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.15.2...0.15.3) (2026-09-12)
+
+
+### Performance Improvements
+
+* **p5:** align Node Current with production compatibility ([#185](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/185)) ([8a3823b](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/8a3823be6dd465e63a39105808afd2ba0c0414c4))
+* **p5:** harden CI evidence, assets and supported tooling ([#182](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/182)) ([1330279](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/1330279fae1db3006221d6d191173ea22d361614))
+
 ## [0.15.2](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.15.1...0.15.2) (2026-09-11)
 
 
