@@ -16,11 +16,11 @@ test("agent auto-fix scopes npm linters to changed files with config fallbacks",
 	assert.equal(pkg.scripts["lint:fix"], "eslint --fix --format ./scripts/eslint-github-formatter.mjs .");
 	assert.equal(
 		pkg.scripts["lint:css"],
-		'stylelint "app/globals.css" "app/**/*.module.css" "components/**/*.module.css" "public/*.css"',
+		'stylelint "app/*.css" "app/**/*.module.css" "components/**/*.module.css" "public/*.css"',
 	);
 	assert.equal(
 		pkg.scripts["lint:css:fix"],
-		'stylelint --fix "app/globals.css" "app/**/*.module.css" "components/**/*.module.css" "public/*.css"',
+		'stylelint --fix "app/*.css" "app/**/*.module.css" "components/**/*.module.css" "public/*.css"',
 	);
 	assert.ok(!pkg.scripts["lint:css"].includes('"app/**/*.css"'), "must not traverse app/public symlink into legacy CSS");
 
