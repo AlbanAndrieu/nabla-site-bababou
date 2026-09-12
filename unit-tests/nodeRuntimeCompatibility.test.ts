@@ -52,3 +52,30 @@ test("Node runtime policy separates development Current from production compatib
   assert.match(workflow, /npm run test:unit/);
   assert.doesNotMatch(workflow, /npm run build|npm run check(?!:)/);
 });
+
+test("Node 24 CI follows production runtime inputs instead of generic maintenance changes", async () => {
+  const workflow = await read(".github/workflows/node24-compat.yml");
+
+  for (const path of [
+    ".nvmrc-production",
+    "package.json",
+    "package-lock.json",
+    "tsconfig.json",
+    "next.config.mjs",
+    "proxy.ts",
+    "vercel.json",
+    "app/**",
+    "components/**",
+    "i18n/**",
+    "lib/**",
+    "messages/**",
+  ]) {
+    assert.match(workflow, new RegExp(`- "${path.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"`));
+  }
+
+  assert.match(workflow, /unit-tests\/nodeRuntimeCompatibility\.test\.ts/);
+  assert.match(workflow, /\.github\/workflows\/node24-compat\.yml/);
+  assert.doesNotMatch(workflow, /- "unit-tests\/\*\*"/);
+  assert.doesNotMatch(workflow, /- "scripts\/\*\*"/);
+  assert.doesNotMatch(workflow, /- "\.nvmrc"/);
+});

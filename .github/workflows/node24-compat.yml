@@ -5,24 +5,38 @@ on:
     types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - ".nvmrc-production"
-      - ".nvmrc"
       - ".npmrc"
       - "package.json"
       - "package-lock.json"
-      - "scripts/**"
-      - "unit-tests/**"
+      - "tsconfig.json"
+      - "next.config.mjs"
+      - "proxy.ts"
+      - "vercel.json"
+      - "app/**"
+      - "components/**"
+      - "i18n/**"
+      - "lib/**"
+      - "messages/**"
+      - "unit-tests/nodeRuntimeCompatibility.test.ts"
       - ".github/workflows/node24-compat.yml"
   push:
     branches:
       - master
     paths:
       - ".nvmrc-production"
-      - ".nvmrc"
       - ".npmrc"
       - "package.json"
       - "package-lock.json"
-      - "scripts/**"
-      - "unit-tests/**"
+      - "tsconfig.json"
+      - "next.config.mjs"
+      - "proxy.ts"
+      - "vercel.json"
+      - "app/**"
+      - "components/**"
+      - "i18n/**"
+      - "lib/**"
+      - "messages/**"
+      - "unit-tests/nodeRuntimeCompatibility.test.ts"
       - ".github/workflows/node24-compat.yml"
   workflow_dispatch:
 
