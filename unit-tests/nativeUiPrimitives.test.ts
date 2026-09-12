@@ -13,8 +13,11 @@ test("shared actions support semantic outline and compact variants", async () =>
   ]);
 
   assert.match(component, /ComponentPropsWithoutRef<"a">/);
+  assert.match(component, /export type ActionVariant/);
+  assert.match(component, /export type ActionSize/);
   assert.match(component, /"primary" \| "secondary" \| "outline"/);
   assert.match(component, /"default" \| "compact"/);
+  assert.match(component, /actionClassName\(variant, size, className\)/);
   assert.match(styles, /\.outline\s*\{/);
   assert.match(styles, /\.compact\s*\{/);
   assert.match(styles, /min-height:\s*var\(--ui-control-min-height\)/);
