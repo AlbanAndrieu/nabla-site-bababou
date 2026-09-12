@@ -17,8 +17,9 @@ MegaLinter is intentionally not a GitHub workflow: `.mega-linter.yml` remains on
 
 ## Runtime
 
-- Node.js major: **24 LTS** (24.21.0 baseline); Node 25 is EOL and must not be reintroduced.
-- npm: **>=11.17.0 <12**; install scripts are governed by the repository `allowScripts` policy.
+- Development, agents and primary CI use **Node 26 Current** (`26.8.2`) from `.nvmrc`.
+- Vercel production currently uses its supported **Node 24.x** runtime; Node 24 is an explicit production-compatibility target, not the development source of truth. Node 25 is EOL and must not be reintroduced.
+- Package compatibility is `>=24.11.0 <27`; npm is **>=11.17.0 <12** and install scripts are governed by the repository `allowScripts` policy.
 - Run Node/npm commands from the repository root.
 - `package.json` and `package-lock.json` at the root are the only application npm manifests.
 - Vercel deployments come from Git Integration. Only `master` and `vercel-preview-*` refs auto-deploy; normal PR branches require the on-demand checkpoint workflow. Do not add a local Vercel CLI deployment workflow unless the project deliberately changes that architecture.
@@ -44,7 +45,7 @@ When editing Actions:
 4. never print secrets or sensitive values;
 5. avoid duplicate builds or duplicate Playwright paths;
 6. use path filtering/ignore policy only when it cannot hide runtime-relevant changes;
-7. keep Node/npm versions aligned with `package.json`;
+7. keep Node/npm versions aligned with the repository runtime and compatibility contracts;
 8. update unit workflow-contract tests when the event model changes.
 9. keep `.npmrc` in Quality path filters and review any dependency install script before changing `allowScripts`; never use `dangerously-allow-all-scripts`.
 
