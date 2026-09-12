@@ -5,7 +5,7 @@ import test from "node:test";
 const read = (path: string) =>
   readFile(new URL(`../${path}`, import.meta.url), "utf8");
 
-test("shared agent tooling follows the Node 25 root-runtime contract", async () => {
+test("shared agent tooling follows the Node 24 LTS root-runtime contract", async () => {
   const [setup, vscode, cursor, nextjs] = await Promise.all([
     read(".github/workflows/copilot-setup-steps.yml"),
     read(".vscode/copilot-instructions.md"),
@@ -44,7 +44,7 @@ test("GitHub Node workflows share .nvmrc as their source of truth", async () => 
     read(".github/workflows/release.yml"),
   ]);
 
-  assert.equal(nvmrc.trim(), "v25.9.0");
+  assert.equal(nvmrc.trim(), "v24.21.0");
 
   for (const workflow of [quality, playwright, copilot, release]) {
     assert.match(workflow, /node-version-file:\s*"\.nvmrc"/);

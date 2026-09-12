@@ -86,7 +86,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 
 - [x] Remplacer l'ancienne version preview de Next.js par une version stable ; le projet utilise désormais Next `16.3.4` (Active LTS), au-delà du minimum `16.3.3` de la security release d'août 2026.
 - [x] Aligner explicitement `next` et `eslint-config-next` dans le manifeste/lockfile et vérifier leur résolution effective (#123), puis converger vers `16.3.4` comme `nabla-site-alban`.
-- [x] Séparer la cible de validation Node 25 du runtime Vercel : local/CI restent sur Node `25.9.0`, tandis que `package.json#engines.node` accepte `>=24.11.0 <26` afin que Vercel puisse utiliser son runtime Node 24.x supporté ; npm reste `>=11.17.0 <12`.
+- [x] Aligner local/CI et Vercel sur une ligne Node supportée : #182 remplace Node `25.9.0` EOL par Node `24.21.0` LTS dans `.nvmrc`, mise, direnv, tests et instructions agents ; `package.json#engines.node` reste `>=24.11.0 <26` et npm `>=11.17.0 <12`.
   - [x] Réconcilier les métadonnées `engines` racine du lockfile lors de la régénération atomique du lockfile (#123), puis après le correctif de compatibilité Vercel post-#150.
 - [x] Supprimer `express` et `@types/express` après confirmation de l'absence de consommateur (#123).
   - [x] Audit du code versionné : aucun import ESM, `require()` ou appel `express()` trouvé.
@@ -319,7 +319,7 @@ Cette phase est volontairement placée après migration, UI/UX, SEO, nettoyage e
   - [x] Retirer 10 dépendances directes observabilité/devtools sans import, déplacer `lodash-es` en devDependency et élaguer 144 entrées lockfile supplémentaires (#147).
   - [x] Restaurer OpenCommit comme outil local optionnel sans recréer de workflow OpenCommit obligatoire (#150).
   - [x] Durcir npm install avec une denylist explicite des scripts déjà bloqués et un échec strict pour toute nouvelle dépendance à script non revue.
-  - [x] Converger avec le cleanup agent/tooling d’Alban #133 : Copilot Setup sur Node 25 et adapters VS Code/Cursor/Next.js/Security réduits vers `AGENTS.md`, sans anciennes instructions Vercel CLI/Git Flow/sitemap.
+  - [x] Converger avec le cleanup agent/tooling d’Alban #133 : Copilot Setup piloté par `.nvmrc` et adapters VS Code/Cursor/Next.js/Security réduits vers `AGENTS.md`, sans anciennes instructions Vercel CLI/Git Flow/sitemap ; #182 réaligne ensuite `.nvmrc` sur Node 24 LTS après EOL de Node 25.
   - [x] Sortir la toolchain semantic-release du graphe npm normal comme Alban #133 : 4 dépendances directes et 412 entrées lockfile retirées, versions pinées et téléchargées uniquement dans le job release.
   - [x] Retirer les scaffolds Next homepage/locale orphelins et leur helper de navigation après preuve d'absence de consommateurs (#168).
   - [x] Retirer le wrapper de build métrique `scripts/run-next-build.mjs` et aligner le manifeste sur `build: next build` / `start: next start`, tout en gardant une mesure CI sans build dupliqué (#168).
@@ -332,6 +332,7 @@ Cette phase est volontairement placée après migration, UI/UX, SEO, nettoyage e
   - [x] Dédupliquer le runtime traduction entre `site-widgets.js` et `site-google-translate.js`, avec ownership runtime unique, shim de compatibilité conservé et contrat garantissant le fallback Google Translate sur les consommateurs legacy sans parité i18n (#171).
   - [x] #179 : quality gate local-first, base production saine avant npm, smoke live, budgets CI warning-only, cache npm explicitement possédé et fast path maintenance-only validés sur le checkpoint distant.
   - [x] #182 : héritage de baseline production durci, SARIF Semgrep succès dédupliqué, baseline CI versionnée, `.assetsignore` retiré, Node/runtime documenté et coût Docker Draft supprimé.
+  - [x] #182 : retirer Node 25 EOL de la toolchain active et converger `.nvmrc`, mise/direnv, CI et instructions agents vers Node `24.21.0` LTS, dans la plage package/Vercel déjà supportée.
   - [ ] #182 : valider le HEAD final Ready sur Quality complète, Docker build/smoke/Trivy, Vercel Preview exact-SHA, Playwright et ZAP avant de solder Tailwind, les nouveaux redirects et la déduplication Font Awesome.
   - [ ] Finaliser Tailwind/PostCSS : retrait code/lock/config déjà présent dans #182 avec reset projet et contrats ; validation Ready + Preview exact-SHA/Playwright/ZAP encore requise avant de solder l'item (#177/#182).
   - [ ] Retrait des runtimes/scripts/assets legacy restants après preuve d'absence de consommateurs externes.

@@ -89,7 +89,7 @@ test("agent bootstrap toolchain is pinned and complete", async () => {
 	]);
 
 	assert.equal(pythonVersion.trim(), "3.13");
-	assert.equal(nvmrc.trim(), "v25.9.0");
+	assert.equal(nvmrc.trim(), "v24.21.0");
 	assert.match(mise, /default='3\.13'/);
 	assert.match(mise, /pre-commit = "4\.6\.2"/);
 	assert.match(setup, /python-version-file: "\.python-version"/);
