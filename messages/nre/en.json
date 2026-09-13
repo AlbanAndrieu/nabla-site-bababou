@@ -1,0 +1,58 @@
+{
+  "nrePage": {
+    "meta": {
+      "title": "NRE — Failure to Present Child (France) | Visitation Rights",
+      "description": "List of scheduled visitation weekends (first weekend of each month) and failures to present child (NRE). Reference: complaint TGI Valence 4 September 2023. Enforceable judgment 31 March 2017."
+    },
+    "hero": {
+      "eyebrow": "Visitation rights · 2017–2026",
+      "title": "Failure to present child (NRE)",
+      "lead": "Visitation rights: first weekend of each month. Full list of scheduled weekends and NRE (non-représentation d'enfant)."
+    },
+    "stats": {
+      "heading": "Summary statistics",
+      "total": "Scheduled weekends (total)",
+      "nre": "NRE (visitation denied)",
+      "exceptions": "Exceptions (visitation honored)",
+      "days": "Days with Bababou (past 12 years)"
+    },
+    "reference": {
+      "heading": "Complaint reference",
+      "prefix": "Complaint for failure to present a child under French Criminal Code",
+      "article": "Article 227-5",
+      "filed": "Filed on 4 September 2023 in Nanterre with the Prosecutor, Court of Valence (TGI Valence).",
+      "judgment": "The list starts from the enforceable judgment of 31 March 2017. Facts are not reproduced here; the official document remains the source.",
+      "document": "Complaint TGI Valence, 4 September 2023 (PDF)"
+    },
+    "note": {
+      "heading": "Note",
+      "p1": "It is said that we are born equal, but we certainly do not give birth equally. The mother has every right to choose where to give birth, without the father’s consent.",
+      "p2": "She knows that whatever she does, she will have sole parental authority, exclusive custody, and the possibility to manipulate the child and use them to obtain rights, power, and money—without ever being held to account.",
+      "p3": "I advise any father against involving social services and filing a complaint against a violent and abusive mother. The result will be that you will never be able to protect your child and they will grow up without you."
+    },
+    "timeline": {
+      "heading": "Timeline by year",
+      "lead": "Scheduled weekends and status by calendar year. The cards are generated from the retained static NRE table, which remains the reviewed source of truth.",
+      "norway": "Norway, Oslo",
+      "germany": "Germany, Frankfurt"
+    },
+    "location": {
+      "heading": "Location",
+      "body": "2015 France; since 2017 Norway, Oslo; since 2022 Germany, Frankfurt."
+    },
+    "table": {
+      "heading": "First weekend of each month",
+      "lead": "Visitation as from the enforceable judgment of 31 March 2017 (first weekend of each month).",
+      "month": "Month",
+      "weekend": "Weekend (Sat – Sun)",
+      "status": "Status",
+      "nre": "NRE",
+      "exception": "Exception (visitation honored or partial)"
+    },
+    "exceptions": {
+      "heading": "Exceptions (visitation honored)",
+      "lead": "The six weekends below are the only exceptions documented in the complaint (visitation honored or partial).",
+      "genericDetail": "Documented exception (visitation honored or partial)."
+    }
+  }
+}

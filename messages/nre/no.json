@@ -1,0 +1,58 @@
+{
+  "nrePage": {
+    "meta": {
+      "title": "NRE — Manglende overlevering av barn | Samværsrett",
+      "description": "Liste over planlagte samværshelger og dokumenterte tilfeller der barnet ikke ble overlevert. Referanse: klage 4. september 2023 og tvangskraftig dom 31. mars 2017."
+    },
+    "hero": {
+      "eyebrow": "Samværsrett · 2017–2026",
+      "title": "Manglende overlevering av barn (NRE)",
+      "lead": "Samværsrett: første helg i hver måned. Full liste over planlagte helger og dokumenterte NRE-tilfeller."
+    },
+    "stats": {
+      "heading": "Nøkkeltall",
+      "total": "Planlagte helger (totalt)",
+      "nre": "NRE (samvær nektet)",
+      "exceptions": "Unntak (samvær gjennomført)",
+      "days": "Dager med Bababou (siste 12 år)"
+    },
+    "reference": {
+      "heading": "Referanse til klage",
+      "prefix": "Klage om manglende overlevering av barn etter fransk straffelov",
+      "article": "artikkel 227-5",
+      "filed": "Innlevert 4. september 2023 i Nanterre til påtalemyndigheten, Court of Valence (TGI Valence).",
+      "judgment": "Listen starter med den tvangskraftige dommen 31. mars 2017. Faktum gjengis ikke her; det offisielle dokumentet er fortsatt kilden.",
+      "document": "Klage TGI Valence, 4. september 2023 (PDF)"
+    },
+    "note": {
+      "heading": "Merknad",
+      "p1": "Det sies at vi blir født like, men forfatteren opplever at likheten ikke gjelder på samme måte ved fødsel. Moren kan velge fødested uten farens samtykke.",
+      "p2": "Forfatteren beskriver sin opplevelse av at moren får foreldreansvar og omsorg alene og kan bruke barnet for å oppnå rettigheter, makt eller penger uten å bli holdt ansvarlig.",
+      "p3": "Forfatteren fraråder fedre å involvere sosiale tjenester eller anmelde en voldelig og mishandlende mor, fordi han frykter at dette kan gjøre det enda vanskeligere å beskytte barnet og opprettholde kontakt."
+    },
+    "timeline": {
+      "heading": "Tidslinje etter år",
+      "lead": "Planlagte helger og status per kalenderår. Kortene genereres fra den bevarte statiske NRE-tabellen, som fortsatt er den gjennomgåtte datakilden.",
+      "norway": "Norge, Oslo",
+      "germany": "Tyskland, Frankfurt"
+    },
+    "location": {
+      "heading": "Sted",
+      "body": "2015 Frankrike; siden 2017 Norge, Oslo; siden 2022 Tyskland, Frankfurt."
+    },
+    "table": {
+      "heading": "Første helg i hver måned",
+      "lead": "Samvær fra den tvangskraftige dommen 31. mars 2017 (første helg i hver måned).",
+      "month": "Måned",
+      "weekend": "Helg (lør – søn)",
+      "status": "Status",
+      "nre": "NRE",
+      "exception": "Unntak (samvær gjennomført eller delvis)"
+    },
+    "exceptions": {
+      "heading": "Unntak (samvær gjennomført)",
+      "lead": "De seks helgene nedenfor er de eneste unntakene dokumentert i klagen (gjennomført eller delvis samvær).",
+      "genericDetail": "Dokumentert unntak (gjennomført eller delvis samvær)."
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "nrePage": {
+    "meta": {
+      "title": "NRE — Nichtgewährung des Umgangs | Umgangsrecht",
+      "description": "Liste der vorgesehenen Umgangswochenenden und dokumentierten Fälle der Nichtgewährung des Umgangs. Bezug: Beschwerde vom 4. September 2023 und vollstreckbares Urteil vom 31. März 2017."
+    },
+    "hero": {
+      "eyebrow": "Umgangsrecht · 2017–2026",
+      "title": "Nichtgewährung des Umgangs (NRE)",
+      "lead": "Umgangsrecht: erstes Wochenende jedes Monats. Vollständige Liste der vorgesehenen Wochenenden und dokumentierten NRE-Fälle."
+    },
+    "stats": {
+      "heading": "Zusammenfassung",
+      "total": "Vorgesehene Wochenenden (gesamt)",
+      "nre": "NRE (Umgang verweigert)",
+      "exceptions": "Ausnahmen (Umgang gewährt)",
+      "days": "Tage mit Bababou (letzte 12 Jahre)"
+    },
+    "reference": {
+      "heading": "Beschwerdebezug",
+      "prefix": "Beschwerde wegen Nichtgewährung der Herausgabe eines Kindes nach dem französischen Strafgesetzbuch",
+      "article": "Artikel 227-5",
+      "filed": "Am 4. September 2023 in Nanterre bei der Staatsanwaltschaft, Gericht Valence (TGI Valence), eingereicht.",
+      "judgment": "Die Liste beginnt mit dem vollstreckbaren Urteil vom 31. März 2017. Der Sachverhalt wird hier nicht wiedergegeben; das amtliche Dokument bleibt die Quelle.",
+      "document": "Beschwerde TGI Valence, 4. September 2023 (PDF)"
+    },
+    "note": {
+      "heading": "Hinweis",
+      "p1": "Es heißt, wir würden gleich geboren, doch beim Gebären besteht diese Gleichheit aus Sicht des Autors nicht. Die Mutter könne den Geburtsort ohne Zustimmung des Vaters wählen.",
+      "p2": "Der Autor beschreibt seine Wahrnehmung, dass die Mutter alleinige elterliche Verantwortung und Betreuung erhalte und das Kind zur Erlangung von Rechten, Macht oder Geld einsetzen könne, ohne zur Rechenschaft gezogen zu werden.",
+      "p3": "Der Autor rät Vätern davon ab, Sozialdienste einzuschalten oder gegen eine gewalttätige und misshandelnde Mutter Anzeige zu erstatten, da er befürchtet, dass dies den Schutz und den Kontakt zum Kind weiter erschweren könne."
+    },
+    "timeline": {
+      "heading": "Zeitleiste nach Jahr",
+      "lead": "Vorgesehene Wochenenden und Status nach Kalenderjahr. Die Karten werden aus der beibehaltenen statischen NRE-Tabelle erzeugt, die als geprüfte Datenquelle erhalten bleibt.",
+      "norway": "Norwegen, Oslo",
+      "germany": "Deutschland, Frankfurt"
+    },
+    "location": {
+      "heading": "Ort",
+      "body": "2015 Frankreich; seit 2017 Norwegen, Oslo; seit 2022 Deutschland, Frankfurt."
+    },
+    "table": {
+      "heading": "Erstes Wochenende jedes Monats",
+      "lead": "Umgang gemäß dem vollstreckbaren Urteil vom 31. März 2017 (erstes Wochenende jedes Monats).",
+      "month": "Monat",
+      "weekend": "Wochenende (Sa – So)",
+      "status": "Status",
+      "nre": "NRE",
+      "exception": "Ausnahme (Umgang gewährt oder teilweise)"
+    },
+    "exceptions": {
+      "heading": "Ausnahmen (Umgang gewährt)",
+      "lead": "Die sechs unten aufgeführten Wochenenden sind die einzigen in der Beschwerde dokumentierten Ausnahmen (gewährter oder teilweiser Umgang).",
+      "genericDetail": "Dokumentierte Ausnahme (gewährter oder teilweiser Umgang)."
+    }
+  }
+}
