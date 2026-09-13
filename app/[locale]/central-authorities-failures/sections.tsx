@@ -69,7 +69,9 @@ const countryDefinitions = [
     key: "france",
     icon: "fa-landmark",
     tone: styles.france,
-    href: "/central-authorities.html",
+    // Relative route keeps the active locale while avoiding the retained
+    // legacy .html redirect (e.g. /de/... -> /de/central-authorities).
+    href: "central-authorities",
   },
   {
     key: "norway",
@@ -202,7 +204,7 @@ export function FailureTimeline({ copy }: CopyProps) {
             <span>{copy.timeline.noReturn}</span>
           </div>
           <p className={styles.timelineLink}>
-            <a href="/central-authorities.html#timeline-heading">
+            <a href="central-authorities#timeline-heading">
               {copy.timeline.fullTimeline}
             </a>
           </p>
@@ -215,7 +217,7 @@ export function FailureTimeline({ copy }: CopyProps) {
 export function ReadMore({ copy }: CopyProps) {
   const links = [
     {
-      href: "/central-authorities.html",
+      href: "central-authorities",
       label: copy.readMore.centralAuthorities,
       icon: "fa-envelope-open-text",
     },
