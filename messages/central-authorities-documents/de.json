@@ -1,0 +1,30 @@
+{
+  "centralAuthorityDocumentsPage": {
+    "meta": {
+      "title": "Dokumentenarchiv der Zentralen Behörden | Bababou",
+      "description": "Quellendokumente und Korrespondenz zu Zentralen Behörden und Nachverfolgungen des Haager Übereinkommens durchsuchen."
+    },
+    "hero": {
+      "eyebrow": "Quellenarchiv",
+      "title": "Dokumente der Zentralen Behörden",
+      "lead": "Ein generierter Index der historischen HTML-Dokumente, die im ca/-Archiv erhalten bleiben, während ihre Inhalte schrittweise auf native Next.js-Seiten migriert werden.",
+      "backToOverview": "Zur Übersicht der Zentralen Behörden"
+    },
+    "notice": {
+      "title": "Dokumente bleiben in ihrer Originalsprache",
+      "body": "Diese Next.js-Seite lokalisiert nur die Navigation des Archivs. Jedes verlinkte historische Dokument bleibt in seiner Quellsprache und behält den Legacy-Übersetzungsfallback, bis eine entsprechende native Seite die Parität bei Inhalt, Verhalten, Metadaten und Barrierefreiheit nachgewiesen hat."
+    },
+    "documents": {
+      "title": "Erhaltene Dokumente",
+      "count": "{count, plural, =0 {Keine erhaltenen Dokumente} =1 {# erhaltenes Dokument} other {# erhaltene Dokumente}}",
+      "rootGroup": "Allgemeine ca/-Dokumente"
+    },
+    "languages": {
+      "fr": "Französische Quelle",
+      "en": "Englische Quelle",
+      "de": "Deutsche Quelle",
+      "no": "Norwegische Quelle",
+      "unknown": "Quellsprache nicht angegeben"
+    }
+  }
+}

@@ -38,6 +38,10 @@ export const SITE_PAGES = {
     category: "discoverability",
     seo: { priority: 0.75, changeFrequency: "monthly" },
   },
+  "central-authorities-documents": {
+    category: "discoverability",
+    seo: { priority: 0.7, changeFrequency: "monthly" },
+  },
   nre: {
     category: "discoverability",
     seo: { priority: 0.7, changeFrequency: "monthly" },
@@ -90,6 +94,7 @@ const nextCanonicalSlugs = new Set<SitePageSlug>([
   "contact",
   "central-authorities",
   "central-authorities-failures",
+  "central-authorities-documents",
   "nre",
   "email",
   "link",

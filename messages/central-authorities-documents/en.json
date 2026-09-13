@@ -1,0 +1,30 @@
+{
+  "centralAuthorityDocumentsPage": {
+    "meta": {
+      "title": "Central Authority document archive | Bababou",
+      "description": "Browse the retained source documents and correspondence related to Central Authorities and Hague Convention follow-ups."
+    },
+    "hero": {
+      "eyebrow": "Source archive",
+      "title": "Central Authority documents",
+      "lead": "A generated index of the historical HTML documents that are still retained in the ca/ archive while their content is migrated progressively to native Next.js pages.",
+      "backToOverview": "Back to the Central Authorities overview"
+    },
+    "notice": {
+      "title": "Original-language documents remain unchanged",
+      "body": "This Next.js page localizes the archive navigation only. Each linked historical document stays in its original source language and keeps the legacy translation fallback until an equivalent native page has proven content, behavior, metadata and accessibility parity."
+    },
+    "documents": {
+      "title": "Retained documents",
+      "count": "{count, plural, =0 {No retained document} =1 {# retained document} other {# retained documents}}",
+      "rootGroup": "General ca/ documents"
+    },
+    "languages": {
+      "fr": "French source",
+      "en": "English source",
+      "de": "German source",
+      "no": "Norwegian source",
+      "unknown": "Source language not declared"
+    }
+  }
+}

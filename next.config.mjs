@@ -26,6 +26,19 @@ const migratedNreRedirects = [
   { source: "/nre-en.html", destination: "/en/nre", permanent: true },
 ];
 
+const migratedCentralAuthorityDocumentHubRedirects = [
+  {
+    source: "/ca",
+    destination: "/en/central-authorities-documents",
+    permanent: true,
+  },
+  {
+    source: "/ca/index.html",
+    destination: "/en/central-authorities-documents",
+    permanent: true,
+  },
+];
+
 /**
  * Policy HTML files stay in public/ as reviewed filesystem sources for the
  * native policy registry, but their public legacy URLs now converge on the
@@ -73,6 +86,7 @@ const nextConfig = {
     return [
       ...migratedLegacyRedirects,
       ...migratedNreRedirects,
+      ...migratedCentralAuthorityDocumentHubRedirects,
       ...migratedPolicyRedirects,
     ];
   },
