@@ -1,3 +1,10 @@
+# [0.17.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.16.1...0.17.0) (2026-09-13)
+
+
+### Features
+
+* **ui:** harden accessible reflow and align shared primitives ([#191](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/191)) ([9bb623f](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/9bb623f8e2f813b5fc7df1799e043df8b1a7fb42))
+
 ## [0.16.1](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.16.0...0.16.1) (2026-09-13)
 
 
