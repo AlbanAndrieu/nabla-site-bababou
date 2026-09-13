@@ -30,6 +30,10 @@ export const SITE_PAGES = {
     category: "primaryVisibility",
     seo: { priority: 0.9, changeFrequency: "monthly" },
   },
+  "central-authorities-failures": {
+    category: "discoverability",
+    seo: { priority: 0.75, changeFrequency: "monthly" },
+  },
   link: {
     category: "discoverability",
     seo: { priority: 0.65, changeFrequency: "monthly" },
@@ -76,6 +80,7 @@ export const SEO_PAGE_SLUGS = sitePageEntries
 const seoPageSlugs = new Set<SitePageSlug>(SEO_PAGE_SLUGS);
 const nextCanonicalSlugs = new Set<SitePageSlug>([
   "contact",
+  "central-authorities-failures",
   "email",
   "link",
   "success",

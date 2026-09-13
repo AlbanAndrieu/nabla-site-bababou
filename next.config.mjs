@@ -12,6 +12,7 @@ const migratedLegacyRedirects = [
   "link",
   "success",
   "cancel",
+  "central-authorities-failures",
 ].flatMap((slug) => [
   // Legacy root pages were English before the Next locale policy changed.
   { source: `/${slug}.html`, destination: `/en/${slug}`, permanent: true },

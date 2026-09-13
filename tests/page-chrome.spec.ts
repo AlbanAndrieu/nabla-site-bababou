@@ -15,10 +15,6 @@ const STANDARD_PAGES: StandardPageCase[] = [
   },
   { path: "/people-contacted.html", label: "people-contacted page" },
   { path: "/ca/index.html", label: "central authorities index page" },
-  {
-    path: "/central-authorities-failures.html",
-    label: "central authorities failures page",
-  },
   { path: "/central-authorities.html", label: "central authorities page" },
   { path: "/for-fathers.html", label: "for fathers page" },
   { path: "/nre-en.html", label: "nre english page" },
@@ -28,6 +24,10 @@ const STANDARD_PAGES: StandardPageCase[] = [
 
 const MIGRATED_NEXT_PAGES: StandardPageCase[] = [
   { path: "/contact.html", label: "contact page" },
+  {
+    path: "/central-authorities-failures.html",
+    label: "central authorities failures page",
+  },
   { path: "/email.html", label: "email contact addresses page" },
   { path: "/link.html", label: "links page" },
   { path: "/cancel.html", label: "cancel payment result page" },
