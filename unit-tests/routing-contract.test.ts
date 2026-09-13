@@ -32,6 +32,18 @@ test("unknown localized routes fall through to the protected global 404", async 
   await assert.rejects(access(projectUrl("app/[locale]/[...rest]/page.tsx")));
 });
 
+test("unknown legacy HTML routes fall through only after filesystem routing", async () => {
+  const nextConfig = await read("next.config.mjs");
+
+  assert.match(nextConfig, /source:\s*["']\/:path\*\.html["']/);
+  assert.match(nextConfig, /destination:\s*["']\/404["']/);
+  assert.match(nextConfig, /fallback:\s*legacyHtmlNotFoundFallback/);
+  assert.match(
+    nextConfig,
+    /Preserve every real public\/legacy file first[\s\S]*Only unmatched \*\.html/,
+  );
+});
+
 test("technical test surface has only the localized App Router implementation", async () => {
   const localizedTestPage = await read("app/[locale]/test/page.tsx");
 

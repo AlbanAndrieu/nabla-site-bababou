@@ -44,6 +44,13 @@ const migratedPolicyRedirects = [
   permanent: true,
 }));
 
+const legacyHtmlNotFoundFallback = [
+  {
+    source: "/:path*.html",
+    destination: "/404",
+  },
+];
+
 const securityHeaders = [
   { key: "X-Frame-Options", value: "DENY" },
   { key: "X-Content-Type-Options", value: "nosniff" },
@@ -75,6 +82,15 @@ const nextConfig = {
       ...migratedNreRedirects,
       ...migratedPolicyRedirects,
     ];
+  },
+  async rewrites() {
+    return {
+      beforeFiles: [],
+      afterFiles: [],
+      // Preserve every real public/legacy file first. Only unmatched *.html
+      // requests fall through to the protected global 404 presentation.
+      fallback: legacyHtmlNotFoundFallback,
+    };
   },
   turbopack: {
     root: projectRoot,

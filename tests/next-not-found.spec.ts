@@ -6,6 +6,8 @@ const NOT_FOUND_PATHS = [
   "/en/missing-next-route-for-playwright",
   "/de/missing-next-route-for-playwright",
   "/no/missing-next-route-for-playwright",
+  "/people-contactedsss.html",
+  "/fr/people-contactedsss.html",
 ] as const;
 
 test.describe("static global Next.js 404", () => {
@@ -40,4 +42,12 @@ test.describe("static global Next.js 404", () => {
       );
     });
   }
+
+  test("existing legacy HTML stays ahead of the fallback rewrite", async ({ page }) => {
+    const response = await page.goto("/people-contacted.html");
+    expect(response?.status()).toBe(200);
+    await expect(page.locator('html[data-nabla-app="next-global-not-found"]')).toHaveCount(
+      0,
+    );
+  });
 });
