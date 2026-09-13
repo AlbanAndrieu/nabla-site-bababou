@@ -3,6 +3,10 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 import { parseNreLegacyRows } from "../lib/nreLegacyData.ts";
+import {
+  findIdentitySpans,
+  PROTECTED_CHILD_IDENTITY_FINGERPRINTS,
+} from "../scripts/privacy-identities.ts";
 
 async function readLegacySource(fileName: string) {
   return readFile(new URL(`../public/${fileName}`, import.meta.url), "utf8");
@@ -61,4 +65,26 @@ test("NRE parser accepts compact and spaced ordinal forms", () => {
       { month: 5, startDay: 1, endDay: 2, status: "exception" },
     ],
   );
+});
+
+test("retained NRE exception details are pseudonymized before Next publication", async () => {
+  for (const [fileName, locale] of [
+    ["nre-fr.html", "fr"],
+    ["nre-en.html", "en"],
+  ] as const) {
+    const rows = parseNreLegacyRows(await readLegacySource(fileName), locale);
+    const exceptionDetails = rows
+      .filter((row) => row.status === "exception")
+      .map((row) => row.statusDetail);
+
+    assert.ok(exceptionDetails.length > 0);
+    assert.ok(exceptionDetails.some((detail) => detail.includes("Bababou")));
+    for (const detail of exceptionDetails) {
+      assert.equal(
+        findIdentitySpans(detail, PROTECTED_CHILD_IDENTITY_FINGERPRINTS).length,
+        0,
+        `${fileName} still exposes protected child identity after parsing`,
+      );
+    }
+  }
 });

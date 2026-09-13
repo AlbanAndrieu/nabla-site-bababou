@@ -62,3 +62,32 @@ export function findIdentitySpans(
 
   return matches.sort((a, b) => a.start - b.start);
 }
+
+export function replaceIdentitySpans(
+  text: string,
+  fingerprints: IdentityFingerprintSet,
+  replacement: string,
+): string {
+  const matches = findIdentitySpans(text, fingerprints);
+  if (!matches.length) return text;
+
+  let cursor = 0;
+  let output = "";
+  for (const match of matches) {
+    output += text.slice(cursor, match.start);
+    output += replacement;
+    cursor = match.end;
+  }
+  return output + text.slice(cursor);
+}
+
+export function pseudonymizeProtectedChildIdentity(
+  text: string,
+  replacement = "Bababou",
+): string {
+  return replaceIdentitySpans(
+    text,
+    PROTECTED_CHILD_IDENTITY_FINGERPRINTS,
+    replacement,
+  );
+}

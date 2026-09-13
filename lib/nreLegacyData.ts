@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 
 import type { AppLocale } from "@/i18n/routing";
+import { pseudonymizeProtectedChildIdentity } from "@/scripts/privacy-identities";
 
 export type NreRow = {
   year: number;
@@ -90,7 +91,7 @@ export function parseNreLegacyRows(
     const attributes = match[1];
     const monthLabel = decodeHtml(match[2]);
     const weekendLabel = decodeHtml(match[3]);
-    const statusDetail = decodeHtml(match[4]);
+    const statusDetail = pseudonymizeProtectedChildIdentity(decodeHtml(match[4]));
     const yearMatch = monthLabel.match(/(20\d{2})/);
     const weekendRange = parseWeekendRange(weekendLabel);
 
