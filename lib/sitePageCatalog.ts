@@ -30,6 +30,18 @@ export const SITE_PAGES = {
     category: "primaryVisibility",
     seo: { priority: 0.9, changeFrequency: "monthly" },
   },
+  "central-authorities": {
+    category: "discoverability",
+    seo: { priority: 0.8, changeFrequency: "monthly" },
+  },
+  "central-authorities-failures": {
+    category: "discoverability",
+    seo: { priority: 0.75, changeFrequency: "monthly" },
+  },
+  nre: {
+    category: "discoverability",
+    seo: { priority: 0.7, changeFrequency: "monthly" },
+  },
   link: {
     category: "discoverability",
     seo: { priority: 0.65, changeFrequency: "monthly" },
@@ -76,6 +88,9 @@ export const SEO_PAGE_SLUGS = sitePageEntries
 const seoPageSlugs = new Set<SitePageSlug>(SEO_PAGE_SLUGS);
 const nextCanonicalSlugs = new Set<SitePageSlug>([
   "contact",
+  "central-authorities",
+  "central-authorities-failures",
+  "nre",
   "email",
   "link",
   "success",
@@ -105,12 +120,11 @@ function nextLocalePrefix(locale: AppLocale) {
 /**
  * Canonical public URL policy during the hybrid migration:
  * - The homepage is still the single legacy surface at `/` for every locale.
- *   Localized homepage URLs are introduced only when P3 cuts the home to Next.
  * - French is Bababou's default locale and stays unprefixed for migrated Next
- *   routes (`/contact`). Other first-class locales are prefixed (`/en/contact`).
+ *   routes. Other first-class locales are prefixed.
  * - Native Next canonical URLs never expose implementation extensions.
- * - Legacy page URL semantics stay frozen until each page is explicitly
- *   migrated and validated.
+ * - Legacy HTML files remain versioned as fallbacks and parity sources even
+ *   after their public URL redirects to a validated native route.
  */
 export function canonicalPagePath(slug: SitePageSlug, locale: AppLocale) {
   if (slug === "index") return "/";
@@ -120,7 +134,6 @@ export function canonicalPagePath(slug: SitePageSlug, locale: AppLocale) {
     return `${prefix}/${slug}`;
   }
 
-  // Preserve the pre-existing legacy URL policy until that route is migrated.
   return `${locale === "fr" ? "/fr" : ""}/${slug}.html`;
 }
 

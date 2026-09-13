@@ -1,0 +1,65 @@
+/**
+ * Legacy contrast compatibility layer.
+ *
+ * Static pages still load Bootstrap after theme.css. Bootstrap color utilities
+ * use !important, so theme-aware legacy pages need a narrowly scoped layer
+ * loaded after vendor CSS to keep foreground/background pairs readable.
+ * Native Next surfaces use semantic --ui-* tokens and do not load this file.
+ */
+:root {
+  --legacy-contrast-muted: #526174;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --legacy-contrast-muted: #a8b0bd;
+  }
+}
+
+html[data-theme="light"] {
+  --legacy-contrast-muted: #526174;
+}
+
+html[data-theme="dark"] {
+  --legacy-contrast-muted: #a8b0bd;
+}
+
+.page-dark .bg-light {
+  background-color: var(--bg-secondary, #f8f9fa) !important;
+  color: var(--text-primary, #1e293b) !important;
+}
+
+.page-dark .bg-white,
+.page-dark .card.bg-light,
+.page-dark .card.bg-white,
+.page-dark .card:not([class*="bg-"]) {
+  background-color: var(--bg-card, #ffffff) !important;
+  color: var(--text-primary, #1e293b) !important;
+}
+
+/*
+ * theme.css normally animates card foreground/background changes. Bootstrap's
+ * text-light switches immediately, which can briefly create light-on-light
+ * text while the card surface is still transitioning. Keep only the harmless
+ * shadow transition on compatibility-owned cards so contrast remains valid for
+ * the complete theme switch, not merely once the animation has settled.
+ */
+.page-dark .card.bg-light,
+.page-dark .card.bg-white,
+.page-dark .card:not([class*="bg-"]) {
+  transition: box-shadow 0.3s ease !important;
+}
+
+.page-dark .bg-light .text-light,
+.page-dark .bg-white .text-light,
+.page-dark .card.bg-light .text-light,
+.page-dark .card.bg-white .text-light {
+  color: var(--text-primary, #1e293b) !important;
+}
+
+.page-dark .text-muted,
+.page-dark .text-secondary,
+.page-dark .cite-ref,
+.page-dark .email-meta {
+  color: var(--legacy-contrast-muted) !important;
+}

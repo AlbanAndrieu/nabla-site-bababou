@@ -1,0 +1,67 @@
+{
+  "centralAuthoritiesFailuresPage": {
+    "meta": {
+      "title": "Sentralmyndighetene sviktet: En far i Europa fikk verken barnet lokalisert eller tilbakeført | Bababou",
+      "description": "Sammendrag av svikt hos sentralmyndighetene i Frankrike, Norge og Tyskland: barnet ble ikke lokalisert, tilbakeføring ble avslått eller ikke registrert, og saken ble forsinket i årevis. En fars erfaring etter Haagkonvensjonen."
+    },
+    "scope": {
+      "label": "Artikkelens tema",
+      "hague": "Haagkonvensjonen",
+      "france": "Frankrike",
+      "norway": "Norge",
+      "germany": "Tyskland"
+    },
+    "hero": {
+      "title": "Sentralmyndighetene sviktet: En far i Europa fikk verken barnet lokalisert eller tilbakeført",
+      "lead": "Sammendrag av institusjonell svikt i tre land — barnet ble ikke lokalisert, tilbakeføring ble avslått eller ikke registrert, og saken ble forsinket i årevis."
+    },
+    "summary": {
+      "title": "Kort fortalt",
+      "locatedTitle": "Ingen myndighet lokaliserte barnet.",
+      "locatedBody": "Frankrike, Norge og Tyskland lokaliserte ikke barnet; faren måtte selv finne henne i Tyskland.",
+      "norwayTitle": "Norge avslo tilbakeføring.",
+      "norwayBody": "Oslo tingrett avslo begjæringen om tilbakeføring etter Haagkonvensjonen (2016).",
+      "germanyTitle": "Tyskland nektet å registrere begjæringen om tilbakeføring.",
+      "germanyBody": "Den tyske sentralmyndigheten ønsket ikke å registrere farens begjæring om tilbakeføring til Frankrike; den franske myndigheten opplyste først at den «ikke var kompetent» for en forflytning Norge→Tyskland.",
+      "delayTitle": "Årevis med forsinkelser.",
+      "delayBody": "Sentralmyndighetene brukte måneder eller år på å svare; prosedyrene startet på nytt da barnet ble flyttet til et annet land."
+    },
+    "countries": {
+      "title": "Svikt etter land",
+      "france": {
+        "name": "Frankrike",
+        "point1": "Årevis med forsinkelse før meningsfull handling (for eksempel kontakt med tysk myndighet først i 2026).",
+        "point2": "Saken ble først behandlet som «ikke kompetent» for forflytningen Norge→Tyskland; faren måtte insistere på tilbakeføring til Frankrike.",
+        "point3": "Barnet ble ikke lokalisert av franske myndigheter.",
+        "cta": "Kontakt med sentralmyndighetene"
+      },
+      "norway": {
+        "name": "Norge",
+        "point1": "Oslo tingrett avslo begjæringen om tilbakeføring (2016) på grunnlag av konvensjonen (vanlig bosted, art. 3, 12, 13 og 20).",
+        "point2": "Barnet ble ikke lokalisert av norske myndigheter; faren hadde ikke noe effektivt rettsmiddel som førte til tilbakeføring.",
+        "cta": "Bortføring i Norge"
+      },
+      "germany": {
+        "name": "Tyskland",
+        "point1": "Sentralmyndigheten nektet å registrere begjæringen om tilbakeføring (motstrid med samvær, fristen i art. 12, anmodning om å trekke saken).",
+        "point2": "Den tyske myndigheten «hadde ingen spor» av en begjæring om tilbakeføring fra 2022; den antok at tilbakeføring var begjært til Norge, ikke Frankrike.",
+        "point3": "Barnet ble ikke lokalisert av tyske myndigheter; faren lokaliserte selv barnet i Frankfurt.",
+        "cta": "Bortføring i Tyskland"
+      }
+    },
+    "timeline": {
+      "title": "Tidslinje",
+      "norway": "Norge",
+      "refused": "Tilbakeføring avslått (Oslo)",
+      "germany": "Barnet i Tyskland",
+      "noReturn": "Fortsatt ingen tilbakeføring",
+      "fullTimeline": "Full tidslinje på siden om sentralmyndighetene"
+    },
+    "readMore": {
+      "title": "Les hele historien",
+      "centralAuthorities": "Kontakt med sentralmyndighetene",
+      "norway": "Bortføring i Norge — Rettslig grunnlag for avslaget",
+      "germany": "Bortføring i Tyskland — Begjæring om skriftlige forklaringer"
+    }
+  }
+}

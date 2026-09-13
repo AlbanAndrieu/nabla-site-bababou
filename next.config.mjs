@@ -12,12 +12,19 @@ const migratedLegacyRedirects = [
   "link",
   "success",
   "cancel",
+  "central-authorities",
+  "central-authorities-failures",
 ].flatMap((slug) => [
   // Legacy root pages were English before the Next locale policy changed.
   { source: `/${slug}.html`, destination: `/en/${slug}`, permanent: true },
   // Legacy French pages lived below /fr; French is now the unprefixed default.
   { source: `/fr/${slug}.html`, destination: `/${slug}`, permanent: true },
 ]);
+
+const migratedNreRedirects = [
+  { source: "/nre-fr.html", destination: "/nre", permanent: true },
+  { source: "/nre-en.html", destination: "/en/nre", permanent: true },
+];
 
 /**
  * Policy HTML files stay in public/ as reviewed filesystem sources for the
@@ -63,7 +70,11 @@ const nextConfig = {
     ];
   },
   async redirects() {
-    return [...migratedLegacyRedirects, ...migratedPolicyRedirects];
+    return [
+      ...migratedLegacyRedirects,
+      ...migratedNreRedirects,
+      ...migratedPolicyRedirects,
+    ];
   },
   turbopack: {
     root: projectRoot,

@@ -23,6 +23,38 @@ test("shared actions support semantic outline and compact variants", async () =>
   assert.match(styles, /min-height:\s*var\(--ui-control-min-height\)/);
 });
 
+test("shared Card CardBody and Badge primitives match the sibling site contract", async () => {
+  const [card, cardStyles, badge, badgeStyles] = await Promise.all([
+    source("components/ui/Card.tsx"),
+    source("components/ui/Card.module.css"),
+    source("components/ui/Badge.tsx"),
+    source("components/ui/Badge.module.css"),
+  ]);
+
+  assert.match(card, /export function CardBody/);
+  assert.match(card, /elevated\?: boolean/);
+  assert.match(cardStyles, /background:\s*var\(--ui-surface-card\)/);
+  assert.match(badge, /"info" \| "success" \| "primary"/);
+  assert.match(badgeStyles, /--ui-info-surface/);
+  assert.match(badgeStyles, /--ui-success-surface/);
+});
+
+test("first card-heavy legacy migration consumes shared primitives in focused sections", async () => {
+  const [page, sections] = await Promise.all([
+    source("app/[locale]/central-authorities-failures/page.tsx"),
+    source("app/[locale]/central-authorities-failures/sections.tsx"),
+  ]);
+
+  assert.match(page, /from "\.\/sections"/);
+  assert.match(sections, /from "@\/components\/ui\/Badge"/);
+  assert.match(sections, /from "@\/components\/ui\/Card"/);
+  assert.match(sections, /<Card/);
+  assert.match(sections, /<CardBody/);
+  assert.match(sections, /<Badge/);
+  assert.doesNotMatch(`${page}\n${sections}`, /CopyPageLinkButton/);
+  assert.doesNotMatch(`${page}\n${sections}`, /className="(?:row|col-|card|btn)/);
+});
+
 test("targeted native routes no longer depend on Bootstrap card/grid/action classes", async () => {
   const [
     email,

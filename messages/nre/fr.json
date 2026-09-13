@@ -1,0 +1,58 @@
+{
+  "nrePage": {
+    "meta": {
+      "title": "NRE — Non-représentation d'enfant | Droit de visite",
+      "description": "Liste des week-ends de droit de visite (premier week-end de chaque mois) et des non-représentations d'enfant (NRE). Référence : plainte TGI Valence 4 septembre 2023. Jugement exécutoire 31 mars 2017."
+    },
+    "hero": {
+      "eyebrow": "Droit de visite · 2017–2026",
+      "title": "Non-représentation d'enfant (NRE)",
+      "lead": "Droit de visite : premier week-end de chaque mois. Liste exhaustive des week-ends prévus et des NRE."
+    },
+    "stats": {
+      "heading": "Synthèse chiffrée",
+      "total": "Week-ends prévus (total)",
+      "nre": "NRE (visites non honorées)",
+      "exceptions": "Exceptions (visites honorées)",
+      "days": "Jours avec Bababou (12 dernières années)"
+    },
+    "reference": {
+      "heading": "Référence plainte",
+      "prefix": "Plainte pour non-représentation d'enfant au titre du Code pénal français",
+      "article": "article 227-5",
+      "filed": "Déposée le 4 septembre 2023 à Nanterre auprès du procureur de la République, TGI Valence.",
+      "judgment": "La liste court à compter du jugement exécutoire du 31 mars 2017. Les faits ne sont pas reproduits ici ; le document officiel reste la source.",
+      "document": "Plainte TGI Valence, 4 septembre 2023 (PDF)"
+    },
+    "note": {
+      "heading": "Note",
+      "p1": "Il paraîtrait que l’on naisse égaux, mais certainement on ne donne pas naissance également. La mère a tous les droits : choisir de donner naissance où elle veut, sans demander l’accord du père.",
+      "p2": "Elle sait que quoi qu’elle fasse, elle aura l’autorité parentale seule, la garde exclusive, la possibilité de manipuler l’enfant et de l’utiliser pour obtenir des droits, du pouvoir, de l’argent. Sans jamais rendre de comptes.",
+      "p3": "Je déconseille à tout père de saisir les services sociaux et de porter plainte contre une mère violente et maltraitante. Le résultat sera que jamais vous ne pourrez protéger votre enfant et il grandira sans vous."
+    },
+    "timeline": {
+      "heading": "Chronologie par année",
+      "lead": "Week-ends prévus et statut par année civile. Les cartes sont générées depuis la table NRE statique conservée, qui reste la source de vérité relue.",
+      "norway": "Norvège, Oslo",
+      "germany": "Allemagne, Frankfurt"
+    },
+    "location": {
+      "heading": "Lieu",
+      "body": "2015 France ; depuis 2017 Norvège, Oslo ; depuis 2022 Allemagne, Frankfurt."
+    },
+    "table": {
+      "heading": "Liste des premiers week-ends du mois",
+      "lead": "Droit de visite à compter du jugement exécutoire du 31 mars 2017 (premier week-end de chaque mois).",
+      "month": "Mois",
+      "weekend": "Week-end (samedi – dimanche)",
+      "status": "Statut",
+      "nre": "NRE",
+      "exception": "Exception (visite honorée ou partielle)"
+    },
+    "exceptions": {
+      "heading": "Exceptions (visites effectuées)",
+      "lead": "Les six week-ends ci-dessous sont les seules exceptions documentées dans la plainte (visite effectuée ou partielle).",
+      "genericDetail": "Exception documentée (visite effectuée ou partielle)."
+    }
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "centralAuthoritiesFailuresPage": {
+    "meta": {
+      "title": "Versagen der Zentralbehörden: Ein Vater in Europa konnte sein Kind weder ausfindig machen noch zurückführen lassen | Bababou",
+      "description": "Zusammenfassung des Versagens der Zentralbehörden in Frankreich, Norwegen und Deutschland: das Kind wurde nicht ausfindig gemacht, die Rückführung abgelehnt oder nicht registriert, jahrelange Verzögerungen. Die Erfahrung eines Vaters nach dem Haager Übereinkommen."
+    },
+    "scope": {
+      "label": "Themenbereich des Artikels",
+      "hague": "Haager Übereinkommen",
+      "france": "Frankreich",
+      "norway": "Norwegen",
+      "germany": "Deutschland"
+    },
+    "hero": {
+      "title": "Versagen der Zentralbehörden: Ein Vater in Europa konnte sein Kind weder ausfindig machen noch zurückführen lassen",
+      "lead": "Zusammenfassung institutioneller Versäumnisse in drei Ländern — das Kind wurde nicht ausfindig gemacht, die Rückführung abgelehnt oder nicht registriert, jahrelange Verzögerungen."
+    },
+    "summary": {
+      "title": "Kurz gesagt",
+      "locatedTitle": "Keine Behörde machte das Kind ausfindig.",
+      "locatedBody": "Frankreich, Norwegen und Deutschland machten das Kind nicht ausfindig; der Vater musste es in Deutschland selbst finden.",
+      "norwayTitle": "Norwegen lehnte die Rückführung ab.",
+      "norwayBody": "Das Bezirksgericht Oslo lehnte den Antrag auf Rückführung nach dem Haager Übereinkommen ab (2016).",
+      "germanyTitle": "Deutschland weigerte sich, den Rückführungsantrag zu registrieren.",
+      "germanyBody": "Die deutsche Zentralbehörde wollte den Antrag des Vaters auf Rückführung nach Frankreich nicht registrieren; die französische Behörde erklärte zunächst, sie sei für eine Verbringung Norwegen→Deutschland „nicht zuständig“.",
+      "delayTitle": "Jahrelange Verzögerungen.",
+      "delayBody": "Die Zentralbehörden brauchten Monate oder Jahre für Antworten; die Verfahren begannen erneut, nachdem das Kind in ein anderes Land verbracht worden war."
+    },
+    "countries": {
+      "title": "Versäumnisse nach Ländern",
+      "france": {
+        "name": "Frankreich",
+        "point1": "Jahrelange Verzögerungen bis zu einem sinnvollen Tätigwerden (z. B. Kontakt mit der deutschen Behörde erst 2026).",
+        "point2": "Der Fall wurde zunächst wegen der Verbringung Norwegen→Deutschland als „nicht zuständig“ behandelt; der Vater musste auf einer Rückführung nach Frankreich bestehen.",
+        "point3": "Keine Ausfindigmachung des Kindes durch französische Behörden.",
+        "cta": "Kontakt mit den Zentralbehörden"
+      },
+      "norway": {
+        "name": "Norwegen",
+        "point1": "Das Bezirksgericht Oslo lehnte den Rückführungsantrag (2016) aus Gründen des Übereinkommens ab (gewöhnlicher Aufenthalt, Art. 3, 12, 13, 20).",
+        "point2": "Keine Ausfindigmachung des Kindes durch norwegische Behörden; dem Vater stand kein wirksamer Rechtsbehelf zur Verfügung, der zur Rückführung führte.",
+        "cta": "Entführung in Norwegen"
+      },
+      "germany": {
+        "name": "Deutschland",
+        "point1": "Die Zentralbehörde weigerte sich, den Rückführungsantrag zu registrieren (Widerspruch zum Umgangsrecht, Frist nach Art. 12, Aufforderung zur Rücknahme).",
+        "point2": "Die deutsche Behörde „hatte keine Spur“ eines Rückführungsantrags aus dem Jahr 2022; sie ging davon aus, dass die Rückführung nach Norwegen und nicht nach Frankreich beantragt wurde.",
+        "point3": "Keine Ausfindigmachung des Kindes durch deutsche Behörden; der Vater fand das Kind selbst in Frankfurt.",
+        "cta": "Entführung in Deutschland"
+      }
+    },
+    "timeline": {
+      "title": "Zeitleiste",
+      "norway": "Norwegen",
+      "refused": "Rückführung abgelehnt (Oslo)",
+      "germany": "Kind in Deutschland",
+      "noReturn": "Noch immer keine Rückführung",
+      "fullTimeline": "Vollständige Zeitleiste auf der Seite zu den Zentralbehörden"
+    },
+    "readMore": {
+      "title": "Die ganze Geschichte lesen",
+      "centralAuthorities": "Kontakt mit den Zentralbehörden",
+      "norway": "Entführung in Norwegen — Rechtliche Gründe für die Ablehnung",
+      "germany": "Entführung in Deutschland — Antrag auf schriftliche Erläuterungen"
+    }
+  }
+}

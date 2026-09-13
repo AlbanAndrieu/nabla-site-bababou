@@ -21,7 +21,7 @@
 ## Ordre d'exécution prioritaire — décision du 2026-08-26
 
 1. **Migration Next.js** : réduire la dette hybride sur les routes déjà natives, puis migrer les pages publiques à faible risque.
-2. **UI/UX et accessibilité** : harmoniser chrome, composants, responsive, navigation clavier et design system.
+2. **UI/UX et accessibilité** : harmoniser chrome, composants, responsive, navigation clavier, contraste mesurable et design system.
 3. **SEO et métadonnées** : canonicals, redirects, hreflang, sitemap/robots, Open Graph et Twitter/X par route.
 4. **Nettoyage technique** : supprimer progressivement code, scripts, dépendances et assets legacy devenus sans consommateur.
 5. **Performance et CI** : réduire tracing, builds, téléchargements inutiles et coûts de validation.
@@ -164,6 +164,13 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] Migrer le lot Bootstrap `card`/grid/actions des surfaces Next natives `email`, `policy` (index + six pages), `success`, `cancel`, `contact`, `link` et `test` vers `ActionLink`, `Container`, `ContentLayout` et `Surface`, avec contrat de non-régression (#162).
   - [x] #190 valide le responsive sur 320/375 px, tablette portrait/paysage et desktop, y compris textes allemands plus longs, safe-area, contrôles 44 px, CTA, footer et absence d'overflow horizontal ; Preview exact-SHA, Playwright 137/137 et ZAP sont verts.
   - [x] #191 ajoute le respect `prefers-reduced-motion` et valide sur Preview exact-SHA le reflow à 200 % de texte sur 320 px pour `/contact`, `/de/contact` et `/policy`; Playwright #561 est vert à 138/138 et ZAP #39 reste `H0 M4 L4 I5`.
+- [ ] Porter le contraste texte/fond du site au niveau WCAG 2.2 AA et empêcher les régressions clair/sombre.
+  - [x] #193 introduit un layer `legacy-contrast.css` limité aux pages HTML `page-dark` afin de reprendre la priorité sur les utilitaires Bootstrap chargés après `theme.css`, sans créer un second thème pour les routes Next.
+  - [x] #193 ajoute un test navigateur de ratio calculé `>= 4.5:1` pour le texte normal de `people-contacted.html` en thèmes clair et sombre, ainsi qu'un contrôle de contraste de la surface Next atteinte depuis `central-authorities.html`.
+  - [ ] Valider le correctif contraste de #193 sur une Preview Vercel du SHA exact, puis conserver ce contrôle dans le gate Playwright.
+  - [ ] Auditer les autres pages legacy utilisant `page-dark` avec `bg-light`, `bg-white`, `text-light`, `text-muted` ou `text-secondary`, corriger les couples sous les seuils et couvrir les variantes `light|dark|auto`.
+  - [ ] Étendre les contrôles aux composants non textuels/focus qui exigent au moins `3:1`, et viser `7:1` sur les textes critiques lorsque cela ne dégrade pas la hiérarchie visuelle.
+  - [ ] Une fois le contrat stabilisé, porter la règle de contraste, les seuils et le pattern de test dans le skill/instructions projet concerné afin que toute nouvelle migration vérifie le contraste au lieu de se limiter à une inspection visuelle.
 - [ ] Poursuivre les pages publiques structurées à faible risque en conservant le fallback legacy jusqu'à preuve de parité.
   - [x] Exception 404 : `public/404.html` reste la source protégée, consommée par `global-not-found`; la 404 React localisée de #118 n'est plus le comportement cible (#139).
   - [x] Accessibility Statement : route propre Next, source HTML inchangée conservée, chrome/metadata et Preview E2E validés (#124).
@@ -176,13 +183,15 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] `public/success.html` et `public/cancel.html` supprimés après validation complète CI + Preview + Playwright de #141 ; les redirects `.html` restent couverts après suppression physique.
   - [ ] Migrer ensuite les autres pages publiques structurées à faible risque.
     - [x] Surface technique `/test` : supprimer le doublon `app/test/page.tsx` et conserver la seule implémentation Next localisée `app/[locale]/test/page.tsx` (#142).
+    - [ ] #193 migre `central-authorities`, `central-authorities-failures` et `nre` vers des routes Next natives FR/EN/DE/NO ; garder les sources HTML retenues comme référence/fallback et ne cocher la migration qu'après Quality + Preview exact-SHA + Playwright/ZAP verts.
+    - [ ] `people-contacted.html` reste legacy pour le moment à cause de son rendu D3/ARF et de `people-cards.js` ; corriger son contraste dès #193, puis migrer séparément sans perdre l'arbre, les cartes, le fallback Google Translate ni les preuves E2E.
     - [ ] Conserver `public/test.html` tant que sa finalité/contenu legacy ne sont pas réconciliés avec `/test`; l'audit post-#167 confirme que ce legacy charge le corpus ARF, donc aucune suppression/redirection avant la phase P6 et une preuve de parité complète.
       - [x] Localiser la surface Next `/test` en FR/EN/DE/NO via un domaine `messages/test`, y compris ses metadata noindex, sans importer le corpus legacy.
       - [x] Ajouter un contrat de coexistence qui exige `public/test.html` et ses signaux ARF (`d3.v3.min.js`, `arf.js`, `index.js`, association) et interdit tout redirect `/test.html` tant que la parité n'est pas démontrée.
       - [x] Ajouter une couverture Playwright FR/EN/DE/NO/noindex pour la surface Next et vérifier que `/test.html` reste un fallback ARF distinct.
       - [x] Exécuter cette couverture sur un checkpoint Vercel du SHA exact avant toute nouvelle déclaration de parité ou suppression legacy : #190 l'a validée dans Playwright Preview 137/137 et #191 la reconfirme dans la suite exacte 138/138. Cette preuve ne vaut pas parité ARF et n'autorise pas la suppression de `public/test.html`.
       - [x] Durcir le préflight Playwright afin qu'un `HTTP 429` ou `x-vercel-mitigated: challenge` soit identifié comme Vercel Security Checkpoint et rejeté avant les tests, au lieu d'être pris pour un accès valide.
-    - [x] Inventorier les HTML legacy racine post-#167 : aucune nouvelle cible P3 faible risque immédiate n'est éligible ; `404.html` est protégée, `index.html` est owner-controlled, `contact.html` reste utile au fallback Docker statique, et les autres surfaces relèvent du corpus différé.
+    - [x] Inventorier les HTML legacy racine post-#167 : l'inventaire initial n'identifiait pas de nouvelle cible faible risque immédiate ; #193 requalifie explicitement `central-authorities`, `central-authorities-failures` et `nre` après extraction structurée, tandis que `404.html`, `index.html`, `contact.html`, `people-contacted.html` et `test.html` conservent leurs contraintes spécifiques.
 - [ ] Différer les pages contenant un corpus familial sensible jusqu'à la phase finale de confidentialité.
 
 ## P4 — SEO et métadonnées
@@ -191,6 +200,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 - [x] Sitemap hybride et robots alignés sur les routes actuellement indexables.
 - [x] Open Graph/Twitter complets et spécifiques pour chaque route Next native (#116).
 - [x] Redirects permanents des anciennes URLs `.html` pour `contact`, `email`, `link`, `success` et `cancel` après migration des routes Next correspondantes (#116, #140).
+- [ ] Finaliser dans #193 les canonicals/hreflang/sitemap et redirects des surfaces `central-authorities`, `central-authorities-failures` et NRE ; `nre-fr.html` doit converger vers `/nre` et `nre-en.html` vers `/en/nre`, sans dupliquer les entrées legacy dans le sitemap généré.
 - [x] Vérifier les redirects et métadonnées avec Playwright sur le Preview exact (#116).
 - [x] Restaurer `/feed.xml` et ajouter le feed de contact dédié avec découverte RSS Next ; garder l’identité approuvée confinée au XML dédié et scanner explicitement les deux feeds via le privacy gate (#163).
 - [x] Ajouter DE/NO dans les alternates après stabilisation des catalogues, y compris pour les six policies nativement localisées (#129, #130, #131, #134, #136).
@@ -321,7 +331,8 @@ Cette phase est volontairement placée après migration, UI/UX, SEO, nettoyage e
   - [x] Index policy et restauration finale de la 404 protégée (#139).
   - [x] Résultats de paiement `success` / `cancel` migrés vers Next (#140).
   - [x] Routage FR/404 réconcilié et tests Preview post-migration validés 167/167 sur le SHA exact (#141).
-  - [ ] Poursuivre les pages publiques structurées à faible risque.
+  - [ ] #193 : finaliser `central-authorities`, `central-authorities-failures` et NRE, y compris contraste, redirects, sitemap et preuves exact-SHA avant merge.
+  - [ ] Poursuivre ensuite les pages publiques structurées à faible risque ; `people-contacted.html` reste une migration séparée à cause de D3/ARF mais son contraste est traité en amont.
 - [ ] **Migration 7 / P5** — dépendances/runtimes legacy, assets orphelins et optimisation CI/performance.
   - [x] Réconciliation release/Preview et cache Chromium (#117/#119/#120/#121).
   - [x] Suppression du seed Chromium redondant et instrumentation Quality (#122).

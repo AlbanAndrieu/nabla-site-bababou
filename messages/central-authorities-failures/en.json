@@ -1,0 +1,67 @@
+{
+  "centralAuthoritiesFailuresPage": {
+    "meta": {
+      "title": "Central Authorities Failed: A Father in Europe Could Not Have His Child Located or Returned | Bababou",
+      "description": "Summary of Central Authority failures in France, Norway and Germany: no location of the child, return refused or not registered, years of delays. A father’s experience under the Hague Convention."
+    },
+    "scope": {
+      "label": "Article scope",
+      "hague": "Hague Convention",
+      "france": "France",
+      "norway": "Norway",
+      "germany": "Germany"
+    },
+    "hero": {
+      "title": "Central Authorities Failed: A Father in Europe Could Not Have His Child Located or Returned",
+      "lead": "Summary of institutional failures across three countries — no location of the child, return refused or not registered, years of delays."
+    },
+    "summary": {
+      "title": "In short",
+      "locatedTitle": "No authority located the child.",
+      "locatedBody": "France, Norway and Germany did not locate the child; the father had to find her himself in Germany.",
+      "norwayTitle": "Norway refused return.",
+      "norwayBody": "Oslo District Court refused the petition for return under the Hague Convention (2016).",
+      "germanyTitle": "Germany refused to register the return request.",
+      "germanyBody": "The German Central Authority did not want to register the father’s request for return to France; the French authority initially said it was “not competent” for a displacement Norway→Germany.",
+      "delayTitle": "Years of delay.",
+      "delayBody": "Central Authorities took months or years to answer; procedures restarted when the child was moved to another country."
+    },
+    "countries": {
+      "title": "Failures by country",
+      "france": {
+        "name": "France",
+        "point1": "Years of delay before meaningful action (e.g. contact with German authority only in 2026).",
+        "point2": "Initially treated the case as “not competent” for displacement Norway→Germany; father had to insist on return to France.",
+        "point3": "No location of the child by French authorities.",
+        "cta": "Reaching Central Authorities"
+      },
+      "norway": {
+        "name": "Norway",
+        "point1": "Oslo District Court refused the petition for return (2016) on Convention grounds (habitual residence, Art. 3, 12, 13, 20).",
+        "point2": "No location of the child by Norwegian authorities; father had no effective remedy to have the child returned.",
+        "cta": "Abduction in Norway"
+      },
+      "germany": {
+        "name": "Germany",
+        "point1": "Central Authority refused to register the return request (contradiction with visitation, Art. 12 delay, request to withdraw).",
+        "point2": "German authority “had no trace” of a 2022 return request; assumed return was to Norway, not France.",
+        "point3": "No location of the child by German authorities; father located the child himself in Frankfurt.",
+        "cta": "Abduction in Germany"
+      }
+    },
+    "timeline": {
+      "title": "Timeline",
+      "norway": "Norway",
+      "refused": "Return refused (Oslo)",
+      "germany": "Child in Germany",
+      "noReturn": "Still no return",
+      "fullTimeline": "Full timeline on Central Authorities page"
+    },
+    "readMore": {
+      "title": "Read the full story",
+      "centralAuthorities": "Reaching Central Authorities",
+      "norway": "Abduction in Norway — Legal grounds for refusal",
+      "germany": "Abduction in Germany — Request for written explanations"
+    }
+  }
+}

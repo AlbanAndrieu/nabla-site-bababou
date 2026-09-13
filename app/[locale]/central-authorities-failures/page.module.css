@@ -1,0 +1,151 @@
+.page {
+  padding: clamp(1.5rem, 4vw, 3rem) 0;
+  color: var(--ui-text-primary);
+}
+
+.hero {
+  max-width: 58rem;
+  margin: 0 auto;
+  padding: clamp(1.5rem, 5vw, 3.5rem) 0;
+  text-align: center;
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  line-height: 1.08;
+  text-wrap: balance;
+}
+
+.badges,
+.timeline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ui-space-sm);
+}
+
+.badges {
+  margin-bottom: var(--ui-space-lg);
+}
+
+.lead {
+  max-width: 46rem;
+  margin: var(--ui-space-lg) auto 0;
+  color: var(--ui-text-secondary);
+  font-size: clamp(1.05rem, 2vw, 1.25rem);
+}
+
+.section {
+  padding: clamp(1.25rem, 3vw, 2rem) 0;
+}
+
+.section h2 {
+  margin: 0 0 var(--ui-space-md);
+  font-size: clamp(1.4rem, 3vw, 1.85rem);
+}
+
+.summaryBody ul,
+.countryBody ul {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.summaryBody li + li,
+.countryBody li + li {
+  margin-top: var(--ui-space-sm);
+}
+
+.countryGrid,
+.readMoreGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--ui-space-lg);
+}
+
+.countryCard {
+  height: 100%;
+}
+
+.countryBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ui-space-md);
+}
+
+.countryBody ul {
+  flex: 1;
+  color: var(--ui-text-secondary);
+}
+
+.countryHeading {
+  display: flex;
+  align-items: center;
+  gap: var(--ui-space-sm);
+}
+
+.countryHeading h3 {
+  margin: 0;
+}
+
+.countryIcon {
+  display: inline-flex;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex: 0 0 2.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #fff;
+}
+
+.france {
+  background: #0055a4;
+}
+
+.norway {
+  background: #ba0c2f;
+}
+
+.germany {
+  background: #000;
+}
+
+.timeline {
+  row-gap: var(--ui-space-md);
+  color: var(--ui-text-secondary);
+}
+
+.timelineLink {
+  margin: var(--ui-space-lg) 0 0;
+  text-align: center;
+}
+
+.readMoreBody {
+  height: 100%;
+}
+
+.readMoreBody > a {
+  width: 100%;
+  height: 100%;
+  justify-content: flex-start;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 900px) {
+  .countryGrid,
+  .readMoreGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .timeline {
+    flex-direction: column;
+  }
+
+  .timeline > span[aria-hidden="true"] {
+    transform: rotate(90deg);
+  }
+}

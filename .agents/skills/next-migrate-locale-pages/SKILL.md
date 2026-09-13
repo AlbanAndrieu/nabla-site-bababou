@@ -62,6 +62,23 @@ When adding or migrating a page:
 
 ---
 
+## Accessibility and contrast parity
+
+Contrast is part of migration parity, not a visual-polish follow-up. A page is not ready for legacy redirect/removal merely because it builds or looks acceptable in one theme.
+
+For migrated or materially edited public surfaces:
+
+- Target WCAG 2.2 AA contrast thresholds: normal text `>= 4.5:1`, large text `>= 3:1`, and non-text UI/focus indicators that carry meaning `>= 3:1` against adjacent colors.
+- Exercise `light`, `dark`, and `auto` theme behavior where the surface supports the shared theme contract. For `auto`, make the system color scheme deterministic in Playwright before asserting the effective theme.
+- Prefer browser-computed foreground/background ratios in Playwright for representative text and controls. Static token assertions are useful, but they do not prove the final cascade after Bootstrap, legacy CSS, or runtime theme changes.
+- Do not hide a transient contrast failure behind an arbitrary sleep. If a theme transition briefly crosses below the required ratio, change the transition/foreground-background pairing so the complete state change remains readable.
+- On retained legacy HTML, Bootstrap compatibility overrides belong in `public/legacy-contrast.css`. Keep them narrowly scoped to the legacy boundary and use `!important` only where required to beat Bootstrap utilities that already use `!important`.
+- Native Next.js surfaces must use the shared semantic `--ui-*` design tokens and must not load Bootstrap or `legacy-contrast.css` merely to satisfy contrast.
+- Preserve `prefers-reduced-motion`, keyboard focus visibility, reflow, and the repository's protected homepage/404 contracts while correcting contrast.
+- Focused contrast tests establish regression coverage for the checked surfaces; they do **not** by themselves claim site-wide WCAG conformance.
+
+---
+
 ## KEY RULE FOR TRANSLATION FILES
 
 Whenever you add a new page or translation key:
