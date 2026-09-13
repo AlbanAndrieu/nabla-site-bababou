@@ -18,6 +18,7 @@ import {
 const SITE_URL = "https://bababou.com";
 const MIGRATED_LEGACY_PATHS = new Set([
   "/contact.html",
+  "/central-authorities.html",
   "/central-authorities-failures.html",
   "/email.html",
   "/link.html",
