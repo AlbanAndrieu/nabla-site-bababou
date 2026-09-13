@@ -1,3 +1,10 @@
+# [0.18.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.17.0...0.18.0) (2026-09-13)
+
+
+### Features
+
+* **next:** migrate central authorities and NRE with contrast hardening ([#193](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/193)) ([64fd828](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/64fd82875dc90e76ce7eaaab617dd8a43122c55b))
+
 # [0.17.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.16.1...0.17.0) (2026-09-13)
 
 
