@@ -51,6 +51,7 @@ function decodeHtml(value: string) {
     .replace(/&#39;|&apos;/gi, "'")
     .replace(/&rsquo;/gi, "’")
     .replace(/&ndash;/gi, "–")
+    .replace(/\u00a0/g, " ")
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -61,6 +62,20 @@ function monthIndex(label: string, sourceLocale: "en" | "fr") {
   const index = months.findIndex((month) => normalized.startsWith(month));
   if (index === -1) throw new Error(`Unsupported NRE month label: ${label}`);
   return index + 1;
+}
+
+function parseWeekendRange(label: string) {
+  const normalized = label
+    .normalize("NFKC")
+    .replace(/[‐‑‒–—−]/g, "-")
+    .replace(/\u00a0/g, " ");
+  const range = normalized.match(
+    /(\d+)\s*(?:(?:er|re|e|eme|ème|st|nd|rd|th)\b\s*)?-\s*(\d+)/i,
+  );
+
+  return range
+    ? { startDay: Number(range[1]), endDay: Number(range[2]) }
+    : null;
 }
 
 export function parseNreLegacyRows(
@@ -77,9 +92,9 @@ export function parseNreLegacyRows(
     const weekendLabel = decodeHtml(match[3]);
     const statusDetail = decodeHtml(match[4]);
     const yearMatch = monthLabel.match(/(20\d{2})/);
-    const weekendMatch = weekendLabel.match(/(\d+)\s*[–-]\s*(\d+)/);
+    const weekendRange = parseWeekendRange(weekendLabel);
 
-    if (!yearMatch || !weekendMatch) {
+    if (!yearMatch || !weekendRange) {
       throw new Error(
         `Unable to parse NRE legacy row: ${monthLabel} / ${weekendLabel}`,
       );
@@ -88,8 +103,8 @@ export function parseNreLegacyRows(
     rows.push({
       year: Number(yearMatch[1]),
       month: monthIndex(monthLabel, sourceLocale),
-      startDay: Number(weekendMatch[1]),
-      endDay: Number(weekendMatch[2]),
+      startDay: weekendRange.startDay,
+      endDay: weekendRange.endDay,
       status: attributes.includes('data-exception="true"')
         ? "exception"
         : "nre",
@@ -104,6 +119,9 @@ export function parseNreLegacyRows(
 export async function loadNreLegacyRows(locale: AppLocale) {
   const sourceLocale = locale === "fr" ? "fr" : "en";
   const fileName = sourceLocale === "fr" ? "nre-fr.html" : "nre-en.html";
-  const source = await readFile(path.join(process.cwd(), "public", fileName), "utf8");
+  const source = await readFile(
+    path.join(process.cwd(), "public", fileName),
+    "utf8",
+  );
   return parseNreLegacyRows(source, sourceLocale);
 }

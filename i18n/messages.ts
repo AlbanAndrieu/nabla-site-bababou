@@ -30,6 +30,13 @@ const CENTRAL_AUTHORITIES_FAILURES_LOADERS = {
   no: () => import("@/messages/central-authorities-failures/no.json"),
 } as const satisfies Record<AppLocale, CatalogLoader>;
 
+const NRE_LOADERS = {
+  fr: () => import("@/messages/nre/fr.json"),
+  en: () => import("@/messages/nre/en.json"),
+  de: () => import("@/messages/nre/de.json"),
+  no: () => import("@/messages/nre/no.json"),
+} as const satisfies Record<AppLocale, CatalogLoader>;
+
 const EMAIL_LOADERS = {
   fr: () => import("@/messages/email/fr.json"),
   en: () => import("@/messages/email/en.json"),
@@ -82,6 +89,7 @@ export async function loadMessages(locale: AppLocale) {
     { default: contact },
     { default: centralAuthorities },
     { default: centralAuthoritiesFailures },
+    { default: nre },
     { default: email },
     { default: link },
     { default: checkout },
@@ -91,6 +99,7 @@ export async function loadMessages(locale: AppLocale) {
     CONTACT_LOADERS[locale](),
     CENTRAL_AUTHORITIES_LOADERS[locale](),
     CENTRAL_AUTHORITIES_FAILURES_LOADERS[locale](),
+    NRE_LOADERS[locale](),
     EMAIL_LOADERS[locale](),
     LINK_LOADERS[locale](),
     CHECKOUT_LOADERS[locale](),
@@ -102,6 +111,7 @@ export async function loadMessages(locale: AppLocale) {
     contact,
     centralAuthorities,
     centralAuthoritiesFailures,
+    nre,
     email,
     link,
     checkout,
