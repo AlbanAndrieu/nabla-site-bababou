@@ -166,9 +166,26 @@
 		}
 	}
 
+	function scrollToTopOfPage() {
+		const options = { top: 0, left: 0, behavior: "smooth" };
+		window.scrollTo(options);
+		document.body?.scrollTo(options);
+		document.documentElement?.scrollTo(options);
+	}
+
+	function initBackToTopCompatibility() {
+		document.addEventListener("click", (event) => {
+			const anchor = event.target?.closest?.('a[href="#top"]');
+			if (!anchor) return;
+			event.preventDefault();
+			scrollToTopOfPage();
+		});
+	}
+
 	function initTheme() {
 		const storedTheme = getStoredTheme();
 		applyTheme(storedTheme);
+		initBackToTopCompatibility();
 
 		if (document.readyState === "loading") {
 			document.addEventListener("DOMContentLoaded", () => {
