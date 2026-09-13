@@ -53,6 +53,25 @@ test.describe("Site widgets integration", () => {
 		await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
 	});
 
+	test("static page footer and floating back-to-top controls scroll to the top", async ({
+		page,
+	}) => {
+		await page.goto("/people-contacted.html");
+		const floatingBackToTop = page.locator("#nabla-back-to-top");
+		const footerBackToTop = page.locator('footer a[href="#top"]');
+		await expect(floatingBackToTop).toBeVisible();
+		await expect(footerBackToTop).toBeVisible();
+
+		for (const control of [footerBackToTop, floatingBackToTop]) {
+			await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+			await expect
+				.poll(() => page.evaluate(() => window.scrollY))
+				.toBeGreaterThan(0);
+			await control.click();
+			await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+		}
+	});
+
 	test("should scroll to top when back-to-top control has href '#'", async ({
 		page,
 	}) => {
