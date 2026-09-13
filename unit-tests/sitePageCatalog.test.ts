@@ -44,8 +44,15 @@ test("native Next routes use the French default locale without a prefix", () => 
   assert.equal(canonicalPagePath("contact", "fr"), "/contact");
   assert.equal(canonicalPagePath("email", "fr"), "/email");
   assert.equal(canonicalPagePath("link", "fr"), "/link");
-  assert.equal(canonicalPagePath("central-authorities", "fr"), "/central-authorities");
-  assert.equal(canonicalPagePath("central-authorities-failures", "fr"), "/central-authorities-failures");
+  assert.equal(
+    canonicalPagePath("central-authorities", "fr"),
+    "/central-authorities",
+  );
+  assert.equal(
+    canonicalPagePath("central-authorities-failures", "fr"),
+    "/central-authorities-failures",
+  );
+  assert.equal(canonicalPagePath("nre", "fr"), "/nre");
 });
 
 test("native Next routes prefix non-default locales and stay extensionless", () => {
@@ -53,8 +60,15 @@ test("native Next routes prefix non-default locales and stay extensionless", () 
     assert.equal(canonicalPagePath("contact", locale), `/${locale}/contact`);
     assert.equal(canonicalPagePath("email", locale), `/${locale}/email`);
     assert.equal(canonicalPagePath("link", locale), `/${locale}/link`);
-    assert.equal(canonicalPagePath("central-authorities", locale), `/${locale}/central-authorities`);
-    assert.equal(canonicalPagePath("central-authorities-failures", locale), `/${locale}/central-authorities-failures`);
+    assert.equal(
+      canonicalPagePath("central-authorities", locale),
+      `/${locale}/central-authorities`,
+    );
+    assert.equal(
+      canonicalPagePath("central-authorities-failures", locale),
+      `/${locale}/central-authorities-failures`,
+    );
+    assert.equal(canonicalPagePath("nre", locale), `/${locale}/nre`);
   }
 });
 
@@ -66,14 +80,26 @@ test("retired ghost routes stay out of the public page catalog", () => {
 });
 
 test("obsolete ghost-route generators stay removed", async () => {
-  for (const path of ["../lib/htmlRoutes.config.mjs", "../scripts/old/generate_fr_locale_html.py"]) {
+  for (const path of [
+    "../lib/htmlRoutes.config.mjs",
+    "../scripts/old/generate_fr_locale_html.py",
+  ]) {
     await assert.rejects(access(new URL(path, import.meta.url)));
   }
 });
 
 test("retired ghost-route styles stay removed", async () => {
-  const layouts = await readFile(new URL("../public/page-layouts.css", import.meta.url), "utf8");
-  for (const selector of ["page-security", "page-ciso", "page-login", "page-ctid"]) {
+  const layouts = await readFile(
+    new URL("../public/page-layouts.css", import.meta.url),
+    "utf8",
+  );
+
+  for (const selector of [
+    "page-security",
+    "page-ciso",
+    "page-login",
+    "page-ctid",
+  ]) {
     assert.doesNotMatch(layouts, new RegExp(`\\.${selector}\\b`));
   }
 });
@@ -89,8 +115,24 @@ test("alternates follow routing locales and use French as x-default", () => {
       "x-default": "/contact",
     },
   });
-  assert.equal(pageAlternates("central-authorities", "en").canonical, "/en/central-authorities");
-  assert.equal(pageAlternates("central-authorities-failures", "en").canonical, "/en/central-authorities-failures");
+  assert.equal(
+    pageAlternates("central-authorities", "en").canonical,
+    "/en/central-authorities",
+  );
+  assert.equal(
+    pageAlternates("central-authorities-failures", "en").canonical,
+    "/en/central-authorities-failures",
+  );
+  assert.deepEqual(pageAlternates("nre", "de"), {
+    canonical: "/de/nre",
+    languages: {
+      fr: "/nre",
+      en: "/en/nre",
+      de: "/de/nre",
+      no: "/no/nre",
+      "x-default": "/nre",
+    },
+  });
 });
 
 test("the Next sitemap indexes only stable localized Next surfaces", () => {
@@ -98,6 +140,7 @@ test("the Next sitemap indexes only stable localized Next surfaces", () => {
     "contact",
     "central-authorities",
     "central-authorities-failures",
+    "nre",
     "link",
     "email",
   ]);

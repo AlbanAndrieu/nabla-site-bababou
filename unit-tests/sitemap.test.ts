@@ -13,6 +13,7 @@ test("sitemap preserves active legacy URLs and adds native Next surfaces", async
   assert.ok(urls.includes("https://bababou.com/contact"));
   assert.ok(urls.includes("https://bababou.com/central-authorities"));
   assert.ok(urls.includes("https://bababou.com/central-authorities-failures"));
+  assert.ok(urls.includes("https://bababou.com/nre"));
   assert.ok(urls.includes("https://bababou.com/link"));
   assert.ok(urls.includes("https://bababou.com/email"));
   assert.ok(urls.includes("https://bababou.com/policy"));
@@ -25,19 +26,33 @@ test("sitemap replaces migrated legacy duplicates with native Next URLs", async 
   assert.equal(urls.includes("https://bababou.com/index.html"), false);
   assert.equal(urls.includes("https://bababou.com/contact.html"), false);
   assert.equal(urls.includes("https://bababou.com/central-authorities.html"), false);
-  assert.equal(urls.includes("https://bababou.com/central-authorities-failures.html"), false);
+  assert.equal(
+    urls.includes("https://bababou.com/central-authorities-failures.html"),
+    false,
+  );
+  assert.equal(urls.includes("https://bababou.com/nre-fr.html"), false);
+  assert.equal(urls.includes("https://bababou.com/nre-en.html"), false);
   assert.equal(urls.includes("https://bababou.com/email.html"), false);
   assert.equal(urls.includes("https://bababou.com/link.html"), false);
 
   for (const policy of POLICY_PAGE_SLUGS) {
-    assert.ok(urls.includes(`https://bababou.com/policy/${policy}`), `${policy} should be present under its clean canonical`);
-    assert.equal(urls.includes(`https://bababou.com/policy/${policy}.html`), false, `${policy}.html should not remain in the generated sitemap`);
+    assert.ok(
+      urls.includes(`https://bababou.com/policy/${policy}`),
+      `${policy} should be present under its clean canonical`,
+    );
+    assert.equal(
+      urls.includes(`https://bababou.com/policy/${policy}.html`),
+      false,
+      `${policy}.html should not remain in the generated sitemap`,
+    );
   }
 });
 
 test("native sitemap entries derive locale alternates from routing", async () => {
   const entries = await sitemap();
-  const contact = entries.find((entry) => entry.url === "https://bababou.com/contact");
+  const contact = entries.find(
+    (entry) => entry.url === "https://bababou.com/contact",
+  );
   assert.ok(contact);
   assert.deepEqual(contact.alternates?.languages, {
     fr: "https://bababou.com/contact",
@@ -47,7 +62,9 @@ test("native sitemap entries derive locale alternates from routing", async () =>
     "x-default": "https://bababou.com/contact",
   });
 
-  const centralAuthorities = entries.find((entry) => entry.url === "https://bababou.com/central-authorities");
+  const centralAuthorities = entries.find(
+    (entry) => entry.url === "https://bababou.com/central-authorities",
+  );
   assert.ok(centralAuthorities);
   assert.deepEqual(centralAuthorities.alternates?.languages, {
     fr: "https://bababou.com/central-authorities",
@@ -57,7 +74,10 @@ test("native sitemap entries derive locale alternates from routing", async () =>
     "x-default": "https://bababou.com/central-authorities",
   });
 
-  const failures = entries.find((entry) => entry.url === "https://bababou.com/central-authorities-failures");
+  const failures = entries.find(
+    (entry) =>
+      entry.url === "https://bababou.com/central-authorities-failures",
+  );
   assert.ok(failures);
   assert.deepEqual(failures.alternates?.languages, {
     fr: "https://bababou.com/central-authorities-failures",
@@ -66,11 +86,23 @@ test("native sitemap entries derive locale alternates from routing", async () =>
     no: "https://bababou.com/no/central-authorities-failures",
     "x-default": "https://bababou.com/central-authorities-failures",
   });
+
+  const nre = entries.find((entry) => entry.url === "https://bababou.com/nre");
+  assert.ok(nre);
+  assert.deepEqual(nre.alternates?.languages, {
+    fr: "https://bababou.com/nre",
+    en: "https://bababou.com/en/nre",
+    de: "https://bababou.com/de/nre",
+    no: "https://bababou.com/no/nre",
+    "x-default": "https://bababou.com/nre",
+  });
 });
 
 test("policy index publishes native hreflang alternates", async () => {
   const entries = await sitemap();
-  const policyIndex = entries.find((entry) => entry.url === "https://bababou.com/policy");
+  const policyIndex = entries.find(
+    (entry) => entry.url === "https://bababou.com/policy",
+  );
   assert.ok(policyIndex);
   assert.deepEqual(policyIndex.alternates?.languages, {
     fr: "https://bababou.com/policy",

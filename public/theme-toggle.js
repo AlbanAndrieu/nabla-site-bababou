@@ -15,12 +15,27 @@
 
 	const STORAGE_KEY = "site-theme-preference";
 	const ROOT_ID = "theme-toggle-root";
+	const LEGACY_CONTRAST_STYLESHEET_ID = "legacy-contrast-styles";
+	const SCRIPT_URL = document.currentScript?.src;
 
 	const MODE_META = [
 		{ theme: THEMES.LIGHT, label: "Light", short: "Light", icon: "☀️" },
 		{ theme: THEMES.DARK, label: "Dark", short: "Dark", icon: "🌙" },
 		{ theme: THEMES.AUTO, label: "Auto (system)", short: "Auto", icon: "🌓" },
 	];
+
+	function ensureLegacyContrastStyles() {
+		if (document.getElementById(LEGACY_CONTRAST_STYLESHEET_ID)) return;
+
+		const link = document.createElement("link");
+		link.id = LEGACY_CONTRAST_STYLESHEET_ID;
+		link.rel = "stylesheet";
+		link.href = SCRIPT_URL
+			? new URL("legacy-contrast.css", SCRIPT_URL).href
+			: "/legacy-contrast.css";
+		link.dataset.nablaLegacyContrast = "true";
+		document.head.appendChild(link);
+	}
 
 	function getSystemPreference() {
 		if (window.matchMedia?.("(prefers-color-scheme: dark)").matches) {
@@ -183,6 +198,7 @@
 	}
 
 	function initTheme() {
+		ensureLegacyContrastStyles();
 		const storedTheme = getStoredTheme();
 		applyTheme(storedTheme);
 		initBackToTopCompatibility();

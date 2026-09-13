@@ -21,6 +21,11 @@ const migratedLegacyRedirects = [
   { source: `/fr/${slug}.html`, destination: `/${slug}`, permanent: true },
 ]);
 
+const migratedNreRedirects = [
+  { source: "/nre-fr.html", destination: "/nre", permanent: true },
+  { source: "/nre-en.html", destination: "/en/nre", permanent: true },
+];
+
 /**
  * Policy HTML files stay in public/ as reviewed filesystem sources for the
  * native policy registry, but their public legacy URLs now converge on the
@@ -65,7 +70,11 @@ const nextConfig = {
     ];
   },
   async redirects() {
-    return [...migratedLegacyRedirects, ...migratedPolicyRedirects];
+    return [
+      ...migratedLegacyRedirects,
+      ...migratedNreRedirects,
+      ...migratedPolicyRedirects,
+    ];
   },
   turbopack: {
     root: projectRoot,

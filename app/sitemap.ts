@@ -20,6 +20,8 @@ const MIGRATED_LEGACY_PATHS = new Set([
   "/contact.html",
   "/central-authorities.html",
   "/central-authorities-failures.html",
+  "/nre-fr.html",
+  "/nre-en.html",
   "/email.html",
   "/link.html",
 ]);
