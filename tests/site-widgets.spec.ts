@@ -17,7 +17,7 @@ const staticBackToTopPages = collectHtmlFiles("public").filter((filePath) =>
 const representativeStaticPages = [
 	"/people-contacted.html",
 	"/ca/index.html",
-	"/central-authorities.html",
+	"/abduction-germany.html",
 ];
 
 test.describe("Site widgets integration", () => {
