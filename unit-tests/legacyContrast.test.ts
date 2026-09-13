@@ -16,10 +16,12 @@ test("legacy theme bootstrap owns the post-Bootstrap contrast layer", async () =
   assert.match(themeToggle, /data-nabla-legacy-contrast|nablaLegacyContrast/);
   assert.match(contrastCss, /\.page-dark \.bg-light/);
   assert.match(contrastCss, /\.page-dark \.bg-white/);
+  assert.match(contrastCss, /\.page-dark \.card:not\(\[class\*="bg-"\]\)/);
   assert.match(contrastCss, /\.page-dark \.text-muted/);
   assert.match(contrastCss, /color: var\(--text-primary[^;]+!important;/);
   assert.match(contrastCss, /--legacy-contrast-muted: #526174/);
   assert.match(contrastCss, /--legacy-contrast-muted: #a8b0bd/);
+  assert.match(contrastCss, /transition: box-shadow 0\.3s ease !important;/);
 });
 
 test("representative legacy contrast regressions keep using the compatibility boundary", async () => {

@@ -43,12 +43,51 @@ async function foregroundBackgroundPair(
   };
 }
 
+function expectNormalTextContrast(
+  pair: { foreground: string; background: string },
+  label: string,
+) {
+  expect(
+    contrastRatio(pair.foreground, pair.background),
+    `${label} contrast`,
+  ).toBeGreaterThanOrEqual(4.5);
+}
+
 test.describe("WCAG-aligned contrast regressions", () => {
-  test("people-contacted keeps the hero card readable in light and dark themes", async ({
+  test("people-contacted keeps representative cards readable throughout theme changes", async ({
     page,
   }) => {
     await page.goto("/people-contacted.html");
-    await expect(page.locator("#legacy-contrast-styles")).toHaveCount(1);
+    const compatibilityStyles = page.locator("#legacy-contrast-styles");
+    await expect(compatibilityStyles).toHaveCount(1);
+    await expect
+      .poll(() =>
+        compatibilityStyles.evaluate(
+          (element) => Boolean((element as HTMLLinkElement).sheet),
+        ),
+      )
+      .toBe(true);
+
+    const assertRepresentativeContrast = async (label: string) => {
+      const heroCard = page.locator(".people-hero .card");
+      const heroHeading = page.locator("#header");
+      const heroMutedCopy = heroCard.locator(".text-muted");
+      const disclosureCard = page.locator(".card.border-warning");
+      const disclosureCopy = disclosureCard.locator(".card-text");
+
+      expectNormalTextContrast(
+        await foregroundBackgroundPair(heroHeading, heroCard),
+        `${label} hero heading`,
+      );
+      expectNormalTextContrast(
+        await foregroundBackgroundPair(heroMutedCopy, heroCard),
+        `${label} muted hero copy`,
+      );
+      expectNormalTextContrast(
+        await foregroundBackgroundPair(disclosureCopy, disclosureCard),
+        `${label} disclosure copy`,
+      );
+    };
 
     for (const theme of ["light", "dark"] as const) {
       await page.evaluate((selectedTheme) => {
@@ -60,23 +99,20 @@ test.describe("WCAG-aligned contrast regressions", () => {
         themeToggle?.set(selectedTheme);
       }, theme);
       await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
-
-      const card = page.locator(".people-hero .card");
-      const heading = page.locator("#header");
-      const mutedCopy = card.locator(".text-muted");
-
-      const headingPair = await foregroundBackgroundPair(heading, card);
-      const mutedPair = await foregroundBackgroundPair(mutedCopy, card);
-
-      expect(
-        contrastRatio(headingPair.foreground, headingPair.background),
-        `${theme} hero heading contrast`,
-      ).toBeGreaterThanOrEqual(4.5);
-      expect(
-        contrastRatio(mutedPair.foreground, mutedPair.background),
-        `${theme} muted hero copy contrast`,
-      ).toBeGreaterThanOrEqual(4.5);
+      await assertRepresentativeContrast(theme);
     }
+
+    await page.emulateMedia({ colorScheme: "dark" });
+    await page.evaluate(() => {
+      const themeToggle = (
+        window as typeof window & {
+          themeToggle?: { set(theme: string): void };
+        }
+      ).themeToggle;
+      themeToggle?.set("auto");
+    });
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+    await assertRepresentativeContrast("auto/dark-system");
   });
 
   test("central-authorities legacy URL lands on a native readable surface", async ({
@@ -93,9 +129,6 @@ test.describe("WCAG-aligned contrast regressions", () => {
     const body = page.locator("body");
     const pair = await foregroundBackgroundPair(heading, body);
 
-    expect(
-      contrastRatio(pair.foreground, pair.background),
-      "native Central Authorities heading contrast",
-    ).toBeGreaterThanOrEqual(4.5);
+    expectNormalTextContrast(pair, "native Central Authorities heading");
   });
 });

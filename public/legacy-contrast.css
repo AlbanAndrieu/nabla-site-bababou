@@ -31,9 +31,23 @@ html[data-theme="dark"] {
 
 .page-dark .bg-white,
 .page-dark .card.bg-light,
-.page-dark .card.bg-white {
+.page-dark .card.bg-white,
+.page-dark .card:not([class*="bg-"]) {
   background-color: var(--bg-card, #ffffff) !important;
   color: var(--text-primary, #1e293b) !important;
+}
+
+/*
+ * theme.css normally animates card foreground/background changes. Bootstrap's
+ * text-light switches immediately, which can briefly create light-on-light
+ * text while the card surface is still transitioning. Keep only the harmless
+ * shadow transition on compatibility-owned cards so contrast remains valid for
+ * the complete theme switch, not merely once the animation has settled.
+ */
+.page-dark .card.bg-light,
+.page-dark .card.bg-white,
+.page-dark .card:not([class*="bg-"]) {
+  transition: box-shadow 0.3s ease !important;
 }
 
 .page-dark .bg-light .text-light,
