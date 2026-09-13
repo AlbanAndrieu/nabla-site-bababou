@@ -1,0 +1,141 @@
+{
+  "centralAuthoritiesPage": {
+    "meta": {
+      "title": "Saisir les Autorités centrales — Convention de La Haye | Bababou",
+      "description": "Contacts avec les Autorités centrales dans les affaires d’enlèvement d’enfant : chronologie, délais et interprétation des fondements juridiques de la Convention de La Haye du 25 octobre 1980."
+    },
+    "hero": {
+      "title": "Saisir les Autorités centrales",
+      "lead": "Contacts, délais, fondements juridiques et relances documentées auprès des Autorités centrales française, norvégienne et allemande au titre de la Convention de La Haye du 25 octobre 1980."
+    },
+    "summary": {
+      "title": "Résumé de cette page",
+      "body": "Cette page documente les contacts du père avec les Autorités centrales dans le cadre de la Convention de La Haye du 25 octobre 1980 sur les aspects civils de l’enlèvement international d’enfants. Elle présente une chronologie depuis le premier contact jusqu’à aujourd’hui, les délais parfois très longs avant une réponse ou une action, ainsi qu’une explication des fondements juridiques de l’enlèvement d’enfant au sens de la Convention, avec des références aux courriels officiels et aux documents conservés dans le répertoire ca/. Pour la procédure norvégienne et les motifs ayant conduit au refus du retour par le tribunal d’Oslo en 2016, voir la page dédiée à la Norvège.",
+      "citations": "Les lois, documents et courriels cités sont référencés à la fin des sections concernées ou dans la liste des documents et courriels."
+    },
+    "timeline": {
+      "title": "Chronologie : du premier contact à aujourd’hui",
+      "warningTitle": "Les Autorités centrales peuvent mettre des années à répondre ou à engager une action significative.",
+      "warningBody": "Des délais de plusieurs mois ou années sont fréquents. La persistance et les relances écrites sont nécessaires ; malgré cela, les procédures peuvent rester bloquées ou devoir être recommencées lorsque l’enfant est déplacé vers un autre pays.",
+      "group2015": "2015 – 2016",
+      "september2015": {
+        "date": "Septembre 2015",
+        "body": "Premières tentatives pour obtenir des informations sur le bien-être de l’enfant auprès des services municipaux norvégiens (ville d’Oslo, services sociaux, bydel Frogner). Aucune réponse substantielle.",
+        "source": "Source : fil de courriels « URGENT : Je n'arrive pas a savoir si ma fille se porte bien... », échangé avec Anne Jensen (ville d’Oslo) et transmis à l’Ambassade de France ; voir les PDF sources dans ca/."
+      },
+      "october2015": {
+        "date": "Octobre 2015",
+        "body": "Contact avec l’Ambassade de France en Norvège (Vice-Consul). Il est indiqué au père que sa première démarche doit être de saisir l’Autorité centrale française au titre de la Convention de La Haye.",
+        "source": "Source : réponse d’Elodie Weiss (Ambassade de France en Norvège), 6 octobre 2015 ; voir les PDF sources dans ca/."
+      },
+      "october192015": {
+        "date": "19 octobre 2015",
+        "body": "Premier contact avec l’Autorité centrale française (Bureau du droit de l’Union, du droit international privé et de l’entraide civile — Direction des affaires civiles et du Sceau, Ministère de la justice).",
+        "source": "Source : courriel à ENTRAIDE-CIVILE-INTERNATIONALE, 19 octobre 2015 ; voir les PDF sources dans ca/."
+      },
+      "october222015": {
+        "date": "22 octobre 2015",
+        "body": "L’Autorité centrale française confirme que la France et la Norvège sont liées par la Convention de La Haye du 25 octobre 1980 et que le père peut demander le retour de l’enfant. Elle cite l’article 3 et précise que la demande peut être adressée à l’Autorité centrale française ou directement à l’Autorité centrale norvégienne ; la procédure judiciaire aura lieu dans l’État où l’enfant se trouve.",
+        "source": "Source : réponse de Marie-Alice ESTERHAZY, juriste, 22 octobre 2015 ; voir les PDF sources dans ca/."
+      },
+      "december2015": {
+        "date": "Décembre 2015",
+        "body": "Le père saisit l’Autorité centrale norvégienne (The Royal Ministry of Justice and Public Security, Department of Civil Affairs ; contact : Ingrid Skogsholm). La demande paraît bloquée ; il sollicite l’aide de l’Autorité centrale française et des informations pour obtenir un avocat en Norvège.",
+        "source": "Source : courriel du père du 22 décembre 2015 ; référence à « Nabla Mail - Request for return of child from Norway to France.pdf » ; ca/."
+      },
+      "january2016": {
+        "date": "Janvier 2016",
+        "body": "L’Autorité centrale française ne parvient pas à ouvrir certaines pièces jointes et transmet de nouveau une liste d’avocats norvégiens spécialisés. Le père répond que cette liste n’a pas changé depuis six mois et qu’il a déjà contacté tous les avocats sans réponse favorable.",
+        "source": "Source : échanges avec ENTRAIDE-CIVILE-INTERNATIONALE, janvier 2016 ; voir les PDF sources dans ca/."
+      },
+      "year2016": {
+        "date": "2016",
+        "body": "Relances France–Norvège concernant l’enlèvement et les demandes de retour ; demande d’explications écrites aux autorités compétentes ; suivi des demandes fondées sur la Convention. Le tribunal de district d’Oslo refuse la demande de retour en avril 2016.",
+        "source": "Source : documents dans ca/, notamment 38DE2016, BDIP_38DE2016 NORVEGE, Follow-up on Hague Convention Requests et Demande d'explications écrites des autorités compétentes."
+      },
+      "related": "Pages dédiées à la demande d’explications écrites et contexte allemand :",
+      "group2022": "2022 – 2026",
+      "year2022": {
+        "date": "2022",
+        "body": "L’enfant est déplacé en Allemagne (2021 ou après). Les démarches doivent être poursuivies ou recommencées auprès des autorités et de l’Autorité centrale allemandes. Les autorités et services de police français et allemands n’ayant pas localisé l’enfant, le père se rend seul en Allemagne, localise l’enfant à Francfort et demande à l’Autorité centrale allemande son retour en France.",
+        "source": "Contexte : voir la page d’accueil, for-fathers.html et les documents de ca/ relatifs à l’Allemagne."
+      },
+      "since2022": {
+        "date": "Depuis 2022",
+        "body": "Relances concernant le déplacement France–Norvège–Allemagne et les procédures de retour ; demande d’assistance pour l’enlèvement en Allemagne ; suivis avec les Autorités centrales française, norvégienne et allemande.",
+        "source": "Source : documents dans ca/, notamment BDIP_38DE2016 NORVEGE - GERMANY, Relance, Aide requis pour un enlèvement d'enfant en Allemagne et Abduction FRANCE_NORVEGE - GERMANY."
+      },
+      "year2024": {
+        "date": "2024",
+        "body": "L’Autorité centrale allemande ne répondant pas aux demandes du père, celui-ci demande à l’Autorité centrale française d’intervenir auprès de l’Allemagne afin d’obtenir une réponse et une action au titre de la Convention de La Haye."
+      },
+      "february2025": {
+        "date": "Février 2025",
+        "body": "L’Autorité centrale française devait contacter l’Autorité centrale allemande pour obtenir une réponse et faire avancer la procédure de retour. Il apparaît que le ministère français de la Justice n’a engagé d’action significative qu’en février 2026."
+      },
+      "today2026": {
+        "date": "Aujourd’hui (2026)",
+        "body": "La situation demeure non résolue. Les contacts et relances auprès des Autorités centrales se poursuivent. Cette chronologie illustre qu’une réponse ou une avancée peut prendre des années et qu’un nouveau déplacement de l’enfant vers un autre État peut obliger le parent resté sur place à recommencer les démarches.",
+        "source": "Voir ca/ pour l’ensemble des courriels et PDF, les pages de demande d’explications écrites et abduction-germany.html."
+      }
+    },
+    "legal": {
+      "title": "Fondements juridiques : enlèvement d’enfant au titre de la Convention de La Haye",
+      "intro": "Les Autorités centrales, et en particulier l’Autorité centrale française, s’appuient sur la Convention de La Haye du 25 octobre 1980 sur les aspects civils de l’enlèvement international d’enfants. Voici l’argument juridique cité (article 3) et une synthèse de son interprétation.",
+      "article3Title": "Ce que l’Autorité centrale a cité : article 3 de la Convention",
+      "article3Intro": "Dans son courriel du 22 octobre 2015, l’Autorité centrale française indique qu’au sens de l’article 3, le déplacement ou le non-retour d’un enfant est considéré comme illicite lorsque :",
+      "clauseA": "il a lieu en violation d’un droit de garde attribué à une personne, une institution ou tout autre organisme, seul ou conjointement, par le droit de l’État dans lequel l’enfant avait sa résidence habituelle immédiatement avant son déplacement ou son non-retour ; et",
+      "clauseB": "au moment du déplacement ou du non-retour, ce droit était exercé de façon effective, seul ou conjointement, ou l’aurait été si le déplacement ou le non-retour n’avait pas eu lieu.",
+      "clauseDetail": "Le droit de garde peut notamment résulter de la loi, d’une décision judiciaire ou administrative, ou d’un accord ayant effet juridique selon le droit de cet État.",
+      "source": "Source : Convention du 25 octobre 1980 sur les aspects civils de l’enlèvement international d’enfants ; citée par l’Autorité centrale française dans son courriel du 22 octobre 2015.",
+      "interpretationTitle": "Comment interpréter cela (résumé)",
+      "wrongfulTitle": "Déplacement ou non-retour illicite —",
+      "wrongfulBody": "Pour que la Convention s’applique, le déplacement ou le non-retour doit violer un droit de garde au regard du droit de l’État de résidence habituelle immédiatement avant les faits, et ce droit doit avoir été exercé effectivement ou l’aurait été sans le déplacement ou le non-retour.",
+      "custodyTitle": "Droit de garde —",
+      "custodyBody": "Il peut résulter de la loi, d’une décision judiciaire ou administrative ou d’un accord ayant effet juridique. Le parent resté sur place qui disposait d’un droit de garde dans l’État de résidence habituelle peut invoquer l’article 3.",
+      "habitualTitle": "Résidence habituelle —",
+      "habitualBody": "Le moment déterminant est celui immédiatement antérieur au déplacement ou au non-retour. Les autorités et juridictions de l’État où se trouve ensuite l’enfant apprécient la résidence habituelle et le caractère illicite du déplacement ou du non-retour.",
+      "returnTitle": "Procédure de retour —",
+      "returnBody": "La procédure de retour se déroule dans l’État où se trouve l’enfant. Le parent resté sur place peut adresser la demande à l’Autorité centrale de son propre pays ou à celle de l’État où se trouve l’enfant.",
+      "practicalTitle": "Conséquence pratique —",
+      "practicalBody": "Lorsque le déplacement ou le non-retour est illicite au sens de l’article 3, la Convention prévoit un mécanisme de demande de retour. En pratique, obtenir un avocat et une action des Autorités centrales et des juridictions dans un délai raisonnable peut être très difficile ; un nouveau déplacement vers un autre pays peut obliger le parent à recommencer.",
+      "legalBasis": "Base juridique : Convention de La Haye du 25 octobre 1980 (art. 3, 8, 12, etc.). Pour les motifs de refus norvégiens (art. 3, 12, 13, 20) et les Autorités centrales française et norvégienne, voir :"
+    },
+    "documents": {
+      "title": "Documents (répertoire ca/)",
+      "intro": "Les fichiers suivants de ca/ sont des PDF sources de courriels et d’autres exports de messages envoyés aux Autorités centrales ou reçus de celles-ci et d’organismes liés. Ils sont cités dans la chronologie et la section juridique.",
+      "emailTitle": "PDF sources de courriels",
+      "emailBody": "« Nabla Mail - RE: URGENT : Je n'arrive pas a savoir si ma fille se porte bien....pdf », « Nabla Mail - Request for return of child from Norway to France » et fichiers associés, ainsi que « Gmail - Demande d'explications écrites des autorités compétentes.pdf ».",
+      "otherTitle": "Autres PDF",
+      "otherBody": "38DE2016, Abduction FRANCE_NORVEGE - GERMANY, Aide requis pour un enlèvement d'enfant en Allemagne, BDIP_38DE2016 NORVEGE, Follow-up on Hague Convention Requests – Status Inquiry and Clarification, différents fichiers Relance et E155M931129_20160222170048109-001.pdf.",
+      "osloTitle": "Procédure d’Oslo (Norvège)",
+      "osloBody": "Les documents du père et de la mère dans l’affaire devant le tribunal de district d’Oslo (demande de retour, décision, ca/abduction/oslo/) sont listés sur abduction-norway.html.",
+      "open": "Ouvrir le répertoire ca/"
+    },
+    "contacts": {
+      "title": "Autorités centrales et personnes contactées (France, Norvège, Allemagne)",
+      "intro": "Voici les Autorités centrales et les principaux contacts institutionnels joints dans chaque pays dans le cadre de la Convention de La Haye et des démarches liées. La liste provient des correspondances et PDF sources ; les fichiers de ca/ doivent être consultés pour les autres signataires ou contacts éventuels.",
+      "france": {
+        "name": "🇫🇷 France",
+        "authority": "Autorité centrale française (Convention de La Haye)",
+        "details": "Bureau du droit de l’Union, du droit international privé et de l’entraide civile — ENTRAIDE-CIVILE-INTERNATIONALE\nDirection des affaires civiles et du Sceau / Ministère de la justice\n13, place Vendôme, 75042 Paris Cedex 01\nTél. : 01.44.77.61.05 — Fax : 01.44.77.61.22\nEmail : entraide-civile-internationale@justice.gouv.fr",
+        "people": "Personnes contactées : Marie-Alice ESTERHAZY, juriste (correspondance 2015–2016) ; BESNARD Maud ; POULARD Morgane ; Diane LE GALL. D’autres noms peuvent apparaître dans les PDF sources de ca/."
+      },
+      "franceMinistry": "Ministère des Affaires étrangères — Mission de la protection des droits des personnes / Bureau de la protection des mineurs et de la famille, 27 rue de la Convention, CS 91533, 75015 Paris Cedex 15. Tél. : +33 (0)1 43 17 53 53.",
+      "norway": {
+        "name": "🇳🇴 Norvège",
+        "authority": "Autorité centrale norvégienne (Convention de La Haye)",
+        "details": "The Royal Ministry of Justice and Public Security — Department of Civil Affairs\nPersonne contactée : Ingrid Skogsholm, Higher Executive Officer\nTél. : +47 22 24 53 33 — Fax : +47 22 24 27 22\nEmail : ingrid.skogsholm@jd.dep.no (2015–2016)",
+        "extra": "Pour la procédure devant le tribunal de district d’Oslo et les motifs juridiques du refus du retour en 2016, voir abduction-norway.html."
+      },
+      "norwayCity": "Ville d’Oslo — Department for Seniors and Social Affairs (bydel Frogner). Personne contactée : Anne Jensen, Chief advisor (correspondance 2015).",
+      "norwayEmbassy": "Ambassade de France en Norvège. Personne contactée : Elodie Weiss, Vice-Consul (2015). Tél. : +47 23 28 46 30 — Portable : +47 92 68 00 18.",
+      "germany": {
+        "name": "🇩🇪 Allemagne",
+        "authority": "Autorité centrale allemande (Convention de La Haye)",
+        "details": "Bundesamt für Justiz (Office fédéral de la Justice). Les enlèvements d’enfants et les questions de droit international de la famille relèvent de l’Autorité centrale du Bundesamt für Justiz.",
+        "extra": "Des contacts et relances ont été effectués ; voir la chronologie et les documents de ca/, notamment les références au dossier 38DE2016 et aux échanges sur l’enlèvement France–Norvège–Allemagne et les demandes de retour."
+      }
+    }
+  }
+}

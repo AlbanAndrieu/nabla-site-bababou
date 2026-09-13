@@ -1,0 +1,141 @@
+{
+  "centralAuthoritiesPage": {
+    "meta": {
+      "title": "Reaching Central Authorities — Hague Convention | Bababou",
+      "description": "Contacting Central Authorities in child abduction cases: timeline, delays, and how to interpret legal grounds under the Hague Convention of 25 October 1980."
+    },
+    "hero": {
+      "title": "Reaching Central Authorities",
+      "lead": "Contacts, delays, legal grounds and documented follow-ups with the French, Norwegian and German Central Authorities under the Hague Convention of 25 October 1980."
+    },
+    "summary": {
+      "title": "Summary of this page",
+      "body": "This page documents the father’s contact with Central Authorities in the framework of the Hague Convention of 25 October 1980 on the Civil Aspects of International Child Abduction. It includes a timeline from first contact to today, an important note on how long it can take for Central Authorities to answer or act, and an explanation of how to interpret the legal grounds for child abduction under the Convention, with references to the Convention, official emails, and documents stored in the ca/ directory. For the Norway proceedings and the legal grounds used by Norway to refuse the petition for return (Oslo District Court, 2016), see the dedicated Norway page.",
+      "citations": "All cited laws, documents and emails are referenced at the end of each section or in the list of documents and emails."
+    },
+    "timeline": {
+      "title": "Timeline: from first contact to today",
+      "warningTitle": "Central Authorities can take years to answer or to take meaningful action.",
+      "warningBody": "Delays of many months or years are common. Persistence and written follow-ups (relances) are necessary; even then, procedures may remain stuck or be restarted when the child is moved to another country.",
+      "group2015": "2015 – 2016",
+      "september2015": {
+        "date": "September 2015",
+        "body": "First attempts to obtain information on the child’s welfare from Norwegian municipal services (City of Oslo, Department for Seniors and Social Affairs; bydel Frogner). No substantive answers.",
+        "source": "Source: email thread ‘URGENT : Je n'arrive pas a savoir si ma fille se porte bien...’, exchanged with Anne Jensen (City of Oslo) and forwarded to the French Embassy; see email source PDFs in ca/."
+      },
+      "october2015": {
+        "date": "October 2015",
+        "body": "Contact with the French Embassy in Norway (Vice-Consul). The father is advised that his first step must be to seize the French Central Authority for the Hague Convention.",
+        "source": "Source: reply from Elodie Weiss (Ambassade de France en Norvège), 6 Oct 2015; see the email source PDFs in ca/."
+      },
+      "october192015": {
+        "date": "19 October 2015",
+        "body": "First contact with the French Central Authority (Bureau du droit de l’Union, du droit international privé et de l’entraide civile — Direction des affaires civiles et du Sceau, Ministère de la justice).",
+        "source": "Source: email to ENTRAIDE-CIVILE-INTERNATIONALE, 19 Oct 2015; see email source PDFs in ca/."
+      },
+      "october222015": {
+        "date": "22 October 2015",
+        "body": "The French Central Authority confirms that France and Norway are bound by the Hague Convention of 25 October 1980 and that the father may request the return of the child. They cite Article 3 and indicate that the request may be sent either to the French Central Authority or directly to the Norwegian Central Authority; the judicial procedure will take place in the country where the child is present.",
+        "source": "Source: reply from Marie-Alice ESTERHAZY, Juriste, 22 Oct 2015; see email source PDFs in ca/."
+      },
+      "december2015": {
+        "date": "December 2015",
+        "body": "The father seizes the Norwegian Central Authority (The Royal Ministry of Justice and Public Security, Department of Civil Affairs; contact: Ingrid Skogsholm). The request appears blocked; he asks the French Central Authority for help and information on obtaining a lawyer in Norway.",
+        "source": "Source: father’s email 22 Dec 2015; reference to ‘Nabla Mail - Request for return of child from Norway to France.pdf’; ca/."
+      },
+      "january2016": {
+        "date": "January 2016",
+        "body": "The French Central Authority cannot open some attached documents and again provides a list of Norwegian lawyers specialised in parental abduction. The father replies that the list has not changed in six months and that he has contacted all lawyers on it without any favourable response.",
+        "source": "Source: exchange with ENTRAIDE-CIVILE-INTERNATIONALE, Jan 2016; see email source PDFs in ca/."
+      },
+      "year2016": {
+        "date": "2016",
+        "body": "Follow-ups and relances (France–Norway) regarding abduction and return requests; request for written explanations from the competent authorities; follow-up on Hague Convention requests. Oslo District Court refuses the petition for return in April 2016.",
+        "source": "Source: documents in ca/, including 38DE2016, BDIP_38DE2016 NORVEGE, Follow-up on Hague Convention Requests, and Demande d'explications écrites des autorités compétentes."
+      },
+      "related": "Dedicated written-explanations pages and the Germany context:",
+      "group2022": "2022 – 2026",
+      "year2022": {
+        "date": "2022",
+        "body": "The child is moved to Germany (2021 or later). Procedures must be pursued or restarted with the German authorities and Central Authority. Germany and France police and authorities refused to locate the child. The father goes to Germany on his own, locates the child in Frankfurt, and asks the German Central Authority to return the child to France.",
+        "source": "Context: see the homepage, for-fathers.html and documents in ca/ referring to Germany."
+      },
+      "since2022": {
+        "date": "2022 onwards",
+        "body": "Relances concerning the child’s displacement France–Norway–Germany and return proceedings; request for assistance for child abduction in Germany; follow-ups with French, Norwegian and German Central Authorities.",
+        "source": "Source: documents in ca/, including BDIP_38DE2016 NORVEGE - GERMANY, Relance, Aide requis pour un enlèvement d'enfant en Allemagne and Abduction FRANCE_NORVEGE - GERMANY."
+      },
+      "year2024": {
+        "date": "2024",
+        "body": "As the German Central Authority did not answer the father’s requests, the father asked the French Central Authority to urge Germany to respond and to act under the Hague Convention."
+      },
+      "february2025": {
+        "date": "February 2025",
+        "body": "The French Central Authority was expected to contact the German Central Authority in order to obtain a response and advance the return procedure. It appears that the French Ministry of Justice did not take meaningful action until February 2026."
+      },
+      "today2026": {
+        "date": "Today (2026)",
+        "body": "The situation remains unresolved. Contact with Central Authorities and follow-ups continue. The timeline illustrates that it can take years for Central Authorities to answer or for procedures to advance, and that a change of country by the abducting parent can force parents to start again in the new State.",
+        "source": "See ca/ for the full set of emails and PDFs, the written-explanations pages, and abduction-germany.html."
+      }
+    },
+    "legal": {
+      "title": "Legal grounds: child abduction under the Hague Convention",
+      "intro": "Central Authorities and the French Central Authority in particular rely on the Hague Convention of 25 October 1980 on the Civil Aspects of International Child Abduction. Below is the legal argument they cite (Article 3) and a short explanation of how to interpret it.",
+      "article3Title": "What the Central Authority cited: Article 3 of the Convention",
+      "article3Intro": "The French Central Authority stated in its email of 22 October 2015 that, under Article 3 of the Convention, the removal or the non-return of a child is considered wrongful when:",
+      "clauseA": "it is in breach of rights of custody attributed to a person, an institution or any other body, either jointly or alone, under the law of the State in which the child was habitually resident immediately before the removal or retention; and",
+      "clauseB": "at the time of removal or retention those rights were actually exercised, either jointly or alone, or would have been so exercised but for the removal or retention.",
+      "clauseDetail": "The rights of custody may arise in particular by operation of law, by reason of a judicial or administrative decision, or by reason of an agreement having legal effect under the law of that State.",
+      "source": "Source: Convention of 25 October 1980 on the Civil Aspects of International Child Abduction; quoted by the French Central Authority in its email of 22 Oct 2015.",
+      "interpretationTitle": "How to interpret this (summary)",
+      "wrongfulTitle": "Wrongful removal or retention —",
+      "wrongfulBody": "For the Convention to apply, the removal or retention must breach rights of custody under the law of the State where the child was habitually resident immediately before the removal or non-return, and those rights must have been actually exercised or would have been but for the removal or retention.",
+      "custodyTitle": "Rights of custody —",
+      "custodyBody": "These can come from law, a court or administrative decision, or an agreement with legal effect in that State. A left-behind parent who had custody rights under the law of the country of habitual residence can invoke Article 3.",
+      "habitualTitle": "Habitual residence —",
+      "habitualBody": "The key moment is immediately before the removal or retention. The authorities and courts of the country where the child is then present will assess habitual residence and whether the removal or retention was wrongful.",
+      "returnTitle": "Return procedure —",
+      "returnBody": "The return procedure takes place in the State where the child is present. The left-behind parent can send the return request to the Central Authority of their own country or to the Central Authority of the country where the child is.",
+      "practicalTitle": "Practical takeaway —",
+      "practicalBody": "If the removal or retention is wrongful under Article 3, the Convention provides a mechanism to request the child’s return. In practice, obtaining a lawyer and getting Central Authorities and courts to act within a reasonable time can be very difficult, and a further move to another country can force the left-behind parent to start again.",
+      "legalBasis": "Legal basis: Hague Convention of 25 October 1980 (Arts. 3, 8, 12, etc.). For Norway’s refusal grounds (Arts. 3, 12, 13, 20), the French authority and the Norwegian authority, see:"
+    },
+    "documents": {
+      "title": "Documents (ca/ directory)",
+      "intro": "The following files in ca/ are email source PDFs and other mail exports sent to or from Central Authorities or related bodies. They are cited in the timeline and legal sections above.",
+      "emailTitle": "Email source PDFs",
+      "emailBody": "‘Nabla Mail - RE: URGENT : Je n'arrive pas a savoir si ma fille se porte bien....pdf’, ‘Nabla Mail - Request for return of child from Norway to France’ and related files, plus ‘Gmail - Demande d'explications écrites des autorités compétentes.pdf’.",
+      "otherTitle": "Other PDFs",
+      "otherBody": "38DE2016, Abduction FRANCE_NORVEGE - GERMANY, Aide requis pour un enlèvement d'enfant en Allemagne, BDIP_38DE2016 NORVEGE, Follow-up on Hague Convention Requests – Status Inquiry and Clarification, Relance files and E155M931129_20160222170048109-001.pdf.",
+      "osloTitle": "Oslo proceedings (Norway)",
+      "osloBody": "Documents from the father and the mother in the Oslo District Court case (petition for return, court verdict, ca/abduction/oslo/) are listed on abduction-norway.html.",
+      "open": "Open the ca/ directory"
+    },
+    "contacts": {
+      "title": "Central Authorities and persons contacted (France, Norway, Germany)",
+      "intro": "Below are the Central Authorities and main institutional contacts reached in each country in the framework of the Hague Convention and related steps. The list is drawn from correspondence and email source PDFs; the PDFs in ca/ should be checked for any further signatories or contacts.",
+      "france": {
+        "name": "🇫🇷 France",
+        "authority": "French Central Authority (Hague Convention)",
+        "details": "Bureau du droit de l’Union, du droit international privé et de l’entraide civile — ENTRAIDE-CIVILE-INTERNATIONALE\nDirection des affaires civiles et du Sceau / Ministère de la justice\n13, place Vendôme, 75042 Paris Cedex 01\nTel: 01.44.77.61.05 — Fax: 01.44.77.61.22\nEmail: entraide-civile-internationale@justice.gouv.fr",
+        "people": "Persons contacted: Marie-Alice ESTERHAZY, Juriste (2015–2016 correspondence); BESNARD Maud; POULARD Morgane; Diane LE GALL. Further names may appear in the email source PDFs in ca/."
+      },
+      "franceMinistry": "Ministère des Affaires étrangères — Mission de la protection des droits des personnes / Bureau de la protection des mineurs et de la famille, 27 rue de la Convention, CS 91533, 75015 Paris Cedex 15. Tel: +33 (0)1 43 17 53 53.",
+      "norway": {
+        "name": "🇳🇴 Norway",
+        "authority": "Norwegian Central Authority (Hague Convention)",
+        "details": "The Royal Ministry of Justice and Public Security — Department of Civil Affairs\nPerson contacted: Ingrid Skogsholm, Higher Executive Officer\nTel: +47 22 24 53 33 — Fax: +47 22 24 27 22\nEmail: ingrid.skogsholm@jd.dep.no (2015–2016)",
+        "extra": "For the Oslo District Court proceedings and the legal grounds used by Norway to refuse the petition for return (2016), see abduction-norway.html."
+      },
+      "norwayCity": "City of Oslo — Department for Seniors and Social Affairs (bydel Frogner). Person contacted: Anne Jensen, Chief advisor (2015 correspondence).",
+      "norwayEmbassy": "Ambassade de France en Norvège. Person contacted: Elodie Weiss, Vice-Consul (2015). Tel: +47 23 28 46 30 — Cell: +47 92 68 00 18.",
+      "germany": {
+        "name": "🇩🇪 Germany",
+        "authority": "German Central Authority (Hague Convention)",
+        "details": "Bundesamt für Justiz (Federal Office of Justice). Child abduction and international family law matters are handled by the Central Authority at the Bundesamt für Justiz.",
+        "extra": "Contact has been made and follow-ups sent; see the timeline and documents in ca/, including references to case 38DE2016 and correspondence on abduction France–Norway–Germany and return requests."
+      }
+    }
+  }
+}
