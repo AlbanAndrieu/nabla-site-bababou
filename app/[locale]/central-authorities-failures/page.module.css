@@ -18,7 +18,6 @@
 }
 
 .badges,
-.heroActions,
 .timeline {
   display: flex;
   flex-wrap: wrap;
@@ -36,10 +35,6 @@
   margin: var(--ui-space-lg) auto 0;
   color: var(--ui-text-secondary);
   font-size: clamp(1.05rem, 2vw, 1.25rem);
-}
-
-.heroActions {
-  margin-top: var(--ui-space-lg);
 }
 
 .section {
@@ -90,8 +85,7 @@
   gap: var(--ui-space-sm);
 }
 
-.countryHeading h3,
-.readMoreGrid h3 {
+.countryHeading h3 {
   margin: 0;
 }
 
@@ -128,8 +122,15 @@
   text-align: center;
 }
 
-.readMoreGrid p {
-  color: var(--ui-text-secondary);
+.readMoreBody {
+  height: 100%;
+}
+
+.readMoreBody > a {
+  width: 100%;
+  height: 100%;
+  justify-content: flex-start;
+  overflow-wrap: anywhere;
 }
 
 @media (max-width: 900px) {
@@ -140,10 +141,6 @@
 }
 
 @media (max-width: 480px) {
-  .heroActions > * {
-    width: 100%;
-  }
-
   .timeline {
     flex-direction: column;
   }

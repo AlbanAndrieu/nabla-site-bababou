@@ -1,0 +1,67 @@
+{
+  "centralAuthoritiesFailuresPage": {
+    "meta": {
+      "title": "Échec des autorités centrales : un père en Europe n’a pas pu faire localiser ni ramener son enfant | Bababou",
+      "description": "Résumé des défaillances des autorités centrales en France, en Norvège et en Allemagne : enfant non localisé, retour refusé ou non enregistré, années de retard. L’expérience d’un père au titre de la Convention de La Haye."
+    },
+    "scope": {
+      "label": "Périmètre de l’article",
+      "hague": "Convention de La Haye",
+      "france": "France",
+      "norway": "Norvège",
+      "germany": "Allemagne"
+    },
+    "hero": {
+      "title": "Échec des autorités centrales : un père en Europe n’a pas pu faire localiser ni ramener son enfant",
+      "lead": "Résumé des défaillances institutionnelles dans trois pays — enfant non localisé, retour refusé ou non enregistré, années de retard."
+    },
+    "summary": {
+      "title": "En bref",
+      "locatedTitle": "Aucune autorité n’a localisé l’enfant.",
+      "locatedBody": "La France, la Norvège et l’Allemagne n’ont pas localisé l’enfant ; le père a dû la retrouver lui-même en Allemagne.",
+      "norwayTitle": "La Norvège a refusé le retour.",
+      "norwayBody": "Le tribunal de district d’Oslo a rejeté la demande de retour au titre de la Convention de La Haye (2016).",
+      "germanyTitle": "L’Allemagne a refusé d’enregistrer la demande de retour.",
+      "germanyBody": "L’Autorité centrale allemande n’a pas voulu enregistrer la demande du père visant au retour en France ; l’autorité française a d’abord indiqué qu’elle n’était « pas compétente » pour un déplacement Norvège→Allemagne.",
+      "delayTitle": "Des années de retard.",
+      "delayBody": "Les Autorités centrales ont mis des mois ou des années à répondre ; les procédures ont recommencé lorsque l’enfant a été déplacée vers un autre pays."
+    },
+    "countries": {
+      "title": "Défaillances par pays",
+      "france": {
+        "name": "France",
+        "point1": "Des années de retard avant une action significative (par exemple, contact avec l’autorité allemande seulement en 2026).",
+        "point2": "L’affaire a d’abord été considérée comme relevant d’une autorité « non compétente » pour le déplacement Norvège→Allemagne ; le père a dû insister sur un retour en France.",
+        "point3": "Aucune localisation de l’enfant par les autorités françaises.",
+        "cta": "Démarches auprès des Autorités centrales"
+      },
+      "norway": {
+        "name": "Norvège",
+        "point1": "Le tribunal de district d’Oslo a rejeté la demande de retour (2016) sur le fondement de la Convention (résidence habituelle, art. 3, 12, 13 et 20).",
+        "point2": "Aucune localisation de l’enfant par les autorités norvégiennes ; le père n’a disposé d’aucun recours effectif permettant son retour.",
+        "cta": "Enlèvement en Norvège"
+      },
+      "germany": {
+        "name": "Allemagne",
+        "point1": "L’Autorité centrale a refusé d’enregistrer la demande de retour (contradiction avec le droit de visite, délai de l’art. 12, demande de retrait).",
+        "point2": "L’autorité allemande « n’avait aucune trace » d’une demande de retour de 2022 ; elle supposait que le retour était demandé vers la Norvège, et non vers la France.",
+        "point3": "Aucune localisation de l’enfant par les autorités allemandes ; le père a lui-même localisé l’enfant à Francfort.",
+        "cta": "Enlèvement en Allemagne"
+      }
+    },
+    "timeline": {
+      "title": "Chronologie",
+      "norway": "Norvège",
+      "refused": "Retour refusé (Oslo)",
+      "germany": "Enfant en Allemagne",
+      "noReturn": "Toujours aucun retour",
+      "fullTimeline": "Chronologie complète sur la page des Autorités centrales"
+    },
+    "readMore": {
+      "title": "Lire l’histoire complète",
+      "centralAuthorities": "Démarches auprès des Autorités centrales",
+      "norway": "Enlèvement en Norvège — Motifs juridiques du refus",
+      "germany": "Enlèvement en Allemagne — Demande d’explications écrites"
+    }
+  }
+}
