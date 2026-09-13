@@ -1,3 +1,10 @@
+## [0.16.1](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.16.0...0.16.1) (2026-09-13)
+
+
+### Bug Fixes
+
+* **ui:** repair back-to-top controls on static pages ([#192](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/192)) ([a138a49](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/a138a4965c06f66ac756da3dbb80b261ee5dbaab))
+
 # [0.16.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.15.4...0.16.0) (2026-09-12)
 
 
