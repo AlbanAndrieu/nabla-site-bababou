@@ -1,4 +1,24 @@
+import { readdirSync, readFileSync } from "node:fs";
+import { join, relative } from "node:path";
 import { expect, test } from "@playwright/test";
+
+function collectHtmlFiles(directory: string): string[] {
+	return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+		const entryPath = join(directory, entry.name);
+		if (entry.isDirectory()) return collectHtmlFiles(entryPath);
+		return entry.isFile() && entry.name.endsWith(".html") ? [entryPath] : [];
+	});
+}
+
+const staticBackToTopPages = collectHtmlFiles("public").filter((filePath) =>
+	readFileSync(filePath, "utf8").includes('href="#top"'),
+);
+
+const representativeStaticPages = [
+	"/people-contacted.html",
+	"/ca/index.html",
+	"/policy/impressum.html",
+];
 
 test.describe("Site widgets integration", () => {
 	test("should inject print, back-to-top on homepage", async ({ page }) => {
@@ -53,24 +73,42 @@ test.describe("Site widgets integration", () => {
 		await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
 	});
 
-	test("static page footer and floating back-to-top controls scroll to the top", async ({
-		page,
-	}) => {
-		await page.goto("/people-contacted.html");
-		const floatingBackToTop = page.locator("#nabla-back-to-top");
-		const footerBackToTop = page.locator('footer a[href="#top"]');
-		await expect(floatingBackToTop).toBeVisible();
-		await expect(footerBackToTop).toBeVisible();
+	test("all legacy #top pages load the shared back-to-top widget", () => {
+		expect(staticBackToTopPages.length).toBeGreaterThan(0);
 
-		for (const control of [footerBackToTop, floatingBackToTop]) {
-			await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-			await expect
-				.poll(() => page.evaluate(() => window.scrollY))
-				.toBeGreaterThan(0);
-			await control.click();
-			await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+		for (const filePath of staticBackToTopPages) {
+			const source = readFileSync(filePath, "utf8");
+			expect(
+				source,
+				`${relative(process.cwd(), filePath)} must load site-widgets.js`,
+			).toContain("site-widgets.js");
 		}
 	});
+
+	for (const path of representativeStaticPages) {
+		test(`${path} footer and floating back-to-top controls scroll to the top`, async ({
+			page,
+		}) => {
+			await page.goto(path);
+			const floatingBackToTop = page.locator("#nabla-back-to-top");
+			const footerBackToTop = page.locator('footer a[href="#top"]');
+			await expect(floatingBackToTop).toBeVisible();
+			await expect(footerBackToTop).toBeVisible();
+
+			for (const control of [footerBackToTop, floatingBackToTop]) {
+				await page.evaluate(() => {
+					document.documentElement.style.minHeight = "200vh";
+					document.body.style.minHeight = "200vh";
+					window.scrollTo(0, document.documentElement.scrollHeight);
+				});
+				await expect
+					.poll(() => page.evaluate(() => window.scrollY))
+					.toBeGreaterThan(0);
+				await control.click();
+				await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+			}
+		});
+	}
 
 	test("should scroll to top when back-to-top control has href '#'", async ({
 		page,
