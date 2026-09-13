@@ -10,6 +10,9 @@
   --ui-border: var(--border-color, #dee2e6);
   --ui-link: var(--link-color, #0b5ed7);
   --ui-link-hover: var(--link-hover, #0056b3);
+  --ui-info-surface: #cff4fc;
+  --ui-info-border: #9eeaf9;
+  --ui-info-text: #055160;
   --ui-success-surface: var(--alert-success-bg, #d4edda);
   --ui-success-border: var(--alert-success-border, #c3e6cb);
   --ui-success-text: var(--alert-success-text, #155724);
@@ -48,6 +51,9 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
+    --ui-info-surface: #073642;
+    --ui-info-border: #0aa2c0;
+    --ui-info-text: #b6effb;
     --ui-danger-surface: #4b1f24;
     --ui-danger-border: #842029;
     --ui-danger-text: #f5c2c7;
@@ -58,6 +64,9 @@
 }
 
 html[data-theme="light"] {
+  --ui-info-surface: #cff4fc;
+  --ui-info-border: #9eeaf9;
+  --ui-info-text: #055160;
   --ui-danger-surface: #f8d7da;
   --ui-danger-border: #f1aeb5;
   --ui-danger-text: #842029;
@@ -67,6 +76,9 @@ html[data-theme="light"] {
 }
 
 html[data-theme="dark"] {
+  --ui-info-surface: #073642;
+  --ui-info-border: #0aa2c0;
+  --ui-info-text: #b6effb;
   --ui-danger-surface: #4b1f24;
   --ui-danger-border: #842029;
   --ui-danger-text: #f5c2c7;
