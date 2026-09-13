@@ -27,7 +27,7 @@
 5. **Performance et CI** : réduire tracing, builds, téléchargements inutiles et coûts de validation.
 6. **Confidentialité finale hors homepage** : pseudonymisation/caviardage du corpus restant, extension du gate et vérification irréversible des documents/assets concernés.
 
-## État de référence — 2026-09-12
+## État de référence — 2026-09-13
 
 ### Terminé
 
@@ -78,7 +78,7 @@
   - [x] Observer le premier smoke production post-merge : #170 a déployé `cdf0dfa` en `READY` avec les alias `www.bababou.com` / `bababou.com`; Vercel ne remonte aucun runtime 4xx/5xx sur ce déploiement et la homepage publique répond. Le run Playwright #521 a néanmoins false-fail sur le `HTTP 307` du rewrite protégé `/ → /index.html`, pas sur une panne applicative.
   - [x] Corriger le smoke pour accepter uniquement ce `307` attendu vers `/index.html`, après avoir exclu les redirects d'authentification Vercel ; `/index.html` reste ensuite vérifié séparément en `200`.
   - [x] Observer le smoke post-#171/#172 : Playwright #523 a révélé un second faux échec, le header `x-vercel-set-bypass-cookie: true` provoquant lui-même un `307 Location: /` de handshake Vercel. Retirer ce header du smoke production et conserver le bypass header-only + OIDC ; le handshake cookie reste réservé au préflight Preview qui le gère explicitement.
-  - [ ] Observer le prochain smoke production après ce correctif avant de considérer ce contrôle opérationnel comme stabilisé.
+  - [x] Observer le smoke suivant après ce correctif : le merge #190 `9bf8d4f3826e20989247c5fb79bdc3806307d99a` est vert sur `Vercel`, `Production Post-deploy Smoke` et `Production DAST` (`H0 M4 L4 I5`). Le contrôle opérationnel est donc stabilisé sur une vraie évolution runtime.
 
 ## P1 — Stabiliser et simplifier le runtime
 
@@ -86,10 +86,10 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 
 - [x] Remplacer l'ancienne version preview de Next.js par une version stable ; le projet utilise désormais Next `16.3.4` (Active LTS), au-delà du minimum `16.3.3` de la security release d'août 2026.
 - [x] Aligner explicitement `next` et `eslint-config-next` dans le manifeste/lockfile et vérifier leur résolution effective (#123), puis converger vers `16.3.4` comme `nabla-site-alban`.
-- [ ] Séparer le runtime de développement/CI du runtime Vercel : #185 aligne dev/agents/CI principale sur Node `26.8.2` Current tout en conservant Vercel `24.x` comme cible de compatibilité production ; `package.json#engines.node` devient `>=24.11.0 <27` et npm reste `>=11.17.0 <12`.
+- [x] Séparer le runtime de développement/CI du runtime Vercel : #185 aligne dev/agents/CI principale sur Node `26.8.2` Current tout en conservant Vercel `24.x` comme cible de compatibilité production ; `package.json#engines.node` devient `>=24.11.0 <27` et npm reste `>=11.17.0 <12`.
   - [x] Synchroniser proprement les métadonnées `engines` racine de `package-lock.json` avec le manifeste via npm 11.17, sans changement du graphe de dépendances.
   - [x] Ajouter un check Node 24 ciblé et peu coûteux (`v24.11.0`, `npm ci`, tests unitaires seulement), skippé en Draft et sans dupliquer Next/Docker/SAST/DAST.
-  - [ ] Au checkpoint Ready de #185, prouver la Quality complète sous Node 26 et la compatibilité Node 24 avant publication.
+  - [x] Au checkpoint Ready de #185, prouver la Quality complète sous Node 26 et la compatibilité Node 24 avant publication : Quality #613, Node 24 #12, Vercel exact-SHA, Playwright, ZAP et Docker/Trivy ont tous été validés sur le HEAD `7560c77c33ea0769d6c306049d0b20bdf504ff94`.
 - [x] Supprimer `express` et `@types/express` après confirmation de l'absence de consommateur (#123).
   - [x] Audit du code versionné : aucun import ESM, `require()` ou appel `express()` trouvé.
   - [x] Retrait effectif avec régénération atomique du lockfile (#123).
@@ -157,11 +157,13 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 - [x] Donner à chaque route Next native ses propres Open Graph/Twitter metadata au lieu d'un aperçu social générique hérité du layout (#116).
 - [x] Harmoniser skip-link, top anchor, landmarks, icônes décoratives et navigation interne sur `contact`, `email` et `link` (#116).
 - [x] Retirer le bouton canonique `/cv` résiduel de `/contact` tout en conservant provisoirement les liens directs vers les variantes CV jusqu'à leur audit d'artefacts (#142).
-- [ ] Harmoniser cartes, boutons, spacing et typographie entre les surfaces Next natives.
+- [x] Harmoniser cartes, boutons, spacing, typographie et reflow entre les surfaces Next natives (#162, #190, #191).
   - [x] Appliquer globalement la préférence de thème `light|dark|auto` dès le layout Next, avant les runtimes page-specific, sans charger les widgets legacy (#160).
   - [x] Porter les tokens de contraste clair au niveau WCAG AA pour liens, boutons primaires et segments de thème inactifs, avec contrat déterministe light/dark (#160).
   - [x] Porter le design-system sémantique d’Alban #105–#107 : aliases `--ui-*`, `Container` responsive, `RouteHeader`, `Footer` et `ContactHero` scindés en CSS Modules, avec contrôles 44 px et focus visible sans dépendance Bootstrap sur ce chrome Next.
   - [x] Migrer le lot Bootstrap `card`/grid/actions des surfaces Next natives `email`, `policy` (index + six pages), `success`, `cancel`, `contact`, `link` et `test` vers `ActionLink`, `Container`, `ContentLayout` et `Surface`, avec contrat de non-régression (#162).
+  - [x] #190 valide le responsive sur 320/375 px, tablette portrait/paysage et desktop, y compris textes allemands plus longs, safe-area, contrôles 44 px, CTA, footer et absence d'overflow horizontal ; Preview exact-SHA, Playwright 137/137 et ZAP sont verts.
+  - [x] #191 ajoute le respect `prefers-reduced-motion` et valide sur Preview exact-SHA le reflow à 200 % de texte sur 320 px pour `/contact`, `/de/contact` et `/policy`; Playwright #561 est vert à 138/138 et ZAP #39 reste `H0 M4 L4 I5`.
 - [ ] Poursuivre les pages publiques structurées à faible risque en conservant le fallback legacy jusqu'à preuve de parité.
   - [x] Exception 404 : `public/404.html` reste la source protégée, consommée par `global-not-found`; la 404 React localisée de #118 n'est plus le comportement cible (#139).
   - [x] Accessibility Statement : route propre Next, source HTML inchangée conservée, chrome/metadata et Preview E2E validés (#124).
@@ -178,7 +180,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
       - [x] Localiser la surface Next `/test` en FR/EN/DE/NO via un domaine `messages/test`, y compris ses metadata noindex, sans importer le corpus legacy.
       - [x] Ajouter un contrat de coexistence qui exige `public/test.html` et ses signaux ARF (`d3.v3.min.js`, `arf.js`, `index.js`, association) et interdit tout redirect `/test.html` tant que la parité n'est pas démontrée.
       - [x] Ajouter une couverture Playwright FR/EN/DE/NO/noindex pour la surface Next et vérifier que `/test.html` reste un fallback ARF distinct.
-      - [ ] Exécuter cette couverture sur un checkpoint Vercel du SHA exact avant toute nouvelle déclaration de parité ou suppression legacy.
+      - [x] Exécuter cette couverture sur un checkpoint Vercel du SHA exact avant toute nouvelle déclaration de parité ou suppression legacy : #190 l'a validée dans Playwright Preview 137/137 et #191 la reconfirme dans la suite exacte 138/138. Cette preuve ne vaut pas parité ARF et n'autorise pas la suppression de `public/test.html`.
       - [x] Durcir le préflight Playwright afin qu'un `HTTP 429` ou `x-vercel-mitigated: challenge` soit identifié comme Vercel Security Checkpoint et rejeté avant les tests, au lieu d'être pris pour un accès valide.
     - [x] Inventorier les HTML legacy racine post-#167 : aucune nouvelle cible P3 faible risque immédiate n'est éligible ; `404.html` est protégée, `index.html` est owner-controlled, `contact.html` reste utile au fallback Docker statique, et les autres surfaces relèvent du corpus différé.
 - [ ] Différer les pages contenant un corpus familial sensible jusqu'à la phase finale de confidentialité.
@@ -204,12 +206,11 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
 - [x] Diagnostiquer la Quality `master` #594 (`34668252882`) : elle est rouge sur trois contrats unitaires devenus obsolètes après #182 ; #185 corrige ces trois régressions. La baseline exploitable reste `npm ci=18s`, `node_modules=693 MiB`; `full_checks`, Next build et `.next` sont `n/a` car les tests unitaires ont arrêté le job avant build.
 - [ ] Collecter plusieurs nouvelles baselines complètes et vertes avant toute promotion des budgets CI warning-only vers des seuils bloquants.
 - [x] #181 est fermée sans merge : son travail Tailwind/PostCSS est superseded par #182, donc aucun rebase artificiel n'est requis.
-- [ ] Terminer #185 en Draft à faible coût, puis seulement au checkpoint Ready exécuter Quality Node 26, compatibilité Node 24, Docker/Trivy, Vercel exact-SHA, Playwright et ZAP ; ne pas merger automatiquement.
-
+- [x] Terminer #185 en Draft à faible coût puis, au checkpoint Ready, exécuter Quality Node 26, compatibilité Node 24, Docker/Trivy, Vercel exact-SHA, Playwright et ZAP sans merge automatique : toutes ces preuves sont vertes sur `7560c77c33ea0769d6c306049d0b20bdf504ff94`.
 
 - [x] Aligner package/lockfile et retirer les dépendances confirmées orphelines (#123).
   - [x] Retirer `stripe`, `@stripe/stripe-js` et `@stripe/react-stripe-js` devenus sans consommateur après la migration/suppression des surfaces checkout (#144).
-  - [ ] Finaliser le retrait de `tailwindcss` et `@tailwindcss/postcss` : #182 retire déjà les deux dépendances, `postcss.config.mjs` et remplace Preflight par `app/reset.css` avec contrats unitaires ; garder l'item ouvert jusqu'au checkpoint Ready et à la preuve Preview exact-SHA + Playwright/ZAP sans régression CSS/build.
+  - [x] Finaliser le retrait de `tailwindcss` et `@tailwindcss/postcss` : #182 retire les deux dépendances, `postcss.config.mjs` et remplace Preflight par `app/reset.css`; le checkpoint #185 puis les Preview exact-SHA #190/#191 valident build, Playwright et ZAP sans régression CSS.
 - [ ] Retirer progressivement les runtimes/scripts legacy après preuve d'absence de consommateurs.
   - [x] Retirer les scaffolds Next orphelins non publiés `app/components/Hero.tsx`, les deux anciens `LocaleSwitcher.tsx` et `i18n/navigation.ts` après preuve d'absence d'import ; `RouteHeader` reste l'unique owner du switcher FR/EN/DE/NO et `/` continue d'être réécrit vers `public/index.html` (#168).
   - [x] Conserver OpenCommit sur décision explicite du propriétaire : wrapper/config et scripts `oco` / `opencommit` restaurés, dev-only et hors runtime (#150).
@@ -253,6 +254,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] Ajouter un OWASP ZAP Baseline GitHub sur le même `vercel.deployment.success`, filtré strictement sur `vercel-preview-pr-*` et le SHA exact de la PR ; le scanner reçoit le Protection Bypass via `ZAP_AUTH_HEADER_*`, cible uniquement l'URL `*.vercel.app` de Preview et publie le statut `OWASP ZAP Preview`.
   - [x] Pinner `zaproxy/action-baseline` v0.15.0 sur SHA immuable et l'image ZAP sur `2.17.0`; désactiver l'ouverture automatique d'issues.
   - [x] Automatiser le checkpoint `vercel-preview-pr-<N>` après Quality verte pour les PR internes ready et deploy-relevant ; attendre ensuite les statuts exact-SHA `Playwright Preview E2E` et `OWASP ZAP Preview` dans un job dédié, tout en conservant le workflow on-demand comme fallback manuel (#174).
+  - [ ] Stabiliser le **déclenchement autonome Vercel** de ces checkpoints : #191 prouve qu'un `git push` du checkpoint depuis Quality avec `GITHUB_TOKEN` peut créer/mettre à jour la ref sans qu'aucun déploiement Vercel ne soit enregistré ; republier le même SHA via une identité GitHub utilisateur/connector a immédiatement déclenché le Preview exact, Playwright et ZAP. Ne pas supposer qu'un simple remplacement par l'API GitHub sous le même `GITHUB_TOKEN` suffit : conserver le fail-fast 2 minutes et prouver un mécanisme autonome supporté de bout en bout avant de solder cette dette.
   - [x] Stabiliser `git.deploymentEnabled` avec les deux catch-all `"*": false` et `"**": false` : `*` couvre les refs simples et `**` ferme aussi les branches contenant `/`, qui restaient sinon non couvertes et donc autorisées par défaut. Conserver `master` et `vercel-preview-*` à `true` ; les règles positives gagnent lorsqu’elles chevauchent un catch-all. #174 a prouvé qu’un checkpoint `vercel-preview-pr-174` déclenche bien un vrai Preview Vercel via `git push`, tandis qu’un head `ci/...` ne doit plus consommer un build séparé.
   - [x] Premiers dispatchs ZAP réels sur `vercel-preview-pr-174` observés : #2/#3 ont échoué avant le scanner parce que `repository_dispatch` charge la définition du workflow depuis `master`. Supprimer la dépendance à l'API Pull Requests : valider à la place que la branche checkpoint Git pointe exactement sur `DEPLOYED_SHA` avec `contents: read`; aucun finding applicatif ZAP n'a été produit par ces runs.
   - [x] Documenter l'exception bootstrap GitHub : `repository_dispatch` charge la définition ZAP de `master`. Les PR uniquement `.github/**` / `.zap/**` restent donc maintenance-only (Quality + Semgrep + contrats, sans build Vercel inutile) et le nouveau `workflow_dispatch` permet un replay manuel sur une Preview existante ; lorsqu'une même PR contient aussi un changement applicatif deploy-relevant, Playwright valide le SHA exact et le statut ZAP est explicitement deferred jusqu'à ce que la définition devienne `master`.
@@ -265,7 +267,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] Collecter la première baseline ZAP effectivement scannée sur une Preview Vercel réelle avec la définition post-#175 : #177 a produit un rapport réel `H0 M4 L6 I5`; les deux alertes bloquantes `10020`/`10021` ont été corrigées sans affaiblir la policy et le nouveau scan a `FAIL-NEW: 0`.
     - [ ] Trier puis réduire les warnings ZAP restant réellement applicables (notamment CSP, SRI, cookies, cache et cross-origin) sans casser le corpus hybride ni le fallback Google Translate ; toute promotion WARN→FAIL doit être justifiée par la baseline et validée sur Preview exact-SHA.
       - [x] #182 retire la feuille Font Awesome cdnjs 7.0.1 redondante des HTML qui possèdent déjà le bundle local 7.1.0, et rend les redirects locale-root `/en|/de|/no → /` explicites avant `next-intl` pour cibler les causes observées de dépendance tierce et de Big Redirect sans modifier le fallback Google Translate.
-      - [ ] Rejouer OWASP ZAP sur le HEAD Ready exact de #182 et comparer la nouvelle baseline H/M/L/I, en particulier le Big Redirect et les warnings liés aux ressources tierces ; conserver séparément les sujets CSP/cache/cross-origin encore justifiés par le corpus hybride ou la plateforme.
+      - [x] Rejouer OWASP ZAP sur un HEAD Ready exact après #182 et comparer la baseline : #190 puis #191 confirment `H0 M4 L4 I5`, `FAIL-NEW=0` et `Big Redirect` PASS. Les sujets CSP/cache/cross-origin/SRI/cookie restant sont volontairement visibles et restent à trier sans suppression cosmétique.
   - [x] Réutiliser l'événement Vercel production jusque-là `skipped` pour un smoke `curl` ciblé et peu coûteux du SHA déployé, sans télécharger Chromium ni réexécuter la suite Playwright complète.
   - [x] Réconcilier ce smoke avec le rewrite homepage hybride protégé : sous Protection Bypass, Vercel peut matérialiser le rewrite `/ → /index.html` en `307`; accepter seulement cette destination attendue et conserver les redirects `vercel.com/login|sso-api` comme échecs (#171).
   - [x] Le workflow séparé de seed Chromium devient inutile et est retiré après validation du cache détenu par `repository_dispatch` (#122).
@@ -276,7 +278,7 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] Aligner le hardening checkpoint du `master` Alban : `vercel-preview-*` force toujours un build du SHA exact même lorsque son delta est docs/tests-only ; le contrat unitaire verrouille cette exception.
 - [x] Mesurer durée de `npm ci`, `npm run check`, `next build`, taille de cache et taille de sortie.
   - [x] Instrumentation Quality ajoutée sans job ni build supplémentaire (#122).
-  - [x] Instrumentation conservée après retour à `build: next build` : le wrapper `run-next-build.mjs` retiré n’est plus nécessaire, Quality chronomètre directement l’unique `npm run build` entre les phases pré/post-build.
+  - [x] Instrumentation conservée après retour à `build: next build` : le wrapper `run-next-build.mjs` retiré n’est plus nécessaire, Quality chronomètre directement l'unique `npm run build` entre les phases pré/post-build.
   - [x] Première comparaison #146 → #147 : `npm ci` 31 → 24 s, `node_modules` 1112 → 1041 MiB, `next build` 19,6 → 18,2 s et `.next` 69 → 66 MiB.
   - [x] Deuxième baseline #148 : 808 paquets, `npm ci` 20 s, `node_modules` 918 MiB, `npm run check` 31 s, `next build` 14,0 s et `.next` 66 MiB.
   - [x] Baseline post-merge #158 à cache `master` froid : `npm ci` 22 s, `node_modules` 723 MiB, cache npm 207 MiB, `npm run check` 42 s, `next build` 19,3 s et `.next` 66 MiB ; aucun warning npm pré-pin.
@@ -284,6 +286,8 @@ Objectif : un seul chemin de build et de déploiement, aligné sur `nabla-site-a
   - [x] Baseline post-merge #168 / Quality #367 : 168/168 tests, cache npm hit, cache Next miss après changement de clé/runtime, `npm ci` 10 s, `node_modules` 723 MiB, cache npm 207 MiB, checks 23 s, `next build` 6,5 s et `.next` 72 MiB.
   - [x] Après les baselines #158/#167/#168 et la baseline post-#178, définir dans #179 des budgets **warning-only** avec marge : `npm ci` > 30 s, `node_modules` > 800 MiB, `npm run check` > 60 s, `next build` > 30 s et `.next` > 80 MiB. Ils restent informatifs et ne sont pas des gates bloquants.
   - [x] Baseline maintenance-only #179 : `npm ci` 17 s, `node_modules` 723 MiB, cache npm 234 MiB (hit), lint/CSS/unit tests 12 s, 230/230 tests ; Next build non mesuré car volontairement skippé pour ce scope.
+  - [x] Baseline runtime #190 / Quality #644 : `npm ci` 19 s, `node_modules` 693 MiB, cache npm 234 MiB, checks complets 46 s, `next build` 15,6 s et `.next` 63 MiB ; tous les budgets warning-only sont verts.
+  - [x] Baseline runtime #191 / Quality #646 : `npm ci` 19 s, `node_modules` 693 MiB, checks complets 48 s, `next build` 16,3 s et `.next` 63 MiB ; tous les budgets warning-only restent verts.
   - [ ] Continuer à collecter les baselines post-merge avant toute promotion éventuelle d'un budget vers un seuil bloquant.
 - [x] Maintenir lint JS/TS/CSS, typecheck, unit tests, `next build`, Playwright Preview, accessibilité et tests SEO comme gates.
   - [x] Exposer le gate canonique via `npm run quality:gate` et garder `scripts/quality-gate.sh` byte-for-byte aligné avec `nabla-site-alban`.
@@ -346,9 +350,10 @@ Cette phase est volontairement placée après migration, UI/UX, SEO, nettoyage e
   - [x] #179 : quality gate local-first, base production saine avant npm, smoke live, budgets CI warning-only, cache npm explicitement possédé et fast path maintenance-only validés sur le checkpoint distant.
   - [x] #182 : héritage de baseline production durci, SARIF Semgrep succès dédupliqué, baseline CI versionnée, `.assetsignore` retiré, Node/runtime documenté et coût Docker Draft supprimé.
   - [x] #182 : retrait de Node 25 EOL et passage transitoire à Node 24 LTS ; #185 supersède cette cible comme source de vérité dev/agents/CI avec Node `26.8.2`, tout en conservant Node 24.x comme compatibilité Vercel production.
-  - [x] #182 : dette de checkpoint Ready reclassifiée post-merge : Vercel production, smoke, DAST et Docker/Trivy sont prouvés sur `1330279fae1db3006221d6d191173ea22d361614`, avec DAST `H0 M4 L4 I5` ; aucune preuve Playwright Preview post-merge sur ce SHA ne doit être revendiquée et la validation navigateur/CSS restante est reportée au checkpoint #185.
-  - [ ] Finaliser Tailwind/PostCSS : retrait code/lock/config déjà présent dans #182 avec reset projet et contrats ; validation Ready + Preview exact-SHA/Playwright/ZAP encore requise avant de solder l'item (#177/#182).
+  - [x] #182 : dette de checkpoint Ready reclassifiée post-merge : Vercel production, smoke, DAST et Docker/Trivy sont prouvés sur `1330279fae1db3006221d6d191173ea22d361614`, avec DAST `H0 M4 L4 I5` ; la validation navigateur/CSS restante a été ensuite prouvée au checkpoint exact #185 puis reconfirmée par #190/#191.
+  - [x] Finaliser Tailwind/PostCSS : retrait code/lock/config présent depuis #182, reset projet et contrats validés ; #185 puis #190/#191 fournissent la preuve Ready + Preview exact-SHA/Playwright/ZAP sans régression CSS/build.
   - [ ] Retrait des runtimes/scripts/assets legacy restants après preuve d'absence de consommateurs externes.
+  - [ ] Stabiliser le déclenchement autonome des checkpoints Vercel depuis Quality, conformément à la dette opérationnelle #191 décrite dans P5.
 - [ ] **Migration 8 / P3** — extraction progressive de sections homepage en conservant les disclosures approuvées, sans changement sensible non validé.
 - [ ] **Migration finale / P6** — confidentialité hors homepage : pseudonymisation/caviardage du corpus restant et extension complète du privacy gate.
 

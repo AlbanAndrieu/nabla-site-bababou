@@ -1,4 +1,5 @@
 @import "./reset.css";
+@import "./accessibility.css";
 /* Reserved for app-level overrides; site styles load from /public via layout <link>. */
 
 .google-translate-widget {
