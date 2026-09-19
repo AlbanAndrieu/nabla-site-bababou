@@ -21,7 +21,7 @@ test("legacy homepage keeps the approved identity and complete social metadata",
     source,
     /property="og:image" content="https:\/\/bababou\.com\/assets\/miss-and-love-you-quote\.jpeg"/,
   );
-  assert.match(source, /property="og:image:type" content="image\/png"/);
+  assert.match(source, /property="og:image:type" content="image\/jpeg"/);
   assert.match(source, /property="og:image:alt" content="[^"]+"/);
   assert.match(source, /name="twitter:card" content="summary_large_image"/);
   assert.match(source, /name="twitter:creator" content="@AlbanAndrieu"/);
