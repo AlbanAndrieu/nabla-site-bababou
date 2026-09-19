@@ -55,3 +55,16 @@ test("agent and canonical gates emit compact machine-actionable deterministic fa
 	assert.match(canonicalGate, /QUALITY_SHOW_DIFF/);
 	assert.match(canonicalGate, /QUALITY_LOG_TAIL:-40/);
 });
+
+test("maintenance-only local validation avoids an unnecessary Next build", async () => {
+	const [agentGate, scope] = await Promise.all([
+		read("../scripts/agent-quality-gate.sh"),
+		read("../scripts/ci-quality-scope.sh"),
+	]);
+
+	assert.match(agentGate, /bash scripts\/ci-quality-scope\.sh/);
+	assert.match(agentGate, /case "\$\{full_project\}" in/);
+	assert.match(agentGate, /false\)[\s\S]*maintenance npm lint, CSS and unit gate/);
+	assert.match(agentGate, /true\)[\s\S]*npm run check/);
+	assert.ok(scope.includes("scripts/publish-vercel-preview-checkpoint.sh"));
+});

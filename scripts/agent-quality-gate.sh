@@ -405,16 +405,41 @@ if [[ "${MODE}" == "publish" && "${QUALITY_FORCE_PUBLISH:-0}" != "1" && -f "${ST
 	fi
 fi
 
-# Run the formatter/linter/security gate before type generation, tests and the
-# production build. Cheap deterministic failures should be discovered before
-# expensive work.
+# Run the formatter/linter/security gate before npm-backed project validation.
+# Cheap deterministic failures should be discovered before expensive work.
 if [[ "${MODE}" == "publish" ]]; then
 	run_compact "canonical formatter/linter/security publication gate" \
 		bash scripts/quality-gate.sh --publish
 else
 	run_compact "canonical formatter/linter/security gate" bash scripts/quality-gate.sh
 fi
-run_compact "Next/npm lint, types, unit, privacy and production build gate" npm run check
+
+scope_output="$(
+	QUALITY_SCOPE_BASE_REF="${BASE_REF}" \
+		QUALITY_SCOPE_HEAD_REF=HEAD \
+		bash scripts/ci-quality-scope.sh
+)"
+printf '%s\n' "${scope_output}"
+full_project="$(awk -F= '$1 == "full_project" { print $2; exit }' <<<"${scope_output}")"
+
+run_maintenance_project_checks() {
+	npm run lint
+	npm run lint:css
+	npm run test:unit
+}
+
+case "${full_project}" in
+true)
+	run_compact "Next/npm lint, types, unit, privacy and production build gate" npm run check
+	;;
+false)
+	run_compact "maintenance npm lint, CSS and unit gate" run_maintenance_project_checks
+	;;
+*)
+	printf '❌ QG_SCOPE_INVALID: ci-quality-scope returned full_project=%s\n' "${full_project:-missing}" >&2
+	exit 1
+	;;
+esac
 
 mkdir -p "$(dirname "${STAMP_PATH}")"
 printf '%s\n' "${STAMP_KEY}" >"${STAMP_PATH}"

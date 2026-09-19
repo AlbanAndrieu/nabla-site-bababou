@@ -38,6 +38,26 @@ test("cheap formatter/linter gate runs before the expensive npm/Next gate", asyn
 	assert.ok(full > canonical);
 });
 
+test("local agent validation mirrors the CI maintenance fast path", async () => {
+	const source = await read("../scripts/agent-quality-gate.sh");
+
+	assert.match(source, /QUALITY_SCOPE_BASE_REF=/);
+	assert.match(source, /QUALITY_SCOPE_HEAD_REF=HEAD/);
+	assert.match(source, /bash scripts\/ci-quality-scope\.sh/);
+	assert.match(source, /full_project/);
+	assert.match(source, /QG_SCOPE_INVALID/);
+	assert.match(source, /run_maintenance_project_checks/);
+	assert.match(source, /npm run lint\n\s+npm run lint:css\n\s+npm run test:unit/);
+	assert.match(
+		source,
+		/run_compact "Next\/npm lint, types, unit, privacy and production build gate" npm run check/,
+	);
+	assert.match(
+		source,
+		/run_compact "maintenance npm lint, CSS and unit gate" run_maintenance_project_checks/,
+	);
+});
+
 test("fix mode scopes project ESLint and Stylelint before pre-commit convergence", async () => {
 	const source = await read("../scripts/agent-quality-gate.sh");
 
