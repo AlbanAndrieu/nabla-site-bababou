@@ -40,7 +40,10 @@ test("unknown legacy HTML routes fall through only after filesystem routing", as
     nextConfig,
     /destination:\s*["']\/__legacy-html-not-found__["']/,
   );
-  assert.match(nextConfig, /intentionally absent internal route/);
+  const legacyNotFoundRoute = await read("app/__legacy-html-not-found__/route.ts");
+  assert.match(legacyNotFoundRoute, /status:\s*404/);
+  assert.match(legacyNotFoundRoute, /public\/404\.html/);
+  assert.match(legacyNotFoundRoute, /data-nabla-app="next-global-not-found"/);
   assert.match(nextConfig, /fallback:\s*legacyHtmlNotFoundFallback/);
   assert.match(
     nextConfig,
