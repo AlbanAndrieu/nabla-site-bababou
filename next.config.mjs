@@ -47,8 +47,8 @@ const migratedPolicyRedirects = [
 const legacyHtmlNotFoundFallback = [
   {
     source: "/:path*.html",
-    // Route through the internal legacy renderer so the reviewed presentation
-    // keeps an explicit HTTP 404 status.
+    // Route through an App Router sentinel that throws notFound(); Next then
+    // renders the single protected global-not-found surface with HTTP 404.
     destination: "/__legacy-html-not-found__",
   },
 ];

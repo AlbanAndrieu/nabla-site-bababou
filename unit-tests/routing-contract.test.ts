@@ -32,7 +32,7 @@ test("unknown localized routes fall through to the protected global 404", async 
   await assert.rejects(access(projectUrl("app/[locale]/[...rest]/page.tsx")));
 });
 
-test("unknown legacy HTML routes fall through only after filesystem routing", async () => {
+test("unknown legacy HTML routes enter global-not-found after filesystem routing", async () => {
   const nextConfig = await read("next.config.mjs");
 
   assert.match(nextConfig, /source:\s*["']\/:path\*\.html["']/);
@@ -40,14 +40,20 @@ test("unknown legacy HTML routes fall through only after filesystem routing", as
     nextConfig,
     /destination:\s*["']\/__legacy-html-not-found__["']/,
   );
-  const legacyNotFoundRoute = await read("app/__legacy-html-not-found__/route.ts");
-  assert.match(legacyNotFoundRoute, /status:\s*404/);
-  assert.match(legacyNotFoundRoute, /public\/404\.html/);
-  assert.match(legacyNotFoundRoute, /data-nabla-app="next-global-not-found"/);
   assert.match(nextConfig, /fallback:\s*legacyHtmlNotFoundFallback/);
   assert.match(
     nextConfig,
     /Preserve every real public\/legacy file first[\s\S]*Only unmatched \*\.html/,
+  );
+
+  const legacyNotFoundPage = await read("app/__legacy-html-not-found__/page.tsx");
+  assert.match(
+    legacyNotFoundPage,
+    /import\s*\{\s*notFound\s*\}\s*from\s*["']next\/navigation["']/,
+  );
+  assert.match(legacyNotFoundPage, /notFound\(\)/);
+  await assert.rejects(
+    access(projectUrl("app/__legacy-html-not-found__/route.ts")),
   );
 });
 
