@@ -30,42 +30,47 @@ DEPENDENCIES=false
 
 is_source_file() {
 	case "$1" in
-		*.cjs | *.js | *.jsx | *.mjs | *.py | *.ts | *.tsx)
-			return 0
-			;;
-		*)
-			return 1
-			;;
+	*.cjs | *.js | *.jsx | *.mjs | *.py | *.ts | *.tsx)
+		return 0
+		;;
+	*)
+		return 1
+		;;
 	esac
 }
 
-for file in "${FILES[@]}"; do
-	case "${file}" in
+is_maintenance_only_path() {
+	case "$1" in
+	docs/* | unit-tests/* | tests/* | *.md | 		.github/* | .zap/* | .vscode/* | .idea/* | .agents/* | .cursor/* | .claude/* | 		.assetsignore | .pre-commit-config.yaml | .pre-commit-pre-push.yaml | .python-version | 		mise.toml | eslint.config.js | stylelint.config.cjs | commitlint.config.* | playwright.config.* | 		scripts/agent-quality-gate.sh | scripts/quality-gate.sh | scripts/ci-quality-scope.sh | 		scripts/verify-production-baseline.sh | scripts/verify-production-live.sh | 		scripts/ci-performance-budget.sh | scripts/publish-vercel-preview-checkpoint.sh | 		scripts/eslint-github-formatter.mjs)
+		return 0
+		;;
+	*)
+		return 1
+		;;
+	esac
+}
+
+if (("${#FILES[@]}" == 0)); then
+	# An empty diff is unusual in a PR quality run. Prefer the safe/full path
+	# rather than silently skipping type/build/security validation.
+	FULL_PROJECT=true
+	SAST=true
+else
+	for file in "${FILES[@]}"; do
+		case "${file}" in
 		package.json | package-lock.json)
 			FULL_PROJECT=true
 			DEPENDENCIES=true
 			;;
-		.nvmrc | .npmrc | next.config.* | proxy.ts | postcss.config.* | tsconfig.json | tsconfig.*.json)
+		*)
+			if is_maintenance_only_path "${file}"; then
+				continue
+			fi
 			FULL_PROJECT=true
 			;;
-		app/* | components/* | i18n/* | lib/* | messages/* | public/* | api/*)
-			FULL_PROJECT=true
-			;;
-		scripts/vercel-ignore-build.sh)
-			# This script is Vercel's ignoreCommand and directly decides whether a
-			# deployment is built. Changes therefore require the full project gate.
-			FULL_PROJECT=true
-			;;
-		scripts/agent-quality-gate.sh | scripts/quality-gate.sh | scripts/ci-quality-scope.sh | scripts/verify-production-baseline.sh | scripts/verify-production-live.sh | scripts/ci-performance-budget.sh | scripts/publish-vercel-preview-checkpoint.sh | scripts/eslint-github-formatter.mjs)
-			# Quality/deployment orchestration: validate with lint/unit contracts,
-			# but it does not require rebuilding the application.
-			;;
-		scripts/*)
-			FULL_PROJECT=true
-			;;
-	esac
+		esac
 
-	case "${file}" in
+		case "${file}" in
 		app/* | components/* | i18n/* | lib/* | api/* | scripts/*)
 			if is_source_file "${file}"; then
 				SAST=true
@@ -74,8 +79,9 @@ for file in "${FILES[@]}"; do
 		next.config.mjs | proxy.ts)
 			SAST=true
 			;;
-	esac
-done
+		esac
+	done
+fi
 
 emit() {
 	printf 'full_project=%s\n' "${FULL_PROJECT}"

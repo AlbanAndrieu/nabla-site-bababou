@@ -11,19 +11,14 @@ test("quality scope helper is executable and conservative about runtime changes"
 	const [source, info] = await Promise.all([read("../scripts/ci-quality-scope.sh"), stat(url)]);
 
 	assert.notEqual(info.mode & 0o100, 0);
-	for (const runtimePath of [
-		"package.json | package-lock.json",
-		"next.config.* | proxy.ts",
-		"app/* | components/* | i18n/* | lib/* | messages/* | public/* | api/*",
-		"scripts/*",
-	]) {
-		assert.ok(source.includes(runtimePath));
-	}
-	assert.match(source, /--diff-filter=ACMRD/);\n	assert.match(source, /FULL_PROJECT=true/);
+	assert.match(source, /--diff-filter=ACMRD/);
+	assert.match(source, /is_maintenance_only_path/);
+	assert.match(source, /FILES\[@\].*== 0/);
+	assert.match(source, /FULL_PROJECT=true/);
 	assert.match(source, /DEPENDENCIES=true/);
 	assert.match(source, /SAST=true/);
+	assert.match(source, /if is_maintenance_only_path/);
 });
-
 test("known quality orchestration files stay maintenance-only", async () => {
 	const source = await read("../scripts/ci-quality-scope.sh");
 
