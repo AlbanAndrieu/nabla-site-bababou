@@ -34,6 +34,7 @@ test("known quality orchestration files stay maintenance-only", async () => {
 		"scripts/verify-production-baseline.sh",
 		"scripts/verify-production-live.sh",
 		"scripts/ci-performance-budget.sh",
+		"scripts/publish-vercel-preview-checkpoint.sh",
 	]) {
 		assert.ok(source.includes(path), `${path} must stay maintenance-only`);
 	}
@@ -260,6 +261,7 @@ test("quality-only files do not trigger an application Preview checkpoint", asyn
 		"scripts/verify-production-live.sh",
 		"scripts/ci-performance-budget.sh",
 		"scripts/quality-gate.sh",
+		"scripts/publish-vercel-preview-checkpoint.sh",
 	]) {
 		assert.ok(workflow.includes(`filename === '${path}'`));
 	}
