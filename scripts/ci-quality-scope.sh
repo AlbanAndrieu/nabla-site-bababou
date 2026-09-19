@@ -21,7 +21,7 @@ if [[ "$(git rev-parse "${BASE_REF}^{commit}")" == "$(git rev-parse "${HEAD_REF}
 fi
 
 mapfile -t FILES < <(
-	git diff --name-only --diff-filter=ACMR "${BASE_REF}" "${HEAD_REF}" | awk 'NF' | sort -u
+	git diff --name-only --diff-filter=ACMRD "${BASE_REF}" "${HEAD_REF}" | awk 'NF' | sort -u
 )
 
 FULL_PROJECT=false

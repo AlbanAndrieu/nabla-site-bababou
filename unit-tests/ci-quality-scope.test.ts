@@ -19,7 +19,7 @@ test("quality scope helper is executable and conservative about runtime changes"
 	]) {
 		assert.ok(source.includes(runtimePath));
 	}
-	assert.match(source, /FULL_PROJECT=true/);
+	assert.match(source, /--diff-filter=ACMRD/);\n	assert.match(source, /FULL_PROJECT=true/);
 	assert.match(source, /DEPENDENCIES=true/);
 	assert.match(source, /SAST=true/);
 });
