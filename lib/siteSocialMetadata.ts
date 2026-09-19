@@ -8,7 +8,7 @@ import {
 } from "@/lib/sitePageCatalog";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://bababou.com";
-const SOCIAL_IMAGE_PATH = "/assets/miss-and-love-you-quote.png";
+const SOCIAL_IMAGE_PATH = "/assets/miss-and-love-you-quote.jpeg";
 const TWITTER_CREATOR = "@AlbanAndrieu";
 
 const SITE_COPY = {
@@ -71,7 +71,7 @@ function socialMetadata(
         {
           url: socialImage,
           secureUrl: socialImage,
-          type: "image/png",
+          type: "image/jpeg",
           alt: copy.imageAlt,
         },
       ],

@@ -366,6 +366,7 @@ Cette phase est volontairement placée après migration, UI/UX, SEO, nettoyage e
   - [ ] Retrait des runtimes/scripts/assets legacy restants après preuve d'absence de consommateurs externes.
   - [ ] Stabiliser le déclenchement autonome des checkpoints Vercel depuis Quality, conformément à la dette opérationnelle #191 décrite dans P5.
 - [ ] **Migration 8 / P3** — extraction progressive de sections homepage en conservant les disclosures approuvées, sans changement sensible non validé.
+  - [ ] Au cutover Next de `/`, remplacer les raster legacy restants par `next/image` avec formats modernes WebP/AVIF, tailles responsives et une image sociale dédiée ~1200×630 ; conserver des budgets de poids/CLS explicites.
 - [ ] **Migration finale / P6** — confidentialité hors homepage : pseudonymisation/caviardage du corpus restant et extension complète du privacy gate.
 
 ## Règles de maintenance de cette roadmap
