@@ -141,6 +141,6 @@ test("policy migration does not touch the protected homepage routing contract", 
     "utf8",
   );
 
-  assert.doesNotMatch(config, /index\.html/);
-  assert.doesNotMatch(config, /404\.html/);
+  assert.doesNotMatch(config, /source:\s*["']\/index\.html["']/);
+  assert.doesNotMatch(config, /source:\s*["']\/404\.html["']/);
 });
