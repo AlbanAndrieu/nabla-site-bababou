@@ -57,16 +57,6 @@ const migratedPolicyRedirects = [
   permanent: true,
 }));
 
-const legacyHtmlNotFoundFallback = [
-  {
-    source: "/:path*.html",
-    // Route only filesystem misses through the explicit renderer. It serves the
-    // reviewed static presentation with an HTTP 404 instead of relying on
-    // rewrite-to-not-found behavior that differs between root and locale paths.
-    destination: "/__legacy-html-not-found__",
-  },
-];
-
 const securityHeaders = [
   { key: "X-Frame-Options", value: "DENY" },
   { key: "X-Content-Type-Options", value: "nosniff" },
@@ -99,15 +89,6 @@ const nextConfig = {
       ...migratedCentralAuthorityDocumentHubRedirects,
       ...migratedPolicyRedirects,
     ];
-  },
-  async rewrites() {
-    return {
-      beforeFiles: [],
-      afterFiles: [],
-      // Preserve every real public/legacy file first. Only unmatched *.html
-      // requests fall through to the protected legacy 404 renderer.
-      fallback: legacyHtmlNotFoundFallback,
-    };
   },
   turbopack: {
     root: projectRoot,

@@ -19,9 +19,9 @@ test("legacy homepage keeps the approved identity and complete social metadata",
   );
   assert.match(
     source,
-    /property="og:image" content="https:\/\/bababou\.com\/assets\/miss-and-love-you-quote\.png"/,
+    /property="og:image" content="https:\/\/bababou\.com\/assets\/miss-and-love-you-quote\.jpeg"/,
   );
-  assert.match(source, /property="og:image:type" content="image\/png"/);
+  assert.match(source, /property="og:image:type" content="image\/jpeg"/);
   assert.match(source, /property="og:image:alt" content="[^"]+"/);
   assert.match(source, /name="twitter:card" content="summary_large_image"/);
   assert.match(source, /name="twitter:creator" content="@AlbanAndrieu"/);
@@ -52,7 +52,7 @@ test("Next social metadata is centralized and excludes the homepage-only identit
   assert.match(helper, /alternateLocale/);
   assert.match(helper, /siteName: "Bababou"/);
   assert.match(helper, /secureUrl: socialImage/);
-  assert.match(helper, /type: "image\/png"/);
+  assert.match(helper, /type: "image\/jpeg"/);
   assert.match(helper, /creator: TWITTER_CREATOR/);
   assert.match(helper, /localizedPageMetadata/);
   assert.match(layout, /localizedSiteMetadata\(locale\)/);

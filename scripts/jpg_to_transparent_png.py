@@ -16,6 +16,14 @@ import os
 import sys
 from pathlib import Path
 
+BACKGROUND_SENSITIVE_ASSETS = {
+    "alone-1.jpg",
+    "child-abuse.jpg",
+    "hide-and-sick-quote.jpg",
+    "miss-and-love-you-quote.jpeg",
+    "patience-vertue-quote.jpg",
+}
+
 try:
     from PIL import Image
 except ImportError:
@@ -105,6 +113,9 @@ def main() -> None:
         sys.exit(0)
 
     for f in files:
+        if f.name in BACKGROUND_SENSITIVE_ASSETS:
+            print(f"Preserve background-sensitive asset {f}")
+            continue
         path = str(f)
         if make_transparent(path, threshold=threshold):
             out = os.path.splitext(path)[0] + ".png"

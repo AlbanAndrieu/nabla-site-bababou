@@ -8,7 +8,6 @@ const STANDARD_PAGES: StandardPageCase[] = [
   { path: "/abduction-norway.html", label: "abduction norway page" },
   { path: "/ca/demande-explications-autorites-competentes-fr.html", label: "ca demande explications page" },
   { path: "/people-contacted.html", label: "people-contacted page" },
-  { path: "/ca/index.html", label: "central authorities index page" },
   { path: "/for-fathers.html", label: "for fathers page" },
   { path: "/test.html", label: "test page" },
 ];
@@ -17,6 +16,7 @@ const MIGRATED_NEXT_PAGES: StandardPageCase[] = [
   { path: "/contact.html", label: "contact page" },
   { path: "/central-authorities.html", label: "central authorities page" },
   { path: "/central-authorities-failures.html", label: "central authorities failures page" },
+  { path: "/ca/index.html", label: "central authorities document hub" },
   { path: "/nre-en.html", label: "nre english page" },
   { path: "/nre-fr.html", label: "nre french page" },
   { path: "/email.html", label: "email contact addresses page" },
