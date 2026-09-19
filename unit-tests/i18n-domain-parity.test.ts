@@ -2,7 +2,15 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-const DOMAINS = ["site", "contact", "email", "link", "checkout", "nre"] as const;
+const DOMAINS = [
+  "site",
+  "contact",
+  "email",
+  "link",
+  "checkout",
+  "nre",
+  "central-authorities-documents",
+] as const;
 const LOCALES = ["fr", "en", "de", "no"] as const;
 
 function keyShape(value: unknown): unknown {

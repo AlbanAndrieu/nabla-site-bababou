@@ -1,0 +1,30 @@
+{
+  "centralAuthorityDocumentsPage": {
+    "meta": {
+      "title": "Dokumentarkiv for sentralmyndigheter | Bababou",
+      "description": "Bla gjennom bevarte kildedokumenter og korrespondanse om sentralmyndigheter og oppfølging etter Haag-konvensjonen."
+    },
+    "hero": {
+      "eyebrow": "Kildearkiv",
+      "title": "Dokumenter fra sentralmyndighetene",
+      "lead": "En generert indeks over historiske HTML-dokumenter som fortsatt er bevart i ca/-arkivet mens innholdet gradvis migreres til native Next.js-sider.",
+      "backToOverview": "Tilbake til oversikten over sentralmyndighetene"
+    },
+    "notice": {
+      "title": "Dokumentene forblir på originalspråket",
+      "body": "Denne Next.js-siden lokaliserer bare arkivnavigasjonen. Hvert lenket historisk dokument forblir på kildespråket og beholder legacy-oversettelsesfallbacken til en tilsvarende native side har dokumentert paritet for innhold, oppførsel, metadata og tilgjengelighet."
+    },
+    "documents": {
+      "title": "Bevarte dokumenter",
+      "count": "{count, plural, =0 {Ingen bevarte dokumenter} =1 {# bevart dokument} other {# bevarte dokumenter}}",
+      "rootGroup": "Generelle ca/-dokumenter"
+    },
+    "languages": {
+      "fr": "Fransk kilde",
+      "en": "Engelsk kilde",
+      "de": "Tysk kilde",
+      "no": "Norsk kilde",
+      "unknown": "Kildespråk ikke oppgitt"
+    }
+  }
+}

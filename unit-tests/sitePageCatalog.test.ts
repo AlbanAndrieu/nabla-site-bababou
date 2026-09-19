@@ -52,6 +52,10 @@ test("native Next routes use the French default locale without a prefix", () => 
     canonicalPagePath("central-authorities-failures", "fr"),
     "/central-authorities-failures",
   );
+  assert.equal(
+    canonicalPagePath("central-authorities-documents", "fr"),
+    "/central-authorities-documents",
+  );
   assert.equal(canonicalPagePath("nre", "fr"), "/nre");
 });
 
@@ -67,6 +71,10 @@ test("native Next routes prefix non-default locales and stay extensionless", () 
     assert.equal(
       canonicalPagePath("central-authorities-failures", locale),
       `/${locale}/central-authorities-failures`,
+    );
+    assert.equal(
+      canonicalPagePath("central-authorities-documents", locale),
+      `/${locale}/central-authorities-documents`,
     );
     assert.equal(canonicalPagePath("nre", locale), `/${locale}/nre`);
   }
@@ -123,6 +131,10 @@ test("alternates follow routing locales and use French as x-default", () => {
     pageAlternates("central-authorities-failures", "en").canonical,
     "/en/central-authorities-failures",
   );
+  assert.equal(
+    pageAlternates("central-authorities-documents", "en").canonical,
+    "/en/central-authorities-documents",
+  );
   assert.deepEqual(pageAlternates("nre", "de"), {
     canonical: "/de/nre",
     languages: {
@@ -140,6 +152,7 @@ test("the Next sitemap indexes only stable localized Next surfaces", () => {
     "contact",
     "central-authorities",
     "central-authorities-failures",
+    "central-authorities-documents",
     "nre",
     "link",
     "email",

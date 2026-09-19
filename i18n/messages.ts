@@ -30,6 +30,13 @@ const CENTRAL_AUTHORITIES_FAILURES_LOADERS = {
   no: () => import("@/messages/central-authorities-failures/no.json"),
 } as const satisfies Record<AppLocale, CatalogLoader>;
 
+const CENTRAL_AUTHORITY_DOCUMENTS_LOADERS = {
+  fr: () => import("@/messages/central-authorities-documents/fr.json"),
+  en: () => import("@/messages/central-authorities-documents/en.json"),
+  de: () => import("@/messages/central-authorities-documents/de.json"),
+  no: () => import("@/messages/central-authorities-documents/no.json"),
+} as const satisfies Record<AppLocale, CatalogLoader>;
+
 const NRE_LOADERS = {
   fr: () => import("@/messages/nre/fr.json"),
   en: () => import("@/messages/nre/en.json"),
@@ -89,6 +96,7 @@ export async function loadMessages(locale: AppLocale) {
     { default: contact },
     { default: centralAuthorities },
     { default: centralAuthoritiesFailures },
+    { default: centralAuthorityDocuments },
     { default: nre },
     { default: email },
     { default: link },
@@ -99,6 +107,7 @@ export async function loadMessages(locale: AppLocale) {
     CONTACT_LOADERS[locale](),
     CENTRAL_AUTHORITIES_LOADERS[locale](),
     CENTRAL_AUTHORITIES_FAILURES_LOADERS[locale](),
+    CENTRAL_AUTHORITY_DOCUMENTS_LOADERS[locale](),
     NRE_LOADERS[locale](),
     EMAIL_LOADERS[locale](),
     LINK_LOADERS[locale](),
@@ -111,6 +120,7 @@ export async function loadMessages(locale: AppLocale) {
     contact,
     centralAuthorities,
     centralAuthoritiesFailures,
+    centralAuthorityDocuments,
     nre,
     email,
     link,

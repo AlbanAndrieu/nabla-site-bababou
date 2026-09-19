@@ -1,0 +1,30 @@
+{
+  "centralAuthorityDocumentsPage": {
+    "meta": {
+      "title": "Archive documentaire des autorités centrales | Bababou",
+      "description": "Consulter les documents sources et correspondances conservés concernant les autorités centrales et les suivis de la Convention de La Haye."
+    },
+    "hero": {
+      "eyebrow": "Archive source",
+      "title": "Documents des autorités centrales",
+      "lead": "Un index généré des documents HTML historiques encore conservés dans l’archive ca/ pendant leur migration progressive vers des pages Next.js natives.",
+      "backToOverview": "Retour à la synthèse des autorités centrales"
+    },
+    "notice": {
+      "title": "Les documents restent dans leur langue d’origine",
+      "body": "Cette page Next.js localise uniquement la navigation de l’archive. Chaque document historique lié reste dans sa langue source et conserve le fallback de traduction legacy jusqu’à ce qu’une page native équivalente ait prouvé la parité du contenu, du comportement, des métadonnées et de l’accessibilité."
+    },
+    "documents": {
+      "title": "Documents conservés",
+      "count": "{count, plural, =0 {Aucun document conservé} =1 {# document conservé} other {# documents conservés}}",
+      "rootGroup": "Documents généraux ca/"
+    },
+    "languages": {
+      "fr": "Source française",
+      "en": "Source anglaise",
+      "de": "Source allemande",
+      "no": "Source norvégienne",
+      "unknown": "Langue source non déclarée"
+    }
+  }
+}
