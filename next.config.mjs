@@ -47,8 +47,8 @@ const migratedPolicyRedirects = [
 const legacyHtmlNotFoundFallback = [
   {
     source: "/:path*.html",
-    // Rewrite to an intentionally absent internal route so Next invokes
-    // global-not-found and preserves the HTTP 404 status.
+    // Route through the internal legacy renderer so the reviewed presentation
+    // keeps an explicit HTTP 404 status.
     destination: "/__legacy-html-not-found__",
   },
 ];
