@@ -17,5 +17,11 @@
       "master": true,
       "vercel-preview-*": true
     }
-  }
+  },
+  "rewrites": [
+    {
+      "source": "/:path*.html",
+      "destination": "/__legacy-html-not-found__"
+    }
+  ]
 }
