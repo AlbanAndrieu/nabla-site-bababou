@@ -32,6 +32,30 @@ test("unknown localized routes fall through to the protected global 404", async 
   await assert.rejects(access(projectUrl("app/[locale]/[...rest]/page.tsx")));
 });
 
+test("unknown legacy HTML uses the reviewed 404 source after filesystem routing", async () => {
+  const nextConfig = await read("next.config.mjs");
+
+  assert.match(nextConfig, /source:\s*["']\/:path\*\.html["']/);
+  assert.match(
+    nextConfig,
+    /destination:\s*["']\/__legacy-html-not-found__["']/,
+  );
+  assert.match(nextConfig, /fallback:\s*legacyHtmlNotFoundFallback/);
+  assert.match(
+    nextConfig,
+    /Preserve every real public\/legacy file first[\s\S]*Only unmatched \*\.html/,
+  );
+
+  const legacyNotFoundRoute = await read("app/__legacy-html-not-found__/route.ts");
+  assert.match(legacyNotFoundRoute, /public\/404\.html/);
+  assert.match(legacyNotFoundRoute, /status:\s*404/);
+  assert.match(legacyNotFoundRoute, /data-nabla-app="next-global-not-found"/);
+  assert.match(legacyNotFoundRoute, /X-Robots-Tag/);
+  await assert.rejects(
+    access(projectUrl("app/__legacy-html-not-found__/page.tsx")),
+  );
+});
+
 test("technical test surface has only the localized App Router implementation", async () => {
   const localizedTestPage = await read("app/[locale]/test/page.tsx");
 
