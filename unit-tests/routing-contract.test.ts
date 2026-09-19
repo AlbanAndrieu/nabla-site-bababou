@@ -36,7 +36,11 @@ test("unknown legacy HTML routes fall through only after filesystem routing", as
   const nextConfig = await read("next.config.mjs");
 
   assert.match(nextConfig, /source:\s*["']\/:path\*\.html["']/);
-  assert.match(nextConfig, /destination:\s*["']\/404["']/);
+  assert.match(
+    nextConfig,
+    /destination:\s*["']\/__legacy-html-not-found__["']/,
+  );
+  assert.match(nextConfig, /intentionally absent internal route/);
   assert.match(nextConfig, /fallback:\s*legacyHtmlNotFoundFallback/);
   assert.match(
     nextConfig,
