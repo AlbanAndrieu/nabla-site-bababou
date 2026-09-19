@@ -56,7 +56,7 @@ for file in "${FILES[@]}"; do
 			# deployment is built. Changes therefore require the full project gate.
 			FULL_PROJECT=true
 			;;
-		scripts/agent-quality-gate.sh | scripts/quality-gate.sh | scripts/ci-quality-scope.sh | scripts/verify-production-baseline.sh | scripts/verify-production-live.sh | scripts/ci-performance-budget.sh | scripts/eslint-github-formatter.mjs)
+		scripts/agent-quality-gate.sh | scripts/quality-gate.sh | scripts/ci-quality-scope.sh | scripts/verify-production-baseline.sh | scripts/verify-production-live.sh | scripts/ci-performance-budget.sh | scripts/publish-vercel-preview-checkpoint.sh | scripts/eslint-github-formatter.mjs)
 			# Quality/deployment orchestration: validate with lint/unit contracts,
 			# but it does not require rebuilding the application.
 			;;
