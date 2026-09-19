@@ -53,6 +53,9 @@ test("unknown legacy HTML uses the reviewed 404 source after Vercel filesystem r
   assert.match(legacyNotFoundRoute, /status:\s*404/);
   assert.match(legacyNotFoundRoute, /data-nabla-app="next-global-not-found"/);
   assert.match(legacyNotFoundRoute, /X-Robots-Tag/);
+  assert.match(legacyNotFoundRoute, /Cache-Control/);
+  assert.match(legacyNotFoundRoute, /export function HEAD\(\)/);
+  assert.match(legacyNotFoundRoute, /legacyNotFoundResponse\(null\)/);
   await assert.rejects(
     access(projectUrl("app/__legacy-html-not-found__/page.tsx")),
   );

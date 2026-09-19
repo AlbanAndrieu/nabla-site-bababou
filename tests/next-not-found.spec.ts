@@ -10,6 +10,11 @@ const NOT_FOUND_PATHS = [
   "/fr/people-contactedsss.html",
 ] as const;
 
+const LEGACY_NOT_FOUND_PATHS = [
+  "/people-contactedsss.html",
+  "/fr/people-contactedsss.html",
+] as const;
+
 test.describe("static global Next.js 404", () => {
   for (const path of NOT_FOUND_PATHS) {
     test(`${path} preserves the reviewed static 404 presentation`, async ({ page }) => {
@@ -43,11 +48,26 @@ test.describe("static global Next.js 404", () => {
     });
   }
 
-  test("existing legacy HTML stays ahead of the fallback rewrite", async ({ page }) => {
+  test("legacy HTML fallback keeps HEAD as a non-indexable 404", async ({ request }) => {
+    for (const path of LEGACY_NOT_FOUND_PATHS) {
+      const response = await request.head(path);
+      expect(response.status()).toBe(404);
+      expect(response.headers()["x-robots-tag"]).toContain("noindex");
+      expect(response.headers()["cache-control"]).toContain("no-store");
+    }
+  });
+
+  test("existing legacy HTML stays ahead of the fallback rewrite", async ({
+    page,
+    request,
+  }) => {
     const response = await page.goto("/people-contacted.html");
     expect(response?.status()).toBe(200);
     await expect(page.locator('html[data-nabla-app="next-global-not-found"]')).toHaveCount(
       0,
     );
+
+    const headResponse = await request.head("/people-contacted.html");
+    expect(headResponse.status()).toBe(200);
   });
 });
