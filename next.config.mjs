@@ -47,10 +47,10 @@ const migratedPolicyRedirects = [
 const legacyHtmlNotFoundFallback = [
   {
     source: "/:path*.html",
-    // /404 intentionally has no route. Rewriting only unmatched legacy HTML
-    // there keeps the original URL while letting routing-level global-not-found
-    // render the protected reviewed presentation with HTTP 404.
-    destination: "/404",
+    // Route only filesystem misses through the explicit renderer. It serves the
+    // reviewed static presentation with an HTTP 404 instead of relying on
+    // rewrite-to-not-found behavior that differs between root and locale paths.
+    destination: "/__legacy-html-not-found__",
   },
 ];
 
@@ -91,7 +91,7 @@ const nextConfig = {
       beforeFiles: [],
       afterFiles: [],
       // Preserve every real public/legacy file first. Only unmatched *.html
-      // requests fall through to the protected global 404 presentation.
+      // requests fall through to the protected legacy 404 renderer.
       fallback: legacyHtmlNotFoundFallback,
     };
   },
