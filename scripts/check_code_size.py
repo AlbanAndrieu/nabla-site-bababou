@@ -1,8 +1,9 @@
 """Report non-regression code-size limits for maintained changed source files.
 
-The gate is baseline-aware: existing oversized legacy files are allowed a small
-growth margin, while new files or files crossing the hard limit must be split.
-It uses only the Python standard library so it can run before npm-backed checks.
+The gate is intentionally baseline-aware: existing oversized legacy files are
+allowed a small growth margin, while new files or files crossing the hard limit
+must be refactored. The script has no third-party dependency and is cheap enough
+to run in the local agent gate before npm lint/tests.
 """
 
 from __future__ import annotations
@@ -46,6 +47,7 @@ def _line_count(path: Path) -> int:
 def _baseline_line_count(path: Path, baseline_ref: str | None) -> int | None:
     if not baseline_ref or path.is_absolute():
         return None
+
     result = subprocess.run(
         ["git", "show", f"{baseline_ref}:{path.as_posix()}"],
         check=False,
@@ -77,7 +79,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("paths", nargs="*", help="Source files/directories to inspect")
     parser.add_argument("--warn", type=int, default=DEFAULT_WARNING_LINES)
     parser.add_argument("--fail", type=int, default=DEFAULT_FAILURE_LINES)
-    parser.add_argument("--baseline-ref", help="Git ref used to grandfather already-oversized files")
+    parser.add_argument(
+        "--baseline-ref",
+        help="Git ref used to grandfather already-oversized files",
+    )
     parser.add_argument(
         "--legacy-growth-percent",
         type=float,
@@ -96,7 +101,9 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     if args.warn < 1 or args.fail <= args.warn:
-        raise SystemExit("--fail must be greater than --warn, and both must be positive")
+        raise SystemExit(
+            "--fail must be greater than --warn, and both must be positive",
+        )
     if args.legacy_growth_percent < 0:
         raise SystemExit("--legacy-growth-percent must be non-negative")
 
