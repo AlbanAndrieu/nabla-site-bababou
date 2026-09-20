@@ -3,52 +3,39 @@ set -euo pipefail
 
 # Repository-specific agent-first gate for nabla-site-bababou.
 # Keep scripts/quality-gate.sh canonical across Nabla repositories; this wrapper
-# adds cheap Git preflight checks, deterministic local fixes and the project npm
-# validation used before publication.
+# owns cheap repository preflight, deterministic local fixes and pre-build checks.
 
 ROOT="$(git rev-parse --show-toplevel)"
 cd "${ROOT}"
 
+# shellcheck source=scripts/lib/agent-quality-support.sh
+source scripts/lib/agent-quality-support.sh
+
 MODE="check"
+PUBLISH=false
 case "${1:-}" in
---fix)
-    MODE="fix"
-    shift
-    ;;
---preflight)
-    MODE="preflight"
-    shift
-    ;;
---publish)
-    MODE="publish"
-    shift
-    ;;
--h | --help)
-    cat <<'USAGE'
-Usage:
-  bash scripts/agent-quality-gate.sh [--fix|--preflight|--publish]
-
-Modes:
-  default      strict agent validation on a clean committed branch
-  --fix        converge deterministic formatter/linter fixes on changed files
-  --preflight  Git-only checks; safe to run before dependency installation
-  --publish    strict publication validation; reuses an exact local proof when valid
-
-Environment:
-  QUALITY_BASE_REF                 override comparison base
-  QUALITY_LOG_TAIL                 failure log lines to print (default: 40)
-  QUALITY_FIX_MAX_PASSES           max deterministic --fix passes (default: 12)
-  QUALITY_ALLOW_LARGE_DELETION=1   acknowledge an intentional large truncation/deletion
-  QUALITY_FORCE_PUBLISH=1          ignore the local exact-SHA publication proof
-USAGE
-    exit 0
-    ;;
-"")
-    ;;
-*)
-    printf '❌ unknown argument: %s\n' "$1" >&2
-    exit 2
-    ;;
+    --fix)
+        MODE="fix"
+        shift
+        ;;
+    --preflight)
+        MODE="preflight"
+        shift
+        ;;
+    --publish)
+        PUBLISH=true
+        shift
+        ;;
+    -h | --help)
+        print_agent_quality_usage
+        exit 0
+        ;;
+    "")
+        ;;
+    *)
+        printf '❌ unknown argument: %s\n' "$1" >&2
+        exit 2
+        ;;
 esac
 
 if (($# > 0)); then
@@ -57,65 +44,13 @@ if (($# > 0)); then
 fi
 
 LOG_TAIL="${QUALITY_LOG_TAIL:-40}"
-FIX_MAX_PASSES="${QUALITY_FIX_MAX_PASSES:-12}"
-STAMP_PATH="$(git rev-parse --git-path nabla-agent-quality.stamp)"
-
-resolve_base_ref() {
-    if [[ -n "${QUALITY_BASE_REF:-}" ]]; then
-        printf '%s\n' "${QUALITY_BASE_REF}"
-    elif git symbolic-ref --quiet refs/remotes/origin/HEAD >/dev/null 2>&1; then
-        git symbolic-ref --quiet --short refs/remotes/origin/HEAD
-    elif git rev-parse --verify origin/main >/dev/null 2>&1; then
-        printf '%s\n' "origin/main"
-    elif git rev-parse --verify origin/master >/dev/null 2>&1; then
-        printf '%s\n' "origin/master"
-    elif git rev-parse --verify HEAD~1 >/dev/null 2>&1; then
-        printf '%s\n' "HEAD~1"
-    else
-        printf '%s\n' "HEAD"
-    fi
-}
+FIX_PASSES="${QUALITY_FIX_PASSES:-12}"
+if [[ ! "${FIX_PASSES}" =~ ^[1-9][0-9]*$ ]]; then
+    echo "❌ QUALITY_FIX_PASSES must be a positive integer" >&2
+    exit 2
+fi
 
 BASE_REF="$(resolve_base_ref)"
-
-run_compact() {
-    local label="$1"
-    shift
-    local log
-    local rc
-    log="$(mktemp)"
-    if "$@" >"${log}" 2>&1; then
-        rm -f "${log}"
-        printf '✅ %s\n' "${label}"
-        return 0
-    else
-        rc=$?
-    fi
-    printf '❌ %s\n' "${label}" >&2
-    tail -n "${LOG_TAIL}" "${log}" >&2 || true
-    rm -f "${log}"
-    return "${rc}"
-}
-
-run_compact_report() {
-    local label="$1"
-    shift
-    local log
-    local rc
-    log="$(mktemp)"
-    if "$@" >"${log}" 2>&1; then
-        grep -E '^(WARNING |Code-size gate:)' "${log}" || true
-        rm -f "${log}"
-        printf '✅ %s\n' "${label}"
-        return 0
-    else
-        rc=$?
-    fi
-    printf '❌ %s\n' "${label}" >&2
-    tail -n "${LOG_TAIL}" "${log}" >&2 || true
-    rm -f "${log}"
-    return "${rc}"
-}
 
 if [[ "${BASE_REF}" != "HEAD" ]]; then
     if ! git rev-parse --verify "${BASE_REF}^{commit}" >/dev/null 2>&1; then
@@ -129,63 +64,30 @@ if [[ "${BASE_REF}" != "HEAD" ]]; then
     printf '✅ branch contains comparison base %s\n' "${BASE_REF}"
 fi
 
-collect_changed_files() {
-    {
-        if [[ "${BASE_REF}" != "HEAD" ]]; then
-            git diff --name-only --diff-filter=ACMR "${BASE_REF}...HEAD"
-        fi
-        git diff --name-only --diff-filter=ACMR
-        git diff --cached --name-only --diff-filter=ACMR
-        git ls-files --others --exclude-standard
-    } |
-        awk 'NF' |
-        sort -u |
-        while IFS= read -r file; do
-            [[ -f "${file}" ]] && printf '%s\n' "${file}"
-        done
-}
-
-collect_deleted_files() {
-    {
-        if [[ "${BASE_REF}" != "HEAD" ]]; then
-            git diff --name-only --diff-filter=D "${BASE_REF}...HEAD"
-        fi
-        git diff --name-only --diff-filter=D
-        git diff --cached --name-only --diff-filter=D
-    } | awk 'NF' | sort -u
-}
-
 mapfile -t CHANGED_FILES < <(collect_changed_files)
 mapfile -t DELETED_FILES < <(collect_deleted_files)
 
-snapshot_changed_files() {
-    {
-        for file in "${CHANGED_FILES[@]}"; do
-            if [[ -f "${file}" ]]; then
-                printf '%s\t%s\n' "${file}" "$(git hash-object -- "${file}")"
-            else
-                printf '%s\t<missing>\n' "${file}"
-            fi
-        done
-    } | git hash-object --stdin
-}
-
 precommit_fix_until_stable() {
-    local pass=1
+    local pass
     local before
     local after
     local log
     local rc
 
-    while ((pass <= FIX_MAX_PASSES)); do
-        before="$(snapshot_changed_files)"
+    for ((pass = 1; pass <= FIX_PASSES; pass++)); do
+        mapfile -t fix_files < <(collect_changed_files)
+        if (("${#fix_files[@]}" == 0)); then
+            echo "✅ no changed files require pre-commit auto-fixes"
+            return 0
+        fi
+
+        before="$(workspace_fingerprint)"
         log="$(mktemp)"
         set +e
-        pre-commit run --hook-stage pre-commit \
-            --files "${CHANGED_FILES[@]}" >"${log}" 2>&1
+        pre-commit run --hook-stage pre-commit --files "${fix_files[@]}" >"${log}" 2>&1
         rc=$?
         set -e
-        after="$(snapshot_changed_files)"
+        after="$(workspace_fingerprint)"
 
         if ((rc == 0)); then
             rm -f "${log}"
@@ -193,11 +95,10 @@ precommit_fix_until_stable() {
             return 0
         fi
 
-        if [[ "${after}" != "${before}" ]]; then
+        if [[ "${before}" != "${after}" ]]; then
             printf '🔧 pre-commit pass %d/%d applied deterministic fixes; retrying without log analysis\n' \
-                "${pass}" "${FIX_MAX_PASSES}"
+                "${pass}" "${FIX_PASSES}"
             rm -f "${log}"
-            ((pass += 1))
             continue
         fi
 
@@ -207,99 +108,23 @@ precommit_fix_until_stable() {
         return "${rc}"
     done
 
-    echo "❌ QG_FIX_DID_NOT_CONVERGE: pre-commit kept changing files after ${FIX_MAX_PASSES} passes." >&2
+    echo "❌ QG_FIX_DID_NOT_CONVERGE: pre-commit kept changing files after ${FIX_PASSES} passes." >&2
     echo "   Inspect 'git status --short' and only the relevant changed files." >&2
     git status --short >&2
     return 1
 }
 
-run_fix_until_stable() {
-    command -v pre-commit >/dev/null 2>&1 || {
-        echo "❌ pre-commit is required; run 'mise run hooks' first" >&2
-        exit 1
-    }
-
-    if [[ ! "${FIX_MAX_PASSES}" =~ ^[1-9][0-9]*$ ]]; then
-        printf '❌ QUALITY_FIX_MAX_PASSES must be a positive integer, got: %s\n' "${FIX_MAX_PASSES}" >&2
-        exit 2
-    fi
-
-    if (("${#CHANGED_FILES[@]}" == 0)); then
-        echo "✅ no changed files require deterministic formatter/linter fixes"
-        return 0
-    fi
-
-    # Run npm-backed lint fixes only on changed JS/TS/CSS files, unless their
-    # configuration changed. Pre-commit owns the remaining deterministic hooks
-    # and converges after npm-backed fixes.
-    local javascript_lint_all=false
-    local stylelint_all=false
-    local file
-    local -a javascript_lint_files=()
-    local -a stylelint_files=()
-
-    for file in "${CHANGED_FILES[@]}"; do
-        case "${file}" in
-        eslint.config.js)
-            javascript_lint_all=true
-            ;;
-        *.js | *.jsx | *.mjs | *.cjs | *.ts | *.tsx)
-            javascript_lint_files+=("${file}")
-            ;;
-        esac
-        case "${file}" in
-        stylelint.config.cjs)
-            stylelint_all=true
-            ;;
-        *.css)
-            stylelint_files+=("${file}")
-            ;;
-        esac
-    done
-
-    if [[ "${javascript_lint_all}" == true || "${stylelint_all}" == true ||
-        "${#javascript_lint_files[@]}" -gt 0 || "${#stylelint_files[@]}" -gt 0 ]]; then
-        if command -v npm >/dev/null 2>&1 && [[ -d node_modules ]]; then
-            if [[ "${javascript_lint_all}" == true ]]; then
-                run_compact "ESLint local auto-fix" npm run lint:fix
-            elif (("${#javascript_lint_files[@]}" > 0)); then
-                run_compact "ESLint changed-file auto-fix" \
-                    npx eslint --fix --format ./scripts/eslint-github-formatter.mjs "${javascript_lint_files[@]}"
-            fi
-
-            if [[ "${stylelint_all}" == true ]]; then
-                run_compact "Stylelint local auto-fix" npm run lint:css:fix
-            elif (("${#stylelint_files[@]}" > 0)); then
-                run_compact "Stylelint changed-file auto-fix" \
-                    npx stylelint --fix "${stylelint_files[@]}"
-            fi
-        else
-            echo "⚠️ QG_NODE_FIX_SKIPPED: node_modules unavailable; npm lint auto-fixes were skipped." >&2
-            echo "   Run 'npm ci --no-audit --no-fund' before the strict publication gate." >&2
-        fi
-    fi
-
-    # npm fixes can create changes covered by Biome/other hooks; converge those
-    # hooks last.
-    precommit_fix_until_stable
-
-    echo "✅ deterministic local auto-fix phase converged."
-    git status --short
-}
-
 is_guarded_path() {
     case "$1" in
-    package-lock.json | public/assets/* | public/checklist/* | public/d3.v3.min.js | .github/copilot-instructions.md)
-        # Generated/vendor-heavy or deliberately thin instruction surfaces have
-        # dedicated contracts; large-deletion heuristics would create false positives.
-        return 1
-        ;;
-    *.md | *.ts | *.tsx | *.js | *.mjs | *.cjs | *.json | *.yml | *.yaml | *.toml | *.sh | *.css | *.html)
-        return 0
-        ;;
-    *)
-        return 1
-        ;;
+        package-lock.json | public/assets/* | public/checklist/* | public/d3.v3.min.js | .github/copilot-instructions.md)
+            return 1
+            ;;
+        *.md | *.ts | *.tsx | *.js | *.mjs | *.cjs | *.json | *.yml | *.yaml | *.toml | *.sh | *.css | *.html)
+            return 0
+            ;;
+        *)
+            return 1
+            ;;
     esac
 }
 
@@ -365,9 +190,53 @@ if [[ "${MODE}" == "preflight" ]]; then
     exit 0
 fi
 
+command -v pre-commit >/dev/null 2>&1 || {
+    echo "❌ pre-commit is required; run 'mise run hooks' first" >&2
+    exit 1
+}
+
+classify_changed_files "${CHANGED_FILES[@]}"
+
+if [[ "${MODE}" != "fix" && "${agent_gate_changed}" == true &&
+    "${QUALITY_CANONICAL_GATE_VERIFIED:-0}" != "1" ]]; then
+    run_compact "agent quality shell formatting" \
+        pre-commit run shfmt-docker --files "${AGENT_GATE_SHELL_FILES[@]}"
+    run_compact "agent quality shell lint" \
+        pre-commit run shell-lint --files "${AGENT_GATE_SHELL_FILES[@]}"
+    run_compact "agent quality shell style" \
+        pre-commit run bashate --files "${AGENT_GATE_SHELL_FILES[@]}"
+fi
+
 if [[ "${MODE}" == "fix" ]]; then
-    run_fix_until_stable
-    echo "ℹ️  review git diff/status, commit deterministic changes, then run the strict agent gate"
+    precommit_fix_until_stable
+
+    if [[ "${javascript_lint_all}" == true || "${stylelint_all}" == true ||
+        "${#JAVASCRIPT_LINT_FILES[@]}" -gt 0 || "${#STYLELINT_FILES[@]}" -gt 0 ]]; then
+        if command -v npm >/dev/null 2>&1 && [[ -d node_modules ]]; then
+            if [[ "${javascript_lint_all}" == true ]]; then
+                run_compact "ESLint local auto-fix" npm run lint:fix
+            elif (("${#JAVASCRIPT_LINT_FILES[@]}" > 0)); then
+                run_compact "ESLint changed-file auto-fix" \
+                    npx eslint --fix --format ./scripts/eslint-github-formatter.mjs "${JAVASCRIPT_LINT_FILES[@]}"
+            fi
+
+            if [[ "${stylelint_all}" == true ]]; then
+                run_compact "Stylelint local auto-fix" npm run lint:css:fix
+            elif (("${#STYLELINT_FILES[@]}" > 0)); then
+                run_compact "Stylelint changed-file auto-fix" \
+                    npx stylelint --fix "${STYLELINT_FILES[@]}"
+            fi
+
+            precommit_fix_until_stable
+        else
+            echo "⚠️ QG_NODE_FIX_SKIPPED: node_modules unavailable; pre-commit fixes ran, but npm lint auto-fixes were skipped." >&2
+            echo "   Run 'npm ci --no-audit --no-fund' before the strict publication gate." >&2
+        fi
+    fi
+
+    echo "✅ deterministic local auto-fix phase converged."
+    git status --short
+    echo "ℹ️  review the diff, commit it, then run scripts/agent-publish.sh"
     exit 0
 fi
 
@@ -396,49 +265,16 @@ command -v node >/dev/null 2>&1 || {
     echo "❌ node is required; activate the repository toolchain with mise" >&2
     exit 1
 }
-command -v pre-commit >/dev/null 2>&1 || {
-    echo "❌ pre-commit is required; run 'mise run hooks' first" >&2
-    exit 1
-}
 if [[ ! -d node_modules ]]; then
     echo "❌ node_modules is missing; run 'npm ci --no-audit --no-fund' first" >&2
     exit 1
 fi
 
-publication_key() {
-    local base_sha
-    local deps_hash="missing"
-    if [[ "${BASE_REF}" == "HEAD" ]]; then
-        base_sha="$(git rev-parse HEAD)"
-    else
-        base_sha="$(git rev-parse "${BASE_REF}^{commit}")"
-    fi
-    if [[ -f node_modules/.package-lock.json ]]; then
-        deps_hash="$(git hash-object -- node_modules/.package-lock.json)"
-    fi
-    {
-        printf 'head=%s\n' "$(git rev-parse HEAD)"
-        printf 'base=%s\n' "${base_sha}"
-        printf 'node=%s\n' "$(node --version)"
-        printf 'npm=%s\n' "$(npm --version)"
-        printf 'precommit=%s\n' "$(pre-commit --version)"
-        printf 'deps=%s\n' "${deps_hash}"
-    } | git hash-object --stdin
-}
-
-STAMP_KEY="$(publication_key)"
-if [[ "${MODE}" == "publish" && "${QUALITY_FORCE_PUBLISH:-0}" != "1" && -f "${STAMP_PATH}" ]]; then
-    if [[ "$(cat "${STAMP_PATH}")" == "${STAMP_KEY}" ]]; then
-        echo "✅ QG_PUBLISH_CACHE: exact HEAD/base/toolchain already passed the strict local gate."
-        exit 0
-    fi
-fi
-
-# Run the formatter/linter/security gate before npm-backed project validation.
-# Cheap deterministic failures should be discovered before expensive work.
-if [[ "${MODE}" == "publish" ]]; then
+if [[ "${PUBLISH}" == true ]]; then
     run_compact "canonical formatter/linter/security publication gate" \
         bash scripts/quality-gate.sh --publish
+elif [[ "${QUALITY_CANONICAL_GATE_VERIFIED:-0}" == "1" ]]; then
+    echo "✅ canonical formatter/linter/security gate already verified earlier in this CI job"
 else
     run_compact "canonical formatter/linter/security gate" bash scripts/quality-gate.sh
 fi
@@ -457,24 +293,36 @@ run_maintenance_project_checks() {
     npm run test:unit
 }
 
+run_full_prebuild_checks() {
+    npm run lint
+    npm run lint:css
+    npx next typegen
+    npm run typecheck
+    npm run test:unit
+    npm run privacy:check
+}
+
 case "${full_project}" in
-true)
-    run_compact "Next/npm lint, types, unit, privacy and production build gate" npm run check
-    ;;
-false)
-    run_compact "maintenance npm lint, CSS and unit gate" run_maintenance_project_checks
-    ;;
-*)
-    printf '❌ QG_SCOPE_INVALID: ci-quality-scope returned full_project=%s\n' "${full_project:-missing}" >&2
-    exit 1
-    ;;
+    true)
+        run_compact "full pre-build lint, types, unit and privacy gate" run_full_prebuild_checks
+        ;;
+    false)
+        run_compact "maintenance lint, CSS and unit gate" run_maintenance_project_checks
+        ;;
+    *)
+        printf '❌ QG_SCOPE_INVALID: ci-quality-scope returned full_project=%s\n' "${full_project:-missing}" >&2
+        exit 1
+        ;;
 esac
 
-mkdir -p "$(dirname "${STAMP_PATH}")"
-printf '%s\n' "${STAMP_KEY}" >"${STAMP_PATH}"
-
-if [[ "${MODE}" == "publish" ]]; then
-    echo "✅ Agent publication gate passed; exact local proof recorded for pre-push reuse."
+if [[ "${PUBLISH}" == true ]]; then
+    STATUS="$(git status --short)"
+    if [[ -n "${STATUS}" ]]; then
+        echo "❌ Working tree changed during the agent publication gate." >&2
+        printf '%s\n' "${STATUS}" >&2
+        exit 1
+    fi
+    echo "✅ Agent pre-build publication gate passed; repository is clean."
 else
-    echo "✅ Agent quality gate passed; exact local proof recorded for a subsequent publish/pre-push."
+    echo "✅ Agent pre-build quality gate passed."
 fi

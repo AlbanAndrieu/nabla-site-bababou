@@ -25,6 +25,8 @@ test("known quality orchestration files stay maintenance-only", async () => {
 
   for (const path of [
     "scripts/agent-quality-gate.sh",
+    "scripts/agent-publish.sh",
+    "scripts/lib/agent-quality-support.sh",
     "scripts/quality-gate.sh",
     "scripts/ci-quality-scope.sh",
     "scripts/verify-production-baseline.sh",
@@ -77,14 +79,25 @@ test("production baseline and live smoke run before dependency installation", as
   assert.notEqual(baselineInfo.mode & 0o100, 0);
   assert.notEqual(liveInfo.mode & 0o100, 0);
   const preflight = workflow.indexOf("- name: Run agent preflight before dependency install");
+  const canonicalGate = workflow.indexOf(
+    "- name: Run canonical changed-file quality gate before network/SAST/npm bootstrap",
+  );
   const baselineGate = workflow.indexOf("- name: Verify current production baseline before PR build");
   const liveGate = workflow.indexOf("- name: Revalidate canonical production smoke before PR build");
   const setupNode = workflow.indexOf("- name: Setup Node.js");
   assert.ok(
-    preflight >= 0 && baselineGate > preflight && liveGate > baselineGate && setupNode > liveGate,
+    preflight >= 0 &&
+      canonicalGate > preflight &&
+      baselineGate > canonicalGate &&
+      liveGate > baselineGate &&
+      setupNode > liveGate,
   );
   assert.match(workflow, /statuses:\s*read/);
-  assert.match(workflow, /BASE_SHA: \$\{\{ github\.event\.pull_request\.base\.sha \}\}/);
+  assert.match(
+    workflow,
+    /BASE_SHA: \\${{ steps\\.current-heads\\.outputs\\.production-sha }}/,
+  );
+  assert.doesNotMatch(workflow, /github\\.event\\.pull_request\\.base\\.sha/);
   assert.match(workflow, /bash scripts\/verify-production-baseline\.sh/);
   assert.match(workflow, /VERCEL_AUTOMATION_BYPASS_SECRET: \$\{\{ secrets\.VERCEL_AUTOMATION_BYPASS_SECRET \}\}/);
   assert.match(workflow, /bash scripts\/verify-production-live\.sh/);
@@ -252,6 +265,8 @@ test("quality-only files do not trigger an application Preview checkpoint", asyn
     ".pre-commit-pre-push.yaml",
     "mise.toml",
     "scripts/agent-quality-gate.sh",
+    "scripts/agent-publish.sh",
+    "scripts/lib/agent-quality-support.sh",
     "scripts/ci-quality-scope.sh",
     "scripts/verify-production-baseline.sh",
     "scripts/verify-production-live.sh",

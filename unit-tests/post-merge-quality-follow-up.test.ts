@@ -53,7 +53,7 @@ test("an automatic PR requires a converged diff and both strict agent gates", as
   const fixIndex = workflow.indexOf("scripts/agent-quality-gate.sh --fix");
   const strictIndex = workflow.indexOf("bash scripts/agent-quality-gate.sh\n");
   const publishIndex = workflow.indexOf(
-    "bash scripts/agent-quality-gate.sh --publish",
+    "bash scripts/agent-publish.sh",
   );
   const pushIndex = workflow.indexOf("git push origin");
   const prIndex = workflow.indexOf("github.rest.pulls.create");

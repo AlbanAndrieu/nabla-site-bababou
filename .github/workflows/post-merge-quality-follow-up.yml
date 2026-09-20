@@ -266,7 +266,7 @@ jobs:
 
           set +e
           QUALITY_BASE_REF="${FAILED_SHA}" \
-            bash scripts/agent-quality-gate.sh --publish
+            bash scripts/agent-publish.sh
           publish_rc=$?
           set -e
           if ((publish_rc != 0)); then

@@ -28,6 +28,7 @@ test("Quality automatically publishes exact PR Preview checkpoints after success
   assert.match(workflow, /ref: \$\{\{ steps\.preview\.outputs\.sha \}\}/);
   assert.match(workflow, /PR_BASE_SHA/);
   assert.match(workflow, /PR_HEAD_SHA/);
+  assert.match(workflow, /needs\.quality\.outputs\.current-base-sha/);
   assert.match(workflow, /publish-vercel-preview-checkpoint\.sh/);
   assert.match(workflow, /vercel-preview-pr-/);
   assert.match(

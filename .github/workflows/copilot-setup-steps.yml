@@ -18,6 +18,8 @@ on:
       - package.json
       - package-lock.json
       - scripts/agent-quality-gate.sh
+      - scripts/agent-publish.sh
+      - scripts/lib/agent-quality-support.sh
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
     paths:
@@ -30,6 +32,8 @@ on:
       - package.json
       - package-lock.json
       - scripts/agent-quality-gate.sh
+      - scripts/agent-publish.sh
+      - scripts/lib/agent-quality-support.sh
 
 concurrency:
   group: copilot-setup-${{ github.event.pull_request.number || github.ref }}

@@ -49,12 +49,12 @@ For a focused change, run the closest relevant formatter or linter first. After 
 ```bash
 bash scripts/agent-quality-gate.sh --fix
 # Review deterministic formatter/linter changes and commit them.
-bash scripts/agent-quality-gate.sh --publish
+bash scripts/agent-publish.sh
 ```
 
-`--fix` first runs the project ESLint/Stylelint fixers when dependencies are available, then lets pre-commit converge deterministic mutations. The publication pass runs the canonical formatter/linter/security gate before the expensive type/unit/privacy/build checks, so cheap deterministic failures are found first.
+`--fix` first converges pre-commit mutations, then applies scoped ESLint/Stylelint fixes when dependencies are available, and converges pre-commit once more. The strict agent gate owns deterministic pre-build checks; `scripts/agent-publish.sh` adds the scope-aware production build and built-output privacy validation only when the change is deploy-relevant.
 
-A successful strict local gate records an exact proof keyed to the committed `HEAD`, comparison base, Node/npm/pre-commit versions and installed dependency lock. The canonical pre-push hook calls `--publish` again, but it reuses that proof instead of rebuilding when nothing relevant changed. Use `QUALITY_FORCE_PUBLISH=1 bash scripts/agent-quality-gate.sh --publish` only when a deliberate full rerun is required.
+A successful `scripts/agent-publish.sh` run records an exact proof keyed to the committed `HEAD`, comparison base, Node/npm/Python/pre-commit versions and installed dependency lock. The canonical pre-push hook calls the same publisher and reuses that proof instead of rebuilding when nothing relevant changed. Use `QUALITY_FORCE_PUBLISH=1 bash scripts/agent-publish.sh` only when a deliberate full rerun is required.
 
 The default strict command remains available for diagnostics:
 
@@ -62,7 +62,7 @@ The default strict command remains available for diagnostics:
 bash scripts/agent-quality-gate.sh
 ```
 
-It also records the same exact proof, so a following `--publish` is cheap. Do not routinely run both strict modes back-to-back: use the single `--publish` path for normal publication.
+It is a pre-build diagnostic gate and does not write the publication proof. Do not routinely run it immediately before the publisher: use the single `scripts/agent-publish.sh` path for normal publication.
 
 The agent gate adds cheap branch-freshness, destructive-diff and executable-script checks before dependency-heavy work and delegates formatter/linter/security policy to the canonical cross-Nabla `scripts/quality-gate.sh`. Keep `scripts/quality-gate.sh` byte-for-byte aligned with sibling repositories rather than duplicating or moving its policy logic.
 
@@ -87,8 +87,8 @@ Before every `git push` or equivalent remote publication from a checkout:
 1. Run `mise run hooks` once for a new checkout.
 2. Run `bash scripts/agent-quality-gate.sh --fix` after editing and review every deterministic formatter/linter mutation.
 3. Commit the reviewed change set.
-4. Run `bash scripts/agent-quality-gate.sh --publish` once and fix every lint, type, unit, privacy, build, workflow, formatter or security failure it reaches.
-5. Push normally; the pre-push hook must reuse the exact local proof when the committed state is unchanged, or rerun the gate if that proof is stale.
+4. Run `bash scripts/agent-publish.sh` once and fix every lint, type, unit, privacy, build, workflow, formatter or security failure it reaches.
+5. Push normally; the pre-push hook must reuse the exact local proof when the committed state is unchanged, or rerun the publisher if that proof is stale.
 
 Never use `git push --no-verify`, and never weaken validation rules merely to make a push or CI pass. Set `QUALITY_ALLOW_LARGE_DELETION=1` only after explicitly reviewing an intentional large truncation or deletion.
 
