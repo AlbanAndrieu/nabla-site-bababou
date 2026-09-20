@@ -342,7 +342,7 @@ Cette phase est volontairement placée après migration, UI/UX, SEO, nettoyage e
   - [x] Routage FR/404 réconcilié et tests Preview post-migration validés 167/167 sur le SHA exact (#141).
   - [x] #193 : `central-authorities`, `central-authorities-failures` et NRE migrés, avec contraste, redirects, sitemap et preuves exact-SHA Playwright/ZAP validés avant merge.
   - [x] #194 : hub documentaire `ca/index.html` migré vers `/central-authorities-documents` avec inventaire build-time du corpus réellement présent.
-  - [ ] #197 : solder le fallback Vercel des `*.html` inexistants vers la 404 statique protégée avec un vrai statut 404 et une preuve Playwright exact-SHA.
+  - [x] #197/#198 : fallback Vercel des `*.html` inexistants vers la 404 statique protégée avec vrai HTTP 404 ; #198 durcit aussi HEAD, noindex et no-store sans changer `public/404.html`.
   - [ ] Lot suivant proposé : pages documentaires `public/ca/**` sans JS complexe, par paires FR/EN homologues et sans traduction juridique automatique ; ensuite seulement `abduction-norway.html` / `abduction-germany.html` après revue de contenu.
   - [ ] `people-contacted.html` reste une migration séparée à cause de D3/ARF/`people-cards.js`, même si son contraste est déjà durci.
 - [ ] **Migration 7 / P5** — dépendances/runtimes legacy, assets orphelins et optimisation CI/performance.
@@ -377,6 +377,18 @@ Cette phase est volontairement placée après migration, UI/UX, SEO, nettoyage e
   - [x] Finaliser Tailwind/PostCSS : retrait code/lock/config présent depuis #182, reset projet et contrats validés ; #185 puis #190/#191 fournissent la preuve Ready + Preview exact-SHA/Playwright/ZAP sans régression CSS/build.
   - [ ] Retrait des runtimes/scripts/assets legacy restants après preuve d'absence de consommateurs externes.
   - [ ] Stabiliser le déclenchement autonome des checkpoints Vercel depuis Quality, conformément à la dette opérationnelle #191 décrite dans P5.
+    - [x] #199 extrait la publication exacte `vercel-preview-pr-<n>` dans un helper local réutilisable : seed sur la base, déplacement exact-SHA protégé par `--force-with-lease`, validation d’ascendance et tests Git locaux. Le gate agent local réutilise aussi le fast-path maintenance de la CI (`lint` + CSS + unit tests, sans `next build` inutile) afin de maximiser la validation workstation quand Actions est indisponible ; le classifieur inclut désormais les suppressions de fichiers runtime et adopte un défaut conservateur (chemin inconnu ou diff vide ⇒ gate complet), afin qu’un delete ou une nouvelle surface de déploiement ne contourne jamais le build. Ce fallback ne remplace pas Quality/Playwright/ZAP runner-backed ; le parent reste donc ouvert.
+- [ ] **Parité structurelle nabla-site-alban — structure/technologies/comportements identiques, contenu distinct.**
+  - [x] Runtime : Node 26.8.2 pour dev/agents et Node 24.11.0 pour la compatibilité production Vercel.
+  - [x] Plateforme : fallback Docker non-root identique et hardening Next partagé (`poweredByHeader=false`, headers sécurité).
+  - [x] Quality local : garde de taille baseline-aware de `nabla-site-alban#186`, avant npm, sans dépendance tierce.
+  - [x] Cohérence des scopes : les mêmes scripts quality/checkpoint sont maintenance-only dans le gate local, la CI Preview et l’héritage de baseline production.
+  - [ ] **P0 après #199** — extraire les mécaniques communes vers `scripts/lib/agent-quality-support.sh` et séparer la preuve de publication via `scripts/agent-publish.sh`, comme Alban.
+  - [ ] **P1 UI primitives** — ajouter `Button`, étendre `ActionLink` avec `outlineSecondary`, `outlineInfo`, `inverted`, puis porter les contrats `actionPrimitives` / `cardPrimitive` de #183 ; conserver le contenu Bababou inchangé.
+  - [ ] **P2 responsive / Bootstrap** — appliquer les patterns #184/#190/#191 : CSS Modules/layout natif, `Card`/`ActionLink`/`Button`, réduction progressive des classes Bootstrap sur les pages Next prioritaires.
+  - [ ] **P3 visual regression** — porter le contrat light/dark/auto de `nabla-site-alban#189` avec routes prioritaires Bababou, contraste >= 4.5:1 et absence d’overflow horizontal.
+  - [ ] **P4 tooling** — maintenir Next/React/next-intl/TypeScript/ESLint/tsx et scripts npm alignés ; documenter explicitement les seules divergences justifiées par le contenu ou les intégrations.
+  - [ ] **P5 404/routing parity** — comparer périodiquement le comportement `*.html`/404 aux évolutions Alban #188 sans remplacer la stratégie filesystem nécessaire au corpus legacy Bababou.
 - [ ] **Migration 8 / P3** — extraction progressive de sections homepage en conservant les disclosures approuvées, sans changement sensible non validé.
   - [ ] Au cutover Next de `/`, remplacer les raster legacy restants par `next/image` avec formats modernes WebP/AVIF, tailles responsives et une image sociale dédiée ~1200×630 ; conserver des budgets de poids/CLS explicites.
 - [ ] **Migration finale / P6** — confidentialité hors homepage : pseudonymisation/caviardage du corpus restant et extension complète du privacy gate.

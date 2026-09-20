@@ -8,20 +8,20 @@ HEAD_REF="${QUALITY_SCOPE_HEAD_REF:-HEAD}"
 BASE_REF="${QUALITY_SCOPE_BASE_REF:-}"
 
 if ! git rev-parse --verify "${HEAD_REF}^{commit}" >/dev/null 2>&1; then
-	printf '❌ invalid quality-scope head: %s\n' "${HEAD_REF}" >&2
-	exit 1
+    printf '❌ invalid quality-scope head: %s\n' "${HEAD_REF}" >&2
+    exit 1
 fi
 
 if [[ -z "${BASE_REF}" ]] || ! git rev-parse --verify "${BASE_REF}^{commit}" >/dev/null 2>&1; then
-	BASE_REF="${HEAD_REF}^"
+    BASE_REF="${HEAD_REF}^"
 fi
 
 if [[ "$(git rev-parse "${BASE_REF}^{commit}")" == "$(git rev-parse "${HEAD_REF}^{commit}")" ]]; then
-	BASE_REF="${HEAD_REF}^"
+    BASE_REF="${HEAD_REF}^"
 fi
 
 mapfile -t FILES < <(
-	git diff --name-only --diff-filter=ACMR "${BASE_REF}" "${HEAD_REF}" | awk 'NF' | sort -u
+    git diff --name-only --diff-filter=ACMRD "${BASE_REF}" "${HEAD_REF}" | awk 'NF' | sort -u
 )
 
 FULL_PROJECT=false
@@ -29,62 +29,68 @@ SAST=false
 DEPENDENCIES=false
 
 is_source_file() {
-	case "$1" in
-		*.cjs | *.js | *.jsx | *.mjs | *.py | *.ts | *.tsx)
-			return 0
-			;;
-		*)
-			return 1
-			;;
-	esac
+    case "$1" in
+    *.cjs | *.js | *.jsx | *.mjs | *.py | *.ts | *.tsx)
+        return 0
+        ;;
+    *)
+        return 1
+        ;;
+    esac
 }
 
-for file in "${FILES[@]}"; do
-	case "${file}" in
-		package.json | package-lock.json)
-			FULL_PROJECT=true
-			DEPENDENCIES=true
-			;;
-		.nvmrc | .npmrc | next.config.* | proxy.ts | postcss.config.* | tsconfig.json | tsconfig.*.json)
-			FULL_PROJECT=true
-			;;
-		app/* | components/* | i18n/* | lib/* | messages/* | public/* | api/*)
-			FULL_PROJECT=true
-			;;
-		scripts/vercel-ignore-build.sh)
-			# This script is Vercel's ignoreCommand and directly decides whether a
-			# deployment is built. Changes therefore require the full project gate.
-			FULL_PROJECT=true
-			;;
-		scripts/agent-quality-gate.sh | scripts/quality-gate.sh | scripts/ci-quality-scope.sh | scripts/verify-production-baseline.sh | scripts/verify-production-live.sh | scripts/ci-performance-budget.sh | scripts/eslint-github-formatter.mjs)
-			# Quality/deployment orchestration: validate with lint/unit contracts,
-			# but it does not require rebuilding the application.
-			;;
-		scripts/*)
-			FULL_PROJECT=true
-			;;
-	esac
+is_maintenance_only_path() {
+    case "$1" in
+    docs/* | unit-tests/* | tests/* | *.md |         .github/* | .zap/* | .vscode/* | .idea/* | .agents/* | .cursor/* | .claude/* |         .assetsignore | .pre-commit-config.yaml | .pre-commit-pre-push.yaml | .python-version |         mise.toml | eslint.config.js | stylelint.config.cjs | commitlint.config.* | playwright.config.* |         scripts/agent-quality-gate.sh | scripts/quality-gate.sh | scripts/ci-quality-scope.sh |         scripts/verify-production-baseline.sh | scripts/verify-production-live.sh |         scripts/ci-performance-budget.sh | scripts/publish-vercel-preview-checkpoint.sh | scripts/check_code_size.py |         scripts/eslint-github-formatter.mjs)
+        return 0
+        ;;
+    *)
+        return 1
+        ;;
+    esac
+}
 
-	case "${file}" in
-		app/* | components/* | i18n/* | lib/* | api/* | scripts/*)
-			if is_source_file "${file}"; then
-				SAST=true
-			fi
-			;;
-		next.config.mjs | proxy.ts)
-			SAST=true
-			;;
-	esac
-done
+if (("${#FILES[@]}" == 0)); then
+    # An empty diff is unusual in a PR quality run. Prefer the safe/full path
+    # rather than silently skipping type/build/security validation.
+    FULL_PROJECT=true
+    SAST=true
+else
+    for file in "${FILES[@]}"; do
+        case "${file}" in
+        package.json | package-lock.json)
+            FULL_PROJECT=true
+            DEPENDENCIES=true
+            ;;
+        *)
+            if is_maintenance_only_path "${file}"; then
+                continue
+            fi
+            FULL_PROJECT=true
+            ;;
+        esac
+
+        case "${file}" in
+        app/* | components/* | i18n/* | lib/* | api/* | scripts/*)
+            if is_source_file "${file}"; then
+                SAST=true
+            fi
+            ;;
+        next.config.mjs | proxy.ts)
+            SAST=true
+            ;;
+        esac
+    done
+fi
 
 emit() {
-	printf 'full_project=%s\n' "${FULL_PROJECT}"
-	printf 'sast=%s\n' "${SAST}"
-	printf 'dependencies=%s\n' "${DEPENDENCIES}"
-	printf 'changed_count=%d\n' "${#FILES[@]}"
+    printf 'full_project=%s\n' "${FULL_PROJECT}"
+    printf 'sast=%s\n' "${SAST}"
+    printf 'dependencies=%s\n' "${DEPENDENCIES}"
+    printf 'changed_count=%d\n' "${#FILES[@]}"
 }
 
 emit
 if [[ -n "${GITHUB_OUTPUT:-}" ]]; then
-	emit >>"${GITHUB_OUTPUT}"
+    emit >>"${GITHUB_OUTPUT}"
 fi
