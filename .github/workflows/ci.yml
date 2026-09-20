@@ -524,6 +524,7 @@ jobs:
               filename === 'scripts/ci-performance-budget.sh' ||
               filename === 'scripts/quality-gate.sh' ||
               filename === 'scripts/publish-vercel-preview-checkpoint.sh' ||
+              filename === 'scripts/check_code_size.py' ||
               filename === 'scripts/eslint-github-formatter.mjs';
 
             const deployRelevant = files
