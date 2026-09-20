@@ -97,6 +97,26 @@ run_compact() {
 	return "${rc}"
 }
 
+run_compact_report() {
+    local label="$1"
+    shift
+    local log
+    local rc
+    log="$(mktemp)"
+    if "$@" >"${log}" 2>&1; then
+        grep -E '^(WARNING |Code-size gate:)' "${log}" || true
+        rm -f "${log}"
+        printf '✅ %s\n' "${label}"
+        return 0
+    else
+        rc=$?
+    fi
+    printf '❌ %s\n' "${label}" >&2
+    tail -n "${LOG_TAIL}" "${log}" >&2 || true
+    rm -f "${log}"
+    return "${rc}"
+}
+
 if [[ "${BASE_REF}" != "HEAD" ]]; then
 	if ! git rev-parse --verify "${BASE_REF}^{commit}" >/dev/null 2>&1; then
 		printf '❌ QG_BASE_MISSING: comparison base %s is unavailable\n' "${BASE_REF}" >&2
@@ -357,6 +377,15 @@ if [[ -n "${STATUS}" ]]; then
 	printf '%s\n' "${STATUS}" >&2
 	echo "   Run 'bash scripts/agent-quality-gate.sh --fix', review, then commit first." >&2
 	exit 1
+fi
+
+if (("${#CHANGED_FILES[@]}" > 0)); then
+    run_compact_report "baseline-aware code-size report" \
+        python3 scripts/check_code_size.py \
+        --baseline-ref "${BASE_REF}" \
+        "${CHANGED_FILES[@]}"
+else
+    echo "✅ baseline-aware code-size report (no changed files)"
 fi
 
 command -v npm >/dev/null 2>&1 || {

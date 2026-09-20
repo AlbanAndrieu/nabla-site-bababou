@@ -378,6 +378,14 @@ Cette phase est volontairement placée après migration, UI/UX, SEO, nettoyage e
   - [ ] Retrait des runtimes/scripts/assets legacy restants après preuve d'absence de consommateurs externes.
   - [ ] Stabiliser le déclenchement autonome des checkpoints Vercel depuis Quality, conformément à la dette opérationnelle #191 décrite dans P5.
     - [x] #199 extrait la publication exacte `vercel-preview-pr-<n>` dans un helper local réutilisable : seed sur la base, déplacement exact-SHA protégé par `--force-with-lease`, validation d’ascendance et tests Git locaux. Le gate agent local réutilise aussi le fast-path maintenance de la CI (`lint` + CSS + unit tests, sans `next build` inutile) afin de maximiser la validation workstation quand Actions est indisponible ; le classifieur inclut désormais les suppressions de fichiers runtime et adopte un défaut conservateur (chemin inconnu ou diff vide ⇒ gate complet), afin qu’un delete ou une nouvelle surface de déploiement ne contourne jamais le build. Ce fallback ne remplace pas Quality/Playwright/ZAP runner-backed ; le parent reste donc ouvert.
+- [ ] **Parité structurelle nabla-site-alban — structure/technologies/comportements identiques, contenu distinct.**
+  - [x] Aligner le runtime Node : Node 26.8.2 pour dev/agents et Node 24.11.0 pour la compatibilité production Vercel.
+  - [x] Aligner le fallback Docker non-root et le hardening Next partagé (headers, poweredByHeader=false).
+  - [x] Porter le garde de taille de code baseline-aware de nabla-site-alban#186 dans le gate agent local.
+  - [ ] Extraire les mécaniques communes du quality gate vers scripts/lib/agent-quality-support.sh et séparer la preuve de publication via scripts/agent-publish.sh, comme Alban, après validation de #199.
+  - [ ] Aligner les primitives UI partagées de #183/#184/#190/#191 : ActionLink, Button, Card, Badge, Container, layouts CSS natifs et réduction progressive de Bootstrap, sans modifier le contenu.
+  - [ ] Porter les tests visuels light/dark prioritaires de nabla-site-alban#189 sur les routes Bababou équivalentes.
+  - [ ] Maintenir les deux projets sur les mêmes versions Next/React/next-intl/TypeScript/tooling lorsque la compatibilité du contenu le permet ; toute divergence doit être explicitement documentée.
 - [ ] **Migration 8 / P3** — extraction progressive de sections homepage en conservant les disclosures approuvées, sans changement sensible non validé.
   - [ ] Au cutover Next de `/`, remplacer les raster legacy restants par `next/image` avec formats modernes WebP/AVIF, tailles responsives et une image sociale dédiée ~1200×630 ; conserver des budgets de poids/CLS explicites.
 - [ ] **Migration finale / P6** — confidentialité hors homepage : pseudonymisation/caviardage du corpus restant et extension complète du privacy gate.
