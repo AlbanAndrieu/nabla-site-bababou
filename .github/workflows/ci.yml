@@ -227,20 +227,20 @@ jobs:
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
         run: bash scripts/verify-production-live.sh
 
-      - name: Classify quality scope
-        id: scope
+      - name: Classify CI change scope
+        id: ci-scope
         if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
         shell: bash
         env:
-          QUALITY_SCOPE_BASE_REF: ${{ steps.current-heads.outputs.base-sha || github.event.before || '' }}
-          QUALITY_SCOPE_HEAD_REF: ${{ github.event.pull_request.head.sha || github.sha }}
-        run: bash scripts/ci-scope.sh
+          BASE_SHA: ${{ steps.current-heads.outputs.base-sha || github.event.before || github.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: bash scripts/ci-scope.sh "${BASE_SHA}" "${HEAD_SHA}"
 
       - name: Run Semgrep SAST on changed source
         id: semgrep-sast
         if: >-
           (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
-          steps.scope.outputs.sast == 'true'
+          steps.ci-scope.outputs.sast == 'true'
         continue-on-error: true
         env:
           BASE_SHA: ${{ steps.current-heads.outputs.base-sha || github.event.before || github.sha }}
@@ -281,7 +281,7 @@ jobs:
         id: semgrep-sarif
         if: >-
           always() &&
-          steps.scope.outputs.sast == 'true' &&
+          steps.ci-scope.outputs.sast == 'true' &&
           vars.ENABLE_CODE_SCANNING_SARIF == 'true' &&
           hashFiles('semgrep.sarif') != '' &&
           (github.event_name != 'pull_request' ||
@@ -294,7 +294,7 @@ jobs:
       - name: Report Code Scanning SARIF opt-in disabled
         if: >-
           always() &&
-          steps.scope.outputs.sast == 'true' &&
+          steps.ci-scope.outputs.sast == 'true' &&
           vars.ENABLE_CODE_SCANNING_SARIF != 'true' &&
           hashFiles('semgrep.sarif') != ''
         shell: bash
@@ -320,7 +320,7 @@ jobs:
       - name: Preserve failed Semgrep SAST report
         if: >-
           always() &&
-          steps.scope.outputs.sast == 'true' &&
+          steps.ci-scope.outputs.sast == 'true' &&
           steps.semgrep-sast.outcome != 'success' &&
           hashFiles('semgrep.sarif') != ''
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
@@ -331,14 +331,14 @@ jobs:
           if-no-files-found: error
 
       - name: Clean Semgrep SAST workspace
-        if: always() && steps.scope.outputs.sast == 'true' && hashFiles('semgrep.sarif') != ''
+        if: always() && steps.ci-scope.outputs.sast == 'true' && hashFiles('semgrep.sarif') != ''
         shell: bash
         run: rm -f semgrep.sarif
 
       - name: Enforce Semgrep SAST
         if: >-
           (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
-          steps.scope.outputs.sast == 'true' &&
+          steps.ci-scope.outputs.sast == 'true' &&
           steps.semgrep-sast.outcome != 'success'
         run: exit 1
 
@@ -363,7 +363,7 @@ jobs:
       - name: Restore Next build cache
         if: >-
           (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
-          steps.scope.outputs.full_project == 'true'
+          steps.ci-scope.outputs.build == 'true'
         id: next-cache
         continue-on-error: true
         uses: actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25 # v5
@@ -406,7 +406,7 @@ jobs:
       - name: Run maintenance project checks
         if: >-
           (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
-          steps.scope.outputs.full_project != 'true'
+          steps.ci-scope.outputs.build != 'true'
         id: maintenance-checks
         shell: bash
         run: |
@@ -420,7 +420,7 @@ jobs:
       - name: Run canonical project checks
         if: >-
           (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
-          steps.scope.outputs.full_project == 'true'
+          steps.ci-scope.outputs.build == 'true'
         id: checks
         shell: bash
         run: |
@@ -447,7 +447,7 @@ jobs:
       - name: Save Next build cache
         if: >-
           (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
-          steps.scope.outputs.full_project == 'true' &&
+          steps.ci-scope.outputs.build == 'true' &&
           steps.next-cache.outputs.cache-hit != 'true'
         continue-on-error: true
         uses: actions/cache/save@caa296126883cff596d87d8935842f9db880ef25 # v5
@@ -460,7 +460,7 @@ jobs:
       - name: Run Snyk vulnerability scan
         if: >-
           (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
-          steps.scope.outputs.dependencies == 'true' &&
+          steps.ci-scope.outputs.dependencies == 'true' &&
           env.SNYK_TOKEN != ''
         run: npx --yes snyk test
 
@@ -468,9 +468,10 @@ jobs:
         if: always() && !cancelled() && (github.event_name != 'pull_request' || github.event.pull_request.draft == false)
         shell: bash
         env:
-          QUALITY_SCOPE: ${{ steps.scope.outputs.full_project }}
-          SAST_SCOPE: ${{ steps.scope.outputs.sast }}
-          DEPENDENCY_SCOPE: ${{ steps.scope.outputs.dependencies }}
+          APPLICATION_SCOPE: ${{ steps.ci-scope.outputs.application }}
+          BUILD_SCOPE: ${{ steps.ci-scope.outputs.build }}
+          SAST_SCOPE: ${{ steps.ci-scope.outputs.sast }}
+          DEPENDENCY_SCOPE: ${{ steps.ci-scope.outputs.dependencies }}
           NPM_CI_SECONDS: ${{ steps.install.outputs.seconds }}
           NODE_MODULES_MB: ${{ steps.install.outputs.node_modules_mb }}
           NPM_CACHE_MB: ${{ steps.install.outputs.npm_cache_mb }}
@@ -494,7 +495,8 @@ jobs:
             echo
             echo "| Metric | Value |"
             echo "| --- | ---: |"
-            echo "| full project gate | $(value_or_na "$QUALITY_SCOPE") |"
+            echo "| application scope | $(value_or_na "$APPLICATION_SCOPE") |"
+            echo "| build gate | $(value_or_na "$BUILD_SCOPE") |"
             echo "| Semgrep source gate | $(value_or_na "$SAST_SCOPE") |"
             echo "| dependency gate | $(value_or_na "$DEPENDENCY_SCOPE") |"
             echo "| npm ci | $(value_or_na "$NPM_CI_SECONDS") s |"

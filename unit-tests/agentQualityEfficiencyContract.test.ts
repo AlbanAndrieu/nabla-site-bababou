@@ -73,8 +73,8 @@ test("publication builds only deploy-relevant changes", async () => {
     read("../scripts/ci-scope.sh"),
   ]);
 
-  assert.match(publish, /bash scripts\/ci-scope\.sh/);
-  assert.match(publish, /case "\$\{full_project\}" in/);
+  assert.match(publish, /bash scripts\/ci-scope\.sh "\$\{BASE_SHA\}" HEAD/);
+  assert.match(publish, /case "\$\{build\}" in/);
   assert.match(publish, /false\)[\s\S]*Next build intentionally skipped/);
   assert.match(publish, /true\)[\s\S]*npm run build/);
   assert.ok(scope.includes("scripts/agent-publish.sh"));

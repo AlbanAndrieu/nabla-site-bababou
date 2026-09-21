@@ -50,18 +50,15 @@ test("Vercel ignored-build policy changes stay deploy-relevant", async (t) => {
 	git("add", "scripts/vercel-ignore-build.sh");
 	git("commit", "--quiet", "-m", "test: change Vercel build policy");
 
-	const output = execFileSync("bash", ["scripts/ci-scope.sh"], {
+	const output = execFileSync("bash", ["scripts/ci-scope.sh", base, "HEAD"], {
 		cwd: repo,
 		encoding: "utf8",
-		env: {
-			...process.env,
-			QUALITY_SCOPE_BASE_REF: base,
-			QUALITY_SCOPE_HEAD_REF: "HEAD",
-		},
 	});
 
-	assert.match(output, /^full_project=true$/m);
+	assert.match(output, /^maintenance_only=false$/m);
+	assert.match(output, /^application=true$/m);
 	assert.match(output, /^sast=false$/m);
+	assert.match(output, /^build=true$/m);
 	assert.match(output, /^dependencies=false$/m);
 	assert.match(output, /^changed_count=1$/m);
 });
