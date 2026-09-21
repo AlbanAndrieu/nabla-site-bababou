@@ -37,5 +37,5 @@ description = "Run the strict agent-first local quality gate"
 run = "bash scripts/agent-quality-gate.sh"
 
 [tasks.agent-publish]
-description = "Run the strict agent publication gate before push"
-run = "bash scripts/agent-quality-gate.sh --publish"
+description = "Run or reuse the exact strict publication proof for the current HEAD/base/toolchain"
+run = "bash scripts/agent-publish.sh"

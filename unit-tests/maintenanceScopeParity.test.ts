@@ -14,6 +14,8 @@ test("quality maintenance paths stay aligned across local, CI, Preview and produ
 
   const sharedMaintenancePaths = [
     "scripts/agent-quality-gate.sh",
+    "scripts/agent-publish.sh",
+    "scripts/lib/agent-quality-support.sh",
     "scripts/quality-gate.sh",
     "scripts/ci-quality-scope.sh",
     "scripts/verify-production-baseline.sh",
