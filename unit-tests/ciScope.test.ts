@@ -7,8 +7,8 @@ async function read(relativePath: string) {
 }
 
 test("quality scope helper is executable and conservative about runtime changes", async () => {
-  const url = new URL("../scripts/ci-quality-scope.sh", import.meta.url);
-  const [source, info] = await Promise.all([read("../scripts/ci-quality-scope.sh"), stat(url)]);
+  const url = new URL("../scripts/ci-scope.sh", import.meta.url);
+  const [source, info] = await Promise.all([read("../scripts/ci-scope.sh"), stat(url)]);
 
   assert.notEqual(info.mode & 0o100, 0);
   assert.match(source, /--diff-filter=ACMRD/);
@@ -21,14 +21,14 @@ test("quality scope helper is executable and conservative about runtime changes"
 });
 
 test("known quality orchestration files stay maintenance-only", async () => {
-  const source = await read("../scripts/ci-quality-scope.sh");
+  const source = await read("../scripts/ci-scope.sh");
 
   for (const path of [
     "scripts/agent-quality-gate.sh",
     "scripts/agent-publish.sh",
     "scripts/lib/agent-quality-support.sh",
     "scripts/quality-gate.sh",
-    "scripts/ci-quality-scope.sh",
+    "scripts/ci-scope.sh",
     "scripts/verify-production-baseline.sh",
     "scripts/verify-production-live.sh",
     "scripts/ci-performance-budget.sh",
@@ -267,7 +267,7 @@ test("quality-only files do not trigger an application Preview checkpoint", asyn
     "scripts/agent-quality-gate.sh",
     "scripts/agent-publish.sh",
     "scripts/lib/agent-quality-support.sh",
-    "scripts/ci-quality-scope.sh",
+    "scripts/ci-scope.sh",
     "scripts/verify-production-baseline.sh",
     "scripts/verify-production-live.sh",
     "scripts/ci-performance-budget.sh",

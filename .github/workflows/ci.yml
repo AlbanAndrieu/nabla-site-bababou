@@ -234,7 +234,7 @@ jobs:
         env:
           QUALITY_SCOPE_BASE_REF: ${{ steps.current-heads.outputs.base-sha || github.event.before || '' }}
           QUALITY_SCOPE_HEAD_REF: ${{ github.event.pull_request.head.sha || github.sha }}
-        run: bash scripts/ci-quality-scope.sh
+        run: bash scripts/ci-scope.sh
 
       - name: Run Semgrep SAST on changed source
         id: semgrep-sast
@@ -598,7 +598,7 @@ jobs:
               filename === 'scripts/agent-quality-gate.sh' ||
               filename === 'scripts/agent-publish.sh' ||
               filename === 'scripts/lib/agent-quality-support.sh' ||
-              filename === 'scripts/ci-quality-scope.sh' ||
+              filename === 'scripts/ci-scope.sh' ||
               filename === 'scripts/verify-production-baseline.sh' ||
               filename === 'scripts/verify-production-live.sh' ||
               filename === 'scripts/ci-performance-budget.sh' ||

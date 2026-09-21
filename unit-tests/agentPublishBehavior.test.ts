@@ -40,7 +40,7 @@ async function createFixture() {
     "#!/usr/bin/env bash\nset -euo pipefail\necho \"gate:$*\" >> \"$(git rev-parse --git-path agent-publish-test-calls)\"\n",
   );
   await writeFile(
-    join(directory, "scripts", "ci-quality-scope.sh"),
+    join(directory, "scripts", "ci-scope.sh"),
     "#!/usr/bin/env bash\nset -euo pipefail\nprintf 'full_project=%s\\nsast=false\\ndependencies=false\\nchanged_count=1\\n' \"${FULL_SCOPE:-false}\"\n",
   );
   await writeFile(join(directory, "node_modules", ".package-lock.json"), "{}\n");
@@ -67,7 +67,7 @@ async function createFixture() {
   for (const path of [
     join(directory, "scripts", "agent-publish.sh"),
     join(directory, "scripts", "agent-quality-gate.sh"),
-    join(directory, "scripts", "ci-quality-scope.sh"),
+    join(directory, "scripts", "ci-scope.sh"),
     npm,
     preCommit,
   ]) {

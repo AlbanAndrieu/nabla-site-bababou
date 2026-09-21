@@ -282,7 +282,7 @@ fi
 scope_output="$(
     QUALITY_SCOPE_BASE_REF="${BASE_REF}" \
         QUALITY_SCOPE_HEAD_REF=HEAD \
-        bash scripts/ci-quality-scope.sh
+        bash scripts/ci-scope.sh
 )"
 printf '%s\n' "${scope_output}"
 full_project="$(awk -F= '$1 == "full_project" { print $2; exit }' <<<"${scope_output}")"
@@ -310,7 +310,7 @@ case "${full_project}" in
         run_compact "maintenance lint, CSS and unit gate" run_maintenance_project_checks
         ;;
     *)
-        printf '❌ QG_SCOPE_INVALID: ci-quality-scope returned full_project=%s\n' "${full_project:-missing}" >&2
+        printf '❌ QG_SCOPE_INVALID: ci-scope returned full_project=%s\n' "${full_project:-missing}" >&2
         exit 1
         ;;
 esac

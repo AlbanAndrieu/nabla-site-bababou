@@ -11,7 +11,7 @@ async function read(relativePath: string) {
 
 test("Vercel ignored-build policy changes stay deploy-relevant", async (t) => {
 	const [scope, workflow, vercelConfig] = await Promise.all([
-		read("../scripts/ci-quality-scope.sh"),
+		read("../scripts/ci-scope.sh"),
 		read("../.github/workflows/ci.yml"),
 		read("../vercel.json"),
 	]);
@@ -39,8 +39,8 @@ test("Vercel ignored-build policy changes stay deploy-relevant", async (t) => {
 	git("config", "user.name", "Quality Scope Test");
 	git("config", "user.email", "quality-scope@example.invalid");
 	await mkdir(join(repo, "scripts"), { recursive: true });
-	await writeFile(join(repo, "scripts/ci-quality-scope.sh"), scope);
-	await chmod(join(repo, "scripts/ci-quality-scope.sh"), 0o755);
+	await writeFile(join(repo, "scripts/ci-scope.sh"), scope);
+	await chmod(join(repo, "scripts/ci-scope.sh"), 0o755);
 	await writeFile(join(repo, "scripts/vercel-ignore-build.sh"), "baseline\n");
 	git("add", ".");
 	git("commit", "--quiet", "-m", "test: baseline");
@@ -50,7 +50,7 @@ test("Vercel ignored-build policy changes stay deploy-relevant", async (t) => {
 	git("add", "scripts/vercel-ignore-build.sh");
 	git("commit", "--quiet", "-m", "test: change Vercel build policy");
 
-	const output = execFileSync("bash", ["scripts/ci-quality-scope.sh"], {
+	const output = execFileSync("bash", ["scripts/ci-scope.sh"], {
 		cwd: repo,
 		encoding: "utf8",
 		env: {

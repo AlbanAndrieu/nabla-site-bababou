@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 import test from "node:test";
 
 const qualityScopeScript = fileURLToPath(
-  new URL("../scripts/ci-quality-scope.sh", import.meta.url),
+  new URL("../scripts/ci-scope.sh", import.meta.url),
 );
 
 function git(cwd: string, ...args: string[]) {

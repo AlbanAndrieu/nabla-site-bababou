@@ -41,7 +41,7 @@ is_source_file() {
 
 is_maintenance_only_path() {
     case "$1" in
-    docs/* | unit-tests/* | tests/* | *.md |         .github/* | .zap/* | .vscode/* | .idea/* | .agents/* | .cursor/* | .claude/* |         .assetsignore | .pre-commit-config.yaml | .pre-commit-pre-push.yaml | .python-version |         mise.toml | eslint.config.js | stylelint.config.cjs | commitlint.config.* | playwright.config.* |         scripts/agent-quality-gate.sh | scripts/agent-publish.sh | scripts/lib/agent-quality-support.sh | scripts/quality-gate.sh | scripts/ci-quality-scope.sh |         scripts/verify-production-baseline.sh | scripts/verify-production-live.sh |         scripts/ci-performance-budget.sh | scripts/publish-vercel-preview-checkpoint.sh | scripts/check_code_size.py |         scripts/eslint-github-formatter.mjs)
+    docs/* | unit-tests/* | tests/* | *.md |         .github/* | .zap/* | .vscode/* | .idea/* | .agents/* | .cursor/* | .claude/* |         .assetsignore | .pre-commit-config.yaml | .pre-commit-pre-push.yaml | .python-version |         mise.toml | eslint.config.js | stylelint.config.cjs | commitlint.config.* | playwright.config.* |         scripts/agent-quality-gate.sh | scripts/agent-publish.sh | scripts/lib/agent-quality-support.sh | scripts/quality-gate.sh | scripts/ci-scope.sh |         scripts/verify-production-baseline.sh | scripts/verify-production-live.sh |         scripts/ci-performance-budget.sh | scripts/publish-vercel-preview-checkpoint.sh | scripts/check_code_size.py |         scripts/eslint-github-formatter.mjs)
         return 0
         ;;
     *)

@@ -32,7 +32,7 @@ To avoid unnecessary tool-schema, CI and response overhead:
 5. Fetch Playwright reports, traces, and screenshots when they are useful for validation or failure diagnosis rather than unconditionally.
 6. Avoid repeatedly polling unchanged workflow or deployment state; re-check when the result can materially change the next action.
 7. Keep iterative PRs draft until the local publication checkpoint is ready; draft Quality is Git-preflight-only.
-8. Let `scripts/ci-quality-scope.sh` keep maintenance-only changes on the lightweight CI path. Do not force Semgrep, Snyk, Next builds or Vercel Previews for files that the classifier explicitly treats as quality/orchestration maintenance.
+8. Let `scripts/ci-scope.sh` keep maintenance-only changes on the lightweight CI path. Do not force Semgrep, Snyk, Next builds or Vercel Previews for files that the classifier explicitly treats as quality/orchestration maintenance.
 9. Keep output retrieval focused, but escalate to full logs/artifacts whenever narrower evidence is insufficient.
 
 The following integrations are not currently part of the normal `nabla-site-bababou` workflow and should only be discovered or invoked when explicitly relevant to the task:
