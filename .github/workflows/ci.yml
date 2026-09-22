@@ -104,6 +104,7 @@ jobs:
     timeout-minutes: 20
     outputs:
       current-base-sha: ${{ steps.current-heads.outputs.base-sha }}
+      preview_required: ${{ steps.ci-scope.outputs.preview_required }}
     env:
       SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 

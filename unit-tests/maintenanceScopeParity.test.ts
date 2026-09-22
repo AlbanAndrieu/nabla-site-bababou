@@ -83,9 +83,25 @@ test("maintenance paths stay aligned across local scope, both Preview paths and 
     baselineClassification.includes(classifierPath),
     "classifier must accept its own policy-only maintenance hop",
   );
+
+  const maintenanceStart = scope.indexOf("is_maintenance_only_path() {");
+  const previewStart = scope.indexOf("is_preview_safe_path() {");
+  const changedFilesStart = scope.indexOf("MAINTENANCE_ONLY=true");
   assert.ok(
-    !scope.includes(classifierPath),
+    maintenanceStart >= 0 &&
+      previewStart > maintenanceStart &&
+      changedFilesStart > previewStart,
+    "CI scope classifier functions must remain ordered and discoverable",
+  );
+  const maintenanceOnlyScope = scope.slice(maintenanceStart, previewStart);
+  const previewSafeScope = scope.slice(previewStart, changedFilesStart);
+  assert.ok(
+    !maintenanceOnlyScope.includes(classifierPath),
     "classifier changes must remain on the full CI quality/build path",
+  );
+  assert.ok(
+    previewSafeScope.includes(classifierPath),
+    "classifier changes must remain Preview-safe",
   );
   assert.ok(
     workflow.includes(`filename === '${classifierPath}'`),

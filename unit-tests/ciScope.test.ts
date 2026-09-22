@@ -25,6 +25,9 @@ test(
     assert.match(source, /DEPENDENCIES=true/);
     assert.match(source, /SAST=true/);
     assert.match(source, /if ! is_maintenance_only_path/);
+    assert.match(source, /is_preview_safe_path/);
+    assert.match(source, /PREVIEW_REQUIRED=true/);
+    assert.match(source, /preview_required=%s/);
     assert.match(source, /BASE_REF="\$\{1:-\$\(resolve_base_ref\)\}"/);
     assert.match(source, /HEAD_REF="\$\{2:-HEAD\}"/);
   },
@@ -63,6 +66,10 @@ test("maintenance CI avoids Semgrep, Next build and dependency scanning", async 
   assert.match(workflow, /steps\.ci-scope\.outputs\.build != 'true'/);
   assert.match(workflow, /steps\.ci-scope\.outputs\.dependencies == 'true'/);
   assert.match(workflow, /steps\.ci-scope\.outputs\.application/);
+  assert.match(
+    workflow,
+    /preview_required: \$\{\{ steps\.ci-scope\.outputs\.preview_required \}\}/,
+  );
   assert.doesNotMatch(workflow, /outputs\.full_project/);
   assert.match(workflow, /- name: Run maintenance project checks/);
   assert.match(workflow, /npm run lint\n\s+npm run lint:css\n\s+npm run test:unit/);
