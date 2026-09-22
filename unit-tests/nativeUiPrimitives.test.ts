@@ -6,19 +6,35 @@ async function source(path: string) {
   return readFile(new URL(`../${path}`, import.meta.url), "utf8");
 }
 
-test("shared actions support semantic outline and compact variants", async () => {
-  const [component, styles] = await Promise.all([
+test("shared actions support semantic variants for links and buttons", async () => {
+  const [component, button, styles] = await Promise.all([
     source("components/ui/ActionLink.tsx"),
+    source("components/ui/Button.tsx"),
     source("components/ui/Action.module.css"),
   ]);
 
   assert.match(component, /ComponentPropsWithoutRef<"a">/);
   assert.match(component, /export type ActionVariant/);
   assert.match(component, /export type ActionSize/);
-  assert.match(component, /"primary" \| "secondary" \| "outline"/);
+  for (const variant of [
+    "primary",
+    "secondary",
+    "outline",
+    "outlineSecondary",
+    "outlineInfo",
+    "inverted",
+  ]) {
+    assert.ok(component.includes(`"${variant}"`));
+  }
   assert.match(component, /"default" \| "compact"/);
   assert.match(component, /actionClassName\(variant, size, className\)/);
+  assert.match(button, /ComponentPropsWithoutRef<"button">/);
+  assert.match(button, /type = "button"/);
+  assert.match(button, /actionClassName\(variant, size, className\)/);
   assert.match(styles, /\.outline\s*\{/);
+  assert.match(styles, /\.outlineSecondary\s*\{/);
+  assert.match(styles, /\.outlineInfo\s*\{/);
+  assert.match(styles, /\.inverted\s*\{/);
   assert.match(styles, /\.compact\s*\{/);
   assert.match(styles, /min-height:\s*var\(--ui-control-min-height\)/);
 });

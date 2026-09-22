@@ -9,7 +9,8 @@
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: var(--ui-space-md);
+  gap: clamp(var(--ui-space-sm), 2vw, var(--ui-space-lg));
+  min-width: 0;
   min-height: 3.75rem;
   padding-block: 0.65rem;
 }
@@ -42,6 +43,11 @@
   font-weight: var(--ui-font-weight-action);
   overflow-wrap: anywhere;
   text-decoration: none;
+}
+
+.home span,
+.parent span {
+  overflow-wrap: anywhere;
 }
 
 .home:hover,
@@ -139,5 +145,16 @@
 
   .select {
     width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 26rem) {
+  .separator {
+    display: none;
+  }
+
+  .parent {
+    flex-basis: 100%;
   }
 }
