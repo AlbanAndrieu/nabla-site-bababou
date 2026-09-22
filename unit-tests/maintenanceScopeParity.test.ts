@@ -99,7 +99,7 @@ test("maintenance paths stay aligned across canonical scope, on-demand Preview a
   const previewSafeScope = scope.slice(previewStart, changedFilesStart);
   assert.ok(
     !maintenanceOnlyScope.includes(classifierPath),
-    "baseline classifier changes must keep full quality/SAST",
+    "baseline classifier changes must stay outside maintenance-only classification",
   );
   assert.ok(
     previewSafeScope.includes(classifierPath),
@@ -122,4 +122,7 @@ test("workflow changes are security-sensitive but non-deployable in canonical sc
 
   assert.doesNotMatch(maintenance, /\.github\/\*/);
   assert.match(preview, /\.github\/\*/);
+  assert.match(scope, /\.github\/workflows\/\*\.yml/);
+  assert.match(scope, /\.github\/workflows\/\*\.yaml/);
+  assert.match(scope, /is_source_file\(\)/);
 });

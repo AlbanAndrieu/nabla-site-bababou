@@ -18,4 +18,5 @@ test("publisher fingerprints only queryable tools", async () => {
     /precommit_version="\$\(tool_version_or_fail pre-commit pre-commit --version\)"/,
   );
   assert.match(source, /if ! TOOLCHAIN_SHA="\$\(toolchain_fingerprint\)"; then/);
+  assert.match(source, /QG_PUBLISH_TOOLCHAIN_INVALID/);
 });

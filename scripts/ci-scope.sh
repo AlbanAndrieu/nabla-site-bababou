@@ -32,9 +32,27 @@ if ! git rev-parse --verify "${HEAD_REF}^{commit}" >/dev/null 2>&1; then
     exit 1
 fi
 
+is_source_file() {
+    case "$1" in
+        *.cjs | *.js | *.jsx | *.mjs | *.py | *.ts | *.tsx)
+            return 0
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
 is_maintenance_only_path() {
     case "$1" in
-        docs/* | unit-tests/* | tests/* | *.md |             .pre-commit-config.yaml | .pre-commit-pre-push.yaml | .python-version |             mise.toml | eslint.config.js | stylelint.config.cjs | commitlint.config.* | playwright.config.* |             scripts/agent-quality-gate.sh | scripts/agent-publish.sh | scripts/lib/agent-quality-support.sh |             scripts/quality-gate.sh | scripts/check_code_size.py | scripts/ci-scope.sh |             scripts/verify-production-baseline.sh | scripts/verify-production-live.sh |             scripts/ci-performance-budget.sh | scripts/publish-vercel-preview-checkpoint.sh |             scripts/eslint-github-formatter.mjs)
+        docs/* | unit-tests/* | tests/* | *.md | \
+            .pre-commit-config.yaml | .pre-commit-pre-push.yaml | .python-version | \
+            mise.toml | eslint.config.js | stylelint.config.cjs | commitlint.config.* | playwright.config.* | \
+            scripts/agent-quality-gate.sh | scripts/agent-publish.sh | scripts/lib/agent-quality-support.sh | \
+            scripts/quality-gate.sh | scripts/check_code_size.py | scripts/ci-scope.sh | \
+            scripts/verify-production-baseline.sh | scripts/verify-production-live.sh | \
+            scripts/ci-performance-budget.sh | scripts/publish-vercel-preview-checkpoint.sh | \
+            scripts/eslint-github-formatter.mjs)
             return 0
             ;;
         *)
@@ -45,7 +63,16 @@ is_maintenance_only_path() {
 
 is_preview_safe_path() {
     case "$1" in
-        docs/* | unit-tests/* | tests/* | *.md |             .github/* | .zap/* | .vscode/* | .idea/* | .agents/* | .cursor/* | .claude/* |             .assetsignore | .pre-commit-config.yaml | .pre-commit-pre-push.yaml | .python-version |             mise.toml | eslint.config.js | stylelint.config.cjs | commitlint.config.* | playwright.config.* |             scripts/agent-quality-gate.sh | scripts/agent-publish.sh | scripts/lib/agent-quality-support.sh |             scripts/lib/production-baseline-classification.sh |             scripts/quality-gate.sh | scripts/check_code_size.py | scripts/ci-scope.sh |             scripts/verify-production-baseline.sh | scripts/verify-production-live.sh |             scripts/ci-performance-budget.sh | scripts/publish-vercel-preview-checkpoint.sh |             scripts/eslint-github-formatter.mjs)
+        docs/* | unit-tests/* | tests/* | *.md | \
+            .github/* | .zap/* | .vscode/* | .idea/* | .agents/* | .cursor/* | .claude/* | \
+            .assetsignore | .pre-commit-config.yaml | .pre-commit-pre-push.yaml | .python-version | \
+            mise.toml | eslint.config.js | stylelint.config.cjs | commitlint.config.* | playwright.config.* | \
+            scripts/agent-quality-gate.sh | scripts/agent-publish.sh | scripts/lib/agent-quality-support.sh | \
+            scripts/lib/production-baseline-classification.sh | \
+            scripts/quality-gate.sh | scripts/check_code_size.py | scripts/ci-scope.sh | \
+            scripts/verify-production-baseline.sh | scripts/verify-production-live.sh | \
+            scripts/ci-performance-budget.sh | scripts/publish-vercel-preview-checkpoint.sh | \
+            scripts/eslint-github-formatter.mjs)
             return 0
             ;;
         *)
@@ -61,6 +88,9 @@ mapfile -t CHANGED_FILES < <(
 )
 
 maintenance_only=true
+application=false
+sast=false
+build=false
 preview_required=false
 zap_bootstrap=false
 dependencies=false
@@ -69,6 +99,9 @@ if (("${#CHANGED_FILES[@]}" == 0)); then
     # An empty diff is unusual in CI. Prefer the safe/full path rather than
     # silently skipping application validation.
     maintenance_only=false
+    application=true
+    sast=true
+    build=true
     preview_required=true
 else
     for file in "${CHANGED_FILES[@]}"; do
@@ -81,27 +114,28 @@ else
         if ! is_maintenance_only_path "${file}"; then
             maintenance_only=false
         fi
+
         if ! is_preview_safe_path "${file}"; then
             preview_required=true
+            application=true
+            build=true
         fi
+
         if [[ "${file}" == ".github/workflows/zap-preview.yml" ]]; then
             zap_bootstrap=true
         fi
+
+        case "${file}" in
+            app/* | components/* | i18n/* | lib/* | api/* | scripts/*)
+                if is_source_file "${file}"; then
+                    sast=true
+                fi
+                ;;
+            .github/workflows/*.yml | .github/workflows/*.yaml | next.config.mjs | proxy.ts)
+                sast=true
+                ;;
+        esac
     done
-fi
-
-if [[ "${maintenance_only}" == true ]]; then
-    sast=false
-else
-    sast=true
-fi
-
-if [[ "${preview_required}" == true ]]; then
-    application=true
-    build=true
-else
-    application=false
-    build=false
 fi
 
 emit() {
@@ -123,9 +157,11 @@ fi
 if [[ "${maintenance_only}" == true ]]; then
     echo "ℹ️ CI scope: maintenance-only change; application SAST/build may be skipped."
 elif [[ "${preview_required}" == true ]]; then
-    echo "ℹ️ CI scope: deploy-relevant application change; SAST/build remain mandatory."
+    echo "ℹ️ CI scope: deploy-relevant application change; build/Preview remain mandatory."
+elif [[ "${sast}" == true ]]; then
+    echo "ℹ️ CI scope: security-sensitive non-deployable source change; SAST remains mandatory."
 else
-    echo "ℹ️ CI scope: security-sensitive non-deployable change; SAST remains mandatory and application build may be skipped."
+    echo "ℹ️ CI scope: non-deployable policy change; canonical quality remains mandatory without fake SAST/build work."
 fi
 
 if [[ "${preview_required}" == true ]]; then

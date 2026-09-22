@@ -57,7 +57,7 @@ test("Vercel ignored-build policy changes stay deploy-relevant", async (t) => {
 
 	assert.match(output, /^maintenance_only=false$/m);
 	assert.match(output, /^application=true$/m);
-	assert.match(output, /^sast=true$/m);
+	assert.match(output, /^sast=false$/m);
 	assert.match(output, /^build=true$/m);
 	assert.match(output, /^dependencies=false$/m);
 	assert.match(output, /^changed_count=1$/m);

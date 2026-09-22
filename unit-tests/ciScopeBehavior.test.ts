@@ -50,22 +50,26 @@ function expectScope(
     count?: number;
   },
 ) {
-  assert.match(stdout, new RegExp(`^maintenance_only=${expected.maintenance}$`, "m"));
-  assert.match(stdout, new RegExp(`^application=${expected.application}$`, "m"));
-  assert.match(stdout, new RegExp(`^sast=${expected.sast}$`, "m"));
-  assert.match(stdout, new RegExp(`^build=${expected.build}$`, "m"));
-  assert.match(stdout, new RegExp(`^preview_required=${expected.preview}$`, "m"));
-  assert.match(stdout, new RegExp(`^zap_bootstrap=${expected.zap ?? false}$`, "m"));
-  assert.match(
-    stdout,
-    new RegExp(`^dependencies=${expected.dependencies ?? false}$`, "m"),
-  );
-  assert.match(stdout, new RegExp(`^changed_count=${expected.count ?? 1}$`, "m"));
+  const values = {
+    maintenance_only: expected.maintenance,
+    application: expected.application,
+    sast: expected.sast,
+    build: expected.build,
+    preview_required: expected.preview,
+    zap_bootstrap: expected.zap ?? false,
+    dependencies: expected.dependencies ?? false,
+    changed_count: expected.count ?? 1,
+  };
+
+  for (const [name, value] of Object.entries(values)) {
+    assert.match(stdout, new RegExp("^" + name + "=" + value + "$", "m"));
+  }
 }
 
 test("quality orchestration remains maintenance-only", async (t) => {
   const { directory, baseSha } = await createRepository("bababou-ci-maint-");
   t.after(async () => rm(directory, { recursive: true, force: true }));
+
   await mkdir(join(directory, "scripts"), { recursive: true });
   await writeFile(join(directory, "scripts", "agent-publish.sh"), "#!/bin/sh\n");
   git(directory, "add", ".");
@@ -82,9 +86,10 @@ test("quality orchestration remains maintenance-only", async (t) => {
   });
 });
 
-test("workflow changes keep SAST but skip application build and Preview", async (t) => {
+test("workflow YAML keeps SAST but skips application build and Preview", async (t) => {
   const { directory, baseSha } = await createRepository("bababou-ci-workflow-");
   t.after(async () => rm(directory, { recursive: true, force: true }));
+
   await mkdir(join(directory, ".github", "workflows"), { recursive: true });
   await writeFile(join(directory, ".github", "workflows", "ci.yml"), "name: CI\n");
   git(directory, "add", ".");
@@ -101,9 +106,10 @@ test("workflow changes keep SAST but skip application build and Preview", async 
   });
 });
 
-test("ZAP workflow changes expose bootstrap without allocating Preview", async (t) => {
+test("ZAP workflow exposes bootstrap without allocating Preview", async (t) => {
   const { directory, baseSha } = await createRepository("bababou-ci-zap-");
   t.after(async () => rm(directory, { recursive: true, force: true }));
+
   await mkdir(join(directory, ".github", "workflows"), { recursive: true });
   await writeFile(
     join(directory, ".github", "workflows", "zap-preview.yml"),
@@ -124,9 +130,10 @@ test("ZAP workflow changes expose bootstrap without allocating Preview", async (
   });
 });
 
-test("runtime changes require application build, SAST and Preview", async (t) => {
+test("runtime source requires application build, SAST and Preview", async (t) => {
   const { directory, baseSha } = await createRepository("bababou-ci-runtime-");
   t.after(async () => rm(directory, { recursive: true, force: true }));
+
   await mkdir(join(directory, "app"), { recursive: true });
   await writeFile(join(directory, "app", "page.tsx"), "export default function Page() {}\n");
   git(directory, "add", ".");
@@ -143,12 +150,18 @@ test("runtime changes require application build, SAST and Preview", async (t) =>
   });
 });
 
-test("dependency changes retain Bababou Snyk signal", async (t) => {
-  const { directory, baseSha } = await createRepository("bababou-ci-deps-");
+test("deleted runtime source still requires application build, SAST and Preview", async (t) => {
+  const { directory } = await createRepository("bababou-ci-delete-");
   t.after(async () => rm(directory, { recursive: true, force: true }));
-  await writeFile(join(directory, "package.json"), '{"name":"fixture"}\n');
+
+  await mkdir(join(directory, "app"), { recursive: true });
+  await writeFile(join(directory, "app", "runtime.ts"), "export const runtime = true;\n");
   git(directory, "add", ".");
-  git(directory, "commit", "--quiet", "-m", "dependencies");
+  git(directory, "commit", "--quiet", "-m", "runtime base");
+  const baseSha = git(directory, "rev-parse", "HEAD");
+
+  git(directory, "rm", "--quiet", "app/runtime.ts");
+  git(directory, "commit", "--quiet", "-m", "delete runtime");
 
   const result = classify(directory, baseSha);
   assert.equal(result.status, 0, result.stderr);
@@ -158,13 +171,102 @@ test("dependency changes retain Bababou Snyk signal", async (t) => {
     sast: true,
     build: true,
     preview: true,
+  });
+});
+
+test("dependency changes keep Snyk but avoid fake Semgrep work", async (t) => {
+  const { directory, baseSha } = await createRepository("bababou-ci-deps-");
+  t.after(async () => rm(directory, { recursive: true, force: true }));
+
+  await writeFile(join(directory, "package.json"), '{"name":"fixture"}\n');
+  git(directory, "add", ".");
+  git(directory, "commit", "--quiet", "-m", "dependencies");
+
+  const result = classify(directory, baseSha);
+  assert.equal(result.status, 0, result.stderr);
+  expectScope(result.stdout, {
+    maintenance: false,
+    application: true,
+    sast: false,
+    build: true,
+    preview: true,
     dependencies: true,
+  });
+});
+
+test("unknown deploy configuration fails safe without fake Semgrep work", async (t) => {
+  const { directory, baseSha } = await createRepository("bababou-ci-config-");
+  t.after(async () => rm(directory, { recursive: true, force: true }));
+
+  await writeFile(join(directory, "vercel.json"), "{}\n");
+  git(directory, "add", ".");
+  git(directory, "commit", "--quiet", "-m", "deployment config");
+
+  const result = classify(directory, baseSha);
+  assert.equal(result.status, 0, result.stderr);
+  expectScope(result.stdout, {
+    maintenance: false,
+    application: true,
+    sast: false,
+    build: true,
+    preview: true,
+  });
+});
+
+test("baseline classifier is policy-only and Preview-safe", async (t) => {
+  const { directory, baseSha } = await createRepository("bababou-ci-classifier-");
+  t.after(async () => rm(directory, { recursive: true, force: true }));
+
+  await mkdir(join(directory, "scripts", "lib"), { recursive: true });
+  await writeFile(
+    join(directory, "scripts", "lib", "production-baseline-classification.sh"),
+    "# policy-only change\n",
+  );
+  git(directory, "add", ".");
+  git(directory, "commit", "--quiet", "-m", "baseline policy");
+
+  const result = classify(directory, baseSha);
+  assert.equal(result.status, 0, result.stderr);
+  expectScope(result.stdout, {
+    maintenance: false,
+    application: false,
+    sast: false,
+    build: false,
+    preview: false,
+  });
+});
+
+test("runtime plus ZAP workflow requires Preview and exposes bootstrap", async (t) => {
+  const { directory, baseSha } = await createRepository("bababou-ci-runtime-zap-");
+  t.after(async () => rm(directory, { recursive: true, force: true }));
+
+  await mkdir(join(directory, "app"), { recursive: true });
+  await mkdir(join(directory, ".github", "workflows"), { recursive: true });
+  await writeFile(join(directory, "app", "page.tsx"), "export default function Page() {}\n");
+  await writeFile(
+    join(directory, ".github", "workflows", "zap-preview.yml"),
+    "name: ZAP Preview\n",
+  );
+  git(directory, "add", ".");
+  git(directory, "commit", "--quiet", "-m", "runtime and zap");
+
+  const result = classify(directory, baseSha);
+  assert.equal(result.status, 0, result.stderr);
+  expectScope(result.stdout, {
+    maintenance: false,
+    application: true,
+    sast: true,
+    build: true,
+    preview: true,
+    zap: true,
+    count: 2,
   });
 });
 
 test("empty diffs fail safe", async (t) => {
   const { directory, baseSha } = await createRepository("bababou-ci-empty-");
   t.after(async () => rm(directory, { recursive: true, force: true }));
+
   git(directory, "commit", "--quiet", "--allow-empty", "-m", "empty");
 
   const result = classify(directory, baseSha);

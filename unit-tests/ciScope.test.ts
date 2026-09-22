@@ -17,6 +17,7 @@ test(
 
     assert.notEqual(info.mode & 0o100, 0);
     assert.match(source, /--diff-filter=ACMRD/);
+    assert.match(source, /is_source_file/);
     assert.match(source, /is_maintenance_only_path/);
     assert.match(source, /is_preview_safe_path/);
     assert.match(source, /CHANGED_FILES\[@\].*== 0/);

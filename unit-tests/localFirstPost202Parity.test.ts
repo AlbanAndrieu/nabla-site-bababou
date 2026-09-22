@@ -50,7 +50,7 @@ test("post-202 local-first policies compose without forcing a Preview", async ()
   assert.match(agentGate, /skip-checks:/);
 });
 
-test("baseline classifier change is SAST-only and Preview-safe", async (t) => {
+test("baseline classifier change is policy-only and Preview-safe", async (t) => {
   const cwd = await mkdtemp(join(tmpdir(), "bababou-post202-scope-"));
   t.after(async () => rm(cwd, { recursive: true, force: true }));
 
@@ -80,7 +80,7 @@ test("baseline classifier change is SAST-only and Preview-safe", async (t) => {
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, /^maintenance_only=false$/m);
   assert.match(result.stdout, /^application=false$/m);
-  assert.match(result.stdout, /^sast=true$/m);
+  assert.match(result.stdout, /^sast=false$/m);
   assert.match(result.stdout, /^build=false$/m);
   assert.match(result.stdout, /^preview_required=false$/m);
   assert.match(result.stdout, /^zap_bootstrap=false$/m);

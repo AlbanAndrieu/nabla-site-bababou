@@ -81,6 +81,7 @@ fi
 HEAD_SHA="$(git rev-parse HEAD)"
 BASE_SHA="$(git rev-parse "${BASE_REF}^{commit}")"
 if ! TOOLCHAIN_SHA="$(toolchain_fingerprint)"; then
+    echo "❌ QG_PUBLISH_TOOLCHAIN_INVALID: cannot compute a trustworthy toolchain fingerprint" >&2
     exit 1
 fi
 PROOF_VERSION="v2"
@@ -105,7 +106,7 @@ case "${build}" in
         run_compact "built-output privacy gate" npm run privacy:check:build
         ;;
     false)
-        echo "✅ maintenance-only publication scope; Next build intentionally skipped"
+        echo "✅ non-build publication scope; Next build intentionally skipped"
         ;;
     *)
         printf '❌ QG_PUBLISH_SCOPE_INVALID: ci-scope returned build=%s\n' "${build:-missing}" >&2
