@@ -7,7 +7,7 @@ async function read(relativePath: string) {
 }
 
 test(
-  "CI scope exposes Alban build semantics plus Bababou dependency scope",
+  "CI scope separates security, build and Preview with Bababou dependency scope",
   async () => {
     const url = new URL("../scripts/ci-scope.sh", import.meta.url);
     const [source, info] = await Promise.all([
@@ -18,16 +18,17 @@ test(
     assert.notEqual(info.mode & 0o100, 0);
     assert.match(source, /--diff-filter=ACMRD/);
     assert.match(source, /is_maintenance_only_path/);
-    assert.match(source, /CHANGED_FILES\[@\].*== 0/);
-    assert.match(source, /MAINTENANCE_ONLY=false/);
-    assert.match(source, /APPLICATION=true/);
-    assert.match(source, /BUILD=true/);
-    assert.match(source, /DEPENDENCIES=true/);
-    assert.match(source, /SAST=true/);
-    assert.match(source, /if ! is_maintenance_only_path/);
     assert.match(source, /is_preview_safe_path/);
-    assert.match(source, /PREVIEW_REQUIRED=true/);
-    assert.match(source, /preview_required=%s/);
+    assert.match(source, /CHANGED_FILES\[@\].*== 0/);
+    assert.match(source, /maintenance_only=false/);
+    assert.match(source, /preview_required=true/);
+    assert.match(source, /dependencies=true/);
+    assert.match(source, /if ! is_maintenance_only_path/);
+    assert.match(source, /if ! is_preview_safe_path/);
+    assert.match(source, /application=true/);
+    assert.match(source, /build=true/);
+    assert.match(source, /sast=true/);
+    assert.match(source, /zap_bootstrap=true/);
     assert.match(source, /BASE_REF="\$\{1:-\$\(resolve_base_ref\)\}"/);
     assert.match(source, /HEAD_REF="\$\{2:-HEAD\}"/);
   },
@@ -49,7 +50,11 @@ test("known quality orchestration files stay maintenance-only", async () => {
   ]) {
     assert.ok(source.includes(path), `${path} must stay maintenance-only`);
   }
-  assert.doesNotMatch(source, /\.github\/workflows\/.*SAST=true/s);
+  const maintenanceStart = source.indexOf("is_maintenance_only_path() {");
+  const previewStart = source.indexOf("is_preview_safe_path() {");
+  assert.ok(maintenanceStart >= 0 && previewStart > maintenanceStart);
+  assert.doesNotMatch(source.slice(maintenanceStart, previewStart), /\.github\/\*/);
+  assert.match(source.slice(previewStart), /\.github\/\*/);
 });
 
 test("maintenance CI avoids Semgrep, Next build and dependency scanning", async () => {
@@ -66,16 +71,16 @@ test("maintenance CI avoids Semgrep, Next build and dependency scanning", async 
   assert.match(workflow, /steps\.ci-scope\.outputs\.build != 'true'/);
   assert.match(workflow, /steps\.ci-scope\.outputs\.dependencies == 'true'/);
   assert.match(workflow, /steps\.ci-scope\.outputs\.application/);
-  assert.match(
-    workflow,
-    /preview_required: \$\{\{ steps\.ci-scope\.outputs\.preview_required \}\}/,
-  );
   assert.doesNotMatch(workflow, /outputs\.full_project/);
   assert.match(workflow, /- name: Run maintenance project checks/);
   assert.match(workflow, /npm run lint\n\s+npm run lint:css\n\s+npm run test:unit/);
-  assert.doesNotMatch(
+  assert.match(
     workflow,
-    /grep -E '[^\n]*\.github\/workflows\/.*\\\.ya\?ml/,
+    /grep -E '[^\n]*\\\.github\/workflows\/.*\\\.ya\?ml/,
+  );
+  assert.match(
+    workflow,
+    /preview_required:\s*\$\{\{ steps\.ci-scope\.outputs\.preview_required \}\}/,
   );
 });
 
@@ -92,17 +97,9 @@ test("draft Semgrep enforcement cannot fail a skipped scan", async () => {
 });
 
 test("production baseline and live smoke run before dependency installation", async () => {
-  const [
-    workflow,
-    baseline,
-    baselineClassification,
-    live,
-    baselineInfo,
-    liveInfo,
-  ] = await Promise.all([
+  const [workflow, baseline, live, baselineInfo, liveInfo] = await Promise.all([
     read("../.github/workflows/ci.yml"),
     read("../scripts/verify-production-baseline.sh"),
-    read("../scripts/lib/production-baseline-classification.sh"),
     read("../scripts/verify-production-live.sh"),
     stat(new URL("../scripts/verify-production-baseline.sh", import.meta.url)),
     stat(new URL("../scripts/verify-production-live.sh", import.meta.url)),
@@ -131,59 +128,31 @@ test("production baseline and live smoke run before dependency installation", as
   );
   assert.doesNotMatch(workflow, /github\\.event\\.pull_request\\.base\\.sha/);
   assert.match(workflow, /bash scripts\/verify-production-baseline\.sh/);
-  assert.match(
-    baseline,
-    /source "\$\{SCRIPT_DIR\}\/lib\/production-baseline-classification\.sh"/,
-  );
-  assert.match(
-    workflow,
-    /VERCEL_AUTOMATION_BYPASS_SECRET: \$\{\{ secrets\.VERCEL_AUTOMATION_BYPASS_SECRET \}\}/,
-  );
+  assert.match(workflow, /VERCEL_AUTOMATION_BYPASS_SECRET: \$\{\{ secrets\.VERCEL_AUTOMATION_BYPASS_SECRET \}\}/);
   assert.match(workflow, /bash scripts\/verify-production-live\.sh/);
 
   for (const context of ["Vercel", "Production Post-deploy Smoke", "Production DAST"]) {
-    assert.ok(baseline.includes('"' + context + '"'));
+    assert.ok(baseline.includes(`\"${context}\"`));
   }
   assert.match(baseline, /vercel_state/);
   assert.match(baseline, /production-only statuses are absent on metadata-only release/);
-  assert.match(baselineClassification, /chore\\\(release\\\):/);
-  assert.match(baselineClassification, /\[skip ci\]/);
-  assert.match(baselineClassification, /package\.json changed beyond version metadata/);
-  assert.match(
-    baselineClassification,
-    /package-lock\.json changed beyond root version metadata/,
-  );
-  assert.match(
-    baselineClassification,
-    /parent .* has inconsistent package\/lock versions/,
-  );
-  assert.match(
-    baselineClassification,
-    /release .* has inconsistent package\/lock versions/,
-  );
-  assert.match(
-    baselineClassification,
-    /release subject does not match package version/,
-  );
-  assert.match(baselineClassification, /PROD_BASE_RELEASE_VERSION/);
-  assert.match(baselineClassification, /PROD_BASE_RELEASE_GRAPH/);
-  assert.match(
-    baselineClassification,
-    /baseline inheritance requires a linear single-parent release commit/,
-  );
-  assert.match(
-    baselineClassification,
-    /production release hop must use stable numeric SemVer/,
-  );
-  assert.match(
-    baselineClassification,
-    /does not monotonically advance package version/,
-  );
+  assert.match(baseline, /chore\\\(release\\\):/);
+  assert.match(baseline, /\[skip ci\]/);
+  assert.match(baseline, /package\.json changed beyond version metadata/);
+  assert.match(baseline, /package-lock\.json changed beyond root version metadata/);
+  assert.match(baseline, /parent .* has inconsistent package\/lock versions/);
+  assert.match(baseline, /release .* has inconsistent package\/lock versions/);
+  assert.match(baseline, /release subject does not match package version/);
+  assert.match(baseline, /PROD_BASE_RELEASE_VERSION/);
+  assert.match(baseline, /PROD_BASE_RELEASE_GRAPH/);
+  assert.match(baseline, /baseline inheritance requires a linear single-parent release commit/);
+  assert.match(baseline, /production release hop must use stable numeric SemVer/);
+  assert.match(baseline, /does not monotonically advance package version/);
   assert.match(baseline, /PROD_BASE_UNHEALTHY/);
-  assert.match(baselineClassification, /PROD_BASE_RELEASE_SCOPE/);
+  assert.match(baseline, /PROD_BASE_RELEASE_SCOPE/);
 
   for (const path of ["/", "/index.html", "/test", "/contact", "/policy"]) {
-    assert.ok(live.includes('probe "' + path + '"'));
+    assert.ok(live.includes(`probe \"${path}\"`));
   }
   assert.match(live, /PROD_LIVE_CHECKPOINT/);
   assert.match(live, /x-vercel-mitigated/);
@@ -309,15 +278,21 @@ test("Copilot setup stays available but does not spend installs on draft synchro
 });
 
 test("retired asset metadata stays maintenance-only and absent", async () => {
-  const workflow = await read("../.github/workflows/ci.yml");
+  const [workflow, scope] = await Promise.all([
+    read("../.github/workflows/ci.yml"),
+    read("../scripts/ci-scope.sh"),
+  ]);
 
   assert.equal((workflow.match(/- "\.assetsignore"/g) ?? []).length, 2);
-  assert.ok(workflow.includes("filename === '.assetsignore'"));
+  assert.match(scope, /\.assetsignore/);
   await assert.rejects(stat(new URL("../.assetsignore", import.meta.url)), /ENOENT/);
 });
 
 test("quality-only files do not trigger an application Preview checkpoint", async () => {
-  const workflow = await read("../.github/workflows/ci.yml");
+  const [scope, workflow] = await Promise.all([
+    read("../scripts/ci-scope.sh"),
+    read("../.github/workflows/ci.yml"),
+  ]);
 
   for (const path of [
     ".assetsignore",
@@ -334,6 +309,10 @@ test("quality-only files do not trigger an application Preview checkpoint", asyn
     "scripts/quality-gate.sh",
     "scripts/publish-vercel-preview-checkpoint.sh",
   ]) {
-    assert.ok(workflow.includes(`filename === '${path}'`));
+    assert.ok(scope.includes(path), `${path} missing from canonical CI scope`);
   }
+
+  assert.match(workflow, /needs\.quality\.outputs\.preview_required == 'true'/);
+  assert.doesNotMatch(workflow, /const safeOnly/);
+  assert.doesNotMatch(workflow, /deployRelevant/);
 });

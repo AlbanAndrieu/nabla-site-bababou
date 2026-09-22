@@ -23,7 +23,10 @@ async function createRepository(prefix: string) {
   git(directory, "init", "--quiet");
   git(directory, "config", "user.name", "CI Scope Test");
   git(directory, "config", "user.email", "ci-scope@example.invalid");
-  return directory;
+  await writeFile(join(directory, "README.md"), "base\n");
+  git(directory, "add", "README.md");
+  git(directory, "commit", "--quiet", "-m", "base");
+  return { directory, baseSha: git(directory, "rev-parse", "HEAD") };
 }
 
 function classify(directory: string, baseSha: string, headSha = "HEAD") {
@@ -34,175 +37,144 @@ function classify(directory: string, baseSha: string, headSha = "HEAD") {
   });
 }
 
-function assertMaintenance(stdout: string, changedCount = 1) {
-  assert.match(stdout, /^maintenance_only=true$/m);
-  assert.match(stdout, /^application=false$/m);
-  assert.match(stdout, /^sast=false$/m);
-  assert.match(stdout, /^build=false$/m);
-  assert.match(stdout, /^dependencies=false$/m);
-  assert.match(stdout, /^preview_required=false$/m);
-  assert.match(stdout, new RegExp(`^changed_count=${changedCount}$`, "m"));
-}
-
-function assertApplication(
+function expectScope(
   stdout: string,
-  options: {
+  expected: {
+    maintenance: boolean;
+    application: boolean;
     sast: boolean;
+    build: boolean;
+    preview: boolean;
+    zap?: boolean;
     dependencies?: boolean;
-    previewRequired?: boolean;
+    count?: number;
   },
 ) {
-  assert.match(stdout, /^maintenance_only=false$/m);
-  assert.match(stdout, /^application=true$/m);
-  assert.match(stdout, new RegExp(`^sast=${options.sast}$`, "m"));
-  assert.match(stdout, /^build=true$/m);
+  assert.match(stdout, new RegExp(`^maintenance_only=${expected.maintenance}$`, "m"));
+  assert.match(stdout, new RegExp(`^application=${expected.application}$`, "m"));
+  assert.match(stdout, new RegExp(`^sast=${expected.sast}$`, "m"));
+  assert.match(stdout, new RegExp(`^build=${expected.build}$`, "m"));
+  assert.match(stdout, new RegExp(`^preview_required=${expected.preview}$`, "m"));
+  assert.match(stdout, new RegExp(`^zap_bootstrap=${expected.zap ?? false}$`, "m"));
   assert.match(
     stdout,
-    new RegExp(`^dependencies=${options.dependencies ?? false}$`, "m"),
+    new RegExp(`^dependencies=${expected.dependencies ?? false}$`, "m"),
   );
-  assert.match(
-    stdout,
-    new RegExp(`^preview_required=${options.previewRequired ?? true}$`, "m"),
-  );
+  assert.match(stdout, new RegExp(`^changed_count=${expected.count ?? 1}$`, "m"));
 }
 
-test("known quality orchestration remains maintenance-only", async (t) => {
-  const directory = await createRepository("bababou-ci-scope-maintenance-");
+test("quality orchestration remains maintenance-only", async (t) => {
+  const { directory, baseSha } = await createRepository("bababou-ci-maint-");
   t.after(async () => rm(directory, { recursive: true, force: true }));
-
-  await writeFile(join(directory, "README.md"), "base\n");
-  git(directory, "add", "README.md");
-  git(directory, "commit", "--quiet", "-m", "base");
-  const baseSha = git(directory, "rev-parse", "HEAD");
-
   await mkdir(join(directory, "scripts"), { recursive: true });
-  await writeFile(
-    join(directory, "scripts", "publish-vercel-preview-checkpoint.sh"),
-    "#!/usr/bin/env bash\necho checkpoint\n",
-  );
-  git(directory, "add", "scripts/publish-vercel-preview-checkpoint.sh");
+  await writeFile(join(directory, "scripts", "agent-publish.sh"), "#!/bin/sh\n");
+  git(directory, "add", ".");
   git(directory, "commit", "--quiet", "-m", "maintenance");
 
   const result = classify(directory, baseSha);
   assert.equal(result.status, 0, result.stderr);
-  assertMaintenance(result.stdout);
+  expectScope(result.stdout, {
+    maintenance: true,
+    application: false,
+    sast: false,
+    build: false,
+    preview: false,
+  });
 });
 
-test("deleted runtime files still require application build and SAST", async (t) => {
-  const directory = await createRepository("bababou-ci-scope-delete-");
+test("workflow changes keep SAST but skip application build and Preview", async (t) => {
+  const { directory, baseSha } = await createRepository("bababou-ci-workflow-");
   t.after(async () => rm(directory, { recursive: true, force: true }));
+  await mkdir(join(directory, ".github", "workflows"), { recursive: true });
+  await writeFile(join(directory, ".github", "workflows", "ci.yml"), "name: CI\n");
+  git(directory, "add", ".");
+  git(directory, "commit", "--quiet", "-m", "workflow");
 
+  const result = classify(directory, baseSha);
+  assert.equal(result.status, 0, result.stderr);
+  expectScope(result.stdout, {
+    maintenance: false,
+    application: false,
+    sast: true,
+    build: false,
+    preview: false,
+  });
+});
+
+test("ZAP workflow changes expose bootstrap without allocating Preview", async (t) => {
+  const { directory, baseSha } = await createRepository("bababou-ci-zap-");
+  t.after(async () => rm(directory, { recursive: true, force: true }));
+  await mkdir(join(directory, ".github", "workflows"), { recursive: true });
+  await writeFile(
+    join(directory, ".github", "workflows", "zap-preview.yml"),
+    "name: ZAP Preview\n",
+  );
+  git(directory, "add", ".");
+  git(directory, "commit", "--quiet", "-m", "zap workflow");
+
+  const result = classify(directory, baseSha);
+  assert.equal(result.status, 0, result.stderr);
+  expectScope(result.stdout, {
+    maintenance: false,
+    application: false,
+    sast: true,
+    build: false,
+    preview: false,
+    zap: true,
+  });
+});
+
+test("runtime changes require application build, SAST and Preview", async (t) => {
+  const { directory, baseSha } = await createRepository("bababou-ci-runtime-");
+  t.after(async () => rm(directory, { recursive: true, force: true }));
   await mkdir(join(directory, "app"), { recursive: true });
-  await writeFile(
-    join(directory, "app", "runtime.ts"),
-    "export const runtime = true;\n",
-  );
-  git(directory, "add", "app/runtime.ts");
-  git(directory, "commit", "--quiet", "-m", "base");
-  const baseSha = git(directory, "rev-parse", "HEAD");
-
-  git(directory, "rm", "--quiet", "app/runtime.ts");
-  git(directory, "commit", "--quiet", "-m", "delete runtime");
+  await writeFile(join(directory, "app", "page.tsx"), "export default function Page() {}\n");
+  git(directory, "add", ".");
+  git(directory, "commit", "--quiet", "-m", "runtime");
 
   const result = classify(directory, baseSha);
   assert.equal(result.status, 0, result.stderr);
-  assertApplication(result.stdout, { sast: true });
-  assert.match(result.stdout, /^changed_count=1$/m);
+  expectScope(result.stdout, {
+    maintenance: false,
+    application: true,
+    sast: true,
+    build: true,
+    preview: true,
+  });
 });
 
-test(
-  "unknown deployment configuration fails safe to application build without fake SAST work",
-  async (t) => {
-    const directory = await createRepository("bababou-ci-scope-vercel-");
-    t.after(async () => rm(directory, { recursive: true, force: true }));
-
-    await writeFile(join(directory, "README.md"), "base\n");
-    git(directory, "add", "README.md");
-    git(directory, "commit", "--quiet", "-m", "base");
-    const baseSha = git(directory, "rev-parse", "HEAD");
-
-    await writeFile(join(directory, "vercel.json"), "{}\n");
-    git(directory, "add", "vercel.json");
-    git(directory, "commit", "--quiet", "-m", "deployment config");
-
-    const result = classify(directory, baseSha);
-    assert.equal(result.status, 0, result.stderr);
-    assertApplication(result.stdout, { sast: false });
-    assert.match(result.stdout, /^changed_count=1$/m);
-  },
-);
-
-test("dependency changes preserve the Bababou-specific Snyk signal", async (t) => {
-  const directory = await createRepository("bababou-ci-scope-dependencies-");
+test("dependency changes retain Bababou Snyk signal", async (t) => {
+  const { directory, baseSha } = await createRepository("bababou-ci-deps-");
   t.after(async () => rm(directory, { recursive: true, force: true }));
-
-  await writeFile(
-    join(directory, "package.json"),
-    '{"name":"fixture","version":"1.0.0"}\n',
-  );
-  git(directory, "add", "package.json");
-  git(directory, "commit", "--quiet", "-m", "base");
-  const baseSha = git(directory, "rev-parse", "HEAD");
-
-  await writeFile(
-    join(directory, "package.json"),
-    '{"name":"fixture","version":"1.0.1"}\n',
-  );
-  git(directory, "add", "package.json");
-  git(directory, "commit", "--quiet", "-m", "dependency metadata");
+  await writeFile(join(directory, "package.json"), '{"name":"fixture"}\n');
+  git(directory, "add", ".");
+  git(directory, "commit", "--quiet", "-m", "dependencies");
 
   const result = classify(directory, baseSha);
   assert.equal(result.status, 0, result.stderr);
-  assertApplication(result.stdout, { sast: false, dependencies: true });
-  assert.match(result.stdout, /^changed_count=1$/m);
+  expectScope(result.stdout, {
+    maintenance: false,
+    application: true,
+    sast: true,
+    build: true,
+    preview: true,
+    dependencies: true,
+  });
 });
 
-test(
-  "baseline classifier changes require full quality but not a Vercel Preview",
-  async (t) => {
-    const directory = await createRepository("bababou-ci-scope-classifier-");
-    t.after(async () => rm(directory, { recursive: true, force: true }));
-
-    await writeFile(join(directory, "README.md"), "base\n");
-    git(directory, "add", "README.md");
-    git(directory, "commit", "--quiet", "-m", "base");
-    const baseSha = git(directory, "rev-parse", "HEAD");
-
-    await mkdir(join(directory, "scripts", "lib"), { recursive: true });
-    await writeFile(
-      join(
-        directory,
-        "scripts",
-        "lib",
-        "production-baseline-classification.sh",
-      ),
-      "# policy change\n",
-    );
-    git(directory, "add", ".");
-    git(directory, "commit", "--quiet", "-m", "refactor: baseline classifier");
-
-    const result = classify(directory, baseSha);
-    assert.equal(result.status, 0, result.stderr);
-    assertApplication(result.stdout, {
-      sast: false,
-      previewRequired: false,
-    });
-    assert.match(result.stdout, /^changed_count=1$/m);
-  },
-);
-
-test("empty diffs fail safe instead of silently using the maintenance path", async (t) => {
-  const directory = await createRepository("bababou-ci-scope-empty-");
+test("empty diffs fail safe", async (t) => {
+  const { directory, baseSha } = await createRepository("bababou-ci-empty-");
   t.after(async () => rm(directory, { recursive: true, force: true }));
-
-  await writeFile(join(directory, "README.md"), "base\n");
-  git(directory, "add", "README.md");
-  git(directory, "commit", "--quiet", "-m", "base");
-  const baseSha = git(directory, "rev-parse", "HEAD");
   git(directory, "commit", "--quiet", "--allow-empty", "-m", "empty");
 
   const result = classify(directory, baseSha);
   assert.equal(result.status, 0, result.stderr);
-  assertApplication(result.stdout, { sast: true });
-  assert.match(result.stdout, /^changed_count=0$/m);
+  expectScope(result.stdout, {
+    maintenance: false,
+    application: true,
+    sast: true,
+    build: true,
+    preview: true,
+    count: 0,
+  });
 });
