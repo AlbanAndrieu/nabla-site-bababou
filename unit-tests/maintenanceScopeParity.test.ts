@@ -7,7 +7,7 @@ const read = (path: string) =>
 
 test("quality maintenance paths stay aligned across local, CI, Preview and production baseline gates", async () => {
   const [scope, workflow, baseline] = await Promise.all([
-    read("scripts/ci-quality-scope.sh"),
+    read("scripts/ci-scope.sh"),
     read(".github/workflows/ci.yml"),
     read("scripts/verify-production-baseline.sh"),
   ]);
@@ -17,7 +17,7 @@ test("quality maintenance paths stay aligned across local, CI, Preview and produ
     "scripts/agent-publish.sh",
     "scripts/lib/agent-quality-support.sh",
     "scripts/quality-gate.sh",
-    "scripts/ci-quality-scope.sh",
+    "scripts/ci-scope.sh",
     "scripts/verify-production-baseline.sh",
     "scripts/verify-production-live.sh",
     "scripts/ci-performance-budget.sh",

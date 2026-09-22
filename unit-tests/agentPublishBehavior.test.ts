@@ -40,8 +40,24 @@ async function createFixture() {
     "#!/usr/bin/env bash\nset -euo pipefail\necho \"gate:$*\" >> \"$(git rev-parse --git-path agent-publish-test-calls)\"\n",
   );
   await writeFile(
-    join(directory, "scripts", "ci-quality-scope.sh"),
-    "#!/usr/bin/env bash\nset -euo pipefail\nprintf 'full_project=%s\\nsast=false\\ndependencies=false\\nchanged_count=1\\n' \"${FULL_SCOPE:-false}\"\n",
+    join(directory, "scripts", "ci-scope.sh"),
+    [
+      "#!/usr/bin/env bash",
+      "set -euo pipefail",
+      "echo \"scope:$*\" >> \"$(git rev-parse --git-path agent-publish-test-calls)\"",
+      "full=\"${FULL_SCOPE:-false}\"",
+      "if [[ \"$full\" == \"true\" ]]; then",
+      "  maintenance=false",
+      "  application=true",
+      "  build=true",
+      "else",
+      "  maintenance=true",
+      "  application=false",
+      "  build=false",
+      "fi",
+      "printf 'maintenance_only=%s\\napplication=%s\\nsast=false\\nbuild=%s\\ndependencies=false\\nchanged_count=1\\n' \"$maintenance\" \"$application\" \"$build\"",
+      "",
+    ].join("\n"),
   );
   await writeFile(join(directory, "node_modules", ".package-lock.json"), "{}\n");
 
@@ -67,7 +83,7 @@ async function createFixture() {
   for (const path of [
     join(directory, "scripts", "agent-publish.sh"),
     join(directory, "scripts", "agent-quality-gate.sh"),
-    join(directory, "scripts", "ci-quality-scope.sh"),
+    join(directory, "scripts", "ci-scope.sh"),
     npm,
     preCommit,
   ]) {
@@ -115,6 +131,7 @@ test("maintenance publication writes and reuses an exact proof without building"
 
   const firstCalls = await readFile(fixture.callLog, "utf8");
   assert.match(firstCalls, /gate:--publish/);
+  assert.match(firstCalls, /scope:[0-9a-f]{40} HEAD/);
   assert.doesNotMatch(firstCalls, /npm-run:build|npm-run:privacy:check:build/);
 
   const second = publish(fixture.directory, fixture.baseSha);
@@ -135,6 +152,7 @@ test("deploy-relevant publication runs build and built-output privacy checks", a
   assert.equal(result.status, 0, result.stderr);
   const calls = await readFile(fixture.callLog, "utf8");
   assert.match(calls, /gate:--publish/);
+  assert.match(calls, /scope:[0-9a-f]{40} HEAD/);
   assert.match(calls, /npm-run:build/);
   assert.match(calls, /npm-run:privacy:check:build/);
   assert.match(result.stdout, /QG_PUBLISH_PROOF_WRITTEN/);

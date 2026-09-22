@@ -67,7 +67,7 @@ test("publisher owns exact proof reuse and scope-aware production build", async 
   assert.match(publish, /QG_PUBLISH_PROOF_REUSED/);
   assert.match(publish, /QUALITY_FORCE_PUBLISH/);
   assert.match(publish, /agent-quality-gate\.sh --publish/);
-  assert.match(publish, /bash scripts\/ci-quality-scope\.sh/);
+  assert.match(publish, /bash scripts\/ci-scope\.sh "\$\{BASE_SHA\}" HEAD/);
   assert.match(publish, /Next\.js production build/);
   assert.match(publish, /npm run privacy:check:build/);
   assert.match(publish, /maintenance-only publication scope; Next build intentionally skipped/);

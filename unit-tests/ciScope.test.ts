@@ -6,29 +6,39 @@ async function read(relativePath: string) {
   return readFile(new URL(relativePath, import.meta.url), "utf8");
 }
 
-test("quality scope helper is executable and conservative about runtime changes", async () => {
-  const url = new URL("../scripts/ci-quality-scope.sh", import.meta.url);
-  const [source, info] = await Promise.all([read("../scripts/ci-quality-scope.sh"), stat(url)]);
+test(
+  "CI scope exposes Alban build semantics plus Bababou dependency scope",
+  async () => {
+    const url = new URL("../scripts/ci-scope.sh", import.meta.url);
+    const [source, info] = await Promise.all([
+      read("../scripts/ci-scope.sh"),
+      stat(url),
+    ]);
 
   assert.notEqual(info.mode & 0o100, 0);
   assert.match(source, /--diff-filter=ACMRD/);
   assert.match(source, /is_maintenance_only_path/);
-  assert.match(source, /FILES\[@\].*== 0/);
-  assert.match(source, /FULL_PROJECT=true/);
+  assert.match(source, /CHANGED_FILES\[@\].*== 0/);
+  assert.match(source, /MAINTENANCE_ONLY=false/);
+  assert.match(source, /APPLICATION=true/);
+  assert.match(source, /BUILD=true/);
   assert.match(source, /DEPENDENCIES=true/);
   assert.match(source, /SAST=true/);
-  assert.match(source, /if is_maintenance_only_path/);
-});
+  assert.match(source, /if ! is_maintenance_only_path/);
+  assert.match(source, /BASE_REF="\$\{1:-\$\(resolve_base_ref\)\}"/);
+    assert.match(source, /HEAD_REF="\$\{2:-HEAD\}"/);
+  },
+);
 
 test("known quality orchestration files stay maintenance-only", async () => {
-  const source = await read("../scripts/ci-quality-scope.sh");
+  const source = await read("../scripts/ci-scope.sh");
 
   for (const path of [
     "scripts/agent-quality-gate.sh",
     "scripts/agent-publish.sh",
     "scripts/lib/agent-quality-support.sh",
     "scripts/quality-gate.sh",
-    "scripts/ci-quality-scope.sh",
+    "scripts/ci-scope.sh",
     "scripts/verify-production-baseline.sh",
     "scripts/verify-production-live.sh",
     "scripts/ci-performance-budget.sh",
@@ -42,11 +52,18 @@ test("known quality orchestration files stay maintenance-only", async () => {
 test("maintenance CI avoids Semgrep, Next build and dependency scanning", async () => {
   const workflow = await read("../.github/workflows/ci.yml");
 
-  assert.match(workflow, /- name: Classify quality scope/);
-  assert.match(workflow, /steps\.scope\.outputs\.sast == 'true'/);
-  assert.match(workflow, /steps\.scope\.outputs\.full_project == 'true'/);
-  assert.match(workflow, /steps\.scope\.outputs\.full_project != 'true'/);
-  assert.match(workflow, /steps\.scope\.outputs\.dependencies == 'true'/);
+  assert.match(workflow, /- name: Classify CI change scope/);
+  assert.match(workflow, /id: ci-scope/);
+  assert.match(
+    workflow,
+    /bash scripts\/ci-scope\.sh "\$\{BASE_SHA\}" "\$\{HEAD_SHA\}"/,
+  );
+  assert.match(workflow, /steps\.ci-scope\.outputs\.sast == 'true'/);
+  assert.match(workflow, /steps\.ci-scope\.outputs\.build == 'true'/);
+  assert.match(workflow, /steps\.ci-scope\.outputs\.build != 'true'/);
+  assert.match(workflow, /steps\.ci-scope\.outputs\.dependencies == 'true'/);
+  assert.match(workflow, /steps\.ci-scope\.outputs\.application/);
+  assert.doesNotMatch(workflow, /outputs\.full_project/);
   assert.match(workflow, /- name: Run maintenance project checks/);
   assert.match(workflow, /npm run lint\n\s+npm run lint:css\n\s+npm run test:unit/);
   assert.doesNotMatch(
@@ -63,7 +80,7 @@ test("draft Semgrep enforcement cannot fail a skipped scan", async () => {
 
   assert.ok(enforceStart >= 0);
   assert.match(block, /github\.event\.pull_request\.draft == false/);
-  assert.match(block, /steps\.scope\.outputs\.sast == 'true'/);
+  assert.match(block, /steps\.ci-scope\.outputs\.sast == 'true'/);
   assert.match(block, /steps\.semgrep-sast\.outcome != 'success'/);
 });
 
@@ -267,7 +284,7 @@ test("quality-only files do not trigger an application Preview checkpoint", asyn
     "scripts/agent-quality-gate.sh",
     "scripts/agent-publish.sh",
     "scripts/lib/agent-quality-support.sh",
-    "scripts/ci-quality-scope.sh",
+    "scripts/ci-scope.sh",
     "scripts/verify-production-baseline.sh",
     "scripts/verify-production-live.sh",
     "scripts/ci-performance-budget.sh",

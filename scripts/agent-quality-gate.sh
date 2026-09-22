@@ -279,13 +279,9 @@ else
     run_compact "canonical formatter/linter/security gate" bash scripts/quality-gate.sh
 fi
 
-scope_output="$(
-    QUALITY_SCOPE_BASE_REF="${BASE_REF}" \
-        QUALITY_SCOPE_HEAD_REF=HEAD \
-        bash scripts/ci-quality-scope.sh
-)"
+scope_output="$(bash scripts/ci-scope.sh "${BASE_REF}" HEAD)"
 printf '%s\n' "${scope_output}"
-full_project="$(awk -F= '$1 == "full_project" { print $2; exit }' <<<"${scope_output}")"
+build="$(awk -F= '$1 == "build" { print $2; exit }' <<<"${scope_output}")"
 
 run_maintenance_project_checks() {
     npm run lint
@@ -302,7 +298,7 @@ run_full_prebuild_checks() {
     npm run privacy:check
 }
 
-case "${full_project}" in
+case "${build}" in
     true)
         run_compact "full pre-build lint, types, unit and privacy gate" run_full_prebuild_checks
         ;;
@@ -310,7 +306,7 @@ case "${full_project}" in
         run_compact "maintenance lint, CSS and unit gate" run_maintenance_project_checks
         ;;
     *)
-        printf '❌ QG_SCOPE_INVALID: ci-quality-scope returned full_project=%s\n' "${full_project:-missing}" >&2
+        printf '❌ QG_SCOPE_INVALID: ci-scope returned build=%s\n' "${build:-missing}" >&2
         exit 1
         ;;
 esac

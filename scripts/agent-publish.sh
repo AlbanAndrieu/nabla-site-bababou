@@ -67,15 +67,11 @@ fi
 
 QUALITY_BASE_REF="${BASE_SHA}" bash scripts/agent-quality-gate.sh --publish
 
-scope_output="$(
-    QUALITY_SCOPE_BASE_REF="${BASE_SHA}" \
-        QUALITY_SCOPE_HEAD_REF=HEAD \
-        bash scripts/ci-quality-scope.sh
-)"
+scope_output="$(bash scripts/ci-scope.sh "${BASE_SHA}" HEAD)"
 printf '%s\n' "${scope_output}"
-full_project="$(awk -F= '$1 == "full_project" { print $2; exit }' <<<"${scope_output}")"
+build="$(awk -F= '$1 == "build" { print $2; exit }' <<<"${scope_output}")"
 
-case "${full_project}" in
+case "${build}" in
     true)
         run_compact "Next.js production build" npm run build
         run_compact "built-output privacy gate" npm run privacy:check:build
@@ -84,7 +80,7 @@ case "${full_project}" in
         echo "✅ maintenance-only publication scope; Next build intentionally skipped"
         ;;
     *)
-        printf '❌ QG_PUBLISH_SCOPE_INVALID: ci-quality-scope returned full_project=%s\n' "${full_project:-missing}" >&2
+        printf '❌ QG_PUBLISH_SCOPE_INVALID: ci-scope returned build=%s\n' "${build:-missing}" >&2
         exit 1
         ;;
 esac
