@@ -7,6 +7,10 @@ const checkpointUrl = new URL(
   "../scripts/publish-vercel-preview-checkpoint.sh",
   import.meta.url,
 );
+const onDemandUrl = new URL(
+  "../.github/workflows/vercel-preview.yml",
+  import.meta.url,
+);
 
 test("Quality automatically publishes exact PR Preview checkpoints after success", async () => {
   const [workflow, checkpointScript] = await Promise.all([
@@ -92,4 +96,23 @@ test("Preview security gate waits for both Playwright and OWASP ZAP exact-SHA st
   );
   assert.doesNotMatch(workflow, /status\?\.state \?\? 'pending'/);
   assert.match(workflow, /Timed out waiting for/);
+});
+
+test("on-demand Preview reuses the exact-SHA publisher and refuses draft PRs", async () => {
+  const [workflow, checkpointScript] = await Promise.all([
+    readFile(onDemandUrl, "utf8"),
+    readFile(checkpointUrl, "utf8"),
+  ]);
+
+  assert.match(workflow, /if \(pr\.draft\)/);
+  assert.match(workflow, /is draft; validate it before Preview publication/);
+  assert.match(workflow, /core\.setOutput\('base_sha', pr\.base\.sha\)/);
+  assert.match(workflow, /Report maintenance-only Preview skip/);
+  assert.match(workflow, /Publish exact-SHA Vercel Preview checkpoint/);
+  assert.match(workflow, /PR_BASE_SHA/);
+  assert.match(workflow, /PR_HEAD_SHA/);
+  assert.match(workflow, /publish-vercel-preview-checkpoint\.sh/);
+  assert.doesNotMatch(workflow, /git push --force origin/);
+  assert.doesNotMatch(workflow, /forceCheckpoint/);
+  assert.match(checkpointScript, /--force-with-lease/);
 });

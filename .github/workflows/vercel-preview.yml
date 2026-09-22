@@ -49,6 +49,10 @@ jobs:
               core.setFailed(`PR #${prNumber} is not open.`);
               return;
             }
+            if (pr.draft) {
+              core.setFailed(`PR #${prNumber} is draft; validate it before Preview publication.`);
+              return;
+            }
             if (pr.head.repo.full_name !== context.repo.owner + '/' + context.repo.repo) {
               core.setFailed('Preview checkpoints are limited to branches from this repository.');
               return;
@@ -80,36 +84,43 @@ jobs:
               per_page: 100,
             });
 
-            const forceCheckpoint = new Set([
-              '.github/workflows/ci.yml',
-              '.github/workflows/playwright.yml',
-              '.github/workflows/vercel-preview.yml',
-              '.github/workflows/zap-preview.yml',
-            ]);
-            const safeOnly = (filename) => {
-              // Security/Preview workflow changes must validate themselves on
-              // a real exact-SHA deployment even when other .github changes
-              // remain maintenance-only.
-              if (forceCheckpoint.has(filename)) return false;
-
-              return (
-                filename.startsWith('docs/') ||
-                filename.endsWith('.md') ||
-                filename.startsWith('unit-tests/') ||
-                filename.startsWith('.github/') ||
-                filename.startsWith('.vscode/') ||
-                filename.startsWith('.idea/') ||
-                filename.startsWith('.agents/') ||
-                filename.startsWith('.cursor/') ||
-                filename.startsWith('.claude/')
-              );
-            };
+            const safeOnly = (filename) =>
+              filename.startsWith('docs/') ||
+              filename.endsWith('.md') ||
+              filename.startsWith('unit-tests/') ||
+              filename.startsWith('.github/') ||
+              filename.startsWith('.zap/') ||
+              filename.startsWith('.vscode/') ||
+              filename.startsWith('.idea/') ||
+              filename.startsWith('.agents/') ||
+              filename.startsWith('.cursor/') ||
+              filename.startsWith('.claude/') ||
+              filename === '.assetsignore' ||
+              filename === '.pre-commit-config.yaml' ||
+              filename === '.pre-commit-pre-push.yaml' ||
+              filename === '.python-version' ||
+              filename === 'mise.toml' ||
+              filename === 'eslint.config.js' ||
+              filename === 'stylelint.config.cjs' ||
+              filename === 'scripts/agent-quality-gate.sh' ||
+              filename === 'scripts/agent-publish.sh' ||
+              filename === 'scripts/lib/agent-quality-support.sh' ||
+              filename === 'scripts/lib/production-baseline-classification.sh' ||
+              filename === 'scripts/ci-scope.sh' ||
+              filename === 'scripts/verify-production-baseline.sh' ||
+              filename === 'scripts/verify-production-live.sh' ||
+              filename === 'scripts/ci-performance-budget.sh' ||
+              filename === 'scripts/quality-gate.sh' ||
+              filename === 'scripts/publish-vercel-preview-checkpoint.sh' ||
+              filename === 'scripts/check_code_size.py' ||
+              filename === 'scripts/eslint-github-formatter.mjs';
 
             const deployRelevant = files
               .map((file) => file.filename)
               .filter((filename) => !safeOnly(filename));
 
             core.setOutput('sha', pr.head.sha);
+            core.setOutput('base_sha', pr.base.sha);
             core.setOutput('branch', `vercel-preview-pr-${prNumber}`);
             core.setOutput('deploy_relevant', deployRelevant.length > 0 ? 'true' : 'false');
 
@@ -120,6 +131,16 @@ jobs:
 
             core.info(`Deploy-relevant files: ${deployRelevant.join(', ')}`);
 
+      - name: Report maintenance-only Preview skip
+        if: steps.preview.outputs.deploy_relevant != 'true'
+        shell: bash
+        run: |
+          {
+            echo "## On-demand Preview"
+            echo
+            echo "No deploy-relevant files: no Vercel checkpoint is published."
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Checkout exact PR revision
         if: steps.preview.outputs.deploy_relevant == 'true'
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -127,18 +148,16 @@ jobs:
           ref: ${{ steps.preview.outputs.sha }}
           fetch-depth: 0
 
-      # Use the Git transport deliberately. Vercel Git Integration reacts to
-      # branch pushes; creating/updating refs through the GitHub REST API alone
-      # does not reliably emit the Git push signal consumed by Vercel.
-      - name: Push dedicated Preview checkpoint
+      - name: Publish exact-SHA Vercel Preview checkpoint
         if: steps.preview.outputs.deploy_relevant == 'true'
         env:
           CHECKPOINT_BRANCH: ${{ steps.preview.outputs.branch }}
+          PR_BASE_SHA: ${{ steps.preview.outputs.base_sha }}
+          PR_HEAD_SHA: ${{ steps.preview.outputs.sha }}
         shell: bash
-        run: |
-          set -euo pipefail
-          git push --force origin "HEAD:refs/heads/${CHECKPOINT_BRANCH}"
-          echo "Published ${CHECKPOINT_BRANCH} at $(git rev-parse HEAD)."
+        run: >-
+          bash scripts/publish-vercel-preview-checkpoint.sh
+          "${CHECKPOINT_BRANCH}" "${PR_BASE_SHA}" "${PR_HEAD_SHA}"
 
   cleanup:
     name: Remove closed PR Preview checkpoint

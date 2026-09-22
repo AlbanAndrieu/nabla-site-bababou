@@ -160,3 +160,28 @@ test("Copilot bootstrap follows all agent quality inputs", async () => {
     assert.ok(setup.includes("- " + input), `Copilot bootstrap trigger must include ${input}`);
   }
 });
+
+test("critical quality and Preview scripts remain executable", async () => {
+  const scripts = [
+    "scripts/quality-gate.sh",
+    "scripts/agent-quality-gate.sh",
+    "scripts/agent-publish.sh",
+    "scripts/ci-scope.sh",
+    "scripts/verify-production-baseline.sh",
+    "scripts/verify-production-live.sh",
+    "scripts/ci-performance-budget.sh",
+    "scripts/publish-vercel-preview-checkpoint.sh",
+  ] as const;
+
+  const stats = await Promise.all(
+    scripts.map((path) => stat(new URL(`../${path}`, import.meta.url))),
+  );
+
+  for (const [index, fileStat] of stats.entries()) {
+    assert.notEqual(
+      fileStat.mode & 0o100,
+      0,
+      `${scripts[index]} must remain executable`,
+    );
+  }
+});

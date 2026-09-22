@@ -600,6 +600,7 @@ jobs:
               filename === 'scripts/agent-quality-gate.sh' ||
               filename === 'scripts/agent-publish.sh' ||
               filename === 'scripts/lib/agent-quality-support.sh' ||
+              filename === 'scripts/lib/production-baseline-classification.sh' ||
               filename === 'scripts/ci-scope.sh' ||
               filename === 'scripts/verify-production-baseline.sh' ||
               filename === 'scripts/verify-production-live.sh' ||
