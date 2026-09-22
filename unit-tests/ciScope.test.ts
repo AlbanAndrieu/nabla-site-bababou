@@ -97,9 +97,17 @@ test("draft Semgrep enforcement cannot fail a skipped scan", async () => {
 });
 
 test("production baseline and live smoke run before dependency installation", async () => {
-  const [workflow, baseline, live, baselineInfo, liveInfo] = await Promise.all([
+  const [
+    workflow,
+    baseline,
+    baselineClassification,
+    live,
+    baselineInfo,
+    liveInfo,
+  ] = await Promise.all([
     read("../.github/workflows/ci.yml"),
     read("../scripts/verify-production-baseline.sh"),
+    read("../scripts/lib/production-baseline-classification.sh"),
     read("../scripts/verify-production-live.sh"),
     stat(new URL("../scripts/verify-production-baseline.sh", import.meta.url)),
     stat(new URL("../scripts/verify-production-live.sh", import.meta.url)),
@@ -127,32 +135,60 @@ test("production baseline and live smoke run before dependency installation", as
     /BASE_SHA: \\${{ steps\\.current-heads\\.outputs\\.production-sha }}/,
   );
   assert.doesNotMatch(workflow, /github\\.event\\.pull_request\\.base\\.sha/);
-  assert.match(workflow, /bash scripts\/verify-production-baseline\.sh/);
-  assert.match(workflow, /VERCEL_AUTOMATION_BYPASS_SECRET: \$\{\{ secrets\.VERCEL_AUTOMATION_BYPASS_SECRET \}\}/);
-  assert.match(workflow, /bash scripts\/verify-production-live\.sh/);
+  assert.match(workflow, /bash scripts\/verify-production-baseline\\.sh/);
+  assert.match(
+    baseline,
+    /source "\$\{SCRIPT_DIR\}\/lib\/production-baseline-classification\\.sh"/,
+  );
+  assert.match(
+    workflow,
+    /VERCEL_AUTOMATION_BYPASS_SECRET: \$\{\{ secrets\\.VERCEL_AUTOMATION_BYPASS_SECRET \}\}/,
+  );
+  assert.match(workflow, /bash scripts\/verify-production-live\\.sh/);
 
   for (const context of ["Vercel", "Production Post-deploy Smoke", "Production DAST"]) {
-    assert.ok(baseline.includes(`\"${context}\"`));
+    assert.ok(baseline.includes('"' + context + '"'));
   }
   assert.match(baseline, /vercel_state/);
   assert.match(baseline, /production-only statuses are absent on metadata-only release/);
-  assert.match(baseline, /chore\\\(release\\\):/);
-  assert.match(baseline, /\[skip ci\]/);
-  assert.match(baseline, /package\.json changed beyond version metadata/);
-  assert.match(baseline, /package-lock\.json changed beyond root version metadata/);
-  assert.match(baseline, /parent .* has inconsistent package\/lock versions/);
-  assert.match(baseline, /release .* has inconsistent package\/lock versions/);
-  assert.match(baseline, /release subject does not match package version/);
-  assert.match(baseline, /PROD_BASE_RELEASE_VERSION/);
-  assert.match(baseline, /PROD_BASE_RELEASE_GRAPH/);
-  assert.match(baseline, /baseline inheritance requires a linear single-parent release commit/);
-  assert.match(baseline, /production release hop must use stable numeric SemVer/);
-  assert.match(baseline, /does not monotonically advance package version/);
+  assert.match(baselineClassification, /chore\\\(release\\\):/);
+  assert.match(baselineClassification, /\[skip ci\]/);
+  assert.match(baselineClassification, /package\\.json changed beyond version metadata/);
+  assert.match(
+    baselineClassification,
+    /package-lock\\.json changed beyond root version metadata/,
+  );
+  assert.match(
+    baselineClassification,
+    /parent .* has inconsistent package\/lock versions/,
+  );
+  assert.match(
+    baselineClassification,
+    /release .* has inconsistent package\/lock versions/,
+  );
+  assert.match(
+    baselineClassification,
+    /release subject does not match package version/,
+  );
+  assert.match(baselineClassification, /PROD_BASE_RELEASE_VERSION/);
+  assert.match(baselineClassification, /PROD_BASE_RELEASE_GRAPH/);
+  assert.match(
+    baselineClassification,
+    /baseline inheritance requires a linear single-parent release commit/,
+  );
+  assert.match(
+    baselineClassification,
+    /production release hop must use stable numeric SemVer/,
+  );
+  assert.match(
+    baselineClassification,
+    /does not monotonically advance package version/,
+  );
   assert.match(baseline, /PROD_BASE_UNHEALTHY/);
-  assert.match(baseline, /PROD_BASE_RELEASE_SCOPE/);
+  assert.match(baselineClassification, /PROD_BASE_RELEASE_SCOPE/);
 
   for (const path of ["/", "/index.html", "/test", "/contact", "/policy"]) {
-    assert.ok(live.includes(`probe \"${path}\"`));
+    assert.ok(live.includes('probe "' + path + '"'));
   }
   assert.match(live, /PROD_LIVE_CHECKPOINT/);
   assert.match(live, /x-vercel-mitigated/);
