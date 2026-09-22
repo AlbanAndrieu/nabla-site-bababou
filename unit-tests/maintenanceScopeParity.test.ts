@@ -5,12 +5,40 @@ import test from "node:test";
 const read = (path: string) =>
   readFile(new URL(`../${path}`, import.meta.url), "utf8");
 
-test("quality maintenance paths stay aligned across local, CI, Preview and production baseline gates", async () => {
-  const [scope, workflow, baseline] = await Promise.all([
-    read("scripts/ci-scope.sh"),
-    read(".github/workflows/ci.yml"),
-    read("scripts/verify-production-baseline.sh"),
-  ]);
+test("maintenance paths stay aligned across local scope, both Preview paths and production baseline", async () => {
+  const [scope, workflow, onDemandWorkflow, baseline, baselineClassification] =
+    await Promise.all([
+      read("scripts/ci-scope.sh"),
+      read(".github/workflows/ci.yml"),
+      read(".github/workflows/vercel-preview.yml"),
+      read("scripts/verify-production-baseline.sh"),
+      read("scripts/lib/production-baseline-classification.sh"),
+    ]);
+  const productionBaselinePolicy = `${baseline}\n${baselineClassification}`;
+
+  const sharedMaintenancePrefixes = [
+    ["docs/*", "filename.startsWith('docs/')"],
+    ["unit-tests/*", "filename.startsWith('unit-tests/')"],
+  ] as const;
+
+  for (const [shellPattern, jsPredicate] of sharedMaintenancePrefixes) {
+    assert.ok(
+      scope.includes(shellPattern),
+      `${shellPattern} missing from CI scope`,
+    );
+    assert.ok(
+      workflow.includes(jsPredicate),
+      `${jsPredicate} missing from automatic Preview scope`,
+    );
+    assert.ok(
+      onDemandWorkflow.includes(jsPredicate),
+      `${jsPredicate} missing from on-demand Preview scope`,
+    );
+    assert.ok(
+      productionBaselinePolicy.includes(shellPattern),
+      `${shellPattern} missing from production-baseline scope`,
+    );
+  }
 
   const sharedMaintenancePaths = [
     "scripts/agent-quality-gate.sh",
@@ -27,8 +55,60 @@ test("quality maintenance paths stay aligned across local, CI, Preview and produ
   ];
 
   for (const path of sharedMaintenancePaths) {
-    assert.ok(scope.includes(path), `${path} missing from quality scope`);
-    assert.ok(workflow.includes(`filename === '${path}'`), `${path} missing from Preview scope`);
-    assert.ok(baseline.includes(path), `${path} missing from production-baseline scope`);
+    assert.ok(scope.includes(path), `${path} missing from CI scope`);
+    assert.ok(
+      workflow.includes(`filename === '${path}'`),
+      `${path} missing from automatic Preview scope`,
+    );
+    assert.ok(
+      onDemandWorkflow.includes(`filename === '${path}'`),
+      `${path} missing from on-demand Preview scope`,
+    );
+    assert.ok(
+      productionBaselinePolicy.includes(path),
+      `${path} missing from production-baseline scope`,
+    );
   }
+
+  assert.match(onDemandWorkflow, /publish-vercel-preview-checkpoint\.sh/);
+  assert.doesNotMatch(onDemandWorkflow, /git push --force origin/);
+  assert.doesNotMatch(
+    onDemandWorkflow,
+    /github\.rest\.git\.(?:createRef|updateRef)/,
+  );
+  assert.doesNotMatch(onDemandWorkflow, /forceCheckpoint/);
+
+  const classifierPath = "scripts/lib/production-baseline-classification.sh";
+  assert.ok(
+    baselineClassification.includes(classifierPath),
+    "classifier must accept its own policy-only maintenance hop",
+  );
+
+  const maintenanceStart = scope.indexOf("is_maintenance_only_path() {");
+  const previewStart = scope.indexOf("is_preview_safe_path() {");
+  const changedFilesStart = scope.indexOf("MAINTENANCE_ONLY=true");
+  assert.ok(
+    maintenanceStart >= 0 &&
+      previewStart > maintenanceStart &&
+      changedFilesStart > previewStart,
+    "CI scope classifier functions must remain ordered and discoverable",
+  );
+  const maintenanceOnlyScope = scope.slice(maintenanceStart, previewStart);
+  const previewSafeScope = scope.slice(previewStart, changedFilesStart);
+  assert.ok(
+    !maintenanceOnlyScope.includes(classifierPath),
+    "classifier changes must remain on the full CI quality/build path",
+  );
+  assert.ok(
+    previewSafeScope.includes(classifierPath),
+    "classifier changes must remain Preview-safe",
+  );
+  assert.ok(
+    workflow.includes(`filename === '${classifierPath}'`),
+    "classifier changes must keep full CI quality but skip automatic Preview",
+  );
+  assert.ok(
+    onDemandWorkflow.includes(`filename === '${classifierPath}'`),
+    "classifier changes must skip on-demand Preview",
+  );
 });

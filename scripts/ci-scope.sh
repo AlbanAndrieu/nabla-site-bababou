@@ -68,11 +68,31 @@ is_maintenance_only_path() {
     esac
 }
 
+is_preview_safe_path() {
+    case "$1" in
+        docs/* | unit-tests/* | tests/* | *.md | \
+            .github/* | .zap/* | .vscode/* | .idea/* | .agents/* | .cursor/* | .claude/* | \
+            .assetsignore | .pre-commit-config.yaml | .pre-commit-pre-push.yaml | .python-version | \
+            mise.toml | eslint.config.js | stylelint.config.cjs | commitlint.config.* | playwright.config.* | \
+            scripts/agent-quality-gate.sh | scripts/agent-publish.sh | scripts/lib/agent-quality-support.sh | \
+            scripts/lib/production-baseline-classification.sh | scripts/quality-gate.sh | scripts/ci-scope.sh | \
+            scripts/verify-production-baseline.sh | scripts/verify-production-live.sh | \
+            scripts/ci-performance-budget.sh | scripts/publish-vercel-preview-checkpoint.sh | \
+            scripts/check_code_size.py | scripts/eslint-github-formatter.mjs)
+            return 0
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
 MAINTENANCE_ONLY=true
 APPLICATION=false
 SAST=false
 BUILD=false
 DEPENDENCIES=false
+PREVIEW_REQUIRED=false
 
 if (("${#CHANGED_FILES[@]}" == 0)); then
     # An empty diff is unusual in CI. Prefer the safe/full path rather than
@@ -81,6 +101,7 @@ if (("${#CHANGED_FILES[@]}" == 0)); then
     APPLICATION=true
     SAST=true
     BUILD=true
+    PREVIEW_REQUIRED=true
 else
     for file in "${CHANGED_FILES[@]}"; do
         case "${file}" in
@@ -93,6 +114,9 @@ else
             MAINTENANCE_ONLY=false
             APPLICATION=true
             BUILD=true
+        fi
+        if ! is_preview_safe_path "${file}"; then
+            PREVIEW_REQUIRED=true
         fi
 
         case "${file}" in
@@ -114,6 +138,7 @@ emit() {
     printf 'sast=%s\n' "${SAST}"
     printf 'build=%s\n' "${BUILD}"
     printf 'dependencies=%s\n' "${DEPENDENCIES}"
+    printf 'preview_required=%s\n' "${PREVIEW_REQUIRED}"
     printf 'changed_count=%d\n' "${#CHANGED_FILES[@]}"
 }
 
@@ -126,4 +151,10 @@ if [[ "${MAINTENANCE_ONLY}" == true ]]; then
     echo "ℹ️ CI scope: maintenance-only change; application SAST/build may be skipped."
 else
     echo "ℹ️ CI scope: application-capable change; deploy-relevant checks remain mandatory."
+fi
+
+if [[ "${PREVIEW_REQUIRED}" == true ]]; then
+    echo "ℹ️ Preview scope: deploy-relevant change; Preview security gates are required."
+else
+    echo "ℹ️ Preview scope: no deploy-relevant changes; Preview runner may be skipped."
 fi

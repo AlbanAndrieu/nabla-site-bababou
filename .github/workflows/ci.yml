@@ -104,6 +104,7 @@ jobs:
     timeout-minutes: 20
     outputs:
       current-base-sha: ${{ steps.current-heads.outputs.base-sha }}
+      preview_required: ${{ steps.ci-scope.outputs.preview_required }}
     env:
       SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
@@ -600,6 +601,7 @@ jobs:
               filename === 'scripts/agent-quality-gate.sh' ||
               filename === 'scripts/agent-publish.sh' ||
               filename === 'scripts/lib/agent-quality-support.sh' ||
+              filename === 'scripts/lib/production-baseline-classification.sh' ||
               filename === 'scripts/ci-scope.sh' ||
               filename === 'scripts/verify-production-baseline.sh' ||
               filename === 'scripts/verify-production-live.sh' ||
