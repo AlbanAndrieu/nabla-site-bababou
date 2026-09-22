@@ -64,6 +64,25 @@ if [[ "${BASE_REF}" != "HEAD" ]]; then
     printf '✅ branch contains comparison base %s\n' "${BASE_REF}"
 fi
 
+ci_skip_directive_failed=0
+if [[ "${BASE_REF}" != "HEAD" ]]; then
+    mapfile -t PR_COMMITS < <(git rev-list --reverse "${BASE_REF}..HEAD")
+    for commit in "${PR_COMMITS[@]}"; do
+        message="$(git log -1 --format=%B "${commit}")"
+        if grep -Eiq '\[(skip ci|ci skip|no ci|skip actions|actions skip)\]' <<<"${message}" ||
+            grep -Eiq '^[[:space:]]*skip-checks:[[:space:]]*true[[:space:]]*$' <<<"${message}"; then
+            subject="$(git log -1 --format=%s "${commit}")"
+            printf '❌ QG_CI_SKIP_DIRECTIVE: commit %s (%s) suppresses required PR validation\n' \
+                "${commit}" "${subject}" >&2
+            ci_skip_directive_failed=1
+        fi
+    done
+fi
+if ((ci_skip_directive_failed != 0)); then
+    exit 1
+fi
+printf '✅ CI skip-directive guard\n'
+
 mapfile -t CHANGED_FILES < <(collect_changed_files)
 mapfile -t DELETED_FILES < <(collect_deleted_files)
 
