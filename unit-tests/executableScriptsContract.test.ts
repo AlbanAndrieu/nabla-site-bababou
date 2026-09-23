@@ -19,9 +19,9 @@ test("critical quality and Preview shell entrypoints remain executable", async (
   for (const relativePath of executableScripts) {
     const info = await stat(new URL(relativePath, repositoryRoot));
     assert.notEqual(
-      info.mode & 0o111,
+      info.mode & 0o100,
       0,
-      `${relativePath} must keep an executable Git mode`,
+      `${relativePath} must keep the owner executable bit`,
     );
   }
 });
