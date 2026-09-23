@@ -204,6 +204,29 @@ if ((exec_bit_failed != 0)); then
 fi
 printf '✅ executable-script contract\n'
 
+validate_changed_shell_syntax() {
+    local file
+
+    for file in "${CHANGED_FILES[@]}"; do
+        case "${file}" in
+            *.sh)
+                bash -n "${file}"
+                ;;
+        esac
+    done
+}
+
+run_dependency_free_preflight() {
+    if [[ "${BASE_REF}" != "HEAD" ]]; then
+        run_compact "committed diff whitespace" git diff --check "${BASE_REF}...HEAD"
+    fi
+    run_compact "working-tree diff whitespace" git diff --check
+    run_compact "staged diff whitespace" git diff --cached --check
+    run_compact "changed shell syntax" validate_changed_shell_syntax
+}
+
+run_dependency_free_preflight
+
 if [[ "${MODE}" == "preflight" ]]; then
     echo "✅ Agent preflight passed without installing dependencies."
     exit 0

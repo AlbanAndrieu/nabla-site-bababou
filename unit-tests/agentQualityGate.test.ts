@@ -24,6 +24,9 @@ test("agent gate delegates shared mechanics and keeps Bababou pre-build checks",
     "QG_BASE_STALE",
     "QG_LARGE_DELETION",
     "QG_EXEC_BIT",
+    "git diff --check",
+    "bash -n",
+    "changed shell syntax",
     "QG_DIRTY_TREE",
     "--preflight",
     "--fix",
@@ -70,7 +73,7 @@ test("publisher owns exact proof reuse and scope-aware production build", async 
   assert.match(publish, /bash scripts\/ci-scope\.sh "\$\{BASE_SHA\}" HEAD/);
   assert.match(publish, /Next\.js production build/);
   assert.match(publish, /npm run privacy:check:build/);
-  assert.match(publish, /maintenance-only publication scope; Next build intentionally skipped/);
+  assert.match(publish, /non-build publication scope; Next build intentionally skipped/);
   assert.match(publish, /QG_PUBLISH_PROOF_WRITTEN/);
 });
 

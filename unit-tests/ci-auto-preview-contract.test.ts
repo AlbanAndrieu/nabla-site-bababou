@@ -7,10 +7,6 @@ const checkpointUrl = new URL(
   "../scripts/publish-vercel-preview-checkpoint.sh",
   import.meta.url,
 );
-const onDemandUrl = new URL(
-  "../.github/workflows/vercel-preview.yml",
-  import.meta.url,
-);
 
 test("Quality automatically publishes exact PR Preview checkpoints after success", async () => {
   const [workflow, checkpointScript] = await Promise.all([
@@ -21,6 +17,15 @@ test("Quality automatically publishes exact PR Preview checkpoints after success
   assert.match(workflow, /preview-security:/);
   assert.match(workflow, /needs: quality/);
   assert.match(workflow, /needs\.quality\.result == 'success'/);
+  assert.match(workflow, /needs\.quality\.outputs\.preview_required == 'true'/);
+  assert.match(
+    workflow,
+    /preview_required:\s*\$\{\{ steps\.ci-scope\.outputs\.preview_required \}\}/,
+  );
+  assert.match(
+    workflow,
+    /zap_bootstrap:\s*\$\{\{ steps\.ci-scope\.outputs\.zap_bootstrap \}\}/,
+  );
   assert.match(workflow, /github\.event\.pull_request\.draft == false/);
   assert.match(
     workflow,
@@ -35,10 +40,6 @@ test("Quality automatically publishes exact PR Preview checkpoints after success
   assert.match(workflow, /needs\.quality\.outputs\.current-base-sha/);
   assert.match(workflow, /publish-vercel-preview-checkpoint\.sh/);
   assert.match(workflow, /vercel-preview-pr-/);
-  assert.match(
-    workflow,
-    /filename === 'scripts\/publish-vercel-preview-checkpoint\.sh'/,
-  );
   assert.match(checkpointScript, /\^vercel-preview-pr-\[0-9\]\+\$/);
   assert.match(checkpointScript, /git merge-base --is-ancestor/);
   assert.match(checkpointScript, /git ls-remote --exit-code --heads/);
@@ -51,19 +52,24 @@ test("Quality automatically publishes exact PR Preview checkpoints after success
     /--force-with-lease="\$\{checkpoint_ref\}:\$\{remote_sha\}"/,
   );
   assert.match(checkpointScript, /does not reliably emit/);
-  assert.match(workflow, /zapBootstrap/);
+  assert.match(workflow, /needs\.quality\.outputs\.zap_bootstrap/);
 });
 
-test("automatic Preview policy skips repository-security maintenance without hiding deploy-relevant app changes", async () => {
+test("automatic Preview delegates deploy classification to canonical CI scope", async () => {
   const workflow = await readFile(ciUrl, "utf8");
 
-  assert.match(workflow, /filename\.startsWith\('docs\/'\)/);
-  assert.match(workflow, /filename\.startsWith\('unit-tests\/'\)/);
-  assert.match(workflow, /filename\.startsWith\('\.github\/'\)/);
-  assert.match(workflow, /filename\.startsWith\('\.zap\/'\)/);
+  assert.match(workflow, /needs\.quality\.outputs\.preview_required == 'true'/);
+  assert.match(
+    workflow,
+    /preview_required:\s*\$\{\{ steps\.ci-scope\.outputs\.preview_required \}\}/,
+  );
+  assert.doesNotMatch(workflow, /const safeOnly/);
+  assert.doesNotMatch(workflow, /deployRelevant/);
+  assert.doesNotMatch(workflow, /Report maintenance-only Preview skip/);
+  assert.doesNotMatch(workflow, /github\.rest\.pulls\.listFiles/);
+  assert.match(workflow, /needs\.quality\.outputs\.zap_bootstrap/);
+  assert.match(workflow, /Canonical Quality scope requires automatic Preview/);
   assert.doesNotMatch(workflow, /forceCheckpoint/);
-  assert.match(workflow, /No deploy-relevant files/);
-  assert.match(workflow, /deployRelevant/);
 });
 
 test("Preview security gate waits for both Playwright and OWASP ZAP exact-SHA statuses", async () => {
@@ -73,6 +79,14 @@ test("Preview security gate waits for both Playwright and OWASP ZAP exact-SHA st
   assert.match(workflow, /OWASP ZAP Preview/);
   assert.match(workflow, /zap_bootstrap/);
   assert.match(workflow, /ZAP_BOOTSTRAP/);
+  assert.match(
+    workflow,
+    /ZAP_BOOTSTRAP:\s*\$\{\{ needs\.quality\.outputs\.zap_bootstrap \}\}/,
+  );
+  assert.match(
+    workflow,
+    /if: needs\.quality\.outputs\.zap_bootstrap == 'true'/,
+  );
   assert.match(workflow, /repository_dispatch uses the default-branch workflow/);
   assert.match(workflow, /stale master ZAP result/);
   assert.match(workflow, /Publish deferred ZAP workflow-bootstrap status/);
@@ -96,23 +110,4 @@ test("Preview security gate waits for both Playwright and OWASP ZAP exact-SHA st
   );
   assert.doesNotMatch(workflow, /status\?\.state \?\? 'pending'/);
   assert.match(workflow, /Timed out waiting for/);
-});
-
-test("on-demand Preview reuses the exact-SHA publisher and refuses draft PRs", async () => {
-  const [workflow, checkpointScript] = await Promise.all([
-    readFile(onDemandUrl, "utf8"),
-    readFile(checkpointUrl, "utf8"),
-  ]);
-
-  assert.match(workflow, /if \(pr\.draft\)/);
-  assert.match(workflow, /is draft; validate it before Preview publication/);
-  assert.match(workflow, /core\.setOutput\('base_sha', pr\.base\.sha\)/);
-  assert.match(workflow, /Report maintenance-only Preview skip/);
-  assert.match(workflow, /Publish exact-SHA Vercel Preview checkpoint/);
-  assert.match(workflow, /PR_BASE_SHA/);
-  assert.match(workflow, /PR_HEAD_SHA/);
-  assert.match(workflow, /publish-vercel-preview-checkpoint\.sh/);
-  assert.doesNotMatch(workflow, /git push --force origin/);
-  assert.doesNotMatch(workflow, /forceCheckpoint/);
-  assert.match(checkpointScript, /--force-with-lease/);
 });

@@ -126,7 +126,7 @@ test("maintenance publication writes and reuses an exact proof without building"
 
   const first = publish(fixture.directory, fixture.baseSha);
   assert.equal(first.status, 0, first.stderr);
-  assert.match(first.stdout, /maintenance-only publication scope/);
+  assert.match(first.stdout, /non-build publication scope/);
   assert.match(first.stdout, /QG_PUBLISH_PROOF_WRITTEN/);
 
   const firstCalls = await readFile(fixture.callLog, "utf8");

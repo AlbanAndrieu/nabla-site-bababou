@@ -105,6 +105,7 @@ jobs:
     outputs:
       current-base-sha: ${{ steps.current-heads.outputs.base-sha }}
       preview_required: ${{ steps.ci-scope.outputs.preview_required }}
+      zap_bootstrap: ${{ steps.ci-scope.outputs.zap_bootstrap }}
     env:
       SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
@@ -256,7 +257,7 @@ jobs:
 
           mapfile -t files < <(
             git diff --name-only --diff-filter=ACMR "$base_sha" "$HEAD_SHA" |
-              grep -E '^(app|components|i18n|lib|scripts|api)/.*\.(cjs|js|jsx|mjs|py|ts|tsx)$|^(next\.config\.mjs|proxy\.ts)$' || true
+              grep -E '^(app|components|i18n|lib|scripts|api)/.*\.(cjs|js|jsx|mjs|py|ts|tsx)$|^\.github/workflows/.*\.ya?ml$|^(next\.config\.mjs|proxy\.ts)$' || true
           )
 
           if (("${#files[@]}" == 0)); then
@@ -529,7 +530,8 @@ jobs:
       github.event_name == 'pull_request' &&
       github.event.pull_request.draft == false &&
       github.event.pull_request.head.repo.full_name == github.repository &&
-      needs.quality.result == 'success'
+      needs.quality.result == 'success' &&
+      needs.quality.outputs.preview_required == 'true'
     timeout-minutes: 35
     runs-on: ubuntu-latest
     permissions:
@@ -573,88 +575,19 @@ jobs:
               return;
             }
 
-            const files = await github.paginate(github.rest.pulls.listFiles, {
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: prNumber,
-              per_page: 100,
-            });
-
-            const safeOnly = (filename) =>
-              filename.startsWith('docs/') ||
-              filename.endsWith('.md') ||
-              filename.startsWith('unit-tests/') ||
-              filename.startsWith('.github/') ||
-              filename.startsWith('.zap/') ||
-              filename.startsWith('.vscode/') ||
-              filename.startsWith('.idea/') ||
-              filename.startsWith('.agents/') ||
-              filename.startsWith('.cursor/') ||
-              filename.startsWith('.claude/') ||
-              filename === '.assetsignore' ||
-              filename === '.pre-commit-config.yaml' ||
-              filename === '.pre-commit-pre-push.yaml' ||
-              filename === '.python-version' ||
-              filename === 'mise.toml' ||
-              filename === 'eslint.config.js' ||
-              filename === 'stylelint.config.cjs' ||
-              filename === 'scripts/agent-quality-gate.sh' ||
-              filename === 'scripts/agent-publish.sh' ||
-              filename === 'scripts/lib/agent-quality-support.sh' ||
-              filename === 'scripts/lib/production-baseline-classification.sh' ||
-              filename === 'scripts/ci-scope.sh' ||
-              filename === 'scripts/verify-production-baseline.sh' ||
-              filename === 'scripts/verify-production-live.sh' ||
-              filename === 'scripts/ci-performance-budget.sh' ||
-              filename === 'scripts/quality-gate.sh' ||
-              filename === 'scripts/publish-vercel-preview-checkpoint.sh' ||
-              filename === 'scripts/check_code_size.py' ||
-              filename === 'scripts/eslint-github-formatter.mjs';
-
-            const deployRelevant = files
-              .map((file) => file.filename)
-              .filter((filename) => !safeOnly(filename));
-
-            const zapBootstrap = files.some(
-              (file) => file.filename === '.github/workflows/zap-preview.yml',
-            );
-
             core.setOutput('sha', headSha);
             core.setOutput('branch', `vercel-preview-pr-${prNumber}`);
-            core.setOutput(
-              'deploy_relevant',
-              deployRelevant.length > 0 ? 'true' : 'false',
+            core.info(
+              `Canonical Quality scope requires automatic Preview for PR #${prNumber}.`,
             );
-            core.setOutput('zap_bootstrap', zapBootstrap ? 'true' : 'false');
-
-            if (deployRelevant.length === 0) {
-              core.info(
-                `PR #${prNumber} only changes tests/docs/maintenance; Preview security gates are not required.`,
-              );
-              return;
-            }
-
-            core.info(`Automatic Preview files: ${deployRelevant.join(', ')}`);
-
-      - name: Report maintenance-only Preview skip
-        if: steps.preview.outputs.deploy_relevant != 'true'
-        shell: bash
-        run: |
-          {
-            echo "## Preview security gates"
-            echo
-            echo "No deploy-relevant files: Vercel Preview, Playwright and ZAP are intentionally skipped."
-          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Checkout exact PR revision for Preview
-        if: steps.preview.outputs.deploy_relevant == 'true'
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ steps.preview.outputs.sha }}
           fetch-depth: 0
 
       - name: Push automatic Vercel Preview checkpoint
-        if: steps.preview.outputs.deploy_relevant == 'true'
         env:
           CHECKPOINT_BRANCH: ${{ steps.preview.outputs.branch }}
           PR_BASE_SHA: ${{ needs.quality.outputs.current-base-sha }}
@@ -665,12 +598,11 @@ jobs:
           "${CHECKPOINT_BRANCH}" "${PR_BASE_SHA}" "${PR_HEAD_SHA}"
 
       - name: Wait for Vercel, Playwright and ZAP Preview statuses
-        if: steps.preview.outputs.deploy_relevant == 'true'
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         env:
           STATUS_SHA: ${{ steps.preview.outputs.sha }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-          ZAP_BOOTSTRAP: ${{ steps.preview.outputs.zap_bootstrap }}
+          ZAP_BOOTSTRAP: ${{ needs.quality.outputs.zap_bootstrap }}
         with:
           retries: 3
           script: |
@@ -775,7 +707,7 @@ jobs:
             );
 
       - name: Publish deferred ZAP workflow-bootstrap status
-        if: steps.preview.outputs.deploy_relevant == 'true' && steps.preview.outputs.zap_bootstrap == 'true'
+        if: needs.quality.outputs.zap_bootstrap == 'true'
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         env:
           STATUS_SHA: ${{ steps.preview.outputs.sha }}

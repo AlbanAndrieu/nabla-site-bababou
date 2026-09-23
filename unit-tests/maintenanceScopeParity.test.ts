@@ -5,8 +5,8 @@ import test from "node:test";
 const read = (path: string) =>
   readFile(new URL(`../${path}`, import.meta.url), "utf8");
 
-test("maintenance paths stay aligned across local scope, both Preview paths and production baseline", async () => {
-  const [scope, workflow, onDemandWorkflow, baseline, baselineClassification] =
+test("maintenance paths stay aligned across canonical scope, on-demand Preview and production baseline", async () => {
+  const [scope, ci, onDemand, baseline, baselineClassification] =
     await Promise.all([
       read("scripts/ci-scope.sh"),
       read(".github/workflows/ci.yml"),
@@ -22,21 +22,14 @@ test("maintenance paths stay aligned across local scope, both Preview paths and 
   ] as const;
 
   for (const [shellPattern, jsPredicate] of sharedMaintenancePrefixes) {
+    assert.ok(scope.includes(shellPattern), `${shellPattern} missing from CI scope`);
     assert.ok(
-      scope.includes(shellPattern),
-      `${shellPattern} missing from CI scope`,
-    );
-    assert.ok(
-      workflow.includes(jsPredicate),
-      `${jsPredicate} missing from automatic Preview scope`,
-    );
-    assert.ok(
-      onDemandWorkflow.includes(jsPredicate),
+      onDemand.includes(jsPredicate),
       `${jsPredicate} missing from on-demand Preview scope`,
     );
     assert.ok(
       productionBaselinePolicy.includes(shellPattern),
-      `${shellPattern} missing from production-baseline scope`,
+      `${shellPattern} missing from production-baseline policy`,
     );
   }
 
@@ -55,60 +48,81 @@ test("maintenance paths stay aligned across local scope, both Preview paths and 
   ];
 
   for (const path of sharedMaintenancePaths) {
-    assert.ok(scope.includes(path), `${path} missing from CI scope`);
+    assert.ok(scope.includes(path), `${path} missing from canonical CI scope`);
     assert.ok(
-      workflow.includes(`filename === '${path}'`),
-      `${path} missing from automatic Preview scope`,
-    );
-    assert.ok(
-      onDemandWorkflow.includes(`filename === '${path}'`),
+      onDemand.includes(`filename === '${path}'`),
       `${path} missing from on-demand Preview scope`,
     );
     assert.ok(
       productionBaselinePolicy.includes(path),
-      `${path} missing from production-baseline scope`,
+      `${path} missing from production-baseline policy`,
     );
   }
 
-  assert.match(onDemandWorkflow, /publish-vercel-preview-checkpoint\.sh/);
-  assert.doesNotMatch(onDemandWorkflow, /git push --force origin/);
-  assert.doesNotMatch(
-    onDemandWorkflow,
-    /github\.rest\.git\.(?:createRef|updateRef)/,
+  assert.match(ci, /needs\.quality\.outputs\.preview_required == 'true'/);
+  assert.match(
+    ci,
+    /preview_required:\s*\$\{\{ steps\.ci-scope\.outputs\.preview_required \}\}/,
   );
-  assert.doesNotMatch(onDemandWorkflow, /forceCheckpoint/);
+  assert.match(ci, /needs\.quality\.outputs\.zap_bootstrap/);
+  assert.doesNotMatch(ci, /const safeOnly/);
+  assert.doesNotMatch(ci, /deployRelevant/);
+  assert.doesNotMatch(ci, /github\.rest\.pulls\.listFiles/);
+
+  assert.match(onDemand, /filename\.startsWith\('docs\/'\)/);
+  assert.match(onDemand, /filename\.startsWith\('unit-tests\/'\)/);
+  assert.match(onDemand, /filename\.startsWith\('tests\/'\)/);
+  assert.match(onDemand, /filename\.startsWith\('\.github\/'\)/);
+  assert.match(onDemand, /filename\.startsWith\('commitlint\.config\.'\)/);
+  assert.match(onDemand, /filename\.startsWith\('playwright\.config\.'\)/);
+  assert.match(onDemand, /publish-vercel-preview-checkpoint\.sh/);
+  assert.doesNotMatch(onDemand, /git push --force origin/);
+  assert.doesNotMatch(onDemand, /forceCheckpoint/);
 
   const classifierPath = "scripts/lib/production-baseline-classification.sh";
   assert.ok(
     baselineClassification.includes(classifierPath),
-    "classifier must accept its own policy-only maintenance hop",
+    "baseline classifier must accept its own policy-only maintenance hop",
   );
 
   const maintenanceStart = scope.indexOf("is_maintenance_only_path() {");
   const previewStart = scope.indexOf("is_preview_safe_path() {");
-  const changedFilesStart = scope.indexOf("MAINTENANCE_ONLY=true");
+  const changedFilesStart = scope.indexOf("mapfile -t CHANGED_FILES");
   assert.ok(
     maintenanceStart >= 0 &&
       previewStart > maintenanceStart &&
       changedFilesStart > previewStart,
     "CI scope classifier functions must remain ordered and discoverable",
   );
+
   const maintenanceOnlyScope = scope.slice(maintenanceStart, previewStart);
   const previewSafeScope = scope.slice(previewStart, changedFilesStart);
   assert.ok(
     !maintenanceOnlyScope.includes(classifierPath),
-    "classifier changes must remain on the full CI quality/build path",
+    "baseline classifier changes must stay outside maintenance-only classification",
   );
   assert.ok(
     previewSafeScope.includes(classifierPath),
-    "classifier changes must remain Preview-safe",
+    "baseline classifier changes must remain Preview-safe",
   );
   assert.ok(
-    workflow.includes(`filename === '${classifierPath}'`),
-    "classifier changes must keep full CI quality but skip automatic Preview",
+    onDemand.includes(`filename === '${classifierPath}'`),
+    "baseline classifier changes must skip on-demand Preview",
   );
-  assert.ok(
-    onDemandWorkflow.includes(`filename === '${classifierPath}'`),
-    "classifier changes must skip on-demand Preview",
-  );
+});
+
+test("workflow changes are security-sensitive but non-deployable in canonical scope", async () => {
+  const scope = await read("scripts/ci-scope.sh");
+  const maintenanceStart = scope.indexOf("is_maintenance_only_path() {");
+  const previewStart = scope.indexOf("is_preview_safe_path() {");
+
+  assert.ok(maintenanceStart >= 0 && previewStart > maintenanceStart);
+  const maintenance = scope.slice(maintenanceStart, previewStart);
+  const preview = scope.slice(previewStart);
+
+  assert.doesNotMatch(maintenance, /\.github\/\*/);
+  assert.match(preview, /\.github\/\*/);
+  assert.match(scope, /\.github\/workflows\/\*\.yml/);
+  assert.match(scope, /\.github\/workflows\/\*\.yaml/);
+  assert.match(scope, /is_source_file\(\)/);
 });
