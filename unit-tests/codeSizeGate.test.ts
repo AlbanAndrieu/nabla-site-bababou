@@ -92,7 +92,9 @@ test("agent gate runs the baseline-aware report before npm-backed validation", a
   assert.match(gate, /python3 scripts\/check_code_size\.py/);
   assert.match(gate, /--baseline-ref "\$\{BASE_REF\}"/);
   const report = gate.indexOf("baseline-aware code-size report");
+  const preflightExit = gate.indexOf('if [[ "${MODE}" == "preflight" ]]');
   const strictNpmCheck = gate.lastIndexOf("command -v npm");
   assert.ok(report >= 0);
-  assert.ok(strictNpmCheck > report);
+  assert.ok(preflightExit > report);
+  assert.ok(strictNpmCheck > preflightExit);
 });

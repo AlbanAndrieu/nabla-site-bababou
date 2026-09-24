@@ -22,12 +22,16 @@ resolve_base_ref() {
 
 BASE_REF="${1:-$(resolve_base_ref)}"
 HEAD_REF="${2:-HEAD}"
+# WORKTREE is a local-only sentinel used by the dependency-free agent preflight.
+# It classifies committed, staged, unstaged and untracked paths through the same
+# policy functions used by CI, without inventing a second scope implementation.
 
 if ! git rev-parse --verify "${BASE_REF}^{commit}" >/dev/null 2>&1; then
     printf '❌ CI_SCOPE_BASE_MISSING: %s\n' "${BASE_REF}" >&2
     exit 1
 fi
-if ! git rev-parse --verify "${HEAD_REF}^{commit}" >/dev/null 2>&1; then
+if [[ "${HEAD_REF}" != "WORKTREE" ]] &&
+    ! git rev-parse --verify "${HEAD_REF}^{commit}" >/dev/null 2>&1; then
     printf '❌ CI_SCOPE_HEAD_MISSING: %s\n' "${HEAD_REF}" >&2
     exit 1
 fi
@@ -81,11 +85,26 @@ is_preview_safe_path() {
     esac
 }
 
-mapfile -t CHANGED_FILES < <(
-    git diff --name-only --diff-filter=ACMRD "${BASE_REF}" "${HEAD_REF}" |
-        awk 'NF' |
-        sort -u
-)
+if [[ "${HEAD_REF}" == "WORKTREE" ]]; then
+    mapfile -t CHANGED_FILES < <(
+        {
+            if [[ "${BASE_REF}" != "HEAD" ]]; then
+                git diff --name-only --diff-filter=ACMRD "${BASE_REF}...HEAD"
+            fi
+            git diff --name-only --diff-filter=ACMRD
+            git diff --cached --name-only --diff-filter=ACMRD
+            git ls-files --others --exclude-standard
+        } |
+            awk 'NF' |
+            sort -u
+    )
+else
+    mapfile -t CHANGED_FILES < <(
+        git diff --name-only --diff-filter=ACMRD "${BASE_REF}" "${HEAD_REF}" |
+            awk 'NF' |
+            sort -u
+    )
+fi
 
 maintenance_only=true
 application=false
@@ -150,6 +169,9 @@ emit() {
 }
 
 emit
+if [[ "${HEAD_REF}" == "WORKTREE" ]]; then
+    echo "ℹ️ Scope source: committed + staged + unstaged + untracked worktree paths."
+fi
 if [[ -n "${GITHUB_OUTPUT:-}" ]]; then
     emit >>"${GITHUB_OUTPUT}"
 fi

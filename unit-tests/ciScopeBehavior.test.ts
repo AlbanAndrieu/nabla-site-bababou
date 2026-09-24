@@ -37,6 +37,10 @@ function classify(directory: string, baseSha: string, headSha = "HEAD") {
   });
 }
 
+function classifyWorktree(directory: string, baseSha: string) {
+  return classify(directory, baseSha, "WORKTREE");
+}
+
 function expectScope(
   stdout: string,
   expected: {
@@ -270,6 +274,162 @@ test("empty diffs fail safe", async (t) => {
   git(directory, "commit", "--quiet", "--allow-empty", "-m", "empty");
 
   const result = classify(directory, baseSha);
+  assert.equal(result.status, 0, result.stderr);
+  expectScope(result.stdout, {
+    maintenance: false,
+    application: true,
+    sast: true,
+    build: true,
+    preview: true,
+    count: 0,
+  });
+});
+
+test("WORKTREE mode classifies untracked maintenance and runtime paths before commit", async (t) => {
+  const { directory, baseSha } = await createRepository("bababou-ci-worktree-");
+  t.after(async () => rm(directory, { recursive: true, force: true }));
+
+  await mkdir(join(directory, "docs"), { recursive: true });
+  await writeFile(join(directory, "docs", "notes.md"), "local roadmap note\n");
+
+  const maintenance = classifyWorktree(directory, baseSha);
+  assert.equal(maintenance.status, 0, maintenance.stderr);
+  expectScope(maintenance.stdout, {
+    maintenance: true,
+    application: false,
+    sast: false,
+    build: false,
+    preview: false,
+  });
+  assert.match(maintenance.stdout, /Scope source: committed \+ staged \+ unstaged \+ untracked/);
+
+  await mkdir(join(directory, "app"), { recursive: true });
+  await writeFile(
+    join(directory, "app", "page.tsx"),
+    "export default function Page() { return null; }\n",
+  );
+
+  const runtime = classifyWorktree(directory, baseSha);
+  assert.equal(runtime.status, 0, runtime.stderr);
+  expectScope(runtime.stdout, {
+    maintenance: false,
+    application: true,
+    sast: true,
+    build: true,
+    preview: true,
+    count: 2,
+  });
+});
+
+test("WORKTREE mode sees staged runtime deletions", async (t) => {
+  const { directory } = await createRepository("bababou-ci-worktree-delete-");
+  t.after(async () => rm(directory, { recursive: true, force: true }));
+
+  await mkdir(join(directory, "app"), { recursive: true });
+  await writeFile(
+    join(directory, "app", "runtime.ts"),
+    "export const runtime = true;\n",
+  );
+  git(directory, "add", ".");
+  git(directory, "commit", "--quiet", "-m", "runtime base");
+  const baseSha = git(directory, "rev-parse", "HEAD");
+
+  git(directory, "rm", "--quiet", "app/runtime.ts");
+
+  const result = classifyWorktree(directory, baseSha);
+  assert.equal(result.status, 0, result.stderr);
+  expectScope(result.stdout, {
+    maintenance: false,
+    application: true,
+    sast: true,
+    build: true,
+    preview: true,
+  });
+});
+
+test("WORKTREE mode exposes dependency cost before package changes are committed", async (t) => {
+  const { directory, baseSha } = await createRepository("bababou-ci-worktree-deps-");
+  t.after(async () => rm(directory, { recursive: true, force: true }));
+
+  await writeFile(join(directory, "package.json"), '{"name":"fixture"}\n');
+
+  const result = classifyWorktree(directory, baseSha);
+  assert.equal(result.status, 0, result.stderr);
+  expectScope(result.stdout, {
+    maintenance: false,
+    application: true,
+    sast: false,
+    build: true,
+    preview: true,
+    dependencies: true,
+  });
+});
+
+test("WORKTREE mode keeps workflow-only changes Preview-free but security-sensitive", async (t) => {
+  const { directory, baseSha } = await createRepository("bababou-ci-worktree-workflow-");
+  t.after(async () => rm(directory, { recursive: true, force: true }));
+
+  await mkdir(join(directory, ".github", "workflows"), { recursive: true });
+  await writeFile(
+    join(directory, ".github", "workflows", "quality.yml"),
+    "name: Quality\n",
+  );
+
+  const result = classifyWorktree(directory, baseSha);
+  assert.equal(result.status, 0, result.stderr);
+  expectScope(result.stdout, {
+    maintenance: false,
+    application: false,
+    sast: true,
+    build: false,
+    preview: false,
+  });
+});
+
+test("WORKTREE mode exposes ZAP bootstrap without forcing Preview alone", async (t) => {
+  const { directory, baseSha } = await createRepository("bababou-ci-worktree-zap-");
+  t.after(async () => rm(directory, { recursive: true, force: true }));
+
+  await mkdir(join(directory, ".github", "workflows"), { recursive: true });
+  await writeFile(
+    join(directory, ".github", "workflows", "zap-preview.yml"),
+    "name: ZAP Preview\n",
+  );
+
+  const result = classifyWorktree(directory, baseSha);
+  assert.equal(result.status, 0, result.stderr);
+  expectScope(result.stdout, {
+    maintenance: false,
+    application: false,
+    sast: true,
+    build: false,
+    preview: false,
+    zap: true,
+  });
+});
+
+test("WORKTREE mode fails safe on unknown deploy configuration before commit", async (t) => {
+  const { directory, baseSha } = await createRepository("bababou-ci-worktree-config-");
+  t.after(async () => rm(directory, { recursive: true, force: true }));
+
+  await writeFile(join(directory, "vercel.json"), "{}\n");
+
+  const result = classifyWorktree(directory, baseSha);
+  assert.equal(result.status, 0, result.stderr);
+  expectScope(result.stdout, {
+    maintenance: false,
+    application: true,
+    sast: false,
+    build: true,
+    preview: true,
+  });
+});
+
+test("WORKTREE mode keeps empty diffs fail-safe", async (t) => {
+  const { directory, baseSha } = await createRepository("bababou-ci-worktree-empty-");
+  t.after(async () => rm(directory, { recursive: true, force: true }));
+
+  const result = classifyWorktree(directory, baseSha);
   assert.equal(result.status, 0, result.stderr);
   expectScope(result.stdout, {
     maintenance: false,

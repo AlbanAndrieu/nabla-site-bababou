@@ -12,7 +12,7 @@ Usage:
 Modes:
     default      strict deterministic pre-build validation
     --fix        converge deterministic pre-commit + npm lint auto-fixes locally
-    --preflight  Git-only branch/destructive/executable checks; no dependencies
+    --preflight  dependency-free branch/diff/shell/Python/code-size checks plus local CI/Preview worktree scope
     --publish    strict pre-build gate plus clean-tree publication validation
 
 Environment:
