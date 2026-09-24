@@ -19,6 +19,31 @@ This installs the configured `pre-commit` and canonical `pre-push` quality-gate 
 3. Reuse existing formatters, linters, generators, privacy/security checks, and CI conventions. Do not create a parallel implementation of the same validation.
 4. For family/legal/publication content, follow `.agents/skills/protect-family-privacy/SKILL.md` and its `references/private-rules.md` before editing.
 
+## OpenCode / small-model execution protocol
+
+OpenCode may run this repository with a smaller model such as GPT-4.1 mini. Do not rely on the model to infer repository workflow from conventions. For every non-trivial repository task, follow this sequence literally:
+
+1. Confirm the current branch is not `master`, then inspect `git status --short`, `git diff --stat`, and the current task/PR objective.
+2. Run `bash scripts/agent-quality-gate.sh --preflight` before editing. Use its worktree scope as the source of truth for whether build, SAST, dependency or Preview work is actually required.
+3. Read only the relevant unchecked subsection of `docs/roadmap.md`; do not load the entire repository to rediscover priorities.
+4. Load the smallest matching skill with OpenCode's `skill` tool before editing:
+   - `roadmap-local-first` for roadmap/PR/quality work;
+   - `quality-follow-up` for failed or incomplete quality evidence;
+   - `protect-family-privacy` before family, legal, publication or privacy edits;
+   - `next-migrate-locale-pages` for legacy-to-Next route migration;
+   - `next-dev-loop` for runtime verification;
+   - `agent-browser` when browser interaction is required.
+5. For multi-step work, maintain a short todo list. Complete one coherent, finishable roadmap item at a time instead of widening the PR.
+6. Apply the smallest safe patch and run the closest targeted test first. Then run `bash scripts/agent-quality-gate.sh --fix`, review every mutation, and commit only the converged intended diff.
+7. Before publication, run `bash scripts/agent-publish.sh` on the committed tree. Never claim this proof, a browser check, a build, CI, or a security scan passed unless it was actually executed on the reported SHA.
+8. Keep the PR draft while iterating. Never merge the PR or mutate `master` unless the user explicitly requests that action.
+
+When GitHub Actions credits/runners are unavailable, do **not** manually rerun workflows to obtain evidence. A job with `steps=null` or no allocated runner is infrastructure evidence, not a code failure. Maximize local validation, keep runner-backed proof listed as unavailable, and continue only with checks that can run locally.
+
+For this repository, keep pull-request descriptions in French unless the user asks for another language. Describe only checks actually executed and keep every unresolved item represented in `docs/roadmap.md`.
+
+OpenCode discovers project skills under `.agents/skills/*/SKILL.md`; load them on demand rather than copying all skill contents into the permanent prompt.
+
 ## Tool and context efficiency
 
 GitHub, Vercel, and Playwright are first-class tools for this repository. Do not restrict their use when they are useful for implementation, deployment validation, debugging, or release verification. Token/context optimization must never reduce correctness, test coverage, deployment validation, or incident diagnosis.
