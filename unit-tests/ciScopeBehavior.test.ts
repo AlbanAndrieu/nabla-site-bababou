@@ -461,3 +461,25 @@ test("WORKTREE mode keeps OpenCode agent configuration maintenance-only", async 
     preview: false,
   });
 });
+
+
+test("WORKTREE mode keeps OpenCode agent prompts maintenance-only", async (t) => {
+  const { directory, baseSha } = await createRepository("bababou-ci-worktree-opencode-agent-");
+  t.after(async () => rm(directory, { recursive: true, force: true }));
+
+  await mkdir(join(directory, ".opencode", "agents"), { recursive: true });
+  await writeFile(
+    join(directory, ".opencode", "agents", "bababou.md"),
+    "---\nmode: primary\n---\n",
+  );
+
+  const result = classifyWorktree(directory, baseSha);
+  assert.equal(result.status, 0, result.stderr);
+  expectScope(result.stdout, {
+    maintenance: true,
+    application: false,
+    sast: false,
+    build: false,
+    preview: false,
+  });
+});

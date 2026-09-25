@@ -76,6 +76,59 @@ test("roadmap-local-first skill encodes local-first completion and failure routi
   assert.match(skill, /never merge unless the user explicitly asks/i);
 });
 
+
+test("OpenCode defaults to the repository agent without pinning the workstation model", async () => {
+  const config = JSON.parse(await read("opencode.json")) as {
+    default_agent?: string;
+    subagent_depth?: number;
+    permission?: { task?: string };
+    command?: Record<
+      string,
+      { agent?: string; subtask?: boolean; model?: string; template?: string }
+    >;
+  };
+
+  assert.equal(config.default_agent, "bababou");
+  assert.equal(config.subagent_depth, 1);
+  assert.equal(config.permission?.task, "allow");
+  assert.equal(config.command?.["roadmap-local"]?.agent, "bababou");
+  assert.equal(config.command?.["roadmap-local"]?.subtask, false);
+  assert.equal(config.command?.["quality-local"]?.agent, "bababou");
+  assert.equal(config.command?.["review-local"]?.agent, "bababou-reviewer");
+  assert.equal(config.command?.["review-local"]?.subtask, true);
+
+  for (const command of Object.values(config.command ?? {})) {
+    assert.equal(command.model, undefined);
+  }
+});
+
+test("OpenCode primary and reviewer agents separate execution from review", async () => {
+  const [primary, reviewer, playbook] = await Promise.all([
+    read(".opencode/agents/bababou.md"),
+    read(".opencode/agents/bababou-reviewer.md"),
+    read(".agents/skills/roadmap-local-first/references/opencode-playbook.md"),
+  ]);
+
+  assert.match(primary, /mode: primary/);
+  assert.doesNotMatch(primary, /^model:/m);
+  assert.match(primary, /roadmap-local-first/);
+  assert.match(primary, /bababou-reviewer/);
+  assert.match(primary, /agent-publish\.sh/);
+
+  assert.match(reviewer, /mode: subagent/);
+  assert.match(reviewer, /edit: deny/);
+  assert.match(reviewer, /task: deny/);
+  assert.match(reviewer, /git diff\*/);
+  assert.match(reviewer, /Do not edit files/i);
+
+  assert.match(playbook, /Capability routing/);
+  assert.match(playbook, /executed/);
+  assert.match(playbook, /static contract/);
+  assert.match(playbook, /steps=null/);
+  assert.match(playbook, /protected visual 404 source/);
+  assert.match(playbook, /Google Translate remains fallback/);
+});
+
 test("OpenCode configuration stays on the maintenance-only CI path", async () => {
   const scope = await read("scripts/ci-scope.sh");
 

@@ -44,6 +44,10 @@ For this repository, keep pull-request descriptions in French unless the user as
 
 OpenCode discovers project skills under `.agents/skills/*/SKILL.md`; load them on demand rather than copying all skill contents into the permanent prompt.
 
+The project OpenCode configuration selects the repository-local primary agent `bababou` by default without pinning a model. That agent inherits the workstation model selection and delegates an independent read-only review to `bababou-reviewer` through `/review-local`. Use the reviewer before publication for any non-trivial batch; it must report findings but must not edit files.
+
+For a concise mapping between repository tasks, available skills, local scripts and optional external tools, read `.agents/skills/roadmap-local-first/references/opencode-playbook.md` only when orchestration is needed.
+
 ## Tool and context efficiency
 
 GitHub, Vercel, and Playwright are first-class tools for this repository. Do not restrict their use when they are useful for implementation, deployment validation, debugging, or release verification. Token/context optimization must never reduce correctness, test coverage, deployment validation, or incident diagnosis.
