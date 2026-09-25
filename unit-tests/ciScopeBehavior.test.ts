@@ -441,7 +441,6 @@ test("WORKTREE mode keeps empty diffs fail-safe", async (t) => {
   });
 });
 
-
 test("WORKTREE mode keeps OpenCode agent configuration maintenance-only", async (t) => {
   const { directory, baseSha } = await createRepository("bababou-ci-worktree-opencode-");
   t.after(async () => rm(directory, { recursive: true, force: true }));
@@ -461,7 +460,6 @@ test("WORKTREE mode keeps OpenCode agent configuration maintenance-only", async 
     preview: false,
   });
 });
-
 
 test("WORKTREE mode keeps OpenCode agent prompts maintenance-only", async (t) => {
   const { directory, baseSha } = await createRepository("bababou-ci-worktree-opencode-agent-");

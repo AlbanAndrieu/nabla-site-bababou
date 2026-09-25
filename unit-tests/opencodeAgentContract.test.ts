@@ -113,6 +113,7 @@ test("OpenCode primary and reviewer agents separate execution from review", asyn
   assert.match(primary, /roadmap-local-first/);
   assert.match(primary, /bababou-reviewer/);
   assert.match(primary, /agent-publish\.sh/);
+  assert.match(primary, /experimental-strip-types/);
 
   assert.match(reviewer, /mode: subagent/);
   assert.match(reviewer, /edit: deny/);
@@ -126,6 +127,7 @@ test("OpenCode primary and reviewer agents separate execution from review", asyn
   assert.match(playbook, /steps=null/);
   assert.match(playbook, /protected visual 404 source/);
   assert.match(playbook, /Google Translate remains fallback/);
+  assert.match(playbook, /experimental-strip-types/);
   assert.match(playbook, /opencode agent list/);
   assert.match(playbook, /bababou-reviewer/);
 });
