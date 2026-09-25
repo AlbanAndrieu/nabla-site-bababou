@@ -48,6 +48,8 @@ The project OpenCode configuration selects the repository-local primary agent `b
 
 For a concise mapping between repository tasks, available skills, local scripts and optional external tools, read `.agents/skills/roadmap-local-first/references/opencode-playbook.md` only when orchestration is needed.
 
+After pulling changes to OpenCode configuration, run `opencode agent list` once on the workstation and confirm that both `bababou` and `bababou-reviewer` are discovered before relying on repository-specific commands.
+
 ## Tool and context efficiency
 
 GitHub, Vercel, and Playwright are first-class tools for this repository. Do not restrict their use when they are useful for implementation, deployment validation, debugging, or release verification. Token/context optimization must never reduce correctness, test coverage, deployment validation, or incident diagnosis.

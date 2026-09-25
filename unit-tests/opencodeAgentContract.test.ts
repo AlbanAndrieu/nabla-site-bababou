@@ -76,7 +76,6 @@ test("roadmap-local-first skill encodes local-first completion and failure routi
   assert.match(skill, /never merge unless the user explicitly asks/i);
 });
 
-
 test("OpenCode defaults to the repository agent without pinning the workstation model", async () => {
   const config = JSON.parse(await read("opencode.json")) as {
     default_agent?: string;
@@ -127,6 +126,8 @@ test("OpenCode primary and reviewer agents separate execution from review", asyn
   assert.match(playbook, /steps=null/);
   assert.match(playbook, /protected visual 404 source/);
   assert.match(playbook, /Google Translate remains fallback/);
+  assert.match(playbook, /opencode agent list/);
+  assert.match(playbook, /bababou-reviewer/);
 });
 
 test("OpenCode configuration stays on the maintenance-only CI path", async () => {

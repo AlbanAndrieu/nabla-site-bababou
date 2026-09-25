@@ -85,3 +85,16 @@ Use `/review-local` after deterministic fixes converge and before the final publ
 4. no findings statement when appropriate.
 
 The primary agent owns fixes. The reviewer does not.
+
+## Workstation OpenCode smoke
+
+After pulling agent/config changes, validate the actual workstation binary before treating OpenCode integration as proven:
+
+```bash
+opencode --version
+opencode agent list
+```
+
+The agent list must include both `bababou` and `bababou-reviewer`. This verifies that OpenCode can parse the project configuration and discover the repository-local agents without spending a model call.
+
+If either agent is missing, stop and inspect the installed OpenCode version/config schema before using `/roadmap-local`, `/quality-local` or `/review-local`. Do not change the repository model setting to work around discovery: the repository intentionally inherits the workstation-selected model.
