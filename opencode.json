@@ -1,11 +1,62 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "share": "disabled",
+  "permission": {
+    "read": "allow",
+    "edit": "allow",
+    "glob": "allow",
+    "grep": "allow",
+    "list": "allow",
+    "lsp": "allow",
+    "skill": "allow",
+    "todowrite": "allow",
+    "webfetch": "allow",
+    "websearch": "allow",
+    "external_directory": "ask",
+    "doom_loop": "ask",
+    "bash": {
+      "*": "allow",
+      "git push*": "ask",
+      "git reset --hard*": "ask",
+      "git clean*": "ask",
+      "git checkout -- *": "ask",
+      "git restore --source*": "ask",
+      "rm -rf *": "ask"
+    },
+    "task": "allow"
+  },
+  "command": {
+    "roadmap-local": {
+      "description": "Continuer la roadmap dans la PR courante avec validation locale-first",
+      "template": "Charge d'abord le skill roadmap-local-first puis suis AGENTS.md strictement. Travaille uniquement sur la branche/PR courante non-master. Inspecte git status, git diff --stat et le plus petit bloc pertinent de docs/roadmap.md. Lance bash scripts/agent-quality-gate.sh --preflight avant édition. Choisis un seul item non coché, prioritaire et finissable sans élargir le scope. Charge ensuite uniquement les skills spécialisés nécessaires. Applique le plus petit patch sûr, exécute le test ciblé, puis bash scripts/agent-quality-gate.sh --fix et revois le diff. Ne merge jamais. Si GitHub Actions est indisponible ou retourne steps=null, ne relance pas le workflow: maximise les preuves locales et conserve la preuve runner-backed comme dette. Mets à jour la roadmap et, si l'outil GitHub/gh est disponible, la description de PR en français avec uniquement les validations réellement exécutées.",
+      "agent": "bababou",
+      "subtask": false
+    },
+    "quality-local": {
+      "description": "Diagnostiquer et corriger le quality gate sans dépendre de GitHub Actions",
+      "template": "Charge les skills quality-follow-up et roadmap-local-first. Exécute d'abord bash scripts/agent-quality-gate.sh --preflight. Classe chaque échec: mutation déterministe, validation déterministe, régression runtime/deploy, ou infrastructure. Pour QG_AUTOFIX_REQUIRED, lance bash scripts/agent-quality-gate.sh --fix au lieu d'analyser de gros logs, puis revois le diff et exécute les tests ciblés. Ne contourne aucune règle et ne déclenche aucun rerun GitHub manuel si les runners/crédits sont indisponibles. Ne publie ni ne merge sans preuve locale; après commit, utilise bash scripts/agent-publish.sh pour la preuve HEAD/base/toolchain.",
+      "agent": "bababou",
+      "subtask": false
+    },
+    "review-local": {
+      "description": "Relire le diff courant avant publication sans modifier les fichiers",
+      "agent": "bababou-reviewer",
+      "subtask": true,
+      "template": "Relis le diff courant comme une revue indépendante. Charge roadmap-local-first puis quality-follow-up si nécessaire. Vérifie AGENTS.md, le bloc roadmap concerné, le scope ci-scope, les tests ajoutés/modifiés, les garde-fous privacy/404/legacy si concernés, et les affirmations de validation. Ne modifie aucun fichier. Rapporte d'abord les bugs ou risques concrets par sévérité avec chemins concernés, puis les preuves manquantes. Si aucun problème concret n'est trouvé, dis-le explicitement et rappelle uniquement les validations encore non exécutées."
+    }
+  },
   "mcp": {
     "next-devtools": {
       "type": "local",
-      "command": ["npx", "-y", "next-devtools-mcp@latest"],
+      "command": [
+        "npx",
+        "-y",
+        "next-devtools-mcp@latest"
+      ],
       "enabled": true,
       "environment": {}
     }
-  }
+  },
+  "default_agent": "bababou",
+  "subagent_depth": 1
 }

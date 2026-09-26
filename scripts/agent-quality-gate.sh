@@ -216,6 +216,18 @@ validate_changed_shell_syntax() {
     done
 }
 
+validate_changed_python_syntax() {
+    local file
+
+    for file in "${CHANGED_FILES[@]}"; do
+        case "${file}" in
+            *.py)
+                python3 -c 'import pathlib, sys; path = pathlib.Path(sys.argv[1]); compile(path.read_text(encoding="utf-8"), str(path), "exec")' "${file}"
+                ;;
+        esac
+    done
+}
+
 run_dependency_free_preflight() {
     if [[ "${BASE_REF}" != "HEAD" ]]; then
         run_compact "committed diff whitespace" git diff --check "${BASE_REF}...HEAD"
@@ -223,12 +235,26 @@ run_dependency_free_preflight() {
     run_compact "working-tree diff whitespace" git diff --check
     run_compact "staged diff whitespace" git diff --cached --check
     run_compact "changed shell syntax" validate_changed_shell_syntax
+    run_compact "changed Python syntax" validate_changed_python_syntax
 }
 
 run_dependency_free_preflight
 
+if (("${#CHANGED_FILES[@]}" > 0)); then
+    run_compact_report "baseline-aware code-size report" \
+        python3 scripts/check_code_size.py \
+        --baseline-ref "${BASE_REF}" \
+        "${CHANGED_FILES[@]}"
+else
+    echo "✅ baseline-aware code-size report (no changed files)"
+fi
+
+worktree_scope_output="$(bash scripts/ci-scope.sh "${BASE_REF}" WORKTREE)"
+printf '%s\n' "${worktree_scope_output}"
+
 if [[ "${MODE}" == "preflight" ]]; then
     echo "✅ Agent preflight passed without installing dependencies."
+    echo "ℹ️ Scope above includes committed, staged, unstaged and untracked paths."
     exit 0
 fi
 
@@ -288,15 +314,6 @@ if [[ -n "${STATUS}" ]]; then
     printf '%s\n' "${STATUS}" >&2
     echo "   Run 'bash scripts/agent-quality-gate.sh --fix', review, then commit first." >&2
     exit 1
-fi
-
-if (("${#CHANGED_FILES[@]}" > 0)); then
-    run_compact_report "baseline-aware code-size report" \
-        python3 scripts/check_code_size.py \
-        --baseline-ref "${BASE_REF}" \
-        "${CHANGED_FILES[@]}"
-else
-    echo "✅ baseline-aware code-size report (no changed files)"
 fi
 
 command -v npm >/dev/null 2>&1 || {
