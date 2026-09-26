@@ -228,12 +228,39 @@ validate_changed_python_syntax() {
     done
 }
 
+validate_untracked_whitespace() {
+    local file
+    local log
+    local rc
+
+    while IFS= read -r file; do
+        [[ -f "${file}" ]] || continue
+        is_guarded_path "${file}" || continue
+
+        log="$(mktemp)"
+        set +e
+        git diff --no-index --check /dev/null -- "${file}" >"${log}" 2>&1
+        rc=$?
+        set -e
+
+        # git diff --no-index returns 1 for an ordinary clean-content diff.
+        # Whitespace errors and command failures return a value greater than 1.
+        if ((rc > 1)); then
+            cat "${log}" >&2
+            rm -f "${log}"
+            return 1
+        fi
+        rm -f "${log}"
+    done < <(git ls-files --others --exclude-standard)
+}
+
 run_dependency_free_preflight() {
     if [[ "${BASE_REF}" != "HEAD" ]]; then
         run_compact "committed diff whitespace" git diff --check "${BASE_REF}...HEAD"
     fi
     run_compact "working-tree diff whitespace" git diff --check
     run_compact "staged diff whitespace" git diff --cached --check
+    run_compact "untracked diff whitespace" validate_untracked_whitespace
     run_compact "changed shell syntax" validate_changed_shell_syntax
     run_compact "changed Python syntax" validate_changed_python_syntax
 }
