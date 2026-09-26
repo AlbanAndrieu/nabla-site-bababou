@@ -133,7 +133,7 @@ precommit_fix_until_stable() {
     return 1
 }
 
-is_guarded_path() {
+is_destructive_diff_guarded_path() {
     case "$1" in
         package-lock.json | public/assets/* | public/checklist/* | public/d3.v3.min.js | .github/copilot-instructions.md)
             return 1
@@ -150,7 +150,7 @@ is_guarded_path() {
 large_deletion_failed=0
 if [[ "${QUALITY_ALLOW_LARGE_DELETION:-0}" != "1" && "${BASE_REF}" != "HEAD" ]]; then
     for file in "${CHANGED_FILES[@]}"; do
-        is_guarded_path "${file}" || continue
+        is_destructive_diff_guarded_path "${file}" || continue
         git cat-file -e "${BASE_REF}:${file}" 2>/dev/null || continue
         base_lines="$(git show "${BASE_REF}:${file}" | wc -l | tr -d ' ')"
         current_lines="$(wc -l <"${file}" | tr -d ' ')"
@@ -167,7 +167,7 @@ if [[ "${QUALITY_ALLOW_LARGE_DELETION:-0}" != "1" && "${BASE_REF}" != "HEAD" ]];
     done
 
     for file in "${DELETED_FILES[@]}"; do
-        is_guarded_path "${file}" || continue
+        is_destructive_diff_guarded_path "${file}" || continue
         git cat-file -e "${BASE_REF}:${file}" 2>/dev/null || continue
         base_lines="$(git show "${BASE_REF}:${file}" | wc -l | tr -d ' ')"
         if ((base_lines >= 200)); then
