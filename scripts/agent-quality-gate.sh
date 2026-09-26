@@ -235,8 +235,10 @@ validate_untracked_whitespace() {
 
     while IFS= read -r file; do
         [[ -f "${file}" ]] || continue
-        is_guarded_path "${file}" || continue
 
+        # Keep this independent from the destructive-diff allowlist: pre-commit's
+        # filesystem whitespace hooks are broader, and git diff safely treats
+        # binary files as ordinary content differences without whitespace errors.
         log="$(mktemp)"
         set +e
         git diff --no-index --check /dev/null -- "${file}" >"${log}" 2>&1

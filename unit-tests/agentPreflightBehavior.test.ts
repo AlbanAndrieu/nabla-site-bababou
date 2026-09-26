@@ -178,6 +178,20 @@ test("dependency-free preflight rejects untracked whitespace before npm", async 
   assert.doesNotMatch(result.stderr, /must not run during --preflight/);
 });
 
+test("dependency-free preflight checks untracked files outside the destructive-diff guard", async (t) => {
+  const fixture = await createFixture();
+  t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
+
+  await writeFile(join(fixture.directory, "package-lock.json"), '{"lockfileVersion":3} \n');
+
+  const result = runPreflight(fixture.directory, fixture.baseSha);
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /untracked diff whitespace/);
+  assert.match(result.stderr, /package-lock\.json/);
+  assert.match(result.stderr, /trailing whitespace/);
+  assert.doesNotMatch(result.stderr, /must not run during --preflight/);
+});
+
 test("dependency-free preflight rejects CI skip directives before npm", async (t) => {
   const fixture = await createFixture();
   t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
