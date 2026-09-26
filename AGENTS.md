@@ -116,7 +116,7 @@ node --experimental-strip-types --test \
 
 This suite exercises the canonical CI scope, the dependency-free preflight behavior and the OpenCode agent contract without `node_modules`, a Next build, a browser or network access. It complements `--preflight`; it does not replace `--fix` or the exact publication proof.
 
-CI uses the preflight before Node/npm setup so stale branches, suspicious large truncations and missing executable bits fail before dependency installation and any scanner/build work.
+CI uses the preflight before Node/npm setup so stale branches, suspicious large truncations, untracked whitespace errors and missing executable bits fail before dependency installation and any scanner/build work.
 
 Keep iterative agent pull requests in **draft** while they are still being edited. Draft PR CI runs only the Git preflight. Once the local `--publish` gate is green, mark the PR ready for review so the `ready_for_review` event performs the authoritative remote gate appropriate to the classified change scope. An API-only agent that cannot run the local gate may mark an atomic draft PR ready after the draft preflight succeeds in order to obtain authoritative CI, while still disclosing that no local publication gate ran.
 
