@@ -481,3 +481,24 @@ test("WORKTREE mode keeps OpenCode agent prompts maintenance-only", async (t) =>
     preview: false,
   });
 });
+
+
+test("WORKTREE mode keeps Renovate policy maintenance-only", async (t) => {
+  const { directory, baseSha } = await createRepository("bababou-ci-worktree-renovate-");
+  t.after(async () => rm(directory, { recursive: true, force: true }));
+
+  await writeFile(
+    join(directory, "renovate.json"),
+    '{"extends":["config:recommended"]}\n',
+  );
+
+  const result = classifyWorktree(directory, baseSha);
+  assert.equal(result.status, 0, result.stderr);
+  expectScope(result.stdout, {
+    maintenance: true,
+    application: false,
+    sast: false,
+    build: false,
+    preview: false,
+  });
+});

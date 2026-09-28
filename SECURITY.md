@@ -16,6 +16,9 @@
 - Packages with reviewed install scripts are explicitly denied through `package.json#allowScripts`; any new install script must fail until reviewed.
 - Never enable `dangerously-allow-all-scripts`.
 - Keep the application dependency graph limited to packages with a proven runtime or build consumer.
+- Routine version updates are owned by Renovate: npm runtime updates are grouped weekly, devDependencies monthly, and GitHub Actions/pre-commit maintenance monthly. npm releases must age 7 days before routine Renovate upgrades.
+- Dependabot remains the vulnerability signal/security-fix path. The repository intentionally has no `.github/dependabot.yml`, so Dependabot version updates are not enabled alongside Renovate.
+- Renovate vulnerability-alert and OSV PR generation stay disabled while Dependabot security updates own CVE remediation, preventing duplicate security PRs.
 
 ## Content/privacy boundary
 
