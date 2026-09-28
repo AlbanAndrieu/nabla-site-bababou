@@ -40,7 +40,9 @@ test("Git-integrated Vercel deployment does not require a local Vercel CLI", asy
   await assert.rejects(access(new URL("../build.sh", import.meta.url)));
 });
 
-test("analytics and devtools use external/platform integration instead of unused npm SDKs", async () => {
+test(
+  "analytics and devtools use external/platform integration instead of unused npm SDKs",
+  async () => {
   const packageJson = JSON.parse(
     await readFile(new URL("../package.json", import.meta.url), "utf8"),
   ) as {
@@ -90,19 +92,28 @@ test("analytics and devtools use external/platform integration instead of unused
   await assert.rejects(access(new URL("../instrumentation.ts", import.meta.url)));
 });
 
-test("deployment docs describe Git integration instead of the retired app-root CLI flow", async () => {
-  const [vercelGuide, actionsGuide] = await Promise.all([
+test("operations docs consolidate deployment, analytics and incident diagnostics", async () => {
+  const [vercelGuide, operationsGuide] = await Promise.all([
     readFile(
       new URL("../.github/vercel-deployment-instructions.md", import.meta.url),
       "utf8",
     ),
-    readFile(new URL("../docs/GITHUB_ACTIONS_SETUP.md", import.meta.url), "utf8"),
+    readFile(new URL("../docs/operations.md", import.meta.url), "utf8"),
   ]);
 
-  for (const guide of [vercelGuide, actionsGuide]) {
+  for (const guide of [vercelGuide, operationsGuide]) {
     assert.match(guide, /Vercel Git integration/i);
     assert.doesNotMatch(guide, /rootDirectory["`:\s]+app|cd app|VERCEL_TOKEN/);
   }
+
+  assert.match(operationsGuide, /runner_id=0/);
+  assert.match(operationsGuide, /steps=\[\]|steps=null/);
+  assert.match(operationsGuide, /x-vercel-mitigated: challenge/);
+  assert.match(operationsGuide, /\/_vercel\/speed-insights\/script\.js/);
+  await assert.rejects(access(new URL("../docs/GITHUB_ACTIONS_SETUP.md", import.meta.url)));
+  await assert.rejects(
+    access(new URL("../docs/getting-started-speed-insights.md", import.meta.url)),
+  );
 });
 
 test("OpenCommit stays available as local commit tooling", async () => {
@@ -151,7 +162,9 @@ test("protected 404 loader does not retain the retired sanitize-html package", a
   assert.doesNotMatch(loader, /sanitize-html|sanitizeHtml/);
 });
 
-test("private root manifest does not advertise the legacy homepage as an npm entrypoint", async () => {
+test(
+  "private root manifest does not advertise the legacy homepage as an npm entrypoint",
+  async () => {
   const packageJson = JSON.parse(
     await readFile(new URL("../package.json", import.meta.url), "utf8"),
   ) as {

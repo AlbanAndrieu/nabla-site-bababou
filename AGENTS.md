@@ -111,10 +111,11 @@ For agent/quality changes, an additional **dependency-free P0 regression suite**
 node --experimental-strip-types --test \
   unit-tests/ciScopeBehavior.test.ts \
   unit-tests/agentPreflightBehavior.test.ts \
-  unit-tests/opencodeAgentContract.test.ts
+  unit-tests/opencodeAgentContract.test.ts \
+  unit-tests/dependencyAutomationContract.test.ts
 ```
 
-This suite exercises the canonical CI scope, the dependency-free preflight behavior and the OpenCode agent contract without `node_modules`, a Next build, a browser or network access. It complements `--preflight`; it does not replace `--fix` or the exact publication proof.
+This suite exercises the canonical CI scope, the dependency-free preflight behavior, the OpenCode agent contract and the Renovate/Dependabot automation policy without `node_modules`, a Next build, a browser or network access. It complements `--preflight`; it does not replace `--fix` or the exact publication proof.
 
 CI uses the preflight before Node/npm setup so stale branches, suspicious large truncations, whitespace errors in any regular untracked file and missing executable bits fail before dependency installation and any scanner/build work.
 
@@ -136,7 +137,7 @@ Never use `git push --no-verify`, and never weaken validation rules merely to ma
 
 Do not put GitHub-recognized CI bypass directives in pull-request commit messages. In particular, do not use bracketed CI/action skip markers or a `skip-checks: true` trailer to save runner time. Documentation-only and maintenance PRs must rely on repository scope classification instead of suppressing the workflow itself.
 
-Routine dependency version updates are owned by Renovate. Keep Dependabot alerts/security updates separate and do not add `.github/dependabot.yml` unless the ownership policy is intentionally being changed. Do not push manual commits to `renovate/*` branches: Renovate stops normal branch updates after user edits; fix the policy/source branch instead or request Renovate to regenerate/rebase the bot branch.
+Dependency PRs are owned by Renovate, including vulnerability fixes sourced from GitHub Dependabot Alerts. Keep `.github/dependabot.yml` absent and GitHub Dependabot Security Updates disabled so Dependabot remains signal-only and cannot open competing dependency PRs. Security Renovate PRs carry the additional `security` label, bypass the routine npm release-age delay, and are capped to one concurrent vulnerability-fix PR. Do not push manual commits to `renovate/*` branches: Renovate stops normal branch updates after user edits; fix the policy/source branch instead or request Renovate to regenerate/rebase the bot branch.
 
 An API-only agent must not silently use remote writes to pretend local hooks ran. If its runtime cannot obtain or execute a checkout, it must state that limitation, perform the closest deterministic checks available, keep the PR draft while iterating, and inspect resulting CI immediately. It must never claim that the local quality gate passed when it was not executed.
 

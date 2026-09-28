@@ -31,7 +31,11 @@ type RenovateConfig = {
   commitHourlyLimit?: number;
   "pre-commit"?: { enabled?: boolean };
   osvVulnerabilityAlerts?: boolean;
-  vulnerabilityAlerts?: { enabled?: boolean };
+  vulnerabilityAlerts?: {
+    enabled?: boolean;
+    prConcurrentLimit?: number;
+    minimumReleaseAge?: string | null;
+  };
   packageRules?: RenovateRule[];
 };
 
@@ -61,12 +65,31 @@ test("routine dependency updates have one conservative Renovate owner", async ()
   assert.equal(config["pre-commit"]?.enabled, true);
   assert.ok(config.extends?.includes(":enablePreCommit"));
   assert.equal(config.osvVulnerabilityAlerts, false);
-  assert.equal(config.vulnerabilityAlerts?.enabled, false);
+  assert.ok(
+    config.extends?.includes(
+      ":enableVulnerabilityAlertsWithAdditionalLabel('security')",
+    ),
+  );
+  assert.equal(config.vulnerabilityAlerts?.prConcurrentLimit, 1);
+  assert.equal(config.vulnerabilityAlerts?.minimumReleaseAge, null);
 
   await assert.rejects(
     access(".github/dependabot.yml", constants.F_OK),
     (error: NodeJS.ErrnoException) => error.code === "ENOENT",
   );
+});
+
+test("security fixes bypass routine release age with their own PR budget", async () => {
+  const config = await loadConfig();
+
+  assert.equal(config.osvVulnerabilityAlerts, false);
+  assert.ok(
+    config.extends?.includes(
+      ":enableVulnerabilityAlertsWithAdditionalLabel('security')",
+    ),
+  );
+  assert.equal(config.vulnerabilityAlerts?.prConcurrentLimit, 1);
+  assert.equal(config.vulnerabilityAlerts?.minimumReleaseAge, null);
 });
 
 test("npm updates are aged and grouped by operational risk", async () => {

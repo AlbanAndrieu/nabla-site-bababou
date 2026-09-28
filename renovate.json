@@ -4,6 +4,7 @@
     "config:recommended",
     ":automergeDisabled",
     ":combinePatchMinorReleases",
+    ":enableVulnerabilityAlertsWithAdditionalLabel('security')",
     ":enablePreCommit",
     ":maintainLockFilesDisabled"
   ],
@@ -22,7 +23,8 @@
   "prHourlyLimit": 1,
   "osvVulnerabilityAlerts": false,
   "vulnerabilityAlerts": {
-    "enabled": false
+    "prConcurrentLimit": 1,
+    "minimumReleaseAge": null
   },
   "packageRules": [
     {
