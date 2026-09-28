@@ -111,10 +111,11 @@ For agent/quality changes, an additional **dependency-free P0 regression suite**
 node --experimental-strip-types --test \
   unit-tests/ciScopeBehavior.test.ts \
   unit-tests/agentPreflightBehavior.test.ts \
-  unit-tests/opencodeAgentContract.test.ts
+  unit-tests/opencodeAgentContract.test.ts \
+  unit-tests/dependencyAutomationContract.test.ts
 ```
 
-This suite exercises the canonical CI scope, the dependency-free preflight behavior and the OpenCode agent contract without `node_modules`, a Next build, a browser or network access. It complements `--preflight`; it does not replace `--fix` or the exact publication proof.
+This suite exercises the canonical CI scope, the dependency-free preflight behavior, the OpenCode agent contract and the Renovate/Dependabot automation policy without `node_modules`, a Next build, a browser or network access. It complements `--preflight`; it does not replace `--fix` or the exact publication proof.
 
 CI uses the preflight before Node/npm setup so stale branches, suspicious large truncations, whitespace errors in any regular untracked file and missing executable bits fail before dependency installation and any scanner/build work.
 
