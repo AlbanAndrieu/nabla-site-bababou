@@ -164,6 +164,106 @@ test("dependency-free preflight rejects malformed changed shell before npm", asy
   assert.doesNotMatch(result.stderr, /must not run during --preflight/);
 });
 
+test("dependency-free preflight rejects untracked whitespace before npm", async (t) => {
+  const fixture = await createFixture();
+  t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
+
+  await mkdir(join(fixture.directory, "docs"), { recursive: true });
+  await writeFile(join(fixture.directory, "docs", "bad-whitespace.md"), "trailing space \n");
+
+  const result = runPreflight(fixture.directory, fixture.baseSha);
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /untracked diff whitespace/);
+  assert.match(result.stderr, /trailing whitespace/);
+  assert.doesNotMatch(result.stderr, /must not run during --preflight/);
+});
+
+test(
+  "dependency-free preflight checks untracked files outside the destructive-diff guard",
+  async (t) => {
+    const fixture = await createFixture();
+    t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
+
+    await writeFile(
+      join(fixture.directory, "package-lock.json"),
+      '{"lockfileVersion":3} \n',
+    );
+
+    const result = runPreflight(fixture.directory, fixture.baseSha);
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /untracked diff whitespace/);
+    assert.match(result.stderr, /package-lock\.json/);
+    assert.match(result.stderr, /trailing whitespace/);
+    assert.doesNotMatch(result.stderr, /must not run during --preflight/);
+  },
+);
+
+test("dependency-free preflight rejects CI skip directives before npm", async (t) => {
+  const fixture = await createFixture();
+  t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
+
+  await writeFile(join(fixture.directory, "README.md"), "head change\n");
+  git(fixture.directory, "add", "README.md");
+  git(fixture.directory, "commit", "--quiet", "-m", "maintenance [skip ci]");
+
+  const result = runPreflight(fixture.directory, fixture.baseSha);
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /QG_CI_SKIP_DIRECTIVE/);
+  assert.doesNotMatch(result.stderr, /must not run during --preflight/);
+});
+
+test("dependency-free preflight rejects skip-checks trailers before npm", async (t) => {
+  const fixture = await createFixture();
+  t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
+
+  await writeFile(join(fixture.directory, "README.md"), "head change\n");
+  git(fixture.directory, "add", "README.md");
+  git(
+    fixture.directory,
+    "commit",
+    "--quiet",
+    "-m",
+    "maintenance",
+    "-m",
+    "skip-checks: true",
+  );
+
+  const result = runPreflight(fixture.directory, fixture.baseSha);
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /QG_CI_SKIP_DIRECTIVE/);
+  assert.doesNotMatch(result.stderr, /must not run during --preflight/);
+});
+
+test("dependency-free preflight rejects missing executable bits before npm", async (t) => {
+  const fixture = await createFixture();
+  t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
+
+  const script = join(fixture.directory, "scripts", "not-executable.sh");
+  await writeFile(script, "#!/usr/bin/env bash\necho test\n");
+  await chmod(script, 0o644);
+  git(fixture.directory, "add", "scripts/not-executable.sh");
+
+  const result = runPreflight(fixture.directory, fixture.baseSha);
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /QG_EXEC_BIT/);
+  assert.doesNotMatch(result.stderr, /must not run during --preflight/);
+});
+
+test("dependency-free preflight rejects untracked scripts without executable bits", async (t) => {
+  const fixture = await createFixture();
+  t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
+
+  const script = join(fixture.directory, "scripts", "untracked-not-executable.sh");
+  await writeFile(script, "#!/usr/bin/env bash\necho test\n");
+  await chmod(script, 0o644);
+
+  const result = runPreflight(fixture.directory, fixture.baseSha);
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /QG_EXEC_BIT/);
+  assert.match(result.stderr, /untracked/);
+  assert.doesNotMatch(result.stderr, /must not run during --preflight/);
+});
+
 test("dependency-free preflight rejects a stale comparison base before npm", async (t) => {
   const fixture = await createFixture();
   t.after(async () => rm(fixture.directory, { recursive: true, force: true }));

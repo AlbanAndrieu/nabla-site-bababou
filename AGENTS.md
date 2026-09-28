@@ -116,7 +116,7 @@ node --experimental-strip-types --test \
 
 This suite exercises the canonical CI scope, the dependency-free preflight behavior and the OpenCode agent contract without `node_modules`, a Next build, a browser or network access. It complements `--preflight`; it does not replace `--fix` or the exact publication proof.
 
-CI uses the preflight before Node/npm setup so stale branches, suspicious large truncations and missing executable bits fail before dependency installation and any scanner/build work.
+CI uses the preflight before Node/npm setup so stale branches, suspicious large truncations, whitespace errors in any regular untracked file and missing executable bits fail before dependency installation and any scanner/build work.
 
 Keep iterative agent pull requests in **draft** while they are still being edited. Draft PR CI runs only the Git preflight. Once the local `--publish` gate is green, mark the PR ready for review so the `ready_for_review` event performs the authoritative remote gate appropriate to the classified change scope. An API-only agent that cannot run the local gate may mark an atomic draft PR ready after the draft preflight succeeds in order to obtain authoritative CI, while still disclosing that no local publication gate ran.
 
@@ -135,6 +135,8 @@ Before every `git push` or equivalent remote publication from a checkout:
 Never use `git push --no-verify`, and never weaken validation rules merely to make a push or CI pass. Set `QUALITY_ALLOW_LARGE_DELETION=1` only after explicitly reviewing an intentional large truncation or deletion.
 
 Do not put GitHub-recognized CI bypass directives in pull-request commit messages. In particular, do not use bracketed CI/action skip markers or a `skip-checks: true` trailer to save runner time. Documentation-only and maintenance PRs must rely on repository scope classification instead of suppressing the workflow itself.
+
+Routine dependency version updates are owned by Renovate. Keep Dependabot alerts/security updates separate and do not add `.github/dependabot.yml` unless the ownership policy is intentionally being changed. Do not push manual commits to `renovate/*` branches: Renovate stops normal branch updates after user edits; fix the policy/source branch instead or request Renovate to regenerate/rebase the bot branch.
 
 An API-only agent must not silently use remote writes to pretend local hooks ran. If its runtime cannot obtain or execute a checkout, it must state that limitation, perform the closest deterministic checks available, keep the PR draft while iterating, and inspect resulting CI immediately. It must never claim that the local quality gate passed when it was not executed.
 

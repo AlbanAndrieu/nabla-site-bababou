@@ -133,7 +133,7 @@ precommit_fix_until_stable() {
     return 1
 }
 
-is_guarded_path() {
+is_destructive_diff_guarded_path() {
     case "$1" in
         package-lock.json | public/assets/* | public/checklist/* | public/d3.v3.min.js | .github/copilot-instructions.md)
             return 1
@@ -150,7 +150,7 @@ is_guarded_path() {
 large_deletion_failed=0
 if [[ "${QUALITY_ALLOW_LARGE_DELETION:-0}" != "1" && "${BASE_REF}" != "HEAD" ]]; then
     for file in "${CHANGED_FILES[@]}"; do
-        is_guarded_path "${file}" || continue
+        is_destructive_diff_guarded_path "${file}" || continue
         git cat-file -e "${BASE_REF}:${file}" 2>/dev/null || continue
         base_lines="$(git show "${BASE_REF}:${file}" | wc -l | tr -d ' ')"
         current_lines="$(wc -l <"${file}" | tr -d ' ')"
@@ -167,7 +167,7 @@ if [[ "${QUALITY_ALLOW_LARGE_DELETION:-0}" != "1" && "${BASE_REF}" != "HEAD" ]];
     done
 
     for file in "${DELETED_FILES[@]}"; do
-        is_guarded_path "${file}" || continue
+        is_destructive_diff_guarded_path "${file}" || continue
         git cat-file -e "${BASE_REF}:${file}" 2>/dev/null || continue
         base_lines="$(git show "${BASE_REF}:${file}" | wc -l | tr -d ' ')"
         if ((base_lines >= 200)); then
@@ -228,12 +228,41 @@ validate_changed_python_syntax() {
     done
 }
 
+validate_untracked_whitespace() {
+    local file
+    local log
+    local rc
+
+    while IFS= read -r file; do
+        [[ -f "${file}" ]] || continue
+
+        # Keep this independent from the destructive-diff allowlist: pre-commit's
+        # filesystem whitespace hooks are broader, and git diff safely treats
+        # binary files as ordinary content differences without whitespace errors.
+        log="$(mktemp)"
+        set +e
+        git diff --no-index --check /dev/null -- "${file}" >"${log}" 2>&1
+        rc=$?
+        set -e
+
+        # git diff --no-index returns 1 for an ordinary clean-content diff.
+        # Whitespace errors and command failures return a value greater than 1.
+        if ((rc > 1)); then
+            cat "${log}" >&2
+            rm -f "${log}"
+            return 1
+        fi
+        rm -f "${log}"
+    done < <(git ls-files --others --exclude-standard)
+}
+
 run_dependency_free_preflight() {
     if [[ "${BASE_REF}" != "HEAD" ]]; then
         run_compact "committed diff whitespace" git diff --check "${BASE_REF}...HEAD"
     fi
     run_compact "working-tree diff whitespace" git diff --check
     run_compact "staged diff whitespace" git diff --cached --check
+    run_compact "untracked diff whitespace" validate_untracked_whitespace
     run_compact "changed shell syntax" validate_changed_shell_syntax
     run_compact "changed Python syntax" validate_changed_python_syntax
 }
