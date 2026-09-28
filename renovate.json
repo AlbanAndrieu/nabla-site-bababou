@@ -4,6 +4,7 @@
     "config:recommended",
     ":automergeDisabled",
     ":combinePatchMinorReleases",
+    ":enablePreCommit",
     ":maintainLockFilesDisabled"
   ],
   "timezone": "Europe/Paris",
@@ -105,24 +106,9 @@
       ]
     },
     {
-      "description": "Group GitHub Actions maintenance monthly",
+      "description": "Group automation tooling maintenance monthly",
       "matchManagers": [
-        "github-actions"
-      ],
-      "matchUpdateTypes": [
-        "minor",
-        "patch",
-        "digest"
-      ],
-      "groupName": "automation toolchain",
-      "groupSlug": "automation-toolchain",
-      "schedule": [
-        "* 0-3 1 * *"
-      ]
-    },
-    {
-      "description": "Group pre-commit maintenance monthly",
-      "matchManagers": [
+        "github-actions",
         "pre-commit"
       ],
       "matchUpdateTypes": [
@@ -136,5 +122,9 @@
         "* 0-3 1 * *"
       ]
     }
-  ]
+  ],
+  "commitHourlyLimit": 1,
+  "pre-commit": {
+    "enabled": true
+  }
 }

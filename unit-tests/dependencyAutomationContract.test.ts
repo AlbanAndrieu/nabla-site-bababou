@@ -28,6 +28,8 @@ type RenovateConfig = {
   prConcurrentLimit?: number;
   branchConcurrentLimit?: number;
   prHourlyLimit?: number;
+  commitHourlyLimit?: number;
+  "pre-commit"?: { enabled?: boolean };
   osvVulnerabilityAlerts?: boolean;
   vulnerabilityAlerts?: { enabled?: boolean };
   packageRules?: RenovateRule[];
@@ -55,6 +57,9 @@ test("routine dependency updates have one conservative Renovate owner", async ()
   assert.equal(config.prConcurrentLimit, 2);
   assert.equal(config.branchConcurrentLimit, 2);
   assert.equal(config.prHourlyLimit, 1);
+  assert.equal(config.commitHourlyLimit, 1);
+  assert.equal(config["pre-commit"]?.enabled, true);
+  assert.ok(config.extends?.includes(":enablePreCommit"));
   assert.equal(config.osvVulnerabilityAlerts, false);
   assert.equal(config.vulnerabilityAlerts?.enabled, false);
 
@@ -98,12 +103,10 @@ test("npm updates are aged and grouped by operational risk", async () => {
 
 test("automation tooling shares one monthly Renovate group", async () => {
   const config = await loadConfig();
-  const githubActions = rule(config, "Group GitHub Actions maintenance monthly");
-  const preCommit = rule(config, "Group pre-commit maintenance monthly");
+  const automation = rule(config, "Group automation tooling maintenance monthly");
 
-  for (const candidate of [githubActions, preCommit]) {
-    assert.equal(candidate.groupName, "automation toolchain");
-    assert.equal(candidate.groupSlug, "automation-toolchain");
-    assert.deepEqual(candidate.schedule, ["* 0-3 1 * *"]);
-  }
+  assert.deepEqual(automation.matchManagers, ["github-actions", "pre-commit"]);
+  assert.equal(automation.groupName, "automation toolchain");
+  assert.equal(automation.groupSlug, "automation-toolchain");
+  assert.deepEqual(automation.schedule, ["* 0-3 1 * *"]);
 });
