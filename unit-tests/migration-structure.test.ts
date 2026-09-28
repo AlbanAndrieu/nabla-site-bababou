@@ -40,7 +40,9 @@ test("Git-integrated Vercel deployment does not require a local Vercel CLI", asy
   await assert.rejects(access(new URL("../build.sh", import.meta.url)));
 });
 
-test("analytics and devtools use external/platform integration instead of unused npm SDKs", async () => {
+test(
+  "analytics and devtools use external/platform integration instead of unused npm SDKs",
+  async () => {
   const packageJson = JSON.parse(
     await readFile(new URL("../package.json", import.meta.url), "utf8"),
   ) as {
@@ -160,7 +162,9 @@ test("protected 404 loader does not retain the retired sanitize-html package", a
   assert.doesNotMatch(loader, /sanitize-html|sanitizeHtml/);
 });
 
-test("private root manifest does not advertise the legacy homepage as an npm entrypoint", async () => {
+test(
+  "private root manifest does not advertise the legacy homepage as an npm entrypoint",
+  async () => {
   const packageJson = JSON.parse(
     await readFile(new URL("../package.json", import.meta.url), "utf8"),
   ) as {
