@@ -10,7 +10,7 @@ Ce dépôt utilise Next.js, avec les pages localisées sous `app/[locale]/`.
 
 - Pour migrer les anciennes pages HTML/CSS/JS, créez la route correspondante sous `app/[locale]/<slug>/`.
 - Les assets statiques restant nécessaires pendant la migration sont servis depuis `public/`.
-- La source unique pour les TODO, migrations et refactorings actifs est [`docs/roadmap.md`](docs/roadmap.md).
+- La source unique pour les travaux actifs est [`docs/roadmap.md`](docs/roadmap.md) ; le runbook CI/Vercel, les incidents connus et leur diagnostic sont regroupés dans [`docs/operations.md`](docs/operations.md).
 
 ## Démarrer
 

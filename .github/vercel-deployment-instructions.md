@@ -111,7 +111,6 @@ For project-specific questions or public site contact, use `aa@bababou.com`. Kee
 
 - `AGENTS.md`
 - `docs/roadmap.md`
-- `docs/GITHUB_ACTIONS_SETUP.md`
-- `docs/getting-started-speed-insights.md`
+- `docs/operations.md`
 - `vercel.json`
 - `scripts/vercel-ignore-build.sh`
