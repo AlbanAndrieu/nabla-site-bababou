@@ -17,8 +17,8 @@
 - Never enable `dangerously-allow-all-scripts`.
 - Keep the application dependency graph limited to packages with a proven runtime or build consumer.
 - Routine version updates are owned by Renovate: npm runtime updates are grouped weekly, devDependencies monthly, and GitHub Actions/pre-commit maintenance monthly. The beta pre-commit manager is explicitly enabled. npm releases must age 7 days before routine Renovate upgrades; branch/PR churn is capped to one bot commit and one new PR per hour.
-- Dependabot remains the vulnerability signal/security-fix path. The repository intentionally has no `.github/dependabot.yml`, so Dependabot version updates are not enabled alongside Renovate.
-- Renovate vulnerability-alert and OSV PR generation stay disabled while Dependabot security updates own CVE remediation, preventing duplicate security PRs.
+- GitHub Dependency Graph + Dependabot Alerts remain the vulnerability signal, but Renovate is the single PR engine for dependency changes. The repository intentionally has no `.github/dependabot.yml`, and GitHub Dependabot Security Updates must remain disabled so Dependabot does not create competing fix PRs.
+- Renovate reads GitHub vulnerability alerts through the Mend Renovate App (`Dependabot alerts: read`) and creates immediate vulnerability-fix PRs with the additional `security` label. These fixes bypass the routine npm 7-day release-age delay and have a dedicated concurrency budget of 1 PR; OSV PR generation remains disabled to avoid a second security-alert source.
 
 ## Content/privacy boundary
 
