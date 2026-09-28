@@ -15,7 +15,7 @@ For every non-trivial task:
 3. load only the specialized skills required by the touched surface;
 4. run `bash scripts/agent-quality-gate.sh --preflight` before editing;
 5. make one coherent minimal batch;
-6. run targeted checks; for agent/quality-only work, also run `node --experimental-strip-types --test unit-tests/ciScopeBehavior.test.ts unit-tests/agentPreflightBehavior.test.ts unit-tests/opencodeAgentContract.test.ts unit-tests/dependencyAutomationContract.test.ts`, then `bash scripts/agent-quality-gate.sh --fix`;
+6. run targeted checks; for agent/quality-only work, also run `npm run test:p0`, then `bash scripts/agent-quality-gate.sh --fix`;
 7. review the changed diff before committing;
 8. invoke `bababou-reviewer` or run `/review-local` before publication;
 9. on the committed tree, use `bash scripts/agent-publish.sh` as the exact publication proof.

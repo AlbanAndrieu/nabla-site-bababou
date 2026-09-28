@@ -108,14 +108,10 @@ bash scripts/agent-quality-gate.sh --preflight
 For agent/quality changes, an additional **dependency-free P0 regression suite** is available with the repository Node runtime and uses only Node built-ins plus Git/Python already required by the preflight:
 
 ```bash
-node --experimental-strip-types --test \
-  unit-tests/ciScopeBehavior.test.ts \
-  unit-tests/agentPreflightBehavior.test.ts \
-  unit-tests/opencodeAgentContract.test.ts \
-  unit-tests/dependencyAutomationContract.test.ts
+npm run test:p0
 ```
 
-This suite exercises the canonical CI scope, the dependency-free preflight behavior, the OpenCode agent contract and the Renovate/Dependabot automation policy without `node_modules`, a Next build, a browser or network access. It complements `--preflight`; it does not replace `--fix` or the exact publication proof.
+This suite exercises CI scope, preflight behavior, OpenCode, Renovate/Dependabot and migration/documentation contracts without `node_modules`, a Next build, a browser or network access. It complements `--preflight`; it does not replace `--fix` or the exact publication proof.
 
 CI uses the preflight before Node/npm setup so stale branches, suspicious large truncations, whitespace errors in any regular untracked file and missing executable bits fail before dependency installation and any scanner/build work.
 

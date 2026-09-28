@@ -17,11 +17,7 @@ Chemin rapide sans dépendances :
 ```bash
 bash scripts/agent-quality-gate.sh --preflight
 
-node --experimental-strip-types --test \
-  unit-tests/ciScopeBehavior.test.ts \
-  unit-tests/agentPreflightBehavior.test.ts \
-  unit-tests/opencodeAgentContract.test.ts \
-  unit-tests/dependencyAutomationContract.test.ts
+npm run test:p0
 ```
 
 Convergence et preuve locale complète :
@@ -32,7 +28,7 @@ bash scripts/agent-quality-gate.sh --fix
 QUALITY_FORCE_PUBLISH=1 bash scripts/agent-publish.sh
 ```
 
-`scripts/agent-publish.sh` est la preuve locale de publication : elle lie le résultat au HEAD, à la base, au toolchain et au lockfile installés. Ne jamais revendiquer un build, un browser check ou un scan non exécuté.
+`npm run test:p0` exécute les cinq contrats Node sans `node_modules` de la boucle local-first. `scripts/agent-publish.sh` est la preuve locale de publication : elle lie le résultat au HEAD, à la base, au toolchain et au lockfile installés. Ne jamais revendiquer un build, un browser check ou un scan non exécuté.
 
 ## 3. Flux Preview et production
 
