@@ -25,7 +25,6 @@
     "lint:css:fix": "stylelint --fix \"app/*.css\" \"app/**/*.module.css\" \"components/**/*.module.css\" \"public/*.css\"",
     "typecheck": "tsc --noEmit",
     "test:unit": "node --import tsx --test \"unit-tests/**/*.test.ts\"",
-    "test:p0": "node --experimental-strip-types --test unit-tests/ciScopeBehavior.test.ts unit-tests/agentPreflightBehavior.test.ts unit-tests/opencodeAgentContract.test.ts unit-tests/dependencyAutomationContract.test.ts unit-tests/migration-structure.test.ts",
     "privacy:check": "node --import tsx scripts/privacy-gate.ts",
     "privacy:check:build": "node --import tsx scripts/privacy-gate.ts --build",
     "check": "npm run check:prebuild && npm run build && npm run check:postbuild",

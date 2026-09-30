@@ -12,12 +12,12 @@
 
 ## 2. Validation locale avant publication
 
-Chemin rapide sans dépendances :
+Chemin rapide sans `node_modules` :
 
 ```bash
 bash scripts/agent-quality-gate.sh --preflight
 
-npm run test:p0
+bash scripts/agent-p0-check.sh
 ```
 
 Convergence et preuve locale complète :
@@ -28,7 +28,7 @@ bash scripts/agent-quality-gate.sh --fix
 QUALITY_FORCE_PUBLISH=1 bash scripts/agent-publish.sh
 ```
 
-`npm run test:p0` exécute les cinq contrats Node sans `node_modules` de la boucle local-first. `scripts/agent-publish.sh` est la preuve locale de publication : elle lie le résultat au HEAD, à la base, au toolchain et au lockfile installés. Ne jamais revendiquer un build, un browser check ou un scan non exécuté.
+`bash scripts/agent-p0-check.sh` chaîne le preflight Git-only et les cinq contrats Node de la boucle local-first, sans `node_modules`. `scripts/agent-publish.sh` est la preuve locale de publication : elle lie le résultat au HEAD, à la base, au toolchain et au lockfile installés. Ne jamais revendiquer un build, un browser check ou un scan non exécuté.
 
 ## 3. Flux Preview et production
 

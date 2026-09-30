@@ -8,7 +8,7 @@ Use this reference only when the task needs orchestration. `AGENTS.md` remains c
 | --- | --- |
 | Plan current work | `docs/roadmap.md` + OpenCode todo tool |
 | Determine validation cost before edit | `bash scripts/agent-quality-gate.sh --preflight` |
-| Dependency-free P0 regression | `npm run test:p0` |
+| Dependency-free P0 regression | `bash scripts/agent-p0-check.sh` |
 | Canonical scope | `bash scripts/ci-scope.sh <base> WORKTREE` before commit; `<base> HEAD` after commit |
 | Converge deterministic mutations | `bash scripts/agent-quality-gate.sh --fix` |
 | Exact pre-publication proof | `bash scripts/agent-publish.sh` |

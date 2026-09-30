@@ -105,10 +105,10 @@ The Git-only preflight is available without dependencies:
 bash scripts/agent-quality-gate.sh --preflight
 ```
 
-For agent/quality changes, an additional **dependency-free P0 regression suite** is available with the repository Node runtime and uses only Node built-ins plus Git/Python already required by the preflight:
+For agent/quality changes, use the **local P0 checkpoint** with the repository Node runtime. It keeps the Git-only preflight separate internally, then runs only Node built-in regression contracts:
 
 ```bash
-npm run test:p0
+bash scripts/agent-p0-check.sh
 ```
 
 This suite exercises CI scope, preflight behavior, OpenCode, Renovate/Dependabot and migration/documentation contracts without `node_modules`, a Next build, a browser or network access. It complements `--preflight`; it does not replace `--fix` or the exact publication proof.

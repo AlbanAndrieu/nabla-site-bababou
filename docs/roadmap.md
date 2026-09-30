@@ -13,7 +13,7 @@
 ## État courant
 
 - [ ] GitHub-hosted runners indisponibles/quota contraint : ne pas relancer manuellement ; maximiser les preuves locales. Diagnostic dans `docs/operations.md`.
-- [ ] **#208 Renovate security** : vérifier Mend Renovate avec `Dependabot alerts: read`, Dependency Graph + Dependabot Alerts ON, Dependabot Security Updates OFF, puis observer le premier Dependency Dashboard et la première PR `security`.
+- [ ] **Renovate security (hérité de #208)** : vérifier Mend Renovate avec `Dependabot alerts: read`, Dependency Graph + Dependabot Alerts ON, Dependabot Security Updates OFF, puis observer le premier Dependency Dashboard et la première PR `security`.
 - [ ] Synchroniser la stratégie Renovate/Dependabot dans Notion lorsque le workspace permet à nouveau la création de blocs.
 
 ## Acquis structurants
@@ -75,8 +75,8 @@
 
 ## Ordre des prochains lots
 
-1. **#208 / P5** — Renovate security, preuves locales et réglages Mend/GitHub.
-2. **P0** — preuves workstation puis déclenchement Vercel autonome/runner-backed.
+1. **#209 / P0** — checkpoint local, preuves workstation puis publication exacte.
+2. **P5** — réglages Mend/GitHub et première remédiation Renovate security réelle.
 3. **P2/P3** — responsive/visual proof puis prochaine page documentaire à faible risque.
 4. **P1** — homepage progressive sous contrôle explicite.
 5. **P6** — confidentialité globale en dernier.

@@ -76,6 +76,7 @@ test("quality orchestration remains maintenance-only", async (t) => {
 
   await mkdir(join(directory, "scripts"), { recursive: true });
   await writeFile(join(directory, "scripts", "agent-publish.sh"), "#!/bin/sh\n");
+  await writeFile(join(directory, "scripts", "agent-p0-check.sh"), "#!/bin/sh\n");
   git(directory, "add", ".");
   git(directory, "commit", "--quiet", "-m", "maintenance");
 
@@ -87,6 +88,7 @@ test("quality orchestration remains maintenance-only", async (t) => {
     sast: false,
     build: false,
     preview: false,
+    count: 2,
   });
 });
 
