@@ -93,15 +93,15 @@ test("dependency-free P0 checkpoint stays canonical and maintenance-only", async
     operations,
     skill,
   ] = await Promise.all([
-      read("package.json"),
-      read("scripts/agent-p0-check.sh"),
-      read("scripts/lib/agent-quality-support.sh"),
-      read("AGENTS.md"),
-      read(".opencode/agents/bababou.md"),
-      read(".agents/skills/roadmap-local-first/references/opencode-playbook.md"),
-      read("docs/operations.md"),
-      read(".agents/skills/roadmap-local-first/SKILL.md"),
-    ]);
+    read("package.json"),
+    read("scripts/agent-p0-check.sh"),
+    read("scripts/lib/agent-quality-support.sh"),
+    read("AGENTS.md"),
+    read(".opencode/agents/bababou.md"),
+    read(".agents/skills/roadmap-local-first/references/opencode-playbook.md"),
+    read("docs/operations.md"),
+    read(".agents/skills/roadmap-local-first/SKILL.md"),
+  ]);
   const packageJson = JSON.parse(packageSource) as {
     scripts?: Record<string, string>;
   };
