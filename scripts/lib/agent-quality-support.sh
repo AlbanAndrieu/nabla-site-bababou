@@ -132,7 +132,7 @@ classify_changed_files() {
 
     for file in "$@"; do
         case "${file}" in
-            scripts/agent-quality-gate.sh | scripts/agent-publish.sh | scripts/lib/agent-quality-support.sh)
+            scripts/agent-quality-gate.sh | scripts/agent-p0-check.sh | scripts/agent-publish.sh | scripts/lib/agent-quality-support.sh)
                 agent_gate_changed=true
                 AGENT_GATE_SHELL_FILES+=("${file}")
                 ;;

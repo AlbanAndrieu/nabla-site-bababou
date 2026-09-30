@@ -20,7 +20,7 @@
 
 - [x] Runtime racine Next.js/Vercel, routage hybride, i18n FR/EN/DE/NO, policies et résultats de paiement stabilisés ; legacy conservé lorsqu'il reste nécessaire.
 - [x] 404 protégée restaurée via `public/404.html` ; Preview exact-SHA, Playwright/ZAP, smoke production et DAST structurés.
-- [x] Quality local-first : scope canonique, draft preflight, publisher exact HEAD/base/toolchain et guards worktree/untracked/exec-bit/CI-skip.
+- [x] Quality local-first : scope canonique, checkpoint P0, shell strict, draft preflight, publisher exact HEAD/base/toolchain et guards worktree/untracked/exec-bit/CI-skip.
 - [x] UI primitives/responsive portés ; dépendances et runtimes manifestement orphelins retirés.
 - [x] Renovate groupé/cadencé et remédiation Dependabot Alerts via label `security` ; documentation CI/Vercel/analytics/incidents consolidée dans `docs/operations.md`.
 

@@ -307,6 +307,27 @@ test("dependency-free preflight rejects oversized source before npm", async (t) 
   assert.doesNotMatch(result.stderr, /must not run during --preflight/);
 });
 
+test("agent shell classifier includes the local P0 checkpoint", async () => {
+  const result = spawnSync(
+    "bash",
+    [
+      "-c",
+      'source "$SUPPORT_PATH"; classify_changed_files scripts/agent-p0-check.sh; printf "%s\\n" "$agent_gate_changed" "${AGENT_GATE_SHELL_FILES[@]}"',
+    ],
+    {
+      encoding: "utf8",
+      env: {
+        ...process.env,
+        SUPPORT_PATH: supportPath,
+      },
+    },
+  );
+
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /^true$/m);
+  assert.match(result.stdout, /^scripts\/agent-p0-check\.sh$/m);
+});
+
 test("dependency-free preflight rejects malformed Python before npm", async (t) => {
   const fixture = await createFixture();
   t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
