@@ -14,7 +14,8 @@ command -v node >/dev/null 2>&1 || {
 node_version="$(node -p 'process.versions.node')"
 IFS=. read -r node_major node_minor _ <<<"${node_version}"
 if ((node_major < 24 || node_major >= 27 || (node_major == 24 && node_minor < 11))); then
-    printf '❌ QG_P0_NODE_VERSION: Node %s is outside repository engines >=24.11.0 <27\n'         "${node_version}" >&2
+    printf '❌ QG_P0_NODE_VERSION: Node %s is outside repository engines >=24.11.0 <27\n' \
+        "${node_version}" >&2
     exit 1
 fi
 

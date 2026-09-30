@@ -312,7 +312,11 @@ test("agent shell classifier includes the local P0 checkpoint", async () => {
     "bash",
     [
       "-c",
-      'source "$SUPPORT_PATH"; classify_changed_files scripts/agent-p0-check.sh; printf "%s\\n" "$agent_gate_changed" "${AGENT_GATE_SHELL_FILES[@]}"',
+      [
+        'source "$SUPPORT_PATH"',
+        "classify_changed_files scripts/agent-p0-check.sh",
+        'printf "%s\\n" "$agent_gate_changed" "${AGENT_GATE_SHELL_FILES[@]}"',
+      ].join("; "),
     ],
     {
       encoding: "utf8",
