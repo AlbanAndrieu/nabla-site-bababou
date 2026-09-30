@@ -203,7 +203,8 @@ test(
     ]) {
       assert.equal(packageJson.scripts?.[retiredRuntimeScript], undefined);
     }
-});
+  },
+);
 
 test("public does not carry a second package/runtime manifest", async () => {
   await assert.rejects(access(new URL("../public/package.json", import.meta.url)));
