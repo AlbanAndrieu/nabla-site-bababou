@@ -83,10 +83,19 @@ test("roadmap-local-first skill encodes local-first completion and failure routi
 });
 
 test("dependency-free P0 checkpoint stays canonical and maintenance-only", async () => {
-  const [packageSource, p0, agents, primary, playbook, operations, skill] =
-    await Promise.all([
+  const [
+    packageSource,
+    p0,
+    support,
+    agents,
+    primary,
+    playbook,
+    operations,
+    skill,
+  ] = await Promise.all([
       read("package.json"),
       read("scripts/agent-p0-check.sh"),
+      read("scripts/lib/agent-quality-support.sh"),
       read("AGENTS.md"),
       read(".opencode/agents/bababou.md"),
       read(".agents/skills/roadmap-local-first/references/opencode-playbook.md"),
@@ -99,16 +108,26 @@ test("dependency-free P0 checkpoint stays canonical and maintenance-only", async
 
   assert.equal(packageJson.scripts?.["test:p0"], undefined);
   assert.match(p0, /agent-quality-gate\.sh --preflight/);
-  assert.match(p0, /QG_P0_NODE_VERSION/);
-  assert.match(p0, />=24\.11\.0 <27/);
+  assert.match(p0, /require_supported_js_toolchain QG_P0/);
+  assert.match(support, /%s_NODE_VERSION/);
+  assert.match(support, />=24\.11\.0 <27/);
+  assert.match(support, />=11\.17\.0 <12/);
   assert.match(p0, /node --experimental-strip-types --test/);
   for (const testFile of [
     "unit-tests/ciScopeBehavior.test.ts",
+    "unit-tests/maintenanceScopeParity.test.ts",
     "unit-tests/agentPreflightBehavior.test.ts",
     "unit-tests/agentPublishBehavior.test.ts",
     "unit-tests/agentQualityGate.test.ts",
-    "unit-tests/opencodeAgentContract.test.ts",
     "unit-tests/dependencyAutomationContract.test.ts",
+    "unit-tests/nodeRuntimeCompatibility.test.ts",
+    "unit-tests/toolingConvergence.test.ts",
+    "unit-tests/vercel-build-policy.test.ts",
+    "unit-tests/vercelPreviewCheckpointPublisher.test.ts",
+    "unit-tests/ci-auto-preview-contract.test.ts",
+    "unit-tests/vercel-preview-workflow.test.ts",
+    "unit-tests/zap-preview-workflow-contract.test.ts",
+    "unit-tests/opencodeAgentContract.test.ts",
     "unit-tests/migration-structure.test.ts",
   ]) {
     assert.ok(p0.includes(testFile), `missing P0 contract: ${testFile}`);

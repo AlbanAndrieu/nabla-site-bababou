@@ -10,12 +10,6 @@
 - Les preuves routing/runtime/Preview portent toujours sur le SHA exact.
 - PR petites et local-first ; toute validation non exécutée, dette ou warning différé reste ouvert.
 
-## État courant
-
-- [ ] GitHub-hosted runners indisponibles/quota contraint : ne pas relancer manuellement ; maximiser les preuves locales. Diagnostic dans `docs/operations.md`.
-- [ ] **Renovate security** : vérifier Mend Renovate avec `Dependabot alerts: read`, Dependency Graph + Dependabot Alerts ON, Dependabot Security Updates OFF, puis observer le premier Dependency Dashboard et la première PR `security`.
-- [ ] Synchroniser la stratégie Renovate/Dependabot dans Notion lorsque le workspace permet à nouveau la création de blocs.
-
 ## Acquis structurants
 
 - [x] Runtime racine Next.js/Vercel, routage hybride, i18n FR/EN/DE/NO, policies et résultats de paiement stabilisés ; legacy conservé lorsqu'il reste nécessaire.
@@ -60,7 +54,8 @@
 
 ## P5 — Tooling, dépendances et nettoyage
 
-- [ ] Valider le premier lot Renovate groupé avec le gate complet avant d'envisager un automerge ciblé de patch/minor devDependencies.
+- [ ] Vérifier Mend Renovate (`Dependabot alerts: read`), Dependency Graph + Dependabot Alerts ON et Security Updates OFF ; puis valider le premier Dependency Dashboard, la première PR `security` et le premier lot groupé avec le gate complet avant tout automerge ciblé.
+- [ ] Synchroniser ensuite la stratégie Renovate/Dependabot dans Notion.
 - [ ] Réconcilier dans un lot dédié `eslint`, `tsx`, `@types/node`, `typescript-eslint` et `postcss-selector-parser` après vérification des consommateurs et du lockfile.
 - [ ] Retirer runtimes/scripts/assets/pages legacy orphelins uniquement après preuve d'absence de consommateurs et de parité.
 
