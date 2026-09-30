@@ -68,6 +68,10 @@ test("publisher owns exact proof reuse and scope-aware production build", async 
   assert.match(publish, /source scripts\/lib\/agent-quality-support\.sh/);
   assert.match(publish, /QG_PUBLISH_DIRTY/);
   assert.match(publish, /QG_PUBLISH_BASE_STALE/);
+  assert.match(publish, /QG_PUBLISH_PROTECTED_BRANCH/);
+  assert.match(publish, /QG_PUBLISH_DETACHED_HEAD/);
+  assert.match(publish, /QG_PUBLISH_PROOF_OK/);
+  assert.match(publish, /--status/);
   assert.match(publish, /git rev-parse --git-path agent-publication-proof/);
   assert.match(publish, /QG_PUBLISH_PROOF_REUSED/);
   assert.match(publish, /QUALITY_FORCE_PUBLISH/);

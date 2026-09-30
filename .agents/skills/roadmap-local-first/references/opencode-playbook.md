@@ -12,7 +12,7 @@ The `roadmap-local-first` skill owns the detailed procedure.
 | Dependency-free P0 regression | `bash scripts/agent-p0-check.sh` |
 | Canonical scope | `bash scripts/ci-scope.sh <base> WORKTREE` before commit; `<base> HEAD` after |
 | Converge deterministic mutations | `bash scripts/agent-quality-gate.sh --fix` |
-| Exact publication proof | `bash scripts/agent-publish.sh` |
+| Exact publication proof | `bash scripts/agent-publish.sh`; audit with `--status` |
 | Quality/CI follow-up | skill `quality-follow-up` |
 | Family/legal/privacy/publication | skill `protect-family-privacy` |
 | Legacy HTML → Next | skill `next-migrate-locale-pages` |

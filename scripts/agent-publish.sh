@@ -4,6 +4,45 @@ set -euo pipefail
 ROOT="$(git rev-parse --show-toplevel)"
 cd "${ROOT}"
 
+MODE="publish"
+case "${1:-}" in
+    "")
+        ;;
+    --status)
+        MODE="status"
+        ;;
+    *)
+        printf '❌ QG_PUBLISH_ARGUMENT_INVALID: %s\n' "${1}" >&2
+        exit 2
+        ;;
+esac
+if (($# > 1)); then
+    printf '❌ QG_PUBLISH_ARGUMENT_INVALID: unexpected extra arguments\n' >&2
+    exit 2
+fi
+
+resolve_protected_branch() {
+    if git symbolic-ref --quiet refs/remotes/origin/HEAD >/dev/null 2>&1; then
+        git symbolic-ref --quiet --short refs/remotes/origin/HEAD |
+            sed 's#^origin/##'
+    else
+        printf '%s\n' "master"
+    fi
+}
+
+CURRENT_BRANCH="$(git branch --show-current)"
+if [[ -z "${CURRENT_BRANCH}" ]]; then
+    printf '%s\n' \
+        '❌ QG_PUBLISH_DETACHED_HEAD: publication requires a named non-default branch' >&2
+    exit 1
+fi
+PROTECTED_BRANCH="$(resolve_protected_branch)"
+if [[ "${CURRENT_BRANCH}" == "${PROTECTED_BRANCH}" ]]; then
+    printf '❌ QG_PUBLISH_PROTECTED_BRANCH: refusing publication on %s\n' \
+        "${CURRENT_BRANCH}" >&2
+    exit 1
+fi
+
 # shellcheck source=scripts/lib/agent-quality-support.sh
 source scripts/lib/agent-quality-support.sh
 
@@ -87,6 +126,24 @@ fi
 PROOF_VERSION="v2"
 PROOF_KEY="${PROOF_VERSION}|${HEAD_SHA}|${BASE_SHA}|${TOOLCHAIN_SHA}"
 PROOF_FILE="$(git rev-parse --git-path agent-publication-proof)"
+
+if [[ "${MODE}" == "status" ]]; then
+    if [[ ! -f "${PROOF_FILE}" ]]; then
+        printf '%s\n' \
+            '❌ QG_PUBLISH_PROOF_MISSING: no strict publication proof exists' >&2
+        exit 1
+    fi
+    if [[ "$(cat "${PROOF_FILE}")" != "${PROOF_KEY}" ]]; then
+        printf '%s\n' \
+            '❌ QG_PUBLISH_PROOF_STALE: HEAD/base/toolchain changed' >&2
+        exit 1
+    fi
+    printf '✅ QG_PUBLISH_PROOF_OK\n'
+    printf 'head=%s\n' "${HEAD_SHA}"
+    printf 'base=%s\n' "${BASE_SHA}"
+    printf 'toolchain_sha=%s\n' "${TOOLCHAIN_SHA}"
+    exit 0
+fi
 
 if [[ "${QUALITY_FORCE_PUBLISH:-0}" != "1" && -f "${PROOF_FILE}" ]] &&
     [[ "$(cat "${PROOF_FILE}")" == "${PROOF_KEY}" ]]; then

@@ -96,7 +96,9 @@ async function createFixture() {
   await writeFile(join(directory, "fixture.txt"), "base\n");
   git(directory, "add", ".");
   git(directory, "commit", "--quiet", "-m", "base");
+  git(directory, "branch", "-M", "master");
   const baseSha = git(directory, "rev-parse", "HEAD");
+  git(directory, "switch", "-c", "feature/publish-test");
 
   await writeFile(join(directory, "fixture.txt"), "base\nhead\n");
   git(directory, "add", "fixture.txt");
@@ -107,8 +109,8 @@ async function createFixture() {
   return { directory, baseSha, callLog };
 }
 
-function publish(directory, baseSha, fullScope = false) {
-  return spawnSync("bash", ["scripts/agent-publish.sh"], {
+function publish(directory, baseSha, fullScope = false, args = []) {
+  return spawnSync("bash", ["scripts/agent-publish.sh", ...args], {
     cwd: directory,
     encoding: "utf8",
     env: {
@@ -167,3 +169,62 @@ test("publication refuses a dirty committed batch", async (t) => {
   assert.equal(result.status, 1);
   assert.match(result.stderr, /QG_PUBLISH_DIRTY/);
 });
+
+test("publication status audits proof without rerunning checks", async (t) => {
+  const fixture = await createFixture();
+  t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
+
+  const first = publish(fixture.directory, fixture.baseSha);
+  assert.equal(first.status, 0, first.stderr);
+  const calls = await readFile(fixture.callLog, "utf8");
+
+  const status = publish(
+    fixture.directory,
+    fixture.baseSha,
+    false,
+    ["--status"],
+  );
+  assert.equal(status.status, 0, status.stderr);
+  assert.match(status.stdout, /QG_PUBLISH_PROOF_OK/);
+  assert.match(status.stdout, /^head=[0-9a-f]{40}$/m);
+  assert.match(status.stdout, /^base=[0-9a-f]{40}$/m);
+  assert.match(status.stdout, /^toolchain_sha=[0-9a-f]{64}$/m);
+  assert.equal(await readFile(fixture.callLog, "utf8"), calls);
+});
+
+test("publication status fails closed without a proof", async (t) => {
+  const fixture = await createFixture();
+  t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
+
+  const status = publish(
+    fixture.directory,
+    fixture.baseSha,
+    false,
+    ["--status"],
+  );
+  assert.equal(status.status, 1);
+  assert.match(status.stderr, /QG_PUBLISH_PROOF_MISSING/);
+});
+
+test("publication refuses the protected default branch", async (t) => {
+  const fixture = await createFixture();
+  t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
+
+  git(fixture.directory, "switch", "master");
+  const result = publish(fixture.directory, fixture.baseSha);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /QG_PUBLISH_PROTECTED_BRANCH/);
+});
+
+test("publication refuses a detached HEAD", async (t) => {
+  const fixture = await createFixture();
+  t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
+
+  git(fixture.directory, "switch", "--detach");
+  const result = publish(fixture.directory, fixture.baseSha);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /QG_PUBLISH_DETACHED_HEAD/);
+});
+

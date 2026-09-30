@@ -20,7 +20,7 @@
 
 - [x] Runtime racine Next.js/Vercel, routage hybride, i18n FR/EN/DE/NO, policies et résultats de paiement stabilisés ; legacy conservé lorsqu'il reste nécessaire.
 - [x] 404 protégée restaurée via `public/404.html` ; Preview exact-SHA, Playwright/ZAP, smoke production et DAST structurés.
-- [x] Quality local-first : scope canonique, checkpoint P0 avec runtime guard, shell strict, draft preflight, publisher exact HEAD/base/toolchain et guards worktree/untracked/exec-bit/CI-skip.
+- [x] Quality local-first : scope canonique, P0 avec publisher contract, runtime/shell guards, draft preflight et preuve exacte HEAD/base/toolchain.
 - [x] UI primitives/responsive portés ; dépendances et runtimes manifestement orphelins retirés.
 - [x] Renovate groupé/cadencé et remédiation Dependabot Alerts via label `security` ; documentation CI/Vercel/analytics/incidents consolidée dans `docs/operations.md`.
 
@@ -63,7 +63,6 @@
 - [ ] Valider le premier lot Renovate groupé avec le gate complet avant d'envisager un automerge ciblé de patch/minor devDependencies.
 - [ ] Réconcilier dans un lot dédié `eslint`, `tsx`, `@types/node`, `typescript-eslint` et `postcss-selector-parser` après vérification des consommateurs et du lockfile.
 - [ ] Retirer runtimes/scripts/assets/pages legacy orphelins uniquement après preuve d'absence de consommateurs et de parité.
-- [ ] Continuer la comparaison structurelle avec `nabla-site-alban` pour les mécaniques communes, sans recopier ses choix de contenu ou de locale racine.
 
 ## P6 — Confidentialité finale hors homepage
 
