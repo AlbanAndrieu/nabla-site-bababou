@@ -36,6 +36,7 @@ test("OpenCode keeps project skills and todo orchestration available", async () 
     /agent-quality-gate\.sh --preflight/,
   );
   assert.match(config.command?.["quality-local"]?.template ?? "", /quality-follow-up/);
+  assert.match(config.command?.["quality-local"]?.template ?? "", /agent-p0-check\.sh/);
   assert.match(
     config.command?.["quality-local"]?.template ?? "",
     /agent-publish\.sh/,
@@ -54,6 +55,7 @@ test("AGENTS gives small models an explicit deterministic workflow", async () =>
   assert.match(agents, /agent-quality-gate\.sh --preflight/);
   assert.match(agents, /agent-quality-gate\.sh --fix/);
   assert.match(agents, /agent-publish\.sh/);
+  assert.match(agents, /agent-p0-check\.sh/);
   assert.match(agents, /steps=null/);
   assert.match(agents, /Never claim.*passed unless it was actually executed/is);
   assert.match(agents, /Keep the PR draft/);
@@ -74,6 +76,41 @@ test("roadmap-local-first skill encodes local-first completion and failure routi
   assert.match(skill, /do not manually rerun hosted workflows/i);
   assert.match(skill, /Keep the PR description in French/i);
   assert.match(skill, /never merge unless the user explicitly asks/i);
+});
+
+test("dependency-free P0 checkpoint stays canonical and maintenance-only", async () => {
+  const [packageSource, p0, agents, primary, playbook, operations, skill] =
+    await Promise.all([
+      read("package.json"),
+      read("scripts/agent-p0-check.sh"),
+      read("AGENTS.md"),
+      read(".opencode/agents/bababou.md"),
+      read(".agents/skills/roadmap-local-first/references/opencode-playbook.md"),
+      read("docs/operations.md"),
+      read(".agents/skills/roadmap-local-first/SKILL.md"),
+    ]);
+  const packageJson = JSON.parse(packageSource) as {
+    scripts?: Record<string, string>;
+  };
+
+  assert.equal(packageJson.scripts?.["test:p0"], undefined);
+  assert.match(p0, /agent-quality-gate\.sh --preflight/);
+  assert.match(p0, /QG_P0_NODE_VERSION/);
+  assert.match(p0, />=24\.11\.0 <27/);
+  assert.match(p0, /node --experimental-strip-types --test/);
+  for (const testFile of [
+    "unit-tests/ciScopeBehavior.test.ts",
+    "unit-tests/agentPreflightBehavior.test.ts",
+    "unit-tests/opencodeAgentContract.test.ts",
+    "unit-tests/dependencyAutomationContract.test.ts",
+    "unit-tests/migration-structure.test.ts",
+  ]) {
+    assert.ok(p0.includes(testFile), `missing P0 contract: ${testFile}`);
+  }
+
+  for (const source of [agents, primary, playbook, operations, skill]) {
+    assert.match(source, /agent-p0-check\.sh/);
+  }
 });
 
 test("OpenCode defaults to the repository agent without pinning the workstation model", async () => {
@@ -113,7 +150,7 @@ test("OpenCode primary and reviewer agents separate execution from review", asyn
   assert.match(primary, /roadmap-local-first/);
   assert.match(primary, /bababou-reviewer/);
   assert.match(primary, /agent-publish\.sh/);
-  assert.match(primary, /experimental-strip-types/);
+  assert.match(primary, /agent-p0-check\.sh/);
 
   assert.match(reviewer, /mode: subagent/);
   assert.match(reviewer, /edit: deny/);
@@ -127,7 +164,7 @@ test("OpenCode primary and reviewer agents separate execution from review", asyn
   assert.match(playbook, /steps=null/);
   assert.match(playbook, /protected visual 404 source/);
   assert.match(playbook, /Google Translate remains fallback/);
-  assert.match(playbook, /experimental-strip-types/);
+  assert.match(playbook, /agent-p0-check\.sh/);
   assert.match(playbook, /opencode agent list/);
   assert.match(playbook, /bababou-reviewer/);
 });

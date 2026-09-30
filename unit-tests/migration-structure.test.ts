@@ -43,53 +43,53 @@ test("Git-integrated Vercel deployment does not require a local Vercel CLI", asy
 test(
   "analytics and devtools use external/platform integration instead of unused npm SDKs",
   async () => {
-  const packageJson = JSON.parse(
-    await readFile(new URL("../package.json", import.meta.url), "utf8"),
-  ) as {
-    dependencies?: Record<string, string>;
-    devDependencies?: Record<string, string>;
-  };
-  const retiredDirectDependencies = [
-    "@datadog/browser-rum",
-    "@opentelemetry/api",
-    "@opentelemetry/api-logs",
-    "@opentelemetry/instrumentation",
-    "@opentelemetry/sdk-logs",
-    "@vercel/analytics",
-    "@vercel/otel",
-    "@vercel/speed-insights",
-    "@vercel/toolbar",
-    "next-devtools-mcp",
-  ];
+    const packageJson = JSON.parse(
+      await readFile(new URL("../package.json", import.meta.url), "utf8"),
+    ) as {
+      dependencies?: Record<string, string>;
+      devDependencies?: Record<string, string>;
+    };
+    const retiredDirectDependencies = [
+      "@datadog/browser-rum",
+      "@opentelemetry/api",
+      "@opentelemetry/api-logs",
+      "@opentelemetry/instrumentation",
+      "@opentelemetry/sdk-logs",
+      "@vercel/analytics",
+      "@vercel/otel",
+      "@vercel/speed-insights",
+      "@vercel/toolbar",
+      "next-devtools-mcp",
+    ];
 
-  for (const dependency of retiredDirectDependencies) {
-    assert.equal(dependency in (packageJson.dependencies ?? {}), false);
-  }
-  assert.equal("lodash-es" in (packageJson.dependencies ?? {}), false);
-  assert.ok(packageJson.devDependencies?.["lodash-es"]);
+    for (const dependency of retiredDirectDependencies) {
+      assert.equal(dependency in (packageJson.dependencies ?? {}), false);
+    }
+    assert.equal("lodash-es" in (packageJson.dependencies ?? {}), false);
+    assert.ok(packageJson.devDependencies?.["lodash-es"]);
 
-  const [analytics, legacyTestScript, nextInstructions] = await Promise.all([
-    readFile(new URL("../public/site-analytics.js", import.meta.url), "utf8"),
-    readFile(new URL("../public/index.js", import.meta.url), "utf8"),
-    readFile(
-      new URL("../.github/copilot-instructions-nextjs.md", import.meta.url),
-      "utf8",
-    ),
-  ]);
+    const [analytics, legacyTestScript, nextInstructions] = await Promise.all([
+      readFile(new URL("../public/site-analytics.js", import.meta.url), "utf8"),
+      readFile(new URL("../public/index.js", import.meta.url), "utf8"),
+      readFile(
+        new URL("../.github/copilot-instructions-nextjs.md", import.meta.url),
+        "utf8",
+      ),
+    ]);
 
-  assert.match(analytics, /\/_vercel\/insights\/script\.js/);
-  assert.match(analytics, /\/_vercel\/speed-insights\/script\.js/);
-  assert.match(analytics, /datadoghq-browser-agent\.com/);
-  assert.doesNotMatch(
-    legacyTestScript,
-    /@vercel\/(?:analytics|speed-insights)/,
-  );
-  assert.match(nextInstructions, /Next\.js[^\n]*16\.3\.4/);
-  assert.doesNotMatch(nextInstructions, /cd app|vercel deploy|app\/package\.json/);
+    assert.match(analytics, /\/_vercel\/insights\/script\.js/);
+    assert.match(analytics, /\/_vercel\/speed-insights\/script\.js/);
+    assert.match(analytics, /datadoghq-browser-agent\.com/);
+    assert.doesNotMatch(
+      legacyTestScript,
+      /@vercel\/(?:analytics|speed-insights)/,
+    );
+    assert.match(nextInstructions, /Next\.js[^\n]*16\.3\.4/);
+    assert.doesNotMatch(nextInstructions, /cd app|vercel deploy|app\/package\.json/);
 
-  const mcpConfig = await readFile(new URL("../.mcp.json", import.meta.url), "utf8");
-  assert.match(mcpConfig, /next-devtools-mcp@latest/);
-  await assert.rejects(access(new URL("../instrumentation.ts", import.meta.url)));
+    const mcpConfig = await readFile(new URL("../.mcp.json", import.meta.url), "utf8");
+    assert.match(mcpConfig, /next-devtools-mcp@latest/);
+    await assert.rejects(access(new URL("../instrumentation.ts", import.meta.url)));
 });
 
 test("operations docs consolidate deployment, analytics and incident diagnostics", async () => {
@@ -146,7 +146,6 @@ test("Wrangler stays retired from the root deployment graph", async () => {
   await assert.rejects(access(new URL("../wrangler.jsonc", import.meta.url)));
 });
 
-
 test("protected 404 loader does not retain the retired sanitize-html package", async () => {
   const [packageSource, loader] = await Promise.all([
     readFile(new URL("../package.json", import.meta.url), "utf8"),
@@ -165,35 +164,35 @@ test("protected 404 loader does not retain the retired sanitize-html package", a
 test(
   "private root manifest does not advertise the legacy homepage as an npm entrypoint",
   async () => {
-  const packageJson = JSON.parse(
-    await readFile(new URL("../package.json", import.meta.url), "utf8"),
-  ) as {
-    private?: boolean;
-    main?: string;
-    scripts?: Record<string, string>;
-  };
+    const packageJson = JSON.parse(
+      await readFile(new URL("../package.json", import.meta.url), "utf8"),
+    ) as {
+      private?: boolean;
+      main?: string;
+      scripts?: Record<string, string>;
+    };
 
-  assert.equal(packageJson.private, true);
-  assert.equal(packageJson.main, undefined);
-  assert.equal(packageJson.scripts?.build, "next build");
-  assert.equal(packageJson.scripts?.start, "next start");
-  assert.equal(packageJson.scripts?.["dev:test"], "next dev --hostname 127.0.0.1");
-  assert.equal(packageJson.scripts?.["start:test"], "next start --hostname 127.0.0.1");
-  assert.equal(
-    packageJson.scripts?.["start-python"],
-    "python3 -m http.server 8001 --directory public",
-  );
+    assert.equal(packageJson.private, true);
+    assert.equal(packageJson.main, undefined);
+    assert.equal(packageJson.scripts?.build, "next build");
+    assert.equal(packageJson.scripts?.start, "next start");
+    assert.equal(packageJson.scripts?.["dev:test"], "next dev --hostname 127.0.0.1");
+    assert.equal(packageJson.scripts?.["start:test"], "next start --hostname 127.0.0.1");
+    assert.equal(
+      packageJson.scripts?.["start-python"],
+      "python3 -m http.server 8001 --directory public",
+    );
 
-  for (const retiredRuntimeScript of [
-    "dev:v",
-    "build:v",
-    "start:v",
-    "dev:wrangler",
-    "start:wrangler",
-    "deploy:wrangler",
-  ]) {
-    assert.equal(packageJson.scripts?.[retiredRuntimeScript], undefined);
-  }
+    for (const retiredRuntimeScript of [
+      "dev:v",
+      "build:v",
+      "start:v",
+      "dev:wrangler",
+      "start:wrangler",
+      "deploy:wrangler",
+    ]) {
+      assert.equal(packageJson.scripts?.[retiredRuntimeScript], undefined);
+    }
 });
 
 test("public does not carry a second package/runtime manifest", async () => {

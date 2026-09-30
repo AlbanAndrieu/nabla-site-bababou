@@ -105,17 +105,13 @@ The Git-only preflight is available without dependencies:
 bash scripts/agent-quality-gate.sh --preflight
 ```
 
-For agent/quality changes, an additional **dependency-free P0 regression suite** is available with the repository Node runtime and uses only Node built-ins plus Git/Python already required by the preflight:
+For agent/quality changes, use the **local P0 checkpoint** with the repository Node runtime. It keeps the Git-only preflight separate internally, then runs only Node built-in regression contracts:
 
 ```bash
-node --experimental-strip-types --test \
-  unit-tests/ciScopeBehavior.test.ts \
-  unit-tests/agentPreflightBehavior.test.ts \
-  unit-tests/opencodeAgentContract.test.ts \
-  unit-tests/dependencyAutomationContract.test.ts
+bash scripts/agent-p0-check.sh
 ```
 
-This suite exercises the canonical CI scope, the dependency-free preflight behavior, the OpenCode agent contract and the Renovate/Dependabot automation policy without `node_modules`, a Next build, a browser or network access. It complements `--preflight`; it does not replace `--fix` or the exact publication proof.
+This checkpoint first enforces the repository Node range (`>=24.11 <27`), then exercises CI scope, preflight behavior, OpenCode, Renovate/Dependabot and migration/documentation contracts without `node_modules`, a Next build, a browser or network access. The strict gate also classifies `scripts/agent-p0-check.sh` as agent shell tooling for shfmt, shell lint and bashate. It complements `--preflight`; it does not replace `--fix` or the exact publication proof.
 
 CI uses the preflight before Node/npm setup so stale branches, suspicious large truncations, whitespace errors in any regular untracked file and missing executable bits fail before dependency installation and any scanner/build work.
 

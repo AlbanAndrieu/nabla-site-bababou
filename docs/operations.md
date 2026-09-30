@@ -12,16 +12,12 @@
 
 ## 2. Validation locale avant publication
 
-Chemin rapide sans dépendances :
+Chemin rapide sans `node_modules` :
 
 ```bash
 bash scripts/agent-quality-gate.sh --preflight
 
-node --experimental-strip-types --test \
-  unit-tests/ciScopeBehavior.test.ts \
-  unit-tests/agentPreflightBehavior.test.ts \
-  unit-tests/opencodeAgentContract.test.ts \
-  unit-tests/dependencyAutomationContract.test.ts
+bash scripts/agent-p0-check.sh
 ```
 
 Convergence et preuve locale complète :
@@ -32,7 +28,7 @@ bash scripts/agent-quality-gate.sh --fix
 QUALITY_FORCE_PUBLISH=1 bash scripts/agent-publish.sh
 ```
 
-`scripts/agent-publish.sh` est la preuve locale de publication : elle lie le résultat au HEAD, à la base, au toolchain et au lockfile installés. Ne jamais revendiquer un build, un browser check ou un scan non exécuté.
+`bash scripts/agent-p0-check.sh` chaîne le preflight Git-only et les cinq contrats Node, refuse un runtime hors `>=24.11 <27` et n'utilise pas `node_modules`; le strict gate lui applique aussi shfmt, shell lint et bashate. `scripts/agent-publish.sh` est la preuve locale de publication : elle lie le résultat au HEAD, à la base, au toolchain et au lockfile installés. Ne jamais revendiquer un build, un browser check ou un scan non exécuté.
 
 ## 3. Flux Preview et production
 

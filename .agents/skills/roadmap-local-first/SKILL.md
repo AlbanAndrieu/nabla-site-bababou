@@ -66,7 +66,7 @@ For each coherent batch:
 
 1. make the smallest patch;
 2. run the closest unit/contract/lint check;
-3. rerun `bash scripts/agent-quality-gate.sh --preflight`;
+3. run `bash scripts/agent-p0-check.sh`;
 4. run `bash scripts/agent-quality-gate.sh --fix`;
 5. inspect `git status --short`, `git diff --stat`, then only the affected diff;
 6. if `--fix` changed files, keep iterating until deterministic mutations converge;
@@ -90,7 +90,7 @@ When credits/runners are unavailable:
 
 1. keep the PR draft;
 2. do not manually rerun hosted workflows;
-3. use `--preflight`, targeted unit tests, lint/type checks, local build, local Playwright/browser checks, and `agent-publish.sh` according to the classified scope;
+3. use `agent-p0-check.sh`, targeted tests, lint/type checks, local build, local Playwright/browser checks, and `agent-publish.sh` according to the classified scope;
 4. distinguish clearly between checks that passed locally and checks not executed;
 5. keep runner-backed validation as an unchecked roadmap/PR residual when it is still required.
 
