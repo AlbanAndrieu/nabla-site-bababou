@@ -111,7 +111,7 @@ For agent/quality changes, use the **local P0 checkpoint** with the repository N
 bash scripts/agent-p0-check.sh
 ```
 
-This checkpoint exercises CI scope, preflight behavior, OpenCode, Renovate/Dependabot and migration/documentation contracts without `node_modules`, a Next build, a browser or network access. The strict gate also classifies `scripts/agent-p0-check.sh` as agent shell tooling for shfmt, shell lint and bashate. It complements `--preflight`; it does not replace `--fix` or the exact publication proof.
+This checkpoint first enforces the repository Node range (`>=24.11 <27`), then exercises CI scope, preflight behavior, OpenCode, Renovate/Dependabot and migration/documentation contracts without `node_modules`, a Next build, a browser or network access. The strict gate also classifies `scripts/agent-p0-check.sh` as agent shell tooling for shfmt, shell lint and bashate. It complements `--preflight`; it does not replace `--fix` or the exact publication proof.
 
 CI uses the preflight before Node/npm setup so stale branches, suspicious large truncations, whitespace errors in any regular untracked file and missing executable bits fail before dependency installation and any scanner/build work.
 

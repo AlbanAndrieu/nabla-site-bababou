@@ -95,6 +95,8 @@ test("dependency-free P0 checkpoint stays canonical and maintenance-only", async
 
   assert.equal(packageJson.scripts?.["test:p0"], undefined);
   assert.match(p0, /agent-quality-gate\.sh --preflight/);
+  assert.match(p0, /QG_P0_NODE_VERSION/);
+  assert.match(p0, />=24\.11\.0 <27/);
   assert.match(p0, /node --experimental-strip-types --test/);
   for (const testFile of [
     "unit-tests/ciScopeBehavior.test.ts",
