@@ -13,7 +13,7 @@
 ## État courant
 
 - [ ] GitHub-hosted runners indisponibles/quota contraint : ne pas relancer manuellement ; maximiser les preuves locales. Diagnostic dans `docs/operations.md`.
-- [ ] **Renovate security (hérité de #208)** : vérifier Mend Renovate avec `Dependabot alerts: read`, Dependency Graph + Dependabot Alerts ON, Dependabot Security Updates OFF, puis observer le premier Dependency Dashboard et la première PR `security`.
+- [ ] **Renovate security** : vérifier Mend Renovate avec `Dependabot alerts: read`, Dependency Graph + Dependabot Alerts ON, Dependabot Security Updates OFF, puis observer le premier Dependency Dashboard et la première PR `security`.
 - [ ] Synchroniser la stratégie Renovate/Dependabot dans Notion lorsque le workspace permet à nouveau la création de blocs.
 
 ## Acquis structurants
@@ -26,7 +26,7 @@
 
 ## P0 — Qualité, CI/CD et opérations
 
-- [ ] Workstation : `bash scripts/agent-quality-gate.sh --preflight`, `npm run test:p0`, `bash scripts/agent-quality-gate.sh --fix`, committer les mutations, puis `QUALITY_FORCE_PUBLISH=1 bash scripts/agent-publish.sh`.
+- [ ] Workstation : `bash scripts/agent-p0-check.sh`, puis `bash scripts/agent-quality-gate.sh --fix`, committer toute mutation et exécuter `QUALITY_FORCE_PUBLISH=1 bash scripts/agent-publish.sh`.
 - [ ] Exécuter `opencode agent list` et confirmer `bababou` + `bababou-reviewer`.
 - [ ] Au retour des runners, valider un guard serveur metadata-only contre les directives CI-skip et observer un vrai `master` rouge pour confirmer le follow-up automatique, sans provoquer d'incident.
 - [ ] Prouver le chemin autonome événement Git → checkpoint `vercel-preview-*` → Preview Vercel exact-SHA.
@@ -75,7 +75,7 @@
 
 ## Ordre des prochains lots
 
-1. **#209 / P0** — checkpoint local, preuves workstation puis publication exacte.
+1. **P0** — preuve workstation du checkpoint local et publication exacte, puis preuve runner-backed quand disponible.
 2. **P5** — réglages Mend/GitHub et première remédiation Renovate security réelle.
 3. **P2/P3** — responsive/visual proof puis prochaine page documentaire à faible risque.
 4. **P1** — homepage progressive sous contrôle explicite.

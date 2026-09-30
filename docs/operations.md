@@ -12,11 +12,9 @@
 
 ## 2. Validation locale avant publication
 
-Chemin rapide sans `node_modules` :
+Checkpoint P0 sans `node_modules` :
 
 ```bash
-bash scripts/agent-quality-gate.sh --preflight
-
 bash scripts/agent-p0-check.sh
 ```
 
