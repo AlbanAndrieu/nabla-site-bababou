@@ -29,7 +29,7 @@ bash scripts/agent-quality-gate.sh --fix
 QUALITY_FORCE_PUBLISH=1 bash scripts/agent-publish.sh
 ```
 
-`agent-p0-check.sh` inclut le preflight Git-only, les six contrats Node et le garde runtime
+`agent-p0-check.sh` inclut le preflight Git-only, les contrats Node P0 et le garde runtime
 `>=24.11 <27`. Le strict gate lui applique aussi shfmt, shell lint et bashate.
 `agent-publish.sh` refuse `master`/detached HEAD et lie la preuve au HEAD, à la base,
 au toolchain et au lockfile installés. `bash scripts/agent-publish.sh --status` audite la

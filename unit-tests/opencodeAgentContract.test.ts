@@ -55,6 +55,7 @@ test("AGENTS gives small models an explicit deterministic workflow", async () =>
   assert.match(agents, /agent-quality-gate\.sh --preflight/);
   assert.match(agents, /agent-quality-gate\.sh --fix/);
   assert.match(agents, /agent-publish\.sh/);
+  assert.match(agents, /agent-publish\.sh --status/);
   assert.match(agents, /agent-p0-check\.sh/);
   assert.match(agents, /steps=null/);
   assert.match(agents, /Never claim.*passed unless it was actually executed/is);
@@ -72,6 +73,9 @@ test("roadmap-local-first skill encodes local-first completion and failure routi
   assert.match(skill, /next-dev-loop/);
   assert.match(skill, /QG_AUTOFIX_REQUIRED/);
   assert.match(skill, /QG_BASE_STALE/);
+  assert.match(skill, /QG_PUBLISH_PROOF_STALE/);
+  assert.match(skill, /QG_PUBLISH_PROTECTED_BRANCH/);
+  assert.match(skill, /agent-publish\.sh --status/);
   assert.match(skill, /steps=null/);
   assert.match(skill, /do not manually rerun hosted workflows/i);
   assert.match(skill, /Keep the PR description in French/i);
@@ -102,6 +106,7 @@ test("dependency-free P0 checkpoint stays canonical and maintenance-only", async
     "unit-tests/ciScopeBehavior.test.ts",
     "unit-tests/agentPreflightBehavior.test.ts",
     "unit-tests/agentPublishBehavior.test.ts",
+    "unit-tests/agentQualityGate.test.ts",
     "unit-tests/opencodeAgentContract.test.ts",
     "unit-tests/dependencyAutomationContract.test.ts",
     "unit-tests/migration-structure.test.ts",

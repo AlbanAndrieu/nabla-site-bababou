@@ -85,7 +85,11 @@ bash scripts/agent-publish.sh
 
 `--fix` first converges pre-commit mutations, then applies scoped ESLint/Stylelint fixes when dependencies are available, and converges pre-commit once more. The strict agent gate owns deterministic pre-build checks; `scripts/agent-publish.sh` adds the scope-aware production build and built-output privacy validation only when the change is deploy-relevant.
 
-A successful `scripts/agent-publish.sh` run records an exact proof keyed to the committed `HEAD`, comparison base, Node/npm/Python/pre-commit versions and installed dependency lock. The canonical pre-push hook calls the same publisher and reuses that proof instead of rebuilding when nothing relevant changed. Use `QUALITY_FORCE_PUBLISH=1 bash scripts/agent-publish.sh` only when a deliberate full rerun is required.
+A successful `scripts/agent-publish.sh` run records an exact proof keyed to the committed
+`HEAD`, comparison base, toolchain and installed dependency lock. Audit it without rerunning
+the gate with `bash scripts/agent-publish.sh --status`. The publisher refuses the repository
+default branch and detached HEAD. The canonical pre-push hook reuses a valid unchanged proof;
+use `QUALITY_FORCE_PUBLISH=1 bash scripts/agent-publish.sh` only for a deliberate full rerun.
 
 The default strict command remains available for diagnostics:
 
@@ -126,8 +130,9 @@ Before every `git push` or equivalent remote publication from a checkout:
 1. Run `mise run hooks` once for a new checkout.
 2. Run `bash scripts/agent-quality-gate.sh --fix` after editing and review every deterministic formatter/linter mutation.
 3. Commit the reviewed change set.
-4. Run `bash scripts/agent-publish.sh` once and fix every lint, type, unit, privacy, build, workflow, formatter or security failure it reaches.
-5. Push normally; the pre-push hook must reuse the exact local proof when the committed state is unchanged, or rerun the publisher if that proof is stale.
+4. Run `bash scripts/agent-publish.sh` once and fix every reached failure.
+5. Audit the exact proof with `bash scripts/agent-publish.sh --status`.
+6. Push normally; pre-push reuses the exact proof or reruns the publisher when it is stale.
 
 Never use `git push --no-verify`, and never weaken validation rules merely to make a push or CI pass. Set `QUALITY_ALLOW_LARGE_DELETION=1` only after explicitly reviewing an intentional large truncation or deletion.
 

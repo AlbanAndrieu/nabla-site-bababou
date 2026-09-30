@@ -23,6 +23,7 @@ node --experimental-strip-types --test \
     unit-tests/ciScopeBehavior.test.ts \
     unit-tests/agentPreflightBehavior.test.ts \
     unit-tests/agentPublishBehavior.test.ts \
+    unit-tests/agentQualityGate.test.ts \
     unit-tests/opencodeAgentContract.test.ts \
     unit-tests/dependencyAutomationContract.test.ts \
     unit-tests/migration-structure.test.ts

@@ -26,7 +26,7 @@
 
 ## P0 — Qualité, CI/CD et opérations
 
-- [ ] Workstation : `bash scripts/agent-p0-check.sh`, puis `bash scripts/agent-quality-gate.sh --fix`, committer toute mutation et exécuter `QUALITY_FORCE_PUBLISH=1 bash scripts/agent-publish.sh`.
+- [ ] Workstation : exécuter `agent-p0-check.sh`, `agent-quality-gate.sh --fix`, committer, lancer `QUALITY_FORCE_PUBLISH=1 bash scripts/agent-publish.sh`, puis auditer avec `bash scripts/agent-publish.sh --status`.
 - [ ] Exécuter `opencode agent list` et confirmer `bababou` + `bababou-reviewer`.
 - [ ] Au retour des runners, valider un guard serveur metadata-only contre les directives CI-skip et observer un vrai `master` rouge pour confirmer le follow-up automatique, sans provoquer d'incident.
 - [ ] Prouver le chemin autonome événement Git → checkpoint `vercel-preview-*` → Preview Vercel exact-SHA.
