@@ -61,6 +61,20 @@ async function createFixture() {
   );
   await writeFile(join(directory, "node_modules", ".package-lock.json"), "{}\n");
 
+  const node = join(directory, "bin", "node");
+  await writeFile(
+    node,
+    [
+      "#!/usr/bin/env bash",
+      "set -euo pipefail",
+      "if [[ \"${1:-}\" == \"-p\" ]]; then echo 24.11.0; exit 0; fi",
+      "if [[ \"${1:-}\" == \"--version\" ]]; then echo v24.11.0; exit 0; fi",
+      "echo \"unexpected node invocation: $*\" >&2",
+      "exit 2",
+      "",
+    ].join("\n"),
+  );
+
   const npm = join(directory, "bin", "npm");
   await writeFile(
     npm,
@@ -84,6 +98,7 @@ async function createFixture() {
     join(directory, "scripts", "agent-publish.sh"),
     join(directory, "scripts", "agent-quality-gate.sh"),
     join(directory, "scripts", "ci-scope.sh"),
+    node,
     npm,
     preCommit,
   ]) {
@@ -158,6 +173,41 @@ test("deploy-relevant publication runs build and built-output privacy checks", a
   assert.match(calls, /npm-run:build/);
   assert.match(calls, /npm-run:privacy:check:build/);
   assert.match(result.stdout, /QG_PUBLISH_PROOF_WRITTEN/);
+});
+
+
+test("publication rejects an unsupported Node toolchain before running the gate", async (t) => {
+  const fixture = await createFixture();
+  t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
+
+  const node = join(fixture.directory, "bin", "node");
+  await writeFile(
+    node,
+    "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"${1:-}\" == \"-p\" ]]; then echo 24.10.9; exit 0; fi\nif [[ \"${1:-}\" == \"--version\" ]]; then echo v24.10.9; exit 0; fi\nexit 2\n",
+  );
+  await chmod(node, 0o755);
+
+  const result = publish(fixture.directory, fixture.baseSha);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /QG_PUBLISH_NODE_VERSION/);
+  assert.equal(await readFile(fixture.callLog, "utf8"), "");
+});
+
+test("publication rejects an unsupported npm toolchain before running the gate", async (t) => {
+  const fixture = await createFixture();
+  t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
+
+  const npm = join(fixture.directory, "bin", "npm");
+  await writeFile(
+    npm,
+    "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"${1:-}\" == \"--version\" ]]; then echo 12.0.0; exit 0; fi\nexit 2\n",
+  );
+  await chmod(npm, 0o755);
+
+  const result = publish(fixture.directory, fixture.baseSha);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /QG_PUBLISH_NPM_VERSION/);
+  assert.equal(await readFile(fixture.callLog, "utf8"), "");
 });
 
 test("publication refuses a dirty committed batch", async (t) => {

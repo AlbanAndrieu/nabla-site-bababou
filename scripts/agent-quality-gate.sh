@@ -345,14 +345,7 @@ if [[ -n "${STATUS}" ]]; then
     exit 1
 fi
 
-command -v npm >/dev/null 2>&1 || {
-    echo "❌ npm is required; activate the repository toolchain with mise" >&2
-    exit 1
-}
-command -v node >/dev/null 2>&1 || {
-    echo "❌ node is required; activate the repository toolchain with mise" >&2
-    exit 1
-}
+require_supported_js_toolchain QG_AGENT
 if [[ ! -d node_modules ]]; then
     echo "❌ node_modules is missing; run 'npm ci --no-audit --no-fund' first" >&2
     exit 1

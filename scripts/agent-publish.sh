@@ -48,6 +48,8 @@ source scripts/lib/agent-quality-support.sh
 
 LOG_TAIL="${QUALITY_LOG_TAIL:-40}"
 BASE_REF="$(resolve_base_ref)"
+require_supported_js_toolchain QG_PUBLISH
+
 
 tool_version_or_fail() {
     local label="$1"
@@ -106,7 +108,7 @@ if [[ -n "${STATUS}" ]]; then
     exit 1
 fi
 
-for command_name in node npm python3 pre-commit; do
+for command_name in python3 pre-commit; do
     command -v "${command_name}" >/dev/null 2>&1 || {
         printf '❌ QG_PUBLISH_TOOL_MISSING: %s is required\n' "${command_name}" >&2
         exit 1
