@@ -277,4 +277,3 @@ test("publication refuses a detached HEAD", async (t) => {
   assert.equal(result.status, 1);
   assert.match(result.stderr, /QG_PUBLISH_DETACHED_HEAD/);
 });
-
