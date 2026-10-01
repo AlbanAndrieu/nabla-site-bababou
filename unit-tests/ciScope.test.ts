@@ -40,6 +40,7 @@ test("known quality orchestration files stay maintenance-only", async () => {
 
   for (const path of [
     "scripts/agent-quality-gate.sh",
+    "scripts/agent-p0-check.sh",
     "scripts/agent-publish.sh",
     "scripts/lib/agent-quality-support.sh",
     "scripts/quality-gate.sh",
@@ -337,6 +338,7 @@ test("quality-only files do not trigger an application Preview checkpoint", asyn
     ".pre-commit-pre-push.yaml",
     "mise.toml",
     "scripts/agent-quality-gate.sh",
+    "scripts/agent-p0-check.sh",
     "scripts/agent-publish.sh",
     "scripts/lib/agent-quality-support.sh",
     "scripts/ci-scope.sh",

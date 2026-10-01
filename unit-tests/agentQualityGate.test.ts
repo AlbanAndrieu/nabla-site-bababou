@@ -187,6 +187,7 @@ test("Copilot bootstrap follows all agent quality inputs", async () => {
     "package.json",
     "package-lock.json",
     "scripts/agent-quality-gate.sh",
+    "scripts/agent-p0-check.sh",
     "scripts/agent-publish.sh",
     "scripts/lib/agent-quality-support.sh",
   ]) {
@@ -198,6 +199,7 @@ test("critical quality and Preview scripts remain executable", async () => {
   const scripts = [
     "scripts/quality-gate.sh",
     "scripts/agent-quality-gate.sh",
+    "scripts/agent-p0-check.sh",
     "scripts/agent-publish.sh",
     "scripts/ci-scope.sh",
     "scripts/verify-production-baseline.sh",

@@ -12,10 +12,13 @@ require_supported_js_toolchain QG_P0
 
 node --experimental-strip-types --test \
     unit-tests/ciScopeBehavior.test.ts \
+    unit-tests/ciScope.test.ts \
     unit-tests/maintenanceScopeParity.test.ts \
+    unit-tests/executableScriptsContract.test.ts \
     unit-tests/agentPreflightBehavior.test.ts \
     unit-tests/agentPublishBehavior.test.ts \
     unit-tests/agentQualityGate.test.ts \
+    unit-tests/agentQualityEfficiencyContract.test.ts \
     unit-tests/dependencyAutomationContract.test.ts \
     unit-tests/nodeRuntimeCompatibility.test.ts \
     unit-tests/toolingConvergence.test.ts \
