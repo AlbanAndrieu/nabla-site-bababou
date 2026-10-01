@@ -14,6 +14,8 @@ node --experimental-strip-types --test \
     unit-tests/ciScopeBehavior.test.ts \
     unit-tests/ciScope.test.ts \
     unit-tests/maintenanceScopeParity.test.ts \
+    unit-tests/localFirstPost202Parity.test.ts \
+    unit-tests/productionBaselineClassification.test.ts \
     unit-tests/executableScriptsContract.test.ts \
     unit-tests/agentPreflightBehavior.test.ts \
     unit-tests/agentPublishBehavior.test.ts \
