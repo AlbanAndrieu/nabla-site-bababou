@@ -1,116 +1,61 @@
 # Vercel deployment contract
 
-Bababou is a **single root Next.js project** deployed through Vercel's Git integration.
+Bababou is one root **Next.js** project deployed through Vercel Git Integration.
 
 ## Source of truth
 
-- Repository root is the project root.
-- `vercel.json` selects the Next.js framework and the build-ignore policy.
-- `package.json` owns install/build/start scripts.
-- `scripts/vercel-ignore-build.sh` decides whether a Git commit needs a Vercel build.
-- Automatic Git deployment is enabled only for `master` and dedicated `vercel-preview-*` checkpoint branches. Ordinary PR branches do not auto-deploy.
-- Production deployments follow the connected `master` branch.
+- repository root = Vercel project root;
+- `vercel.json` owns framework/build-ignore integration;
+- `package.json` owns install/build/start scripts;
+- `scripts/vercel-ignore-build.sh` decides whether a Git event needs a Vercel build;
+- only `master` and dedicated `vercel-preview-*` checkpoint refs are deployment branches;
+- `docs/operations.md` is the runbook for validation and incident diagnosis.
 
-There is no standalone `app/` npm project and no repository-owned Vercel CLI dependency.
+There is no standalone `app/` npm project and no repository-owned Vercel CLI deployment path.
 
-## Normal deployment workflow
+## Pull-request Preview flow
 
-1. Create a focused branch and pull request.
-2. Run the canonical repository quality gate and let GitHub Quality validate the PR.
-3. After the exact PR SHA has a successful completed Quality run, dispatch **Vercel Preview (On Demand)** with the PR number. The workflow verifies that gate, checks out the exact SHA and pushes `vercel-preview-pr-<number>` through Git so Vercel receives a real branch-push event.
-4. Let Vercel Git Integration deploy that checkpoint branch and validate the **exact deployed SHA** through repository-dispatch Playwright.
-5. Merge only after the required GitHub/Vercel/Preview gates are green. The checkpoint ref still points to the exact PR commit (no synthetic commit is created). Closing the PR removes its checkpoint branch.
+For a deploy-relevant PR:
 
-Documentation-only or repository-maintenance commits may be intentionally skipped by `scripts/vercel-ignore-build.sh`. Dedicated `vercel-preview-*` checkpoints are the exception: they always build so the deployment and Playwright run validate the exact CI-approved SHA.
+1. local validation converges and the PR is committed;
+2. Quality classifies `preview_required=true` and validates the exact PR SHA;
+3. after successful Quality, `ci.yml` automatically publishes
+   `vercel-preview-pr-<number>` at that exact SHA;
+4. Vercel Git Integration deploys the checkpoint;
+5. Playwright/ZAP validate the exact deployed SHA before merge.
 
-## Local development
+`Vercel Preview (On Demand)` remains an operator fallback/recovery workflow. It is not the
+normal path and must validate successful Quality evidence for the same PR SHA before publishing
+a checkpoint.
 
-Run from the repository root:
+Documentation/maintenance changes may skip Preview. A dedicated `vercel-preview-*` checkpoint
+always builds so the deployed artifact corresponds to the validated SHA. Closing a PR removes
+its checkpoint branch.
 
-```bash
-npm ci
-npm run dev
-npm run check
-npm run build
-npm run start
-```
+## Production
 
-The application defaults to port 3000 for local Next development/testing. Playwright can use another loopback port through `PLAYWRIGHT_PORT` when parallel local work would otherwise collide.
+`master` is the production branch. Validate application deployment and domain binding
+separately; a healthy Preview does not prove that `bababou.com` is attached correctly.
 
-## Project configuration
+For routing/build changes, review together:
 
-The current `vercel.json` is intentionally small. Do not reintroduce an `app` root directory, manual CLI wrappers, or a second deployment project merely because older documentation described that architecture.
+- `vercel.json`;
+- `next.config.mjs`;
+- `proxy.ts`;
+- `scripts/vercel-ignore-build.sh`;
+- relevant unit contracts;
+- exact-SHA Preview evidence.
 
-When changing routing or build behavior, validate together:
+## Failure handling
 
-- `vercel.json`
-- `next.config.mjs`
-- `proxy.ts`
-- `scripts/vercel-ignore-build.sh`
-- unit routing/build-policy contracts
-- exact Preview Playwright results
+- **Preview missing**: verify canonical scope, successful exact-SHA Quality, checkpoint ref,
+  then Vercel deployment registration; a Git ref alone is not deployment proof.
+- **Build failure**: inspect Vercel build logs and reproduce with repository-root
+  `npm run check` / `npm run build`.
+- **Preview READY but E2E fails**: inspect the exact URL/SHA and Playwright/ZAP evidence before
+  changing routing or protection bypass.
+- **Protection challenge**: follow the Vercel checkpoint/bypass signatures in
+  `docs/operations.md`.
 
-## Environment variables and secrets
-
-Manage deployment secrets in the Vercel project settings. Do not commit credentials or `.vercel/` local metadata.
-
-GitHub Actions does not require Vercel deployment credentials for the normal Git-integrated flow. Introduce deployment credentials only if the repository deliberately adopts a custom deployment workflow in the future.
-
-## Preview validation
-
-For runtime, routing, locale, SEO or asset changes:
-
-- confirm the Vercel deployment reached `READY`;
-- confirm the deployment metadata references the intended Git SHA;
-- run/inspect the Preview Playwright workflow for that SHA;
-- use deployment build/runtime logs when a Preview fails;
-- do not treat an older successful Preview as proof for a newer commit.
-
-## Build-rate hygiene
-
-The project uses the Vercel Hobby plan, so unnecessary Preview fan-out matters.
-
-- API-only agents should publish multi-file changes as one atomic Git commit.
-- Keep documentation-only changes eligible for the ignore-build policy.
-- Avoid making a sequence of remote file commits on a Vercel-connected branch.
-- Do not add a second build solely to collect metrics already emitted by CI.
-
-## Production/domain checks
-
-The application runtime and DNS/domain binding are separate concerns. When validating production, check both the deployed application and the Vercel project domain attachment. A healthy Preview does not by itself prove that `bababou.com` is bound to the project.
-
-## Troubleshooting
-
-### Vercel build failure
-
-1. inspect the deployment build log;
-2. reproduce with `npm run check` / `npm run build` from the repository root;
-3. verify Node/npm versions match `package.json` engines;
-4. inspect only the routing/configuration files relevant to the failure.
-
-### Preview missing
-
-1. confirm the PR is deploy-relevant and **Vercel Preview (On Demand)** was dispatched for its PR number;
-2. check whether `scripts/vercel-ignore-build.sh` intentionally skipped the checkpoint commit;
-3. confirm Git integration and the `vercel-preview-*` rule in `vercel.json`;
-4. inspect Vercel project status and build-rate limits.
-
-### Preview succeeds but E2E fails
-
-Use the Preview workflow's exact URL and SHA, then inspect Playwright traces/screenshots before changing routing or protection-bypass behavior.
-
-## Analytics
-
-Vercel Web Analytics and Speed Insights are platform integrations loaded through `public/site-analytics.js`; the application does not require local Vercel analytics SDK packages.
-
-## Support
-
-For project-specific questions or public site contact, use `aa@bababou.com`. Keep retired personal/site addresses out of support documentation.
-
-## Related files
-
-- `AGENTS.md`
-- `docs/roadmap.md`
-- `docs/operations.md`
-- `vercel.json`
-- `scripts/vercel-ignore-build.sh`
+Do not add Vercel deployment credentials, manual CLI wrappers or a second project root merely
+to work around Preview failures.

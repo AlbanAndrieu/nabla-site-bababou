@@ -39,10 +39,11 @@ Ne jamais revendiquer un build, browser check ou scan non exécuté.
 
 ## 3. Preview et production
 
-Pour un changement deploy-relevant : valider localement, obtenir un commit propre, laisser
-Quality classifier le scope, publier le checkpoint `vercel-preview-pr-<n>`, puis confirmer
-le deployment **SHA exact** en `READY` avant Playwright/ZAP. Après merge, contrôler
-`Vercel`, `Production Post-deploy Smoke` et `Production DAST`.
+Pour un changement deploy-relevant : valider localement, obtenir un commit propre, puis laisser
+Quality classifier le scope. Après Quality verte, `ci.yml` publie automatiquement
+`vercel-preview-pr-<n>` au **SHA exact** ; Vercel doit atteindre `READY` avant
+Playwright/ZAP. `Vercel Preview (On Demand)` reste un fallback opérateur. Après merge,
+contrôler `Vercel`, `Production Post-deploy Smoke` et `Production DAST`.
 
 Les changements documentation/maintenance peuvent être ignorés par
 `scripts/vercel-ignore-build.sh`. Un checkpoint `vercel-preview-*` doit construire.

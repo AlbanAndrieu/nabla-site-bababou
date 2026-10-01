@@ -112,6 +112,10 @@ test("operations docs consolidate deployment, analytics and incident diagnostics
   assert.match(operationsGuide, /x-vercel-mitigated: challenge/);
   assert.match(operationsGuide, /\/_vercel\/speed-insights\/script\.js/);
   assert.match(operationsGuide, /bash scripts\/agent-p0-check\.sh/);
+  assert.match(operationsGuide, /ci\.yml.*publie automatiquement/is);
+  assert.match(vercelGuide, /ci\.yml.*automatically publishes/is);
+  assert.match(vercelGuide, /On Demand.*fallback/is);
+  assert.doesNotMatch(vercelGuide, /normal deployment workflow[\s\S]*dispatch \*\*Vercel Preview \(On Demand\)\*\*/i);
   assert.doesNotMatch(
     operationsGuide,
     /agent-quality-gate\.sh --preflight\s+\n\s*bash scripts\/agent-p0-check\.sh/,
