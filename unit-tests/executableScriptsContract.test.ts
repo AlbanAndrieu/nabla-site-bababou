@@ -8,6 +8,7 @@ test("critical quality and Preview shell entrypoints remain executable", async (
   const executableScripts = [
     "scripts/quality-gate.sh",
     "scripts/agent-quality-gate.sh",
+    "scripts/agent-p0-check.sh",
     "scripts/agent-publish.sh",
     "scripts/ci-scope.sh",
     "scripts/verify-production-baseline.sh",

@@ -7,7 +7,7 @@ The repository uses GitHub Actions for validation and Vercel Git Integration for
 The files under `.github/workflows/` are authoritative. The current set is:
 
 - `ci.yml` — canonical quality/security gate, including the Next.js build and CI performance summary;
-- `vercel-preview.yml` — creates/removes explicit `vercel-preview-pr-*` checkpoint branches for on-demand Preview deployments;
+- `vercel-preview.yml` — operator fallback for explicit `vercel-preview-pr-*` checkpoints and checkpoint cleanup;
 - `playwright.yml` — browser validation, including exact Vercel Preview E2E through repository dispatch;
 - `release.yml` — semantic-release after successful current-`master` Quality validation; release packages are fetched ephemerally there and stay out of the normal application lock graph;
 - `docker-build.yml` — Docker validation;
@@ -22,15 +22,18 @@ MegaLinter is intentionally not a GitHub workflow: `.mega-linter.yml` remains on
 - Package compatibility is `>=24.11.0 <27`; npm is **>=11.17.0 <12** and install scripts are governed by the repository `allowScripts` policy.
 - Run Node/npm commands from the repository root.
 - `package.json` and `package-lock.json` at the root are the only application npm manifests.
-- Vercel deployments come from Git Integration. Only `master` and `vercel-preview-*` refs auto-deploy; normal PR branches require the on-demand checkpoint workflow. Do not add a local Vercel CLI deployment workflow unless the project deliberately changes that architecture.
+- Vercel deployments come from Git Integration. Only `master` and `vercel-preview-*` refs deploy; deploy-relevant PRs get an automatic exact-SHA checkpoint from `ci.yml` after successful Quality, while `vercel-preview.yml` remains an operator fallback. Do not add a local Vercel CLI deployment workflow unless the project deliberately changes that architecture.
 
 ## Validation
 
-Before publication, the canonical local gate is:
+Before publication, use the repository local-first path:
 
 ```bash
 mise run hooks
-bash scripts/quality-gate.sh
+bash scripts/agent-p0-check.sh
+bash scripts/agent-quality-gate.sh --fix
+# commit reviewed mutations
+bash scripts/agent-publish.sh
 ```
 
 In GitHub Actions, `ci.yml` must preserve the equivalent lint, typecheck, unit, privacy and `next build` coverage. Runtime/routing changes also require the exact deployed Vercel Preview and its Playwright run.

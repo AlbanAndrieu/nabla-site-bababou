@@ -93,12 +93,13 @@ test(
 });
 
 test("operations docs consolidate deployment, analytics and incident diagnostics", async () => {
-  const [vercelGuide, operationsGuide] = await Promise.all([
+  const [vercelGuide, operationsGuide, roadmapGuide] = await Promise.all([
     readFile(
       new URL("../.github/vercel-deployment-instructions.md", import.meta.url),
       "utf8",
     ),
     readFile(new URL("../docs/operations.md", import.meta.url), "utf8"),
+    readFile(new URL("../docs/roadmap.md", import.meta.url), "utf8"),
   ]);
 
   for (const guide of [vercelGuide, operationsGuide]) {
@@ -110,6 +111,19 @@ test("operations docs consolidate deployment, analytics and incident diagnostics
   assert.match(operationsGuide, /steps=\[\]|steps=null/);
   assert.match(operationsGuide, /x-vercel-mitigated: challenge/);
   assert.match(operationsGuide, /\/_vercel\/speed-insights\/script\.js/);
+  assert.match(operationsGuide, /bash scripts\/agent-p0-check\.sh/);
+  assert.match(operationsGuide, /ci\.yml.*publie automatiquement/is);
+  assert.match(vercelGuide, /ci\.yml.*automatically publishes/is);
+  assert.match(vercelGuide, /On Demand.*fallback/is);
+  assert.doesNotMatch(vercelGuide, /normal deployment workflow[\s\S]*dispatch \*\*Vercel Preview \(On Demand\)\*\*/i);
+  assert.doesNotMatch(
+    operationsGuide,
+    /agent-quality-gate\.sh --preflight\s+\n\s*bash scripts\/agent-p0-check\.sh/,
+  );
+
+  assert.match(roadmapGuide, /bash scripts\/agent-p0-check\.sh/);
+  assert.doesNotMatch(roadmapGuide, /npm run test:p0|#209 \/ P0/);
+
   await assert.rejects(access(new URL("../docs/GITHUB_ACTIONS_SETUP.md", import.meta.url)));
   await assert.rejects(
     access(new URL("../docs/getting-started-speed-insights.md", import.meta.url)),
@@ -193,7 +207,8 @@ test(
     ]) {
       assert.equal(packageJson.scripts?.[retiredRuntimeScript], undefined);
     }
-});
+  },
+);
 
 test("public does not carry a second package/runtime manifest", async () => {
   await assert.rejects(access(new URL("../public/package.json", import.meta.url)));

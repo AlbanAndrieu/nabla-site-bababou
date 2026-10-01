@@ -45,6 +45,7 @@ test("agent gate delegates shared mechanics and keeps Bababou pre-build checks",
   }
   for (const helper of [
     "resolve_base_ref",
+    "require_supported_js_toolchain",
     "run_compact",
     "run_compact_report",
     "collect_changed_files",
@@ -54,6 +55,7 @@ test("agent gate delegates shared mechanics and keeps Bababou pre-build checks",
   ]) {
     assert.match(support, new RegExp(`${helper}\\(\\)`));
   }
+  assert.match(gate, /require_supported_js_toolchain QG_AGENT/);
   assert.doesNotMatch(gate, /agent-publication-proof|QG_PUBLISH_PROOF_REUSED/);
 });
 
@@ -66,8 +68,13 @@ test("publisher owns exact proof reuse and scope-aware production build", async 
 
   assert.notEqual(info.mode & 0o100, 0);
   assert.match(publish, /source scripts\/lib\/agent-quality-support\.sh/);
+  assert.match(publish, /require_supported_js_toolchain QG_PUBLISH/);
   assert.match(publish, /QG_PUBLISH_DIRTY/);
   assert.match(publish, /QG_PUBLISH_BASE_STALE/);
+  assert.match(publish, /QG_PUBLISH_PROTECTED_BRANCH/);
+  assert.match(publish, /QG_PUBLISH_DETACHED_HEAD/);
+  assert.match(publish, /QG_PUBLISH_PROOF_OK/);
+  assert.match(publish, /--status/);
   assert.match(publish, /git rev-parse --git-path agent-publication-proof/);
   assert.match(publish, /QG_PUBLISH_PROOF_REUSED/);
   assert.match(publish, /QUALITY_FORCE_PUBLISH/);
@@ -77,6 +84,27 @@ test("publisher owns exact proof reuse and scope-aware production build", async 
   assert.match(publish, /npm run privacy:check:build/);
   assert.match(publish, /non-build publication scope; Next build intentionally skipped/);
   assert.match(publish, /QG_PUBLISH_PROOF_WRITTEN/);
+});
+
+test("P0, strict gate and publisher enforce the repository Node/npm engines", async () => {
+  const [p0, gate, publish, support, packageSource] = await Promise.all([
+    read("../scripts/agent-p0-check.sh"),
+    read("../scripts/agent-quality-gate.sh"),
+    read("../scripts/agent-publish.sh"),
+    read("../scripts/lib/agent-quality-support.sh"),
+    read("../package.json"),
+  ]);
+  const pkg = JSON.parse(packageSource) as {
+    engines?: { node?: string; npm?: string };
+  };
+
+  assert.equal(pkg.engines?.node, ">=24.11.0 <27");
+  assert.equal(pkg.engines?.npm, ">=11.17.0 <12");
+  assert.match(p0, /require_supported_js_toolchain QG_P0/);
+  assert.match(gate, /require_supported_js_toolchain QG_AGENT/);
+  assert.match(publish, /require_supported_js_toolchain QG_PUBLISH/);
+  assert.match(support, /Node %s is outside repository engines >=24\.11\.0 <27/);
+  assert.match(support, /npm %s is outside repository engines >=11\.17\.0 <12/);
 });
 
 test("npm, mise and pre-push expose the separated publication workflow", async () => {
@@ -159,6 +187,7 @@ test("Copilot bootstrap follows all agent quality inputs", async () => {
     "package.json",
     "package-lock.json",
     "scripts/agent-quality-gate.sh",
+    "scripts/agent-p0-check.sh",
     "scripts/agent-publish.sh",
     "scripts/lib/agent-quality-support.sh",
   ]) {
@@ -170,6 +199,7 @@ test("critical quality and Preview scripts remain executable", async () => {
   const scripts = [
     "scripts/quality-gate.sh",
     "scripts/agent-quality-gate.sh",
+    "scripts/agent-p0-check.sh",
     "scripts/agent-publish.sh",
     "scripts/ci-scope.sh",
     "scripts/verify-production-baseline.sh",

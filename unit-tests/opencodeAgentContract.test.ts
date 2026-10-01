@@ -55,6 +55,7 @@ test("AGENTS gives small models an explicit deterministic workflow", async () =>
   assert.match(agents, /agent-quality-gate\.sh --preflight/);
   assert.match(agents, /agent-quality-gate\.sh --fix/);
   assert.match(agents, /agent-publish\.sh/);
+  assert.match(agents, /agent-publish\.sh --status/);
   assert.match(agents, /agent-p0-check\.sh/);
   assert.match(agents, /steps=null/);
   assert.match(agents, /Never claim.*passed unless it was actually executed/is);
@@ -72,6 +73,9 @@ test("roadmap-local-first skill encodes local-first completion and failure routi
   assert.match(skill, /next-dev-loop/);
   assert.match(skill, /QG_AUTOFIX_REQUIRED/);
   assert.match(skill, /QG_BASE_STALE/);
+  assert.match(skill, /QG_PUBLISH_PROOF_STALE/);
+  assert.match(skill, /QG_PUBLISH_PROTECTED_BRANCH/);
+  assert.match(skill, /agent-publish\.sh --status/);
   assert.match(skill, /steps=null/);
   assert.match(skill, /do not manually rerun hosted workflows/i);
   assert.match(skill, /Keep the PR description in French/i);
@@ -79,30 +83,56 @@ test("roadmap-local-first skill encodes local-first completion and failure routi
 });
 
 test("dependency-free P0 checkpoint stays canonical and maintenance-only", async () => {
-  const [packageSource, p0, agents, primary, playbook, operations, skill] =
-    await Promise.all([
-      read("package.json"),
-      read("scripts/agent-p0-check.sh"),
-      read("AGENTS.md"),
-      read(".opencode/agents/bababou.md"),
-      read(".agents/skills/roadmap-local-first/references/opencode-playbook.md"),
-      read("docs/operations.md"),
-      read(".agents/skills/roadmap-local-first/SKILL.md"),
-    ]);
+  const [
+    packageSource,
+    p0,
+    support,
+    agents,
+    primary,
+    playbook,
+    operations,
+    skill,
+  ] = await Promise.all([
+    read("package.json"),
+    read("scripts/agent-p0-check.sh"),
+    read("scripts/lib/agent-quality-support.sh"),
+    read("AGENTS.md"),
+    read(".opencode/agents/bababou.md"),
+    read(".agents/skills/roadmap-local-first/references/opencode-playbook.md"),
+    read("docs/operations.md"),
+    read(".agents/skills/roadmap-local-first/SKILL.md"),
+  ]);
   const packageJson = JSON.parse(packageSource) as {
     scripts?: Record<string, string>;
   };
 
   assert.equal(packageJson.scripts?.["test:p0"], undefined);
   assert.match(p0, /agent-quality-gate\.sh --preflight/);
-  assert.match(p0, /QG_P0_NODE_VERSION/);
-  assert.match(p0, />=24\.11\.0 <27/);
+  assert.match(p0, /require_supported_js_toolchain QG_P0/);
+  assert.match(support, /%s_NODE_VERSION/);
+  assert.match(support, />=24\.11\.0 <27/);
+  assert.match(support, />=11\.17\.0 <12/);
   assert.match(p0, /node --experimental-strip-types --test/);
   for (const testFile of [
     "unit-tests/ciScopeBehavior.test.ts",
+    "unit-tests/ciScope.test.ts",
+    "unit-tests/maintenanceScopeParity.test.ts",
+    "unit-tests/localFirstPost202Parity.test.ts",
+    "unit-tests/productionBaselineClassification.test.ts",
+    "unit-tests/executableScriptsContract.test.ts",
     "unit-tests/agentPreflightBehavior.test.ts",
-    "unit-tests/opencodeAgentContract.test.ts",
+    "unit-tests/agentPublishBehavior.test.ts",
+    "unit-tests/agentQualityGate.test.ts",
+    "unit-tests/agentQualityEfficiencyContract.test.ts",
     "unit-tests/dependencyAutomationContract.test.ts",
+    "unit-tests/nodeRuntimeCompatibility.test.ts",
+    "unit-tests/toolingConvergence.test.ts",
+    "unit-tests/vercel-build-policy.test.ts",
+    "unit-tests/vercelPreviewCheckpointPublisher.test.ts",
+    "unit-tests/ci-auto-preview-contract.test.ts",
+    "unit-tests/vercel-preview-workflow.test.ts",
+    "unit-tests/zap-preview-workflow-contract.test.ts",
+    "unit-tests/opencodeAgentContract.test.ts",
     "unit-tests/migration-structure.test.ts",
   ]) {
     assert.ok(p0.includes(testFile), `missing P0 contract: ${testFile}`);

@@ -81,6 +81,8 @@ Never use `git push --no-verify`. Never weaken a rule merely to make a gate pass
 - `QG_PRECOMMIT_FAILED` → inspect the specific hook/error and affected file.
 - `QG_FIX_DID_NOT_CONVERGE` → inspect the changing diff and conflicting formatters.
 - `QG_BASE_STALE` → fetch/rebase the working branch before publication; do not force `master`.
+- `QG_PUBLISH_PROOF_MISSING` / `QG_PUBLISH_PROOF_STALE` → run the strict publisher once.
+- `QG_PUBLISH_PROTECTED_BRANCH` / `QG_PUBLISH_DETACHED_HEAD` → stop and move to a named non-default branch.
 - test/type/security failure → fix the semantic cause, then rerun the closest check.
 - GitHub job with `steps=null`, no logs, or no allocated runner → infrastructure/quota evidence; do not infer a code regression and do not manually rerun while the user has said credits are unavailable.
 
@@ -115,5 +117,6 @@ Before reporting completion:
 1. load `quality-follow-up`;
 2. account for every requested or discovered residual in `docs/roadmap.md`;
 3. confirm the branch is not behind its base;
-4. confirm the PR remains draft while required local or runner-backed evidence is missing;
-5. never merge unless the user explicitly asks.
+4. audit a successful publication proof with `bash scripts/agent-publish.sh --status`;
+5. keep the PR draft while required local or runner-backed evidence is missing;
+6. never merge unless the user explicitly asks.

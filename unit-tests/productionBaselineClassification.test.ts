@@ -151,6 +151,23 @@ test("maintenance classification accepts reviewed quality paths and rejects runt
   );
   assert.equal(classifierAccepted.status, 0, classifierAccepted.stderr);
 
+  await mkdir(join(cwd, "scripts"), { recursive: true });
+  await writeFile(
+    join(cwd, "scripts", "agent-p0-check.sh"),
+    "#!/usr/bin/env bash\necho p0\n",
+  );
+  git(cwd, "add", ".");
+  git(cwd, "commit", "--quiet", "-m", "test: update offline P0 checkpoint");
+  const p0Maintenance = git(cwd, "rev-parse", "HEAD");
+
+  const p0Accepted = classify(
+    cwd,
+    "maintenance_only_hop",
+    classifierMaintenance,
+    p0Maintenance,
+  );
+  assert.equal(p0Accepted.status, 0, p0Accepted.stderr);
+
   await mkdir(join(cwd, "app"), { recursive: true });
   await writeFile(
     join(cwd, "app", "runtime.ts"),
@@ -162,7 +179,7 @@ test("maintenance classification accepts reviewed quality paths and rejects runt
   const rejected = classify(
     cwd,
     "maintenance_only_hop",
-    classifierMaintenance,
+    p0Maintenance,
     git(cwd, "rev-parse", "HEAD"),
   );
   assert.equal(rejected.status, 1);

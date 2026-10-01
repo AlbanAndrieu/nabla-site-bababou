@@ -35,6 +35,7 @@ test("maintenance paths stay aligned across canonical scope, on-demand Preview a
 
   const sharedMaintenancePaths = [
     "scripts/agent-quality-gate.sh",
+    "scripts/agent-p0-check.sh",
     "scripts/agent-publish.sh",
     "scripts/lib/agent-quality-support.sh",
     "scripts/quality-gate.sh",

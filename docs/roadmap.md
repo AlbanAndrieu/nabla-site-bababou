@@ -10,23 +10,17 @@
 - Les preuves routing/runtime/Preview portent toujours sur le SHA exact.
 - PR petites et local-first ; toute validation non exécutée, dette ou warning différé reste ouvert.
 
-## État courant
-
-- [ ] GitHub-hosted runners indisponibles/quota contraint : ne pas relancer manuellement ; maximiser les preuves locales. Diagnostic dans `docs/operations.md`.
-- [ ] **Renovate security (hérité de #208)** : vérifier Mend Renovate avec `Dependabot alerts: read`, Dependency Graph + Dependabot Alerts ON, Dependabot Security Updates OFF, puis observer le premier Dependency Dashboard et la première PR `security`.
-- [ ] Synchroniser la stratégie Renovate/Dependabot dans Notion lorsque le workspace permet à nouveau la création de blocs.
-
 ## Acquis structurants
 
 - [x] Runtime racine Next.js/Vercel, routage hybride, i18n FR/EN/DE/NO, policies et résultats de paiement stabilisés ; legacy conservé lorsqu'il reste nécessaire.
 - [x] 404 protégée restaurée via `public/404.html` ; Preview exact-SHA, Playwright/ZAP, smoke production et DAST structurés.
-- [x] Quality local-first : scope canonique, checkpoint P0 avec runtime guard, shell strict, draft preflight, publisher exact HEAD/base/toolchain et guards worktree/untracked/exec-bit/CI-skip.
+- [x] Quality local-first : scope canonique, P0 avec publisher contract, runtime/shell guards, draft preflight et preuve exacte HEAD/base/toolchain.
 - [x] UI primitives/responsive portés ; dépendances et runtimes manifestement orphelins retirés.
 - [x] Renovate groupé/cadencé et remédiation Dependabot Alerts via label `security` ; documentation CI/Vercel/analytics/incidents consolidée dans `docs/operations.md`.
 
 ## P0 — Qualité, CI/CD et opérations
 
-- [ ] Workstation : `bash scripts/agent-quality-gate.sh --preflight`, `npm run test:p0`, `bash scripts/agent-quality-gate.sh --fix`, committer les mutations, puis `QUALITY_FORCE_PUBLISH=1 bash scripts/agent-publish.sh`.
+- [ ] Workstation : exécuter `agent-p0-check.sh`, `agent-quality-gate.sh --fix`, committer, lancer `QUALITY_FORCE_PUBLISH=1 bash scripts/agent-publish.sh`, puis auditer avec `bash scripts/agent-publish.sh --status`.
 - [ ] Exécuter `opencode agent list` et confirmer `bababou` + `bababou-reviewer`.
 - [ ] Au retour des runners, valider un guard serveur metadata-only contre les directives CI-skip et observer un vrai `master` rouge pour confirmer le follow-up automatique, sans provoquer d'incident.
 - [ ] Prouver le chemin autonome événement Git → checkpoint `vercel-preview-*` → Preview Vercel exact-SHA.
@@ -60,10 +54,10 @@
 
 ## P5 — Tooling, dépendances et nettoyage
 
-- [ ] Valider le premier lot Renovate groupé avec le gate complet avant d'envisager un automerge ciblé de patch/minor devDependencies.
+- [ ] Vérifier Mend Renovate (`Dependabot alerts: read`), Dependency Graph + Dependabot Alerts ON et Security Updates OFF ; puis valider le premier Dependency Dashboard, la première PR `security` et le premier lot groupé avec le gate complet avant tout automerge ciblé.
+- [ ] Synchroniser ensuite la stratégie Renovate/Dependabot dans Notion.
 - [ ] Réconcilier dans un lot dédié `eslint`, `tsx`, `@types/node`, `typescript-eslint` et `postcss-selector-parser` après vérification des consommateurs et du lockfile.
 - [ ] Retirer runtimes/scripts/assets/pages legacy orphelins uniquement après preuve d'absence de consommateurs et de parité.
-- [ ] Continuer la comparaison structurelle avec `nabla-site-alban` pour les mécaniques communes, sans recopier ses choix de contenu ou de locale racine.
 
 ## P6 — Confidentialité finale hors homepage
 
@@ -75,7 +69,7 @@
 
 ## Ordre des prochains lots
 
-1. **#209 / P0** — checkpoint local, preuves workstation puis publication exacte.
+1. **P0** — preuve workstation du checkpoint local et publication exacte, puis preuve runner-backed quand disponible.
 2. **P5** — réglages Mend/GitHub et première remédiation Renovate security réelle.
 3. **P2/P3** — responsive/visual proof puis prochaine page documentaire à faible risque.
 4. **P1** — homepage progressive sous contrôle explicite.

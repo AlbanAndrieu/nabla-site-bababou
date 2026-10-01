@@ -6,24 +6,30 @@ cd "${ROOT}"
 
 bash scripts/agent-quality-gate.sh --preflight
 
-command -v node >/dev/null 2>&1 || {
-    echo "❌ QG_P0_NODE_MISSING: node is required for the local P0 contracts" >&2
-    exit 1
-}
-
-node_version="$(node -p 'process.versions.node')"
-IFS=. read -r node_major node_minor _ <<<"${node_version}"
-if ((node_major < 24 || node_major >= 27 || (node_major == 24 && node_minor < 11))); then
-    printf '❌ QG_P0_NODE_VERSION: Node %s is outside repository engines >=24.11.0 <27\n' \
-        "${node_version}" >&2
-    exit 1
-fi
+# shellcheck source=scripts/lib/agent-quality-support.sh
+source scripts/lib/agent-quality-support.sh
+require_supported_js_toolchain QG_P0
 
 node --experimental-strip-types --test \
     unit-tests/ciScopeBehavior.test.ts \
+    unit-tests/ciScope.test.ts \
+    unit-tests/maintenanceScopeParity.test.ts \
+    unit-tests/localFirstPost202Parity.test.ts \
+    unit-tests/productionBaselineClassification.test.ts \
+    unit-tests/executableScriptsContract.test.ts \
     unit-tests/agentPreflightBehavior.test.ts \
-    unit-tests/opencodeAgentContract.test.ts \
+    unit-tests/agentPublishBehavior.test.ts \
+    unit-tests/agentQualityGate.test.ts \
+    unit-tests/agentQualityEfficiencyContract.test.ts \
     unit-tests/dependencyAutomationContract.test.ts \
+    unit-tests/nodeRuntimeCompatibility.test.ts \
+    unit-tests/toolingConvergence.test.ts \
+    unit-tests/vercel-build-policy.test.ts \
+    unit-tests/vercelPreviewCheckpointPublisher.test.ts \
+    unit-tests/ci-auto-preview-contract.test.ts \
+    unit-tests/vercel-preview-workflow.test.ts \
+    unit-tests/zap-preview-workflow-contract.test.ts \
+    unit-tests/opencodeAgentContract.test.ts \
     unit-tests/migration-structure.test.ts
 
 echo "✅ local P0 checkpoint passed without node_modules."

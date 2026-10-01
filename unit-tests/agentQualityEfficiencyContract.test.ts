@@ -77,6 +77,7 @@ test("publication builds only deploy-relevant changes", async () => {
   assert.match(publish, /case "\$\{build\}" in/);
   assert.match(publish, /false\)[\s\S]*Next build intentionally skipped/);
   assert.match(publish, /true\)[\s\S]*npm run build/);
+  assert.ok(scope.includes("scripts/agent-p0-check.sh"));
   assert.ok(scope.includes("scripts/agent-publish.sh"));
   assert.ok(scope.includes("scripts/lib/agent-quality-support.sh"));
 });

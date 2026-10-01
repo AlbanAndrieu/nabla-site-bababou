@@ -61,6 +61,20 @@ async function createFixture() {
   );
   await writeFile(join(directory, "node_modules", ".package-lock.json"), "{}\n");
 
+  const node = join(directory, "bin", "node");
+  await writeFile(
+    node,
+    [
+      "#!/usr/bin/env bash",
+      "set -euo pipefail",
+      "if [[ \"${1:-}\" == \"-p\" ]]; then echo 24.11.0; exit 0; fi",
+      "if [[ \"${1:-}\" == \"--version\" ]]; then echo v24.11.0; exit 0; fi",
+      "echo \"unexpected node invocation: $*\" >&2",
+      "exit 2",
+      "",
+    ].join("\n"),
+  );
+
   const npm = join(directory, "bin", "npm");
   await writeFile(
     npm,
@@ -84,6 +98,7 @@ async function createFixture() {
     join(directory, "scripts", "agent-publish.sh"),
     join(directory, "scripts", "agent-quality-gate.sh"),
     join(directory, "scripts", "ci-scope.sh"),
+    node,
     npm,
     preCommit,
   ]) {
@@ -96,7 +111,9 @@ async function createFixture() {
   await writeFile(join(directory, "fixture.txt"), "base\n");
   git(directory, "add", ".");
   git(directory, "commit", "--quiet", "-m", "base");
+  git(directory, "branch", "-M", "master");
   const baseSha = git(directory, "rev-parse", "HEAD");
+  git(directory, "switch", "-c", "feature/publish-test");
 
   await writeFile(join(directory, "fixture.txt"), "base\nhead\n");
   git(directory, "add", "fixture.txt");
@@ -107,8 +124,8 @@ async function createFixture() {
   return { directory, baseSha, callLog };
 }
 
-function publish(directory, baseSha, fullScope = false) {
-  return spawnSync("bash", ["scripts/agent-publish.sh"], {
+function publish(directory, baseSha, fullScope = false, args = []) {
+  return spawnSync("bash", ["scripts/agent-publish.sh", ...args], {
     cwd: directory,
     encoding: "utf8",
     env: {
@@ -158,6 +175,41 @@ test("deploy-relevant publication runs build and built-output privacy checks", a
   assert.match(result.stdout, /QG_PUBLISH_PROOF_WRITTEN/);
 });
 
+
+test("publication rejects an unsupported Node toolchain before running the gate", async (t) => {
+  const fixture = await createFixture();
+  t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
+
+  const node = join(fixture.directory, "bin", "node");
+  await writeFile(
+    node,
+    "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"${1:-}\" == \"-p\" ]]; then echo 24.10.9; exit 0; fi\nif [[ \"${1:-}\" == \"--version\" ]]; then echo v24.10.9; exit 0; fi\nexit 2\n",
+  );
+  await chmod(node, 0o755);
+
+  const result = publish(fixture.directory, fixture.baseSha);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /QG_PUBLISH_NODE_VERSION/);
+  assert.equal(await readFile(fixture.callLog, "utf8"), "");
+});
+
+test("publication rejects an unsupported npm toolchain before running the gate", async (t) => {
+  const fixture = await createFixture();
+  t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
+
+  const npm = join(fixture.directory, "bin", "npm");
+  await writeFile(
+    npm,
+    "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"${1:-}\" == \"--version\" ]]; then echo 12.0.0; exit 0; fi\nexit 2\n",
+  );
+  await chmod(npm, 0o755);
+
+  const result = publish(fixture.directory, fixture.baseSha);
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /QG_PUBLISH_NPM_VERSION/);
+  assert.equal(await readFile(fixture.callLog, "utf8"), "");
+});
+
 test("publication refuses a dirty committed batch", async (t) => {
   const fixture = await createFixture();
   t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
@@ -166,4 +218,62 @@ test("publication refuses a dirty committed batch", async (t) => {
   const result = publish(fixture.directory, fixture.baseSha);
   assert.equal(result.status, 1);
   assert.match(result.stderr, /QG_PUBLISH_DIRTY/);
+});
+
+test("publication status audits proof without rerunning checks", async (t) => {
+  const fixture = await createFixture();
+  t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
+
+  const first = publish(fixture.directory, fixture.baseSha);
+  assert.equal(first.status, 0, first.stderr);
+  const calls = await readFile(fixture.callLog, "utf8");
+
+  const status = publish(
+    fixture.directory,
+    fixture.baseSha,
+    false,
+    ["--status"],
+  );
+  assert.equal(status.status, 0, status.stderr);
+  assert.match(status.stdout, /QG_PUBLISH_PROOF_OK/);
+  assert.match(status.stdout, /^head=[0-9a-f]{40}$/m);
+  assert.match(status.stdout, /^base=[0-9a-f]{40}$/m);
+  assert.match(status.stdout, /^toolchain_sha=[0-9a-f]{64}$/m);
+  assert.equal(await readFile(fixture.callLog, "utf8"), calls);
+});
+
+test("publication status fails closed without a proof", async (t) => {
+  const fixture = await createFixture();
+  t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
+
+  const status = publish(
+    fixture.directory,
+    fixture.baseSha,
+    false,
+    ["--status"],
+  );
+  assert.equal(status.status, 1);
+  assert.match(status.stderr, /QG_PUBLISH_PROOF_MISSING/);
+});
+
+test("publication refuses the protected default branch", async (t) => {
+  const fixture = await createFixture();
+  t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
+
+  git(fixture.directory, "switch", "master");
+  const result = publish(fixture.directory, fixture.baseSha);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /QG_PUBLISH_PROTECTED_BRANCH/);
+});
+
+test("publication refuses a detached HEAD", async (t) => {
+  const fixture = await createFixture();
+  t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
+
+  git(fixture.directory, "switch", "--detach");
+  const result = publish(fixture.directory, fixture.baseSha);
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /QG_PUBLISH_DETACHED_HEAD/);
 });

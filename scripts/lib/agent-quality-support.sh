@@ -79,6 +79,59 @@ run_compact_report() {
     return "${rc}"
 }
 
+require_supported_js_toolchain() {
+    local error_prefix="${1:-QG_TOOLCHAIN}"
+    local node_version
+    local npm_version
+    local node_major
+    local node_minor
+    local npm_major
+    local npm_minor
+
+    command -v node >/dev/null 2>&1 || {
+        printf '❌ %s_NODE_MISSING: node is required; activate the repository toolchain with mise\n' \
+            "${error_prefix}" >&2
+        return 1
+    }
+    command -v npm >/dev/null 2>&1 || {
+        printf '❌ %s_NPM_MISSING: npm is required; activate the repository toolchain with mise\n' \
+            "${error_prefix}" >&2
+        return 1
+    }
+
+    if ! node_version="$(node -p 'process.versions.node' 2>/dev/null)" ||
+        [[ ! "${node_version}" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+) ]]; then
+        printf '❌ %s_NODE_VERSION: unable to read a valid Node version\n' \
+            "${error_prefix}" >&2
+        return 1
+    fi
+    node_major="${BASH_REMATCH[1]}"
+    node_minor="${BASH_REMATCH[2]}"
+
+    if ! npm_version="$(npm --version 2>/dev/null)" ||
+        [[ ! "${npm_version}" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+) ]]; then
+        printf '❌ %s_NPM_VERSION: unable to read a valid npm version\n' \
+            "${error_prefix}" >&2
+        return 1
+    fi
+    npm_major="${BASH_REMATCH[1]}"
+    npm_minor="${BASH_REMATCH[2]}"
+
+    if ((node_major < 24 || node_major >= 27 || (node_major == 24 && node_minor < 11))); then
+        printf '❌ %s_NODE_VERSION: Node %s is outside repository engines >=24.11.0 <27\n' \
+            "${error_prefix}" "${node_version}" >&2
+        return 1
+    fi
+    if ((npm_major < 11 || npm_major >= 12 || (npm_major == 11 && npm_minor < 17))); then
+        printf '❌ %s_NPM_VERSION: npm %s is outside repository engines >=11.17.0 <12\n' \
+            "${error_prefix}" "${npm_version}" >&2
+        return 1
+    fi
+
+    printf '✅ supported Node/npm toolchain: node=%s npm=%s\n' \
+        "${node_version}" "${npm_version}"
+}
+
 collect_changed_files() {
     {
         if [[ "${BASE_REF}" != "HEAD" ]] && git rev-parse --verify "${BASE_REF}^{commit}" >/dev/null 2>&1; then
