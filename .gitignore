@@ -103,3 +103,15 @@ playwright/.cache/
 
 .env*.local
 .env.sops.secrets
+
+# Private publication/redaction workspace: never commit raw family/legal sources
+.private-publication-source/
+.redaction-work/
+public/eml/
+public/ca/**/*.docx
+public/ca/**/*.eml
+public/ca/**/*.odg
+public/ca/**/*.xoj
+*.unredacted.pdf
+*.unredacted.html
+*.redaction-source.*

@@ -61,6 +61,7 @@
 
 ## P6 — Confidentialité finale hors homepage
 
+- [ ] Publier le corpus récupéré par petits lots via `config/publication-review.json` + `npm run privacy:publication` ; garder les originaux hors Git et interdire les formats sources éditables/bruts.
 - [ ] Auditer le corpus public restant hors homepage/index.
 - [ ] Normaliser les pseudonymes juridiques (`the child`, `Mr A`, `Ms B`) et caviarder les données protégées sans perdre le sens juridique, chronologique ou probatoire.
 - [ ] Étendre le privacy gate sans exposer les valeurs protégées dans logs/tests.

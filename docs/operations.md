@@ -35,7 +35,7 @@ bash scripts/agent-quality-gate.sh --fix
 QUALITY_FORCE_PUBLISH=1 bash scripts/agent-publish.sh
 ```
 
-`agent-p0-check.sh` inclut le preflight Git-only et 27 contrats offline de scope, baseline,
+`agent-p0-check.sh` inclut le preflight Git-only et 28 contrats offline de scope, baseline,
 toolchain, agents, CI/Preview, accessibilité et Vercel, avec les gardes Node `>=24.11 <27` / npm `>=11.17 <12`.
 Le strict gate lui applique aussi shfmt, shell lint et bashate.
 `agent-publish.sh` refuse `master`/detached HEAD et lie la preuve au HEAD, à la base,
@@ -148,5 +148,6 @@ politique de consentement/confidentialité.
 - `docs/roadmap.md` — travaux ouverts et acquis structurants ;
 - `.github/vercel-deployment-instructions.md` — contrat Vercel concis ;
 - `SECURITY.md` — supply-chain et sécurité ;
+- `docs/publication-redaction.md` — publication/caviardage du corpus familial et juridique ;
 - validation locale :
   `scripts/agent-p0-check.sh`, `scripts/agent-quality-gate.sh`, `scripts/agent-publish.sh`.

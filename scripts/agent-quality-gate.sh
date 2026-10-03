@@ -377,6 +377,7 @@ run_full_prebuild_checks() {
     npm run typecheck
     npm run test:unit
     npm run privacy:check
+    npm run privacy:publication
 }
 
 case "${build}" in
