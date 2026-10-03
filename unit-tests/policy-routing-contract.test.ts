@@ -53,6 +53,19 @@ test("all reviewed policy pages are owned by the native registry", async () => {
   }
 });
 
+test("security.txt points to the canonical localized privacy policy", async () => {
+  const security = await readFile(
+    new URL("../public/security.txt", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(
+    security,
+    /^Policy: https:\/\/www\.bababou\.com\/fr\/policy\/privacy_policy$/m,
+  );
+  assert.doesNotMatch(security, /\/policy\/privacy\.html/);
+});
+
 test("localized policies own native content instead of the legacy HTML bridge", async () => {
   const route = await readFile(
     new URL("../app/[locale]/policy/[policy]/page.tsx", import.meta.url),

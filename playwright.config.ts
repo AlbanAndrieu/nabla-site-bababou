@@ -15,6 +15,8 @@ const vercelTrustedOidcToken = process.env.VERCEL_TRUSTED_OIDC_TOKEN?.trim();
 const vercelAuthMode = process.env.VERCEL_AUTH_MODE?.trim();
 const protectedVercelPreview =
   process.env.VERCEL_PREVIEW_PROTECTED === "true";
+const reuseExistingServer =
+  process.env.PLAYWRIGHT_REUSE_SERVER !== "false";
 
 if (
   externalBaseUrl &&
@@ -101,7 +103,7 @@ export default defineConfig({
     : {
         command: `${process.env.CI ? "npm run start:test" : "npm run dev:test"} -- --port ${testPort}`,
         url: localTestUrl,
-        reuseExistingServer: !process.env.CI,
+        reuseExistingServer: !process.env.CI && reuseExistingServer,
         timeout: 120 * 1000,
       },
 });

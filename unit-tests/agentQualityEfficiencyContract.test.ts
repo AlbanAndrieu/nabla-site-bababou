@@ -58,10 +58,10 @@ test("agent and canonical gates emit compact machine-actionable failures", async
 test("maintenance local validation avoids typegen, privacy and production build", async () => {
   const gate = await read("../scripts/agent-quality-gate.sh");
 
-  assert.match(gate, /bash scripts\\/ci-scope\\.sh/);
+  assert.match(gate, /bash scripts\/ci-scope\.sh/);
   assert.match(gate, /maintenance lint, CSS and unit gate/);
   assert.match(gate, /run_maintenance_project_checks/);
-  assert.match(gate, /npm run lint\\n\\s+npm run lint:css\\n\\s+npm run test:unit/);
+  assert.match(gate, /npm run lint\n\s+npm run lint:css\n\s+npm run test:unit/);
   assert.match(gate, /full pre-build lint, types, unit and privacy gate/);
   assert.match(gate, /npx next typegen/);
   assert.match(gate, /npm run privacy:check/);

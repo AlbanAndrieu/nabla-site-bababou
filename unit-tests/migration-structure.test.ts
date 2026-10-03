@@ -188,9 +188,12 @@ test(
 
     assert.equal(packageJson.private, true);
     assert.equal(packageJson.main, undefined);
-    assert.equal(packageJson.scripts?.build, "next build");
+    assert.equal(packageJson.scripts?.build, "bash scripts/run-next-clean.sh build");
     assert.equal(packageJson.scripts?.start, "next start");
-    assert.equal(packageJson.scripts?.["dev:test"], "next dev --hostname 127.0.0.1");
+    assert.equal(
+      packageJson.scripts?.["dev:test"],
+      "bash scripts/run-next-clean.sh dev --hostname 127.0.0.1",
+    );
     assert.equal(packageJson.scripts?.["start:test"], "next start --hostname 127.0.0.1");
     assert.equal(
       packageJson.scripts?.["start-python"],

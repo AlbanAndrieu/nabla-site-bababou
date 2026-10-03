@@ -15,6 +15,7 @@ test("critical quality and Preview shell entrypoints remain executable", async (
     "scripts/verify-production-live.sh",
     "scripts/ci-performance-budget.sh",
     "scripts/publish-vercel-preview-checkpoint.sh",
+    "scripts/run-next-clean.sh",
   ] as const;
 
   for (const relativePath of executableScripts) {

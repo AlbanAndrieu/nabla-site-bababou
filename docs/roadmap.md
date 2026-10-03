@@ -20,7 +20,7 @@
 
 ## P0 — Qualité, CI/CD et opérations
 
-- [ ] Workstation : exécuter `agent-p0-check.sh`, `agent-quality-gate.sh --fix`, committer, lancer `QUALITY_FORCE_PUBLISH=1 bash scripts/agent-publish.sh`, puis auditer avec `bash scripts/agent-publish.sh --status`.
+- [ ] Workstation : exécuter `bash scripts/agent-p0-check.sh`, `bash scripts/agent-quality-gate.sh --fix`, committer, lancer `QUALITY_FORCE_PUBLISH=1 bash scripts/agent-publish.sh`, puis auditer avec `bash scripts/agent-publish.sh --status`.
 - [ ] Exécuter `opencode agent list` et confirmer `bababou` + `bababou-reviewer`.
 - [ ] Au retour des runners, valider un guard serveur metadata-only contre les directives CI-skip et observer un vrai `master` rouge pour confirmer le follow-up automatique, sans provoquer d'incident.
 - [ ] Prouver le chemin autonome événement Git → checkpoint `vercel-preview-*` → Preview Vercel exact-SHA.
@@ -35,9 +35,9 @@
 
 ## P2 — UI, accessibilité et responsive
 
-- [ ] Atteindre WCAG 2.2 AA pour texte/fond et contrôles non textuels/focus ; viser 7:1 sur les textes critiques lorsque pertinent.
+- [ ] Clore l'audit WCAG 2.2 AA : axe FR/EN, navigation clavier, contraste et reflow 200 % sont maintenant contractualisés sur les routes Next prioritaires ; fermer seulement après preuve browser locale/exact-SHA verte.
 - [ ] Migrer les consommateurs Next restants vers `Card`, `ActionLink`, `Button` et primitives partagées sans coupler le HTML legacy.
-- [ ] Valider 320/375/768/1024/1440+ et reflow 200 % avec Chromium, puis multi-browser avant fermeture du volet visual regression.
+- [ ] Étendre ensuite la matrice 320/375/768/1024/1440+ puis multi-browser avant fermeture du volet visual regression.
 
 ## P3 — Routing, i18n et pages publiques
 
