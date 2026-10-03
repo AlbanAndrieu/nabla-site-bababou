@@ -11,8 +11,8 @@ body.site-content-page.page-contact {
   --contact-dark: #343a40;
   --contact-light: #f8f9fa;
 
-  overflow-y: visible;
   overflow: visible;
+  overflow-y: visible;
   font-family:
     -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
     Arial, sans-serif;

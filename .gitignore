@@ -75,6 +75,7 @@ build/
 .cache/
 .pnpm/
 tsconfig.tsbuildinfo
+next-env.d.ts
 
 # Temporary files
 tmp/
@@ -103,3 +104,4 @@ playwright/.cache/
 
 .env*.local
 .env.sops.secrets
+.env*

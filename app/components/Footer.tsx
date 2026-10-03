@@ -68,6 +68,7 @@ export default function Footer({
           aria-label="RSS feed for this site"
         >
           <i className="fa fa-rss" aria-hidden="true"></i>
+          <span className="sr-only">RSS Feed</span>
         </a>
       </div>
       <div className="footer-links">

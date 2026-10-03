@@ -5,6 +5,7 @@ import Script from "next/script";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import Footer from "@/app/components/Footer";
+import type { LayoutProps } from "@/app/types";
 import RouteHeader from "@/components/RouteHeader";
 import { routing } from "@/i18n/routing";
 

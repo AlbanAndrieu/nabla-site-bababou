@@ -8,7 +8,7 @@ export default function TestPage() {
       <a href="#main-content" className="skip-to-main">
         Skip to main content
       </a>
-      <main id="main-content" role="main" className="mb-5">
+      <main id="main-content" className="mb-5">
         <section className="services-section" aria-labelledby="people-heading">
           <div className="container">
             <div className="row">

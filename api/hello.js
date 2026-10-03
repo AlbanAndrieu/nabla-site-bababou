@@ -1,5 +1,5 @@
 export default {
-  fetch(request: Request) {
+  fetch(request) {
     return new Response('Hello from Vercel!');
   },
 };
