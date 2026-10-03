@@ -45,9 +45,11 @@ BASE_URL=https://<preview-exact-sha> npm run test:a11y
 ```
 
 Le premier mode valide le serveur local ; le second réutilise la même suite contre une
-Preview exacte sans démarrer de serveur local. Le wrapper `run-next-clean.sh` attend
-explicitement la terminaison du processus Next avant de restaurer `next-env.d.ts`, y
-compris lors d'un arrêt `SIGTERM` initié par Playwright.
+Preview exacte sans démarrer de serveur local. En local, `npm run test:a11y` passe par
+`scripts/run-a11y-local.sh` : le harness refuse un `next-env.d.ts` déjà sale, nettoie
+`.next` et `test-results`, utilise le port isolé 3103, désactive la réutilisation d'un
+serveur Playwright existant puis restaure `next-env.d.ts` à la sortie. Le wrapper
+`run-next-clean.sh` reste la garde générique des commandes Next.
 
 ## 3. Preview et production
 

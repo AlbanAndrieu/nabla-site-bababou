@@ -28,3 +28,23 @@ test("Next wrapper restores generated next-env.d.ts after runtime commands", asy
   );
   assert.equal(pkg.scripts.build, "bash scripts/run-next-clean.sh build");
 });
+
+
+test("local accessibility harness isolates Next runtime artifacts", async () => {
+  const [script, pkgRaw, playwright] = await Promise.all([
+    source("scripts/run-a11y-local.sh"),
+    source("package.json"),
+    source("playwright.config.ts"),
+  ]);
+  const pkg = JSON.parse(pkgRaw) as { scripts: Record<string, string> };
+
+  assert.equal(pkg.scripts["test:a11y"], "bash scripts/run-a11y-local.sh");
+  assert.doesNotMatch(script, /^#!\/usr\/bin\/env bash/m);
+  assert.ok(script.includes('git diff --quiet -- "${NEXT_ENV}"'));
+  assert.ok(script.includes("rm -rf .next test-results"));
+  assert.ok(script.includes('PLAYWRIGHT_PORT="${PLAYWRIGHT_PORT:-3103}"'));
+  assert.ok(script.includes("PLAYWRIGHT_REUSE_SERVER=false"));
+  assert.ok(
+    playwright.includes('process.env.PLAYWRIGHT_REUSE_SERVER !== "false"'),
+  );
+});

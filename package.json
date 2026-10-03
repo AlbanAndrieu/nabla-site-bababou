@@ -40,7 +40,7 @@
     "test:headed": "playwright test --headed",
     "test:debug": "playwright test --debug",
     "test:report": "playwright show-report",
-    "test:a11y": "playwright test tests/accessibility-axe.spec.ts --project=chromium --reporter=line",
+    "test:a11y": "bash scripts/run-a11y-local.sh",
     "oco": "node scripts/run-opencommit.mjs",
     "opencommit": "node scripts/run-opencommit.mjs",
     "quality:gate": "bash scripts/quality-gate.sh",

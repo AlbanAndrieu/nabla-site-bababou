@@ -17,7 +17,7 @@ test("axe audit stays pinned, bounded and aligned with Bababou locale routing", 
   };
 
   assert.equal(pkg.devDependencies?.["@axe-core/playwright"], "4.13.0");
-  assert.equal(pkg.scripts?.["test:a11y"], "playwright test tests/accessibility-axe.spec.ts --project=chromium --reporter=line");
+  assert.equal(pkg.scripts?.["test:a11y"], "bash scripts/run-a11y-local.sh");
   assert.match(lock, /"node_modules\/@axe-core\/playwright"/);
   assert.match(lock, /"version": "4\.13\.0"/);
 
