@@ -34,6 +34,6 @@ test("publication gate requires explicit review and irreversible PDF verificatio
   assert.match(source, /pdf-embedded-file/);
   assert.equal(
     pkg.scripts?.["privacy:publication"],
-    "node --import tsx scripts/publication-privacy-gate.ts",
+    "node --experimental-strip-types scripts/publication-privacy-gate.ts",
   );
 });

@@ -28,7 +28,7 @@ test("private publication audit is local-only and does not echo protected values
   assert.doesNotMatch(script, /console\.log\([^\n]*finding\.file/);
   assert.equal(
     pkg.scripts?.["privacy:audit-private"],
-    "node --import tsx scripts/audit-private-publication.ts",
+    "node --experimental-strip-types scripts/audit-private-publication.ts",
   );
 });
 

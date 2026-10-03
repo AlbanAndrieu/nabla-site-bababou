@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "collections": [
+    {
+      "id": "demande-explications-autorites-competentes",
+      "title": "Demande d'explications écrites des autorités compétentes",
+      "sources": [
+        {
+          "path": "public/ca/demande-explications-autorites-competentes-fr.html",
+          "scope": "public-baseline",
+          "language": "fr",
+          "role": "published-baseline"
+        },
+        {
+          "path": ".private-publication-source/recovered-20261003/public/ca/Gmail - Demande d’explications écrites des autorités compétentes.pdf",
+          "scope": "private",
+          "language": "fr",
+          "role": "primary-source"
+        },
+        {
+          "path": ".private-publication-source/recovered-20261003/public/ca/demande-explications-autorites-competentes-en.html",
+          "scope": "private",
+          "language": "en",
+          "role": "translation-draft"
+        },
+        {
+          "path": ".private-publication-source/recovered-20261003/public/ca/gmail-absence-reponse-proposition-fr.html",
+          "scope": "private",
+          "language": "fr",
+          "role": "thread-extension"
+        },
+        {
+          "path": ".private-publication-source/recovered-20261003/public/ca/gmail-absence-reponse-proposition-en.html",
+          "scope": "private",
+          "language": "en",
+          "role": "translation-draft"
+        },
+        {
+          "path": ".private-publication-source/recovered-20261003/public/ca/gmail-clarifications-maintien-demande-fr.html",
+          "scope": "private",
+          "language": "fr",
+          "role": "thread-extension"
+        },
+        {
+          "path": ".private-publication-source/recovered-20261003/public/ca/gmail-clarifications-maintien-demande-en.html",
+          "scope": "private",
+          "language": "en",
+          "role": "translation-draft"
+        },
+        {
+          "path": ".private-publication-source/recovered-20261003/public/ca/gmail-deplacement-enfant-france-norvege-allemagne-fr.html",
+          "scope": "private",
+          "language": "fr",
+          "role": "historical-context"
+        },
+        {
+          "path": ".private-publication-source/recovered-20261003/public/ca/gmail-deplacement-enfant-france-norvege-allemagne-en.html",
+          "scope": "private",
+          "language": "en",
+          "role": "translation-draft"
+        },
+        {
+          "path": ".private-publication-source/recovered-20261003/public/ca/gmail-follow-up-hague-status-fr.html",
+          "scope": "private",
+          "language": "fr",
+          "role": "thread-extension"
+        },
+        {
+          "path": ".private-publication-source/recovered-20261003/public/ca/gmail-follow-up-hague-status-en.html",
+          "scope": "private",
+          "language": "en",
+          "role": "translation-draft"
+        },
+        {
+          "path": ".private-publication-source/recovered-20261003/public/ca/gmail-transmission-dossier-rappels-retour-fr.html",
+          "scope": "private",
+          "language": "fr",
+          "role": "thread-extension"
+        },
+        {
+          "path": ".private-publication-source/recovered-20261003/public/ca/gmail-transmission-dossier-rappels-retour-en.html",
+          "scope": "private",
+          "language": "en",
+          "role": "translation-draft"
+        }
+      ]
+    }
+  ]
+}

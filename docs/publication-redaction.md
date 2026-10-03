@@ -54,6 +54,40 @@ extractible est marqué pour revue visuelle/OCR manuelle ; les images et formats
 sont également marqués pour transformation manuelle. L'audit privé ne rend jamais un
 artefact publiable à lui seul.
 
+## Consolidation avant caviardage
+
+Pour le dossier « demande d'explications des autorités compétentes », les sources sont
+déclarées dans `config/private-consolidation.json`. Le manifeste référence seulement les
+noms de fichiers ; aucun contenu privé n'est versionné.
+
+Générer le bundle local :
+
+```bash
+npm run privacy:consolidate-private -- demande-explications-autorites-competentes
+```
+
+La commande fonctionne avec Node seul, sans `node_modules`. Elle extrait localement le texte
+du PDF et des HTML, découpe les contenus en paragraphes, calcule des empreintes SHA-256 et
+repère les paragraphes dupliqués. Elle produit sous
+`.redaction-work/consolidation/demande-explications-autorites-competentes/` :
+
+- `source-index.json` : provenance, langue, rôle, tailles et taux de doublons ;
+- `sources/*.txt` : extraction locale par source ;
+- `merged-draft.md` : draft consolidé local contenant les paragraphes uniques et leur provenance.
+
+Ces sorties peuvent contenir les données privées originales : elles restent ignorées par Git
+et ne doivent jamais être copiées directement dans `public/`.
+
+Auditer ensuite le draft consolidé :
+
+```bash
+npm run privacy:audit-private -- \
+  .redaction-work/consolidation/demande-explications-autorites-competentes/merged-draft.md
+```
+
+Le caviardage et la pseudonymisation se font sur une copie de ce draft. La version publique
+FR/EN n'est créée qu'après disparition des findings protégés et revue du sens juridique.
+
 ## HTML
 
 Avant publication :
