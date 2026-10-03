@@ -46,7 +46,11 @@ test("local accessibility harness isolates Next runtime artifacts", async () => 
   assert.match(script, /^# shellcheck shell=bash/m);
   assert.ok(script.includes('git diff --quiet -- "${NEXT_ENV}"'));
   assert.ok(script.includes("rm -rf .next test-results"));
-  assert.ok(script.includes('PLAYWRIGHT_PORT="${PLAYWRIGHT_PORT:-3103}"'));
+  assert.ok(script.includes('if [[ -n "${PLAYWRIGHT_PORT:-}" ]]'));
+  assert.ok(script.includes('node -e'));
+  assert.ok(script.includes('server.listen(0, "127.0.0.1"'));
+  assert.ok(script.includes("A11Y_HARNESS_INVALID_PORT"));
+  assert.doesNotMatch(script, /PLAYWRIGHT_PORT="\$\{PLAYWRIGHT_PORT:-3103\}"/);
   assert.ok(script.includes("PLAYWRIGHT_REUSE_SERVER=false"));
   assert.ok(
     playwright.includes('process.env.PLAYWRIGHT_REUSE_SERVER !== "false"'),

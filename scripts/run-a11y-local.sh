@@ -17,7 +17,35 @@ cp "${NEXT_ENV}" "${NEXT_ENV_SNAPSHOT}"
 rm -rf .next test-results
 
 export PLAYWRIGHT_A11Y=1
-export PLAYWRIGHT_PORT="${PLAYWRIGHT_PORT:-3103}"
+
+if [[ -n "${PLAYWRIGHT_PORT:-}" ]]; then
+    if [[ ! "${PLAYWRIGHT_PORT}" =~ ^[0-9]+$ ]] || ((PLAYWRIGHT_PORT < 1 || PLAYWRIGHT_PORT > 65535)); then
+        echo "❌ A11Y_HARNESS_INVALID_PORT: PLAYWRIGHT_PORT must be an integer between 1 and 65535." >&2
+        exit 2
+    fi
+else
+    PLAYWRIGHT_PORT="$(
+        node -e '
+const net = require("node:net");
+const server = net.createServer();
+server.unref();
+server.on("error", (error) => {
+  console.error(error.message);
+  process.exit(1);
+});
+server.listen(0, "127.0.0.1", () => {
+  const address = server.address();
+  if (!address || typeof address === "string") {
+    process.exit(1);
+  }
+  process.stdout.write(String(address.port));
+  server.close();
+});
+'
+    )"
+fi
+
+export PLAYWRIGHT_PORT
 export PLAYWRIGHT_REUSE_SERVER=false
 
 npx playwright test tests/accessibility-axe.spec.ts --project=chromium --reporter=line
