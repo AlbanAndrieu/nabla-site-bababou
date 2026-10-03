@@ -58,7 +58,10 @@ test("workflow-only changes no longer force an on-demand Vercel Preview", async 
 
   assert.match(workflow, /filename\.startsWith\('\.github\/'\)/);
   assert.doesNotMatch(workflow, /forceCheckpoint\.has\(filename\)/);
-  assert.match(workflow, /No deploy-relevant files: no Vercel checkpoint is published/);
+  assert.match(
+    workflow,
+    /only changes tests\/docs\/maintenance; no Vercel Preview needed/,
+  );
 });
 
 test("closed pull requests clean up their dedicated Preview branch", async () => {

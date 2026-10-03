@@ -19,7 +19,13 @@ Checkpoint P0 sans `node_modules` :
 
 ```bash
 bash scripts/agent-p0-check.sh
+# diagnostic complet uniquement si nécessaire
+bash scripts/agent-p0-check.sh --verbose
 ```
+
+Le mode par défaut compacte la sortie du preflight et des contrats Node. En cas d'échec,
+il affiche seulement les tests/assertions utiles avec un nombre de lignes borné par
+`P0_LOG_TAIL` ; `--verbose` conserve la sortie native pour l'investigation.
 
 Convergence puis preuve exacte :
 
@@ -29,7 +35,7 @@ bash scripts/agent-quality-gate.sh --fix
 QUALITY_FORCE_PUBLISH=1 bash scripts/agent-publish.sh
 ```
 
-`agent-p0-check.sh` inclut le preflight Git-only et 25 contrats offline de scope, baseline,
+`agent-p0-check.sh` inclut le preflight Git-only et 26 contrats offline de scope, baseline,
 toolchain, agents, CI/Preview, accessibilité et Vercel, avec les gardes Node `>=24.11 <27` / npm `>=11.17 <12`.
 Le strict gate lui applique aussi shfmt, shell lint et bashate.
 `agent-publish.sh` refuse `master`/detached HEAD et lie la preuve au HEAD, à la base,

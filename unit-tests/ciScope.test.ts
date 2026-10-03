@@ -134,7 +134,7 @@ test("production baseline and live smoke run before dependency installation", as
   assert.match(workflow, /statuses:\s*read/);
   assert.match(
     workflow,
-    /BASE_SHA: \\${{ steps\\.current-heads\\.outputs\\.production-sha }}/,
+    /BASE_SHA: \$\{\{ steps\.current-heads\.outputs\.production-sha \}\}/,
   );
   assert.doesNotMatch(workflow, /github\\.event\\.pull_request\\.base\\.sha/);
   assert.match(workflow, /bash scripts\/verify-production-baseline\\.sh/);
