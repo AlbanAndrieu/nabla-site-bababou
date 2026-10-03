@@ -29,7 +29,7 @@ bash scripts/agent-quality-gate.sh --fix
 QUALITY_FORCE_PUBLISH=1 bash scripts/agent-publish.sh
 ```
 
-`agent-p0-check.sh` inclut le preflight Git-only et 24 contrats offline de scope, baseline,
+`agent-p0-check.sh` inclut le preflight Git-only et 25 contrats offline de scope, baseline,
 toolchain, agents, CI/Preview, accessibilité et Vercel, avec les gardes Node `>=24.11 <27` / npm `>=11.17 <12`.
 Le strict gate lui applique aussi shfmt, shell lint et bashate.
 `agent-publish.sh` refuse `master`/detached HEAD et lie la preuve au HEAD, à la base,
@@ -45,7 +45,9 @@ BASE_URL=https://<preview-exact-sha> npm run test:a11y
 ```
 
 Le premier mode valide le serveur local ; le second réutilise la même suite contre une
-Preview exacte sans démarrer de serveur local.
+Preview exacte sans démarrer de serveur local. Le wrapper `run-next-clean.sh` attend
+explicitement la terminaison du processus Next avant de restaurer `next-env.d.ts`, y
+compris lors d'un arrêt `SIGTERM` initié par Playwright.
 
 ## 3. Preview et production
 

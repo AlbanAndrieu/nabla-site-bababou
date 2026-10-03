@@ -118,6 +118,7 @@ test("dependency-free P0 checkpoint stays canonical and maintenance-only", async
     "unit-tests/ciScope.test.ts",
     "unit-tests/maintenanceScopeParity.test.ts",
     "unit-tests/generatedNextEnvContract.test.ts",
+    "unit-tests/generatedNextEnvBehavior.test.ts",
     "unit-tests/textScaleContract.test.ts",
     "unit-tests/accessibilityKeyboardContract.test.ts",
     "unit-tests/accessibilityAxeContract.test.ts",
