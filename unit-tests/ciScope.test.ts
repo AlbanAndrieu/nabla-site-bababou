@@ -210,7 +210,10 @@ test("production baseline and live smoke run before dependency installation", as
   }
   assertMatches(live, /PROD_LIVE_CHECKPOINT/);
   assertMatches(live, /x-vercel-mitigated/);
-  assertMatches(live, /vercel\.com\/(login|sso-api)/);
+  assert.ok(
+    live.includes("vercel\\.com/(login|sso-api)"),
+    "production live check must detect Vercel login/SSO redirects",
+  );
   assertMatches(live, /--connect-timeout 5/);
   assertMatches(live, /--max-time 15/);
 });
