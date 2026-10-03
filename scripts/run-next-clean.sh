@@ -15,6 +15,8 @@ snapshot_next_env() {
     fi
 }
 
+# Invoked indirectly by the EXIT trap below.
+# shellcheck disable=SC2329
 restore_next_env() {
     if [[ -n "${NEXT_ENV_SNAPSHOT}" && -f "${NEXT_ENV_SNAPSHOT}" ]]; then
         cp "${NEXT_ENV_SNAPSHOT}" "${NEXT_ENV}"
@@ -23,6 +25,8 @@ restore_next_env() {
     fi
 }
 
+# Invoked indirectly by the INT/TERM traps below.
+# shellcheck disable=SC2329
 terminate_next() {
     local signal="$1"
     local exit_code="$2"

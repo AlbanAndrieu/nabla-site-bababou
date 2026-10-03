@@ -165,7 +165,7 @@ test("production baseline and live smoke run before dependency installation", as
   assertMatches(workflow, /bash scripts\/verify-production-live\.sh/);
 
   for (const context of ["Vercel", "Production Post-deploy Smoke", "Production DAST"]) {
-    assert.ok(baseline.includes('"' + context + '"'));
+    assert.ok(baseline.includes(`"${context}"`));
   }
   assertMatches(baseline, /vercel_state/);
   assertMatches(baseline, /production-only statuses are absent on metadata-only release/);
@@ -206,7 +206,7 @@ test("production baseline and live smoke run before dependency installation", as
   assertMatches(baselineClassification, /PROD_BASE_RELEASE_SCOPE/);
 
   for (const path of ["/", "/index.html", "/test", "/contact", "/policy"]) {
-    assert.ok(live.includes('probe "' + path + '"'));
+    assert.ok(live.includes(`probe "${path}"`));
   }
   assertMatches(live, /PROD_LIVE_CHECKPOINT/);
   assertMatches(live, /x-vercel-mitigated/);

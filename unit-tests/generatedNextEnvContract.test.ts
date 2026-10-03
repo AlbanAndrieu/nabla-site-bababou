@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 const source = (path: string) =>
-  readFile(new URL("../" + path, import.meta.url), "utf8");
+  readFile(new URL(`../${path}`, import.meta.url), "utf8");
 
 test("Next wrapper restores generated next-env.d.ts after runtime commands", async () => {
   const [script, pkgRaw] = await Promise.all([
@@ -16,7 +16,10 @@ test("Next wrapper restores generated next-env.d.ts after runtime commands", asy
   assert.match(script, /trap restore_next_env EXIT/);
   assert.match(script, /terminate_next INT 130/);
   assert.match(script, /terminate_next TERM 143/);
-  assert.ok(script.includes('cp "${NEXT_ENV}" "${NEXT_ENV_SNAPSHOT}"'));
+  assert.match(
+    script,
+    /cp "\$\{NEXT_ENV\}" "\$\{NEXT_ENV_SNAPSHOT\}"/,
+  );
   assert.match(script, /NEXT_PID=/);
   assert.match(script, /wait "\$\{NEXT_PID\}"/);
   assert.doesNotMatch(script, /git checkout -- next-env\.d\.ts/);
