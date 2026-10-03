@@ -6,6 +6,22 @@ async function read(relativePath: string) {
   return readFile(new URL(relativePath, import.meta.url), "utf8");
 }
 
+function assertMatches(
+  source: string,
+  pattern: RegExp,
+  label = pattern.toString(),
+): void {
+  assert.ok(pattern.test(source), `missing contract: ${label}`);
+}
+
+function assertNotMatches(
+  source: string,
+  pattern: RegExp,
+  label = pattern.toString(),
+): void {
+  assert.ok(!pattern.test(source), `unexpected contract: ${label}`);
+}
+
 test(
   "CI scope separates security, build and Preview with Bababou dependency scope",
   async () => {
@@ -16,22 +32,22 @@ test(
     ]);
 
     assert.notEqual(info.mode & 0o100, 0);
-    assert.match(source, /--diff-filter=ACMRD/);
-    assert.match(source, /is_source_file/);
-    assert.match(source, /is_maintenance_only_path/);
-    assert.match(source, /is_preview_safe_path/);
-    assert.match(source, /CHANGED_FILES\[@\].*== 0/);
-    assert.match(source, /maintenance_only=false/);
-    assert.match(source, /preview_required=true/);
-    assert.match(source, /dependencies=true/);
-    assert.match(source, /if ! is_maintenance_only_path/);
-    assert.match(source, /if ! is_preview_safe_path/);
-    assert.match(source, /application=true/);
-    assert.match(source, /build=true/);
-    assert.match(source, /sast=true/);
-    assert.match(source, /zap_bootstrap=true/);
-    assert.match(source, /BASE_REF="\$\{1:-\$\(resolve_base_ref\)\}"/);
-    assert.match(source, /HEAD_REF="\$\{2:-HEAD\}"/);
+    assertMatches(source, /--diff-filter=ACMRD/);
+    assertMatches(source, /is_source_file/);
+    assertMatches(source, /is_maintenance_only_path/);
+    assertMatches(source, /is_preview_safe_path/);
+    assertMatches(source, /CHANGED_FILES\[@\].*== 0/);
+    assertMatches(source, /maintenance_only=false/);
+    assertMatches(source, /preview_required=true/);
+    assertMatches(source, /dependencies=true/);
+    assertMatches(source, /if ! is_maintenance_only_path/);
+    assertMatches(source, /if ! is_preview_safe_path/);
+    assertMatches(source, /application=true/);
+    assertMatches(source, /build=true/);
+    assertMatches(source, /sast=true/);
+    assertMatches(source, /zap_bootstrap=true/);
+    assertMatches(source, /BASE_REF="\$\{1:-\$\(resolve_base_ref\)\}"/);
+    assertMatches(source, /HEAD_REF="\$\{2:-HEAD\}"/);
   },
 );
 
@@ -55,32 +71,32 @@ test("known quality orchestration files stay maintenance-only", async () => {
   const maintenanceStart = source.indexOf("is_maintenance_only_path() {");
   const previewStart = source.indexOf("is_preview_safe_path() {");
   assert.ok(maintenanceStart >= 0 && previewStart > maintenanceStart);
-  assert.doesNotMatch(source.slice(maintenanceStart, previewStart), /\.github\/\*/);
-  assert.match(source.slice(previewStart), /\.github\/\*/);
+  assertNotMatches(source.slice(maintenanceStart, previewStart), /\.github\/\*/);
+  assertMatches(source.slice(previewStart), /\.github\/\*/);
 });
 
 test("maintenance CI avoids Semgrep, Next build and dependency scanning", async () => {
   const workflow = await read("../.github/workflows/ci.yml");
 
-  assert.match(workflow, /- name: Classify CI change scope/);
-  assert.match(workflow, /id: ci-scope/);
-  assert.match(
+  assertMatches(workflow, /- name: Classify CI change scope/);
+  assertMatches(workflow, /id: ci-scope/);
+  assertMatches(
     workflow,
     /bash scripts\/ci-scope\.sh "\$\{BASE_SHA\}" "\$\{HEAD_SHA\}"/,
   );
-  assert.match(workflow, /steps\.ci-scope\.outputs\.sast == 'true'/);
-  assert.match(workflow, /steps\.ci-scope\.outputs\.build == 'true'/);
-  assert.match(workflow, /steps\.ci-scope\.outputs\.build != 'true'/);
-  assert.match(workflow, /steps\.ci-scope\.outputs\.dependencies == 'true'/);
-  assert.match(workflow, /steps\.ci-scope\.outputs\.application/);
-  assert.doesNotMatch(workflow, /outputs\.full_project/);
-  assert.match(workflow, /- name: Run maintenance project checks/);
-  assert.match(workflow, /npm run lint\n\s+npm run lint:css\n\s+npm run test:unit/);
-  assert.match(
+  assertMatches(workflow, /steps\.ci-scope\.outputs\.sast == 'true'/);
+  assertMatches(workflow, /steps\.ci-scope\.outputs\.build == 'true'/);
+  assertMatches(workflow, /steps\.ci-scope\.outputs\.build != 'true'/);
+  assertMatches(workflow, /steps\.ci-scope\.outputs\.dependencies == 'true'/);
+  assertMatches(workflow, /steps\.ci-scope\.outputs\.application/);
+  assertNotMatches(workflow, /outputs\.full_project/);
+  assertMatches(workflow, /- name: Run maintenance project checks/);
+  assertMatches(workflow, /npm run lint\n\s+npm run lint:css\n\s+npm run test:unit/);
+  assertMatches(
     workflow,
     /grep -E '[^\n]*\\\.github\/workflows\/.*\\\.ya\?ml/,
   );
-  assert.match(
+  assertMatches(
     workflow,
     /preview_required:\s*\$\{\{ steps\.ci-scope\.outputs\.preview_required \}\}/,
   );
@@ -93,9 +109,9 @@ test("draft Semgrep enforcement cannot fail a skipped scan", async () => {
   const block = workflow.slice(enforceStart, setupNode);
 
   assert.ok(enforceStart >= 0);
-  assert.match(block, /github\.event\.pull_request\.draft == false/);
-  assert.match(block, /steps\.ci-scope\.outputs\.sast == 'true'/);
-  assert.match(block, /steps\.semgrep-sast\.outcome != 'success'/);
+  assertMatches(block, /github\.event\.pull_request\.draft == false/);
+  assertMatches(block, /steps\.ci-scope\.outputs\.sast == 'true'/);
+  assertMatches(block, /steps\.semgrep-sast\.outcome != 'success'/);
 });
 
 test("production baseline and live smoke run before dependency installation", async () => {
@@ -131,72 +147,72 @@ test("production baseline and live smoke run before dependency installation", as
       liveGate > baselineGate &&
       setupNode > liveGate,
   );
-  assert.match(workflow, /statuses:\s*read/);
-  assert.match(
+  assertMatches(workflow, /statuses:\s*read/);
+  assertMatches(
     workflow,
     /BASE_SHA: \$\{\{ steps\.current-heads\.outputs\.production-sha \}\}/,
   );
-  assert.doesNotMatch(workflow, /github\\.event\\.pull_request\\.base\\.sha/);
-  assert.match(workflow, /bash scripts\/verify-production-baseline\\.sh/);
-  assert.match(
+  assertNotMatches(workflow, /github\.event\.pull_request\.base\.sha/);
+  assertMatches(workflow, /bash scripts\/verify-production-baseline\.sh/);
+  assertMatches(
     baseline,
-    /source "\$\{SCRIPT_DIR\}\/lib\/production-baseline-classification\\.sh"/,
+    /source "\$\{SCRIPT_DIR\}\/lib\/production-baseline-classification\.sh"/,
   );
-  assert.match(
+  assertMatches(
     workflow,
-    /VERCEL_AUTOMATION_BYPASS_SECRET: \$\{\{ secrets\\.VERCEL_AUTOMATION_BYPASS_SECRET \}\}/,
+    /VERCEL_AUTOMATION_BYPASS_SECRET: \$\{\{ secrets\.VERCEL_AUTOMATION_BYPASS_SECRET \}\}/,
   );
-  assert.match(workflow, /bash scripts\/verify-production-live\\.sh/);
+  assertMatches(workflow, /bash scripts\/verify-production-live\.sh/);
 
   for (const context of ["Vercel", "Production Post-deploy Smoke", "Production DAST"]) {
     assert.ok(baseline.includes('"' + context + '"'));
   }
-  assert.match(baseline, /vercel_state/);
-  assert.match(baseline, /production-only statuses are absent on metadata-only release/);
-  assert.match(baselineClassification, /chore\\\(release\\\):/);
-  assert.match(baselineClassification, /\[skip ci\]/);
-  assert.match(baselineClassification, /package\\.json changed beyond version metadata/);
-  assert.match(
+  assertMatches(baseline, /vercel_state/);
+  assertMatches(baseline, /production-only statuses are absent on metadata-only release/);
+  assertMatches(baselineClassification, /chore\(release\):/);
+  assertMatches(baselineClassification, /\[skip ci\]/);
+  assertMatches(baselineClassification, /package\.json changed beyond version metadata/);
+  assertMatches(
     baselineClassification,
-    /package-lock\\.json changed beyond root version metadata/,
+    /package-lock\.json changed beyond root version metadata/,
   );
-  assert.match(
+  assertMatches(
     baselineClassification,
     /parent .* has inconsistent package\/lock versions/,
   );
-  assert.match(
+  assertMatches(
     baselineClassification,
     /release .* has inconsistent package\/lock versions/,
   );
-  assert.match(
+  assertMatches(
     baselineClassification,
     /release subject does not match package version/,
   );
-  assert.match(baselineClassification, /PROD_BASE_RELEASE_VERSION/);
-  assert.match(baselineClassification, /PROD_BASE_RELEASE_GRAPH/);
-  assert.match(
+  assertMatches(baselineClassification, /PROD_BASE_RELEASE_VERSION/);
+  assertMatches(baselineClassification, /PROD_BASE_RELEASE_GRAPH/);
+  assertMatches(
     baselineClassification,
     /baseline inheritance requires a linear single-parent release commit/,
   );
-  assert.match(
+  assertMatches(
     baselineClassification,
     /production release hop must use stable numeric SemVer/,
   );
-  assert.match(
+  assertMatches(
     baselineClassification,
     /does not monotonically advance package version/,
   );
-  assert.match(baseline, /PROD_BASE_UNHEALTHY/);
-  assert.match(baselineClassification, /PROD_BASE_RELEASE_SCOPE/);
+  assertMatches(baseline, /PROD_BASE_UNHEALTHY/);
+  assertMatches(baselineClassification, /PROD_BASE_RELEASE_SCOPE/);
 
   for (const path of ["/", "/index.html", "/test", "/contact", "/policy"]) {
     assert.ok(live.includes('probe "' + path + '"'));
   }
-  assert.match(live, /PROD_LIVE_CHECKPOINT/);
-  assert.match(live, /x-vercel-mitigated/);
-  assert.match(live, /vercel\\\.com\/\(login\|sso-api\)/);
-  assert.match(live, /--connect-timeout 5/);
-  assert.match(live, /--max-time 15/);
+  assertMatches(live, /PROD_LIVE_CHECKPOINT/);
+  assertMatches(live, /x-vercel-mitigated/);
+  assertMatches(live, /vercel\.com\/(login|sso-api)/);
+  assertMatches(live, /--connect-timeout 5/);
+  assertMatches(live, /--max-time 15/);
 });
 
 test("CI performance budgets are warning-only and derived from observed headroom", async () => {
@@ -207,16 +223,16 @@ test("CI performance budgets are warning-only and derived from observed headroom
   ]);
 
   assert.notEqual(info.mode & 0o100, 0);
-  assert.match(workflow, /- name: Check CI performance warning budgets/);
-  assert.match(workflow, /bash scripts\/ci-performance-budget\.sh/);
-  assert.match(budget, /NPM_CI_WARN_SECONDS=.*30/);
-  assert.match(budget, /NODE_MODULES_WARN_MB=.*800/);
-  assert.match(budget, /FULL_CHECK_WARN_SECONDS=.*60/);
-  assert.match(budget, /NEXT_BUILD_WARN_SECONDS=.*30/);
-  assert.match(budget, /NEXT_OUTPUT_WARN_MB=.*80/);
-  assert.match(budget, /::warning::CI performance regression candidate/);
-  assert.match(budget, /quality result remains non-blocking/);
-  assert.doesNotMatch(budget, /exit 1/);
+  assertMatches(workflow, /- name: Check CI performance warning budgets/);
+  assertMatches(workflow, /bash scripts\/ci-performance-budget\.sh/);
+  assertMatches(budget, /NPM_CI_WARN_SECONDS=.*30/);
+  assertMatches(budget, /NODE_MODULES_WARN_MB=.*800/);
+  assertMatches(budget, /FULL_CHECK_WARN_SECONDS=.*60/);
+  assertMatches(budget, /NEXT_BUILD_WARN_SECONDS=.*30/);
+  assertMatches(budget, /NEXT_OUTPUT_WARN_MB=.*80/);
+  assertMatches(budget, /::warning::CI performance regression candidate/);
+  assertMatches(budget, /quality result remains non-blocking/);
+  assertNotMatches(budget, /exit 1/);
 });
 
 test("CI performance emits a toolchain-aware exact-checkout baseline record without artifacts", async () => {
@@ -225,21 +241,21 @@ test("CI performance emits a toolchain-aware exact-checkout baseline record with
     read("../scripts/ci-performance-budget.sh"),
   ]);
 
-  assert.match(budget, /CI_PERF_BASELINE schema=2 run=/);
-  assert.doesNotMatch(budget, /CI_PERF_BASELINE schema=1 run=/);
-  assert.match(budget, /GITHUB_RUN_ID/);
-  assert.match(budget, /GITHUB_RUN_NUMBER/);
-  assert.match(budget, /GITHUB_RUN_ATTEMPT/);
-  assert.match(budget, /GITHUB_HEAD_REF/);
-  assert.match(budget, /GITHUB_REF_NAME/);
-  assert.match(budget, /RUNNER_OS/);
-  assert.match(budget, /RUNNER_ARCH/);
-  assert.match(budget, /node --version/);
-  assert.match(budget, /npm --version/);
-  assert.match(budget, /git rev-parse HEAD/);
-  assert.doesNotMatch(budget, /sha=\$\(value_or_na "\$\{GITHUB_SHA/);
-  assert.match(budget, /GITHUB_EVENT_NAME/);
-  assert.match(budget, /scope=\$\{quality_scope\}/);
+  assertMatches(budget, /CI_PERF_BASELINE schema=2 run=/);
+  assertNotMatches(budget, /CI_PERF_BASELINE schema=1 run=/);
+  assertMatches(budget, /GITHUB_RUN_ID/);
+  assertMatches(budget, /GITHUB_RUN_NUMBER/);
+  assertMatches(budget, /GITHUB_RUN_ATTEMPT/);
+  assertMatches(budget, /GITHUB_HEAD_REF/);
+  assertMatches(budget, /GITHUB_REF_NAME/);
+  assertMatches(budget, /RUNNER_OS/);
+  assertMatches(budget, /RUNNER_ARCH/);
+  assertMatches(budget, /node --version/);
+  assertMatches(budget, /npm --version/);
+  assertMatches(budget, /git rev-parse HEAD/);
+  assertNotMatches(budget, /sha=\$\(value_or_na "\$\{GITHUB_SHA/);
+  assertMatches(budget, /GITHUB_EVENT_NAME/);
+  assertMatches(budget, /scope=\$\{quality_scope\}/);
   for (const field of ["run_number=", "ref=", "node=", "npm="]) {
     assert.ok(budget.includes(field));
   }
@@ -252,8 +268,8 @@ test("CI performance emits a toolchain-aware exact-checkout baseline record with
   ]) {
     assert.ok(budget.includes(metric));
   }
-  assert.match(budget, /Copy-ready baseline record/);
-  assert.doesNotMatch(workflow, /ci-performance.*upload-artifact/is);
+  assertMatches(budget, /Copy-ready baseline record/);
+  assertNotMatches(workflow, /ci-performance.*upload-artifact/is);
 });
 
 test("explicit npm cache owners disable setup-node automatic npm caching", async () => {
@@ -268,8 +284,8 @@ test("explicit npm cache owners disable setup-node automatic npm caching", async
     ["Copilot Setup", copilot],
     ["Playwright", playwright],
   ] as const) {
-    assert.match(workflow, /package-manager-cache:\s*false/, `${name} must disable setup-node npm cache`);
-    assert.match(workflow, /path:\s*~\/\.npm/, `${name} must retain explicit npm cache ownership`);
+    assertMatches(workflow, /package-manager-cache:\s*false/, `${name} must disable setup-node npm cache`);
+    assertMatches(workflow, /path:\s*~\/\.npm/, `${name} must retain explicit npm cache ownership`);
   }
 });
 
@@ -284,35 +300,35 @@ test("pre-commit keeps one authority per Ruff, CSS and shell formatting concern"
     scripts?: Record<string, string>;
   };
 
-  assert.match(preCommit, /^fail_fast: false/m);
-  assert.doesNotMatch(preCommit, /pre-commit-update/);
-  assert.match(preCommit, /repo: https:\/\/github\.com\/pre-commit\/pre-commit\.git[\s\S]*?rev: v4\.6\.2/);
-  assert.match(preCommit, /id: ruff-format/);
-  assert.match(preCommit, /id: ruff-check/);
-  assert.match(preCommit, /args: \[--fix, --unsafe-fixes\]/);
-  assert.doesNotMatch(preCommit, /id: ruff\n/);
-  assert.doesNotMatch(preCommit, /pre-commit-stylelint|id: stylelint|stylelint@/);
-  assert.match(preCommit, /id: shfmt-docker[\s\S]*?args: \["-i", "4", "-ci"\]/);
-  assert.match(preCommit, /id: bashate[\s\S]*?args: \[-i, "E002,E003,E006"\]/);
+  assertMatches(preCommit, /^fail_fast: false/m);
+  assertNotMatches(preCommit, /pre-commit-update/);
+  assertMatches(preCommit, /repo: https:\/\/github\.com\/pre-commit\/pre-commit\.git[\s\S]*?rev: v4\.6\.2/);
+  assertMatches(preCommit, /id: ruff-format/);
+  assertMatches(preCommit, /id: ruff-check/);
+  assertMatches(preCommit, /args: \[--fix, --unsafe-fixes\]/);
+  assertNotMatches(preCommit, /id: ruff\n/);
+  assertNotMatches(preCommit, /pre-commit-stylelint|id: stylelint|stylelint@/);
+  assertMatches(preCommit, /id: shfmt-docker[\s\S]*?args: \["-i", "4", "-ci"\]/);
+  assertMatches(preCommit, /id: bashate[\s\S]*?args: \[-i, "E002,E003,E006"\]/);
   assert.equal(pkg.devDependencies?.stylelint, "^17.14.1");
-  assert.match(pkg.scripts?.["lint:css"] ?? "", /^stylelint /);
-  assert.doesNotMatch(mise, /--hook-type commit-msg/);
-  assert.match(mise, /\[tasks\.hooks-update\]/);
-  assert.match(mise, /pre-commit autoupdate/);
+  assertMatches(pkg.scripts?.["lint:css"] ?? "", /^stylelint /);
+  assertNotMatches(mise, /--hook-type commit-msg/);
+  assertMatches(mise, /\[tasks\.hooks-update\]/);
+  assertMatches(mise, /pre-commit autoupdate/);
 });
 
 test("Copilot setup stays available but does not spend installs on draft synchronization", async () => {
   const setup = await read("../.github/workflows/copilot-setup-steps.yml");
 
-  assert.match(setup, /workflow_dispatch:/);
-  assert.match(setup, /types: \[opened, synchronize, reopened, ready_for_review\]/);
-  assert.match(setup, /group: copilot-setup-\$\{\{ github\.event\.pull_request\.number \|\| github\.ref \}\}/);
-  assert.match(setup, /cancel-in-progress: true/);
-  assert.match(
+  assertMatches(setup, /workflow_dispatch:/);
+  assertMatches(setup, /types: \[opened, synchronize, reopened, ready_for_review\]/);
+  assertMatches(setup, /group: copilot-setup-\$\{\{ github\.event\.pull_request\.number \|\| github\.ref \}\}/);
+  assertMatches(setup, /cancel-in-progress: true/);
+  assertMatches(
     setup,
     /if: github\.event_name != 'pull_request' \|\| github\.event\.pull_request\.draft == false/,
   );
-  assert.match(setup, /timeout-minutes: 15/);
+  assertMatches(setup, /timeout-minutes: 15/);
 });
 
 test("retired asset metadata stays maintenance-only and absent", async () => {
@@ -322,7 +338,7 @@ test("retired asset metadata stays maintenance-only and absent", async () => {
   ]);
 
   assert.equal((workflow.match(/- "\.assetsignore"/g) ?? []).length, 2);
-  assert.match(scope, /\.assetsignore/);
+  assertMatches(scope, /\.assetsignore/);
   await assert.rejects(stat(new URL("../.assetsignore", import.meta.url)), /ENOENT/);
 });
 
@@ -351,7 +367,7 @@ test("quality-only files do not trigger an application Preview checkpoint", asyn
     assert.ok(scope.includes(path), `${path} missing from canonical CI scope`);
   }
 
-  assert.match(workflow, /needs\.quality\.outputs\.preview_required == 'true'/);
-  assert.doesNotMatch(workflow, /const safeOnly/);
-  assert.doesNotMatch(workflow, /deployRelevant/);
+  assertMatches(workflow, /needs\.quality\.outputs\.preview_required == 'true'/);
+  assertNotMatches(workflow, /const safeOnly/);
+  assertNotMatches(workflow, /deployRelevant/);
 });

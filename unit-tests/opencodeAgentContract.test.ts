@@ -116,6 +116,7 @@ test("dependency-free P0 checkpoint stays canonical and maintenance-only", async
   for (const testFile of [
     "unit-tests/ciScopeBehavior.test.ts",
     "unit-tests/ciScope.test.ts",
+    "unit-tests/ciScopeCompactDiagnosticsContract.test.ts",
     "unit-tests/maintenanceScopeParity.test.ts",
     "unit-tests/generatedNextEnvContract.test.ts",
     "unit-tests/generatedNextEnvBehavior.test.ts",
