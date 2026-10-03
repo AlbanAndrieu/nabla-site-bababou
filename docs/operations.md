@@ -29,13 +29,23 @@ bash scripts/agent-quality-gate.sh --fix
 QUALITY_FORCE_PUBLISH=1 bash scripts/agent-publish.sh
 ```
 
-`agent-p0-check.sh` inclut le preflight Git-only et 20 contrats offline de scope, baseline,
-toolchain, agents, CI/Preview et Vercel, avec les gardes Node `>=24.11 <27` / npm `>=11.17 <12`.
+`agent-p0-check.sh` inclut le preflight Git-only et 24 contrats offline de scope, baseline,
+toolchain, agents, CI/Preview, accessibilité et Vercel, avec les gardes Node `>=24.11 <27` / npm `>=11.17 <12`.
 Le strict gate lui applique aussi shfmt, shell lint et bashate.
 `agent-publish.sh` refuse `master`/detached HEAD et lie la preuve au HEAD, à la base,
 au toolchain et au lockfile installés. `bash scripts/agent-publish.sh --status` audite la
 preuve sans relancer le gate.
 Ne jamais revendiquer un build, browser check ou scan non exécuté.
+
+Audit accessibilité ciblé, borné à Chromium :
+
+```bash
+npm run test:a11y
+BASE_URL=https://<preview-exact-sha> npm run test:a11y
+```
+
+Le premier mode valide le serveur local ; le second réutilise la même suite contre une
+Preview exacte sans démarrer de serveur local.
 
 ## 3. Preview et production
 

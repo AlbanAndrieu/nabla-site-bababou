@@ -35,9 +35,9 @@
 
 ## P2 — UI, accessibilité et responsive
 
-- [ ] Atteindre WCAG 2.2 AA pour texte/fond et contrôles non textuels/focus ; viser 7:1 sur les textes critiques lorsque pertinent.
+- [ ] Clore l'audit WCAG 2.2 AA : axe FR/EN, navigation clavier, contraste et reflow 200 % sont maintenant contractualisés sur les routes Next prioritaires ; fermer seulement après preuve browser locale/exact-SHA verte.
 - [ ] Migrer les consommateurs Next restants vers `Card`, `ActionLink`, `Button` et primitives partagées sans coupler le HTML legacy.
-- [ ] Valider 320/375/768/1024/1440+ et reflow 200 % avec Chromium, puis multi-browser avant fermeture du volet visual regression.
+- [ ] Étendre ensuite la matrice 320/375/768/1024/1440+ puis multi-browser avant fermeture du volet visual regression.
 
 ## P3 — Routing, i18n et pages publiques
 

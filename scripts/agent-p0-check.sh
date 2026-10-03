@@ -14,6 +14,10 @@ node --experimental-strip-types --test \
     unit-tests/ciScopeBehavior.test.ts \
     unit-tests/ciScope.test.ts \
     unit-tests/maintenanceScopeParity.test.ts \
+    unit-tests/generatedNextEnvContract.test.ts \
+    unit-tests/textScaleContract.test.ts \
+    unit-tests/accessibilityKeyboardContract.test.ts \
+    unit-tests/accessibilityAxeContract.test.ts \
     unit-tests/localFirstPost202Parity.test.ts \
     unit-tests/productionBaselineClassification.test.ts \
     unit-tests/executableScriptsContract.test.ts \
