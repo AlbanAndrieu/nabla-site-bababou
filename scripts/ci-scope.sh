@@ -30,8 +30,7 @@ if ! git rev-parse --verify "${BASE_REF}^{commit}" >/dev/null 2>&1; then
     printf '❌ CI_SCOPE_BASE_MISSING: %s\n' "${BASE_REF}" >&2
     exit 1
 fi
-if [[ "${HEAD_REF}" != "WORKTREE" ]] &&
-    ! git rev-parse --verify "${HEAD_REF}^{commit}" >/dev/null 2>&1; then
+if [[ "${HEAD_REF}" != "WORKTREE" ]] && ! git rev-parse --verify "${HEAD_REF}^{commit}" >/dev/null 2>&1; then
     printf '❌ CI_SCOPE_HEAD_MISSING: %s\n' "${HEAD_REF}" >&2
     exit 1
 fi
@@ -51,7 +50,6 @@ is_maintenance_only_path() {
     case "$1" in
         docs/* | unit-tests/* | tests/* | *.md | \
             .pre-commit-config.yaml | .pre-commit-pre-push.yaml | .python-version | \
-            .opencode/agents/*.md | .opencode/commands/*.md | \
             mise.toml | opencode.json | renovate.json | eslint.config.js | stylelint.config.cjs | commitlint.config.* | playwright.config.* | \
             scripts/agent-quality-gate.sh | scripts/agent-p0-check.sh | scripts/agent-publish.sh | scripts/lib/agent-quality-support.sh | \
             scripts/quality-gate.sh | scripts/check_code_size.py | scripts/ci-scope.sh | \
@@ -71,7 +69,6 @@ is_preview_safe_path() {
         docs/* | unit-tests/* | tests/* | *.md | \
             .github/* | .zap/* | .vscode/* | .idea/* | .agents/* | .cursor/* | .claude/* | \
             .assetsignore | .pre-commit-config.yaml | .pre-commit-pre-push.yaml | .python-version | \
-            .opencode/agents/*.md | .opencode/commands/*.md | \
             mise.toml | opencode.json | renovate.json | eslint.config.js | stylelint.config.cjs | commitlint.config.* | playwright.config.* | \
             scripts/agent-quality-gate.sh | scripts/agent-p0-check.sh | scripts/agent-publish.sh | scripts/lib/agent-quality-support.sh | \
             scripts/lib/production-baseline-classification.sh | \

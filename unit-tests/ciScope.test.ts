@@ -73,6 +73,8 @@ test("known quality orchestration files stay maintenance-only", async () => {
   assert.ok(maintenanceStart >= 0 && previewStart > maintenanceStart);
   assertNotMatches(source.slice(maintenanceStart, previewStart), /\.github\/\*/);
   assertMatches(source.slice(previewStart), /\.github\/\*/);
+  assertNotMatches(source, /\.opencode\/agents\/\*\.md/);
+  assertNotMatches(source, /\.opencode\/commands\/\*\.md/);
 });
 
 test("maintenance CI avoids Semgrep, Next build and dependency scanning", async () => {
