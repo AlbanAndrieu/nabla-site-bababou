@@ -29,6 +29,31 @@ public/eml/
 Conserver également l'archive de récupération hors du dépôt. Ne jamais déplacer l'archive
 dans un chemin suivi par Git.
 
+## Audit privé avant publication
+
+Auditer les originaux directement dans le workspace ignoré par Git :
+
+```bash
+npm run privacy:audit-private -- \
+  .private-publication-source/recovered-20261003/public
+```
+
+La console n'affiche ni valeur détectée ni chemin d'origine. Le détail actionnable est écrit
+uniquement dans `.redaction-work/private-audit.json`, lui-même ignoré par Git. Ce rapport
+local contient les chemins, lignes et catégories nécessaires au caviardage.
+
+Pour un premier lot HTML ciblé :
+
+```bash
+npm run privacy:audit-private -- \
+  .private-publication-source/recovered-20261003/public/ca/gmail-clarifications-maintien-demande-fr.html
+```
+
+Les PDF sont inspectés avec `pdftotext`, `pdfinfo` et `pdfdetach`. Un PDF sans texte
+extractible est marqué pour revue visuelle/OCR manuelle ; les images et formats source bruts
+sont également marqués pour transformation manuelle. L'audit privé ne rend jamais un
+artefact publiable à lui seul.
+
 ## HTML
 
 Avant publication :

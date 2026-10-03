@@ -63,6 +63,7 @@ P0_TESTS=(
     "unit-tests/localFirstPost202Parity.test.ts"
     "unit-tests/productionBaselineClassification.test.ts"
     "unit-tests/publicationPrivacyGateContract.test.ts"
+    "unit-tests/privatePublicationAuditContract.test.ts"
     "unit-tests/executableScriptsContract.test.ts"
     "unit-tests/agentPreflightBehavior.test.ts"
     "unit-tests/agentPublishBehavior.test.ts"

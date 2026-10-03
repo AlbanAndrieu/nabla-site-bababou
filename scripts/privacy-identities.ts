@@ -15,6 +15,19 @@ export const PROTECTED_CHILD_IDENTITY_FINGERPRINTS: IdentityFingerprintSet = new
   "511898c9bcb07aa2d0eeeefdaea80dc272ee3783592442ffb74f94babeabb6bd",
 ]);
 
+export const PROTECTED_FATHER_IDENTITY_FINGERPRINTS: IdentityFingerprintSet = new Set([
+  "b89581cf975bb7dba41e1a5b52aa86c893ad858233d963325147121cd5cd171f",
+  "6f9edcd3408cbda14a837e6a44fc5b7f64ccc9a2477c1498fcb13c777ffb9605",
+  "fcddb3ba91ab8b4ff38a08424f343f7f465e93ac1e61926e2cf283b9d493ce09",
+  "243a37513857e218b26d78d60a5da917658f11a055655407566a34db48548aa1",
+]);
+
+export const PROTECTED_MOTHER_IDENTITY_FINGERPRINTS: IdentityFingerprintSet = new Set([
+  "219c7cdbedac43d32726742c274c52d064fc9f4cf963b68b0f2fa8384051169a",
+  "befd812b4e37a441cacaa4d020568564278728d7361024b194c11c08af7ada2c",
+  "6fef2d9315ca9bc36eda4039f9f2f2d02653816c55cd59de5b18bdf00282b209",
+]);
+
 export function normalizeIdentity(value: string): string {
   return value
     .normalize("NFKD")
