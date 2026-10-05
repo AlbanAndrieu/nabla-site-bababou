@@ -18,10 +18,7 @@ test("publication gate fails closed on raw family/legal source formats", () => {
   for (const extension of [".docx", ".eml", ".odg", ".xoj"]) {
     assert.ok(source.includes(`"${extension}"`));
   }
-  assert.match(
-    source,
-    /image-requires-explicit-reviewed-publication-copy/,
-  );
+  assert.match(source, /image-requires-explicit-reviewed-publication-copy/);
   assert.match(source, /disposition: "BLOCK"/);
   assert.match(source, /disposition: "REVIEW"/);
   assert.match(source, /disposition: "REWRITE"/);

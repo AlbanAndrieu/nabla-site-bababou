@@ -37,7 +37,11 @@ test("shared runtime and test toolchain versions remain internally aligned", asy
     if (version === undefined) {
       assert.equal(pkg.devDependencies[name], undefined);
     } else {
-      assert.equal(pkg.devDependencies[name], version, `unexpected ${name} version`);
+      assert.equal(
+        pkg.devDependencies[name],
+        version,
+        `unexpected ${name} version`,
+      );
     }
   }
 
