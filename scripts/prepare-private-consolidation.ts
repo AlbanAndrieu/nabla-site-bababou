@@ -1,5 +1,5 @@
-import { createHash } from "node:crypto";
 import { spawnSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
@@ -56,9 +56,7 @@ function decodeHtmlEntities(value: string) {
     .replace(/&gt;/gi, ">")
     .replace(/&quot;/gi, '"')
     .replace(/&#39;|&apos;/gi, "'")
-    .replace(/&#(\d+);/g, (_match, code) =>
-      String.fromCodePoint(Number(code)),
-    )
+    .replace(/&#(\d+);/g, (_match, code) => String.fromCodePoint(Number(code)))
     .replace(/&#x([0-9a-f]+);/gi, (_match, code) =>
       String.fromCodePoint(Number.parseInt(code, 16)),
     );
@@ -107,7 +105,10 @@ function toolOutput(command: string, args: string[], sourceId: string) {
     encoding: "utf8",
     maxBuffer: 32 * 1024 * 1024,
   });
-  if (result.error && (result.error as NodeJS.ErrnoException).code === "ENOENT") {
+  if (
+    result.error &&
+    (result.error as NodeJS.ErrnoException).code === "ENOENT"
+  ) {
     throw new Error(`required consolidation tool is missing: ${command}`);
   }
   if (result.status !== 0) {
@@ -118,10 +119,17 @@ function toolOutput(command: string, args: string[], sourceId: string) {
 
 async function extractSource(source: ConsolidationSource) {
   if (source.scope === "private" && !privatePathIsAllowed(source.path)) {
-    throw new Error("private consolidation sources must stay under .private-publication-source/");
+    throw new Error(
+      "private consolidation sources must stay under .private-publication-source/",
+    );
   }
-  if (source.scope === "public-baseline" && source.path.startsWith(PRIVATE_ROOT)) {
-    throw new Error("public baseline cannot point to the private source workspace");
+  if (
+    source.scope === "public-baseline" &&
+    source.path.startsWith(PRIVATE_ROOT)
+  ) {
+    throw new Error(
+      "public baseline cannot point to the private source workspace",
+    );
   }
 
   const absolute = path.join(ROOT, source.path);
@@ -264,9 +272,7 @@ export async function preparePrivateConsolidation(collectionId: string) {
   console.log(
     `Private consolidation complete: ${extracted.length} source(s), ${paragraphCount} paragraph occurrence(s), ${duplicateOccurrences} duplicate occurrence(s).`,
   );
-  console.log(
-    `Private output written under ${OUTPUT_ROOT}${collection.id}/.`,
-  );
+  console.log(`Private output written under ${OUTPUT_ROOT}${collection.id}/.`);
 }
 
 async function main() {

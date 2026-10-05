@@ -1,15 +1,14 @@
-import { createHash } from "node:crypto";
 import { spawnSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { mkdir, readdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
-
+import { parsePrivacyPolicy, scanText } from "./privacy-gate.ts";
 import {
   findIdentitySpans,
   PROTECTED_FATHER_IDENTITY_FINGERPRINTS,
   PROTECTED_MOTHER_IDENTITY_FINGERPRINTS,
 } from "./privacy-identities.ts";
-import { parsePrivacyPolicy, scanText } from "./privacy-gate.ts";
 
 type AuditDisposition = "BLOCK" | "REWRITE" | "REVIEW";
 
@@ -84,7 +83,10 @@ function toolOutput(command: string, args: string[], id: string) {
     encoding: "utf8",
     maxBuffer: 32 * 1024 * 1024,
   });
-  if (result.error && (result.error as NodeJS.ErrnoException).code === "ENOENT") {
+  if (
+    result.error &&
+    (result.error as NodeJS.ErrnoException).code === "ENOENT"
+  ) {
     throw new Error(`required private-audit tool is missing: ${command}`);
   }
   if (result.status !== 0) {
@@ -244,9 +246,7 @@ export async function runPrivatePublicationAudit(
   const files = [
     ...new Set(
       (
-        await Promise.all(
-          normalizedInputs.map((input) => collectFiles(input)),
-        )
+        await Promise.all(normalizedInputs.map((input) => collectFiles(input)))
       ).flat(),
     ),
   ].sort();
@@ -291,9 +291,7 @@ export async function runPrivatePublicationAudit(
     `Private publication audit complete: ${artifacts.length} artifact(s), ${findingCount} finding(s).`,
   );
   for (const disposition of ["BLOCK", "REWRITE", "REVIEW"] as const) {
-    console.log(
-      `- ${disposition}: ${dispositionCounts.get(disposition) ?? 0}`,
-    );
+    console.log(`- ${disposition}: ${dispositionCounts.get(disposition) ?? 0}`);
   }
   for (const [category, count] of [...categoryCounts.entries()].sort()) {
     console.log(`- ${category}: ${count}`);

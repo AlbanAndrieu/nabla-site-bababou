@@ -4,8 +4,8 @@ import { pathToFileURL } from "node:url";
 
 import {
   findIdentitySpans,
-  PROTECTED_CHILD_IDENTITY_FINGERPRINTS,
   type IdentityFingerprintSet,
+  PROTECTED_CHILD_IDENTITY_FINGERPRINTS,
 } from "./privacy-identities.ts";
 
 export type PrivacyCategory =
@@ -47,8 +47,10 @@ const ROOT = process.cwd();
 const POLICY_PATH = ".cursor/mem/privacy-address-phone.md";
 const ADDRESS_PHONE_EXCEPTION = "public/assets/nabla/signature/";
 const APPROVED_PUBLIC_IDENTIFIER = "14CV32249";
-const APPROVED_PUBLIC_DOCUMENT_ASSET = "public/assets/passport-fr-bababou-4.png";
-const APPROVED_PUBLIC_DOCUMENT_ASSET_REFERENCE = "assets/passport-fr-bababou-4.png";
+const APPROVED_PUBLIC_DOCUMENT_ASSET =
+  "public/assets/passport-fr-bababou-4.png";
+const APPROVED_PUBLIC_DOCUMENT_ASSET_REFERENCE =
+  "assets/passport-fr-bababou-4.png";
 const APPROVED_INDEX_CHILD_DISPLAY_NAME = "Éléonore (Bababou)";
 const APPROVED_INDEX_CHILD_RECOGNITION_LITERAL =
   "<strong>Your real name is Éléonore</strong> (some people call you by other names, but Éléonore";
@@ -201,12 +203,7 @@ function isApprovedIndexChildIdentityMatch(
   if (file.replaceAll("\\", "/") !== "public/index.html") return false;
 
   return (
-    isMatchWithinLiteral(
-      text,
-      start,
-      end,
-      APPROVED_INDEX_CHILD_DISPLAY_NAME,
-    ) ||
+    isMatchWithinLiteral(text, start, end, APPROVED_INDEX_CHILD_DISPLAY_NAME) ||
     isMatchWithinLiteral(
       text,
       start,
@@ -320,8 +317,7 @@ export function scanText(
   text: string,
   file: string,
   policy: PrivacyPolicy,
-  childIdentityFingerprints: IdentityFingerprintSet =
-    PROTECTED_CHILD_IDENTITY_FINGERPRINTS,
+  childIdentityFingerprints: IdentityFingerprintSet = PROTECTED_CHILD_IDENTITY_FINGERPRINTS,
 ): PrivacyFinding[] {
   const findings: PrivacyFinding[] = [];
   const normalizedFile = file.replaceAll("\\", "/");
