@@ -1,8 +1,11 @@
 ---
 name: protect-family-privacy
-description: Canonical Bababou publication policy for family, legal, contact, identity, image, metadata, and generated content. Apply contextual pseudonymization and irreversible redaction while preserving owner-controlled homepage exceptions and information genuinely necessary to understand the case.
+description: >-
+  Canonical Bababou publication policy for family, legal, contact, identity,
+  image, metadata, and generated content. Apply contextual pseudonymization and
+  irreversible redaction while preserving owner-controlled homepage exceptions
+  and information genuinely necessary to understand the case.
 ---
-
 # Protect Family Privacy
 
 Apply **contextual pseudonymization and irreversible redaction**, not blanket deletion. Preserve the site's legitimate recognition, contact, documentary, and legal purpose while protecting family identities and sensitive values outside explicitly controlled exceptions.
