@@ -1,17 +1,16 @@
 import { execFileSync, spawnSync } from "node:child_process";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-
+import {
+  type PrivacyDisposition,
+  parsePrivacyPolicy,
+  scanText,
+} from "./privacy-gate.ts";
 import {
   findIdentitySpans,
   PROTECTED_FATHER_IDENTITY_FINGERPRINTS,
   PROTECTED_MOTHER_IDENTITY_FINGERPRINTS,
 } from "./privacy-identities.ts";
-import {
-  parsePrivacyPolicy,
-  scanText,
-  type PrivacyDisposition,
-} from "./privacy-gate.ts";
 
 type ReviewEntry = {
   path: string;
@@ -125,7 +124,10 @@ function toolOutput(command: string, args: string[], file: string) {
     encoding: "utf8",
     maxBuffer: 16 * 1024 * 1024,
   });
-  if (result.error && (result.error as NodeJS.ErrnoException).code === "ENOENT") {
+  if (
+    result.error &&
+    (result.error as NodeJS.ErrnoException).code === "ENOENT"
+  ) {
     throw new Error(`required verification tool is missing: ${command}`);
   }
   if (result.status !== 0) {
@@ -200,7 +202,11 @@ function scanPdfArtifact(
 ): PublicationFinding[] {
   const findings: PublicationFinding[] = [];
   const absolute = path.join(ROOT, file);
-  const extractedText = toolOutput("pdftotext", ["-layout", absolute, "-"], file);
+  const extractedText = toolOutput(
+    "pdftotext",
+    ["-layout", absolute, "-"],
+    file,
+  );
   const metadata = toolOutput("pdfinfo", [absolute], file);
   const attachments = toolOutput("pdfdetach", ["-list", absolute], file);
 
@@ -304,8 +310,7 @@ async function main() {
   ];
 
   const unresolved = deduped.filter(
-    (finding) =>
-      !reviewFindingApproved(finding, manifest.get(finding.file)),
+    (finding) => !reviewFindingApproved(finding, manifest.get(finding.file)),
   );
 
   if (!unresolved.length) {

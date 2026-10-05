@@ -1,10 +1,17 @@
 import assert from "node:assert/strict";
 import { execFileSync, spawnSync } from "node:child_process";
-import { chmod, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import {
+  chmod,
+  mkdir,
+  mkdtemp,
+  readFile,
+  rm,
+  writeFile,
+} from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { fileURLToPath } from "node:url";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 
 const gatePath = fileURLToPath(
   new URL("../scripts/agent-quality-gate.sh", import.meta.url),
@@ -59,25 +66,19 @@ async function createFixture() {
 }
 
 function preflight(directory: string, baseSha: string) {
-  return spawnSync(
-    "bash",
-    ["scripts/agent-quality-gate.sh", "--preflight"],
-    {
-      cwd: directory,
-      encoding: "utf8",
-      env: {
-        ...process.env,
-        QUALITY_BASE_REF: baseSha,
-      },
+  return spawnSync("bash", ["scripts/agent-quality-gate.sh", "--preflight"], {
+    cwd: directory,
+    encoding: "utf8",
+    env: {
+      ...process.env,
+      QUALITY_BASE_REF: baseSha,
     },
-  );
+  });
 }
 
 test("normal PR commits pass the dependency-free CI skip-directive guard", async (t) => {
   const fixture = await createFixture();
-  t.after(async () =>
-    rm(fixture.directory, { recursive: true, force: true }),
-  );
+  t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
 
   await mkdir(join(fixture.directory, "docs"), { recursive: true });
   await writeFile(join(fixture.directory, "docs", "note.md"), "maintenance\n");
@@ -87,14 +88,15 @@ test("normal PR commits pass the dependency-free CI skip-directive guard", async
   const result = preflight(fixture.directory, fixture.baseSha);
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, /CI skip-directive guard/);
-  assert.match(result.stdout, /Agent preflight passed without installing dependencies/);
+  assert.match(
+    result.stdout,
+    /Agent preflight passed without installing dependencies/,
+  );
 });
 
 test("GitHub bracketed CI skip directives are rejected before dependency install", async (t) => {
   const fixture = await createFixture();
-  t.after(async () =>
-    rm(fixture.directory, { recursive: true, force: true }),
-  );
+  t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
 
   git(
     fixture.directory,
@@ -112,9 +114,7 @@ test("GitHub bracketed CI skip directives are rejected before dependency install
 
 test("GitHub skip-checks trailer is rejected before dependency install", async (t) => {
   const fixture = await createFixture();
-  t.after(async () =>
-    rm(fixture.directory, { recursive: true, force: true }),
-  );
+  t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
 
   git(
     fixture.directory,
