@@ -11,8 +11,11 @@ import {
 } from "./privacy-identities.ts";
 import { parsePrivacyPolicy, scanText } from "./privacy-gate.ts";
 
+type AuditDisposition = "BLOCK" | "REWRITE" | "REVIEW";
+
 type AuditFinding = {
   category: string;
+  disposition: AuditDisposition;
   line: number;
 };
 
@@ -94,9 +97,11 @@ function identityFindings(
   text: string,
   fingerprints: ReadonlySet<string>,
   category: string,
+  disposition: AuditDisposition,
 ): AuditFinding[] {
   return findIdentitySpans(text, fingerprints).map((match) => ({
     category,
+    disposition,
     line: lineAt(text, match.start),
   }));
 }
@@ -105,7 +110,7 @@ function dedupe(findings: AuditFinding[]) {
   return [
     ...new Map(
       findings.map((finding) => [
-        `${finding.category}:${finding.line}`,
+        `${finding.disposition}:${finding.category}:${finding.line}`,
         finding,
       ]),
     ).values(),
@@ -120,17 +125,20 @@ function scanExtractedText(
   return dedupe([
     ...scanText(text, label, policy).map((finding) => ({
       category: finding.category,
+      disposition: finding.disposition,
       line: finding.line,
     })),
     ...identityFindings(
       text,
       PROTECTED_FATHER_IDENTITY_FINGERPRINTS,
-      "protected-father-identity",
+      "father-identity",
+      "REWRITE",
     ),
     ...identityFindings(
       text,
       PROTECTED_MOTHER_IDENTITY_FINGERPRINTS,
-      "protected-mother-identity",
+      "mother-identity",
+      "REWRITE",
     ),
   ]);
 }
@@ -147,7 +155,13 @@ async function auditFile(
     return {
       id,
       path: file,
-      findings: [{ category: "raw-source-manual-conversion-required", line: 1 }],
+      findings: [
+        {
+          category: "raw-source-manual-conversion-required",
+          disposition: "REVIEW",
+          line: 1,
+        },
+      ],
     };
   }
 
@@ -155,7 +169,13 @@ async function auditFile(
     return {
       id,
       path: file,
-      findings: [{ category: "image-manual-visual-review-required", line: 1 }],
+      findings: [
+        {
+          category: "image-manual-visual-review-required",
+          disposition: "REVIEW",
+          line: 1,
+        },
+      ],
     };
   }
 
@@ -180,11 +200,16 @@ async function auditFile(
     if (!text.trim()) {
       findings.push({
         category: "pdf-no-extractable-text-manual-review-required",
+        disposition: "REVIEW",
         line: 1,
       });
     }
     if (!/^0 embedded files\s*$/m.test(attachments)) {
-      findings.push({ category: "pdf-embedded-file", line: 1 });
+      findings.push({
+        category: "pdf-embedded-file",
+        disposition: "REVIEW",
+        line: 1,
+      });
     }
     return { id, path: file, findings: dedupe(findings) };
   }
@@ -193,7 +218,11 @@ async function auditFile(
     id,
     path: file,
     findings: [
-      { category: "unsupported-private-format-manual-review-required", line: 1 },
+      {
+        category: "unsupported-private-format-manual-review-required",
+        disposition: "REVIEW",
+        line: 1,
+      },
     ],
   };
 }
@@ -246,11 +275,14 @@ export async function runPrivatePublicationAudit(
     0,
   );
   const categoryCounts = new Map<string, number>();
+  const dispositionCounts = new Map<AuditDisposition, number>();
   for (const artifact of artifacts) {
     for (const finding of artifact.findings) {
-      categoryCounts.set(
-        finding.category,
-        (categoryCounts.get(finding.category) ?? 0) + 1,
+      const key = `${finding.disposition} ${finding.category}`;
+      categoryCounts.set(key, (categoryCounts.get(key) ?? 0) + 1);
+      dispositionCounts.set(
+        finding.disposition,
+        (dispositionCounts.get(finding.disposition) ?? 0) + 1,
       );
     }
   }
@@ -258,6 +290,11 @@ export async function runPrivatePublicationAudit(
   console.log(
     `Private publication audit complete: ${artifacts.length} artifact(s), ${findingCount} finding(s).`,
   );
+  for (const disposition of ["BLOCK", "REWRITE", "REVIEW"] as const) {
+    console.log(
+      `- ${disposition}: ${dispositionCounts.get(disposition) ?? 0}`,
+    );
+  }
   for (const [category, count] of [...categoryCounts.entries()].sort()) {
     console.log(`- ${category}: ${count}`);
   }

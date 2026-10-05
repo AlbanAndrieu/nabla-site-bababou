@@ -2,7 +2,16 @@ import { execFileSync, spawnSync } from "node:child_process";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
-import { parsePrivacyPolicy, scanText } from "./privacy-gate.ts";
+import {
+  findIdentitySpans,
+  PROTECTED_FATHER_IDENTITY_FINGERPRINTS,
+  PROTECTED_MOTHER_IDENTITY_FINGERPRINTS,
+} from "./privacy-identities.ts";
+import {
+  parsePrivacyPolicy,
+  scanText,
+  type PrivacyDisposition,
+} from "./privacy-gate.ts";
 
 type ReviewEntry = {
   path: string;
@@ -10,6 +19,8 @@ type ReviewEntry = {
   sourceOutsideGit: boolean;
   irreversibleRedactionVerified: boolean;
   metadataReviewed: boolean;
+  sensitiveDataApproved?: boolean;
+  officialIdentifiersReviewed?: boolean;
 };
 
 type ReviewManifest = {
@@ -19,6 +30,7 @@ type ReviewManifest = {
 
 type PublicationFinding = {
   category: string;
+  disposition: PrivacyDisposition;
   file: string;
 };
 
@@ -131,15 +143,55 @@ async function loadManifest() {
   return new Map(manifest.artifacts.map((entry) => [entry.path, entry]));
 }
 
+function parentIdentityFindings(
+  text: string,
+  file: string,
+): PublicationFinding[] {
+  const findings: PublicationFinding[] = [];
+  for (const [fingerprints, category] of [
+    [PROTECTED_FATHER_IDENTITY_FINGERPRINTS, "father-identity"],
+    [PROTECTED_MOTHER_IDENTITY_FINGERPRINTS, "mother-identity"],
+  ] as const) {
+    if (findIdentitySpans(text, fingerprints).length) {
+      findings.push({ category, disposition: "REWRITE", file });
+    }
+  }
+  return findings;
+}
+
+function reviewFindingApproved(
+  finding: PublicationFinding,
+  entry: ReviewEntry | undefined,
+) {
+  if (finding.disposition !== "REVIEW") return false;
+  if (
+    finding.category === "medical-or-psychological" ||
+    finding.category === "special-category-personal-data"
+  ) {
+    return entry?.sensitiveDataApproved === true;
+  }
+  if (
+    finding.category === "official-document-identifier" ||
+    finding.category === "official-document-artifact"
+  ) {
+    return entry?.officialIdentifiersReviewed === true;
+  }
+  return false;
+}
+
 async function scanTextArtifact(
   file: string,
   policy: ReturnType<typeof parsePrivacyPolicy>,
 ) {
   const text = await readFile(path.join(ROOT, file), "utf8");
-  return scanText(text, file, policy).map((finding) => ({
-    category: finding.category,
-    file,
-  }));
+  return [
+    ...scanText(text, file, policy).map((finding) => ({
+      category: finding.category,
+      disposition: finding.disposition,
+      file,
+    })),
+    ...parentIdentityFindings(text, file),
+  ];
 }
 
 function scanPdfArtifact(
@@ -153,13 +205,29 @@ function scanPdfArtifact(
   const attachments = toolOutput("pdfdetach", ["-list", absolute], file);
 
   for (const finding of scanText(extractedText, `${file}::pdf-text`, policy)) {
-    findings.push({ category: finding.category, file });
+    findings.push({
+      category: finding.category,
+      disposition: finding.disposition,
+      file,
+    });
   }
   for (const finding of scanText(metadata, `${file}::pdf-metadata`, policy)) {
-    findings.push({ category: finding.category, file });
+    findings.push({
+      category: finding.category,
+      disposition: finding.disposition,
+      file,
+    });
   }
+  findings.push(
+    ...parentIdentityFindings(extractedText, file),
+    ...parentIdentityFindings(metadata, file),
+  );
   if (!/^0 embedded files\s*$/m.test(attachments)) {
-    findings.push({ category: "pdf-embedded-file", file });
+    findings.push({
+      category: "pdf-embedded-file",
+      disposition: "REVIEW",
+      file,
+    });
   }
   return findings;
 }
@@ -184,6 +252,7 @@ async function main() {
     if (isForbiddenSourcePath(file)) {
       findings.push({
         category: "raw-source-artifact-not-publishable",
+        disposition: "BLOCK",
         file,
       });
       continue;
@@ -192,14 +261,19 @@ async function main() {
     const extension = path.extname(file).toLowerCase();
     if (IMAGE_EXTENSIONS.has(extension)) {
       findings.push({
-        category: "image-requires-flattened-reviewed-publication-copy",
+        category: "image-requires-explicit-reviewed-publication-copy",
+        disposition: "REVIEW",
         file,
       });
       continue;
     }
 
     if (!reviewEntryIsComplete(manifest.get(file))) {
-      findings.push({ category: "publication-review-incomplete", file });
+      findings.push({
+        category: "publication-review-incomplete",
+        disposition: "BLOCK",
+        file,
+      });
       continue;
     }
 
@@ -213,19 +287,28 @@ async function main() {
       continue;
     }
 
-    findings.push({ category: "unsupported-publication-format", file });
+    findings.push({
+      category: "unsupported-publication-format",
+      disposition: "REVIEW",
+      file,
+    });
   }
 
   const deduped = [
     ...new Map(
       findings.map((finding) => [
-        `${finding.category}:${finding.file}`,
+        `${finding.disposition}:${finding.category}:${finding.file}`,
         finding,
       ]),
     ).values(),
   ];
 
-  if (!deduped.length) {
+  const unresolved = deduped.filter(
+    (finding) =>
+      !reviewFindingApproved(finding, manifest.get(finding.file)),
+  );
+
+  if (!unresolved.length) {
     console.log(
       `Publication privacy gate passed: ${files.length} reviewed artifact(s) are eligible for publication.`,
     );
@@ -233,10 +316,12 @@ async function main() {
   }
 
   console.error(
-    `Publication privacy gate failed: ${deduped.length} finding(s).`,
+    `Publication privacy gate failed: ${unresolved.length} unresolved finding(s).`,
   );
-  for (const finding of deduped) {
-    console.error(`- ${finding.file} [${finding.category}]`);
+  for (const finding of unresolved) {
+    console.error(
+      `- ${finding.file} [${finding.disposition}:${finding.category}]`,
+    );
   }
   process.exitCode = 1;
 }
