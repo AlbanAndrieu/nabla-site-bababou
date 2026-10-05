@@ -59,6 +59,9 @@ test("authority explanation collection references the private PDF and recovered 
     "gmail-follow-up-hague-status-fr.html",
     "gmail-transmission-dossier-rappels-retour-fr.html",
   ]) {
-    assert.ok(paths.some((value) => value.endsWith(suffix)), suffix);
+    assert.ok(
+      paths.some((value) => value.endsWith(suffix)),
+      suffix,
+    );
   }
 });

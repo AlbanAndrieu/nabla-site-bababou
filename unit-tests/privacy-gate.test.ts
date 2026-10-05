@@ -2,10 +2,10 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  type PrivacyPolicy,
   parsePrivacyPolicy,
   scanSourceMap,
   scanText,
-  type PrivacyPolicy,
 } from "../scripts/privacy-gate.ts";
 import { identityFingerprint } from "../scripts/privacy-identities.ts";
 
@@ -22,7 +22,10 @@ const SYNTHETIC_CHILD_IDENTITIES = new Set([
 
 test("parses protected values and safe replacements from project policy format", () => {
   assert.equal(POLICY.generalizedLocation, "Located in Example area");
-  assert.equal(POLICY.protectedAddress, "123 Example Street, 75000 Example City");
+  assert.equal(
+    POLICY.protectedAddress,
+    "123 Example Street, 75000 Example City",
+  );
   assert.equal(POLICY.privatePhone, "+33 6 12 34 56 78");
   assert.equal(POLICY.maskedPhone, "+33 6 12 34 56 XX");
 });
@@ -75,21 +78,19 @@ test("allows the approved display identity and recognition sentence only on publ
     "public/index.html",
     POLICY,
   );
-  const otherFile = scanText(
-    "Éléonore (Bababou)",
-    "messages/en.json",
-    POLICY,
-  );
+  const otherFile = scanText("Éléonore (Bababou)", "messages/en.json", POLICY);
 
   assert.deepEqual(socialMetadata, []);
   assert.deepEqual(visibleHeading, []);
   assert.deepEqual(recognition, []);
-  assert.deepEqual(bareMetadata.map((finding) => finding.category), [
-    "protected-child-identity",
-  ]);
-  assert.deepEqual(otherFile.map((finding) => finding.category), [
-    "protected-child-identity",
-  ]);
+  assert.deepEqual(
+    bareMetadata.map((finding) => finding.category),
+    ["protected-child-identity"],
+  );
+  assert.deepEqual(
+    otherFile.map((finding) => finding.category),
+    ["protected-child-identity"],
+  );
 });
 
 test("allows only the approved given name on the dedicated RSS contact artifact", () => {
@@ -115,12 +116,14 @@ test("allows only the approved given name on the dedicated RSS contact artifact"
   );
 
   assert.deepEqual(approvedFeedCopy, []);
-  assert.deepEqual(unrelatedSurface.map((finding) => finding.category), [
-    "protected-child-identity",
-  ]);
-  assert.deepEqual(spellingVariant.map((finding) => finding.category), [
-    "protected-child-identity",
-  ]);
+  assert.deepEqual(
+    unrelatedSurface.map((finding) => finding.category),
+    ["protected-child-identity"],
+  );
+  assert.deepEqual(
+    spellingVariant.map((finding) => finding.category),
+    ["protected-child-identity"],
+  );
   assert.ok(
     expandedIdentity.some(
       (finding) => finding.category === "protected-child-identity",
@@ -140,9 +143,10 @@ test("detects unapproved child identity variants on the index", () => {
     POLICY,
   );
 
-  assert.deepEqual(spellingVariant.map((finding) => finding.category), [
-    "protected-child-identity",
-  ]);
+  assert.deepEqual(
+    spellingVariant.map((finding) => finding.category),
+    ["protected-child-identity"],
+  );
   assert.ok(
     completeIdentity.some(
       (finding) => finding.category === "protected-child-identity",

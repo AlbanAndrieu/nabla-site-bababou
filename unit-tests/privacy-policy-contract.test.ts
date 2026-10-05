@@ -18,9 +18,15 @@ test("canonical privacy policy uses the approved contextual aliases", async () =
   assert.match(source, /French legal\/editorial alias: \*\*Mme B\*\*/);
   assert.match(source, /English legal\/editorial alias: \*\*Ms B\*\*/);
   assert.match(source, /French legal\/official wording: use \*\*l'enfant\*\*/);
-  assert.match(source, /Do not use `Bababou` in legal, official, evidentiary or administrative documents\/pages/);
+  assert.match(
+    source,
+    /Do not use `Bababou` in legal, official, evidentiary or administrative documents\/pages/,
+  );
   assert.match(source, /father's financial details are \*\*BLOCK\*\*/i);
-  assert.match(source, /requires \*\*explicit owner approval for that specific content\*\*/i);
+  assert.match(
+    source,
+    /requires \*\*explicit owner approval for that specific content\*\*/i,
+  );
 });
 
 test("homepage and index stay owner-controlled privacy exceptions", async () => {
@@ -31,8 +37,14 @@ test("homepage and index stay owner-controlled privacy exceptions", async () => 
   assert.match(source, /public `\/` homepage/);
   assert.match(source, /Open Graph, Twitter\/X metadata, homepage JSON-LD/);
   assert.match(source, /ask the user for explicit approval before editing/i);
-  assert.match(source, /Auditing and reporting the homepage\/index is allowed without approval; modifying it is not/);
-  assert.doesNotMatch(source, /homepage real-name\/display-name exception is \*\*revoked\*\*/i);
+  assert.match(
+    source,
+    /Auditing and reporting the homepage\/index is allowed without approval; modifying it is not/,
+  );
+  assert.doesNotMatch(
+    source,
+    /homepage real-name\/display-name exception is \*\*revoked\*\*/i,
+  );
 });
 
 test("dedicated RSS identity exception stays narrow and explicit", async () => {
@@ -53,8 +65,14 @@ test("essential protected information is caviarded rather than silently deleted"
 
   assert.match(source, /Essential but protected/);
   assert.match(source, /essential information redacted; available on request/);
-  assert.match(source, /information essentielle caviardée ; révélation sur demande/);
-  assert.match(source, /original protected value has been removed from the source data/);
+  assert.match(
+    source,
+    /information essentielle caviardée ; révélation sur demande/,
+  );
+  assert.match(
+    source,
+    /original protected value has been removed from the source data/,
+  );
   assert.match(source, /Never keep the protected value in:/);
 });
 
@@ -65,7 +83,16 @@ test("Cursor adapter preserves homepage approval boundary", async () => {
     source,
     /`Mr A` \/ `Mme B` \(or `Ms B` in English\) legal aliases/,
   );
-  assert.match(source, /homepage-specific Open Graph\/Twitter\/JSON-LD identity disclosures are \*\*owner-controlled exceptions\*\*/);
-  assert.match(source, /unless the user explicitly approves the specific change in the current task/);
-  assert.doesNotMatch(source, /former `public\/index\.html` child real-name exception has been revoked/i);
+  assert.match(
+    source,
+    /homepage-specific Open Graph\/Twitter\/JSON-LD identity disclosures are \*\*owner-controlled exceptions\*\*/,
+  );
+  assert.match(
+    source,
+    /unless the user explicitly approves the specific change in the current task/,
+  );
+  assert.doesNotMatch(
+    source,
+    /former `public\/index\.html` child real-name exception has been revoked/i,
+  );
 });
