@@ -20,7 +20,10 @@ test("Playwright local server uses a configurable loopback port", async () => {
   assert.match(config, /vercelAuthMode === "oidc"/);
   assert.match(config, /vercelAuthMode === "bypass-cookie"/);
   assert.equal(packageJson.scripts?.["quality:gate"], "bash scripts/quality-gate.sh");
-  assert.equal(packageJson.scripts?.["dev:test"], "next dev --hostname 127.0.0.1");
+  assert.equal(
+    packageJson.scripts?.["dev:test"],
+    "bash scripts/run-next-clean.sh dev --hostname 127.0.0.1",
+  );
   assert.equal(
     packageJson.scripts?.["start:test"],
     "next start --hostname 127.0.0.1",

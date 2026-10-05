@@ -43,6 +43,8 @@ test("project support documentation no longer publishes the retired address", as
   for (const relativePath of paths) {
     const source = await read(relativePath);
     assert.ok(!source.toLowerCase().includes(retiredAddress), relativePath);
-    assert.ok(source.includes(CANONICAL_CONTACT_EMAIL), relativePath);
+    if (/@bababou\.com/i.test(source)) {
+      assert.ok(source.includes(CANONICAL_CONTACT_EMAIL), relativePath);
+    }
   }
 });

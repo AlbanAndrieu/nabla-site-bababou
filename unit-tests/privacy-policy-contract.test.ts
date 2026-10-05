@@ -14,9 +14,9 @@ const CURSOR_RULE_URL = new URL(
 test("canonical privacy policy uses the approved contextual aliases", async () => {
   const source = await readFile(SKILL_URL, "utf8");
 
-  assert.match(source, /use \*\*Mr AA\*\* as the canonical legal alias/);
-  assert.match(source, /French legal\/editorial alias: \*\*Mme RB\*\*/);
-  assert.match(source, /English legal\/editorial alias: \*\*Ms RB\*\*/);
+  assert.match(source, /use \*\*Mr A\*\* as the canonical legal alias/);
+  assert.match(source, /French legal\/editorial alias: \*\*Mme B\*\*/);
+  assert.match(source, /English legal\/editorial alias: \*\*Ms B\*\*/);
   assert.match(source, /French legal\/official wording: use \*\*l'enfant\*\*/);
   assert.match(source, /Do not use `Bababou` in legal, official, evidentiary or administrative documents\/pages/);
   assert.match(source, /father's financial details are \*\*BLOCK\*\*/i);
@@ -63,7 +63,7 @@ test("Cursor adapter preserves homepage approval boundary", async () => {
 
   assert.match(
     source,
-    /`Mr AA` \/ `Mme RB` \(or `Ms RB` in English\) legal aliases/,
+    /`Mr A` \/ `Mme B` \(or `Ms B` in English\) legal aliases/,
   );
   assert.match(source, /homepage-specific Open Graph\/Twitter\/JSON-LD identity disclosures are \*\*owner-controlled exceptions\*\*/);
   assert.match(source, /unless the user explicitly approves the specific change in the current task/);

@@ -17,7 +17,7 @@ test("shared runtime and test toolchain versions remain internally aligned", asy
   assert.equal(pkg.engines.npm, ">=11.17.0 <12");
 
   for (const [name, version] of Object.entries({
-    next: "16.3.4",
+    next: "16.3.8",
     "next-intl": "^4.9.2",
     react: "^19.2.4",
     "react-dom": "^19.2.4",

@@ -117,7 +117,7 @@ Outside the owner-controlled homepage/index exception and the dedicated RSS cont
 
 The father's identity is **not classified as confidential personal data**, but it is normalized outside recognition/contact surfaces to reduce unnecessary exposure and institutional pressure.
 
-- On family-case, legal, court, police, administrative, evidentiary or closely derived pages/documents, use **Mr AA** as the canonical legal alias.
+- On family-case, legal, court, police, administrative, evidentiary or closely derived pages/documents, use **Mr A** as the canonical legal alias.
 - In natural French prose after the alias has been established, **le père** is acceptable; in English prose, **the father** is acceptable.
 - Do not expand the father's full legal identity in those documents merely because it is available in a source.
 - On the homepage/index and the site's principal Contact/Email surfaces, the father's public identity may remain visible so the child can identify and contact him.
@@ -127,8 +127,8 @@ The father's identity is **not classified as confidential personal data**, but i
 
 The mother's identity is generally normalized on family-case/legal material even though names and ordinary contact coordinates are not treated as inherently secret.
 
-- French legal/editorial alias: **Mme RB**.
-- English legal/editorial alias: **Ms RB**.
+- French legal/editorial alias: **Mme B**.
+- English legal/editorial alias: **Ms B**.
 - In natural prose after the alias has been established, **la mère** / **the mother** is acceptable.
 - Use the real identity only when it is essential to identify a source, professional/public record, or other owner-approved evidentiary context.
 
@@ -136,8 +136,8 @@ The mother's identity is generally normalized on family-case/legal material even
 
 Normalize older aliases when encountered in family/legal publication material:
 
-- `Mr A`, `M. A.`, `MR A` or equivalent father aliases → **Mr AA** (French display may use **M. AA** where typography requires it);
-- `Ms B`, `Mme B`, `Mrs B` or equivalent mother aliases → **Mme RB** in French / **Ms RB** in English.
+- `Mr AA`, `M. AA`, `MR AA` or equivalent two-letter father aliases → **Mr A** (French display may use **M. A.** where typography requires it);
+- `Ms RB`, `Mme RB`, `Mrs RB` or equivalent two-letter mother aliases → **Mme B** in French / **Ms B** in English.
 
 Do not treat these identity rewrites as secret-data findings. They are **REWRITE** findings: publication is blocked until the public copy uses the canonical alias, but the original value does not need to be treated as a secret in local audit storage.
 
@@ -273,8 +273,8 @@ Outside recognition/contact exceptions:
 - Child legal/official copy → **l'enfant / the child**.
 - Child first-person narrative → **ma fille / my daughter** where natural.
 - Do not use **Bababou** in legal/official/evidentiary pages or documents.
-- Father family/legal copy → **Mr AA**; subsequent prose may use **le père / the father**.
-- Mother family/legal copy → **Mme RB** (FR) / **Ms RB** (EN); subsequent prose may use **la mère / the mother**.
+- Father family/legal copy → **Mr A**; subsequent prose may use **le père / the father**.
+- Mother family/legal copy → **Mme B** (FR) / **Ms B** (EN); subsequent prose may use **la mère / the mother**.
 - Father's full phone outside Contact/Email → masked form ending in **XX** or Contact-page link.
 - Child current/private address → irreversible redaction.
 - Father's financial details → irreversible redaction unless a later explicit owner decision authorizes a narrow disclosure.
@@ -296,7 +296,7 @@ The privacy tooling should:
 
 - report only file/line/category/disposition, never the matched protected value;
 - treat child legal identity outside recognition surfaces as **REWRITE**, not as a generic secret;
-- treat father/mother family-case identities as **REWRITE** to **Mr AA** / **Mme RB** (or **Ms RB** in English);
+- treat father/mother family-case identities as **REWRITE** to **Mr A** / **Mme B** (or **Ms B** in English);
 - treat the father's full phone outside Contact/Email as **REWRITE**, normally to the masked form or a Contact link;
 - not flag professional/institutional phones, emails or addresses merely because they are contact data;
 - preserve judicial/administrative case references by default;
@@ -314,7 +314,7 @@ Before modifying family/legal/publication content, read this entire skill.
 
 - Never alter owner-controlled homepage/index recognition disclosures without explicit approval for that specific change.
 - Never replace the `public/404.html`-backed 404 with a fully native Next/React implementation without explicit approval.
-- On family/legal content, normalize identities to **Mr AA**, **Mme RB/Ms RB**, and **l'enfant/the child** as defined above.
+- On family/legal content, normalize identities to **Mr A**, **Mme B/Ms B**, and **l'enfant/the child** as defined above.
 - Keep the father's real identity/contact discoverable on the principal recognition/contact surfaces.
 - Do not use **Bababou** as the child's name in official/legal/evidentiary material.
 - Treat health/special-category data as requiring explicit owner approval even when sourced.

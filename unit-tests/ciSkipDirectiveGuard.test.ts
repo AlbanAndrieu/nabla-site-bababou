@@ -12,6 +12,12 @@ const gatePath = fileURLToPath(
 const supportPath = fileURLToPath(
   new URL("../scripts/lib/agent-quality-support.sh", import.meta.url),
 );
+const codeSizePath = fileURLToPath(
+  new URL("../scripts/check_code_size.py", import.meta.url),
+);
+const ciScopePath = fileURLToPath(
+  new URL("../scripts/ci-scope.sh", import.meta.url),
+);
 
 function git(cwd: string, ...args: string[]) {
   return execFileSync("git", args, {
@@ -31,6 +37,14 @@ async function createFixture() {
   await writeFile(
     join(directory, "scripts", "lib", "agent-quality-support.sh"),
     await readFile(supportPath, "utf8"),
+  );
+  await writeFile(
+    join(directory, "scripts", "check_code_size.py"),
+    await readFile(codeSizePath, "utf8"),
+  );
+  await writeFile(
+    join(directory, "scripts", "ci-scope.sh"),
+    await readFile(ciScopePath, "utf8"),
   );
   await chmod(join(directory, "scripts", "agent-quality-gate.sh"), 0o755);
 

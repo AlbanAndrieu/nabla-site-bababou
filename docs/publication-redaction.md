@@ -9,7 +9,7 @@ Ce runbook s'applique aux fichiers récupérés destinés à `public/ca/**` et �
   l'historique sensible.
 - Les sources `.eml`, `.docx`, `.odg` et `.xoj` ne sont pas des formats de publication.
   Elles restent dans le worktree/archive privée et sont converties vers une copie publique.
-- Pour les documents juridiques : utiliser `l'enfant` / `the child`, `Mr AA`, `Mme RB` / `Ms RB` selon
+- Pour les documents juridiques : utiliser `l'enfant` / `the child`, `Mr A`, `Mme B` / `Ms B` selon
   `.agents/skills/protect-family-privacy/SKILL.md`.
 - Une information protégée mais essentielle est conservée contextuellement avec un marqueur
   visible de caviardage ; la valeur originale ne doit plus exister dans le fichier publié.
