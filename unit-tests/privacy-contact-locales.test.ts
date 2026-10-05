@@ -14,19 +14,11 @@ const PUBLIC_PHONE = "+33 6 12 34 56 78";
 test("generated Contact/Email phone exceptions are locale-agnostic", () => {
   for (const locale of ["fr", "en", "de", "no", "future-locale"]) {
     assert.deepEqual(
-      scanText(
-        PUBLIC_PHONE,
-        `.next/server/app/${locale}/contact.html`,
-        POLICY,
-      ),
+      scanText(PUBLIC_PHONE, `.next/server/app/${locale}/contact.html`, POLICY),
       [],
     );
     assert.deepEqual(
-      scanText(
-        PUBLIC_PHONE,
-        `.next/server/app/${locale}/email.rsc`,
-        POLICY,
-      ),
+      scanText(PUBLIC_PHONE, `.next/server/app/${locale}/email.rsc`, POLICY),
       [],
     );
     assert.deepEqual(

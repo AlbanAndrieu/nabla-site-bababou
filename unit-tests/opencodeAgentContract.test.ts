@@ -30,20 +30,33 @@ test("OpenCode keeps project skills and todo orchestration available", async () 
   assert.equal(config.permission?.bash?.["rm -rf *"], "ask");
   assert.ok(config.mcp?.["next-devtools"]);
 
-  assert.match(config.command?.["roadmap-local"]?.template ?? "", /roadmap-local-first/);
+  assert.match(
+    config.command?.["roadmap-local"]?.template ?? "",
+    /roadmap-local-first/,
+  );
   assert.match(
     config.command?.["roadmap-local"]?.template ?? "",
     /agent-quality-gate\.sh --preflight/,
   );
-  assert.match(config.command?.["quality-local"]?.template ?? "", /quality-follow-up/);
-  assert.match(config.command?.["quality-local"]?.template ?? "", /agent-p0-check\.sh/);
+  assert.match(
+    config.command?.["quality-local"]?.template ?? "",
+    /quality-follow-up/,
+  );
+  assert.match(
+    config.command?.["quality-local"]?.template ?? "",
+    /agent-p0-check\.sh/,
+  );
   assert.match(
     config.command?.["quality-local"]?.template ?? "",
     /agent-publish\.sh/,
   );
 
   for (const command of Object.values(config.command ?? {})) {
-    assert.equal(command.model, undefined, "repository config must preserve the workstation-selected model");
+    assert.equal(
+      command.model,
+      undefined,
+      "repository config must preserve the workstation-selected model",
+    );
   }
 });
 
@@ -213,5 +226,9 @@ test("OpenCode configuration stays on the maintenance-only CI path", async () =>
   const scope = await read("scripts/ci-scope.sh");
 
   const matches = scope.match(/opencode\.json/g) ?? [];
-  assert.equal(matches.length, 2, "opencode.json must be maintenance-only and Preview-safe");
+  assert.equal(
+    matches.length,
+    2,
+    "opencode.json must be maintenance-only and Preview-safe",
+  );
 });
