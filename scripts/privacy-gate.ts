@@ -10,14 +10,18 @@ import {
 
 export type PrivacyCategory =
   | "protected-child-identity"
-  | "protected-address"
   | "private-phone"
   | "official-document-identifier"
   | "official-document-artifact"
-  | "medical-or-psychological";
+  | "medical-or-psychological"
+  | "special-category-personal-data"
+  | "father-financial";
+
+export type PrivacyDisposition = "BLOCK" | "REWRITE" | "REVIEW";
 
 export type PrivacyFinding = {
   category: PrivacyCategory;
+  disposition: PrivacyDisposition;
   file: string;
   line: number;
 };
@@ -100,6 +104,16 @@ const MEDICAL_OR_PSYCHOLOGICAL_PATTERNS = [
   /\bpsychiatric\s+(?:condition|record|report|assessment|treatment)\b/gi,
   /\bpsychotherapy\b/gi,
   /\btherapy\s+(?:record|report|session|treatment)\b/gi,
+];
+
+const SPECIAL_CATEGORY_PATTERNS = [
+  /\b(?:religion|religious belief|religious affiliation|croyance religieuse|orientation sexuelle|sexual orientation|sexual preference|sex life|vie sexuelle|trade[- ]union membership|appartenance syndicale|genetic data|donn(?:ée|e)es génétiques|biometric data|donn(?:ée|e)es biométriques)\b/gi,
+];
+
+const FATHER_FINANCIAL_PATTERNS = [
+  /\b(?:IBAN|BIC|SWIFT)\b\s*[:#-]?\s*[A-Z0-9][A-Z0-9 ]{5,}/gi,
+  /\b(?:bank account|account number|num(?:é|e)ro de compte|bank statement|relev(?:é|e) bancaire|payslip|pay slip|bulletin de salaire|tax return|avis d['’]imp(?:ô|o)t)\b/gi,
+  /\b(?:my|mon|ma|mes|the father(?:'s)?|le p(?:è|e)re|Mr\.?\s*AA|M\.?\s*AA)\b[^\n<]{0,80}\b(?:salary|income|bank balance|assets?|debts?|revenus?|salaire|solde bancaire|patrimoine|dettes?)\b/gi,
 ];
 
 const OFFICIAL_IDENTIFIER_PATTERNS = [
@@ -249,6 +263,7 @@ function collectPatternFindings(
   text: string,
   pattern: RegExp,
   category: PrivacyCategory,
+  disposition: PrivacyDisposition,
   file: string,
 ) {
   const findings: PrivacyFinding[] = [];
@@ -256,6 +271,7 @@ function collectPatternFindings(
   for (const match of text.matchAll(pattern)) {
     findings.push({
       category,
+      disposition,
       file,
       line: lineAt(text, match.index ?? 0),
     });
@@ -272,6 +288,7 @@ function collectOfficialIdentifierFindings(text: string, file: string) {
       if (identifier === APPROVED_PUBLIC_IDENTIFIER) continue;
       findings.push({
         category: "official-document-identifier",
+        disposition: "REVIEW",
         file,
         line: lineAt(text, match.index ?? 0),
       });
@@ -290,6 +307,7 @@ function collectOfficialArtifactFindings(text: string, file: string) {
       if (match[0].includes(APPROVED_PUBLIC_DOCUMENT_ASSET_REFERENCE)) continue;
       findings.push({
         category: "official-document-artifact",
+        disposition: "REVIEW",
         file,
         line: lineAt(text, match.index ?? 0),
       });
@@ -329,21 +347,15 @@ export function scanText(
     }
     findings.push({
       category: "protected-child-identity",
+      disposition: "REWRITE",
       file,
       line: lineAt(text, match.start),
     });
   }
 
-  if (!signatureException) {
-    findings.push(
-      ...collectPatternFindings(
-        text,
-        flexibleTextRegex(policy.protectedAddress),
-        "protected-address",
-        file,
-      ),
-    );
-  }
+  // Generic adult/institutional addresses are publishable under the repository
+  // policy. The child's current/private address is BLOCK data, but it must be
+  // detected by a child-specific rule rather than by this legacy generic value.
 
   if (!signatureException && !publicContactSurface) {
     findings.push(
@@ -351,6 +363,7 @@ export function scanText(
         text,
         flexiblePhoneRegex(policy.privatePhone),
         "private-phone",
+        "REWRITE",
         file,
       ),
     );
@@ -367,6 +380,31 @@ export function scanText(
         text,
         pattern,
         "medical-or-psychological",
+        "REVIEW",
+        file,
+      ),
+    );
+  }
+
+  for (const pattern of SPECIAL_CATEGORY_PATTERNS) {
+    findings.push(
+      ...collectPatternFindings(
+        text,
+        pattern,
+        "special-category-personal-data",
+        "REVIEW",
+        file,
+      ),
+    );
+  }
+
+  for (const pattern of FATHER_FINANCIAL_PATTERNS) {
+    findings.push(
+      ...collectPatternFindings(
+        text,
+        pattern,
+        "father-financial",
+        "BLOCK",
         file,
       ),
     );
@@ -490,7 +528,9 @@ async function main() {
     `Privacy gate failed: ${findings.length} protected publication finding(s).`,
   );
   for (const finding of findings) {
-    console.error(`- ${finding.file}:${finding.line} [${finding.category}]`);
+    console.error(
+      `- ${finding.file}:${finding.line} [${finding.disposition}:${finding.category}]`,
+    );
   }
   process.exitCode = 1;
 }
