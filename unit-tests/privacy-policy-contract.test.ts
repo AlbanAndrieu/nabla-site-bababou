@@ -11,14 +11,16 @@ const CURSOR_RULE_URL = new URL(
   import.meta.url,
 );
 
-test("canonical privacy policy uses the approved legal pseudonyms", async () => {
+test("canonical privacy policy uses the approved contextual aliases", async () => {
   const source = await readFile(SKILL_URL, "utf8");
 
-  assert.match(source, /Prefer \*\*Mr A\*\*/);
-  assert.match(source, /Prefer \*\*Ms B\*\*/);
-  assert.match(source, /Child legal\/official-derived copy → \*\*the child\*\*/);
-  assert.match(source, /`Mr AA` \/ `MR AA` → \*\*Mr A\*\*/);
-  assert.match(source, /`Ms RB` \/ `Mme RB` \/ `Mrs RB` → \*\*Ms B\*\*/);
+  assert.match(source, /use \*\*Mr AA\*\* as the canonical legal alias/);
+  assert.match(source, /French legal\/editorial alias: \*\*Mme RB\*\*/);
+  assert.match(source, /English legal\/editorial alias: \*\*Ms RB\*\*/);
+  assert.match(source, /French legal\/official wording: use \*\*l'enfant\*\*/);
+  assert.match(source, /Do not use `Bababou` in legal, official, evidentiary or administrative documents\/pages/);
+  assert.match(source, /father's financial details are \*\*BLOCK\*\*/i);
+  assert.match(source, /requires \*\*explicit owner approval for that specific content\*\*/i);
 });
 
 test("homepage and index stay owner-controlled privacy exceptions", async () => {
@@ -59,7 +61,10 @@ test("essential protected information is caviarded rather than silently deleted"
 test("Cursor adapter preserves homepage approval boundary", async () => {
   const source = await readFile(CURSOR_RULE_URL, "utf8");
 
-  assert.match(source, /`Mr A` \/ `Ms B` legal aliases/);
+  assert.match(
+    source,
+    /`Mr AA` \/ `Mme RB` \(or `Ms RB` in English\) legal aliases/,
+  );
   assert.match(source, /homepage-specific Open Graph\/Twitter\/JSON-LD identity disclosures are \*\*owner-controlled exceptions\*\*/);
   assert.match(source, /unless the user explicitly approves the specific change in the current task/);
   assert.doesNotMatch(source, /former `public\/index\.html` child real-name exception has been revoked/i);

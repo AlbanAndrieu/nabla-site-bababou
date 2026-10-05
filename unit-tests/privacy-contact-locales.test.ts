@@ -41,8 +41,8 @@ test("generated Contact/Email phone exceptions are locale-agnostic", () => {
 
   assert.deepEqual(
     scanText(PUBLIC_PHONE, ".next/server/app/de/link.html", POLICY).map(
-      (finding) => finding.category,
+      (finding) => [finding.category, finding.disposition],
     ),
-    ["private-phone"],
+    [["private-phone", "REWRITE"]],
   );
 });

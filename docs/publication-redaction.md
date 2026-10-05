@@ -9,7 +9,7 @@ Ce runbook s'applique aux fichiers récupérés destinés à `public/ca/**` et �
   l'historique sensible.
 - Les sources `.eml`, `.docx`, `.odg` et `.xoj` ne sont pas des formats de publication.
   Elles restent dans le worktree/archive privée et sont converties vers une copie publique.
-- Pour les documents juridiques : utiliser `the child`, `Mr A`, `Ms B` selon
+- Pour les documents juridiques : utiliser `l'enfant` / `the child`, `Mr AA`, `Mme RB` / `Ms RB` selon
   `.agents/skills/protect-family-privacy/SKILL.md`.
 - Une information protégée mais essentielle est conservée contextuellement avec un marqueur
   visible de caviardage ; la valeur originale ne doit plus exister dans le fichier publié.
@@ -138,8 +138,13 @@ Chaque HTML/PDF sensible ajouté ou modifié doit avoir une entrée exacte :
 }
 ```
 
-Les quatre indicateurs sont obligatoires. Le manifeste ne contient aucune donnée personnelle,
-aucun extrait du document et aucun secret.
+Les quatre indicateurs de base sont obligatoires. Deux validations optionnelles permettent
+une décision explicite du propriétaire sans relâcher les réécritures obligatoires :
+
+- `sensitiveDataApproved: true` — autorisation explicite d'un contenu médical/psychologique ou autre donnée de catégorie spéciale ;
+- `officialIdentifiersReviewed: true` — identifiants officiels vérifiés comme nécessaires et publiables.
+
+Le manifeste ne contient aucune donnée personnelle, aucun extrait du document et aucun secret.
 
 ## Gate
 
@@ -151,7 +156,13 @@ npm run privacy:check
 bash scripts/agent-p0-check.sh
 ```
 
-Le gate de publication :
+Le gate de publication classe ses findings en `BLOCK`, `REWRITE` et `REVIEW` :
+
+- `BLOCK` : donnée réellement sensible/sécurité, notamment finance du père ;
+- `REWRITE` : identité/contact à normaliser avant publication, sans la traiter comme un secret ;
+- `REVIEW` : décision humaine explicite nécessaire.
+
+Le gate :
 
 - inspecte uniquement les artefacts sensibles nouveaux/modifiés ;
 - refuse les formats source bruts ;

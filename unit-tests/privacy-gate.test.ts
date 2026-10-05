@@ -27,16 +27,16 @@ test("parses protected values and safe replacements from project policy format",
   assert.equal(POLICY.maskedPhone, "+33 6 12 34 56 XX");
 });
 
-test("detects punctuation and spacing variants of protected address and phone", () => {
+test("generic adult address is publishable while the father phone is a rewrite outside contact", () => {
   const findings = scanText(
     "Address: 123-Example-Street 75000 Example City. Phone: +33.6.12.34.56.78",
-    "public/index.html",
+    "public/example.html",
     POLICY,
   );
 
   assert.deepEqual(
-    findings.map((finding) => finding.category).sort(),
-    ["private-phone", "protected-address"],
+    findings.map((finding) => [finding.category, finding.disposition]),
+    [["private-phone", "REWRITE"]],
   );
 });
 
@@ -48,9 +48,10 @@ test("detects a protected child identity without storing the real identity in ge
     SYNTHETIC_CHILD_IDENTITIES,
   );
 
-  assert.deepEqual(findings.map((finding) => finding.category), [
-    "protected-child-identity",
-  ]);
+  assert.deepEqual(
+    findings.map((finding) => [finding.category, finding.disposition]),
+    [["protected-child-identity", "REWRITE"]],
+  );
 });
 
 test("allows the approved display identity and recognition sentence only on public index", () => {
@@ -149,16 +150,17 @@ test("detects unapproved child identity variants on the index", () => {
   );
 });
 
-test("keeps the signature exception scoped to address and phone only", () => {
+test("keeps the signature exception scoped while reviewing official identifiers", () => {
   const findings = scanText(
     "123 Example Street, 75000 Example City +33 6 12 34 56 78. Passport with ID: ZXCV123456.",
     "public/assets/nabla/signature/example.html",
     POLICY,
   );
 
-  assert.deepEqual(findings.map((finding) => finding.category), [
-    "official-document-identifier",
-  ]);
+  assert.deepEqual(
+    findings.map((finding) => [finding.category, finding.disposition]),
+    [["official-document-identifier", "REVIEW"]],
+  );
 });
 
 test("allows the explicitly approved public identifier", () => {
@@ -180,6 +182,7 @@ test("still detects other official document identifiers", () => {
 
   assert.equal(findings.length, 1);
   assert.equal(findings[0]?.category, "official-document-identifier");
+  assert.equal(findings[0]?.disposition, "REVIEW");
 });
 
 test("allows the approved passport asset but rejects other document artifacts", () => {
@@ -195,9 +198,10 @@ test("allows the approved passport asset but rejects other document artifacts", 
   );
 
   assert.deepEqual(approved, []);
-  assert.deepEqual(other.map((finding) => finding.category), [
-    "official-document-artifact",
-  ]);
+  assert.deepEqual(
+    other.map((finding) => [finding.category, finding.disposition]),
+    [["official-document-artifact", "REVIEW"]],
+  );
 });
 
 test("allows institutions, professional contacts and relevant map links", () => {
@@ -214,16 +218,14 @@ test("allows institutions, professional contacts and relevant map links", () => 
   assert.deepEqual(findings, []);
 });
 
-test("allows intentional public phone data on contact surfaces but never the protected address", () => {
+test("allows intentional public phone and ordinary address data on contact surfaces", () => {
   const findings = scanText(
     "123 Example Street, 75000 Example City +33 6 12 34 56 78",
     "messages/contact/en.json",
     POLICY,
   );
 
-  assert.deepEqual(findings.map((finding) => finding.category), [
-    "protected-address",
-  ]);
+  assert.deepEqual(findings, []);
 });
 
 test("scopes generated public contact data to contact/email artifacts", () => {
@@ -246,9 +248,10 @@ test("scopes generated public contact data to contact/email artifacts", () => {
 
   assert.deepEqual(contactHtml, []);
   assert.deepEqual(contactCatalogChunk, []);
-  assert.deepEqual(unrelatedRoute.map((finding) => finding.category), [
-    "private-phone",
-  ]);
+  assert.deepEqual(
+    unrelatedRoute.map((finding) => [finding.category, finding.disposition]),
+    [["private-phone", "REWRITE"]],
+  );
 });
 
 test("detects high-confidence medical or psychological publication content", () => {
@@ -260,6 +263,7 @@ test("detects high-confidence medical or psychological publication content", () 
 
   assert.equal(findings.length, 1);
   assert.equal(findings[0]?.category, "medical-or-psychological");
+  assert.equal(findings[0]?.disposition, "REVIEW");
 });
 
 test("does not confuse technical diagnostics with medical information", () => {
@@ -295,6 +299,7 @@ test("source-map scan ignores dependencies but checks project sourcesContent", (
 
   assert.equal(findings.length, 1);
   assert.equal(findings[0]?.category, "medical-or-psychological");
+  assert.equal(findings[0]?.disposition, "REVIEW");
   assert.match(findings[0]?.file ?? "", /app\/page\.tsx$/);
 });
 
@@ -326,4 +331,30 @@ test("accepts pseudonymized public copy and generalized location", () => {
   );
 
   assert.deepEqual(findings, []);
+});
+
+test("reviews GDPR-style special-category personal data", () => {
+  const findings = scanText(
+    "Sexual orientation: synthetic fixture value.",
+    "public/example.html",
+    POLICY,
+  );
+
+  assert.deepEqual(
+    findings.map((finding) => [finding.category, finding.disposition]),
+    [["special-category-personal-data", "REVIEW"]],
+  );
+});
+
+test("blocks high-confidence financial account details", () => {
+  const findings = scanText(
+    "IBAN: FR76 0000 0000 0000 0000 0000 000",
+    "public/example.html",
+    POLICY,
+  );
+
+  assert.deepEqual(
+    findings.map((finding) => [finding.category, finding.disposition]),
+    [["father-financial", "BLOCK"]],
+  );
 });

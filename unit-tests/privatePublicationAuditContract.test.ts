@@ -20,10 +20,13 @@ test("private publication audit is local-only and does not echo protected values
   assert.match(script, /\.private-publication-source/);
   assert.match(script, /\.redaction-work\/private-audit\.json/);
   assert.match(script, /artifactId/);
-  assert.match(script, /protected-father-identity/);
-  assert.match(script, /protected-mother-identity/);
+  assert.match(script, /father-identity/);
+  assert.match(script, /mother-identity/);
   assert.match(script, /pdf-no-extractable-text-manual-review-required/);
   assert.match(script, /image-manual-visual-review-required/);
+  assert.match(script, /"BLOCK"/);
+  assert.match(script, /"REWRITE"/);
+  assert.match(script, /"REVIEW"/);
   assert.doesNotMatch(script, /console\.log\([^\n]*artifact\.path/);
   assert.doesNotMatch(script, /console\.log\([^\n]*finding\.file/);
   assert.equal(

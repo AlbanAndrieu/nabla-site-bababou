@@ -20,8 +20,11 @@ test("publication gate fails closed on raw family/legal source formats", () => {
   }
   assert.match(
     source,
-    /image-requires-flattened-reviewed-publication-copy/,
+    /image-requires-explicit-reviewed-publication-copy/,
   );
+  assert.match(source, /disposition: "BLOCK"/);
+  assert.match(source, /disposition: "REVIEW"/);
+  assert.match(source, /disposition: "REWRITE"/);
 });
 
 test("publication gate requires explicit review and irreversible PDF verification", () => {
@@ -32,6 +35,10 @@ test("publication gate requires explicit review and irreversible PDF verificatio
   assert.match(source, /pdfinfo/);
   assert.match(source, /pdfdetach/);
   assert.match(source, /pdf-embedded-file/);
+  assert.match(source, /sensitiveDataApproved/);
+  assert.match(source, /officialIdentifiersReviewed/);
+  assert.match(source, /father-identity/);
+  assert.match(source, /mother-identity/);
   assert.equal(
     pkg.scripts?.["privacy:publication"],
     "node --experimental-strip-types scripts/publication-privacy-gate.ts",
