@@ -39,6 +39,11 @@ test("unknown legacy HTML uses the reviewed 404 source after Vercel filesystem r
   };
 
   assert.doesNotMatch(nextConfig, /legacyHtmlNotFoundFallback/);
+  assert.match(
+    nextConfig,
+    /outputFileTracingIncludes:\s*\{[\s\S]*["']\/__legacy-html-not-found__["']:\s*\[["']\.\/public\/404\.html["']\]/,
+    "legacy 404 Route Handler must bundle the protected public/404.html source",
+  );
   assert.ok(
     vercelConfig.rewrites?.some(
       (rewrite) =>
