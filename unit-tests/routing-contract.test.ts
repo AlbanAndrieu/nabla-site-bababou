@@ -53,7 +53,9 @@ test("unknown legacy HTML uses the reviewed 404 source after Vercel filesystem r
     "Vercel must route filesystem-missed legacy HTML URLs to the protected 404 renderer",
   );
 
-  const legacyNotFoundRoute = await read("app/__legacy-html-not-found__/route.ts");
+  const legacyNotFoundRoute = await read(
+    "app/__legacy-html-not-found__/route.ts",
+  );
   assert.match(legacyNotFoundRoute, /public\/404\.html/);
   assert.match(legacyNotFoundRoute, /status:\s*404/);
   assert.match(legacyNotFoundRoute, /data-nabla-app="next-global-not-found"/);
