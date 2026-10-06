@@ -25,6 +25,8 @@
 - [ ] Au retour des runners, valider un guard serveur metadata-only contre les directives CI-skip et observer un vrai `master` rouge pour confirmer le follow-up automatique, sans provoquer d'incident.
 - [ ] Prouver le chemin autonome événement Git → checkpoint `vercel-preview-*` → Preview Vercel exact-SHA.
 - [ ] Réduire les warnings ZAP applicables et collecter plusieurs baselines vertes avant de rendre les budgets sécurité/performance bloquants.
+- [ ] Confirmer en Preview exact-SHA la 404 legacy via rewrite Next `afterFiles` : statut 404, `noindex`, `no-store`, pages statiques existantes prioritaires. CI #844/#845 : 180 Playwright verts, trois échecs 404.
+- [ ] Valider Betterleaks v1.9.0 sur l'index Git réel (pre-commit Docker et `just secrets-staged`) avant de fermer le remplacement du scanner.
 
 ## P1 — Homepage owner-controlled
 

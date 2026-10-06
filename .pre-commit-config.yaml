@@ -380,13 +380,15 @@ repos:
             public/assets/fontawesome-free-7.1.0-web/.*|
           )$
 
--   repo: https://github.com/zricethezav/gitleaks
-    rev: v8.30.1
+# Betterleaks stable v1 supports the existing Gitleaks-compatible TOML.
+# Pin both the hook revision and container image to the same release.
+-   repo: https://github.com/betterleaks/betterleaks
+    rev: v1.9.0
     hooks:
-    -   id: gitleaks-docker
-        name: "🔒 🐳 security · Detect hardcoded secrets"
-        entry: zricethezav/gitleaks protect --verbose --redact --staged --config
-          .gitleaks.toml
+    -   id: betterleaks-docker
+        name: "🔒 🐳 security · Detect hardcoded secrets with Betterleaks"
+        entry: >-
+          ghcr.io/betterleaks/betterleaks:v1.9.0 git --pre-commit --staged --redact --config .gitleaks.toml
 
     ### Ansible ###
     # Disable because too slow
