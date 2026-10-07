@@ -380,16 +380,16 @@ repos:
             public/assets/fontawesome-free-7.1.0-web/.*|
           )$
 
-# BetterLeaks v1.9.0 is wrapped locally so linked Git worktrees can mount the
-# repository common Git directory correctly. The wrapper executes the pinned
-# BetterLeaks Docker image by default.
+# BetterLeaks v1.9.0 scans the filenames selected by pre-commit. This avoids
+# BetterLeaks v1's Git staged-diff incompatibility while preserving pre-commit's
+# staged-file semantics and automatic hiding of unstaged modifications.
 -   repo: local
     hooks:
-    -   id: betterleaks-staged
-        name: "🔒 🐳 security · Detect staged secrets with BetterLeaks"
-        entry: bash scripts/run-betterleaks.sh staged
+    -   id: betterleaks-files
+        name: "🔒 🐳 security · Detect secrets with BetterLeaks"
+        entry: bash scripts/run-betterleaks.sh files
         language: system
-        pass_filenames: false
+        pass_filenames: true
 
     ### Ansible ###
     # Disable because too slow

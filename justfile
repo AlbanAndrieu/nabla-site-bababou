@@ -42,7 +42,7 @@ publish-status:
 
 # Canonical BetterLeaks wrapper; ignored private family/legal sources stay out.
 secrets-staged:
-    bash scripts/run-betterleaks.sh staged
+    pre-commit run betterleaks-files
 
 secrets-changed:
     bash scripts/run-betterleaks.sh changed
