@@ -1,3 +1,26 @@
+# [0.19.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.18.0...0.19.0) (2026-10-07)
+
+
+### Bug Fixes
+
+* **quality:** durcir le préflight et réduire le bruit des dépendances ([#207](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/207)) ([0d93b7d](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/0d93b7d3d7fcaca16b459d2eaa81ab1c5bb56e66))
+* **routing:** harden legacy 404 HEAD semantics ([#198](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/198)) ([429ced7](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/429ced76ba83819e08a1e29e4dac62f2854b0c87))
+* **routing:** restore custom 404 for unknown legacy HTML ([#195](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/195)) ([39878e5](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/39878e56f5768cf4de60b1a8fef5386a69cb513e))
+* **security,a11y:** corriger security.txt et renforcer la preuve locale ([#215](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/215)) ([a54f615](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/a54f615578f005aea139ab90fa60578e451cc6be))
+
+
+### Features
+
+* **next:** migrate central authority document hub ([#194](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/194)) ([7d26125](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/7d26125868a2730828549ec14dc5ecbedf0a88f8))
+* **privacy:** sécuriser la publication du corpus familial et juridique ([#218](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/218)) ([57e5919](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/57e5919047f98ab25809eb4cf3c235334634881b))
+* **quality:** renforcer la preuve locale et simplifier la documentation ([#210](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/210)) ([71eb6e2](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/71eb6e2ff948c87a7d61c83ef6d451ccae00ab4f))
+
+
+### Performance Improvements
+
+* **homepage:** restore lightweight imagery and legacy 404 fallback ([#197](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/197)) ([a131eae](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/a131eaeb074074a4759de564664e515710f63a59))
+* **quality:** étendre le préflight local au worktree ([#206](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/206)) ([d2f99ee](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/d2f99ee6cc0046c289f0f4546ab05ab529884cee))
+
 # [0.18.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.17.0...0.18.0) (2026-09-13)
 
 
