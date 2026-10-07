@@ -53,14 +53,14 @@ run_betterleaks() {
 }
 
 scan_staged() {
-    run_betterleaks git --pre-commit --staged --redact --config "${CONFIG}"
+    run_betterleaks git . --pre-commit --staged --redact --config "${CONFIG}"
 }
 
 scan_changed() {
     local -a untracked=()
 
     # BetterLeaks git/pre-commit covers tracked staged + unstaged diffs.
-    run_betterleaks git --pre-commit --redact --config "${CONFIG}"
+    run_betterleaks git . --pre-commit --redact --config "${CONFIG}"
 
     # BetterLeaks v1 has no single all-committable-changes mode.
     # Add ignored-aware untracked coverage explicitly.
