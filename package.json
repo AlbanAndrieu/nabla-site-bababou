@@ -50,8 +50,11 @@
     "agent:fix": "bash scripts/agent-quality-gate.sh --fix",
     "agent:quality": "bash scripts/agent-quality-gate.sh",
     "agent:publish": "bash scripts/agent-publish.sh",
-    "check:prebuild": "npm run lint && npm run lint:css && npx next typegen && npm run typecheck && npm run test:unit && npm run privacy:check",
-    "check:postbuild": "npm run privacy:check:build"
+    "check:prebuild": "npm run lint && npm run lint:css && npx next typegen && npm run typecheck && npm run test:unit && npm run privacy:check && npm run privacy:publication",
+    "check:postbuild": "npm run privacy:check:build",
+    "privacy:publication": "node --experimental-strip-types scripts/publication-privacy-gate.ts",
+    "privacy:audit-private": "node --experimental-strip-types scripts/audit-private-publication.ts",
+    "privacy:consolidate-private": "node --experimental-strip-types scripts/prepare-private-consolidation.ts"
   },
   "dependencies": {
     "next": "16.3.8",
@@ -68,7 +71,7 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "eslint": "^9.39.1",
-    "eslint-config-next": "16.3.4",
+    "eslint-config-next": "16.3.8",
     "eslint-formatter-gitlab": "^7.2.0",
     "playwright": "^1.58.0",
     "postcss-selector-parser": "^7.1.4",

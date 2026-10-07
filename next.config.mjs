@@ -74,6 +74,9 @@ const nextConfig = {
   experimental: {
     globalNotFound: true,
   },
+  outputFileTracingIncludes: {
+    "/__legacy-html-not-found__": ["./public/404.html"],
+  },
   async headers() {
     return [
       {

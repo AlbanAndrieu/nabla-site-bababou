@@ -22,7 +22,7 @@ npm run dev
 ## Qualité de code, CI/CD et Pull Requests
 
 - Exécutez `npm run check` avant chaque commit pour valider lint (JS/TS/CSS), typecheck, unit tests et build Next.js.
-- Les hooks pre-commit sur chaque commit : lint/format (biome, stylelint, prettier), secrets (gitleaks), yamllint, check case, trailing whitespace/EOL...
+- Les hooks pre-commit sur chaque commit : lint/format (biome, stylelint, prettier), secrets (Betterleaks), yamllint, check case, trailing whitespace/EOL...
 - Pour installer : `pre-commit install` — mettre à jour : `pre-commit autoupdate`.
 - Playwright : `npm test` (tests e2e).
 - La CI Cloud (GitHub Actions) contrôle : lint, check, pre-commit, tests e2e, audit sécurité.

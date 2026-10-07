@@ -18,13 +18,19 @@ test("quality CI records performance around the single canonical Next build", as
     scripts: Record<string, string>;
   };
 
-  assert.equal(packageJson.scripts.build, "next build");
+  assert.equal(
+    packageJson.scripts.build,
+    "bash scripts/run-next-clean.sh build",
+  );
   assert.equal(packageJson.scripts.start, "next start");
   assert.equal(
     packageJson.scripts.check,
     "npm run check:prebuild && npm run build && npm run check:postbuild",
   );
-  assert.match(packageJson.scripts["check:prebuild"], /npm run privacy:check$/);
+  assert.match(
+    packageJson.scripts["check:prebuild"],
+    /npm run privacy:check && npm run privacy:publication$/,
+  );
   assert.equal(
     packageJson.scripts["check:postbuild"],
     "npm run privacy:check:build",

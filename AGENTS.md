@@ -75,6 +75,11 @@ The following integrations are not currently part of the normal `nabla-site-baba
 
 ## Validation
 
+Le `justfile` offre des alias facultatifs (`just p0`,
+`just quality-fix`, `just publish-check`, `just secrets-staged`)
+en complément du `Makefile` historique. Une commande non exécutée
+ne constitue jamais une preuve de validation.
+
 For a focused change, run the closest relevant formatter or linter first. After an editing batch, use the repository-specific local workflow:
 
 ```bash

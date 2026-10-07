@@ -1,8 +1,6 @@
-# This is the default gitleaks configuration file.
-# Rules and allowlists are defined within this file.
-# Rules instruct gitleaks on what should be considered a secret.
-# Allowlists instruct gitleaks on what is allowed, i.e. not a secret.
-title = "gitleaks config"
+# Betterleaks v1 consumes this existing Gitleaks-compatible policy.
+# Keep the reviewed allowlists stable during the scanner migration.
+title = "Betterleaks policy (Gitleaks-compatible format)"
 minVersion = "v8.25.0"
 
 [extend]

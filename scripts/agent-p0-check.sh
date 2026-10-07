@@ -51,6 +51,8 @@ LOG_TAIL="${P0_LOG_TAIL}"
 
 P0_TESTS=(
     "unit-tests/ciScopeBehavior.test.ts"
+    "unit-tests/justBetterleaksContract.test.ts"
+    "unit-tests/legacyHtmlFallbackContract.test.ts"
     "unit-tests/ciScope.test.ts"
     "unit-tests/ciScopeCompactDiagnosticsContract.test.ts"
     "unit-tests/maintenanceScopeParity.test.ts"
@@ -62,6 +64,9 @@ P0_TESTS=(
     "unit-tests/agentP0CompactOutputContract.test.ts"
     "unit-tests/localFirstPost202Parity.test.ts"
     "unit-tests/productionBaselineClassification.test.ts"
+    "unit-tests/publicationPrivacyGateContract.test.ts"
+    "unit-tests/privatePublicationAuditContract.test.ts"
+    "unit-tests/privateConsolidationContract.test.ts"
     "unit-tests/executableScriptsContract.test.ts"
     "unit-tests/agentPreflightBehavior.test.ts"
     "unit-tests/agentPublishBehavior.test.ts"

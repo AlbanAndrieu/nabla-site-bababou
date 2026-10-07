@@ -294,8 +294,7 @@ command -v pre-commit >/dev/null 2>&1 || {
 
 classify_changed_files "${CHANGED_FILES[@]}"
 
-if [[ "${MODE}" != "fix" && "${agent_gate_changed}" == true &&
-    "${QUALITY_CANONICAL_GATE_VERIFIED:-0}" != "1" ]]; then
+if [[ "${MODE}" != "fix" && "${agent_gate_changed}" == true && "${QUALITY_CANONICAL_GATE_VERIFIED:-0}" != "1" ]]; then
     run_compact "agent quality shell formatting" \
         pre-commit run shfmt-docker --files "${AGENT_GATE_SHELL_FILES[@]}"
     run_compact "agent quality shell lint" \
@@ -307,8 +306,7 @@ fi
 if [[ "${MODE}" == "fix" ]]; then
     precommit_fix_until_stable
 
-    if [[ "${javascript_lint_all}" == true || "${stylelint_all}" == true ||
-        "${#JAVASCRIPT_LINT_FILES[@]}" -gt 0 || "${#STYLELINT_FILES[@]}" -gt 0 ]]; then
+    if [[ "${javascript_lint_all}" == true || "${stylelint_all}" == true || "${#JAVASCRIPT_LINT_FILES[@]}" -gt 0 || "${#STYLELINT_FILES[@]}" -gt 0 ]]; then
         if command -v npm >/dev/null 2>&1 && [[ -d node_modules ]]; then
             if [[ "${javascript_lint_all}" == true ]]; then
                 run_compact "ESLint local auto-fix" npm run lint:fix
@@ -377,6 +375,7 @@ run_full_prebuild_checks() {
     npm run typecheck
     npm run test:unit
     npm run privacy:check
+    npm run privacy:publication
 }
 
 case "${build}" in

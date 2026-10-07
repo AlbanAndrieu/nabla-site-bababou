@@ -25,6 +25,8 @@
 - [ ] Au retour des runners, valider un guard serveur metadata-only contre les directives CI-skip et observer un vrai `master` rouge pour confirmer le follow-up automatique, sans provoquer d'incident.
 - [ ] Prouver le chemin autonome événement Git → checkpoint `vercel-preview-*` → Preview Vercel exact-SHA.
 - [ ] Réduire les warnings ZAP applicables et collecter plusieurs baselines vertes avant de rendre les budgets sécurité/performance bloquants.
+- [ ] Confirmer en Preview exact-SHA la 404 legacy via rewrite Next `afterFiles` : statut 404, `noindex`, `no-store`, pages statiques existantes prioritaires. CI #844/#845 : 180 Playwright verts, trois échecs 404.
+- [ ] Valider Betterleaks v1.9.0 sur l'index Git réel (pre-commit Docker et `just secrets-staged`) avant de fermer le remplacement du scanner.
 
 ## P1 — Homepage owner-controlled
 
@@ -61,8 +63,9 @@
 
 ## P6 — Confidentialité finale hors homepage
 
+- [ ] Publier le corpus récupéré par petits lots via `config/publication-review.json` + `npm run privacy:publication` ; garder les originaux hors Git et interdire les formats sources éditables/bruts.
 - [ ] Auditer le corpus public restant hors homepage/index.
-- [ ] Normaliser les pseudonymes juridiques (`the child`, `Mr A`, `Ms B`) et caviarder les données protégées sans perdre le sens juridique, chronologique ou probatoire.
+- [ ] Normaliser les pseudonymes juridiques (`l'enfant` / `the child`, `Mr A`, `Mme B` / `Ms B`) et caviarder les données protégées sans perdre le sens juridique, chronologique ou probatoire.
 - [ ] Étendre le privacy gate sans exposer les valeurs protégées dans logs/tests.
 - [ ] Pour PDF/images, appliquer une redaction irréversible et supprimer couches/metadata cachées.
 - [ ] Garder `/` et `public/index.html` hors hardening automatique : toute évolution de disclosure exige un accord explicite.
