@@ -627,6 +627,8 @@ jobs:
             const startedAt = Date.now();
             const deadline = startedAt + 25 * 60 * 1000;
             const vercelRegistrationDeadline = startedAt + 2 * 60 * 1000;
+            // Keep repository_dispatch as the fast path, but recover deterministically
+            // when Vercel registered a successful deployment and Playwright did not.
             const playwrightFallbackDeadline = startedAt + 3 * 60 * 1000;
             let playwrightFallbackDispatched = false;
 
