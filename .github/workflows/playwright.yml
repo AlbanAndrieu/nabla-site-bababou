@@ -239,7 +239,9 @@ jobs:
           BASE_URL: ${{ env.PREVIEW_BASE_URL }}
 
       - name: Publish Playwright Preview E2E status
-        if: always() && github.event_name != 'workflow_dispatch'
+        if: >-
+          always() &&
+          (github.event_name != 'workflow_dispatch' || inputs.git_sha != '')
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           STATUS_SHA: ${{ env.DEPLOYED_SHA }}

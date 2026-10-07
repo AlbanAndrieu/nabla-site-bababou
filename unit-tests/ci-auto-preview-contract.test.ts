@@ -31,6 +31,7 @@ test("Quality automatically publishes exact PR Preview checkpoints after success
     workflow,
     /github\.event\.pull_request\.head\.repo\.full_name == github\.repository/,
   );
+  assert.match(workflow, /actions: write/);
   assert.match(workflow, /contents: write/);
   assert.match(workflow, /pull-requests: read/);
   assert.match(workflow, /statuses: write/);
@@ -102,6 +103,14 @@ test("Preview security gate waits for both Playwright and OWASP ZAP exact-SHA st
   assert.match(workflow, /failure', 'error/);
   assert.match(workflow, /vercelRegistrationDeadline/);
   assert.match(workflow, /2 \* 60 \* 1000/);
+  assert.match(workflow, /playwrightFallbackDeadline/);
+  assert.match(workflow, /3 \* 60 \* 1000/);
+  assert.match(workflow, /listDeployments/);
+  assert.match(workflow, /listDeploymentStatuses/);
+  assert.match(workflow, /environment_url/);
+  assert.match(workflow, /createWorkflowDispatch/);
+  assert.match(workflow, /workflow_id: 'playwright\.yml'/);
+  assert.match(workflow, /PR_HEAD_REF/);
   assert.match(workflow, /status\?\.state \?\? 'absent'/);
   assert.match(workflow, /Vercel status was not registered within 2 minutes/);
   assert.match(
@@ -110,4 +119,16 @@ test("Preview security gate waits for both Playwright and OWASP ZAP exact-SHA st
   );
   assert.doesNotMatch(workflow, /status\?\.state \?\? 'pending'/);
   assert.match(workflow, /Timed out waiting for/);
+});
+
+test("Playwright workflow publishes exact-SHA status for CI fallback dispatches", async () => {
+  const workflow = await readFile(
+    new URL("../.github/workflows/playwright.yml", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(workflow, /inputs\.git_sha != ''/);
+  assert.match(workflow, /Publish Playwright Preview E2E status/);
+  assert.match(workflow, /STATUS_SHA: \$\{\{ env\.DEPLOYED_SHA \}\}/);
+  assert.match(workflow, /context 'Playwright Preview E2E'/);
 });
