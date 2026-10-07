@@ -164,7 +164,10 @@ test("production baseline and live smoke run before dependency installation", as
     workflow,
     /VERCEL_AUTOMATION_BYPASS_SECRET: \$\{\{ secrets\.VERCEL_AUTOMATION_BYPASS_SECRET \}\}/,
   );
+  assertMatches(workflow, /PRODUCTION_LIVE_ALLOW_MISSING_SECRET: "1"/);
   assertMatches(workflow, /bash scripts\/verify-production-live\.sh/);
+  assertMatches(live, /PROD_LIVE_CREDENTIAL_UNAVAILABLE/);
+  assertMatches(live, /PRODUCTION_LIVE_ALLOW_MISSING_SECRET/);
 
   for (const context of ["Vercel", "Production Post-deploy Smoke", "Production DAST"]) {
     assert.ok(baseline.includes(`"${context}"`));
