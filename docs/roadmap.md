@@ -26,7 +26,7 @@
 - [ ] Prouver le chemin autonome événement Git → checkpoint `vercel-preview-*` → Preview Vercel exact-SHA.
 - [ ] Réduire les warnings ZAP applicables et collecter plusieurs baselines vertes avant de rendre les budgets sécurité/performance bloquants.
 - [ ] Confirmer en Preview exact-SHA la 404 legacy via rewrite Next `afterFiles` : statut 404, `noindex`, `no-store`, pages statiques existantes prioritaires. CI #844/#845 : 180 Playwright verts, trois échecs 404.
-- [ ] Valider Betterleaks v1.9.0 sur l'index Git réel (pre-commit Docker et `just secrets-staged`) avant de fermer le remplacement du scanner.
+- [ ] Valider Betterleaks v1.9.0 sur l'index Git réel (`just secrets-staged`, `just secrets-worktree`) avant de fermer le remplacement ; la configuration canonique est `.betterleaks.toml` et Gitleaks n'est plus exécuté.
 
 ## P1 — Homepage owner-controlled
 

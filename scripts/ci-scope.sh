@@ -50,7 +50,7 @@ is_maintenance_only_path() {
     case "$1" in
         docs/* | unit-tests/* | tests/* | *.md | \
             .pre-commit-config.yaml | .pre-commit-pre-push.yaml | .python-version | \
-            Makefile | justfile | .mega-linter.yml | .gitleaks.toml | \
+            Makefile | justfile | .mega-linter.yml | .betterleaks.toml | \
             mise.toml | opencode.json | renovate.json | eslint.config.js | stylelint.config.cjs | commitlint.config.* | playwright.config.* | \
             scripts/agent-quality-gate.sh | scripts/agent-p0-check.sh | scripts/agent-publish.sh | scripts/lib/agent-quality-support.sh | \
             scripts/quality-gate.sh | scripts/check_code_size.py | scripts/ci-scope.sh | \
@@ -70,7 +70,7 @@ is_preview_safe_path() {
         docs/* | unit-tests/* | tests/* | *.md | \
             .github/* | .zap/* | .vscode/* | .idea/* | .agents/* | .cursor/* | .claude/* | \
             .assetsignore | .pre-commit-config.yaml | .pre-commit-pre-push.yaml | .python-version | \
-            Makefile | justfile | .mega-linter.yml | .gitleaks.toml | \
+            Makefile | justfile | .mega-linter.yml | .betterleaks.toml | \
             mise.toml | opencode.json | renovate.json | eslint.config.js | stylelint.config.cjs | commitlint.config.* | playwright.config.* | \
             scripts/agent-quality-gate.sh | scripts/agent-p0-check.sh | scripts/agent-publish.sh | scripts/lib/agent-quality-support.sh | \
             scripts/lib/production-baseline-classification.sh | \
