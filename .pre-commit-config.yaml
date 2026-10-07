@@ -380,15 +380,16 @@ repos:
             public/assets/fontawesome-free-7.1.0-web/.*|
           )$
 
-# Betterleaks stable v1 supports the existing Gitleaks-compatible TOML.
-# Pin both the hook revision and container image to the same release.
--   repo: https://github.com/betterleaks/betterleaks
-    rev: v1.9.0
+# BetterLeaks v1.9.0 is wrapped locally so linked Git worktrees can mount the
+# repository common Git directory correctly. The wrapper executes the pinned
+# BetterLeaks Docker image by default.
+-   repo: local
     hooks:
-    -   id: betterleaks-docker
-        name: "🔒 🐳 security · Detect hardcoded secrets with Betterleaks"
-        entry: >-
-          ghcr.io/betterleaks/betterleaks:v1.9.0 git --pre-commit --staged --redact --config .gitleaks.toml
+    -   id: betterleaks-staged
+        name: "🔒 🐳 security · Detect staged secrets with BetterLeaks"
+        entry: bash scripts/run-betterleaks.sh staged
+        language: system
+        pass_filenames: false
 
     ### Ansible ###
     # Disable because too slow
