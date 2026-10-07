@@ -23,10 +23,17 @@ test("justfile delegates to canonical scripts while preserving Makefile", async 
   ]) {
     assert.ok(justfile.includes(command), command);
   }
-  assert.match(justfile, /betterleaks git --pre-commit --staged --redact --config \.gitleaks\.toml/);
+  assert.match(
+    justfile,
+    /betterleaks git --pre-commit --staged --redact --config \.gitleaks\.toml/,
+  );
   assert.doesNotMatch(justfile, /git push|git merge|rm -rf/);
   assert.equal(
-    (scope.match(/Makefile \| justfile \| \.mega-linter\.yml \| \.gitleaks\.toml/g) ?? []).length,
+    (
+      scope.match(
+        /Makefile \| justfile \| \.mega-linter\.yml \| \.gitleaks\.toml/g,
+      ) ?? []
+    ).length,
     2,
   );
 });
@@ -39,12 +46,21 @@ test("Betterleaks stable v1 is used instead of Gitleaks, retaining reviewed allo
     read("README.md"),
     read(".github/PULL_REQUEST_TEMPLATE.md"),
   ]);
-  assert.match(precommit, /repo: https:\/\/github\.com\/betterleaks\/betterleaks\s+rev: v1\.9\.0/);
+  assert.match(
+    precommit,
+    /repo: https:\/\/github\.com\/betterleaks\/betterleaks\s+rev: v1\.9\.0/,
+  );
   assert.match(precommit, /id: betterleaks-docker/);
-  assert.match(precommit, /ghcr\.io\/betterleaks\/betterleaks:v1\.9\.0 git --pre-commit --staged --redact --config \.gitleaks\.toml/);
+  assert.match(
+    precommit,
+    /ghcr\.io\/betterleaks\/betterleaks:v1\.9\.0 git --pre-commit --staged --redact --config \.gitleaks\.toml/,
+  );
   assert.doesNotMatch(precommit, /zricethezav\/gitleaks|id: gitleaks-docker/);
   assert.match(mega, /- REPOSITORY_GITLEAKS/);
-  assert.doesNotMatch(mega, /REPOSITORY_GITLEAKS_ARGUMENTS|REPOSITORY_GITLEAKS_DISABLE_ERRORS/);
+  assert.doesNotMatch(
+    mega,
+    /REPOSITORY_GITLEAKS_ARGUMENTS|REPOSITORY_GITLEAKS_DISABLE_ERRORS/,
+  );
   assert.match(policy, /useDefault\s*=\s*true/);
   assert.match(readme, /Betterleaks/);
   assert.match(template, /Betterleaks/);

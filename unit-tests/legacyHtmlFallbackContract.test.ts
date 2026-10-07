@@ -15,14 +15,20 @@ test("legacy HTML fallback is handled after Next public file resolution", async 
       read("public/404.html"),
     ]);
 
-  assert.equal((JSON.parse(vercelSource) as { rewrites?: unknown }).rewrites, undefined);
+  assert.equal(
+    (JSON.parse(vercelSource) as { rewrites?: unknown }).rewrites,
+    undefined,
+  );
   assert.match(next, /async rewrites\(\)[\s\S]*?afterFiles:/);
   assert.match(next, /source: "\/:path\*\.html"/);
   assert.match(next, /destination: "\/__legacy-html-not-found__"/);
   assert.match(handler, /status: 404/);
   assert.match(handler, /"Cache-Control": "no-store, max-age=0"/);
   assert.match(handler, /"X-Robots-Tag": "noindex, nofollow"/);
-  assert.match(browserSpec, /existing legacy HTML stays ahead of the fallback rewrite/);
+  assert.match(
+    browserSpec,
+    /existing legacy HTML stays ahead of the fallback rewrite/,
+  );
   assert.match(browserSpec, /toHaveAttribute\("lang", "en"\)/);
   assert.match(static404, /cloak__wrapper/);
 });
