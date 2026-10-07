@@ -14,9 +14,38 @@ if [[ ! -f "${CONFIG}" ]]; then
     exit 2
 fi
 
+create_git_compat_shim() {
+    local shim_dir
+    shim_dir="$(mktemp -d)"
+    cat >"${shim_dir}/git" <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+
+real_git="${BETTERLEAKS_REAL_GIT:-/usr/bin/git}"
+args=()
+for arg in "$@"; do
+    if [[ "${arg}" == "--staged" ]]; then
+        args+=("--cached")
+    else
+        args+=("${arg}")
+    fi
+done
+exec "${real_git}" "${args[@]}"
+EOF
+    chmod 0755 "${shim_dir}/git"
+    printf '%s\n' "${shim_dir}"
+}
+
 run_betterleaks() {
+    local git_shim_dir="${1:-}"
+    shift || true
+
     if [[ -n "${SYSTEM_BIN}" ]]; then
-        "${SYSTEM_BIN}" "$@"
+        if [[ -n "${git_shim_dir}" ]]; then
+            PATH="${git_shim_dir}:${PATH}" BETTERLEAKS_REAL_GIT="$(command -v git)" "${SYSTEM_BIN}" "$@"
+        else
+            "${SYSTEM_BIN}" "$@"
+        fi
         return
     fi
 
@@ -49,18 +78,29 @@ run_betterleaks() {
             ;;
     esac
 
+    if [[ -n "${git_shim_dir}" ]]; then
+        docker_args+=(
+            --volume "${git_shim_dir}:/betterleaks-git-shim:ro"
+            --env "PATH=/betterleaks-git-shim:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+            --env "BETTERLEAKS_REAL_GIT=/usr/bin/git"
+        )
+    fi
+
     docker "${docker_args[@]}" "${IMAGE}" "$@"
 }
 
 scan_staged() {
-    run_betterleaks git . --pre-commit --staged --redact --config "${CONFIG}"
+    local shim_dir
+    shim_dir="$(create_git_compat_shim)"
+    trap 'rm -rf "${shim_dir}"' RETURN
+    run_betterleaks "${shim_dir}" git . --pre-commit --staged --redact --config "${CONFIG}"
 }
 
 scan_changed() {
     local -a untracked=()
 
     # BetterLeaks git/pre-commit covers tracked staged + unstaged diffs.
-    run_betterleaks git . --pre-commit --redact --config "${CONFIG}"
+    run_betterleaks "" git . --pre-commit --redact --config "${CONFIG}"
 
     # BetterLeaks v1 has no single all-committable-changes mode.
     # Add ignored-aware untracked coverage explicitly.
@@ -73,7 +113,7 @@ scan_changed() {
         return
     fi
 
-    run_betterleaks dir "${untracked[@]}" --redact --config "${CONFIG}"
+    run_betterleaks "" dir "${untracked[@]}" --redact --config "${CONFIG}"
     printf '✅ BetterLeaks changed scan covered %d untracked file(s).\n' "${#untracked[@]}"
 }
 
