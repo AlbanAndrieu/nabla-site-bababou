@@ -15,5 +15,14 @@
       "master": true,
       "vercel-preview-*": true
     }
-  }
+  },
+  "routes": [
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)\\.html$",
+      "dest": "/__legacy-html-not-found__"
+    }
+  ]
 }

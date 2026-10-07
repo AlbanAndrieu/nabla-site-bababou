@@ -85,18 +85,6 @@ const nextConfig = {
       },
     ];
   },
-  // Existing public HTML takes priority; missing *.html uses the protected
-  // static 404 handler. Next afterFiles also works on Vercel Preview.
-  async rewrites() {
-    return {
-      afterFiles: [
-        {
-          source: "/:path*.html",
-          destination: "/__legacy-html-not-found__",
-        },
-      ],
-    };
-  },
   async redirects() {
     return [
       ...migratedLegacyRedirects,
