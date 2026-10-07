@@ -176,10 +176,21 @@ test.describe("Native Next chrome", () => {
 
 		for (const path of paths) {
 			await page.goto(path);
-			await page.addStyleTag({
-				content: "html { font-size: 200% !important; }",
+			await page.locator("html").evaluate((element) => {
+				element.style.setProperty("font-size", "200%", "important");
 			});
 			await expect(page.locator("body")).toBeVisible();
+			await expect
+				.poll(
+					() =>
+						page.evaluate(() =>
+							Number.parseFloat(
+								window.getComputedStyle(document.documentElement).fontSize,
+							),
+						),
+					{ message: `${path} should honor 200% text sizing` },
+				)
+				.toBeGreaterThanOrEqual(32);
 
 			const metrics = await page.evaluate(() => {
 				const maxCssTimeMs = (value: string): number =>
@@ -219,7 +230,7 @@ test.describe("Native Next chrome", () => {
 				};
 			});
 
-			expect(metrics.rootFontSize, `${path} should honor 200% text sizing`).toBeGreaterThanOrEqual(32);
+			expect(metrics.rootFontSize).toBeGreaterThanOrEqual(32);
 			expect(
 				metrics.hasHorizontalScroll,
 				`${path} should reflow without horizontal scrolling at 200% text`,

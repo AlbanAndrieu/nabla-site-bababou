@@ -16,13 +16,10 @@
       "vercel-preview-*": true
     }
   },
-  "routes": [
+  "rewrites": [
     {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*)\\.html$",
-      "dest": "/__legacy-html-not-found__"
+      "source": "/:path*.html",
+      "destination": "/__legacy-html-not-found__"
     }
   ]
 }

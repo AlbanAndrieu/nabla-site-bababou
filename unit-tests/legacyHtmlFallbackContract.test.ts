@@ -16,12 +16,15 @@ test("legacy HTML fallback is filesystem-first on Vercel", async () => {
     ]);
 
   const vercel = JSON.parse(vercelSource) as {
-    routes?: Array<{ handle?: string; src?: string; dest?: string }>;
+    rewrites?: Array<{ source?: string; destination?: string }>;
   };
-  assert.deepEqual(vercel.routes, [
-    { handle: "filesystem" },
-    { src: "/(.*)\\.html$", dest: "/__legacy-html-not-found__" },
+  assert.deepEqual(vercel.rewrites, [
+    {
+      source: "/:path*.html",
+      destination: "/__legacy-html-not-found__",
+    },
   ]);
+  assert.doesNotMatch(vercelSource, /"handle"\s*:\s*"filesystem"/);
   assert.doesNotMatch(next, /source: "\/:path\*\.html"/);
   assert.match(handler, /status: 404/);
   assert.match(handler, /"Cache-Control": "no-store, max-age=0"/);
