@@ -21,7 +21,10 @@ test("Dagger spike is pinned, local-first and does not expose private workspaces
   assert.match(script, /\.env\.local/);
   assert.doesNotMatch(script, /\/var\/run\/docker\.sock|--privileged/);
 
-  assert.match(script, /QUALITY_BASE_REF=HEAD bash scripts\/agent-p0-check\.sh/);
+  assert.match(
+    script,
+    /QUALITY_BASE_REF=HEAD bash scripts\/agent-p0-check\.sh/,
+  );
   assert.match(
     script,
     /QUALITY_BASE_REF=HEAD bash scripts\/agent-quality-gate\.sh --preflight/,
