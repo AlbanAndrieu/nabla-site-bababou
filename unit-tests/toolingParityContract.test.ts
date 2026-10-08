@@ -69,5 +69,5 @@ test("Bababou-specific tooling divergences stay explicit while parity work remai
   assert.equal(pkg.devDependencies.tsx, "^4.23.13");
   assert.equal(pkg.devDependencies["@types/node"], "^24.13.3");
   assert.equal(pkg.devDependencies["typescript-eslint"], "^8.47.0");
-  assert.equal(pkg.devDependencies["postcss-selector-parser"], "^7.1.6");
+  assert.equal(pkg.devDependencies["postcss-selector-parser"], "^7.1.4");
 });

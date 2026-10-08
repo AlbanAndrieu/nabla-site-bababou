@@ -5,10 +5,6 @@ BASE_URL="${PRODUCTION_BASE_URL:-https://www.bababou.com}"
 BYPASS_SECRET="${VERCEL_AUTOMATION_BYPASS_SECRET:-}"
 
 if [[ -z "${BYPASS_SECRET}" ]]; then
-	if [[ "${PRODUCTION_LIVE_ALLOW_MISSING_SECRET:-0}" == "1" ]]; then
-		echo "⚠️ PROD_LIVE_CREDENTIAL_UNAVAILABLE: live smoke skipped; rely on the immediately preceding verified production baseline."
-		exit 0
-	fi
 	echo "❌ PROD_LIVE_CREDENTIAL_MISSING: VERCEL_AUTOMATION_BYPASS_SECRET is required" >&2
 	exit 2
 fi

@@ -53,7 +53,7 @@ is_maintenance_only_path() {
             Makefile | justfile | .mega-linter.yml | .gitleaks.toml | \
             mise.toml | opencode.json | renovate.json | eslint.config.js | stylelint.config.cjs | commitlint.config.* | playwright.config.* | \
             scripts/agent-quality-gate.sh | scripts/agent-p0-check.sh | scripts/agent-publish.sh | scripts/lib/agent-quality-support.sh | \
-            scripts/quality-gate.sh | scripts/check_code_size.py | scripts/ci-scope.sh | scripts/run-betterleaks.sh | \
+            scripts/quality-gate.sh | scripts/check_code_size.py | scripts/ci-scope.sh | \
             scripts/verify-production-baseline.sh | scripts/verify-production-live.sh | \
             scripts/ci-performance-budget.sh | scripts/publish-vercel-preview-checkpoint.sh | \
             scripts/eslint-github-formatter.mjs)
@@ -74,7 +74,7 @@ is_preview_safe_path() {
             mise.toml | opencode.json | renovate.json | eslint.config.js | stylelint.config.cjs | commitlint.config.* | playwright.config.* | \
             scripts/agent-quality-gate.sh | scripts/agent-p0-check.sh | scripts/agent-publish.sh | scripts/lib/agent-quality-support.sh | \
             scripts/lib/production-baseline-classification.sh | \
-            scripts/quality-gate.sh | scripts/check_code_size.py | scripts/ci-scope.sh | scripts/run-betterleaks.sh | \
+            scripts/quality-gate.sh | scripts/check_code_size.py | scripts/ci-scope.sh | \
             scripts/verify-production-baseline.sh | scripts/verify-production-live.sh | \
             scripts/ci-performance-budget.sh | scripts/publish-vercel-preview-checkpoint.sh | \
             scripts/eslint-github-formatter.mjs)

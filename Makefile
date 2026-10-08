@@ -172,11 +172,3 @@ deploy-docker: ## Push
 ## —— Deploy 💾👑 ———————————————————————————————————————————————————————————————
 .PHONY: deploy
 deploy: deploy-docker ## Push to registry
-
-## —— Secrets 🔐 ———————————————————————————————————————————————————————————————
-.PHONY: secrets-staged secrets-changed
-secrets-staged: ## Scan staged files with BetterLeaks v1.9.0 through pre-commit
-	@pre-commit run betterleaks-files
-
-secrets-changed: ## Scan tracked changes and non-ignored untracked files with BetterLeaks
-	@bash scripts/run-betterleaks.sh changed

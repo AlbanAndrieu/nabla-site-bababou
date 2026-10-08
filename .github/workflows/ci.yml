@@ -8,10 +8,6 @@ on:
       - ".cursor/**"
       - ".vscode/**"
       - ".pre-commit-config.yaml"
-      - ".gitleaks.toml"
-      - ".mega-linter.yml"
-      - "Makefile"
-      - "justfile"
       - ".npmrc"
       - ".envrc"
       - ".nvmrc"
@@ -55,10 +51,6 @@ on:
       - ".cursor/**"
       - ".vscode/**"
       - ".pre-commit-config.yaml"
-      - ".gitleaks.toml"
-      - ".mega-linter.yml"
-      - "Makefile"
-      - "justfile"
       - ".npmrc"
       - ".envrc"
       - ".nvmrc"
@@ -235,11 +227,6 @@ jobs:
         env:
           PRODUCTION_BASE_URL: https://www.bababou.com
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
-          # The previous step has already verified Vercel + production smoke + DAST
-          # on the canonical production SHA. If this optional bypass credential is
-          # unavailable in the PR context, do not turn that healthy baseline into
-          # a false-negative CI failure.
-          PRODUCTION_LIVE_ALLOW_MISSING_SECRET: "1"
         run: bash scripts/verify-production-live.sh
 
       - name: Classify CI change scope

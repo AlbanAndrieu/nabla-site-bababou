@@ -40,12 +40,9 @@ publish-check:
 publish-status:
     bash scripts/agent-publish.sh --status
 
-# Canonical BetterLeaks wrapper; ignored private family/legal sources stay out.
+# Index-only scan; never publish ignored private family/legal source files.
 secrets-staged:
-    pre-commit run betterleaks-files
-
-secrets-changed:
-    bash scripts/run-betterleaks.sh changed
+    betterleaks git --pre-commit --staged --redact --config .gitleaks.toml
 
 privacy-check:
     npm run privacy:check
