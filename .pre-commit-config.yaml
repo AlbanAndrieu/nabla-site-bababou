@@ -203,9 +203,10 @@ repos:
 -   repo: https://github.com/scop/pre-commit-shfmt
     rev: v3.13.1-1
     hooks:
-    -   id: shfmt-docker
-        name: "🐚 🐳 shell · Format shell scripts"
-        # shfmt is the single shell-indentation authority, aligned with Site Alban #177.
+    -   id: shfmt
+        name: "🐚 shell · Format shell scripts"
+        # Native prebuilt shfmt hook: no Docker daemon/socket required.
+        # shfmt remains the single shell-indentation authority, aligned with Site Alban #177.
         args: ["-i", "4", "-ci"]
 -   repo: https://github.com/detailyang/pre-commit-shell
     rev: v1.0.6
