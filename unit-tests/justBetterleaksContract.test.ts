@@ -54,11 +54,13 @@ test("Betterleaks stable v1 is the only executed secret scanner", async () => {
     precommit,
     /repo: https:\/\/github\.com\/betterleaks\/betterleaks\s+rev: v1\.9\.0/,
   );
-  assert.match(precommit, /id: betterleaks-docker/);
+  assert.match(precommit, /id: betterleaks(?:\s|$)/);
+  assert.doesNotMatch(precommit, /id: betterleaks-docker/);
   assert.match(
     precommit,
-    /betterleaks:v1\.9\.0 git --pre-commit --staged --redact --config \.betterleaks\.toml/,
+    /betterleaks git --pre-commit --staged --redact --config \.betterleaks\.toml/,
   );
+  assert.doesNotMatch(precommit, /ghcr\.io\/betterleaks\/betterleaks/);
   assert.doesNotMatch(precommit, /zricethezav\/gitleaks|id: gitleaks-docker/);
   assert.match(mega, /- REPOSITORY_GITLEAKS/);
   assert.doesNotMatch(

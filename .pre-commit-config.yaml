@@ -381,14 +381,14 @@ repos:
           )$
 
 # Betterleaks is the canonical secret scanner.
-# Pin both the hook revision and container image to the same stable release.
+# Use the upstream native Go hook: no Docker daemon/socket is required.
 -   repo: https://github.com/betterleaks/betterleaks
     rev: v1.9.0
     hooks:
-    -   id: betterleaks-docker
-        name: "🔒 🐳 security · Detect hardcoded secrets with Betterleaks"
+    -   id: betterleaks
+        name: "🔒 security · Detect hardcoded secrets with Betterleaks"
         entry: >-
-          ghcr.io/betterleaks/betterleaks:v1.9.0 git --pre-commit --staged --redact --config .betterleaks.toml
+          betterleaks git --pre-commit --staged --redact --config .betterleaks.toml
 
     ### Ansible ###
     # Disable because too slow

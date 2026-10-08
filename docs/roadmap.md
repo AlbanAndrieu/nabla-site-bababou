@@ -38,7 +38,7 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 ## P0 — CI, qualité et agent
 
 - [ ] **Fermer la CI courante** : prouver sur le HEAD exact que la 404 legacy rend 404 + `noindex` + `no-store`, sans casser les HTML existants ; confirmer également le reflow 200 % non flaky.
-- [ ] **Betterleaks** : exécuter d'abord `just secrets-config`, puis valider `just secrets-staged`, `just secrets-worktree`, `just secrets-history` sur un vrai checkout ; `.betterleaks.toml` impose Betterleaks >= v1.9.0 et l'ancien scanner Gitleaks n'est jamais exécuté.
+- [ ] **Betterleaks** : hook pre-commit natif Go v1.9.0 (sans Docker) ; exécuter d'abord `just secrets-config`, puis valider `just secrets-staged`, `just secrets-worktree`, `just secrets-history` sur un vrai checkout ; `.betterleaks.toml` impose Betterleaks >= v1.9.0 et l'ancien scanner Gitleaks n'est jamais exécuté.
 - [ ] **Dagger CI — spike local-first** ([docs officielles](https://docs.dagger.io/getting-started/introduction/)) :
   - encapsuler `p0`, `quality`, `test`, `build` en réutilisant les scripts existants, sans dupliquer leur politique ;
   - exécuter le **même pipeline** localement et dans GitHub Actions sur le même SHA ;
