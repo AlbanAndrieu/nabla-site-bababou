@@ -58,3 +58,16 @@ privacy-check:
 
 privacy-publication:
     npm run privacy:publication
+
+# Opt-in Dagger CI spike. The same wrapper is used locally and by dagger-spike.yml.
+dagger-p0:
+    bash scripts/dagger-ci.sh p0
+
+dagger-quality-preflight:
+    bash scripts/dagger-ci.sh quality-preflight
+
+dagger-test:
+    bash scripts/dagger-ci.sh test
+
+dagger-build:
+    bash scripts/dagger-ci.sh build

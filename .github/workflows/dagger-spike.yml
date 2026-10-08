@@ -1,0 +1,47 @@
+name: Dagger CI Spike
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Dagger spike target
+        required: true
+        default: p0
+        type: choice
+        options:
+          - p0
+          - quality-preflight
+          - test
+          - build
+  workflow_call:
+    inputs:
+      target:
+        description: Dagger spike target
+        required: false
+        default: p0
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dagger-spike-${{ github.workflow }}-${{ github.ref }}-${{ inputs.target }}
+  cancel-in-progress: true
+
+jobs:
+  dagger:
+    name: Dagger ${{ inputs.target }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout exact revision
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Install pinned Dagger CLI
+        uses: dagger/dagger-for-github@27b130bf0f79a7f6fbbbe0fbca6760dc9bb40a77 # v8.4.1
+        with:
+          version: v0.21.10
+
+      - name: Run shared local-first Dagger target
+        shell: bash
+        run: bash scripts/dagger-ci.sh "${{ inputs.target }}"

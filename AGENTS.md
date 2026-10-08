@@ -66,6 +66,12 @@ To avoid unnecessary tool-schema, CI and response overhead:
 8. Let `scripts/ci-scope.sh` keep maintenance-only changes on the lightweight CI path. Do not force Semgrep, Snyk, Next builds or Vercel Previews for files that the classifier explicitly treats as quality/orchestration maintenance.
 9. Keep output retrieval focused, but escalate to full logs/artifacts whenever narrower evidence is insufficient.
 
+Dagger CI is currently an **opt-in spike**, not the canonical gate. Use the shared
+`scripts/dagger-ci.sh` / `just dagger-*` targets only when evaluating the spike.
+Do not expose the host Docker socket, private publication workspaces or local secret
+files to Dagger. Do not claim full-quality parity until the remaining Docker-backed
+pre-commit hooks have been removed or replaced.
+
 The following integrations are not currently part of the normal `nabla-site-bababou` workflow and should only be discovered or invoked when explicitly relevant to the task:
 
 - Slack

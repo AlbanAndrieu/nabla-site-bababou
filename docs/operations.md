@@ -154,7 +154,31 @@ publiées dans les logs et artefacts CI.
 - traiter logs/artifacts comme surfaces de divulgation ;
 - ne pas ajouter de credentials Vercel CLI tant que Git integration reste le mécanisme.
 
-## 8. Références
+## 8. Dagger CI spike
+
+Le POC Dagger est **opt-in** et épingle Dagger `v0.21.10`. Le même wrapper
+`scripts/dagger-ci.sh` est appelé localement via `just dagger-*` et par
+`.github/workflows/dagger-spike.yml` (workflow manuel/réutilisable uniquement).
+
+Cibles actuelles :
+
+- `dagger-p0` : snapshot Git isolé + `agent-p0-check.sh` ;
+- `dagger-quality-preflight` : preflight dependency-free uniquement ;
+- `dagger-test` : `npm ci` + tests unitaires ;
+- `dagger-build` : `npm ci` + build Next de production.
+
+Le source transféré vers l'engine exclut explicitement `.git/**`,
+`.private-publication-source/**`, `.redaction-work/**`, les fichiers
+`.env.*` privés, `.vercel/**`, `node_modules/**` et les sorties générées.
+Le spike n'utilise ni `--privileged` ni socket Docker hôte.
+
+Le **full quality gate n'est pas revendiqué dans Dagger** : le pre-commit canonique
+contient encore `shfmt-docker` et `hadolint-docker`. Avant adoption, migrer ces
+deux hooks vers des exécutions natives ou démontrer une autre solution sans
+Docker-in-Docker. Ensuite seulement comparer temps à froid/chaud, cache, réseau
+et lisibilité des traces, puis décider adopter/différer/rejeter.
+
+## 9. Références
 
 - `AGENTS.md` — politique agent/local-first ;
 - `docs/roadmap.md` — travaux ouverts et acquis structurants ;

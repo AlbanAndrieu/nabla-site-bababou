@@ -39,12 +39,13 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 
 - [ ] **Fermer la CI courante** : prouver sur le HEAD exact que la 404 legacy rend 404 + `noindex` + `no-store`, sans casser les HTML existants ; confirmer également le reflow 200 % non flaky.
 - [ ] **Betterleaks** : hook pre-commit natif Go v1.9.0 (sans Docker) ; exécuter d'abord `just secrets-config`, puis valider `just secrets-staged`, `just secrets-worktree`, `just secrets-history` sur un vrai checkout ; `.betterleaks.toml` impose Betterleaks >= v1.9.0 et l'ancien scanner Gitleaks n'est jamais exécuté.
-- [ ] **Dagger CI — spike local-first** ([docs officielles](https://docs.dagger.io/getting-started/introduction/)) :
-  - encapsuler `p0`, `quality`, `test`, `build` en réutilisant les scripts existants, sans dupliquer leur politique ;
-  - exécuter le **même pipeline** localement et dans GitHub Actions sur le même SHA ;
-  - mesurer cache, temps, trafic réseau et lisibilité des traces avant/après ;
-  - aucun secret implicite ; montage explicite et moindre privilège ;
-  - sortie du spike : **adopter / différer / rejeter**. Si adopté, GitHub Actions devient surtout déclencheur du pipeline Dagger ; sinon suppression propre du spike.
+- [ ] **Dagger CI — spike local-first v0.21.10** :
+  - [x] wrapper partagé `scripts/dagger-ci.sh` + aliases Just + workflow opt-in `dagger-spike.yml`, sans déclenchement PR/push automatique ;
+  - [x] mêmes cibles local/GitHub : `p0`, `quality-preflight`, `test` (unit), `build`, avec Node 26.8.2/npm 11.17.0 ;
+  - [x] sources privées/secrets exclus avant transfert ; aucun socket Docker ni mode privilégié ;
+  - [ ] rendre le **full quality** portable en supprimant la dépendance des hooks `shfmt-docker` / `hadolint-docker` avant de l'exposer comme cible Dagger ;
+  - [ ] exécuter le spike sur un vrai runtime Dagger, mesurer froid/chaud, cache, réseau et traces, puis décider **adopter / différer / rejeter** ;
+  - [ ] si adopté, GitHub Actions devient surtout déclencheur du pipeline Dagger ; sinon supprimer proprement le spike.
 - [ ] **Context7 MCP — documentation actuelle pour l'agent** ([docs officielles](https://context7.com/docs/overview)) :
   - connecter Context7 via MCP pour Next.js, React, Vercel, Playwright, Node, Dagger, Betterleaks et dépendances mouvantes ;
   - privilégier les docs locales/versionnées du projet lorsqu'elles existent, puis Context7 pour compléter/valider l'API actuelle ;
