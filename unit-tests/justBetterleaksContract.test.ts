@@ -25,7 +25,15 @@ test("justfile delegates to canonical scripts while preserving Makefile", async 
   }
   assert.match(
     justfile,
-    /betterleaks git --pre-commit --staged --redact --config \.gitleaks\.toml/,
+    /betterleaks git --pre-commit --staged --redact --config \.betterleaks\.toml/,
+  );
+  assert.match(
+    justfile,
+    /betterleaks git --pre-commit --redact --config \.betterleaks\.toml/,
+  );
+  assert.match(
+    justfile,
+    /betterleaks git \. --redact --config \.betterleaks\.toml/,
   );
   assert.match(
     justfile,
@@ -39,7 +47,7 @@ test("justfile delegates to canonical scripts while preserving Makefile", async 
   assert.equal(
     (
       scope.match(
-        /Makefile \| justfile \| \.mega-linter\.yml \| \.gitleaks\.toml/g,
+        /Makefile \| justfile \| \.mega-linter\.yml \| \.betterleaks\.toml/g,
       ) ?? []
     ).length,
     2,
@@ -61,7 +69,7 @@ test("Betterleaks stable v1 is used instead of Gitleaks, retaining reviewed allo
   assert.match(precommit, /id: betterleaks-docker/);
   assert.match(
     precommit,
-    /ghcr\.io\/betterleaks\/betterleaks:v1\.9\.0 git --pre-commit --staged --redact --config \.gitleaks\.toml/,
+    /ghcr\.io\/betterleaks\/betterleaks:v1\.9\.0 git --pre-commit --staged --redact --config \.betterleaks\.toml/,
   );
   assert.doesNotMatch(precommit, /zricethezav\/gitleaks|id: gitleaks-docker/);
   assert.match(mega, /- REPOSITORY_GITLEAKS/);
