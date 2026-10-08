@@ -41,6 +41,9 @@ publish-status:
     bash scripts/agent-publish.sh --status
 
 # Secret scanning is local-first. Private ignored family/legal source files are not staged.
+secrets-config:
+    betterleaks config check .betterleaks.toml
+
 secrets-staged:
     betterleaks git --pre-commit --staged --redact --config .betterleaks.toml
 

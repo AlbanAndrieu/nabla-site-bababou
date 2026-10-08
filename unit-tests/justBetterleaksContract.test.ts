@@ -24,6 +24,7 @@ test("justfile delegates to canonical scripts while preserving Makefile", async 
     assert.ok(justfile.includes(command), command);
   }
   for (const command of [
+    "betterleaks config check .betterleaks.toml",
     "betterleaks git --pre-commit --staged --redact --config .betterleaks.toml",
     "betterleaks git --pre-commit --redact --config .betterleaks.toml",
     "betterleaks git . --redact --config .betterleaks.toml",
@@ -64,6 +65,8 @@ test("Betterleaks stable v1 is the only executed secret scanner", async () => {
     mega,
     /REPOSITORY_GITLEAKS_ARGUMENTS|REPOSITORY_GITLEAKS_DISABLE_ERRORS/,
   );
+  assert.match(policy, /betterleaksMinVersion\s*=\s*"v1\.9\.0"/);
+  assert.match(policy, /minVersion\s*=\s*"v8\.25\.0"/);
   assert.match(policy, /useDefault\s*=\s*true/);
   assert.match(policy, /betterleaks:allow/);
   assert.doesNotMatch(policy, /allow:gitleaks/);

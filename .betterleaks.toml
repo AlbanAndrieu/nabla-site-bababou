@@ -1,6 +1,8 @@
 # Betterleaks v1 policy.
 # Keep reviewed allowlists stable and use this file explicitly in local/CI scans.
 title = "Betterleaks policy"
+betterleaksMinVersion = "v1.9.0"
+# Compatibility floor for the inherited Gitleaks config schema consumed by Betterleaks.
 minVersion = "v8.25.0"
 
 [extend]
