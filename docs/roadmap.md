@@ -47,11 +47,11 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
   - [ ] exécuter le spike sur un vrai runtime Dagger, mesurer froid/chaud, cache, réseau et traces, puis décider **adopter / différer / rejeter** ;
   - [ ] si adopté, GitHub Actions devient surtout déclencheur du pipeline Dagger ; sinon supprimer proprement le spike.
 - [ ] **Context7 MCP — documentation actuelle pour l'agent** ([docs officielles](https://context7.com/docs/overview)) :
-  - connecter Context7 via MCP pour Next.js, React, Vercel, Playwright, Node, Dagger, Betterleaks et dépendances mouvantes ;
-  - privilégier les docs locales/versionnées du projet lorsqu'elles existent, puis Context7 pour compléter/valider l'API actuelle ;
-  - ajouter une règle agent : consulter Context7 avant d'écrire du code dépendant d'une API externe susceptible d'avoir évolué ;
-  - ne jamais envoyer corpus privé, secrets, logs sensibles ou fichiers ignorés à Context7 ;
-  - Context7 reste **non bloquant** : P0/quality doivent fonctionner offline sans lui.
+  - [x] configuration OpenCode distante via OAuth, sans clé/API secret versionné ;
+  - [x] docs locales/versionnées prioritaires, Context7 seulement pour compléter les API externes mouvantes ;
+  - [x] règle agent : ne jamais envoyer corpus privé, secrets, logs sensibles ou fichiers ignorés à Context7 ;
+  - [x] Context7 reste **non bloquant** : P0/quality doivent fonctionner offline sans lui ;
+  - [ ] valider une connexion réelle avec `opencode mcp list` / authentification OAuth puis une requête documentaire ciblée avant de considérer l'intégration terminée.
 - [ ] Prouver le chemin Git → checkpoint `vercel-preview-*` → Vercel → Playwright/ZAP exact-SHA, y compris le fallback dispatch Playwright.
 - [ ] Réduire les warnings ZAP applicables ; rendre les budgets bloquants seulement après plusieurs baselines vertes.
 - [ ] Garder les sorties quality compactes ; verbose uniquement pour diagnostic.

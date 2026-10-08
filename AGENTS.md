@@ -72,6 +72,15 @@ Do not expose the host Docker socket, private publication workspaces or local se
 files to Dagger. Do not claim full-quality parity until the remaining Docker-backed
 pre-commit hooks have been removed or replaced.
 
+Context7 is an optional documentation MCP for APIs that change faster than the model's
+training data. Prefer repository-local/versioned documentation first (especially the
+Next.js docs shipped in `node_modules/next/dist/docs/`). Use Context7 to verify current
+external APIs for React, Vercel, Playwright, Node, Dagger, Betterleaks and similar tooling
+before implementing version-sensitive code. Never send `.private-publication-source/**`,
+`.redaction-work/**`, secrets, private legal/family material, or sensitive logs to
+Context7. Context7 availability/authentication is advisory only: P0, quality and publication
+gates must remain fully usable offline without it.
+
 The following integrations are not currently part of the normal `nabla-site-bababou` workflow and should only be discovered or invoked when explicitly relevant to the task:
 
 - Slack

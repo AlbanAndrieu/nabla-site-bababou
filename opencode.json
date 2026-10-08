@@ -55,6 +55,11 @@
       ],
       "enabled": true,
       "environment": {}
+    },
+    "context7": {
+      "type": "remote",
+      "url": "https://mcp.context7.com/mcp/oauth",
+      "enabled": true
     }
   },
   "default_agent": "bababou",
