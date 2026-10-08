@@ -32,25 +32,31 @@ test("unknown localized routes fall through to the protected global 404", async 
   await assert.rejects(access(projectUrl("app/[locale]/[...rest]/page.tsx")));
 });
 
-test("unknown legacy HTML uses the reviewed 404 source after Vercel filesystem routing", async () => {
+test("unknown legacy HTML uses the reviewed 404 source through Next afterFiles", async () => {
   const nextConfig = await read("next.config.mjs");
   const vercelConfig = JSON.parse(await read("vercel.json")) as {
-    routes?: Array<{ handle?: string; src?: string; dest?: string }>;
+    routes?: unknown;
+    rewrites?: unknown;
   };
 
-  assert.doesNotMatch(nextConfig, /legacyHtmlNotFoundFallback|:path\*\.html/);
   assert.match(
     nextConfig,
     /outputFileTracingIncludes:\s*\{[\s\S]*?["']\/__legacy-html-not-found__["']:\s*\[["']\.\/public\/404\.html["']\]/,
     "legacy 404 Route Handler must bundle the protected public/404.html source",
   );
-  assert.deepEqual(
+  assert.match(nextConfig, /async rewrites\(\)/);
+  assert.match(nextConfig, /afterFiles:\s*\[/);
+  assert.match(nextConfig, /source:\s*"\/:path\*\.html"/);
+  assert.match(nextConfig, /destination:\s*"\/__legacy-html-not-found__"/);
+  assert.equal(
     vercelConfig.routes,
-    [
-      { handle: "filesystem" },
-      { src: "/(.*)\\.html$", dest: "/__legacy-html-not-found__" },
-    ],
-    "Vercel must preserve existing filesystem HTML before routing only misses to the protected 404 renderer",
+    undefined,
+    "Vercel routes must not bypass Next/filesystem ordering",
+  );
+  assert.equal(
+    vercelConfig.rewrites,
+    undefined,
+    "legacy fallback belongs to Next afterFiles, not vercel.json",
   );
 
   const legacyNotFoundRoute = await read(

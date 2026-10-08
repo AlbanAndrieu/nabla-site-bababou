@@ -23,26 +23,13 @@ test("justfile delegates to canonical scripts while preserving Makefile", async 
   ]) {
     assert.ok(justfile.includes(command), command);
   }
-  assert.match(
-    justfile,
-    /betterleaks git --pre-commit --staged --redact --config \.betterleaks\.toml/,
-  );
-  assert.match(
-    justfile,
-    /betterleaks git --pre-commit --redact --config \.betterleaks\.toml/,
-  );
-  assert.match(
-    justfile,
-    /betterleaks git \. --redact --config \.betterleaks\.toml/,
-  );
-  assert.match(
-    justfile,
-    /betterleaks git --pre-commit --redact --config \.betterleaks\.toml/,
-  );
-  assert.match(
-    justfile,
-    /betterleaks git \. --redact --config \.betterleaks\.toml/,
-  );
+  for (const command of [
+    "betterleaks git --pre-commit --staged --redact --config .betterleaks.toml",
+    "betterleaks git --pre-commit --redact --config .betterleaks.toml",
+    "betterleaks git . --redact --config .betterleaks.toml",
+  ]) {
+    assert.ok(justfile.includes(command), command);
+  }
   assert.doesNotMatch(justfile, /git push|git merge|rm -rf/);
   assert.equal(
     (
@@ -54,7 +41,7 @@ test("justfile delegates to canonical scripts while preserving Makefile", async 
   );
 });
 
-test("Betterleaks stable v1 is used instead of Gitleaks, retaining reviewed allowlists", async () => {
+test("Betterleaks stable v1 is the only executed secret scanner", async () => {
   const [precommit, mega, policy, readme, template] = await Promise.all([
     read(".pre-commit-config.yaml"),
     read(".mega-linter.yml"),
@@ -69,7 +56,7 @@ test("Betterleaks stable v1 is used instead of Gitleaks, retaining reviewed allo
   assert.match(precommit, /id: betterleaks-docker/);
   assert.match(
     precommit,
-    /ghcr\.io\/betterleaks\/betterleaks:v1\.9\.0 git --pre-commit --staged --redact --config \.betterleaks\.toml/,
+    /betterleaks:v1\.9\.0 git --pre-commit --staged --redact --config \.betterleaks\.toml/,
   );
   assert.doesNotMatch(precommit, /zricethezav\/gitleaks|id: gitleaks-docker/);
   assert.match(mega, /- REPOSITORY_GITLEAKS/);

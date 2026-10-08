@@ -137,14 +137,11 @@ politique de consentement/confidentialité.
 ## 7. Secrets et sécurité
 
 Le hook pre-commit utilise **Betterleaks v1.9.0** (image Docker épinglée)
-pour la détection de secrets. Le fichier `.gitleaks.toml` conserve sa syntaxe
-compatible et ses allowlists ; il est consommé par Betterleaks, pas par
-l'ancien exécutable Gitleaks. MegaLinter désactive Gitleaks, tandis que
+pour la détection de secrets. Le fichier `.betterleaks.toml` est la policy canonique et conserve les allowlists revues. Betterleaks est le seul scanner de secrets exécuté ; l'ancien exécutable Gitleaks reste désactivé. MegaLinter désactive Gitleaks, tandis que
 `detect-private-key` et Secretlint restent des protections complémentaires.
 
 Le `justfile` est facultatif et **additionnel** au `Makefile` :
-`just preflight`, `just p0`, `just quality-fix`, `just quality`,
-`just publish-check`, `just publish-status`, `just secrets-staged`.
+`just preflight`, `just p0`, `just quality-fix`, `just quality`, `just publish-check`, `just publish-status`, `just secrets-staged`, `just secrets-worktree`, `just secrets-history`.
 Les scripts npm et mise restent les points d'entrée canoniques.
 
 `just secrets-staged` analyse uniquement l'index Git : les sources

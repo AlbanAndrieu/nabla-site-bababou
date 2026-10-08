@@ -4,8 +4,6 @@ title = "Betterleaks policy"
 minVersion = "v8.25.0"
 
 [extend]
-# useDefault will extend the base configuration with the default gitleaks config:
-# https://github.com/zricethezav/gitleaks/blob/master/config/gitleaks.toml
 useDefault = true
 
 [allowlist]
@@ -19,40 +17,25 @@ regexes = [
     '''password-reset-XXX''',
     '''sk-1234567890''',
     '''tg3zLMS/bebJFl0LxctiCw''',
-      # Vercel data-key: value like tg3zLMS/bebJFl0LxctiCw (alphanumeric + slash)
-  '''data-key=^[A-Za-z0-9]+/[A-Za-z0-9+/=]{10,70}$''',
-    ]
+    '''data-key=^[A-Za-z0-9]+/[A-Za-z0-9+/=]{10,70}$''',
+]
 paths = [
-    '''.betterleaks.toml''',
-    '''(.*?)(jpg|gif|doc|docx|zip|xls|pdf|bin|svg|socket|vsidx|v2|suo|wsuo|.dll|pdb|exe)$''',
+    '''\.betterleaks\.toml$''',
+    '''(.*?)(jpg|gif|doc|docx|zip|xls|pdf|bin|svg|socket|vsidx|v2|suo|wsuo|\.dll|pdb|exe)$''',
     '''(go.mod|go.sum|go.work|go.work.sum)$''',
     '''gradle.lockfile''',
     '''megalinter-reports''',
     '''node_modules''',
-    '''.mypy_cache''',
-    '''(.*?)(?:betterleaks|gitleaks)\.toml
+    '''\.mypy_cache''',
     '''vue-client/node_modules''',
     '''package-lock.json''',
     '''yarn.lock''',
     '''pnpm-lock.yaml''',
     '''Database.refactorlog''',
     '''vendor/''',
-    '''.venv/''',
-    '''.direnv/''',
-    '''.tox/''',
+    '''\.venv/''',
+    '''\.direnv/''',
+    '''\.tox/''',
     '''environment.yml''',
-    '''.terraform''',
-]
-'',
-    '''vue-client/node_modules''',
-    '''package-lock.json''',
-    '''yarn.lock''',
-    '''pnpm-lock.yaml''',
-    '''Database.refactorlog''',
-    '''vendor/''',
-    '''.venv/''',
-    '''.direnv/''',
-    '''.tox/''',
-    '''environment.yml''',
-    '''.terraform''',
+    '''\.terraform''',
 ]
