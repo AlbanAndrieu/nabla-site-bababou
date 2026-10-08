@@ -3,7 +3,6 @@ set -euo pipefail
 
 readonly DAGGER_REQUIRED_VERSION="v0.21.10"
 readonly NODE_IMAGE="node:26.8.2-bookworm@sha256:e7bc1a4cd2419953c91f9a6f7bb6efb3737773093fb4ded0b1c77a0a5831fac4"
-readonly NPM_VERSION="11.17.0"
 readonly SOURCE_EXCLUDES=".git/**,.private-publication-source/**,.redaction-work/**,.env.secrets,.env.local,.vercel/**,node_modules/**,.next/**,test-results/**,playwright-report/**,megalinter-reports/**"
 
 usage() {
@@ -47,7 +46,7 @@ container_exec() {
         --gitignore=true \
         --exclude="${SOURCE_EXCLUDES}" \
         with-workdir --path=/workspace \
-        with-exec --args="bash","-lc","${command}" \
+        with-exec --args "bash" "-lc" "${command}" \
         sync >/dev/null
 }
 
