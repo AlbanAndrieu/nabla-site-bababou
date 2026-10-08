@@ -93,6 +93,18 @@ const nextConfig = {
       ...migratedPolicyRedirects,
     ];
   },
+  async rewrites() {
+    return {
+      beforeFiles: [],
+      afterFiles: [
+        {
+          source: "/:path*.html",
+          destination: "/__legacy-html-not-found__",
+        },
+      ],
+      fallback: [],
+    };
+  },
   turbopack: {
     root: projectRoot,
   },

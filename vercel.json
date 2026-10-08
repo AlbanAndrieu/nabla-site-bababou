@@ -1,7 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "regions": ["fra1"],
+  "regions": [
+    "fra1"
+  ],
   "framework": "nextjs",
   "ignoreCommand": "bash scripts/vercel-ignore-build.sh",
   "github": {
@@ -15,14 +17,5 @@
       "master": true,
       "vercel-preview-*": true
     }
-  },
-  "routes": [
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*)\\.html$",
-      "dest": "/__legacy-html-not-found__"
-    }
-  ]
+  }
 }

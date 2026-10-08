@@ -40,9 +40,15 @@ publish-check:
 publish-status:
     bash scripts/agent-publish.sh --status
 
-# Index-only scan; never publish ignored private family/legal source files.
+# Secret scanning is local-first. Private ignored family/legal source files are not staged.
 secrets-staged:
-    betterleaks git --pre-commit --staged --redact --config .gitleaks.toml
+    betterleaks git --pre-commit --staged --redact --config .betterleaks.toml
+
+secrets-worktree:
+    betterleaks git --pre-commit --redact --config .betterleaks.toml
+
+secrets-history:
+    betterleaks git . --redact --config .betterleaks.toml
 
 privacy-check:
     npm run privacy:check
