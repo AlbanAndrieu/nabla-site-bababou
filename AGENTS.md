@@ -50,6 +50,12 @@ For a concise mapping between repository tasks, available skills, local scripts 
 
 After pulling changes to OpenCode configuration, run `opencode agent list` once on the workstation and confirm that both `bababou` and `bababou-reviewer` are discovered before relying on repository-specific commands.
 
+## Disconnected checkout: L1 fallback
+
+When GitHub, registries or hook downloads are inaccessible, start with `just offline-l1` (or `bash scripts/agent-offline-check.sh`). It uses only local Git, Bash and Python when Python files are present. If the comparison base is missing, it checks **all** tracked and untracked local files, not an arbitrary first 200. `AGENT_OFFLINE_MAX_PATHS=0` disables the optional scope ceiling; any explicit ceiling exceeded fails rather than silently dropping files. Git command failures are blocking.
+
+L1 proves only shell/Python syntax and tracked/staged whitespace. Its `NOT_RUN` line means P0, pre-commit, Betterleaks, Next build, Vercel Preview and CI are **not** validated. Once the runtime is present, use `just p0`; when tools and caches permit, use `just quality-fix` and the canonical publication gate. Never bypass or weaken those gates because a network is blocked.
+
 ## Offline-first and bounded agent context
 
 When github.com, PyPI, Docker Hub or other endpoints are blocked, distinguish network failure from a code defect. Never repeat a failed network request without a changed prerequisite; never pretend a skipped check passed.
