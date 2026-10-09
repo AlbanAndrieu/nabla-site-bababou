@@ -22,7 +22,7 @@ if ! command -v pre-commit >/dev/null 2>&1; then
 	exit 1
 fi
 
-LOG_TAIL="${QUALITY_LOG_TAIL:-40}"
+LOG_TAIL="${QUALITY_LOG_TAIL:-12}"
 
 resolve_base_ref() {
 	if [[ -n "${QUALITY_BASE_REF:-}" ]]; then
