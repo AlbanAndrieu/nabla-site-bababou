@@ -23,6 +23,8 @@ bash scripts/agent-p0-check.sh
 bash scripts/agent-p0-check.sh --verbose
 ```
 
+**Budgets de sortie par défaut :** `QUALITY_LOG_TAIL=12`, `P0_LOG_TAIL=12`, patch autofix `QUALITY_DIFF_LINES=36` (0 = patch complet). CI préflight : 20 lignes au maximum ; les erreurs restent bloquantes. `PRODUCTION_SMOKE_VERBOSE=0` résume les cinq probes HTTP en une ligne de succès, tandis que `=1` affiche chaque probe. Les erreurs HTTP/auth/challenge restent visibles quel que soit le mode. Ces paramètres limitent la sortie console, pas les contrôles effectués.
+
 Le mode par défaut compacte la sortie du preflight et des contrats Node. En cas d'échec,
 il affiche seulement les tests/assertions utiles avec un nombre de lignes borné par
 `P0_LOG_TAIL` ; `--verbose` conserve la sortie native pour l'investigation.
