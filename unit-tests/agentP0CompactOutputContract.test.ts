@@ -9,7 +9,7 @@ const source = await readFile(
 
 test("P0 stays compact by default with an explicit verbose diagnostic mode", () => {
   assert.match(source, /--verbose/);
-  assert.match(source, /P0_LOG_TAIL/);
+  assert.match(source, /P0_LOG_TAIL:-12/);
   assert.match(source, /run_compact_report "P0 Git preflight"/);
   assert.match(source, /NO_COLOR=1 FORCE_COLOR=0/);
   assert.match(source, />"\$\{log\}" 2>&1/);
