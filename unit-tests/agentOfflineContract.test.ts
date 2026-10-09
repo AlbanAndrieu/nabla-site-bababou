@@ -39,7 +39,7 @@ test("offline fallback covers 205 files and fails closed on syntax and explicit 
     assert.equal(git.status, 0, git.stderr);
 
     for (let i = 0; i < 205; i++) {
-      await writeFile(join(root, `case-${i}.sh`), "true\\n");
+      await writeFile(join(root, `case-${i}.sh`), "true\n");
     }
     const run = (limit: string) =>
       spawnSync("bash", [script], {
@@ -61,7 +61,7 @@ test("offline fallback covers 205 files and fails closed on syntax and explicit 
     assert.equal(limited.status, 2);
     assert.match(limited.stderr, /OFFLINE_LIMIT_EXCEEDED/);
 
-    await writeFile(join(root, "case-204.sh"), "if then\\n");
+    await writeFile(join(root, "case-204.sh"), "if then\n");
     const invalid = run("0");
     assert.notEqual(invalid.status, 0);
     assert.doesNotMatch(invalid.stdout, /OFFLINE_L1_PASS/);
