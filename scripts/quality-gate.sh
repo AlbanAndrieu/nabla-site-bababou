@@ -94,7 +94,10 @@ if (("${#CHANGED_FILES[@]}" > 0)); then
 			echo "   No CI-log analysis is required for this condition." >&2
 			git status --short >&2
 			echo "--- exact formatter patch ---" >&2
-			git diff --no-ext-diff -- "${CHANGED_FILES[@]}" >&2 || true
+			git diff --no-ext-diff -- "${CHANGED_FILES[@]}" | awk -v max="${QUALITY_DIFF_LINES:-36}" '
+				max == 0 || NR <= max { print }
+				END { if (max > 0 && NR > max) printf "... %d diff lines omitted; set QUALITY_DIFF_LINES=0 for full patch\\n", NR - max }
+			' >&2 || true
 			echo "--- end formatter patch ---" >&2
 		else
 			echo "❌ QG_PRECOMMIT_FAILED: pre-commit found a non-auto-fixed validation error." >&2
