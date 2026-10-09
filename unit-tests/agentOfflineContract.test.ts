@@ -3,8 +3,8 @@ import { spawnSync } from "node:child_process";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { fileURLToPath } from "node:url";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 
 const read = (path: string) =>
   readFile(new URL("../" + path, import.meta.url), "utf8");
@@ -23,8 +23,14 @@ test("offline L1 checks every local path without implicit truncation", async () 
   assert.match(script, /ast\.parse/);
   assert.match(script, /git diff --cached --check/);
   assert.match(script, /NOT_RUN: formatter, Betterleaks/);
-  assert.doesNotMatch(script, /head -n|sed -n ['"]1,200|curl |git fetch|git clone/);
-  assert.match(justfile, /offline-l1:\n    bash scripts\/agent-offline-check\.sh/);
+  assert.doesNotMatch(
+    script,
+    /head -n|sed -n ['"]1,200|curl |git fetch|git clone/,
+  );
+  assert.match(
+    justfile,
+    /offline-l1:\n {4}bash scripts\/agent-offline-check\.sh/,
+  );
 });
 
 test("offline fallback covers 205 files and fails closed on syntax and explicit limits", async () => {
