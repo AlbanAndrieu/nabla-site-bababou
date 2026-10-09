@@ -56,6 +56,8 @@ test("offline fallback covers 205 files and fails closed on syntax and explicit 
     assert.equal(valid.status, 0, valid.stderr);
     assert.match(valid.stdout, /paths=205 syntax_checked=205/);
     assert.match(valid.stderr, /OFFLINE_BASE_UNAVAILABLE/);
+    assert.match(valid.stdout, /NOT_RUN: formatter, Betterleaks/);
+    assert.ok(valid.stdout.split("\n").length <= 5, "success diagnostics stay concise");
 
     const limited = run("200");
     assert.equal(limited.status, 2);
