@@ -32,3 +32,15 @@ test("secretless Dependabot and fork PRs defer only the live smoke", () => {
     /mandatory production baseline verification above remains enforced/,
   );
 });
+
+test("production smoke summarizes successes but never downgrades HTTP and auth failures", async () => {
+  const script = await readFile(
+    new URL("../scripts/verify-production-live.sh", import.meta.url),
+    "utf8",
+  );
+  assert.match(script, /PRODUCTION_SMOKE_VERBOSE:-0/);
+  assert.match(script, /SMOKE_PASSED/);
+  assert.match(script, /PROD_LIVE_HTTP/);
+  assert.match(script, /PROD_LIVE_AUTH/);
+  assert.match(script, /canonical production smoke passed: %d checks/);
+});
