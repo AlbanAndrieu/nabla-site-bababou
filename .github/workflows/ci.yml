@@ -285,9 +285,12 @@ jobs:
           fi
 
           printf 'Semgrep SAST targets:\n%s\n' "${files[@]}"
-          # Avoid anonymous Docker Hub pull limits; keep Semgrep findings blocking.
-          python -m pip install --disable-pip-version-check --quiet 'semgrep==1.145.0'
-          SEMGREP_SEND_METRICS=off semgrep scan \
+          # Isolate Semgrep's Pydantic/MCP dependencies from pre-commit's Python environment.
+          # The venv is ephemeral and avoids anonymous Docker Hub image pulls.
+          semgrep_venv="${RUNNER_TEMP:-/tmp}/bababou-semgrep-venv"
+          python -m venv "$semgrep_venv"
+          "$semgrep_venv/bin/python" -m pip install --disable-pip-version-check --quiet 'semgrep==1.145.0'
+          SEMGREP_SEND_METRICS=off "$semgrep_venv/bin/semgrep" scan \
             --config p/ci \
             --error \
             --metrics=off \
