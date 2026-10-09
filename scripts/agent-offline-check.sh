@@ -18,24 +18,27 @@ if [[ -z "$BASE" ]]; then
         fi
     done
 fi
+scope_file="$(mktemp)"
+trap 'rm -f "$scope_file"' EXIT
 if [[ -n "$BASE" ]] && git rev-parse --verify "$BASE^{commit}" >/dev/null 2>&1 &&
     git merge-base "$BASE" HEAD >/dev/null 2>&1; then
-    mapfile -t files < <(
-        {
-            git diff --name-only --diff-filter=ACMR "$BASE...HEAD"
-            git diff --name-only --diff-filter=ACMR
-            git diff --cached --name-only --diff-filter=ACMR
-            git ls-files --others --exclude-standard
-        } | LC_ALL=C sort -u
-    )
+    # Execute Git in the current shell: process-substitution errors could be lost.
+    {
+        git diff --name-only --diff-filter=ACMR "$BASE...HEAD"
+        git diff --name-only --diff-filter=ACMR
+        git diff --cached --name-only --diff-filter=ACMR
+        git ls-files --others --exclude-standard
+    } | LC_ALL=C sort -u >"$scope_file"
     printf 'ℹ️ OFFLINE_SCOPE_DIFF: %s...HEAD + worktree\n' "$BASE"
 else
     # Never silently truncate the file set or claim PR-completeness without a base.
-    mapfile -t files < <(
-        { git ls-files; git ls-files --others --exclude-standard; } | LC_ALL=C sort -u
-    )
+    {
+        git ls-files
+        git ls-files --others --exclude-standard
+    } | LC_ALL=C sort -u >"$scope_file"
     echo "⚠️ OFFLINE_BASE_UNAVAILABLE: checking every local tracked/untracked path; PR completeness NOT VERIFIED" >&2
 fi
+mapfile -t files <"$scope_file"
 if ((MAX_PATHS > 0 && ${#files[@]} > MAX_PATHS)); then
     printf '❌ OFFLINE_LIMIT_EXCEEDED: %d paths exceed explicit limit %d\n' "${#files[@]}" "$MAX_PATHS" >&2
     exit 2
