@@ -32,13 +32,14 @@ test("unknown localized routes fall through to the protected global 404", async 
   await assert.rejects(access(projectUrl("app/[locale]/[...rest]/page.tsx")));
 });
 
-test("unknown legacy HTML uses the reviewed 404 source only after Vercel resolves an error", async () => {
+test("unknown legacy HTML uses the reviewed 404 source after filesystem miss and before dynamic Next routes", async () => {
   const nextConfig = await read("next.config.mjs");
   const vercelConfig = JSON.parse(await read("vercel.json")) as {
     routes?: Array<{
       handle?: string;
       src?: string;
       dest?: string;
+      check?: boolean;
       status?: number;
       headers?: Record<string, string>;
     }>;
@@ -52,9 +53,10 @@ test("unknown legacy HTML uses the reviewed 404 source only after Vercel resolve
     "legacy 404 Route Handler must bundle the protected public/404.html source",
   );
   assert.doesNotMatch(nextConfig, /source:\s*"\/:path\*\.html"/);
-  assert.deepEqual(routes[0], { handle: "error" });
+  assert.deepEqual(routes[0], { handle: "miss" });
   assert.equal(routes[1]?.src, "/(.*)\\.html$");
   assert.equal(routes[1]?.dest, "/__legacy-html-not-found__");
+  assert.equal(routes[1]?.check, true);
   assert.equal(routes[1]?.status, 404);
   assert.equal(routes[1]?.headers?.["cache-control"], "no-store, max-age=0");
   assert.equal(routes[1]?.headers?.["x-robots-tag"], "noindex, nofollow");

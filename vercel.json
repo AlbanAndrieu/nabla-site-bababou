@@ -18,11 +18,12 @@
   },
   "routes": [
     {
-      "handle": "error"
+      "handle": "miss"
     },
     {
       "src": "/(.*)\\.html$",
       "dest": "/__legacy-html-not-found__",
+      "check": true,
       "status": 404,
       "headers": {
         "cache-control": "no-store, max-age=0",

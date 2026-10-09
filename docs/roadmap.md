@@ -21,7 +21,7 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 
 - `master` contient Betterleaks + `justfile` via #220 ; `Makefile` est conservé.
 - #223 est réconciliée avec ce `master`. La preuve Preview #886 a confirmé que Next `afterFiles` ne suffit pas sur Vercel pour les `*.html` absents : 180 tests Playwright verts, 3 échecs 404, tandis que Vercel et ZAP sont verts.
-- Le correctif courant déplace ce seul fallback dans la phase Vercel **`handle: error`** : fichiers et redirects valides se résolvent d'abord ; seuls les `*.html` déjà en erreur sont envoyés vers `/__legacy-html-not-found__` avec `404`, `noindex` et `no-store`.
+- La Preview #889 a prouvé que **`handle: error` est trop tardif** : les `*.html` absents sont déjà capturés par le segment dynamique Next (`x-matched-path: /[locale]`) avant la phase d'erreur. Le correctif courant utilise **`handle: miss` + `check: true`** : redirects et fichiers valides se résolvent d'abord, puis les `*.html` absents passent par `/__legacy-html-not-found__` avant les routes dynamiques Next.
 - **Ne jamais considérer ce snapshot comme une preuve courante** : relire le HEAD/CI live au début du prochain lot.
 - Les sources privées `.private-publication-source/**` et `.redaction-work/**` ne doivent jamais être envoyées à un service externe ou ajoutées à Git.
 
@@ -37,7 +37,7 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 
 ## P0 — CI, qualité et agent
 
-- [ ] **Fermer la CI courante** : valider sur le HEAD exact le fallback Vercel `handle: error` des `*.html` absents (404 + `noindex` + `no-store`) sans casser fichiers/redirects existants ; confirmer également le reflow 200 % non flaky.
+- [ ] **Fermer la CI courante** : valider sur le HEAD exact le fallback Vercel `handle: miss` + `check: true` des `*.html` absents (404 + `noindex` + `no-store`) sans casser fichiers/redirects existants ; confirmer également le reflow 200 % non flaky.
 - [ ] **Betterleaks** : hook pre-commit natif Go v1.9.0 (sans Docker) ; exécuter d'abord `just secrets-config`, puis valider `just secrets-staged`, `just secrets-worktree`, `just secrets-history` sur un vrai checkout ; `.betterleaks.toml` impose Betterleaks >= v1.9.0 et l'ancien scanner Gitleaks n'est jamais exécuté.
 - [ ] **Dagger CI — spike local-first v0.21.10** :
   - [x] wrapper partagé `scripts/dagger-ci.sh` + aliases Just + workflow opt-in `dagger-spike.yml`, sans déclenchement PR/push automatique ;

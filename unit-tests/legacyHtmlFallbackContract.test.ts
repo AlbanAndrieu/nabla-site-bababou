@@ -5,7 +5,7 @@ import test from "node:test";
 const read = (path: string) =>
   readFile(new URL("../" + path, import.meta.url), "utf8");
 
-test("legacy HTML fallback runs only in Vercel's error phase", async () => {
+test("legacy HTML fallback runs in Vercel's miss phase before dynamic Next routes", async () => {
   const [next, vercelSource, handler, browserSpec, static404] =
     await Promise.all([
       read("next.config.mjs"),
@@ -20,22 +20,24 @@ test("legacy HTML fallback runs only in Vercel's error phase", async () => {
       handle?: string;
       src?: string;
       dest?: string;
+      check?: boolean;
       status?: number;
       headers?: Record<string, string>;
     }>;
   };
   const routes = vercel.routes ?? [];
 
-  assert.deepEqual(routes[0], { handle: "error" });
+  assert.deepEqual(routes[0], { handle: "miss" });
   assert.equal(routes[1]?.src, "/(.*)\\.html$");
   assert.equal(routes[1]?.dest, "/__legacy-html-not-found__");
+  assert.equal(routes[1]?.check, true);
   assert.equal(routes[1]?.status, 404);
   assert.equal(routes[1]?.headers?.["cache-control"], "no-store, max-age=0");
   assert.equal(routes[1]?.headers?.["x-robots-tag"], "noindex, nofollow");
   assert.doesNotMatch(
     next,
     /source:\s*"\/:path\*\.html"/,
-    "Next rewrites must not mutate the original legacy URL before Vercel's error phase",
+    "Next rewrites must not mutate the original legacy URL before Vercel's miss phase",
   );
 
   assert.match(handler, /status: 404/);
