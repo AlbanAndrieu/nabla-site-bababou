@@ -81,3 +81,14 @@ test("publication builds only deploy-relevant changes", async () => {
   assert.ok(scope.includes("scripts/agent-publish.sh"));
   assert.ok(scope.includes("scripts/lib/agent-quality-support.sh"));
 });
+
+test("agent shell formatter uses the native pre-commit hook offline", async () => {
+  const [gate, hooks] = await Promise.all([
+    read("../scripts/agent-quality-gate.sh"),
+    read("../.pre-commit-config.yaml"),
+  ]);
+
+  assert.match(gate, /pre-commit run shfmt --files/);
+  assert.doesNotMatch(gate, /pre-commit run shfmt-docker/);
+  assert.match(hooks, /id: shfmt\n/);
+});
