@@ -284,7 +284,7 @@ jobs:
             exit 0
           fi
 
-          printf 'Semgrep SAST targets:\n%s\n' "${files[@]}"
+          printf 'Semgrep SAST: %d changed files\n' "${#files[@]}"
           # Isolate Semgrep's Pydantic/MCP dependencies from pre-commit's Python environment.
           # The venv is ephemeral and avoids anonymous Docker Hub image pulls.
           semgrep_venv="${RUNNER_TEMP:-/tmp}/bababou-semgrep-venv"
