@@ -37,17 +37,13 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 
 ## P0 — CI, qualité et agent
 
-### Boucle local-first (octobre 2026)
+### Boucle local-first — état courant
 
-- [x] Ajouter les contrats Semgrep au checkpoint P0 hors réseau ; documenter les classes PASS/FAIL/BLOCKED_NETWORK/MISSING_TOOL/NOT_RUN et le budget de contexte de l'agent.
-- [ ] Obtenir la preuve CI sur le **HEAD courant** après correction des tests Semgrep : la CI #898 a échoué avant le SAST sur un patch Biome déterministe et Node 24 sur la syntaxe des regexp ; les correctifs ont été committés. Ne pas revendiquer de qualité verte avant une exécution complète.
-- [ ] Mesurer la consommation de tokens/temps avant-après sur une tâche d'agent identique. Ne pas annoncer de gain chiffré non mesuré.
-- [x] Aligner `scripts/agent-quality-gate.sh` sur le hook natif `shfmt` déjà utilisé par pre-commit ; verrouiller ce contrat dans les tests, sans Docker Hub.
-- [x] Reprendre le comportement de `nabla-compose` #250 : `just offline-l1` sans accès réseau, contrôle de tous les fichiers locaux si la base Git manque, borne facultative explicite, erreurs Git non masquées, tests sur 205 fichiers et classement `NOT_RUN`.
-- [ ] Valider l'exécution complète de P0, Biome, Betterleaks, Semgrep, build/Preview sur le HEAD exact. Le fallback L1 n'est pas une preuve de publication.
-- [ ] Évaluer sur une tâche comparable les enseignements de `fastapi-sample` #329 (diagnostics compacts), #325 (Betterleaks local-first), #322 (fail-closed et frontières runtime) ; réutiliser les contrats applicables sans importer les probes pfSense/TrueNAS hors périmètre.
-- [ ] Tester le chemin sans accès github.com/PyPI/Docker Hub sur un checkout et caches existants, sans substituer une archive non vérifiée ni ignorer les gates indisponibles.
-
+- [x] P0 hors réseau : contrats Semgrep, `just offline-l1` avec vérification exhaustive (>200 fichiers), limites et erreurs Git explicites, `shfmt` natif et sortie compacte.
+- [x] Skill de maintenance : reprise par snapshot d'artefact **exact-HEAD** seulement s'il existe déjà, conformément à `nabla-site-alban` ; fallback API ciblée si DNS indisponible, sans déclencher de CI ni inventer une validation locale.
+- [ ] Fermer la quality gate du **HEAD exact** : CI #38001376894 signalait `QG_AUTOFIX_REQUIRED` sur `agentOfflineContract.test.ts`, patch Biome appliqué. Vérifier ensuite Semgrep, tests, build et Preview selon le scope ; le statut final reste à prouver.
+- [ ] Mesurer à périmètre comparable les tokens, durée et lignes de logs avant/après ; ne pas annoncer de pourcentage non mesuré. Conserver les journaux complets accessibles sur demande.
+- [ ] Valider P0, Betterleaks, publication et éventuel snapshot sur un véritable checkout ou une archive vérifiée ; L1/API seule ne prouve pas L3.
 
 - [ ] **Fermer la CI courante** : valider sur le HEAD exact le fallback Vercel `handle: miss` + `check: true` des `*.html` absents (404 + `noindex` + `no-store`) sans casser fichiers/redirects existants ; confirmer également le reflow 200 % non flaky.
 - [ ] **Betterleaks** : hook pre-commit natif Go v1.9.0 (sans Docker) ; exécuter d'abord `just secrets-config`, puis valider `just secrets-staged`, `just secrets-worktree`, `just secrets-history` sur un vrai checkout ; `.betterleaks.toml` impose Betterleaks >= v1.9.0 et l'ancien scanner Gitleaks n'est jamais exécuté.
