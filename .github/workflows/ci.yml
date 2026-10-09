@@ -153,7 +153,7 @@ jobs:
         shell: bash
         env:
           QUALITY_BASE_REF: ${{ steps.current-heads.outputs.base-sha || github.event.before || 'origin/master' }}
-          QUALITY_LOG_TAIL: "120"
+          QUALITY_LOG_TAIL: "20"
         run: bash scripts/agent-quality-gate.sh --preflight
 
       - name: Report draft preflight-only mode
@@ -191,7 +191,7 @@ jobs:
         continue-on-error: true
         env:
           QUALITY_BASE_REF: ${{ steps.current-heads.outputs.base-sha || github.event.before || 'origin/master' }}
-          QUALITY_LOG_TAIL: "40"
+          QUALITY_LOG_TAIL: "12"
         run: bash scripts/quality-gate.sh
 
       - name: Save pre-commit environments
@@ -289,7 +289,8 @@ jobs:
           # The venv is ephemeral and avoids anonymous Docker Hub image pulls.
           semgrep_venv="${RUNNER_TEMP:-/tmp}/bababou-semgrep-venv"
           python -m venv "$semgrep_venv"
-          "$semgrep_venv/bin/python" -m pip install --disable-pip-version-check --quiet 'semgrep==1.145.0'
+          "$semgrep_venv/bin/python" -m pip install --disable-pip-version-check --quiet 'semgrep==1.145.0' 'pydantic==2.12.5'
+          "$semgrep_venv/bin/python" -c "from pydantic._internal._typing_extra import eval_type_backport"
           SEMGREP_SEND_METRICS=off "$semgrep_venv/bin/semgrep" scan \
             --config p/ci \
             --error \
