@@ -42,6 +42,8 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 - [x] Ajouter les contrats Semgrep au checkpoint P0 hors réseau ; documenter les classes PASS/FAIL/BLOCKED_NETWORK/MISSING_TOOL/NOT_RUN et le budget de contexte de l'agent.
 - [ ] Obtenir la preuve CI sur le **HEAD courant** après correction des tests Semgrep : la CI #898 a échoué avant le SAST sur un patch Biome déterministe et Node 24 sur la syntaxe des regexp ; les correctifs ont été committés. Ne pas revendiquer de qualité verte avant une exécution complète.
 - [ ] Mesurer la consommation de tokens/temps avant-après sur une tâche d'agent identique. Ne pas annoncer de gain chiffré non mesuré.
+- [x] Aligner `scripts/agent-quality-gate.sh` sur le hook natif `shfmt` déjà utilisé par pre-commit ; verrouiller ce contrat dans les tests, sans Docker Hub.
+- [ ] Évaluer sur une tâche comparable les enseignements de `fastapi-sample` #329 (diagnostics compacts), #325 (Betterleaks local-first), #322 (fail-closed et frontières runtime) ; réutiliser les contrats applicables sans importer les probes pfSense/TrueNAS hors périmètre.
 - [ ] Tester le chemin sans accès github.com/PyPI/Docker Hub sur un checkout et caches existants, sans substituer une archive non vérifiée ni ignorer les gates indisponibles.
 
 
