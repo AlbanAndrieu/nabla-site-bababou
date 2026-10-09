@@ -20,7 +20,9 @@ test("Quality runs changed-source Semgrep before the expensive Node build", asyn
   const setupNode = workflow.indexOf("Setup Node.js");
   assert.ok(semgrep > 0);
   assert.ok(setupNode > semgrep);
-  assert.match(workflow, /semgrep\/semgrep@sha256:/);
+  assert.match(workflow, /python -m pip install --disable-pip-version-check --quiet 'semgrep==1\\.145\\.0'/);
+  assert.match(workflow, /SEMGREP_SEND_METRICS=off semgrep scan/);
+  assert.doesNotMatch(workflow, /semgrep\/semgrep@sha256:/);
   assert.match(workflow, /--sarif/);
   assert.match(workflow, /semgrep-sast-report/);
   assert.match(workflow, /id: semgrep-sarif/);
