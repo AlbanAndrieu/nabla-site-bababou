@@ -32,31 +32,36 @@ test("unknown localized routes fall through to the protected global 404", async 
   await assert.rejects(access(projectUrl("app/[locale]/[...rest]/page.tsx")));
 });
 
-test("unknown legacy HTML uses the reviewed 404 source through Next afterFiles", async () => {
+test("unknown legacy HTML uses the reviewed 404 source only after Vercel resolves an error", async () => {
   const nextConfig = await read("next.config.mjs");
   const vercelConfig = JSON.parse(await read("vercel.json")) as {
-    routes?: unknown;
+    routes?: Array<{
+      handle?: string;
+      src?: string;
+      dest?: string;
+      status?: number;
+      headers?: Record<string, string>;
+    }>;
     rewrites?: unknown;
   };
+  const routes = vercelConfig.routes ?? [];
 
   assert.match(
     nextConfig,
     /outputFileTracingIncludes:\s*\{[\s\S]*?["']\/__legacy-html-not-found__["']:\s*\[["']\.\/public\/404\.html["']\]/,
     "legacy 404 Route Handler must bundle the protected public/404.html source",
   );
-  assert.match(nextConfig, /async rewrites\(\)/);
-  assert.match(nextConfig, /afterFiles:\s*\[/);
-  assert.match(nextConfig, /source:\s*"\/:path\*\.html"/);
-  assert.match(nextConfig, /destination:\s*"\/__legacy-html-not-found__"/);
-  assert.equal(
-    vercelConfig.routes,
-    undefined,
-    "Vercel routes must not bypass Next/filesystem ordering",
-  );
+  assert.doesNotMatch(nextConfig, /source:\s*"\/:path\*\.html"/);
+  assert.deepEqual(routes[0], { handle: "error" });
+  assert.equal(routes[1]?.src, "/(.*)\\.html$");
+  assert.equal(routes[1]?.dest, "/__legacy-html-not-found__");
+  assert.equal(routes[1]?.status, 404);
+  assert.equal(routes[1]?.headers?.["cache-control"], "no-store, max-age=0");
+  assert.equal(routes[1]?.headers?.["x-robots-tag"], "noindex, nofollow");
   assert.equal(
     vercelConfig.rewrites,
     undefined,
-    "legacy fallback belongs to Next afterFiles, not vercel.json",
+    "legacy fallback must not run as an unconditional Vercel rewrite",
   );
 
   const legacyNotFoundRoute = await read(

@@ -5,7 +5,7 @@ import test from "node:test";
 const read = (path: string) =>
   readFile(new URL("../" + path, import.meta.url), "utf8");
 
-test("legacy HTML fallback is filesystem-first through Next afterFiles", async () => {
+test("legacy HTML fallback runs only in Vercel's error phase", async () => {
   const [next, vercelSource, handler, browserSpec, static404] =
     await Promise.all([
       read("next.config.mjs"),
@@ -16,19 +16,27 @@ test("legacy HTML fallback is filesystem-first through Next afterFiles", async (
     ]);
 
   const vercel = JSON.parse(vercelSource) as {
-    routes?: Array<{ handle?: string; src?: string; dest?: string }>;
+    routes?: Array<{
+      handle?: string;
+      src?: string;
+      dest?: string;
+      status?: number;
+      headers?: Record<string, string>;
+    }>;
   };
+  const routes = vercel.routes ?? [];
 
-  assert.equal(
-    vercel.routes,
-    undefined,
-    "Vercel routes must not bypass Next afterFiles/filesystem ordering",
+  assert.deepEqual(routes[0], { handle: "error" });
+  assert.equal(routes[1]?.src, "/(.*)\\.html$");
+  assert.equal(routes[1]?.dest, "/__legacy-html-not-found__");
+  assert.equal(routes[1]?.status, 404);
+  assert.equal(routes[1]?.headers?.["cache-control"], "no-store, max-age=0");
+  assert.equal(routes[1]?.headers?.["x-robots-tag"], "noindex, nofollow");
+  assert.doesNotMatch(
+    next,
+    /source:\s*"\/:path\*\.html"/,
+    "Next rewrites must not mutate the original legacy URL before Vercel's error phase",
   );
-  assert.match(next, /async rewrites\(\)/);
-  assert.match(next, /afterFiles:\s*\[/);
-  assert.match(next, /source:\s*"\/:path\*\.html"/);
-  assert.match(next, /destination:\s*"\/__legacy-html-not-found__"/);
-  assert.doesNotMatch(next, /beforeFiles:\s*\[[^\]]*__legacy-html-not-found__/s);
 
   assert.match(handler, /status: 404/);
   assert.match(handler, /"Cache-Control": "no-store, max-age=0"/);

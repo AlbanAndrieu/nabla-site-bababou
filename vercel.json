@@ -17,5 +17,19 @@
       "master": true,
       "vercel-preview-*": true
     }
-  }
+  },
+  "routes": [
+    {
+      "handle": "error"
+    },
+    {
+      "src": "/(.*)\\.html$",
+      "dest": "/__legacy-html-not-found__",
+      "status": 404,
+      "headers": {
+        "cache-control": "no-store, max-age=0",
+        "x-robots-tag": "noindex, nofollow"
+      }
+    }
+  ]
 }
