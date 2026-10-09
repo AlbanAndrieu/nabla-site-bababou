@@ -8,9 +8,14 @@ const workflow = await readFile(
 );
 
 test("Semgrep does not depend on anonymous Docker Hub pulls", () => {
-  const scan = workflow.split("      - name: Run Semgrep SAST on changed source")[1]?.split("      - name: Upload Semgrep SARIF")[0];
+  const scan = workflow
+    .split("      - name: Run Semgrep SAST on changed source")[1]
+    ?.split("      - name: Upload Semgrep SARIF")[0];
   assert.ok(scan, "Semgrep CI step must exist");
-  assert.match(scan, /python -m pip install --disable-pip-version-check --quiet 'semgrep==1\.145\.0'/);
+  assert.match(
+    scan,
+    /python -m pip install --disable-pip-version-check --quiet 'semgrep==1\.145\.0'/,
+  );
   assert.match(scan, /SEMGREP_SEND_METRICS=off semgrep scan/);
   assert.match(scan, /--config p\/ci/);
   assert.match(scan, /--error/);
@@ -21,5 +26,8 @@ test("Semgrep does not depend on anonymous Docker Hub pulls", () => {
 
 test("Semgrep failures remain blocking and SARIF diagnostics remain available", () => {
   assert.match(workflow, /Preserve failed Semgrep SAST report/);
-  assert.match(workflow, /Enforce Semgrep SAST[\s\S]*?steps\.semgrep-sast\.outcome != 'success'[\s\S]*?run: exit 1/);
+  assert.match(
+    workflow,
+    /Enforce Semgrep SAST[\s\S]*?steps\.semgrep-sast\.outcome != 'success'[\s\S]*?run: exit 1/,
+  );
 });
