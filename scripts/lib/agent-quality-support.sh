@@ -17,7 +17,7 @@ Modes:
 
 Environment:
     QUALITY_BASE_REF                    override comparison base
-    QUALITY_LOG_TAIL                    failure log lines to print (default: 40)
+    QUALITY_LOG_TAIL                    failure log lines to print (default: 12)
     QUALITY_FIX_PASSES                  maximum local pre-commit fix passes (default: 12)
     QUALITY_CANONICAL_GATE_VERIFIED=1   CI-only: canonical gate already passed in this job
     QUALITY_ALLOW_LARGE_DELETION=1      acknowledge an intentional large truncation
