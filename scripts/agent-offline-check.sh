@@ -20,8 +20,13 @@ if [[ -z "$BASE" ]]; then
 fi
 scope_file="$(mktemp)"
 trap 'rm -f "$scope_file"' EXIT
-if [[ -n "$BASE" ]] && git rev-parse --verify "$BASE^{commit}" >/dev/null 2>&1 &&
-    git merge-base "$BASE" HEAD >/dev/null 2>&1; then
+base_available=false
+if [[ -n "$BASE" ]] && git rev-parse --verify "$BASE^{commit}" >/dev/null 2>&1; then
+    if git merge-base "$BASE" HEAD >/dev/null 2>&1; then
+        base_available=true
+    fi
+fi
+if [[ "$base_available" == true ]]; then
     # Execute Git in the current shell: process-substitution errors could be lost.
     {
         git diff --name-only --diff-filter=ACMR "$BASE...HEAD"
