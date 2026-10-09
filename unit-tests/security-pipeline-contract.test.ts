@@ -20,7 +20,10 @@ test("Quality runs changed-source Semgrep before the expensive Node build", asyn
   const setupNode = workflow.indexOf("Setup Node.js");
   assert.ok(semgrep > 0);
   assert.ok(setupNode > semgrep);
-  assert.match(workflow, /python -m pip install --disable-pip-version-check --quiet 'semgrep==1\.145\.0'/);
+  assert.match(
+    workflow,
+    /python -m pip install --disable-pip-version-check --quiet 'semgrep==1\.145\.0'/,
+  );
   assert.match(workflow, /SEMGREP_SEND_METRICS=off semgrep scan/);
   assert.doesNotMatch(workflow, /semgrep\/semgrep@sha256:/);
   assert.match(workflow, /--sarif/);
@@ -34,8 +37,13 @@ test("Quality runs changed-source Semgrep before the expensive Node build", asyn
 
 test("Quality retains Semgrep SARIF artifacts only for failed scans", async () => {
   const workflow = await readFile(ciUrl, "utf8");
-  const preserveStart = workflow.indexOf("- name: Preserve failed Semgrep SAST report");
-  const cleanStart = workflow.indexOf("- name: Clean Semgrep SAST workspace", preserveStart);
+  const preserveStart = workflow.indexOf(
+    "- name: Preserve failed Semgrep SAST report",
+  );
+  const cleanStart = workflow.indexOf(
+    "- name: Clean Semgrep SAST workspace",
+    preserveStart,
+  );
   const preserveBlock = workflow.slice(preserveStart, cleanStart);
 
   assert.ok(preserveStart >= 0);
