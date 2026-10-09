@@ -22,9 +22,9 @@ test("Quality runs changed-source Semgrep before the expensive Node build", asyn
   assert.ok(setupNode > semgrep);
   assert.match(
     workflow,
-    /"\$semgrep_venv/bin/python\" -m pip install --disable-pip-version-check --quiet 'semgrep==1\.145\.0'/,
+    /"\$semgrep_venv[/]bin[/]python" -m pip install --disable-pip-version-check --quiet 'semgrep==1\.145\.0'/,
   );
-  assert.match(workflow, /SEMGREP_SEND_METRICS=off "\$semgrep_venv/bin/semgrep\" scan/);
+  assert.match(workflow, /SEMGREP_SEND_METRICS=off "\$semgrep_venv[/]bin[/]semgrep" scan/);
   assert.doesNotMatch(workflow, /semgrep\/semgrep@sha256:/);
   assert.match(workflow, /python -m venv/);
   assert.match(workflow, /--sarif/);
