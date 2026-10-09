@@ -28,6 +28,19 @@ async function injectAnalyticsScript(
 }
 
 async function gotoAnalyticsHost(page: Page) {
+	for (const path of [
+		"**/_vercel/insights/script.js",
+		"**/_vercel/speed-insights/script.js",
+	]) {
+		await page.route(path, async (route) => {
+			await route.fulfill({
+				status: 200,
+				contentType: "application/javascript",
+				body: "",
+			});
+		});
+	}
+
 	await page.route("**/analytics-test-host.html", async (route) => {
 		await route.fulfill({
 			status: 200,
