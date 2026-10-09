@@ -85,7 +85,10 @@ test("AGENTS gives small models an explicit deterministic workflow", async () =>
   assert.match(agents, /Keep the PR draft/);
   assert.match(agents, /pull-request descriptions in French/i);
   assert.match(agents, /Context7 is an optional documentation MCP/);
-  assert.match(agents, /Prefer repository-local\/versioned documentation first/);
+  assert.match(
+    agents,
+    /Prefer repository-local\/versioned documentation first/,
+  );
   assert.match(agents, /must remain fully usable offline without it/);
   assert.match(agents, /\.private-publication-source\/\*\*/);
 });

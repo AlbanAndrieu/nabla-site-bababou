@@ -53,13 +53,12 @@ test("Dagger spike is pinned, local-first and does not expose private workspaces
   }
 });
 
-
 test("Dagger portability keeps shell formatting Docker-free", async () => {
   const preCommit = await readFile(
     new URL("../.pre-commit-config.yaml", import.meta.url),
     "utf8",
   );
 
-  assert.match(preCommit, /-   id: shfmt\n/);
+  assert.match(preCommit, /- {3}id: shfmt\n/);
   assert.doesNotMatch(preCommit, /shfmt-docker/);
 });
