@@ -21,6 +21,8 @@ test("Semgrep does not depend on anonymous Docker Hub pulls", () => {
     /SEMGREP_SEND_METRICS=off "\$semgrep_venv[/]bin[/]semgrep" scan/,
   );
   assert.match(scan, /python -m venv/);
+  assert.match(scan, /pydantic==2\\.12\\.5/);
+  assert.match(scan, /eval_type_backport/);
   assert.match(scan, /--config p\/ci/);
   assert.match(scan, /--error/);
   assert.match(scan, /--sarif/);
