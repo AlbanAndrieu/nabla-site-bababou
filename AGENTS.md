@@ -50,6 +50,17 @@ For a concise mapping between repository tasks, available skills, local scripts 
 
 After pulling changes to OpenCode configuration, run `opencode agent list` once on the workstation and confirm that both `bababou` and `bababou-reviewer` are discovered before relying on repository-specific commands.
 
+## Offline-first and bounded agent context
+
+When github.com, PyPI, Docker Hub or other endpoints are blocked, distinguish network failure from a code defect. Never repeat a failed network request without a changed prerequisite; never pretend a skipped check passed.
+
+1. Use the existing checkout and tracked Git objects first. Inspect `git status --short`, `git rev-parse HEAD`, `git merge-base` and only the changed paths; do not clone or fetch merely to run P0.
+2. Run `bash scripts/agent-p0-check.sh` using the supported installed Node runtime; it includes Semgrep CI contracts and must not need `node_modules` or any external endpoint. If Node is unavailable, run `bash scripts/agent-quality-gate.sh --preflight` and report P0 as unavailable.
+3. Use existing `node_modules`, package caches, installed tools, or a previously verified local archive only when their version and provenance are known. Do not download arbitrary substitutes or weaken a quality gate.
+4. Classify blocked checks precisely: `PASS` (executed), `FAIL` (code or rule), `BLOCKED_NETWORK`, `MISSING_TOOL`, `NOT_RUN`. Network/tool failures never count as green.
+5. Keep responses to the HEAD, changed files, failed invariant, minimal fix, tests actually run and remaining blockers. Limit normal diagnostics to the first relevant failure and a short tail; expand to complete logs only when necessary. Do not paste whole CI logs, tool schemas, unchanged files or verbose test success output into the agent context.
+6. Prefer one scoped patch followed by targeted offline regression tests and a local fix/convergence pass. Never push merely to exercise a formatter or discover a syntax error.
+
 ## Tool and context efficiency
 
 GitHub, Vercel, and Playwright are first-class tools for this repository. Do not restrict their use when they are useful for implementation, deployment validation, debugging, or release verification. Token/context optimization must never reduce correctness, test coverage, deployment validation, or incident diagnosis.
