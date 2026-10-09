@@ -313,7 +313,7 @@ test("pre-commit keeps one authority per Ruff, CSS and shell formatting concern"
   assertMatches(preCommit, /args: \[--fix, --unsafe-fixes\]/);
   assertNotMatches(preCommit, /id: ruff\n/);
   assertNotMatches(preCommit, /pre-commit-stylelint|id: stylelint|stylelint@/);
-  assertMatches(preCommit, /id: shfmt-docker[\s\S]*?args: \["-i", "4", "-ci"\]/);
+  assertMatches(preCommit, /id: shfmt[\s\S]*?args: \["-i", "4", "-ci"\]/);
   assertMatches(preCommit, /id: bashate[\s\S]*?args: \[-i, "E002,E003,E006"\]/);
   assert.equal(pkg.devDependencies?.stylelint, "^17.14.1");
   assertMatches(pkg.scripts?.["lint:css"] ?? "", /^stylelint /);
