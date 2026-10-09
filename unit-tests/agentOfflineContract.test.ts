@@ -1,5 +1,9 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readFile, mkdtemp, writeFile, rm } from "node:fs/promises";
+import { spawnSync } from "node:child_process";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import test from "node:test";
 
 const read = (path: string) =>
@@ -21,4 +25,47 @@ test("offline L1 checks every local path without implicit truncation", async () 
   assert.match(script, /NOT_RUN: formatter, Betterleaks/);
   assert.doesNotMatch(script, /head -n|sed -n ['"]1,200|curl |git fetch|git clone/);
   assert.match(justfile, /offline-l1:\n    bash scripts\/agent-offline-check\.sh/);
+});
+
+test("offline fallback covers 205 files and fails closed on syntax and explicit limits", async () => {
+  const root = await mkdtemp(join(tmpdir(), "bababou-offline-"));
+  const script = fileURLToPath(
+    new URL("../scripts/agent-offline-check.sh", import.meta.url),
+  );
+  try {
+    const git = spawnSync("git", ["init", "-q", root], {
+      encoding: "utf8",
+    });
+    assert.equal(git.status, 0, git.stderr);
+
+    for (let i = 0; i < 205; i++) {
+      await writeFile(join(root, `case-${i}.sh`), "true\\n");
+    }
+    const run = (limit: string) =>
+      spawnSync("bash", [script], {
+        cwd: root,
+        encoding: "utf8",
+        env: {
+          ...process.env,
+          QUALITY_BASE_REF: "refs/heads/absent",
+          AGENT_OFFLINE_MAX_PATHS: limit,
+        },
+      });
+
+    const valid = run("0");
+    assert.equal(valid.status, 0, valid.stderr);
+    assert.match(valid.stdout, /paths=205 syntax_checked=205/);
+    assert.match(valid.stderr, /OFFLINE_BASE_UNAVAILABLE/);
+
+    const limited = run("200");
+    assert.equal(limited.status, 2);
+    assert.match(limited.stderr, /OFFLINE_LIMIT_EXCEEDED/);
+
+    await writeFile(join(root, "case-204.sh"), "if then\\n");
+    const invalid = run("0");
+    assert.notEqual(invalid.status, 0);
+    assert.doesNotMatch(invalid.stdout, /OFFLINE_L1_PASS/);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
 });
