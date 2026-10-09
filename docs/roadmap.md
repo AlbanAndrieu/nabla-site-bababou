@@ -43,6 +43,8 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 - [ ] Obtenir la preuve CI sur le **HEAD courant** après correction des tests Semgrep : la CI #898 a échoué avant le SAST sur un patch Biome déterministe et Node 24 sur la syntaxe des regexp ; les correctifs ont été committés. Ne pas revendiquer de qualité verte avant une exécution complète.
 - [ ] Mesurer la consommation de tokens/temps avant-après sur une tâche d'agent identique. Ne pas annoncer de gain chiffré non mesuré.
 - [x] Aligner `scripts/agent-quality-gate.sh` sur le hook natif `shfmt` déjà utilisé par pre-commit ; verrouiller ce contrat dans les tests, sans Docker Hub.
+- [x] Reprendre le comportement de `nabla-compose` #250 : `just offline-l1` sans accès réseau, contrôle de tous les fichiers locaux si la base Git manque, borne facultative explicite, erreurs Git non masquées, tests sur 205 fichiers et classement `NOT_RUN`.
+- [ ] Valider l'exécution complète de P0, Biome, Betterleaks, Semgrep, build/Preview sur le HEAD exact. Le fallback L1 n'est pas une preuve de publication.
 - [ ] Évaluer sur une tâche comparable les enseignements de `fastapi-sample` #329 (diagnostics compacts), #325 (Betterleaks local-first), #322 (fail-closed et frontières runtime) ; réutiliser les contrats applicables sans importer les probes pfSense/TrueNAS hors périmètre.
 - [ ] Tester le chemin sans accès github.com/PyPI/Docker Hub sur un checkout et caches existants, sans substituer une archive non vérifiée ni ignorer les gates indisponibles.
 
