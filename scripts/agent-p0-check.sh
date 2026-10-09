@@ -51,6 +51,7 @@ LOG_TAIL="${P0_LOG_TAIL}"
 
 P0_TESTS=(
     "unit-tests/ciScopeBehavior.test.ts"
+    "unit-tests/agentOfflineContract.test.ts"
     "unit-tests/ciSemgrepContract.test.ts"
     "unit-tests/security-pipeline-contract.test.ts"
     "unit-tests/justBetterleaksContract.test.ts"
