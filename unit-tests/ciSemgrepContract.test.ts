@@ -14,9 +14,10 @@ test("Semgrep does not depend on anonymous Docker Hub pulls", () => {
   assert.ok(scan, "Semgrep CI step must exist");
   assert.match(
     scan,
-    /python -m pip install --disable-pip-version-check --quiet 'semgrep==1\.145\.0'/,
+    /\"\$semgrep_venv/bin/python\" -m pip install --disable-pip-version-check --quiet 'semgrep==1\.145\.0'/,
   );
-  assert.match(scan, /SEMGREP_SEND_METRICS=off semgrep scan/);
+  assert.match(scan, /SEMGREP_SEND_METRICS=off \"\$semgrep_venv/bin/semgrep\" scan/);
+  assert.match(scan, /python -m venv/);
   assert.match(scan, /--config p\/ci/);
   assert.match(scan, /--error/);
   assert.match(scan, /--sarif/);
