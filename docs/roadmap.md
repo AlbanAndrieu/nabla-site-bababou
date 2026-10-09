@@ -37,6 +37,14 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 
 ## P0 — CI, qualité et agent
 
+### Boucle local-first (octobre 2026)
+
+- [x] Ajouter les contrats Semgrep au checkpoint P0 hors réseau ; documenter les classes PASS/FAIL/BLOCKED_NETWORK/MISSING_TOOL/NOT_RUN et le budget de contexte de l'agent.
+- [ ] Obtenir la preuve CI sur le **HEAD courant** après correction des tests Semgrep : la CI #898 a échoué avant le SAST sur un patch Biome déterministe et Node 24 sur la syntaxe des regexp ; les correctifs ont été committés. Ne pas revendiquer de qualité verte avant une exécution complète.
+- [ ] Mesurer la consommation de tokens/temps avant-après sur une tâche d'agent identique. Ne pas annoncer de gain chiffré non mesuré.
+- [ ] Tester le chemin sans accès github.com/PyPI/Docker Hub sur un checkout et caches existants, sans substituer une archive non vérifiée ni ignorer les gates indisponibles.
+
+
 - [ ] **Fermer la CI courante** : valider sur le HEAD exact le fallback Vercel `handle: miss` + `check: true` des `*.html` absents (404 + `noindex` + `no-store`) sans casser fichiers/redirects existants ; confirmer également le reflow 200 % non flaky.
 - [ ] **Betterleaks** : hook pre-commit natif Go v1.9.0 (sans Docker) ; exécuter d'abord `just secrets-config`, puis valider `just secrets-staged`, `just secrets-worktree`, `just secrets-history` sur un vrai checkout ; `.betterleaks.toml` impose Betterleaks >= v1.9.0 et l'ancien scanner Gitleaks n'est jamais exécuté.
 - [ ] **Dagger CI — spike local-first v0.21.10** :
