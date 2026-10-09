@@ -43,7 +43,7 @@ test("agent and canonical gates emit compact machine-actionable failures", async
     read("../scripts/lib/agent-quality-support.sh"),
   ]);
 
-  assert.match(agentGate, /QUALITY_LOG_TAIL:-40/);
+  assert.match(agentGate, /QUALITY_LOG_TAIL:-12/);
   assert.match(agentGate, /QUALITY_FIX_PASSES:-12/);
   assert.match(agentGate, /QG_PRECOMMIT_FAILED/);
   assert.match(agentGate, /QG_FIX_DID_NOT_CONVERGE/);
@@ -56,6 +56,7 @@ test("agent and canonical gates emit compact machine-actionable failures", async
   assert.match(canonicalGate, /git diff --no-ext-diff/);
   assert.match(canonicalGate, /--fail-fast/);
   assert.match(canonicalGate, /QUALITY_SHOW_DIFF/);
+  assert.match(canonicalGate, /QUALITY_DIFF_LINES:-36/);
 });
 
 test("maintenance local validation avoids typegen, privacy and production build", async () => {
