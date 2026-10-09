@@ -296,7 +296,7 @@ classify_changed_files "${CHANGED_FILES[@]}"
 
 if [[ "${MODE}" != "fix" && "${agent_gate_changed}" == true && "${QUALITY_CANONICAL_GATE_VERIFIED:-0}" != "1" ]]; then
     run_compact "agent quality shell formatting" \
-        pre-commit run shfmt-docker --files "${AGENT_GATE_SHELL_FILES[@]}"
+        pre-commit run shfmt --files "${AGENT_GATE_SHELL_FILES[@]}"
     run_compact "agent quality shell lint" \
         pre-commit run shell-lint --files "${AGENT_GATE_SHELL_FILES[@]}"
     run_compact "agent quality shell style" \
