@@ -44,4 +44,6 @@ jobs:
 
       - name: Run shared local-first Dagger target
         shell: bash
-        run: bash scripts/dagger-ci.sh "${{ inputs.target }}"
+        env:
+          DAGGER_TARGET: ${{ inputs.target }}
+        run: bash scripts/dagger-ci.sh "$DAGGER_TARGET"
