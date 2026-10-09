@@ -43,7 +43,7 @@ if (($# > 0)); then
     exit 2
 fi
 
-LOG_TAIL="${QUALITY_LOG_TAIL:-40}"
+LOG_TAIL="${QUALITY_LOG_TAIL:-12}"
 FIX_PASSES="${QUALITY_FIX_PASSES:-12}"
 if [[ ! "${FIX_PASSES}" =~ ^[1-9][0-9]*$ ]]; then
     echo "❌ QUALITY_FIX_PASSES must be a positive integer" >&2
