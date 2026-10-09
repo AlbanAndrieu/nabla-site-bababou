@@ -1,8 +1,11 @@
 ---
 name: roadmap-local-first
-description: Deterministic Bababou roadmap and pull-request workflow for local-first agents, especially smaller OpenCode models. Use when asked to continue the roadmap, work in the current PR, fix the quality gate, minimize GitHub Actions usage, or prepare a branch for review.
+description: >-
+  Deterministic Bababou roadmap and pull-request workflow for local-first
+  agents, especially smaller OpenCode models. Use when asked to continue the
+  roadmap, work in the current PR, fix the quality gate, minimize GitHub Actions
+  usage, or prepare a branch for review.
 ---
-
 # Roadmap local-first execution
 
 Use this skill for roadmap continuation and PR quality work. It is deliberately procedural so a smaller model does not have to infer the repository workflow.
