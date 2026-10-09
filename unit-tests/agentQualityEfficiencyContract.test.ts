@@ -14,7 +14,10 @@ test("agent auto-fix scopes npm linters through the shared support library", asy
   ]);
   const pkg = JSON.parse(packageRaw) as { scripts: Record<string, string> };
 
-  assert.equal(pkg.scripts["lint:fix"], "eslint --fix --format ./scripts/eslint-github-formatter.mjs .");
+  assert.equal(
+    pkg.scripts["lint:fix"],
+    "eslint --fix --format ./scripts/eslint-github-formatter.mjs .",
+  );
   assert.equal(
     pkg.scripts["lint:css"],
     'stylelint "app/*.css" "app/**/*.module.css" "components/**/*.module.css" "public/*.css"',
