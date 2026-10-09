@@ -96,7 +96,7 @@ if (("${#CHANGED_FILES[@]}" > 0)); then
 			echo "--- exact formatter patch ---" >&2
 			git diff --no-ext-diff -- "${CHANGED_FILES[@]}" | awk -v max="${QUALITY_DIFF_LINES:-36}" '
 				max == 0 || NR <= max { print }
-				END { if (max > 0 && NR > max) printf "... %d diff lines omitted; set QUALITY_DIFF_LINES=0 for full patch\\n", NR - max }
+				END { if (max > 0 && NR > max) printf "... %d diff lines omitted; set QUALITY_DIFF_LINES=0 for full patch\n", NR - max }
 			' >&2 || true
 			echo "--- end formatter patch ---" >&2
 		else
