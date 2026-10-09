@@ -22,34 +22,31 @@ function assertNotMatches(
   assert.ok(!pattern.test(source), `unexpected contract: ${label}`);
 }
 
-test(
-  "CI scope separates security, build and Preview with Bababou dependency scope",
-  async () => {
-    const url = new URL("../scripts/ci-scope.sh", import.meta.url);
-    const [source, info] = await Promise.all([
-      read("../scripts/ci-scope.sh"),
-      stat(url),
-    ]);
+test("CI scope separates security, build and Preview with Bababou dependency scope", async () => {
+  const url = new URL("../scripts/ci-scope.sh", import.meta.url);
+  const [source, info] = await Promise.all([
+    read("../scripts/ci-scope.sh"),
+    stat(url),
+  ]);
 
-    assert.notEqual(info.mode & 0o100, 0);
-    assertMatches(source, /--diff-filter=ACMRD/);
-    assertMatches(source, /is_source_file/);
-    assertMatches(source, /is_maintenance_only_path/);
-    assertMatches(source, /is_preview_safe_path/);
-    assertMatches(source, /CHANGED_FILES\[@\].*== 0/);
-    assertMatches(source, /maintenance_only=false/);
-    assertMatches(source, /preview_required=true/);
-    assertMatches(source, /dependencies=true/);
-    assertMatches(source, /if ! is_maintenance_only_path/);
-    assertMatches(source, /if ! is_preview_safe_path/);
-    assertMatches(source, /application=true/);
-    assertMatches(source, /build=true/);
-    assertMatches(source, /sast=true/);
-    assertMatches(source, /zap_bootstrap=true/);
-    assertMatches(source, /BASE_REF="\$\{1:-\$\(resolve_base_ref\)\}"/);
-    assertMatches(source, /HEAD_REF="\$\{2:-HEAD\}"/);
-  },
-);
+  assert.notEqual(info.mode & 0o100, 0);
+  assertMatches(source, /--diff-filter=ACMRD/);
+  assertMatches(source, /is_source_file/);
+  assertMatches(source, /is_maintenance_only_path/);
+  assertMatches(source, /is_preview_safe_path/);
+  assertMatches(source, /CHANGED_FILES\[@\].*== 0/);
+  assertMatches(source, /maintenance_only=false/);
+  assertMatches(source, /preview_required=true/);
+  assertMatches(source, /dependencies=true/);
+  assertMatches(source, /if ! is_maintenance_only_path/);
+  assertMatches(source, /if ! is_preview_safe_path/);
+  assertMatches(source, /application=true/);
+  assertMatches(source, /build=true/);
+  assertMatches(source, /sast=true/);
+  assertMatches(source, /zap_bootstrap=true/);
+  assertMatches(source, /BASE_REF="\$\{1:-\$\(resolve_base_ref\)\}"/);
+  assertMatches(source, /HEAD_REF="\$\{2:-HEAD\}"/);
+});
 
 test("known quality orchestration files stay maintenance-only", async () => {
   const source = await read("../scripts/ci-scope.sh");
@@ -71,7 +68,10 @@ test("known quality orchestration files stay maintenance-only", async () => {
   const maintenanceStart = source.indexOf("is_maintenance_only_path() {");
   const previewStart = source.indexOf("is_preview_safe_path() {");
   assert.ok(maintenanceStart >= 0 && previewStart > maintenanceStart);
-  assertNotMatches(source.slice(maintenanceStart, previewStart), /\.github\/\*/);
+  assertNotMatches(
+    source.slice(maintenanceStart, previewStart),
+    /\.github\/\*/,
+  );
   assertMatches(source.slice(previewStart), /\.github\/\*/);
   assertNotMatches(source, /\.opencode\/agents\/\*\.md/);
   assertNotMatches(source, /\.opencode\/commands\/\*\.md/);
@@ -93,11 +93,11 @@ test("maintenance CI avoids Semgrep, Next build and dependency scanning", async 
   assertMatches(workflow, /steps\.ci-scope\.outputs\.application/);
   assertNotMatches(workflow, /outputs\.full_project/);
   assertMatches(workflow, /- name: Run maintenance project checks/);
-  assertMatches(workflow, /npm run lint\n\s+npm run lint:css\n\s+npm run test:unit/);
   assertMatches(
     workflow,
-    /grep -E '[^\n]*\\\.github\/workflows\/.*\\\.ya\?ml/,
+    /npm run lint\n\s+npm run lint:css\n\s+npm run test:unit/,
   );
+  assertMatches(workflow, /grep -E '[^\n]*\\\.github\/workflows\/.*\\\.ya\?ml/);
   assertMatches(
     workflow,
     /preview_required:\s*\$\{\{ steps\.ci-scope\.outputs\.preview_required \}\}/,
@@ -135,12 +135,18 @@ test("production baseline and live smoke run before dependency installation", as
 
   assert.notEqual(baselineInfo.mode & 0o100, 0);
   assert.notEqual(liveInfo.mode & 0o100, 0);
-  const preflight = workflow.indexOf("- name: Run agent preflight before dependency install");
+  const preflight = workflow.indexOf(
+    "- name: Run agent preflight before dependency install",
+  );
   const canonicalGate = workflow.indexOf(
     "- name: Run canonical changed-file quality gate before network/SAST/npm bootstrap",
   );
-  const baselineGate = workflow.indexOf("- name: Verify current production baseline before PR build");
-  const liveGate = workflow.indexOf("- name: Revalidate canonical production smoke before PR build");
+  const baselineGate = workflow.indexOf(
+    "- name: Verify current production baseline before PR build",
+  );
+  const liveGate = workflow.indexOf(
+    "- name: Revalidate canonical production smoke before PR build",
+  );
   const setupNode = workflow.indexOf("- name: Setup Node.js");
   assert.ok(
     preflight >= 0 &&
@@ -166,14 +172,24 @@ test("production baseline and live smoke run before dependency installation", as
   );
   assertMatches(workflow, /bash scripts\/verify-production-live\.sh/);
 
-  for (const context of ["Vercel", "Production Post-deploy Smoke", "Production DAST"]) {
+  for (const context of [
+    "Vercel",
+    "Production Post-deploy Smoke",
+    "Production DAST",
+  ]) {
     assert.ok(baseline.includes(`"${context}"`));
   }
   assertMatches(baseline, /vercel_state/);
-  assertMatches(baseline, /production-only statuses are absent on metadata-only release/);
+  assertMatches(
+    baseline,
+    /production-only statuses are absent on metadata-only release/,
+  );
   assertMatches(baselineClassification, /chore\(release\):/);
   assertMatches(baselineClassification, /\[skip ci\]/);
-  assertMatches(baselineClassification, /package\.json changed beyond version metadata/);
+  assertMatches(
+    baselineClassification,
+    /package\.json changed beyond version metadata/,
+  );
   assertMatches(
     baselineClassification,
     /package-lock\.json changed beyond root version metadata/,
@@ -289,8 +305,16 @@ test("explicit npm cache owners disable setup-node automatic npm caching", async
     ["Copilot Setup", copilot],
     ["Playwright", playwright],
   ] as const) {
-    assertMatches(workflow, /package-manager-cache:\s*false/, `${name} must disable setup-node npm cache`);
-    assertMatches(workflow, /path:\s*~\/\.npm/, `${name} must retain explicit npm cache ownership`);
+    assertMatches(
+      workflow,
+      /package-manager-cache:\s*false/,
+      `${name} must disable setup-node npm cache`,
+    );
+    assertMatches(
+      workflow,
+      /path:\s*~\/\.npm/,
+      `${name} must retain explicit npm cache ownership`,
+    );
   }
 });
 
@@ -307,7 +331,10 @@ test("pre-commit keeps one authority per Ruff, CSS and shell formatting concern"
 
   assertMatches(preCommit, /^fail_fast: false/m);
   assertNotMatches(preCommit, /pre-commit-update/);
-  assertMatches(preCommit, /repo: https:\/\/github\.com\/pre-commit\/pre-commit\.git[\s\S]*?rev: v4\.6\.2/);
+  assertMatches(
+    preCommit,
+    /repo: https:\/\/github\.com\/pre-commit\/pre-commit\.git[\s\S]*?rev: v4\.6\.2/,
+  );
   assertMatches(preCommit, /id: ruff-format/);
   assertMatches(preCommit, /id: ruff-check/);
   assertMatches(preCommit, /args: \[--fix, --unsafe-fixes\]/);
@@ -326,8 +353,14 @@ test("Copilot setup stays available but does not spend installs on draft synchro
   const setup = await read("../.github/workflows/copilot-setup-steps.yml");
 
   assertMatches(setup, /workflow_dispatch:/);
-  assertMatches(setup, /types: \[opened, synchronize, reopened, ready_for_review\]/);
-  assertMatches(setup, /group: copilot-setup-\$\{\{ github\.event\.pull_request\.number \|\| github\.ref \}\}/);
+  assertMatches(
+    setup,
+    /types: \[opened, synchronize, reopened, ready_for_review\]/,
+  );
+  assertMatches(
+    setup,
+    /group: copilot-setup-\$\{\{ github\.event\.pull_request\.number \|\| github\.ref \}\}/,
+  );
   assertMatches(setup, /cancel-in-progress: true/);
   assertMatches(
     setup,
@@ -344,7 +377,10 @@ test("retired asset metadata stays maintenance-only and absent", async () => {
 
   assert.equal((workflow.match(/- "\.assetsignore"/g) ?? []).length, 2);
   assertMatches(scope, /\.assetsignore/);
-  await assert.rejects(stat(new URL("../.assetsignore", import.meta.url)), /ENOENT/);
+  await assert.rejects(
+    stat(new URL("../.assetsignore", import.meta.url)),
+    /ENOENT/,
+  );
 });
 
 test("quality-only files do not trigger an application Preview checkpoint", async () => {
@@ -372,7 +408,10 @@ test("quality-only files do not trigger an application Preview checkpoint", asyn
     assert.ok(scope.includes(path), `${path} missing from canonical CI scope`);
   }
 
-  assertMatches(workflow, /needs\.quality\.outputs\.preview_required == 'true'/);
+  assertMatches(
+    workflow,
+    /needs\.quality\.outputs\.preview_required == 'true'/,
+  );
   assertNotMatches(workflow, /const safeOnly/);
   assertNotMatches(workflow, /deployRelevant/);
 });
