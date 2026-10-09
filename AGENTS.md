@@ -67,6 +67,8 @@ When github.com, PyPI, Docker Hub or other endpoints are blocked, distinguish ne
 5. Keep responses to the HEAD, changed files, failed invariant, minimal fix, tests actually run and remaining blockers. Limit normal diagnostics to the first relevant failure and a short tail; expand to complete logs only when necessary. Do not paste whole CI logs, tool schemas, unchanged files or verbose test success output into the agent context.
 6. Prefer one scoped patch followed by targeted offline regression tests and a local fix/convergence pass. Never push merely to exercise a formatter or discover a syntax error.
 
+Default diagnostic output is bounded to 12 lines (`QUALITY_LOG_TAIL`, `P0_LOG_TAIL`), 36 autofix-diff lines (`QUALITY_DIFF_LINES`), and 20 lines in CI preflight. Escalate a single failing command with `QUALITY_LOG_TAIL=80`, `P0_LOG_TAIL=80`, or `QUALITY_DIFF_LINES=0`; use `bash scripts/agent-p0-check.sh --verbose` for the complete Node test output. Production HTTP smoke emits a one-line success summary unless `PRODUCTION_SMOKE_VERBOSE=1`. Never silence failure messages, warnings, security findings or a failing exit status to save tokens.
+
 ## Tool and context efficiency
 
 GitHub, Vercel, and Playwright are first-class tools for this repository. Do not restrict their use when they are useful for implementation, deployment validation, debugging, or release verification. Token/context optimization must never reduce correctness, test coverage, deployment validation, or incident diagnosis.
