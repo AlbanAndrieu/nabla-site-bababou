@@ -86,6 +86,18 @@ Never use `git push --no-verify`. Never weaken a rule merely to make a gate pass
 - test/type/security failure → fix the semantic cause, then rerun the closest check.
 - GitHub job with `steps=null`, no logs, or no allocated runner → infrastructure/quota evidence; do not infer a code regression and do not manually rerun while the user has said credits are unavailable.
 
+## API-only and blocked-DNS checkout recovery
+
+When `git clone`, `git fetch`, `curl` or codeload cannot resolve GitHub, do **not** retry equivalent URLs, invoke a workstation as a workaround, or claim an API file listing is an executable checkout.
+
+1. Read the exact open PR HEAD using the connected GitHub API. If a repository checkout is already mounted, use it directly and compare `git rev-parse HEAD` to that SHA.
+2. Prefer an **existing** GitHub Actions source-snapshot artifact tied to that exact HEAD, as in `nabla-site-alban`'s `nabla-maintenance` skill. Check artifact name, run SHA, expiry and digest when exposed. Extract in an isolated workspace and validate filenames/provenance before executing targeted dependency-free tests. Never trigger Actions just to create the snapshot.
+3. If there is no matching artifact, use the GitHub connector to fetch only relevant files and check CI workflow → job → failed step → short error excerpt. Local L1 on an unrelated checkout is not proof for the PR. Report `BLOCKED_NETWORK` or `NOT_RUN` for commands that cannot be executed.
+4. Source archives have no Git history; they cannot establish merge-base, exact branch/pre-push proof, or a clean committed worktree. A source snapshot does not replace pre-commit, Betterleaks, build, Preview or ZAP.
+5. Favor one logical GitHub commit after deterministic formatting rather than commit-by-commit probes that consume Actions. Respect CI-published formatter patches exactly.
+
+Token budget: maintain a one-line state `PR / HEAD / failing step / edit / proof / blocker`; read at most the relevant skill and files; avoid repeating historical PR descriptions, whole logs and tool schemas. Show full evidence only for unresolved failures. Measured token reductions require comparable runs, not estimates.
+
 ## GitHub Actions unavailable
 
 When credits/runners are unavailable:
