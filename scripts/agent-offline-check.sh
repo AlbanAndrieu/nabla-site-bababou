@@ -24,7 +24,7 @@ if [[ -n "$BASE" ]] && git rev-parse --verify "$BASE^{commit}" >/dev/null 2>&1 &
         {
             git diff --name-only --diff-filter=ACMR "$BASE...HEAD"
             git diff --name-only --diff-filter=ACMR
-        git diff --cached --name-only --diff-filter=ACMR
+            git diff --cached --name-only --diff-filter=ACMR
             git ls-files --others --exclude-standard
         } | LC_ALL=C sort -u
     )
