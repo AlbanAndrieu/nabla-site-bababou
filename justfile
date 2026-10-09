@@ -71,3 +71,7 @@ dagger-test:
 
 dagger-build:
     bash scripts/dagger-ci.sh build
+
+# Dependency-free L1 fallback when GitHub, registries, or hooks are inaccessible.
+offline-l1:
+    bash scripts/agent-offline-check.sh
