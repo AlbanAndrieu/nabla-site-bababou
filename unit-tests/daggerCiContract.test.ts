@@ -71,7 +71,7 @@ test("Dagger rejects unknown targets without a runtime or network dependency", (
     env: { ...process.env, PATH: "/usr/bin:/bin" },
   });
   assert.equal(invalid.status, 2);
-  assert.match(invalid.stderr, /unknown Dagger target: unsupported/);
+  assert.match(invalid.stderr, /unknown Dagger target: unsupported\nUsage:/);
   assert.doesNotMatch(invalid.stderr, /dagger is required/);
 
   const help = spawnSync("bash", [script.pathname, "--help"], {
@@ -80,4 +80,12 @@ test("Dagger rejects unknown targets without a runtime or network dependency", (
   });
   assert.equal(help.status, 0);
   assert.match(help.stdout, /Dagger spike/);
+
+  const unexpectedHelpArgs = spawnSync("bash", [script.pathname, "--help", "build"], {
+    encoding: "utf8",
+    env: { ...process.env, PATH: "/usr/bin:/bin" },
+  });
+  assert.equal(unexpectedHelpArgs.status, 2);
+  assert.match(unexpectedHelpArgs.stderr, /Usage:/);
+  assert.doesNotMatch(unexpectedHelpArgs.stderr, /dagger is required/);
 });
