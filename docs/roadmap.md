@@ -38,6 +38,15 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 
 ## P0 — CI, qualité et agent
 
+### Cloudflare Security Audit Skill — POC local-first (à réaliser)
+
+- [ ] Évaluer puis installer [`cloudflare/security-audit-skill`](https://github.com/cloudflare/security-audit-skill) dans un environnement isolé, avec version/commit amont figé et prérequis documentés. Installation à confirmer par une commande et sa sortie : ne pas déclarer le skill installé avant preuve.
+- [ ] Exécuter **une première analyse locale non bloquante** sur le code public de `nabla-site-bababou` : Next.js, routes API, i18n, dépendances et configuration Vercel. Exclure les sources privées, pièces juridiques non publiques, secrets, jetons, credentials et données personnelles ; aucun envoi à un service externe sans validation des flux de données.
+- [ ] Sauvegarder les éléments de preuve reproductibles (SHA audité, version du skill, périmètre, commande, durée, couverture, limites), ainsi qu'un rapport Markdown et un résultat structuré JSON si le skill le permet. Ne pas qualifier une exécution partielle de scan complet.
+- [ ] Trier les vulnérabilités par exploitabilité/impact, vérifier indépendamment les constats avant création de tickets et documenter les faux positifs ; ne pas modifier automatiquement du contenu sensible.
+- [ ] Mesurer coût, durée et bruit du POC ; décider **adopter / adapter / différer** avant toute intégration périodique à la CI. Préserver Semgrep/SAST, BetterLeaks, Playwright, ZAP et les gates existantes sans substitution ni contournement ; éviter toute consommation GitHub Actions non justifiée.
+
+
 ### Boucle local-first — état courant
 
 - [x] P0 hors réseau : contrats Semgrep, `just offline-l1` avec vérification exhaustive (>200 fichiers), limites et erreurs Git explicites, `shfmt` natif et sortie compacte.
