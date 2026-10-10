@@ -10,6 +10,7 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 2. Lire son **HEAD exact**, sa mergeability et les derniers workflows avant toute modification.
 3. Tout job rouge pertinent est corrigé **avant** le lot suivant ; ne jamais relancer manuellement un workflow uniquement pour obtenir du vert.
 4. Boucle local-first : ciblé → `just p0` (`bash scripts/agent-p0-check.sh`) → `just quality-fix` → revue du diff → `just quality` / `just publish-status` si l'environnement exécutable est disponible.
+   Skill de référence : `.agents/skills/local-first-quality/SKILL.md` (adapté de `nabla-compose#251`) ; distinguer systématiquement preuves locales L0/L1/L2/L3 et preuves CI sur HEAD exact.
 5. Ne jamais merger automatiquement ; descriptions de PR en français ; jamais `--no-verify`.
 6. `justfile` complète le `Makefile`, qui reste conservé.
 7. **Betterleaks v1.9.0** remplace Gitleaks comme scanner exécuté ; policy canonique : `.betterleaks.toml`.
