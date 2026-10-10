@@ -124,9 +124,15 @@ else
                 if (length(line) > 280) {
                     line = substr(line, 1, 277) "..."
                 }
-                print line
-                emitted++
-                if (emitted >= max_lines) exit
+                # Keep the most recent actionable errors and Node test totals.
+                lines[matched % max_lines] = line
+                matched++
+            }
+            END {
+                start = matched > max_lines ? matched - max_lines : 0
+                for (i = start; i < matched; i++) {
+                    print lines[i % max_lines]
+                }
             }
             /^test at / ||
             /^✖ / ||
