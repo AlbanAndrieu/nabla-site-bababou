@@ -82,7 +82,6 @@ test("offline fallback covers 205 files and fails closed on syntax and explicit 
   }
 });
 
-
 test("offline L1 rejects committed whitespace errors in the comparison range", async () => {
   const root = await mkdtemp(join(tmpdir(), "bababou-offline-commits-"));
   const script = fileURLToPath(
@@ -93,7 +92,10 @@ test("offline L1 rejects committed whitespace errors in the comparison range", a
   try {
     assert.equal(runGit("init", "-q").status, 0);
     assert.equal(runGit("config", "user.name", "Offline Test").status, 0);
-    assert.equal(runGit("config", "user.email", "offline@example.invalid").status, 0);
+    assert.equal(
+      runGit("config", "user.email", "offline@example.invalid").status,
+      0,
+    );
     await writeFile(join(root, "README.md"), "valid\n");
     assert.equal(runGit("add", ".").status, 0);
     assert.equal(runGit("commit", "-qm", "initial").status, 0);

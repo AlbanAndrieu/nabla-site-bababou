@@ -21,8 +21,8 @@ test("Dagger spike is pinned, local-first and does not expose private workspaces
   assert.match(script, /npm@11\.17\.0/);
   assert.match(script, /\.private-publication-source\/\*\*/);
   assert.match(script, /\.redaction-work\/\*\*/);
-  assert.match(script, /\.env\*/);
-  assert.match(script, /\*\*\/\.env\*/);
+  assert.match(script, /\.env\.secrets/);
+  assert.match(script, /\.env\.local/);
   for (const excluded of [
     ".env*",
     "**/.env*",
