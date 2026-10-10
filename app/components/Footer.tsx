@@ -41,6 +41,7 @@ export default function Footer({
           aria-label={contactLabel}
         >
           <i className="fas fa-envelope" aria-hidden="true" />
+          <span className={styles.screenReaderOnly}>{contactLabel}</span>
         </a>
         <a
           href="/feed.xml"
@@ -48,6 +49,8 @@ export default function Footer({
           aria-label={rssFeedAria}
         >
           <i className="fa fa-rss" aria-hidden="true" />
+          <span className={styles.screenReaderOnly}>{rssFeedAria}</span>
+          <span className={styles.screenReaderOnly}>{eleonoreRssFeedAria}</span>
         </a>
         <a
           href="/eleonore-feed.xml"

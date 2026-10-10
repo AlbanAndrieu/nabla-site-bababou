@@ -26,6 +26,8 @@ test("P2 footer navigation name follows the active locale", async () => {
     read("messages/en.json"),
   ]);
   assert.match(footer, /aria-label=\{navigationAriaLabel\}/);
+  assert.match(footer, /screenReaderOnly/);
+  assert.match(footer, /\{eleonoreRssFeedAria\}<\/span>/);
   assert.match(layout, /navigationAriaLabel=\{site\.footerNavigationAria\}/);
   for (const [locale, content] of [
     ["fr", french],
