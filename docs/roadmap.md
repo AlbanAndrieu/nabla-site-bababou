@@ -76,6 +76,7 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 - [x] Chaîne Git → checkpoint `vercel-preview-*` → Vercel → Playwright/ZAP **exact-SHA** attestée pour `5261267`.
 - [ ] Réduire les warnings ZAP applicables ; rendre les budgets bloquants seulement après plusieurs baselines vertes.
 - [x] Garder les sorties quality compactes ; verbose uniquement pour diagnostic.
+- [x] Borner **aussi en mémoire** l’extraction des erreurs de pre-commit (`QUALITY_ERROR_LINES`) avec test sur 10 000 lignes, sans perdre la dernière erreur et sans modifier le verdict des hooks.
 - [x] Classer les scripts offline comme maintenance-only dans les politiques CI/Preview/baseline ; mutualiser ces politiques.
 - [x] Vérifier les erreurs `git diff` et les espaces des commits existants (`BASE...HEAD`) dans la gate offline.
 
