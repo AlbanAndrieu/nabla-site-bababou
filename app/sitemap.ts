@@ -5,8 +5,8 @@ import type { MetadataRoute } from "next";
 import { type AppLocale, routing } from "@/i18n/routing";
 import {
   isPolicyPageSlug,
-  POLICY_PAGES,
   POLICY_PAGE_SLUGS,
+  POLICY_PAGES,
   type PolicyPageSlug,
 } from "@/lib/policyPages";
 import {
@@ -40,7 +40,9 @@ type SitemapEntry = MetadataRoute.Sitemap[number];
 type ChangeFrequency = NonNullable<SitemapEntry["changeFrequency"]>;
 
 function textTag(block: string, tag: string) {
-  return block.match(new RegExp(`<${tag}>([\\s\\S]*?)</${tag}>`, "i"))?.[1].trim();
+  return block
+    .match(new RegExp(`<${tag}>([\\s\\S]*?)</${tag}>`, "i"))?.[1]
+    .trim();
 }
 
 function normalizeLegacyLocation(location: string) {
@@ -105,7 +107,9 @@ function localizedPolicyIndexPath(locale: AppLocale) {
 
 function localizedPolicyPath(slug: PolicyPageSlug, locale: AppLocale) {
   const primaryPath = POLICY_PAGES[slug].canonicalPath;
-  return locale === routing.defaultLocale ? primaryPath : `/${locale}${primaryPath}`;
+  return locale === routing.defaultLocale
+    ? primaryPath
+    : `/${locale}${primaryPath}`;
 }
 
 function policyIndexSitemapEntry(): SitemapEntry {
