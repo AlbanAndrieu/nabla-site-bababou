@@ -133,7 +133,9 @@ function policyIndexSitemapEntry(): SitemapEntry {
 function policySitemapEntries(
   existingEntries: MetadataRoute.Sitemap,
 ): MetadataRoute.Sitemap {
-  const existingByUrl = new Map(existingEntries.map((entry) => [entry.url, entry]));
+  const existingByUrl = new Map(
+    existingEntries.map((entry) => [entry.url, entry]),
+  );
 
   return POLICY_PAGE_SLUGS.map((slug) => {
     const primaryPath = POLICY_PAGES[slug].canonicalPath;
