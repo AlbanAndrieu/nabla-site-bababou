@@ -9,6 +9,7 @@ type FooterProps = {
   backToTop: string;
   backToTopAria: string;
   contactLabel: string;
+  navigationAriaLabel: string;
   copyright: string;
   eleonoreRssFeedAria: string;
   legalNotices: string;
@@ -21,6 +22,7 @@ export default function Footer({
   backToTop,
   backToTopAria,
   contactLabel,
+  navigationAriaLabel,
   copyright,
   eleonoreRssFeedAria,
   legalNotices,
@@ -39,6 +41,7 @@ export default function Footer({
           aria-label={contactLabel}
         >
           <i className="fas fa-envelope" aria-hidden="true" />
+          <span className={styles.screenReaderOnly}>{contactLabel}</span>
         </a>
         <a
           href="/feed.xml"
@@ -46,6 +49,7 @@ export default function Footer({
           aria-label={rssFeedAria}
         >
           <i className="fa fa-rss" aria-hidden="true" />
+          <span className={styles.screenReaderOnly}>{rssFeedAria}</span>
         </a>
         <a
           href="/eleonore-feed.xml"
@@ -53,12 +57,13 @@ export default function Footer({
           aria-label={eleonoreRssFeedAria}
         >
           <i className="fa fa-rss" aria-hidden="true" />
+          <span className={styles.screenReaderOnly}>{eleonoreRssFeedAria}</span>
         </a>
       </div>
       <div className={`${styles.links} footer-links`}>
         <a href="/policy/legal">{legalNotices}</a>
       </div>
-      <nav className={styles.actions} aria-label="Footer navigation">
+      <nav className={styles.actions} aria-label={navigationAriaLabel}>
         <ActionLink href={homeHref}>
           <i className="fas fa-home" aria-hidden="true" />
           <span>{backHome}</span>

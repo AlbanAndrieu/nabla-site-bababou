@@ -52,7 +52,7 @@ is_maintenance_only_path() {
             .pre-commit-config.yaml | .pre-commit-pre-push.yaml | .python-version | \
             Makefile | justfile | .mega-linter.yml | .betterleaks.toml | \
             mise.toml | opencode.json | renovate.json | eslint.config.js | stylelint.config.cjs | commitlint.config.* | playwright.config.* | \
-            scripts/agent-quality-gate.sh | scripts/agent-p0-check.sh | scripts/agent-publish.sh | scripts/lib/agent-quality-support.sh | \
+            scripts/agent-quality-gate.sh | scripts/agent-p0-check.sh | scripts/agent-offline-check.sh | scripts/agent-output-metrics.sh | scripts/agent-publish.sh | scripts/lib/agent-quality-support.sh | \
             scripts/quality-gate.sh | scripts/check_code_size.py | scripts/ci-scope.sh | \
             scripts/verify-production-baseline.sh | scripts/verify-production-live.sh | \
             scripts/ci-performance-budget.sh | scripts/publish-vercel-preview-checkpoint.sh | \
@@ -66,18 +66,13 @@ is_maintenance_only_path() {
 }
 
 is_preview_safe_path() {
+    # Preview-safe is a strict superset of the canonical maintenance policy.
+    if is_maintenance_only_path "$1"; then
+        return 0
+    fi
     case "$1" in
-        docs/* | unit-tests/* | tests/* | *.md | \
-            .github/* | .zap/* | .vscode/* | .idea/* | .agents/* | .cursor/* | .claude/* | \
-            .assetsignore | .pre-commit-config.yaml | .pre-commit-pre-push.yaml | .python-version | \
-            Makefile | justfile | .mega-linter.yml | .betterleaks.toml | \
-            mise.toml | opencode.json | renovate.json | eslint.config.js | stylelint.config.cjs | commitlint.config.* | playwright.config.* | \
-            scripts/agent-quality-gate.sh | scripts/agent-p0-check.sh | scripts/agent-publish.sh | scripts/lib/agent-quality-support.sh | \
-            scripts/lib/production-baseline-classification.sh | \
-            scripts/quality-gate.sh | scripts/check_code_size.py | scripts/ci-scope.sh | \
-            scripts/verify-production-baseline.sh | scripts/verify-production-live.sh | \
-            scripts/ci-performance-budget.sh | scripts/publish-vercel-preview-checkpoint.sh | \
-            scripts/eslint-github-formatter.mjs)
+        .github/* | .zap/* | .vscode/* | .idea/* | .agents/* | .cursor/* | .claude/* | \
+            .assetsignore | scripts/lib/production-baseline-classification.sh)
             return 0
             ;;
         *)
@@ -86,26 +81,29 @@ is_preview_safe_path() {
     esac
 }
 
+# Keep git errors visible: mapfile + process substitution swallow failures.
+scope_file="$(mktemp)"
+trap 'rm -f "$scope_file"' EXIT
 if [[ "${HEAD_REF}" == "WORKTREE" ]]; then
-    mapfile -t CHANGED_FILES < <(
-        {
-            if [[ "${BASE_REF}" != "HEAD" ]]; then
-                git diff --name-only --diff-filter=ACMRD "${BASE_REF}...HEAD"
-            fi
-            git diff --name-only --diff-filter=ACMRD
-            git diff --cached --name-only --diff-filter=ACMRD
-            git ls-files --others --exclude-standard
-        } |
-            awk 'NF' |
-            sort -u
-    )
+    if ! {
+        if [[ "${BASE_REF}" != "HEAD" ]]; then
+            git diff --name-only --diff-filter=ACMRD "${BASE_REF}...HEAD"
+        fi
+        git diff --name-only --diff-filter=ACMRD
+        git diff --cached --name-only --diff-filter=ACMRD
+        git ls-files --others --exclude-standard
+    } | awk 'NF' | LC_ALL=C sort -u >"$scope_file"; then
+        echo '❌ CI_SCOPE_GIT_FAILED: unable to enumerate worktree changes' >&2
+        exit 2
+    fi
 else
-    mapfile -t CHANGED_FILES < <(
-        git diff --name-only --diff-filter=ACMRD "${BASE_REF}" "${HEAD_REF}" |
-            awk 'NF' |
-            sort -u
-    )
+    if ! git diff --name-only --diff-filter=ACMRD "${BASE_REF}" "${HEAD_REF}" |
+        awk 'NF' | LC_ALL=C sort -u >"$scope_file"; then
+        echo '❌ CI_SCOPE_GIT_FAILED: unable to enumerate committed changes' >&2
+        exit 2
+    fi
 fi
+mapfile -t CHANGED_FILES <"$scope_file"
 
 maintenance_only=true
 application=false

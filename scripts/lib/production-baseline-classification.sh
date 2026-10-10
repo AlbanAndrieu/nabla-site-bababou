@@ -103,11 +103,11 @@ release_only_hop() {
     parent_lock_root_version="$(git show "${parent}:package-lock.json" | jq -er '.packages[""].version | select(type == "string" and length > 0)')"
     child_lock_root_version="$(git show "${child}:package-lock.json" | jq -er '.packages[""].version | select(type == "string" and length > 0)')"
 
-    if [[ "${parent_package_version}" != "${parent_lock_version}" || "${parent_package_version}" != "${parent_lock_root_version}" ]]; then
+    if [[ "${parent_package_version}" != "${parent_lock_version}" || "${parent_lock_version}" != "${parent_lock_root_version}" ]]; then
         printf '❌ PROD_BASE_RELEASE_VERSION: parent %s has inconsistent package/lock versions\n' "${parent}" >&2
         return 1
     fi
-    if [[ "${child_package_version}" != "${child_lock_version}" || "${child_package_version}" != "${child_lock_root_version}" ]]; then
+    if [[ "${child_package_version}" != "${child_lock_version}" || "${child_lock_version}" != "${child_lock_root_version}" ]]; then
         printf '❌ PROD_BASE_RELEASE_VERSION: release %s has inconsistent package/lock versions\n' "${child}" >&2
         return 1
     fi
@@ -155,7 +155,7 @@ maintenance_only_hop() {
 
     for file in "${maintenance_files[@]}"; do
         case "${file}" in
-            .assetsignore | docs/* | unit-tests/* | *.md | .github/* | .vscode/* | .idea/* | .agents/* | .cursor/* | .claude/* | .zap/* | .pre-commit-config.yaml | .pre-commit-pre-push.yaml | .python-version | mise.toml | eslint.config.js | stylelint.config.cjs | scripts/agent-quality-gate.sh | scripts/agent-p0-check.sh | scripts/agent-publish.sh | scripts/lib/agent-quality-support.sh | scripts/lib/production-baseline-classification.sh | scripts/ci-scope.sh | scripts/verify-production-baseline.sh | scripts/verify-production-live.sh | scripts/ci-performance-budget.sh | scripts/publish-vercel-preview-checkpoint.sh | scripts/check_code_size.py | scripts/quality-gate.sh | scripts/eslint-github-formatter.mjs)
+            .assetsignore | docs/* | unit-tests/* | *.md | .github/* | .vscode/* | .idea/* | .agents/* | .cursor/* | .claude/* | .zap/* | .pre-commit-config.yaml | .pre-commit-pre-push.yaml | .python-version | mise.toml | eslint.config.js | stylelint.config.cjs | scripts/agent-quality-gate.sh | scripts/agent-p0-check.sh | scripts/agent-offline-check.sh | scripts/agent-output-metrics.sh | scripts/agent-publish.sh | scripts/lib/agent-quality-support.sh | scripts/lib/production-baseline-classification.sh | scripts/ci-scope.sh | scripts/verify-production-baseline.sh | scripts/verify-production-live.sh | scripts/ci-performance-budget.sh | scripts/publish-vercel-preview-checkpoint.sh | scripts/check_code_size.py | scripts/quality-gate.sh | scripts/eslint-github-formatter.mjs)
                 ;;
             *)
                 printf '❌ PROD_BASE_MAINTENANCE_SCOPE: %s changes deploy-relevant file %s\n' "${child}" "${file}" >&2

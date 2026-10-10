@@ -40,6 +40,7 @@ export default async function LocaleLayout({
     copyright: string;
     eleonoreRssFeedAria: string;
     legalNotices: string;
+    footerNavigationAria: string;
     rssFeedAria: string;
   };
   const contactPage = messages.contactPage as {
@@ -94,6 +95,7 @@ export default async function LocaleLayout({
             backToTop={site.backToTop}
             backToTopAria={site.backToTopAria}
             contactLabel={contactPage.information.title}
+            navigationAriaLabel={site.footerNavigationAria}
             copyright={copyright}
             eleonoreRssFeedAria={site.eleonoreRssFeedAria}
             legalNotices={site.legalNotices}

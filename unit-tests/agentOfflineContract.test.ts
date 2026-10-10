@@ -22,6 +22,7 @@ test("offline L1 checks every local path without implicit truncation", async () 
   assert.match(script, /bash -n/);
   assert.match(script, /ast\.parse/);
   assert.match(script, /git diff --cached --check/);
+  assert.match(script, /git diff --check "\$BASE\.\.\.HEAD"/);
   assert.match(script, /NOT_RUN: formatter, Betterleaks/);
   assert.doesNotMatch(
     script,
@@ -76,6 +77,40 @@ test("offline fallback covers 205 files and fails closed on syntax and explicit 
     const invalid = run("0");
     assert.notEqual(invalid.status, 0);
     assert.doesNotMatch(invalid.stdout, /OFFLINE_L1_PASS/);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("offline L1 rejects committed whitespace errors in the comparison range", async () => {
+  const root = await mkdtemp(join(tmpdir(), "bababou-offline-commits-"));
+  const script = fileURLToPath(
+    new URL("../scripts/agent-offline-check.sh", import.meta.url),
+  );
+  const runGit = (...args: string[]) =>
+    spawnSync("git", args, { cwd: root, encoding: "utf8" });
+  try {
+    assert.equal(runGit("init", "-q").status, 0);
+    assert.equal(runGit("config", "user.name", "Offline Test").status, 0);
+    assert.equal(
+      runGit("config", "user.email", "offline@example.invalid").status,
+      0,
+    );
+    await writeFile(join(root, "README.md"), "valid\n");
+    assert.equal(runGit("add", ".").status, 0);
+    assert.equal(runGit("commit", "-qm", "initial").status, 0);
+    const base = runGit("rev-parse", "HEAD").stdout.trim();
+    await writeFile(join(root, "README.md"), "invalid trailing spaces  \n");
+    assert.equal(runGit("add", ".").status, 0);
+    assert.equal(runGit("commit", "-qm", "broken whitespace").status, 0);
+    const result = spawnSync("bash", [script], {
+      cwd: root,
+      encoding: "utf8",
+      env: { ...process.env, QUALITY_BASE_REF: base },
+    });
+    assert.notEqual(result.status, 0);
+    assert.match(result.stdout + result.stderr, /trailing whitespace/);
+    assert.doesNotMatch(result.stdout, /OFFLINE_L1_PASS/);
   } finally {
     await rm(root, { recursive: true, force: true });
   }

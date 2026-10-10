@@ -168,6 +168,8 @@ jobs:
           name: source-snapshot-${{ github.event.pull_request.head.sha }}
           path: ${{ runner.temp }}/agent-source/nabla-site-bababou-${{ github.event.pull_request.head.sha }}.tar.gz
           retention-days: 1
+          # git archive is already gzip compressed; avoid redundant artifact compression.
+          compression-level: 0
           if-no-files-found: error
 
       - name: Run agent preflight before dependency install

@@ -101,7 +101,17 @@ if (("${#CHANGED_FILES[@]}" > 0)); then
 			echo "--- end formatter patch ---" >&2
 		else
 			echo "❌ QG_PRECOMMIT_FAILED: pre-commit found a non-auto-fixed validation error." >&2
-			tail -n "${LOG_TAIL}" "${log}" >&2 || true
+			# Preserve actionable hook errors while keeping bounded agent output.
+			awk -v max="${QUALITY_ERROR_LINES:-64}" '
+				/\.\.\.Failed/ { found=1 }
+				found { lines[++n]=$0 }
+				END {
+					if (!found) exit 1
+					start=n-max+1
+					if (start<1) start=1
+					for (i=start;i<=n;i++) print lines[i]
+				}
+			' "${log}" >&2 || tail -n "${LOG_TAIL}" "${log}" >&2 || true
 		fi
 		rm -f "${log}"
 		exit "${rc}"

@@ -28,6 +28,7 @@ OpenCode may run this repository with a smaller model such as GPT-4.1 mini. Do n
 3. Read only the relevant unchecked subsection of `docs/roadmap.md`; do not load the entire repository to rediscover priorities.
 4. Load the smallest matching skill with OpenCode's `skill` tool before editing:
    - `roadmap-local-first` for roadmap/PR/quality work;
+   - `local-first-quality` for exact-HEAD L0–L3 evidence, offline recovery and validation before publication;
    - `quality-follow-up` for failed or incomplete quality evidence;
    - `protect-family-privacy` before family, legal, publication or privacy edits;
    - `next-migrate-locale-pages` for legacy-to-Next route migration;

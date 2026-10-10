@@ -6,10 +6,11 @@
 
 Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état live GitHub** sans demander de compactage.
 
-1. Identifier la PR ouverte la plus récente sur GitHub ; ne jamais supposer qu’une ancienne PR est encore ouverte après son merge.
+1. Identifier la PR ouverte la plus récente sur GitHub. Suivi actif : **#227** (`fix/offline-scope-parity-followup`) ; revérifier le HEAD et la CI.
 2. Lire son **HEAD exact**, sa mergeability et les derniers workflows avant toute modification.
 3. Tout job rouge pertinent est corrigé **avant** le lot suivant ; ne jamais relancer manuellement un workflow uniquement pour obtenir du vert.
 4. Boucle local-first : ciblé → `just p0` (`bash scripts/agent-p0-check.sh`) → `just quality-fix` → revue du diff → `just quality` / `just publish-status` si l'environnement exécutable est disponible.
+   Skill de référence : `.agents/skills/local-first-quality/SKILL.md` (adapté de `nabla-compose#251`) ; distinguer systématiquement preuves locales L0/L1/L2/L3 et preuves CI sur HEAD exact.
 5. Ne jamais merger automatiquement ; descriptions de PR en français ; jamais `--no-verify`.
 6. `justfile` complète le `Makefile`, qui reste conservé.
 7. **Betterleaks v1.9.0** remplace Gitleaks comme scanner exécuté ; policy canonique : `.betterleaks.toml`.
@@ -45,7 +46,9 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 - [x] Quality gate, Semgrep, tests, build Next, Node 24, Docker/Trivy, Vercel, Playwright et ZAP **verts sur le HEAD `5261267`** ; revérifier tout nouveau HEAD avant merge.
 - [x] Baisser les budgets de sortie : 12 lignes P0/quality locales, 20 lignes préflight CI, 36 lignes de patch autofix par défaut (`QUALITY_DIFF_LINES=0` pour tout voir), et résumer les sondes HTTP production (`PRODUCTION_SMOKE_VERBOSE=1` pour le détail). Les codes d'erreur, résultats de scan, SARIF et statuts bloquants restent conservés.
 - [x] Semgrep validé avec le venv isolé et la contrainte Pydantic lors de la CI Quality & Security verte sur `5261267`.
-- [ ] Mesurer à périmètre comparable les tokens, durée et lignes de logs avant/après ; ne pas annoncer de pourcentage non mesuré. Conserver les journaux complets accessibles sur demande.
+- [x] Outil de mesure des lignes/octets des logs sans divulguer leur contenu : `bash scripts/agent-output-metrics.sh avant.log après.log`.
+- [ ] Comparer à périmètre, durée, toolchain et SHA comparables ; ne pas extrapoler les tokens à partir des octets.
+- [x] Éviter la compression redondante de l'artefact `tar.gz` exact-HEAD (`compression-level: 0` dans `upload-artifact`) tout en conservant le SHA, la rétention et le contrôle d'intégrité.
 - [x] Snapshot source de CI sur le SHA exact `5261267` récupéré via connecteur, intégrité SHA-256 vérifiée ; 31/31 tests ciblés et syntaxe Bash/JS validés localement malgré le DNS bloqué.
 - [ ] Prouver Betterleaks (staged/worktree/history), P0 exact toolchain et L3 publication sur un **vrai checkout Git** ; l'archive source ne contient pas `.git` et ne remplace pas ces preuves.
 
@@ -58,6 +61,7 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
   - [x] rejeter les cibles inconnues avant toute invocation de Dagger, avec test hors réseau pour `--help` et les arguments non autorisés ;
   - [x] étendre les exclusions Dagger aux fichiers d'environnement et aux clés locales, avec test de transfert des arguments sur CLI simulé ;
   - [ ] vérifier l'efficacité réelle des filtres sur un moteur Dagger avant d'affirmer la confidentialité du transfert ;
+  - [x] figer l'image Docker du hook Hadolint sur la version pré-commit, sans image mutable `:latest` ; contrôle bloquant conservé, contrat de non-régression ajouté.
   - [ ] rendre le **full quality** portable : `shfmt-docker` est remplacé par le hook natif précompilé `shfmt`; supprimer ensuite la dépendance restante à `hadolint-docker` avant d'exposer le full quality comme cible Dagger ;
   - [x] journaliser le temps d'exécution de chaque cible Dagger (`DAGGER_TARGET`, `DAGGER_WALL_SECONDS`) et vérifier la sortie avec un CLI simulé hors réseau ;
   - [x] fournir `just dagger-benchmark` en mode explicitement opt-in : deux échantillons identiques, aucune hypothèse implicite sur le cache, test de dispatch sans Dagger réel ;
@@ -71,7 +75,12 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
   - [ ] valider une connexion réelle avec `opencode mcp list` / authentification OAuth puis une requête documentaire ciblée avant de considérer l'intégration terminée.
 - [x] Chaîne Git → checkpoint `vercel-preview-*` → Vercel → Playwright/ZAP **exact-SHA** attestée pour `5261267`.
 - [ ] Réduire les warnings ZAP applicables ; rendre les budgets bloquants seulement après plusieurs baselines vertes.
-- [ ] Garder les sorties quality compactes ; verbose uniquement pour diagnostic.
+- [x] Garder les sorties quality compactes ; verbose uniquement pour diagnostic.
+- [x] Classer les scripts offline comme maintenance-only dans les politiques CI/Preview/baseline ; mutualiser ces politiques.
+- [x] Vérifier les erreurs `git diff` et les espaces des commits existants (`BASE...HEAD`) dans la gate offline.
+
+- [x] P1/P3/P4 : les métadonnées n'annoncent plus des homepages localisées inexistantes ; canonical legacy `/` conservée jusqu'à parité.
+- [x] P2 : libellé accessible de la navigation footer traduit en FR/EN, avec contrat de régression.
 
 ## P1 — Homepage owner-controlled
 

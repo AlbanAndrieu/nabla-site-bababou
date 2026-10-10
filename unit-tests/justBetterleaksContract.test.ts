@@ -38,8 +38,9 @@ test("justfile delegates to canonical scripts while preserving Makefile", async 
         /Makefile \| justfile \| \.mega-linter\.yml \| \.betterleaks\.toml/g,
       ) ?? []
     ).length,
-    2,
+    1,
   );
+  assert.match(scope, /if is_maintenance_only_path "\$1"; then/);
 });
 
 test("Betterleaks stable v1 is the only executed secret scanner", async () => {
