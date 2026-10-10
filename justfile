@@ -79,3 +79,10 @@ dagger-benchmark:
 # Dependency-free L1 fallback when GitHub, registries, or hooks are inaccessible.
 offline-l1:
     bash scripts/agent-offline-check.sh
+
+# Offline provenance check, requires an already downloaded official upstream checkout.
+audit-skill-verify upstream:
+    node scripts/verify-security-audit-skill.mjs "{{upstream}}"
+
+audit-skill-test:
+    node --test unit-tests/verifySecurityAuditSkill.test.mjs
