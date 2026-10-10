@@ -1,3 +1,18 @@
+# [0.20.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.19.0...0.20.0) (2026-10-10)
+
+
+### Bug Fixes
+
+* **ci:** éviter le build Preview pour l'outillage offline ([#227](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/227)) ([7949c9e](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/7949c9e85ae5b3c6b7df5d6300e5bd7c7f91805c)), closes [#251](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/251)
+* **ci:** restaurer les garde-fous post-merge et la parité des dépendances ([#223](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/223)) ([243df36](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/243df369ad63a1b64f7bde68542bb624bf751bac))
+* **ci:** stabiliser la quality gate et poursuivre BetterLeaks/Justfile ([#222](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/222)) ([275efc8](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/275efc881d3de10ed8a9d26d990e8b32a1530a5d))
+* **p0:** sécuriser les cibles Dagger en mode local-first ([#226](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/226)) ([c3b4c1d](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/c3b4c1df37de4360540d9f95d8651f4b933e274a))
+
+
+### Features
+
+* **security:** finaliser Betterleaks et le workflow local-first avec just ([#220](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/220)) ([3e48974](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/3e48974854a43548dd45c4d2c8d6820299383bae))
+
 # [0.19.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.18.0...0.19.0) (2026-10-07)
 
 
