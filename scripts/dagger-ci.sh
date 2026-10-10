@@ -3,7 +3,7 @@ set -euo pipefail
 
 readonly DAGGER_REQUIRED_VERSION="v0.21.10"
 readonly NODE_IMAGE="node:26.8.2-bookworm@sha256:e7bc1a4cd2419953c91f9a6f7bb6efb3737773093fb4ded0b1c77a0a5831fac4"
-readonly SOURCE_EXCLUDES=".git/**,.private-publication-source/**,.redaction-work/**,.env.secrets,.env.local,.vercel/**,node_modules/**,.next/**,test-results/**,playwright-report/**,megalinter-reports/**"
+readonly SOURCE_EXCLUDES=".git/**,.private-publication-source/**,.redaction-work/**,.env*,**/.env*,**/*.pem,**/*.key,**/*.p12,**/*.pfx,**/id_rsa*,**/id_ed25519*,.vercel/**,node_modules/**,.next/**,test-results/**,playwright-report/**,megalinter-reports/**"
 
 usage() {
     cat <<'EOF'
@@ -67,6 +67,10 @@ main() {
     local target="${1:-}"
     case "${target}" in
         -h | --help)
+            if (($# != 1)); then
+                usage >&2
+                exit 2
+            fi
             usage
             exit 0
             ;;
@@ -81,7 +85,18 @@ main() {
         exit 2
     fi
 
+    # Reject unsupported targets before invoking Dagger or contacting its runtime.
+    case "${target}" in
+        p0 | quality-preflight | test | build) ;;
+        *)
+            printf '❌ unknown Dagger target: %s\n' "${target}" >&2
+            usage >&2
+            exit 2
+            ;;
+    esac
+
     require_dagger
+    local started_at="${SECONDS}"
 
     case "${target}" in
         p0)
@@ -109,6 +124,8 @@ NEXT_TELEMETRY_DISABLED=1 npm run build"
 
     printf '✅ Dagger spike target %s passed with %s\n' \
         "${target}" "${DAGGER_REQUIRED_VERSION}"
+    printf 'DAGGER_TARGET=%s DAGGER_WALL_SECONDS=%d\n' \
+        "${target}" "$((SECONDS - started_at))"
 }
 
 main "$@"

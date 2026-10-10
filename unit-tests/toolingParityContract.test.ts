@@ -71,3 +71,34 @@ test("Bababou-specific tooling divergences stay explicit while parity work remai
   assert.equal(pkg.devDependencies["typescript-eslint"], "^8.47.0");
   assert.equal(pkg.devDependencies["postcss-selector-parser"], "^7.1.6");
 });
+
+test("P5 tooling dependencies retain package-lock root parity and installed resolutions", async () => {
+  const packageJson = JSON.parse(await readFile(packageUrl, "utf8")) as {
+    devDependencies: Record<string, string>;
+  };
+  const lock = JSON.parse(
+    await readFile(new URL("../package-lock.json", import.meta.url), "utf8"),
+  ) as {
+    lockfileVersion: number;
+    packages: Record<string, { version?: string; devDependencies?: Record<string, string> }>;
+  };
+  assert.equal(lock.lockfileVersion, 3);
+  for (const name of [
+    "eslint",
+    "tsx",
+    "@types/node",
+    "typescript-eslint",
+    "postcss-selector-parser",
+  ]) {
+    assert.equal(
+      lock.packages[""]?.devDependencies?.[name],
+      packageJson.devDependencies[name],
+      `root lockfile manifest drift for ${name}; run npm install --package-lock-only`,
+    );
+    assert.match(
+      lock.packages[`node_modules/${name}`]?.version ?? "",
+      /^\d+\.\d+\.\d+/,
+      `missing resolved lockfile version for ${name}`,
+    );
+  }
+});

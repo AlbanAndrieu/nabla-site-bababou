@@ -72,6 +72,10 @@ dagger-test:
 dagger-build:
     bash scripts/dagger-ci.sh build
 
+# Explicitly opt-in; two equivalent runs, not a claim of cold/warm cache parity.
+dagger-benchmark:
+    bash scripts/dagger-benchmark.sh p0
+
 # Dependency-free L1 fallback when GitHub, registries, or hooks are inaccessible.
 offline-l1:
     bash scripts/agent-offline-check.sh
