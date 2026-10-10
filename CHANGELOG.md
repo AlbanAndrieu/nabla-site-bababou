@@ -1,3 +1,10 @@
+## [0.20.1](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.20.0...0.20.1) (2026-10-10)
+
+
+### Bug Fixes
+
+* **ci:** borner les diagnostics pre-commit pour les agents ([#229](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/229)) ([73b8cca](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/73b8cca53349928f14ef262ba16ce2113a988b23))
+
 # [0.20.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.19.0...0.20.0) (2026-10-10)
 
 
