@@ -7,7 +7,7 @@ LABEL org.opencontainers.image.title="nabla-site-bababou" \
       org.opencontainers.image.description="Static public/ fallback for nabla-site-bababou"
 
 # Update the vulnerable Alpine PCRE2 package; fail the build if no fixed version exists.
-USER root
+USER 0
 RUN apk add --no-cache 'pcre2>=10.49-r0'
 
 COPY public/ /usr/share/nginx/html/
