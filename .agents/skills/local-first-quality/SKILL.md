@@ -1,8 +1,10 @@
 ---
 name: local-first-quality
-description: Apply exact-HEAD L0–L3 evidence, offline source recovery, deterministic quality convergence and secure publication before consuming GitHub Actions credits.
+description: >-
+  Apply exact-HEAD L0–L3 evidence, offline source recovery, deterministic
+  quality convergence and secure publication before consuming GitHub Actions
+  credits.
 ---
-
 # Local-first quality — Bababou
 
 Adapted from `nabla-compose#251` at `575314e27510e59fd47af4eb9ec2c59d908cefdf` (`.agents/skills/local-first-quality/SKILL.md`). Preserve the source's evidence model; use **this repository's actual commands**, not Compose-only task names.
