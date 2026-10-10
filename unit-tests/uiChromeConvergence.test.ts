@@ -55,6 +55,8 @@ test("shared Next chrome uses semantic tokens and scoped styles", async () => {
   assert.match(routeHeader, /RouteHeader\.module\.css/);
   assert.match(routeHeader, /routing\.locales\.map/);
   assert.match(routeHeader, /lang=\{supportedLocale\}/);
+  assert.match(routeHeader, /parts\[parts\.length - 1\]\.replace/);
+  assert.doesNotMatch(routeHeader, /parts\.map\(\(part\) => part\.replace/);
   assert.match(
     routeHeader,
     /routing\.locales\.some\(\(supported\) => supported === nextLocale\)/,
