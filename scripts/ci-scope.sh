@@ -52,7 +52,7 @@ is_maintenance_only_path() {
             .pre-commit-config.yaml | .pre-commit-pre-push.yaml | .python-version | \
             Makefile | justfile | .mega-linter.yml | .betterleaks.toml | \
             mise.toml | opencode.json | renovate.json | eslint.config.js | stylelint.config.cjs | commitlint.config.* | playwright.config.* | \
-            scripts/agent-quality-gate.sh | scripts/agent-p0-check.sh | scripts/agent-offline-check.sh | scripts/agent-output-metrics.sh | scripts/agent-publish.sh | scripts/lib/agent-quality-support.sh | \
+            scripts/agent-quality-gate.sh | scripts/agent-p0-check.sh | scripts/agent-offline-check.sh | scripts/agent-output-metrics.sh | scripts/agent-publish.sh | scripts/lib/agent-quality-support.sh | scripts/lib/quality-log-excerpt.awk | \
             scripts/quality-gate.sh | scripts/check_code_size.py | scripts/ci-scope.sh | \
             scripts/verify-production-baseline.sh | scripts/verify-production-live.sh | \
             scripts/ci-performance-budget.sh | scripts/publish-vercel-preview-checkpoint.sh | \

@@ -23,6 +23,11 @@ if ! command -v pre-commit >/dev/null 2>&1; then
 fi
 
 LOG_TAIL="${QUALITY_LOG_TAIL:-12}"
+QUALITY_ERROR_LINES="${QUALITY_ERROR_LINES:-64}"
+if [[ ! "${QUALITY_ERROR_LINES}" =~ ^[1-9][0-9]*$ ]]; then
+    echo "❌ QUALITY_ERROR_LINES must be a positive integer" >&2
+    exit 2
+fi
 
 resolve_base_ref() {
 	if [[ -n "${QUALITY_BASE_REF:-}" ]]; then
@@ -102,16 +107,7 @@ if (("${#CHANGED_FILES[@]}" > 0)); then
 		else
 			echo "❌ QG_PRECOMMIT_FAILED: pre-commit found a non-auto-fixed validation error." >&2
 			# Preserve actionable hook errors while keeping bounded agent output.
-			awk -v max="${QUALITY_ERROR_LINES:-64}" '
-				/\.\.\.Failed/ { found=1 }
-				found { lines[++n]=$0 }
-				END {
-					if (!found) exit 1
-					start=n-max+1
-					if (start<1) start=1
-					for (i=start;i<=n;i++) print lines[i]
-				}
-			' "${log}" >&2 || tail -n "${LOG_TAIL}" "${log}" >&2 || true
+			awk -v max="${QUALITY_ERROR_LINES}" -f scripts/lib/quality-log-excerpt.awk "${log}" >&2 || tail -n "${LOG_TAIL}" "${log}" >&2 || true
 		fi
 		rm -f "${log}"
 		exit "${rc}"

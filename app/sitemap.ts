@@ -5,8 +5,8 @@ import type { MetadataRoute } from "next";
 import { type AppLocale, routing } from "@/i18n/routing";
 import {
   isPolicyPageSlug,
-  POLICY_PAGES,
   POLICY_PAGE_SLUGS,
+  POLICY_PAGES,
   type PolicyPageSlug,
 } from "@/lib/policyPages";
 import {
@@ -40,13 +40,24 @@ type SitemapEntry = MetadataRoute.Sitemap[number];
 type ChangeFrequency = NonNullable<SitemapEntry["changeFrequency"]>;
 
 function textTag(block: string, tag: string) {
-  return block.match(new RegExp(`<${tag}>([\\s\\S]*?)</${tag}>`, "i"))?.[1].trim();
+  return block
+    .match(new RegExp(`<${tag}>([\\s\\S]*?)</${tag}>`, "i"))?.[1]
+    .trim();
 }
 
-function normalizeLegacyLocation(location: string) {
-  const url = new URL(location);
-  if (url.origin !== SITE_URL) return null;
+export function normalizeLegacyLocation(location: string) {
+  // A malformed legacy URL must not abort generation of the entire sitemap.
+  let url: URL;
+  try {
+    url = new URL(location);
+  } catch {
+    return null;
+  }
+  if (url.origin !== SITE_URL || url.username || url.password) return null;
 
+  // Canonical URLs represent pages, not tracking queries or fragments.
+  url.search = "";
+  url.hash = "";
   if (MIGRATED_LEGACY_PATHS.has(url.pathname)) return null;
   if (url.pathname === "/index.html") url.pathname = "/";
 
@@ -96,7 +107,9 @@ function localizedPolicyIndexPath(locale: AppLocale) {
 
 function localizedPolicyPath(slug: PolicyPageSlug, locale: AppLocale) {
   const primaryPath = POLICY_PAGES[slug].canonicalPath;
-  return locale === routing.defaultLocale ? primaryPath : `/${locale}${primaryPath}`;
+  return locale === routing.defaultLocale
+    ? primaryPath
+    : `/${locale}${primaryPath}`;
 }
 
 function policyIndexSitemapEntry(): SitemapEntry {
@@ -120,7 +133,9 @@ function policyIndexSitemapEntry(): SitemapEntry {
 function policySitemapEntries(
   existingEntries: MetadataRoute.Sitemap,
 ): MetadataRoute.Sitemap {
-  const existingByUrl = new Map(existingEntries.map((entry) => [entry.url, entry]));
+  const existingByUrl = new Map(
+    existingEntries.map((entry) => [entry.url, entry]),
+  );
 
   return POLICY_PAGE_SLUGS.map((slug) => {
     const primaryPath = POLICY_PAGES[slug].canonicalPath;

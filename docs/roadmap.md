@@ -6,7 +6,7 @@
 
 Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état live GitHub** sans demander de compactage.
 
-1. Identifier la PR ouverte la plus récente sur GitHub. Suivi actif : **#227** (`fix/offline-scope-parity-followup`) ; revérifier le HEAD et la CI.
+1. Identifier la PR ouverte la plus récente sur GitHub. Suivi actif : **#229** (`fix/quality-log-bounded-followup`), après fusion de #227 le 10 octobre 2026 ; revérifier le HEAD et la CI.
 2. Lire son **HEAD exact**, sa mergeability et les derniers workflows avant toute modification.
 3. Tout job rouge pertinent est corrigé **avant** le lot suivant ; ne jamais relancer manuellement un workflow uniquement pour obtenir du vert.
 4. Boucle local-first : ciblé → `just p0` (`bash scripts/agent-p0-check.sh`) → `just quality-fix` → revue du diff → `just quality` / `just publish-status` si l'environnement exécutable est disponible.
@@ -76,6 +76,7 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 - [x] Chaîne Git → checkpoint `vercel-preview-*` → Vercel → Playwright/ZAP **exact-SHA** attestée pour `5261267`.
 - [ ] Réduire les warnings ZAP applicables ; rendre les budgets bloquants seulement après plusieurs baselines vertes.
 - [x] Garder les sorties quality compactes ; verbose uniquement pour diagnostic.
+- [x] Borner **aussi en mémoire** l’extraction des erreurs de pre-commit (`QUALITY_ERROR_LINES`) avec test sur 10 000 lignes, sans perdre la dernière erreur et sans modifier le verdict des hooks.
 - [x] Classer les scripts offline comme maintenance-only dans les politiques CI/Preview/baseline ; mutualiser ces politiques.
 - [x] Vérifier les erreurs `git diff` et les espaces des commits existants (`BASE...HEAD`) dans la gate offline.
 

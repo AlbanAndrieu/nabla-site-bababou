@@ -16,7 +16,12 @@ export const ROUTE_HEADER_LANGUAGE_SWITCHER_ENABLED =
 function routeParts(pathname: string) {
   const parts = pathname.split("/").filter(Boolean);
   if (routing.locales.some((locale) => locale === parts[0])) parts.shift();
-  return parts.map((part) => part.replace(/\.html$/, ""));
+  // Only the final segment can carry the legacy HTML extension.
+  // Preserve parent directory names when constructing localized routes.
+  if (parts.length > 0) {
+    parts[parts.length - 1] = parts[parts.length - 1].replace(/\.html$/, "");
+  }
+  return parts;
 }
 
 function localizedPath(locale: string, parts: string[]) {
@@ -51,6 +56,7 @@ export default function RouteHeader() {
 
   function handleLocaleChange(event: ChangeEvent<HTMLSelectElement>) {
     const nextLocale = event.target.value;
+    if (!routing.locales.some((supported) => supported === nextLocale)) return;
     const hasHtmlSuffix = pathname.endsWith(".html");
     const targetParts = [...parts];
     if (hasHtmlSuffix && targetParts.length) {
@@ -100,7 +106,11 @@ export default function RouteHeader() {
               className={styles.select}
             >
               {routing.locales.map((supportedLocale) => (
-                <option key={supportedLocale} value={supportedLocale}>
+                <option
+                  key={supportedLocale}
+                  value={supportedLocale}
+                  lang={supportedLocale}
+                >
                   {t(`languageName.${supportedLocale}`)}
                 </option>
               ))}

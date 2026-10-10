@@ -17,11 +17,20 @@ test("shared Next chrome uses semantic tokens and scoped styles", async () => {
   ] = await Promise.all([
     readFile(new URL("../app/design-tokens.css", import.meta.url), "utf8"),
     readFile(new URL("../components/RouteHeader.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../components/RouteHeader.module.css", import.meta.url), "utf8"),
+    readFile(
+      new URL("../components/RouteHeader.module.css", import.meta.url),
+      "utf8",
+    ),
     readFile(new URL("../app/components/Footer.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../app/components/Footer.module.css", import.meta.url), "utf8"),
+    readFile(
+      new URL("../app/components/Footer.module.css", import.meta.url),
+      "utf8",
+    ),
     readFile(new URL("../components/ContactHero.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../components/ContactHero.module.css", import.meta.url), "utf8"),
+    readFile(
+      new URL("../components/ContactHero.module.css", import.meta.url),
+      "utf8",
+    ),
     readFile(
       new URL("../components/ui/ContentLayout.module.css", import.meta.url),
       "utf8",
@@ -45,6 +54,14 @@ test("shared Next chrome uses semantic tokens and scoped styles", async () => {
   assert.match(routeHeader, /components\/ui\/Container/);
   assert.match(routeHeader, /RouteHeader\.module\.css/);
   assert.match(routeHeader, /routing\.locales\.map/);
+  assert.match(routeHeader, /lang=\{supportedLocale\}/);
+  assert.match(routeHeader, /parts\[parts\.length - 1\]\.replace/);
+  assert.doesNotMatch(routeHeader, /parts\.map\(\(part\) => part\.replace/);
+  assert.match(
+    routeHeader,
+    /routing\.locales\.some\(\(supported\) => supported === nextLocale\)/,
+  );
+  assert.match(routeHeader, /aria-label=\{t\("switchLanguage"\)\}/);
   assert.doesNotMatch(routeHeader, /form-select|route-header__/);
   assert.match(routeStyles, /min-height:\s*var\(--ui-control-min-height\)/);
   assert.match(routeStyles, /@media \(max-width:\s*900px\)/);
@@ -73,7 +90,10 @@ test("shared Next chrome uses semantic tokens and scoped styles", async () => {
   assert.match(contactStyles, /focus-visible/);
 
   assert.match(contentLayout, /@media \(max-width:\s*900px\)/);
-  assert.match(contentLayout, /grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/);
+  assert.match(
+    contentLayout,
+    /grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/,
+  );
   assert.match(contentLayout, /text-wrap:\s*balance/);
 
   assert.match(
@@ -96,8 +116,14 @@ test("shared Next chrome uses semantic tokens and scoped styles", async () => {
 
 test("shared container keeps bounded responsive page chrome", async () => {
   const [component, styles] = await Promise.all([
-    readFile(new URL("../components/ui/Container.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../components/ui/Container.module.css", import.meta.url), "utf8"),
+    readFile(
+      new URL("../components/ui/Container.tsx", import.meta.url),
+      "utf8",
+    ),
+    readFile(
+      new URL("../components/ui/Container.module.css", import.meta.url),
+      "utf8",
+    ),
   ]);
 
   assert.match(component, /ComponentPropsWithoutRef<"div">/);

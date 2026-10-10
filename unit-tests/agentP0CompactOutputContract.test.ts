@@ -15,6 +15,13 @@ test("P0 stays compact by default with an explicit verbose diagnostic mode", () 
   assert.match(source, />"\$\{log\}" 2>&1/);
   assert.match(source, /compact failure summary/);
   assert.match(source, /length\(line\) > 280/);
+  assert.match(source, /lines\[matched % max_lines\] = line/);
+  assert.match(
+    source,
+    /start = matched > max_lines \? matched - max_lines : 0/,
+  );
+  assert.match(source, /print lines\[i % max_lines\]/);
+  assert.doesNotMatch(source, /if \(emitted >= max_lines\) exit/);
   assert.match(source, /agent-p0-check\.sh --verbose/);
   assert.doesNotMatch(source, /cat "\$\{log\}"/);
 });

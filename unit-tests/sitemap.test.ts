@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import sitemap from "../app/sitemap.ts";
+import sitemap, { normalizeLegacyLocation } from "../app/sitemap.ts";
 import { POLICY_PAGE_SLUGS } from "../lib/policyPages.ts";
 
 test("sitemap preserves active legacy URLs and adds native Next surfaces", async () => {
@@ -25,7 +25,10 @@ test("sitemap replaces migrated legacy duplicates with native Next URLs", async 
 
   assert.equal(urls.includes("https://bababou.com/index.html"), false);
   assert.equal(urls.includes("https://bababou.com/contact.html"), false);
-  assert.equal(urls.includes("https://bababou.com/central-authorities.html"), false);
+  assert.equal(
+    urls.includes("https://bababou.com/central-authorities.html"),
+    false,
+  );
   assert.equal(
     urls.includes("https://bababou.com/central-authorities-failures.html"),
     false,
@@ -75,8 +78,7 @@ test("native sitemap entries derive locale alternates from routing", async () =>
   });
 
   const failures = entries.find(
-    (entry) =>
-      entry.url === "https://bababou.com/central-authorities-failures",
+    (entry) => entry.url === "https://bababou.com/central-authorities-failures",
   );
   assert.ok(failures);
   assert.deepEqual(failures.alternates?.languages, {
@@ -127,4 +129,30 @@ test("all policies publish native hreflang alternates", async () => {
       "x-default": base,
     });
   }
+});
+
+test("legacy sitemap URLs stay canonical and same-origin", () => {
+  assert.equal(
+    normalizeLegacyLocation(
+      "https://bababou.com/legacy.html?utm_source=test#section",
+    ),
+    "https://bababou.com/legacy.html",
+  );
+  assert.equal(
+    normalizeLegacyLocation("https://bababou.com/index.html?ref=feed"),
+    "https://bababou.com/",
+  );
+  assert.equal(
+    normalizeLegacyLocation("https://bababou.com/contact.html?ref=feed"),
+    null,
+  );
+  assert.equal(
+    normalizeLegacyLocation("https://example.com/legacy.html"),
+    null,
+  );
+  assert.equal(
+    normalizeLegacyLocation("https://user:password@bababou.com/legacy.html"),
+    null,
+  );
+  assert.equal(normalizeLegacyLocation("not a valid URL"), null);
 });
