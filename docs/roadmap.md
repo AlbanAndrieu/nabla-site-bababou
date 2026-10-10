@@ -6,7 +6,7 @@
 
 Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état live GitHub** sans demander de compactage.
 
-1. Identifier la PR ouverte la plus récente sur GitHub. Suivi actif : **#229** (`fix/quality-log-bounded-followup`), après fusion de #227 le 10 octobre 2026 ; revérifier le HEAD et la CI.
+1. Identifier la PR ouverte la plus récente sur GitHub. **#229 a été fusionnée le 10 octobre 2026** ; ne pas supposer qu'une PR est encore ouverte. En l'absence de PR, créer une branche depuis le HEAD courant de master et ouvrir une PR draft.
 2. Lire son **HEAD exact**, sa mergeability et les derniers workflows avant toute modification.
 3. Tout job rouge pertinent est corrigé **avant** le lot suivant ; ne jamais relancer manuellement un workflow uniquement pour obtenir du vert.
 4. Boucle local-first : ciblé → `just p0` (`bash scripts/agent-p0-check.sh`) → `just quality-fix` → revue du diff → `just quality` / `just publish-status` si l'environnement exécutable est disponible.
@@ -83,6 +83,14 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 - [x] P1/P3/P4 : les métadonnées n'annoncent plus des homepages localisées inexistantes ; canonical legacy `/` conservée jusqu'à parité.
 - [x] P2 : libellé accessible de la navigation footer traduit en FR/EN, avec contrat de régression.
 
+## P1 — Audit Cloudflare security-audit-skill
+
+- [ ] Vérifier provenance, licence, commit upstream épinglé de https://github.com/cloudflare/security-audit-skill avant installation ; conserver checksum et version.
+- [ ] Exécuter un audit **local-first, incrémental, en lecture seule et sur périmètre autorisé** : Cloudflare Access, Tunnel/DNS, Vercel Preview, headers, cookies et endpoints publics. Exclure corpus privé, secrets et données familiales.
+- [ ] Conserver un ledger de contrôles (pass / fail / not-run / not-applicable), preuves expurgées, version, HEAD exact, limites et remédiations P0–P4. Ne jamais présenter la checklist comme une preuve d'exécution.
+- [ ] Réconcilier les constats avec STRIDE/DSOMM et les contrôles SAST, Betterleaks, Playwright et ZAP, sans contournement.
+- [ ] Clore après reproduction locale, revue des faux positifs et preuves vérifiables.
+
 ## P1 — Homepage owner-controlled
 
 - [ ] Décomposer `app/[locale]/page.tsx` et déplacer progressivement les textes vers i18n sans changer les disclosures approuvées.
@@ -130,7 +138,7 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 ## Ordre de travail
 
 1. **P0 CI courante**.
-2. **P0 agent/tooling** : Betterleaks → Dagger spike → Context7.
+2. **P0 agent/tooling** : Betterleaks → Dagger spike → Context7 ; puis audit Cloudflare P1 en lecture seule.
 3. **P5** dépendances/Renovate.
 4. **P2/P3** accessibilité puis migration documentaire.
 5. **P1** homepage sous contrôle explicite.
