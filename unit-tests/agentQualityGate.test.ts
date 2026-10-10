@@ -113,7 +113,10 @@ test("P0, strict gate and publisher enforce the repository Node/npm engines", as
   assert.match(p0, /require_supported_js_toolchain QG_P0/);
   assert.match(gate, /require_supported_js_toolchain QG_AGENT/);
   assert.match(publish, /require_supported_js_toolchain QG_PUBLISH/);
-  assert.match(support, /Node %s is outside repository engines >=24\.11\.0 <27/);
+  assert.match(
+    support,
+    /Node %s is outside repository engines >=24\.11\.0 <27/,
+  );
   assert.match(support, /npm %s is outside repository engines >=11\.17\.0 <12/);
 });
 
@@ -126,10 +129,19 @@ test("npm, mise and pre-push expose the separated publication workflow", async (
   const pkg = JSON.parse(packageSource) as { scripts: Record<string, string> };
 
   assert.equal(pkg.scripts["quality:gate"], "bash scripts/quality-gate.sh");
-  assert.equal(pkg.scripts["agent:fix"], "bash scripts/agent-quality-gate.sh --fix");
-  assert.equal(pkg.scripts["agent:quality"], "bash scripts/agent-quality-gate.sh");
+  assert.equal(
+    pkg.scripts["agent:fix"],
+    "bash scripts/agent-quality-gate.sh --fix",
+  );
+  assert.equal(
+    pkg.scripts["agent:quality"],
+    "bash scripts/agent-quality-gate.sh",
+  );
   assert.equal(pkg.scripts["agent:publish"], "bash scripts/agent-publish.sh");
-  assert.equal(pkg.scripts["quality:agent:publish"], "bash scripts/agent-publish.sh");
+  assert.equal(
+    pkg.scripts["quality:agent:publish"],
+    "bash scripts/agent-publish.sh",
+  );
 
   for (const task of [
     "[tasks.agent-fix]",
@@ -188,7 +200,10 @@ test("CI rejects deterministic formatter failures before network SAST and npm bo
 test("draft PRs still stop after dependency-free Git preflight", async () => {
   const workflow = await read("../.github/workflows/ci.yml");
 
-  assert.match(workflow, /types: \[opened, synchronize, reopened, ready_for_review\]/);
+  assert.match(
+    workflow,
+    /types: \[opened, synchronize, reopened, ready_for_review\]/,
+  );
   assert.match(workflow, /Run agent preflight before dependency install/);
   assert.match(workflow, /Draft PR preflight/);
   assert.match(workflow, /github\.event\.pull_request\.draft == true/);
