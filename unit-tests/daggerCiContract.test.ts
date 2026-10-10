@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
+import { chmodSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { readFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import test from "node:test";
 
 const read = (path: string) =>
@@ -102,4 +105,41 @@ test("Dagger rejects unknown targets without a runtime or network dependency", (
   assert.equal(unexpectedHelpArgs.status, 2);
   assert.match(unexpectedHelpArgs.stderr, /Usage:/);
   assert.doesNotMatch(unexpectedHelpArgs.stderr, /dagger is required/);
+});
+
+test("Dagger dispatch preserves private-source exclusions with a mocked CLI", () => {
+  const directory = mkdtempSync(join(tmpdir(), "nabla-dagger-contract-"));
+  try {
+    const executable = join(directory, "dagger");
+    const argumentLog = join(directory, "args.txt");
+    writeFileSync(
+      executable,
+      '#!/usr/bin/env bash\nif [[ "$1" == "version" ]]; then echo "dagger v0.21.10"; exit 0; fi\nprintf "%s\\n" "$@" > "$DAGGER_ARGS_LOG"\n',
+    );
+    chmodSync(executable, 0o700);
+
+    const script = new URL("../scripts/dagger-ci.sh", import.meta.url);
+    const result = spawnSync("bash", [script.pathname, "p0"], {
+      encoding: "utf8",
+      env: {
+        ...process.env,
+        PATH: `${directory}:/usr/bin:/bin`,
+        DAGGER_ARGS_LOG: argumentLog,
+      },
+    });
+    assert.equal(result.status, 0, result.stderr);
+    const args = readFileSync(argumentLog, "utf8");
+    for (const expected of [
+      "--gitignore=true",
+      "**/.env*",
+      "**/*.pem",
+      "**/*.key",
+      "with-exec",
+      "agent-p0-check.sh",
+    ]) {
+      assert.ok(args.includes(expected), `Dagger CLI omitted ${expected}`);
+    }
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
 });
