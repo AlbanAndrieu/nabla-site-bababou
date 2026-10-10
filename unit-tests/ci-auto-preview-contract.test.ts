@@ -143,7 +143,10 @@ test("CI publishes a short-lived exact-HEAD archive for disconnected agents", as
   assert.match(ci, /Package exact-HEAD source for offline agents/);
   assert.match(ci, /test "\$\(git rev-parse HEAD\)" = "\$PR_HEAD_SHA"/);
   assert.match(ci, /git archive --format=tar HEAD/);
-  assert.match(ci, /source-snapshot-\$\{\{ github\.event\.pull_request\.head\.sha \}\}/);
+  assert.match(
+    ci,
+    /source-snapshot-\$\{\{ github\.event\.pull_request\.head\.sha \}\}/,
+  );
   assert.match(ci, /retention-days: 1/);
   assert.match(ci, /if-no-files-found: error/);
 });

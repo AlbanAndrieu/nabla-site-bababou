@@ -41,6 +41,7 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 
 - [x] P0 hors réseau : contrats Semgrep, `just offline-l1` avec vérification exhaustive (>200 fichiers), limites et erreurs Git explicites, `shfmt` natif et sortie compacte.
 - [x] Skill de maintenance : reprise par snapshot d'artefact **exact-HEAD** seulement s'il existe déjà, conformément à `nabla-site-alban` ; fallback API ciblée si DNS indisponible, sans déclencher de CI ni inventer une validation locale.
+- [ ] Vérifier l'image Docker après mise à jour fail-closed de `pcre2>=10.49-r0` (CVE-2026-103111, Trivy HIGH), et les 183 tests Playwright après déduplication des scripts Vercel ; ne déclarer verts que les contrôles du dernier HEAD.
 - [ ] Fermer la quality gate du **HEAD exact** : CI #38001376894 signalait `QG_AUTOFIX_REQUIRED` sur `agentOfflineContract.test.ts`, patch Biome appliqué. Vérifier ensuite Semgrep, tests, build et Preview selon le scope ; le statut final reste à prouver.
 - [x] Baisser les budgets de sortie : 12 lignes P0/quality locales, 20 lignes préflight CI, 36 lignes de patch autofix par défaut (`QUALITY_DIFF_LINES=0` pour tout voir), et résumer les sondes HTTP production (`PRODUCTION_SMOKE_VERBOSE=1` pour le détail). Les codes d'erreur, résultats de scan, SARIF et statuts bloquants restent conservés.
 - [ ] Confirmer le scan Semgrep sur le HEAD exact après contrainte de compatibilité `pydantic==2.12.5` ; ne pas assimiler les runs auto-annulés pendant les commits à un succès.
