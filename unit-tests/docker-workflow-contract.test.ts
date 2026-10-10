@@ -190,3 +190,19 @@ test("Docker context contains only the reviewed public fallback and pins its bas
   );
   assert.doesNotMatch(dockerfile, /version="0\.0\.5"/);
 });
+
+test("hadolint Docker hook image matches the pinned pre-commit release", async () => {
+  const config = await read(".pre-commit-config.yaml");
+  const hook = config.match(
+    /repo: https:\/\/github\.com\/hadolint\/hadolint\n([\s\S]*?)(?=\n-   repo:|$)/,
+  )?.[1];
+  assert.ok(hook, "Hadolint hook must stay installed");
+  const version = hook.match(/rev: (v[0-9]+\.[0-9]+\.[0-9]+)/)?.[1];
+  assert.ok(version, "Hadolint revision must be an explicit release");
+  assert.match(hook, /id: hadolint-docker/);
+  assert.ok(
+    hook.includes("entry: ghcr.io/hadolint/hadolint:" + version + " hadolint"),
+    "Docker runtime must match the pinned hook release",
+  );
+  assert.doesNotMatch(hook, /hadolint:latest/);
+});

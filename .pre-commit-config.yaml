@@ -351,6 +351,9 @@ repos:
     hooks:
     -   id: hadolint-docker
         name: "🐳 hadolint · Validate Dockerfile"
+        # The upstream Docker hook otherwise pulls a mutable latest image.
+        # Keep its runtime version aligned with the reviewed pre-commit revision.
+        entry: ghcr.io/hadolint/hadolint:v2.15.0 hadolint
 
     ### Security Tools ###
 -   repo: https://github.com/PyCQA/bandit

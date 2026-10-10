@@ -60,6 +60,7 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
   - [x] rejeter les cibles inconnues avant toute invocation de Dagger, avec test hors réseau pour `--help` et les arguments non autorisés ;
   - [x] étendre les exclusions Dagger aux fichiers d'environnement et aux clés locales, avec test de transfert des arguments sur CLI simulé ;
   - [ ] vérifier l'efficacité réelle des filtres sur un moteur Dagger avant d'affirmer la confidentialité du transfert ;
+  - [x] figer l'image Docker du hook Hadolint sur la version pré-commit, sans image mutable `:latest` ; contrôle bloquant conservé, contrat de non-régression ajouté.
   - [ ] rendre le **full quality** portable : `shfmt-docker` est remplacé par le hook natif précompilé `shfmt`; supprimer ensuite la dépendance restante à `hadolint-docker` avant d'exposer le full quality comme cible Dagger ;
   - [x] journaliser le temps d'exécution de chaque cible Dagger (`DAGGER_TARGET`, `DAGGER_WALL_SECONDS`) et vérifier la sortie avec un CLI simulé hors réseau ;
   - [x] fournir `just dagger-benchmark` en mode explicitement opt-in : deux échantillons identiques, aucune hypothèse implicite sur le cache, test de dispatch sans Dagger réel ;
