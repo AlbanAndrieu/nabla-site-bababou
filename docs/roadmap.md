@@ -6,7 +6,7 @@
 
 Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état live GitHub** sans demander de compactage.
 
-1. Identifier la PR ouverte la plus récente ; au 8 octobre 2026, la PR de suivi est **#223** (`fix/privacy-roadmap-followup`).
+1. Identifier la PR ouverte la plus récente sur GitHub. **#223 est fusionnée** ; suivi actif : **#227** (`fix/offline-scope-parity-followup`). Toujours revérifier son HEAD et sa CI.
 2. Lire son **HEAD exact**, sa mergeability et les derniers workflows avant toute modification.
 3. Tout job rouge pertinent est corrigé **avant** le lot suivant ; ne jamais relancer manuellement un workflow uniquement pour obtenir du vert.
 4. Boucle local-first : ciblé → `just p0` (`bash scripts/agent-p0-check.sh`) → `just quality-fix` → revue du diff → `just quality` / `just publish-status` si l'environnement exécutable est disponible.
@@ -66,7 +66,8 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
   - [ ] valider une connexion réelle avec `opencode mcp list` / authentification OAuth puis une requête documentaire ciblée avant de considérer l'intégration terminée.
 - [x] Chaîne Git → checkpoint `vercel-preview-*` → Vercel → Playwright/ZAP **exact-SHA** attestée pour `5261267`.
 - [ ] Réduire les warnings ZAP applicables ; rendre les budgets bloquants seulement après plusieurs baselines vertes.
-- [ ] Garder les sorties quality compactes ; verbose uniquement pour diagnostic.
+- [x] Garder les sorties quality compactes ; verbose uniquement pour diagnostic.
+- [x] Classer le contrôle `agent-offline-check.sh` comme maintenance seule dans CI, Preview à la demande et vérification de baseline : éviter un build/Preview inutile sans supprimer les contrôles qualité.
 
 ## P1 — Homepage owner-controlled
 
