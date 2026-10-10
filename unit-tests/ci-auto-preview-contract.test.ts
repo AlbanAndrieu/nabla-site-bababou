@@ -136,3 +136,14 @@ test("Playwright workflow publishes exact-SHA status for CI fallback dispatches"
   assert.match(workflow, /STATUS_SHA: \$\{\{ env\.DEPLOYED_SHA \}\}/);
   assert.match(workflow, /context 'Playwright Preview E2E'/);
 });
+
+test("CI publishes a short-lived exact-HEAD archive for disconnected agents", async () => {
+  const ci = await readFile(ciUrl, "utf8");
+
+  assert.match(ci, /Package exact-HEAD source for offline agents/);
+  assert.match(ci, /test "\$\(git rev-parse HEAD\)" = "\$PR_HEAD_SHA"/);
+  assert.match(ci, /git archive --format=tar HEAD/);
+  assert.match(ci, /source-snapshot-\$\{\{ github\.event\.pull_request\.head\.sha \}\}/);
+  assert.match(ci, /retention-days: 1/);
+  assert.match(ci, /if-no-files-found: error/);
+});
