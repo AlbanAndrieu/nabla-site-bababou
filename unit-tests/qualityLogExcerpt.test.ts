@@ -40,3 +40,15 @@ test("canonical quality gate validates the log budget and executes the helper", 
   assert.match(text, /-f scripts\/lib\/quality-log-excerpt\.awk/);
   assert.doesNotMatch(text, /lines\[\+\+n\]/);
 });
+
+test("log excerpt helper is maintenance-only in all three scope policies", async () => {
+  const [ciScope, preview, baseline] = await Promise.all([
+    readFile(new URL("../scripts/ci-scope.sh", import.meta.url), "utf8"),
+    readFile(new URL("../.github/workflows/vercel-preview.yml", import.meta.url), "utf8"),
+    readFile(new URL("../scripts/lib/production-baseline-classification.sh", import.meta.url), "utf8"),
+  ]);
+  for (const policy of [ciScope, preview, baseline]) {
+    assert.ok(policy.includes("scripts/lib/quality-log-excerpt.awk"));
+  }
+  assert.match(ciScope, /is_maintenance_only_path/);
+});

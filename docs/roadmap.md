@@ -6,7 +6,7 @@
 
 Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état live GitHub** sans demander de compactage.
 
-1. Identifier la PR ouverte la plus récente sur GitHub. Suivi actif : **#227** (`fix/offline-scope-parity-followup`) ; revérifier le HEAD et la CI.
+1. Identifier la PR ouverte la plus récente sur GitHub. Suivi actif : **#229** (`fix/quality-log-bounded-followup`), après fusion de #227 le 10 octobre 2026 ; revérifier le HEAD et la CI.
 2. Lire son **HEAD exact**, sa mergeability et les derniers workflows avant toute modification.
 3. Tout job rouge pertinent est corrigé **avant** le lot suivant ; ne jamais relancer manuellement un workflow uniquement pour obtenir du vert.
 4. Boucle local-first : ciblé → `just p0` (`bash scripts/agent-p0-check.sh`) → `just quality-fix` → revue du diff → `just quality` / `just publish-status` si l'environnement exécutable est disponible.
