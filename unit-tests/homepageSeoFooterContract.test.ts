@@ -11,11 +11,11 @@ test("P1/P3/P4 do not advertise phantom localized homepage URLs", async () => {
     read("lib/siteSocialMetadata.ts"),
     read("app/[locale]/page.tsx"),
   ]);
-  assert.match(catalog, /if \\(slug === "index"\\) return "\\/"/);
-  assert.match(metadata, /canonicalPagePath\\("index", locale\\)/);
+  assert.match(catalog, /if \(slug === "index"\) return "\/"/);
+  assert.match(metadata, /canonicalPagePath\("index", locale\)/);
   assert.doesNotMatch(metadata, /localizedHomePath/);
-  assert.match(metadata, /alternates: \\{ canonical \\}/);
-  assert.match(homepage, /redirect\\("\\/"\\)/);
+  assert.match(metadata, /alternates: \{ canonical \}/);
+  assert.match(homepage, /redirect\("\/"\)/);
 });
 
 test("P2 footer navigation name follows the active locale", async () => {
@@ -25,8 +25,8 @@ test("P2 footer navigation name follows the active locale", async () => {
     read("messages/fr.json"),
     read("messages/en.json"),
   ]);
-  assert.match(footer, /aria-label=\\{navigationAriaLabel\\}/);
-  assert.match(layout, /navigationAriaLabel=\\{site\\.footerNavigationAria\\}/);
+  assert.match(footer, /aria-label=\{navigationAriaLabel\}/);
+  assert.match(layout, /navigationAriaLabel=\{site\.footerNavigationAria\}/);
   for (const [locale, content] of [
     ["fr", french],
     ["en", english],
