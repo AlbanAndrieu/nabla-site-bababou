@@ -68,6 +68,7 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 - [ ] Réduire les warnings ZAP applicables ; rendre les budgets bloquants seulement après plusieurs baselines vertes.
 - [x] Garder les sorties quality compactes ; verbose uniquement pour diagnostic.
 - [x] Classer le contrôle `agent-offline-check.sh` comme maintenance seule dans CI, Preview à la demande et vérification de baseline : éviter un build/Preview inutile sans supprimer les contrôles qualité.
+- [x] Supprimer la liste maintenance dupliquée dans `ci-scope.sh` et faire échouer explicitement toute erreur `git diff` ; régression couverte en local sans réseau.
 
 ## P1 — Homepage owner-controlled
 
