@@ -48,7 +48,10 @@ test("agent gate delegates shared mechanics and keeps Bababou pre-build checks",
     "npm run privacy:check",
     "bash scripts/quality-gate.sh",
   ]) {
-    assert.ok(gate.includes(token), `missing agent gate contract: ${token}`);
+    assert.ok(
+      gate.includes(token),
+      `missing agent gate contract: ${token}`,
+    );
   }
   for (const helper of [
     "resolve_base_ref",
@@ -63,7 +66,10 @@ test("agent gate delegates shared mechanics and keeps Bababou pre-build checks",
     assert.match(support, new RegExp(`${helper}\\(\\)`));
   }
   assert.match(gate, /require_supported_js_toolchain QG_AGENT/);
-  assert.doesNotMatch(gate, /agent-publication-proof|QG_PUBLISH_PROOF_REUSED/);
+  assert.doesNotMatch(
+    gate,
+    /agent-publication-proof|QG_PUBLISH_PROOF_REUSED/,
+  );
 });
 
 test("publisher owns exact proof reuse and scope-aware production build", async () => {
@@ -117,7 +123,10 @@ test("P0, strict gate and publisher enforce the repository Node/npm engines", as
     support,
     /Node %s is outside repository engines >=24\.11\.0 <27/,
   );
-  assert.match(support, /npm %s is outside repository engines >=11\.17\.0 <12/);
+  assert.match(
+    support,
+    /npm %s is outside repository engines >=11\.17\.0 <12/,
+  );
 });
 
 test("npm, mise and pre-push expose the separated publication workflow", async () => {
@@ -137,7 +146,10 @@ test("npm, mise and pre-push expose the separated publication workflow", async (
     pkg.scripts["agent:quality"],
     "bash scripts/agent-quality-gate.sh",
   );
-  assert.equal(pkg.scripts["agent:publish"], "bash scripts/agent-publish.sh");
+  assert.equal(
+    pkg.scripts["agent:publish"],
+    "bash scripts/agent-publish.sh",
+  );
   assert.equal(
     pkg.scripts["quality:agent:publish"],
     "bash scripts/agent-publish.sh",
@@ -207,7 +219,10 @@ test("draft PRs still stop after dependency-free Git preflight", async () => {
   assert.match(workflow, /Run agent preflight before dependency install/);
   assert.match(workflow, /Draft PR preflight/);
   assert.match(workflow, /github\.event\.pull_request\.draft == true/);
-  assert.match(workflow, /bash scripts\/agent-quality-gate\.sh --preflight/);
+  assert.match(
+    workflow,
+    /bash scripts\/agent-quality-gate\.sh --preflight/,
+  );
 });
 
 test("Copilot bootstrap follows all agent quality inputs", async () => {
