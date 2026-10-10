@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+# Invoked with bash; intentionally non-executable in Git.
 set -euo pipefail
 
 usage() {
