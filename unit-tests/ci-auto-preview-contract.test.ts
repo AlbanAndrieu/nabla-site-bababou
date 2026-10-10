@@ -148,5 +148,6 @@ test("CI publishes a short-lived exact-HEAD archive for disconnected agents", as
     /source-snapshot-\$\{\{ github\.event\.pull_request\.head\.sha \}\}/,
   );
   assert.match(ci, /retention-days: 1/);
+  assert.match(ci, /compression-level: 0/);
   assert.match(ci, /if-no-files-found: error/);
 });
