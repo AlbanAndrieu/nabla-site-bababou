@@ -45,7 +45,7 @@ function textTag(block: string, tag: string) {
     .trim();
 }
 
-function normalizeLegacyLocation(location: string) {
+export function normalizeLegacyLocation(location: string) {
   // A malformed legacy URL must not abort generation of the entire sitemap.
   let url: URL;
   try {
