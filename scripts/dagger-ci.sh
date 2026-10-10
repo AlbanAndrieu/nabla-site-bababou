@@ -3,7 +3,7 @@ set -euo pipefail
 
 readonly DAGGER_REQUIRED_VERSION="v0.21.10"
 readonly NODE_IMAGE="node:26.8.2-bookworm@sha256:e7bc1a4cd2419953c91f9a6f7bb6efb3737773093fb4ded0b1c77a0a5831fac4"
-readonly SOURCE_EXCLUDES=".git/**,.private-publication-source/**,.redaction-work/**,.env.secrets,.env.local,.vercel/**,node_modules/**,.next/**,test-results/**,playwright-report/**,megalinter-reports/**"
+readonly SOURCE_EXCLUDES=".git/**,.private-publication-source/**,.redaction-work/**,.env*,**/.env*,**/*.pem,**/*.key,**/*.p12,**/*.pfx,**/id_rsa*,**/id_ed25519*,.vercel/**,node_modules/**,.next/**,test-results/**,playwright-report/**,megalinter-reports/**"
 
 usage() {
     cat <<'EOF'
