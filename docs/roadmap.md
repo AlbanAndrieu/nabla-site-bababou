@@ -76,6 +76,9 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 - [x] Classer les scripts offline comme maintenance-only dans les politiques CI/Preview/baseline ; mutualiser ces politiques.
 - [x] Vérifier les erreurs `git diff` et les espaces des commits existants (`BASE...HEAD`) dans la gate offline.
 
+- [x] P1/P3/P4 : les métadonnées n'annoncent plus des homepages localisées inexistantes ; canonical legacy `/` conservée jusqu'à parité.
+- [x] P2 : libellé accessible de la navigation footer traduit en FR/EN, avec contrat de régression.
+
 ## P1 — Homepage owner-controlled
 
 - [ ] Décomposer `app/[locale]/page.tsx` et déplacer progressivement les textes vers i18n sans changer les disclosures approuvées.

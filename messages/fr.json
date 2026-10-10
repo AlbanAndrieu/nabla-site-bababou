@@ -18,6 +18,7 @@
     },
     "switchLanguage": "Changer de langue",
     "rssFeedAria": "Flux RSS de ce site",
-    "copyright": "© {year} Bababou."
+    "copyright": "© {year} Bababou.",
+    "footerNavigationAria": "Navigation du pied de page"
   }
 }

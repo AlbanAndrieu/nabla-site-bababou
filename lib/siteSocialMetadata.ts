@@ -42,9 +42,6 @@ function siteCopy(locale: AppLocale) {
   return SITE_COPY[locale as SiteCopyLocale] ?? SITE_COPY.en;
 }
 
-function localizedHomePath(locale: AppLocale) {
-  return locale === routing.defaultLocale ? "/" : `/${locale}`;
-}
 
 function socialMetadata(
   locale: AppLocale,
@@ -88,13 +85,8 @@ function socialMetadata(
 
 export function localizedSiteMetadata(locale: AppLocale): Metadata {
   const copy = siteCopy(locale);
-  const canonical = localizedHomePath(locale);
-  const languages = Object.fromEntries(
-    routing.locales.map((supportedLocale) => [
-      supportedLocale,
-      localizedHomePath(supportedLocale),
-    ]),
-  );
+  // Legacy homepage is `/` for every locale until its migration is audited.
+  const canonical = canonicalPagePath("index", locale);
 
   return {
     metadataBase: new URL(SITE_URL),
@@ -106,10 +98,7 @@ export function localizedSiteMetadata(locale: AppLocale): Metadata {
     creator: "Alban Andrieu",
     publisher: "Alban Andrieu",
     referrer: "origin-when-cross-origin",
-    alternates: {
-      canonical,
-      languages,
-    },
+    alternates: { canonical },
     ...socialMetadata(locale, copy.title, copy.description, canonical),
   };
 }

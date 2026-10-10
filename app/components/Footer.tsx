@@ -9,6 +9,7 @@ type FooterProps = {
   backToTop: string;
   backToTopAria: string;
   contactLabel: string;
+  navigationAriaLabel: string;
   copyright: string;
   eleonoreRssFeedAria: string;
   legalNotices: string;
@@ -21,6 +22,7 @@ export default function Footer({
   backToTop,
   backToTopAria,
   contactLabel,
+  navigationAriaLabel,
   copyright,
   eleonoreRssFeedAria,
   legalNotices,
@@ -58,7 +60,7 @@ export default function Footer({
       <div className={`${styles.links} footer-links`}>
         <a href="/policy/legal">{legalNotices}</a>
       </div>
-      <nav className={styles.actions} aria-label="Footer navigation">
+      <nav className={styles.actions} aria-label={navigationAriaLabel}>
         <ActionLink href={homeHref}>
           <i className="fas fa-home" aria-hidden="true" />
           <span>{backHome}</span>
