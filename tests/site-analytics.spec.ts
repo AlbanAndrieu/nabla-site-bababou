@@ -194,6 +194,21 @@ test.describe("Site analytics loader regression tests", () => {
 		).toHaveCount(1);
 	});
 
+	test("should not duplicate Vercel scripts when the loader is injected twice", async ({
+		page,
+	}) => {
+		await gotoAnalyticsHost(page);
+		await injectAnalyticsScript(page, "vercel");
+		await injectAnalyticsScript(page, "vercel");
+
+		await expect(
+			page.locator('script[src="/_vercel/insights/script.js"]'),
+		).toHaveCount(1);
+		await expect(
+			page.locator('script[src="/_vercel/speed-insights/script.js"]'),
+		).toHaveCount(1);
+	});
+
 	test("should load Datadog RUM in full mode", async ({ page }) => {
 		await gotoAnalyticsHost(page);
 		await injectAnalyticsScript(page, "full");
