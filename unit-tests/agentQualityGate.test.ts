@@ -161,7 +161,7 @@ test("CI rejects deterministic formatter failures before network SAST and npm bo
   assert.ok(setupNode > semgrep);
   assert.ok(install > setupNode);
   assert.match(ci, /pre-commit==4\.6\.2/);
-  assert.match(ci, /QUALITY_LOG_TAIL: "40"/);
+  assert.match(ci, /QUALITY_LOG_TAIL: "12"/);
   assert.match(ci, /steps\.canonical-quality-gate\.outcome != 'success'/);
 });
 
