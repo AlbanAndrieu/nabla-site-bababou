@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { chmodSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { chmodSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -140,6 +140,37 @@ test("Dagger dispatch preserves private-source exclusions with a mocked CLI", ()
     ]) {
       assert.ok(args.includes(expected), `Dagger CLI omitted ${expected}`);
     }
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+});
+
+test("Dagger benchmark repeats the same opt-in target with no runtime", async () => {
+  const source = await read("scripts/dagger-benchmark.sh");
+  assert.match(source, /for iteration in 1 2/);
+  const directory = mkdtempSync(join(tmpdir(), "nabla-dagger-sample-"));
+  try {
+    mkdirSync(join(directory, "scripts"));
+    const log = join(directory, "samples.txt");
+    writeFileSync(
+      join(directory, "scripts", "dagger-ci.sh"),
+      'printf "%s\\n" "$1" >> "$DAGGER_SAMPLE_LOG"\n',
+    );
+    const benchmark = new URL("../scripts/dagger-benchmark.sh", import.meta.url);
+    const result = spawnSync("bash", [benchmark.pathname, "p0"], {
+      cwd: directory,
+      encoding: "utf8",
+      env: { ...process.env, DAGGER_SAMPLE_LOG: log },
+    });
+    assert.equal(result.status, 0, result.stderr);
+    assert.deepEqual(readFileSync(log, "utf8").trim().split("\n"), ["p0", "p0"]);
+    assert.match(result.stdout, /DAGGER_SAMPLE=1 DAGGER_TARGET=p0/);
+    assert.match(result.stdout, /DAGGER_SAMPLE=2 DAGGER_TARGET=p0/);
+    const invalid = spawnSync("bash", [benchmark.pathname, "unknown"], {
+      cwd: directory,
+      encoding: "utf8",
+    });
+    assert.equal(invalid.status, 2);
   } finally {
     rmSync(directory, { recursive: true, force: true });
   }
