@@ -33,7 +33,11 @@ test("justfile delegates to canonical scripts while preserving Makefile", async 
   }
   assert.doesNotMatch(justfile, /git push|git merge|rm -rf/);
   assert.equal(
-    (scope.match(/Makefile \| justfile \| \.mega-linter\.yml \| \.betterleaks\.toml/g) ?? []).length,
+    (
+      scope.match(
+        /Makefile \| justfile \| \.mega-linter\.yml \| \.betterleaks\.toml/g,
+      ) ?? []
+    ).length,
     1,
   );
   assert.match(scope, /if is_maintenance_only_path "\$1"; then/);
