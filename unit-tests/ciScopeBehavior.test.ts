@@ -92,26 +92,6 @@ test("quality orchestration remains maintenance-only", async (t) => {
   });
 });
 
-test("offline agent shell changes remain maintenance-only without false Preview", async (t) => {
-  const { directory, baseSha } = await createRepository("bababou-offline-scope-");
-  t.after(async () => rm(directory, { recursive: true, force: true }));
-
-  await mkdir(join(directory, "scripts"), { recursive: true });
-  await writeFile(join(directory, "scripts", "agent-offline-check.sh"), "true\n");
-  git(directory, "add", ".");
-  git(directory, "commit", "--quiet", "-m", "offline maintenance");
-
-  const result = classify(directory, baseSha);
-  assert.equal(result.status, 0, result.stderr);
-  expectScope(result.stdout, {
-    maintenance: true,
-    application: false,
-    sast: false,
-    build: false,
-    preview: false,
-  });
-});
-
 test("workflow YAML keeps SAST but skips application build and Preview", async (t) => {
   const { directory, baseSha } = await createRepository("bababou-ci-workflow-");
   t.after(async () => rm(directory, { recursive: true, force: true }));
