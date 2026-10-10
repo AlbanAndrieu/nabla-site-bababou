@@ -42,7 +42,6 @@ function siteCopy(locale: AppLocale) {
   return SITE_COPY[locale as SiteCopyLocale] ?? SITE_COPY.en;
 }
 
-
 function socialMetadata(
   locale: AppLocale,
   title: string,
