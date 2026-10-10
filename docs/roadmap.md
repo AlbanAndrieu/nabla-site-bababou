@@ -41,14 +41,15 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 
 - [x] P0 hors réseau : contrats Semgrep, `just offline-l1` avec vérification exhaustive (>200 fichiers), limites et erreurs Git explicites, `shfmt` natif et sortie compacte.
 - [x] Skill de maintenance : reprise par snapshot d'artefact **exact-HEAD** seulement s'il existe déjà, conformément à `nabla-site-alban` ; fallback API ciblée si DNS indisponible, sans déclencher de CI ni inventer une validation locale.
-- [ ] Vérifier l'image Docker après mise à jour fail-closed de `pcre2>=10.49-r0` (CVE-2026-103111, Trivy HIGH), et les 183 tests Playwright après déduplication des scripts Vercel ; ne déclarer verts que les contrôles du dernier HEAD.
-- [ ] Fermer la quality gate du **HEAD exact** : CI #38001376894 signalait `QG_AUTOFIX_REQUIRED` sur `agentOfflineContract.test.ts`, patch Biome appliqué. Vérifier ensuite Semgrep, tests, build et Preview selon le scope ; le statut final reste à prouver.
+- [x] Image Docker corrigée (`pcre2>=10.49-r0`, Trivy HIGH bloquant) et Playwright Preview validé sur `5261267` (10 octobre 2026).
+- [x] Quality gate, Semgrep, tests, build Next, Node 24, Docker/Trivy, Vercel, Playwright et ZAP **verts sur le HEAD `5261267`** ; revérifier tout nouveau HEAD avant merge.
 - [x] Baisser les budgets de sortie : 12 lignes P0/quality locales, 20 lignes préflight CI, 36 lignes de patch autofix par défaut (`QUALITY_DIFF_LINES=0` pour tout voir), et résumer les sondes HTTP production (`PRODUCTION_SMOKE_VERBOSE=1` pour le détail). Les codes d'erreur, résultats de scan, SARIF et statuts bloquants restent conservés.
-- [ ] Confirmer le scan Semgrep sur le HEAD exact après contrainte de compatibilité `pydantic==2.12.5` ; ne pas assimiler les runs auto-annulés pendant les commits à un succès.
+- [x] Semgrep validé avec le venv isolé et la contrainte Pydantic lors de la CI Quality & Security verte sur `5261267`.
 - [ ] Mesurer à périmètre comparable les tokens, durée et lignes de logs avant/après ; ne pas annoncer de pourcentage non mesuré. Conserver les journaux complets accessibles sur demande.
-- [ ] Valider P0, Betterleaks, publication et éventuel snapshot sur un véritable checkout ou une archive vérifiée ; L1/API seule ne prouve pas L3.
+- [x] Snapshot source de CI sur le SHA exact `5261267` récupéré via connecteur, intégrité SHA-256 vérifiée ; 31/31 tests ciblés et syntaxe Bash/JS validés localement malgré le DNS bloqué.
+- [ ] Prouver Betterleaks (staged/worktree/history), P0 exact toolchain et L3 publication sur un **vrai checkout Git** ; l'archive source ne contient pas `.git` et ne remplace pas ces preuves.
 
-- [ ] **Fermer la CI courante** : valider sur le HEAD exact le fallback Vercel `handle: miss` + `check: true` des `*.html` absents (404 + `noindex` + `no-store`) sans casser fichiers/redirects existants ; confirmer également le reflow 200 % non flaky.
+- [x] CI et Preview exact-SHA `5261267` réussies, incluant fallback legacy HTML, tests reflow/Playwright et ZAP ; maintenir la preuve à chaque changement de runtime.
 - [ ] **Betterleaks** : hook pre-commit natif Go v1.9.0 (sans Docker) ; exécuter d'abord `just secrets-config`, puis valider `just secrets-staged`, `just secrets-worktree`, `just secrets-history` sur un vrai checkout ; `.betterleaks.toml` impose Betterleaks >= v1.9.0 et l'ancien scanner Gitleaks n'est jamais exécuté.
 - [ ] **Dagger CI — spike local-first v0.21.10** :
   - [x] wrapper partagé `scripts/dagger-ci.sh` + aliases Just + workflow opt-in `dagger-spike.yml`, sans déclenchement PR/push automatique ;
@@ -63,7 +64,7 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
   - [x] règle agent : ne jamais envoyer corpus privé, secrets, logs sensibles ou fichiers ignorés à Context7 ;
   - [x] Context7 reste **non bloquant** : P0/quality doivent fonctionner offline sans lui ;
   - [ ] valider une connexion réelle avec `opencode mcp list` / authentification OAuth puis une requête documentaire ciblée avant de considérer l'intégration terminée.
-- [ ] Prouver le chemin Git → checkpoint `vercel-preview-*` → Vercel → Playwright/ZAP exact-SHA, y compris le fallback dispatch Playwright.
+- [x] Chaîne Git → checkpoint `vercel-preview-*` → Vercel → Playwright/ZAP **exact-SHA** attestée pour `5261267`.
 - [ ] Réduire les warnings ZAP applicables ; rendre les budgets bloquants seulement après plusieurs baselines vertes.
 - [ ] Garder les sorties quality compactes ; verbose uniquement pour diagnostic.
 
