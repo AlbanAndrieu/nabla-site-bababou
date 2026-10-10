@@ -19,7 +19,7 @@ test.describe("static global Next.js 404", () => {
   for (const path of NOT_FOUND_PATHS) {
     test(`${path} preserves the reviewed static 404 presentation`, async ({ page }) => {
       const response = await page.goto(path);
-      expect(response?.status()).toBe(404);
+      expect(response?.status(), `Unexpected HTTP status for ${path}`).toBe(404);
 
       await expect(page.locator("html")).toHaveAttribute("lang", "en");
       await expect(page.locator("html")).toHaveAttribute(
@@ -53,7 +53,10 @@ test.describe("static global Next.js 404", () => {
       const response = await request.head(path);
       expect(response.status()).toBe(404);
       expect(response.headers()["x-robots-tag"]).toContain("noindex");
-      expect(response.headers()["cache-control"]).toContain("no-store");
+      expect(
+        response.headers()["cache-control"],
+        `Missing no-store for HEAD ${path}; headers: ${JSON.stringify(response.headers())}`,
+      ).toContain("no-store");
     }
   });
 

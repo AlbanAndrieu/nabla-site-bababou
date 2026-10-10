@@ -148,12 +148,34 @@ jobs:
           persist-credentials: false
           ref: ${{ github.event.pull_request.head.sha || github.ref }}
 
+      # Connector-downloadable source transport when the agent's DNS blocks GitHub.
+      # This is not a Git checkout or a publication/merge-base proof.
+      - name: Package exact-HEAD source for offline agents
+        if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
+        shell: bash
+        env:
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$PR_HEAD_SHA"
+          mkdir -p "$RUNNER_TEMP/agent-source"
+          git archive --format=tar HEAD | gzip -n > "$RUNNER_TEMP/agent-source/nabla-site-bababou-${PR_HEAD_SHA}.tar.gz"
+
+      - name: Upload exact-HEAD source snapshot
+        if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: source-snapshot-${{ github.event.pull_request.head.sha }}
+          path: ${{ runner.temp }}/agent-source/nabla-site-bababou-${{ github.event.pull_request.head.sha }}.tar.gz
+          retention-days: 1
+          if-no-files-found: error
+
       - name: Run agent preflight before dependency install
         if: github.event_name == 'pull_request'
         shell: bash
         env:
           QUALITY_BASE_REF: ${{ steps.current-heads.outputs.base-sha || github.event.before || 'origin/master' }}
-          QUALITY_LOG_TAIL: "120"
+          QUALITY_LOG_TAIL: "20"
         run: bash scripts/agent-quality-gate.sh --preflight
 
       - name: Report draft preflight-only mode
@@ -191,7 +213,7 @@ jobs:
         continue-on-error: true
         env:
           QUALITY_BASE_REF: ${{ steps.current-heads.outputs.base-sha || github.event.before || 'origin/master' }}
-          QUALITY_LOG_TAIL: "40"
+          QUALITY_LOG_TAIL: "12"
         run: bash scripts/quality-gate.sh
 
       - name: Save pre-commit environments
@@ -222,12 +244,31 @@ jobs:
         run: bash scripts/verify-production-baseline.sh
 
       - name: Revalidate canonical production smoke before PR build
-        if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
+        if: >-
+          github.event_name == 'pull_request' &&
+          github.event.pull_request.draft == false &&
+          github.event.pull_request.head.repo.full_name == github.repository &&
+          github.event.pull_request.user.login != 'dependabot[bot]'
         shell: bash
         env:
           PRODUCTION_BASE_URL: https://www.bababou.com
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
         run: bash scripts/verify-production-live.sh
+
+      - name: Report unavailable PR production smoke credential context
+        if: >-
+          github.event_name == 'pull_request' &&
+          github.event.pull_request.draft == false &&
+          (github.event.pull_request.user.login == 'dependabot[bot]' ||
+           github.event.pull_request.head.repo.full_name != github.repository)
+        shell: bash
+        run: |
+          {
+            echo "## Production live smoke"
+            echo
+            echo "Repository secrets are intentionally unavailable in this PR context, so the credentialed live smoke is deferred."
+            echo "The mandatory production baseline verification above remains enforced."
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Classify CI change scope
         id: ci-scope
@@ -265,18 +306,19 @@ jobs:
             exit 0
           fi
 
-          printf 'Semgrep SAST targets:\n%s\n' "${files[@]}"
-          docker run --rm \
-            --env SEMGREP_SEND_METRICS=off \
-            --volume "$PWD:/src" \
-            --workdir /src \
-            semgrep/semgrep@sha256:12672acdb0949e19f9f6a4c2b288edd0b404f268f0ca7738a2c06f372f50362e \
-            semgrep scan \
+          printf 'Semgrep SAST: %d changed files\n' "${#files[@]}"
+          # Isolate Semgrep's Pydantic/MCP dependencies from pre-commit's Python environment.
+          # The venv is ephemeral and avoids anonymous Docker Hub image pulls.
+          semgrep_venv="${RUNNER_TEMP:-/tmp}/bababou-semgrep-venv"
+          python -m venv "$semgrep_venv"
+          "$semgrep_venv/bin/python" -m pip install --disable-pip-version-check --quiet 'semgrep==1.145.0' 'pydantic==2.12.5'
+          "$semgrep_venv/bin/python" -c "from pydantic._internal._typing_extra import eval_type_backport"
+          SEMGREP_SEND_METRICS=off "$semgrep_venv/bin/semgrep" scan \
             --config p/ci \
             --error \
             --metrics=off \
             --sarif \
-            --output /src/semgrep.sarif \
+            --output semgrep.sarif \
             "${files[@]}"
 
       - name: Upload Semgrep SARIF to GitHub Code Scanning
@@ -535,7 +577,9 @@ jobs:
     timeout-minutes: 35
     runs-on: ubuntu-latest
     permissions:
+      actions: write
       contents: write
+      deployments: read
       pull-requests: read
       statuses: write
 
@@ -602,6 +646,7 @@ jobs:
         env:
           STATUS_SHA: ${{ steps.preview.outputs.sha }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
           ZAP_BOOTSTRAP: ${{ needs.quality.outputs.zap_bootstrap }}
         with:
           retries: 3
@@ -622,8 +667,13 @@ jobs:
                 'This PR changes zap-preview.yml. repository_dispatch uses the default-branch workflow, so the new ZAP definition cannot be runtime-validated from this PR. The exact Vercel Preview and Playwright remain required; the stale master ZAP result is allowed to settle and is then replaced by an explicit deferred/bootstrap status.',
               );
             }
-            const deadline = Date.now() + 25 * 60 * 1000;
-            const vercelRegistrationDeadline = Date.now() + 2 * 60 * 1000;
+            const startedAt = Date.now();
+            const deadline = startedAt + 25 * 60 * 1000;
+            const vercelRegistrationDeadline = startedAt + 2 * 60 * 1000;
+            // Keep repository_dispatch as the fast path, but recover deterministically
+            // when Vercel registered a successful deployment and Playwright did not.
+            const playwrightFallbackDeadline = startedAt + 3 * 60 * 1000;
+            let playwrightFallbackDispatched = false;
 
             while (Date.now() < deadline) {
               const { data: livePr } = await github.rest.pulls.get({
@@ -668,6 +718,63 @@ jobs:
                   `Vercel status was not registered within 2 minutes for ${sha}; no Preview deployment evidence was created.`,
                 );
                 return;
+              }
+
+              const playwrightStatus = latest.get('Playwright Preview E2E');
+              if (
+                vercelStatus?.state === 'success' &&
+                !playwrightStatus &&
+                !playwrightFallbackDispatched &&
+                Date.now() >= playwrightFallbackDeadline
+              ) {
+                const { data: deployments } = await github.rest.repos.listDeployments({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  sha,
+                  per_page: 100,
+                });
+
+                let previewUrl = '';
+                for (const deployment of deployments) {
+                  const { data: deploymentStatuses } =
+                    await github.rest.repos.listDeploymentStatuses({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      deployment_id: deployment.id,
+                      per_page: 100,
+                    });
+                  const successfulStatus = deploymentStatuses.find(
+                    (status) =>
+                      status.state === 'success' &&
+                      typeof status.environment_url === 'string' &&
+                      status.environment_url !== '',
+                  );
+                  if (successfulStatus?.environment_url) {
+                    previewUrl = successfulStatus.environment_url;
+                    break;
+                  }
+                }
+
+                if (previewUrl) {
+                  core.warning(
+                    'Playwright repository_dispatch status is still absent; dispatching the exact-SHA fallback against the successful Vercel deployment.',
+                  );
+                  await github.rest.actions.createWorkflowDispatch({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    workflow_id: 'playwright.yml',
+                    ref: process.env.PR_HEAD_REF,
+                    inputs: {
+                      base_url: previewUrl,
+                      git_sha: sha,
+                    },
+                  });
+                  playwrightFallbackDispatched = true;
+                } else {
+                  core.info(
+                    'Playwright fallback is eligible, but no successful deployment environment_url is available yet.',
+                  );
+                }
               }
 
               for (const context of expected) {

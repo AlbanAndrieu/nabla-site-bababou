@@ -28,6 +28,19 @@ async function injectAnalyticsScript(
 }
 
 async function gotoAnalyticsHost(page: Page) {
+	for (const path of [
+		"**/_vercel/insights/script.js",
+		"**/_vercel/speed-insights/script.js",
+	]) {
+		await page.route(path, async (route) => {
+			await route.fulfill({
+				status: 200,
+				contentType: "application/javascript",
+				body: "",
+			});
+		});
+	}
+
 	await page.route("**/analytics-test-host.html", async (route) => {
 		await route.fulfill({
 			status: 200,
@@ -178,6 +191,21 @@ test.describe("Site analytics loader regression tests", () => {
 		).toHaveCount(1);
 		await expect(
 			page.locator('script[src*="/_vercel/speed-insights/script.js"]'),
+		).toHaveCount(1);
+	});
+
+	test("should not duplicate Vercel scripts when the loader is injected twice", async ({
+		page,
+	}) => {
+		await gotoAnalyticsHost(page);
+		await injectAnalyticsScript(page, "vercel");
+		await injectAnalyticsScript(page, "vercel");
+
+		await expect(
+			page.locator('script[src="/_vercel/insights/script.js"]'),
+		).toHaveCount(1);
+		await expect(
+			page.locator('script[src="/_vercel/speed-insights/script.js"]'),
 		).toHaveCount(1);
 	});
 

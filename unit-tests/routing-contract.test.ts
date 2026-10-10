@@ -32,25 +32,38 @@ test("unknown localized routes fall through to the protected global 404", async 
   await assert.rejects(access(projectUrl("app/[locale]/[...rest]/page.tsx")));
 });
 
-test("unknown legacy HTML uses the reviewed 404 source after Vercel filesystem routing", async () => {
+test("unknown legacy HTML uses the reviewed 404 source after filesystem miss and before dynamic Next routes", async () => {
   const nextConfig = await read("next.config.mjs");
   const vercelConfig = JSON.parse(await read("vercel.json")) as {
-    routes?: Array<{ handle?: string; src?: string; dest?: string }>;
+    routes?: Array<{
+      handle?: string;
+      src?: string;
+      dest?: string;
+      check?: boolean;
+      status?: number;
+      headers?: Record<string, string>;
+    }>;
+    rewrites?: unknown;
   };
+  const routes = vercelConfig.routes ?? [];
 
-  assert.doesNotMatch(nextConfig, /legacyHtmlNotFoundFallback|:path\*\.html/);
   assert.match(
     nextConfig,
     /outputFileTracingIncludes:\s*\{[\s\S]*?["']\/__legacy-html-not-found__["']:\s*\[["']\.\/public\/404\.html["']\]/,
     "legacy 404 Route Handler must bundle the protected public/404.html source",
   );
-  assert.deepEqual(
-    vercelConfig.routes,
-    [
-      { handle: "filesystem" },
-      { src: "/(.*)\\.html$", dest: "/__legacy-html-not-found__" },
-    ],
-    "Vercel must preserve existing filesystem HTML before routing only misses to the protected 404 renderer",
+  assert.doesNotMatch(nextConfig, /source:\s*"\/:path\*\.html"/);
+  assert.deepEqual(routes[0], { handle: "miss" });
+  assert.equal(routes[1]?.src, "/(.*)\\.html$");
+  assert.equal(routes[1]?.dest, "/__legacy-html-not-found__");
+  assert.equal(routes[1]?.check, true);
+  assert.equal(routes[1]?.status, 404);
+  assert.equal(routes[1]?.headers?.["cache-control"], "no-store, max-age=0");
+  assert.equal(routes[1]?.headers?.["x-robots-tag"], "noindex, nofollow");
+  assert.equal(
+    vercelConfig.rewrites,
+    undefined,
+    "legacy fallback must not run as an unconditional Vercel rewrite",
   );
 
   const legacyNotFoundRoute = await read(

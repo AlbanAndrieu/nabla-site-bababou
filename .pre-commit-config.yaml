@@ -203,9 +203,10 @@ repos:
 -   repo: https://github.com/scop/pre-commit-shfmt
     rev: v3.13.1-1
     hooks:
-    -   id: shfmt-docker
-        name: "🐚 🐳 shell · Format shell scripts"
-        # shfmt is the single shell-indentation authority, aligned with Site Alban #177.
+    -   id: shfmt
+        name: "🐚 shell · Format shell scripts"
+        # Native prebuilt shfmt hook: no Docker daemon/socket required.
+        # shfmt remains the single shell-indentation authority, aligned with Site Alban #177.
         args: ["-i", "4", "-ci"]
 -   repo: https://github.com/detailyang/pre-commit-shell
     rev: v1.0.6
@@ -381,14 +382,14 @@ repos:
           )$
 
 # Betterleaks is the canonical secret scanner.
-# Pin both the hook revision and container image to the same stable release.
+# Use the upstream native Go hook: no Docker daemon/socket is required.
 -   repo: https://github.com/betterleaks/betterleaks
     rev: v1.9.0
     hooks:
-    -   id: betterleaks-docker
-        name: "🔒 🐳 security · Detect hardcoded secrets with Betterleaks"
+    -   id: betterleaks
+        name: "🔒 security · Detect hardcoded secrets with Betterleaks"
         entry: >-
-          ghcr.io/betterleaks/betterleaks:v1.9.0 git --pre-commit --staged --redact --config .betterleaks.toml
+          betterleaks git --pre-commit --staged --redact --config .betterleaks.toml
 
     ### Ansible ###
     # Disable because too slow

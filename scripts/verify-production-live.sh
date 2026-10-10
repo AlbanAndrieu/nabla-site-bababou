@@ -2,6 +2,8 @@
 set -euo pipefail
 
 BASE_URL="${PRODUCTION_BASE_URL:-https://www.bababou.com}"
+SMOKE_VERBOSE="${PRODUCTION_SMOKE_VERBOSE:-0}"
+SMOKE_PASSED=0
 BYPASS_SECRET="${VERCEL_AUTOMATION_BYPASS_SECRET:-}"
 
 if [[ -z "${BYPASS_SECRET}" ]]; then
@@ -50,7 +52,10 @@ probe() {
 	if [[ "${status}" == "307" && -n "${expected_redirect}" ]]; then
 		local redirect_path="${location%%\?*}"
 		if [[ "${redirect_path}" == "${expected_redirect}" || "${redirect_path}" == "${BASE_URL}${expected_redirect}" ]]; then
-			printf '✅ production %s: expected HTTP 307 → %s\n' "${path}" "${expected_redirect}"
+			SMOKE_PASSED=$((SMOKE_PASSED + 1))
+			if [[ "${SMOKE_VERBOSE}" == "1" ]]; then
+				printf '✅ production %s: expected HTTP 307 → %s\n' "${path}" "${expected_redirect}"
+			fi
 			return 0
 		fi
 	fi
@@ -62,7 +67,10 @@ probe() {
 		return 1
 	fi
 
-	printf '✅ production %s: HTTP 200\n' "${path}"
+	SMOKE_PASSED=$((SMOKE_PASSED + 1))
+	if [[ "${SMOKE_VERBOSE}" == "1" ]]; then
+		printf '✅ production %s: HTTP 200\n' "${path}"
+	fi
 }
 
 probe "/" "/index.html"
@@ -71,4 +79,4 @@ probe "/test"
 probe "/contact"
 probe "/policy"
 
-echo "✅ canonical production smoke passed before PR dependency installation"
+printf '✅ canonical production smoke passed: %d checks (PRODUCTION_SMOKE_VERBOSE=1 for details)\n' "${SMOKE_PASSED}"

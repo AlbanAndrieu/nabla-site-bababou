@@ -41,6 +41,9 @@ publish-status:
     bash scripts/agent-publish.sh --status
 
 # Secret scanning is local-first. Private ignored family/legal source files are not staged.
+secrets-config:
+    betterleaks config check .betterleaks.toml
+
 secrets-staged:
     betterleaks git --pre-commit --staged --redact --config .betterleaks.toml
 
@@ -55,3 +58,20 @@ privacy-check:
 
 privacy-publication:
     npm run privacy:publication
+
+# Opt-in Dagger CI spike. The same wrapper is used locally and by dagger-spike.yml.
+dagger-p0:
+    bash scripts/dagger-ci.sh p0
+
+dagger-quality-preflight:
+    bash scripts/dagger-ci.sh quality-preflight
+
+dagger-test:
+    bash scripts/dagger-ci.sh test
+
+dagger-build:
+    bash scripts/dagger-ci.sh build
+
+# Dependency-free L1 fallback when GitHub, registries, or hooks are inaccessible.
+offline-l1:
+    bash scripts/agent-offline-check.sh

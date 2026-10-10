@@ -14,7 +14,10 @@ test("agent auto-fix scopes npm linters through the shared support library", asy
   ]);
   const pkg = JSON.parse(packageRaw) as { scripts: Record<string, string> };
 
-  assert.equal(pkg.scripts["lint:fix"], "eslint --fix --format ./scripts/eslint-github-formatter.mjs .");
+  assert.equal(
+    pkg.scripts["lint:fix"],
+    "eslint --fix --format ./scripts/eslint-github-formatter.mjs .",
+  );
   assert.equal(
     pkg.scripts["lint:css"],
     'stylelint "app/*.css" "app/**/*.module.css" "components/**/*.module.css" "public/*.css"',
@@ -40,7 +43,7 @@ test("agent and canonical gates emit compact machine-actionable failures", async
     read("../scripts/lib/agent-quality-support.sh"),
   ]);
 
-  assert.match(agentGate, /QUALITY_LOG_TAIL:-40/);
+  assert.match(agentGate, /QUALITY_LOG_TAIL:-12/);
   assert.match(agentGate, /QUALITY_FIX_PASSES:-12/);
   assert.match(agentGate, /QG_PRECOMMIT_FAILED/);
   assert.match(agentGate, /QG_FIX_DID_NOT_CONVERGE/);
@@ -53,6 +56,7 @@ test("agent and canonical gates emit compact machine-actionable failures", async
   assert.match(canonicalGate, /git diff --no-ext-diff/);
   assert.match(canonicalGate, /--fail-fast/);
   assert.match(canonicalGate, /QUALITY_SHOW_DIFF/);
+  assert.match(canonicalGate, /QUALITY_DIFF_LINES:-36/);
 });
 
 test("maintenance local validation avoids typegen, privacy and production build", async () => {
@@ -80,4 +84,15 @@ test("publication builds only deploy-relevant changes", async () => {
   assert.ok(scope.includes("scripts/agent-p0-check.sh"));
   assert.ok(scope.includes("scripts/agent-publish.sh"));
   assert.ok(scope.includes("scripts/lib/agent-quality-support.sh"));
+});
+
+test("agent shell formatter uses the native pre-commit hook offline", async () => {
+  const [gate, hooks] = await Promise.all([
+    read("../scripts/agent-quality-gate.sh"),
+    read("../.pre-commit-config.yaml"),
+  ]);
+
+  assert.match(gate, /pre-commit run shfmt --files/);
+  assert.doesNotMatch(gate, /pre-commit run shfmt-docker/);
+  assert.match(hooks, /id: shfmt\n/);
 });

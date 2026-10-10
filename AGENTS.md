@@ -50,6 +50,25 @@ For a concise mapping between repository tasks, available skills, local scripts 
 
 After pulling changes to OpenCode configuration, run `opencode agent list` once on the workstation and confirm that both `bababou` and `bababou-reviewer` are discovered before relying on repository-specific commands.
 
+## Disconnected checkout: L1 fallback
+
+When GitHub, registries or hook downloads are inaccessible, start with `just offline-l1` (or `bash scripts/agent-offline-check.sh`). It uses only local Git, Bash and Python when Python files are present. If the comparison base is missing, it checks **all** tracked and untracked local files, not an arbitrary first 200. `AGENT_OFFLINE_MAX_PATHS=0` disables the optional scope ceiling; any explicit ceiling exceeded fails rather than silently dropping files. Git command failures are blocking.
+
+L1 proves only shell/Python syntax and tracked/staged whitespace. Its `NOT_RUN` line means P0, pre-commit, Betterleaks, Next build, Vercel Preview and CI are **not** validated. Once the runtime is present, use `just p0`; when tools and caches permit, use `just quality-fix` and the canonical publication gate. Never bypass or weaken those gates because a network is blocked.
+
+## Offline-first and bounded agent context
+
+When github.com, PyPI, Docker Hub or other endpoints are blocked, distinguish network failure from a code defect. Never repeat a failed network request without a changed prerequisite; never pretend a skipped check passed.
+
+1. Use the existing checkout and tracked Git objects first. Inspect `git status --short`, `git rev-parse HEAD`, `git merge-base` and only the changed paths; do not clone or fetch merely to run P0.
+2. Run `bash scripts/agent-p0-check.sh` using the supported installed Node runtime; it includes Semgrep CI contracts and must not need `node_modules` or any external endpoint. If Node is unavailable, run `bash scripts/agent-quality-gate.sh --preflight` and report P0 as unavailable.
+3. Use existing `node_modules`, package caches, installed tools, or a previously verified local archive only when their version and provenance are known. Do not download arbitrary substitutes or weaken a quality gate.
+4. Classify blocked checks precisely: `PASS` (executed), `FAIL` (code or rule), `BLOCKED_NETWORK`, `MISSING_TOOL`, `NOT_RUN`. Network/tool failures never count as green.
+5. Keep responses to the HEAD, changed files, failed invariant, minimal fix, tests actually run and remaining blockers. Limit normal diagnostics to the first relevant failure and a short tail; expand to complete logs only when necessary. Do not paste whole CI logs, tool schemas, unchanged files or verbose test success output into the agent context.
+6. Prefer one scoped patch followed by targeted offline regression tests and a local fix/convergence pass. Never push merely to exercise a formatter or discover a syntax error.
+
+Default diagnostic output is bounded to 12 lines (`QUALITY_LOG_TAIL`, `P0_LOG_TAIL`), 36 autofix-diff lines (`QUALITY_DIFF_LINES`), and 20 lines in CI preflight. Escalate a single failing command with `QUALITY_LOG_TAIL=80`, `P0_LOG_TAIL=80`, or `QUALITY_DIFF_LINES=0`; use `bash scripts/agent-p0-check.sh --verbose` for the complete Node test output. Production HTTP smoke emits a one-line success summary unless `PRODUCTION_SMOKE_VERBOSE=1`. Never silence failure messages, warnings, security findings or a failing exit status to save tokens.
+
 ## Tool and context efficiency
 
 GitHub, Vercel, and Playwright are first-class tools for this repository. Do not restrict their use when they are useful for implementation, deployment validation, debugging, or release verification. Token/context optimization must never reduce correctness, test coverage, deployment validation, or incident diagnosis.
@@ -66,6 +85,21 @@ To avoid unnecessary tool-schema, CI and response overhead:
 8. Let `scripts/ci-scope.sh` keep maintenance-only changes on the lightweight CI path. Do not force Semgrep, Snyk, Next builds or Vercel Previews for files that the classifier explicitly treats as quality/orchestration maintenance.
 9. Keep output retrieval focused, but escalate to full logs/artifacts whenever narrower evidence is insufficient.
 
+Dagger CI is currently an **opt-in spike**, not the canonical gate. Use the shared
+`scripts/dagger-ci.sh` / `just dagger-*` targets only when evaluating the spike.
+Do not expose the host Docker socket, private publication workspaces or local secret
+files to Dagger. Do not claim full-quality parity until the remaining Docker-backed
+pre-commit hooks have been removed or replaced.
+
+Context7 is an optional documentation MCP for APIs that change faster than the model's
+training data. Prefer repository-local/versioned documentation first (especially the
+Next.js docs shipped in `node_modules/next/dist/docs/`). Use Context7 to verify current
+external APIs for React, Vercel, Playwright, Node, Dagger, Betterleaks and similar tooling
+before implementing version-sensitive code. Never send `.private-publication-source/**`,
+`.redaction-work/**`, secrets, private legal/family material, or sensitive logs to
+Context7. Context7 availability/authentication is advisory only: P0, quality and publication
+gates must remain fully usable offline without it.
+
 The following integrations are not currently part of the normal `nabla-site-bababou` workflow and should only be discovered or invoked when explicitly relevant to the task:
 
 - Slack
@@ -76,7 +110,7 @@ The following integrations are not currently part of the normal `nabla-site-baba
 ## Validation
 
 Le `justfile` offre des alias facultatifs (`just p0`,
-`just quality-fix`, `just publish-check`, `just secrets-staged`)
+`just quality-fix`, `just publish-check`, `just secrets-config`, `just secrets-staged`)
 en complément du `Makefile` historique. Une commande non exécutée
 ne constitue jamais une preuve de validation.
 

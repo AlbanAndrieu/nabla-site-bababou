@@ -2,7 +2,10 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-const responsiveSpecPath = new URL("../tests/responsive.spec.ts", import.meta.url);
+const responsiveSpecPath = new URL(
+  "../tests/responsive.spec.ts",
+  import.meta.url,
+);
 
 test("responsive Playwright matrix keeps the shared priority breakpoints", async () => {
   const source = await readFile(responsiveSpecPath, "utf8");
@@ -16,7 +19,10 @@ test("responsive Playwright matrix keeps the shared priority breakpoints", async
   }
 
   for (const route of ["/contact", "/de/contact", "/policy"]) {
-    assert.ok(source.includes(`"${route}"`), `missing responsive route ${route}`);
+    assert.ok(
+      source.includes(`"${route}"`),
+      `missing responsive route ${route}`,
+    );
   }
 
   assert.match(source, /hasHorizontalScroll/);
@@ -27,7 +33,10 @@ test("responsive Playwright matrix keeps the shared priority breakpoints", async
 test("responsive Playwright matrix preserves 200 percent reflow and reduced motion", async () => {
   const source = await readFile(responsiveSpecPath, "utf8");
 
-  assert.match(source, /font-size:\s*200%\s*!important/);
+  assert.match(
+    source,
+    /setProperty\(\s*"font-size",\s*"200%",\s*"important"\s*\)/,
+  );
   assert.match(source, /reducedMotion:\s*"reduce"/);
   assert.match(source, /rootFontSize/);
   assert.match(source, /toBeGreaterThanOrEqual\(32\)/);

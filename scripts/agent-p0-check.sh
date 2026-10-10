@@ -22,7 +22,7 @@ Default:
     preserve complete preflight and Node test-runner output for diagnosis.
 
 Environment:
-    P0_LOG_TAIL   maximum compact failure-summary lines (default: 40)
+    P0_LOG_TAIL   maximum compact failure-summary lines (default: 12)
 EOF
         exit 0
         ;;
@@ -39,7 +39,7 @@ if (($# > 0)); then
     exit 2
 fi
 
-P0_LOG_TAIL="${P0_LOG_TAIL:-40}"
+P0_LOG_TAIL="${P0_LOG_TAIL:-12}"
 if [[ ! "${P0_LOG_TAIL}" =~ ^[1-9][0-9]*$ ]]; then
     echo "❌ P0_LOG_TAIL must be a positive integer" >&2
     exit 2
@@ -51,7 +51,11 @@ LOG_TAIL="${P0_LOG_TAIL}"
 
 P0_TESTS=(
     "unit-tests/ciScopeBehavior.test.ts"
+    "unit-tests/agentOfflineContract.test.ts"
+    "unit-tests/ciSemgrepContract.test.ts"
+    "unit-tests/security-pipeline-contract.test.ts"
     "unit-tests/justBetterleaksContract.test.ts"
+    "unit-tests/daggerCiContract.test.ts"
     "unit-tests/legacyHtmlFallbackContract.test.ts"
     "unit-tests/ciScope.test.ts"
     "unit-tests/ciScopeCompactDiagnosticsContract.test.ts"

@@ -18,7 +18,14 @@ test("OpenCode keeps project skills and todo orchestration available", async () 
       bash?: Record<string, string>;
     };
     command?: Record<string, { template?: string; model?: string }>;
-    mcp?: Record<string, unknown>;
+    mcp?: Record<
+      string,
+      {
+        type?: string;
+        url?: string;
+        enabled?: boolean;
+      }
+    >;
   };
 
   assert.equal(config.share, "disabled");
@@ -29,6 +36,9 @@ test("OpenCode keeps project skills and todo orchestration available", async () 
   assert.equal(config.permission?.bash?.["git reset --hard*"], "ask");
   assert.equal(config.permission?.bash?.["rm -rf *"], "ask");
   assert.ok(config.mcp?.["next-devtools"]);
+  assert.equal(config.mcp?.context7?.type, "remote");
+  assert.equal(config.mcp?.context7?.url, "https://mcp.context7.com/mcp/oauth");
+  assert.equal(config.mcp?.context7?.enabled, true);
 
   assert.match(
     config.command?.["roadmap-local"]?.template ?? "",
@@ -74,6 +84,13 @@ test("AGENTS gives small models an explicit deterministic workflow", async () =>
   assert.match(agents, /Never claim.*passed unless it was actually executed/is);
   assert.match(agents, /Keep the PR draft/);
   assert.match(agents, /pull-request descriptions in French/i);
+  assert.match(agents, /Context7 is an optional documentation MCP/);
+  assert.match(
+    agents,
+    /Prefer repository-local\/versioned documentation first/,
+  );
+  assert.match(agents, /must remain fully usable offline without it/);
+  assert.match(agents, /\.private-publication-source\/\*\*/);
 });
 
 test("roadmap-local-first skill encodes local-first completion and failure routing", async () => {
@@ -143,6 +160,7 @@ test("dependency-free P0 checkpoint stays canonical and maintenance-only", async
     "unit-tests/productionBaselineClassification.test.ts",
     "unit-tests/publicationPrivacyGateContract.test.ts",
     "unit-tests/privatePublicationAuditContract.test.ts",
+    "unit-tests/daggerCiContract.test.ts",
     "unit-tests/privateConsolidationContract.test.ts",
     "unit-tests/executableScriptsContract.test.ts",
     "unit-tests/agentPreflightBehavior.test.ts",

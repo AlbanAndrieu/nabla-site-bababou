@@ -23,6 +23,8 @@ bash scripts/agent-p0-check.sh
 bash scripts/agent-p0-check.sh --verbose
 ```
 
+**Budgets de sortie par défaut :** `QUALITY_LOG_TAIL=12`, `P0_LOG_TAIL=12`, patch autofix `QUALITY_DIFF_LINES=36` (0 = patch complet). CI préflight : 20 lignes au maximum ; les erreurs restent bloquantes. `PRODUCTION_SMOKE_VERBOSE=0` résume les cinq probes HTTP en une ligne de succès, tandis que `=1` affiche chaque probe. Les erreurs HTTP/auth/challenge restent visibles quel que soit le mode. Ces paramètres limitent la sortie console, pas les contrôles effectués.
+
 Le mode par défaut compacte la sortie du preflight et des contrats Node. En cas d'échec,
 il affiche seulement les tests/assertions utiles avec un nombre de lignes borné par
 `P0_LOG_TAIL` ; `--verbose` conserve la sortie native pour l'investigation.
@@ -136,15 +138,11 @@ politique de consentement/confidentialité.
 
 ## 7. Secrets et sécurité
 
-Le hook pre-commit utilise **Betterleaks v1.9.0** (image Docker épinglée)
-pour la détection de secrets. Le fichier `.gitleaks.toml` conserve sa syntaxe
-compatible et ses allowlists ; il est consommé par Betterleaks, pas par
-l'ancien exécutable Gitleaks. MegaLinter désactive Gitleaks, tandis que
-`detect-private-key` et Secretlint restent des protections complémentaires.
+Le hook pre-commit utilise **Betterleaks v1.9.0** via son hook Go natif
+pour la détection de secrets ; aucun daemon/socket Docker n'est requis par Betterleaks. Le fichier `.betterleaks.toml` est la policy canonique et conserve les allowlists revues. Betterleaks est le seul scanner de secrets exécuté. Le nom `REPOSITORY_GITLEAKS` subsiste uniquement comme identifiant historique du linter désactivé dans MegaLinter ; aucun binaire/hook Gitleaks n'est exécuté. `detect-private-key` et Secretlint restent des protections complémentaires.
 
 Le `justfile` est facultatif et **additionnel** au `Makefile` :
-`just preflight`, `just p0`, `just quality-fix`, `just quality`,
-`just publish-check`, `just publish-status`, `just secrets-staged`.
+`just preflight`, `just p0`, `just quality-fix`, `just quality`, `just publish-check`, `just publish-status`, `just secrets-config`, `just secrets-staged`, `just secrets-worktree`, `just secrets-history`.
 Les scripts npm et mise restent les points d'entrée canoniques.
 
 `just secrets-staged` analyse uniquement l'index Git : les sources
@@ -158,7 +156,31 @@ publiées dans les logs et artefacts CI.
 - traiter logs/artifacts comme surfaces de divulgation ;
 - ne pas ajouter de credentials Vercel CLI tant que Git integration reste le mécanisme.
 
-## 8. Références
+## 8. Dagger CI spike
+
+Le POC Dagger est **opt-in** et épingle Dagger `v0.21.10`. Le même wrapper
+`scripts/dagger-ci.sh` est appelé localement via `just dagger-*` et par
+`.github/workflows/dagger-spike.yml` (workflow manuel/réutilisable uniquement).
+
+Cibles actuelles :
+
+- `dagger-p0` : snapshot Git isolé + `agent-p0-check.sh` ;
+- `dagger-quality-preflight` : preflight dependency-free uniquement ;
+- `dagger-test` : `npm ci` + tests unitaires ;
+- `dagger-build` : `npm ci` + build Next de production.
+
+Le source transféré vers l'engine exclut explicitement `.git/**`,
+`.private-publication-source/**`, `.redaction-work/**`, les fichiers
+`.env.*` privés, `.vercel/**`, `node_modules/**` et les sorties générées.
+Le spike n'utilise ni `--privileged` ni socket Docker hôte.
+
+Le **full quality gate n'est pas revendiqué dans Dagger** : le pre-commit canonique
+contient encore `shfmt-docker` et `hadolint-docker`. Avant adoption, migrer ces
+deux hooks vers des exécutions natives ou démontrer une autre solution sans
+Docker-in-Docker. Ensuite seulement comparer temps à froid/chaud, cache, réseau
+et lisibilité des traces, puis décider adopter/différer/rejeter.
+
+## 9. Références
 
 - `AGENTS.md` — politique agent/local-first ;
 - `docs/roadmap.md` — travaux ouverts et acquis structurants ;
