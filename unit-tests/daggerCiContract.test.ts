@@ -20,6 +20,20 @@ test("Dagger spike is pinned, local-first and does not expose private workspaces
   assert.match(script, /\.redaction-work\/\*\*/);
   assert.match(script, /\.env\.secrets/);
   assert.match(script, /\.env\.local/);
+  for (const excluded of [
+    ".env*",
+    "**/.env*",
+    "**/*.pem",
+    "**/*.key",
+    "**/*.p12",
+    "**/*.pfx",
+    "**/id_rsa*",
+    "**/id_ed25519*",
+  ]) {
+    assert.ok(script.includes(excluded), `Dagger must exclude ${excluded}`);
+  }
+  assert.match(script, /--gitignore=true/);
+  assert.match(script, /--exclude="\$\{SOURCE_EXCLUDES\}"/);
   assert.doesNotMatch(script, /\/var\/run\/docker\.sock|--privileged/);
 
   assert.match(
