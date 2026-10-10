@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
@@ -61,4 +62,22 @@ test("Dagger portability keeps shell formatting Docker-free", async () => {
 
   assert.match(preCommit, /- {3}id: shfmt\n/);
   assert.doesNotMatch(preCommit, /shfmt-docker/);
+});
+
+test("Dagger rejects unknown targets without a runtime or network dependency", () => {
+  const script = new URL("../scripts/dagger-ci.sh", import.meta.url);
+  const invalid = spawnSync("bash", [script.pathname, "unsupported"], {
+    encoding: "utf8",
+    env: { ...process.env, PATH: "/usr/bin:/bin" },
+  });
+  assert.equal(invalid.status, 2);
+  assert.match(invalid.stderr, /unknown Dagger target: unsupported/);
+  assert.doesNotMatch(invalid.stderr, /dagger is required/);
+
+  const help = spawnSync("bash", [script.pathname, "--help"], {
+    encoding: "utf8",
+    env: { ...process.env, PATH: "/usr/bin:/bin" },
+  });
+  assert.equal(help.status, 0);
+  assert.match(help.stdout, /Dagger spike/);
 });
