@@ -148,6 +148,28 @@ jobs:
           persist-credentials: false
           ref: ${{ github.event.pull_request.head.sha || github.ref }}
 
+      # Connector-downloadable source transport when the agent's DNS blocks GitHub.
+      # This is not a Git checkout or a publication/merge-base proof.
+      - name: Package exact-HEAD source for offline agents
+        if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
+        shell: bash
+        env:
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$PR_HEAD_SHA"
+          mkdir -p "$RUNNER_TEMP/agent-source"
+          git archive --format=tar HEAD | gzip -n > "$RUNNER_TEMP/agent-source/nabla-site-bababou-${PR_HEAD_SHA}.tar.gz"
+
+      - name: Upload exact-HEAD source snapshot
+        if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: source-snapshot-${{ github.event.pull_request.head.sha }}
+          path: ${{ runner.temp }}/agent-source/nabla-site-bababou-${{ github.event.pull_request.head.sha }}.tar.gz
+          retention-days: 1
+          if-no-files-found: error
+
       - name: Run agent preflight before dependency install
         if: github.event_name == 'pull_request'
         shell: bash
