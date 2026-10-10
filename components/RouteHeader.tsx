@@ -51,6 +51,7 @@ export default function RouteHeader() {
 
   function handleLocaleChange(event: ChangeEvent<HTMLSelectElement>) {
     const nextLocale = event.target.value;
+    if (!routing.locales.some((supported) => supported === nextLocale)) return;
     const hasHtmlSuffix = pathname.endsWith(".html");
     const targetParts = [...parts];
     if (hasHtmlSuffix && targetParts.length) {
