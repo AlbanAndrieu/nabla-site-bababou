@@ -16,7 +16,12 @@ export const ROUTE_HEADER_LANGUAGE_SWITCHER_ENABLED =
 function routeParts(pathname: string) {
   const parts = pathname.split("/").filter(Boolean);
   if (routing.locales.some((locale) => locale === parts[0])) parts.shift();
-  return parts.map((part) => part.replace(/\.html$/, ""));
+  // Only the final segment can carry the legacy HTML extension.
+  // Preserve parent directory names when constructing localized routes.
+  if (parts.length > 0) {
+    parts[parts.length - 1] = parts[parts.length - 1].replace(/\.html$/, "");
+  }
+  return parts;
 }
 
 function localizedPath(locale: string, parts: string[]) {
