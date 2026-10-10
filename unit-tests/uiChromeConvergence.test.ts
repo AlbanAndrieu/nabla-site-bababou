@@ -88,7 +88,10 @@ test("shared Next chrome uses semantic tokens and scoped styles", async () => {
   assert.match(contactStyles, /focus-visible/);
 
   assert.match(contentLayout, /@media \(max-width:\s*900px\)/);
-  assert.match(contentLayout, /grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/);
+  assert.match(
+    contentLayout,
+    /grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/,
+  );
   assert.match(contentLayout, /text-wrap:\s*balance/);
 
   assert.match(
@@ -111,8 +114,14 @@ test("shared Next chrome uses semantic tokens and scoped styles", async () => {
 
 test("shared container keeps bounded responsive page chrome", async () => {
   const [component, styles] = await Promise.all([
-    readFile(new URL("../components/ui/Container.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../components/ui/Container.module.css", import.meta.url), "utf8"),
+    readFile(
+      new URL("../components/ui/Container.tsx", import.meta.url),
+      "utf8",
+    ),
+    readFile(
+      new URL("../components/ui/Container.module.css", import.meta.url),
+      "utf8",
+    ),
   ]);
 
   assert.match(component, /ComponentPropsWithoutRef<"div">/);
