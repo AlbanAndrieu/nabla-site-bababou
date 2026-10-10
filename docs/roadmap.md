@@ -6,7 +6,7 @@
 
 Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état live GitHub** sans demander de compactage.
 
-1. Identifier la PR ouverte la plus récente ; au 8 octobre 2026, la PR de suivi est **#223** (`fix/privacy-roadmap-followup`).
+1. Identifier la PR ouverte la plus récente sur GitHub ; ne jamais supposer qu’une ancienne PR est encore ouverte après son merge.
 2. Lire son **HEAD exact**, sa mergeability et les derniers workflows avant toute modification.
 3. Tout job rouge pertinent est corrigé **avant** le lot suivant ; ne jamais relancer manuellement un workflow uniquement pour obtenir du vert.
 4. Boucle local-first : ciblé → `just p0` (`bash scripts/agent-p0-check.sh`) → `just quality-fix` → revue du diff → `just quality` / `just publish-status` si l'environnement exécutable est disponible.
@@ -20,7 +20,7 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 ### Snapshot technique de reprise
 
 - `master` contient Betterleaks + `justfile` via #220 ; `Makefile` est conservé.
-- #223 est réconciliée avec ce `master`. La preuve Preview #886 a confirmé que Next `afterFiles` ne suffit pas sur Vercel pour les `*.html` absents : 180 tests Playwright verts, 3 échecs 404, tandis que Vercel et ZAP sont verts.
+- #223 a été mergée le 10 octobre 2026. La preuve Preview #886 a confirmé que Next `afterFiles` ne suffit pas sur Vercel pour les `*.html` absents : 180 tests Playwright verts, 3 échecs 404, tandis que Vercel et ZAP sont verts.
 - La Preview #889 a prouvé que **`handle: error` est trop tardif** : les `*.html` absents sont déjà capturés par le segment dynamique Next (`x-matched-path: /[locale]`) avant la phase d'erreur. Le correctif courant utilise **`handle: miss` + `check: true`** : redirects et fichiers valides se résolvent d'abord, puis les `*.html` absents passent par `/__legacy-html-not-found__` avant les routes dynamiques Next.
 - **Ne jamais considérer ce snapshot comme une preuve courante** : relire le HEAD/CI live au début du prochain lot.
 - Les sources privées `.private-publication-source/**` et `.redaction-work/**` ne doivent jamais être envoyées à un service externe ou ajoutées à Git.
@@ -55,6 +55,7 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
   - [x] wrapper partagé `scripts/dagger-ci.sh` + aliases Just + workflow opt-in `dagger-spike.yml`, sans déclenchement PR/push automatique ;
   - [x] mêmes cibles local/GitHub : `p0`, `quality-preflight`, `test` (unit), `build`, avec Node 26.8.2/npm 11.17.0 ;
   - [x] sources privées/secrets exclus avant transfert ; aucun socket Docker ni mode privilégié ;
+  - [x] rejeter les cibles inconnues avant toute invocation de Dagger, avec test hors réseau pour `--help` et les arguments non autorisés ;
   - [ ] rendre le **full quality** portable : `shfmt-docker` est remplacé par le hook natif précompilé `shfmt`; supprimer ensuite la dépendance restante à `hadolint-docker` avant d'exposer le full quality comme cible Dagger ;
   - [ ] exécuter le spike sur un vrai runtime Dagger, mesurer froid/chaud, cache, réseau et traces, puis décider **adopter / différer / rejeter** ;
   - [ ] si adopté, GitHub Actions devient surtout déclencheur du pipeline Dagger ; sinon supprimer proprement le spike.
