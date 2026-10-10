@@ -148,10 +148,7 @@ test("npm, mise and pre-push expose the separated publication workflow", async (
     "[tasks.agent-quality]",
     "[tasks.agent-publish]",
   ]) {
-    assert.match(
-      mise,
-      new RegExp(task.replace(/[.*+?^$\{\}()|[\]\\]/g, "\\    assert.match(mise, new RegExp(task.replace(/[.*+?^$\{\}()|[\]\\]/g, "\\$&")));")),
-    );
+    assert.ok(mise.includes(task), `mise task missing: ${task}`);
   }
   assert.match(mise, /run = "bash scripts\/agent-publish\.sh"/);
   assert.match(prePush, /entry: bash scripts\/agent-publish\.sh/);
