@@ -66,6 +66,9 @@ for file in "${files[@]}"; do
             ;;
     esac
 done
+if [[ "$base_available" == true ]]; then
+    git diff --check "$BASE...HEAD"
+fi
 git diff --check
 git diff --cached --check
 printf '✅ OFFLINE_L1_PASS: paths=%d syntax_checked=%d\n' "${#files[@]}" "$checked"
