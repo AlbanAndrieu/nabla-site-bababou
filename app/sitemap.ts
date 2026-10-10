@@ -44,9 +44,18 @@ function textTag(block: string, tag: string) {
 }
 
 function normalizeLegacyLocation(location: string) {
-  const url = new URL(location);
-  if (url.origin !== SITE_URL) return null;
+  // A malformed legacy URL must not abort generation of the entire sitemap.
+  let url: URL;
+  try {
+    url = new URL(location);
+  } catch {
+    return null;
+  }
+  if (url.origin !== SITE_URL || url.username || url.password) return null;
 
+  // Canonical URLs represent pages, not tracking queries or fragments.
+  url.search = "";
+  url.hash = "";
   if (MIGRATED_LEGACY_PATHS.has(url.pathname)) return null;
   if (url.pathname === "/index.html") url.pathname = "/";
 
