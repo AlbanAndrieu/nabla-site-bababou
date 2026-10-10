@@ -67,6 +67,10 @@ main() {
     local target="${1:-}"
     case "${target}" in
         -h | --help)
+            if (($# != 1)); then
+                usage >&2
+                exit 2
+            fi
             usage
             exit 0
             ;;
@@ -85,7 +89,7 @@ main() {
     case "${target}" in
         p0 | quality-preflight | test | build) ;;
         *)
-            printf '❌ unknown Dagger target: %s\\n' "${target}" >&2
+            printf '❌ unknown Dagger target: %s\n' "${target}" >&2
             usage >&2
             exit 2
             ;;
