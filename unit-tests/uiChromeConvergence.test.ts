@@ -17,11 +17,20 @@ test("shared Next chrome uses semantic tokens and scoped styles", async () => {
   ] = await Promise.all([
     readFile(new URL("../app/design-tokens.css", import.meta.url), "utf8"),
     readFile(new URL("../components/RouteHeader.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../components/RouteHeader.module.css", import.meta.url), "utf8"),
+    readFile(
+      new URL("../components/RouteHeader.module.css", import.meta.url),
+      "utf8",
+    ),
     readFile(new URL("../app/components/Footer.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../app/components/Footer.module.css", import.meta.url), "utf8"),
+    readFile(
+      new URL("../app/components/Footer.module.css", import.meta.url),
+      "utf8",
+    ),
     readFile(new URL("../components/ContactHero.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../components/ContactHero.module.css", import.meta.url), "utf8"),
+    readFile(
+      new URL("../components/ContactHero.module.css", import.meta.url),
+      "utf8",
+    ),
     readFile(
       new URL("../components/ui/ContentLayout.module.css", import.meta.url),
       "utf8",
@@ -46,7 +55,10 @@ test("shared Next chrome uses semantic tokens and scoped styles", async () => {
   assert.match(routeHeader, /RouteHeader\.module\.css/);
   assert.match(routeHeader, /routing\.locales\.map/);
   assert.match(routeHeader, /lang=\{supportedLocale\}/);
-  assert.match(routeHeader, /routing\.locales\.some\(\(supported\) => supported === nextLocale\)/);
+  assert.match(
+    routeHeader,
+    /routing\.locales\.some\(\(supported\) => supported === nextLocale\)/,
+  );
   assert.match(routeHeader, /aria-label=\{t\("switchLanguage"\)\}/);
   assert.doesNotMatch(routeHeader, /form-select|route-header__/);
   assert.match(routeStyles, /min-height:\s*var\(--ui-control-min-height\)/);
