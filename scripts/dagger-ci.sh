@@ -96,6 +96,7 @@ main() {
     esac
 
     require_dagger
+    local started_at="${SECONDS}"
 
     case "${target}" in
         p0)
@@ -123,6 +124,8 @@ NEXT_TELEMETRY_DISABLED=1 npm run build"
 
     printf '✅ Dagger spike target %s passed with %s\n' \
         "${target}" "${DAGGER_REQUIRED_VERSION}"
+    printf 'DAGGER_TARGET=%s DAGGER_WALL_SECONDS=%d\n' \
+        "${target}" "$((SECONDS - started_at))"
 }
 
 main "$@"
