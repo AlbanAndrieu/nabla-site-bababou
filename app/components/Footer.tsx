@@ -50,7 +50,6 @@ export default function Footer({
         >
           <i className="fa fa-rss" aria-hidden="true" />
           <span className={styles.screenReaderOnly}>{rssFeedAria}</span>
-          <span className={styles.screenReaderOnly}>{eleonoreRssFeedAria}</span>
         </a>
         <a
           href="/eleonore-feed.xml"
@@ -58,6 +57,7 @@ export default function Footer({
           aria-label={eleonoreRssFeedAria}
         >
           <i className="fa fa-rss" aria-hidden="true" />
+          <span className={styles.screenReaderOnly}>{eleonoreRssFeedAria}</span>
         </a>
       </div>
       <div className={`${styles.links} footer-links`}>
