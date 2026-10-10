@@ -100,7 +100,11 @@ export default function RouteHeader() {
               className={styles.select}
             >
               {routing.locales.map((supportedLocale) => (
-                <option key={supportedLocale} value={supportedLocale}>
+                <option
+                  key={supportedLocale}
+                  value={supportedLocale}
+                  lang={supportedLocale}
+                >
                   {t(`languageName.${supportedLocale}`)}
                 </option>
               ))}
