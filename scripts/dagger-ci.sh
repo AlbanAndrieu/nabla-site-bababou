@@ -81,6 +81,16 @@ main() {
         exit 2
     fi
 
+    # Reject unsupported targets before invoking Dagger or contacting its runtime.
+    case "${target}" in
+        p0 | quality-preflight | test | build) ;;
+        *)
+            printf '❌ unknown Dagger target: %s\\n' "${target}" >&2
+            usage >&2
+            exit 2
+            ;;
+    esac
+
     require_dagger
 
     case "${target}" in
