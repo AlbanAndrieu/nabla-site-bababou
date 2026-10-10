@@ -25,7 +25,10 @@ test("Docker fallback builds and scans the Bababou image without Node or pgclien
   const workflow = await read(".github/workflows/docker-build.yml");
 
   assert.match(workflow, /LOCAL_IMAGE: nabla-site-bababou:ci/);
-  assert.match(workflow, /GHCR_IMAGE: ghcr\.io\/albanandrieu\/nabla-site-bababou/);
+  assert.match(
+    workflow,
+    /GHCR_IMAGE: ghcr\.io\/albanandrieu\/nabla-site-bababou/,
+  );
   assert.match(workflow, /DOCKERHUB_IMAGE: nabla\/nabla-site-bababou/);
   assert.ok(
     workflow.includes(
@@ -87,8 +90,9 @@ test("Docker fallback builds and scans the Bababou image without Node or pgclien
       workflow.indexOf("- name: Enforce Trivy vulnerability scan"),
   );
   assert.ok(
-    workflow.indexOf("- name: Upload Trivy scan results to GitHub Code Scanning") <
-      workflow.indexOf("- name: Enforce Trivy vulnerability scan"),
+    workflow.indexOf(
+      "- name: Upload Trivy scan results to GitHub Code Scanning",
+    ) < workflow.indexOf("- name: Enforce Trivy vulnerability scan"),
   );
   assert.ok(
     workflow.indexOf("- name: Enforce Trivy vulnerability scan") <
@@ -194,7 +198,7 @@ test("Docker context contains only the reviewed public fallback and pins its bas
 test("hadolint Docker hook image matches the pinned pre-commit release", async () => {
   const config = await read(".pre-commit-config.yaml");
   const hook = config.match(
-    /repo: https:\/\/github\.com\/hadolint\/hadolint\n([\s\S]*?)(?=\n-   repo:|$)/,
+    /repo: https:\/\/github\.com\/hadolint\/hadolint\n([\s\S]*?)(?=\n- {3}repo:|$)/,
   )?.[1];
   assert.ok(hook, "Hadolint hook must stay installed");
   const version = hook.match(/rev: (v[0-9]+\.[0-9]+\.[0-9]+)/)?.[1];
