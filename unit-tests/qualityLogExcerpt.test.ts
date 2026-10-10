@@ -17,14 +17,8 @@ test("pre-commit failure excerpt keeps the last actionable lines at a fixed budg
     ...Array.from({ length: 10000 }, (_, i) => "diagnostic " + i),
     "ERROR: real failure at the bottom",
   ].join("\n");
-  const result = spawnSync(
-    "awk",
-    ["-v", "max=4", "-f", fileURLToPath(source)],
-    {
-    input,
-    encoding: "utf8",
-    },
-  );
+  const args = ["-v", "max=4", "-f", fileURLToPath(source)];
+  const result = spawnSync("awk", args, { input, encoding: "utf8" });
   assert.equal(result.status, 0, result.stderr);
   const lines = result.stdout.trimEnd().split("\n");
   assert.equal(lines.length, 4);
@@ -36,14 +30,11 @@ test("pre-commit failure excerpt keeps the last actionable lines at a fixed budg
 });
 
 test("missing failure marker requires caller fallback instead of false success", () => {
-  const result = spawnSync(
-    "awk",
-    ["-v", "max=4", "-f", fileURLToPath(source)],
-    {
+  const args = ["-v", "max=4", "-f", fileURLToPath(source)];
+  const result = spawnSync("awk", args, {
     input: "All hooks passed\n",
-      encoding: "utf8",
-    },
-  );
+    encoding: "utf8",
+  });
   assert.equal(result.status, 1);
   assert.equal(result.stdout, "");
 });
@@ -58,7 +49,10 @@ test("canonical quality gate validates the log budget and executes the helper", 
 test("log excerpt helper is maintenance-only in all three scope policies", async () => {
   const [ciScope, preview, baseline] = await Promise.all([
     readFile(new URL("../scripts/ci-scope.sh", import.meta.url), "utf8"),
-    readFile(new URL("../.github/workflows/vercel-preview.yml", import.meta.url), "utf8"),
+    readFile(
+      new URL("../.github/workflows/vercel-preview.yml", import.meta.url),
+      "utf8",
+    ),
     readFile(
       new URL(
         "../scripts/lib/production-baseline-classification.sh",
