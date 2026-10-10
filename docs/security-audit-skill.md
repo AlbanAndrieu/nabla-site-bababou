@@ -10,6 +10,17 @@ Le projet [cloudflare/security-audit-skill](https://github.com/cloudflare/securi
 - Répertoire upstream : `skills/security-audit/` ; `SKILL.md` blob Git `92178dad304d3f63e37582a297026a7874e12c62`.
 - Ce document ne prétend pas que le skill a été installé ou exécuté. Le blob Git n'est pas un checksum SHA-256 d'une archive installée.
 
+## Contrôle d'intégrité hors réseau
+
+Pour un checkout upstream déjà disponible et vérifié depuis une source de confiance :
+
+```bash
+just audit-skill-test
+just audit-skill-verify /chemin/vers/security-audit-skill
+```
+
+Le second contrôle compare quatre blobs Git upstream épinglés (`LICENSE`, `SKILL.md` et les deux validateurs). Il échoue sur toute modification ou absence de fichier. Il **ne** prouve **ni** que le commit du checkout est authentique, **ni** l'intégrité de tous les autres fichiers, **ni** l'exécution d'un audit ; vérifier séparément la révision complète et l'ensemble des fichiers avant usage. Aucun téléchargement ou envoi de données n'est effectué.
+
 ## Procédure locale de qualification
 
 1. Dans un checkout autorisé et sans sources privées, contrôler l'identité du commit upstream et la licence avant de copier ou installer le skill. Épingler le commit, pas une branche mutable.
