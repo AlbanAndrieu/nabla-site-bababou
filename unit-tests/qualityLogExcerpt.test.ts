@@ -4,7 +4,10 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 
-const source = new URL("../scripts/lib/quality-log-excerpt.awk", import.meta.url);
+const source = new URL(
+  "../scripts/lib/quality-log-excerpt.awk",
+  import.meta.url,
+);
 const gate = new URL("../scripts/quality-gate.sh", import.meta.url);
 
 test("pre-commit failure excerpt keeps the last actionable lines at a fixed budget", () => {
@@ -14,22 +17,33 @@ test("pre-commit failure excerpt keeps the last actionable lines at a fixed budg
     ...Array.from({ length: 10000 }, (_, i) => "diagnostic " + i),
     "ERROR: real failure at the bottom",
   ].join("\n");
-  const result = spawnSync("awk", ["-v", "max=4", "-f", fileURLToPath(source)], {
+  const result = spawnSync(
+    "awk",
+    ["-v", "max=4", "-f", fileURLToPath(source)],
+    {
     input,
     encoding: "utf8",
-  });
+    },
+  );
   assert.equal(result.status, 0, result.stderr);
   const lines = result.stdout.trimEnd().split("\n");
   assert.equal(lines.length, 4);
   assert.equal(lines.at(-1), "ERROR: real failure at the bottom");
-  assert.doesNotMatch(result.stdout, /unrelated pre-commit setup|diagnostic 0\n/);
+  assert.doesNotMatch(
+    result.stdout,
+    /unrelated pre-commit setup|diagnostic 0\n/,
+  );
 });
 
 test("missing failure marker requires caller fallback instead of false success", () => {
-  const result = spawnSync("awk", ["-v", "max=4", "-f", fileURLToPath(source)], {
+  const result = spawnSync(
+    "awk",
+    ["-v", "max=4", "-f", fileURLToPath(source)],
+    {
     input: "All hooks passed\n",
-    encoding: "utf8",
-  });
+      encoding: "utf8",
+    },
+  );
   assert.equal(result.status, 1);
   assert.equal(result.stdout, "");
 });
@@ -45,7 +59,13 @@ test("log excerpt helper is maintenance-only in all three scope policies", async
   const [ciScope, preview, baseline] = await Promise.all([
     readFile(new URL("../scripts/ci-scope.sh", import.meta.url), "utf8"),
     readFile(new URL("../.github/workflows/vercel-preview.yml", import.meta.url), "utf8"),
-    readFile(new URL("../scripts/lib/production-baseline-classification.sh", import.meta.url), "utf8"),
+    readFile(
+      new URL(
+        "../scripts/lib/production-baseline-classification.sh",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
   ]);
   for (const policy of [ciScope, preview, baseline]) {
     assert.ok(policy.includes("scripts/lib/quality-log-excerpt.awk"));
