@@ -6,7 +6,7 @@
 
 Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état live GitHub** sans demander de compactage.
 
-1. Identifier la PR ouverte la plus récente sur GitHub. **#223 est fusionnée** ; suivi actif : **#227** (`fix/offline-scope-parity-followup`). Toujours revérifier son HEAD et sa CI.
+1. Identifier la PR ouverte la plus récente sur GitHub. Suivi actif : **#227** (`fix/offline-scope-parity-followup`) ; revérifier le HEAD et la CI.
 2. Lire son **HEAD exact**, sa mergeability et les derniers workflows avant toute modification.
 3. Tout job rouge pertinent est corrigé **avant** le lot suivant ; ne jamais relancer manuellement un workflow uniquement pour obtenir du vert.
 4. Boucle local-first : ciblé → `just p0` (`bash scripts/agent-p0-check.sh`) → `just quality-fix` → revue du diff → `just quality` / `just publish-status` si l'environnement exécutable est disponible.
@@ -20,7 +20,7 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 ### Snapshot technique de reprise
 
 - `master` contient Betterleaks + `justfile` via #220 ; `Makefile` est conservé.
-- #223 est réconciliée avec ce `master`. La preuve Preview #886 a confirmé que Next `afterFiles` ne suffit pas sur Vercel pour les `*.html` absents : 180 tests Playwright verts, 3 échecs 404, tandis que Vercel et ZAP sont verts.
+- #223 a été mergée le 10 octobre 2026. La preuve Preview #886 a confirmé que Next `afterFiles` ne suffit pas sur Vercel pour les `*.html` absents : 180 tests Playwright verts, 3 échecs 404, tandis que Vercel et ZAP sont verts.
 - La Preview #889 a prouvé que **`handle: error` est trop tardif** : les `*.html` absents sont déjà capturés par le segment dynamique Next (`x-matched-path: /[locale]`) avant la phase d'erreur. Le correctif courant utilise **`handle: miss` + `check: true`** : redirects et fichiers valides se résolvent d'abord, puis les `*.html` absents passent par `/__legacy-html-not-found__` avant les routes dynamiques Next.
 - **Ne jamais considérer ce snapshot comme une preuve courante** : relire le HEAD/CI live au début du prochain lot.
 - Les sources privées `.private-publication-source/**` et `.redaction-work/**` ne doivent jamais être envoyées à un service externe ou ajoutées à Git.
@@ -40,14 +40,13 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 ### Boucle local-first — état courant
 
 - [x] P0 hors réseau : contrats Semgrep, `just offline-l1` avec vérification exhaustive (>200 fichiers), limites et erreurs Git explicites, `shfmt` natif et sortie compacte.
-- [x] Élargir `offline-l1` à `git diff --check BASE...HEAD` pour détecter aussi les erreurs d'espacement déjà commitées (test Git de non-régression).
 - [x] Skill de maintenance : reprise par snapshot d'artefact **exact-HEAD** seulement s'il existe déjà, conformément à `nabla-site-alban` ; fallback API ciblée si DNS indisponible, sans déclencher de CI ni inventer une validation locale.
 - [x] Image Docker corrigée (`pcre2>=10.49-r0`, Trivy HIGH bloquant) et Playwright Preview validé sur `5261267` (10 octobre 2026).
 - [x] Quality gate, Semgrep, tests, build Next, Node 24, Docker/Trivy, Vercel, Playwright et ZAP **verts sur le HEAD `5261267`** ; revérifier tout nouveau HEAD avant merge.
 - [x] Baisser les budgets de sortie : 12 lignes P0/quality locales, 20 lignes préflight CI, 36 lignes de patch autofix par défaut (`QUALITY_DIFF_LINES=0` pour tout voir), et résumer les sondes HTTP production (`PRODUCTION_SMOKE_VERBOSE=1` pour le détail). Les codes d'erreur, résultats de scan, SARIF et statuts bloquants restent conservés.
 - [x] Semgrep validé avec le venv isolé et la contrainte Pydantic lors de la CI Quality & Security verte sur `5261267`.
-- [x] Fournir un outil de mesure locale reproductible des **lignes et octets** des logs, sans les publier : `bash scripts/agent-output-metrics.sh avant.log après.log`.
-- [ ] Comparer à périmètre, durée, toolchain et SHA comparables ; ne pas estimer la consommation de tokens depuis les octets. Garder les logs complets locaux.
+- [x] Outil de mesure des lignes/octets des logs sans divulguer leur contenu : `bash scripts/agent-output-metrics.sh avant.log après.log`.
+- [ ] Comparer à périmètre, durée, toolchain et SHA comparables ; ne pas extrapoler les tokens à partir des octets.
 - [x] Snapshot source de CI sur le SHA exact `5261267` récupéré via connecteur, intégrité SHA-256 vérifiée ; 31/31 tests ciblés et syntaxe Bash/JS validés localement malgré le DNS bloqué.
 - [ ] Prouver Betterleaks (staged/worktree/history), P0 exact toolchain et L3 publication sur un **vrai checkout Git** ; l'archive source ne contient pas `.git` et ne remplace pas ces preuves.
 
@@ -57,7 +56,12 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
   - [x] wrapper partagé `scripts/dagger-ci.sh` + aliases Just + workflow opt-in `dagger-spike.yml`, sans déclenchement PR/push automatique ;
   - [x] mêmes cibles local/GitHub : `p0`, `quality-preflight`, `test` (unit), `build`, avec Node 26.8.2/npm 11.17.0 ;
   - [x] sources privées/secrets exclus avant transfert ; aucun socket Docker ni mode privilégié ;
+  - [x] rejeter les cibles inconnues avant toute invocation de Dagger, avec test hors réseau pour `--help` et les arguments non autorisés ;
+  - [x] étendre les exclusions Dagger aux fichiers d'environnement et aux clés locales, avec test de transfert des arguments sur CLI simulé ;
+  - [ ] vérifier l'efficacité réelle des filtres sur un moteur Dagger avant d'affirmer la confidentialité du transfert ;
   - [ ] rendre le **full quality** portable : `shfmt-docker` est remplacé par le hook natif précompilé `shfmt`; supprimer ensuite la dépendance restante à `hadolint-docker` avant d'exposer le full quality comme cible Dagger ;
+  - [x] journaliser le temps d'exécution de chaque cible Dagger (`DAGGER_TARGET`, `DAGGER_WALL_SECONDS`) et vérifier la sortie avec un CLI simulé hors réseau ;
+  - [x] fournir `just dagger-benchmark` en mode explicitement opt-in : deux échantillons identiques, aucune hypothèse implicite sur le cache, test de dispatch sans Dagger réel ;
   - [ ] exécuter le spike sur un vrai runtime Dagger, mesurer froid/chaud, cache, réseau et traces, puis décider **adopter / différer / rejeter** ;
   - [ ] si adopté, GitHub Actions devient surtout déclencheur du pipeline Dagger ; sinon supprimer proprement le spike.
 - [ ] **Context7 MCP — documentation actuelle pour l'agent** ([docs officielles](https://context7.com/docs/overview)) :
@@ -69,8 +73,8 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 - [x] Chaîne Git → checkpoint `vercel-preview-*` → Vercel → Playwright/ZAP **exact-SHA** attestée pour `5261267`.
 - [ ] Réduire les warnings ZAP applicables ; rendre les budgets bloquants seulement après plusieurs baselines vertes.
 - [x] Garder les sorties quality compactes ; verbose uniquement pour diagnostic.
-- [x] Classer le contrôle `agent-offline-check.sh` comme maintenance seule dans CI, Preview à la demande et vérification de baseline : éviter un build/Preview inutile sans supprimer les contrôles qualité.
-- [x] Supprimer la liste maintenance dupliquée dans `ci-scope.sh` et faire échouer explicitement toute erreur `git diff` ; régression couverte en local sans réseau.
+- [x] Classer les scripts offline comme maintenance-only dans les politiques CI/Preview/baseline ; mutualiser ces politiques.
+- [x] Vérifier les erreurs `git diff` et les espaces des commits existants (`BASE...HEAD`) dans la gate offline.
 
 ## P1 — Homepage owner-controlled
 
@@ -100,7 +104,8 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 ## P5 — Tooling / dépendances
 
 - [ ] Valider Mend Renovate : Dependabot Alerts read-only, Security Updates GitHub désactivé, première vraie PR `security` et premier lot groupé.
-- [ ] Réconcilier `eslint`, `tsx`, `@types/node`, `typescript-eslint`, `postcss-selector-parser` et lockfile.
+- [x] Vérifier par contrat P5 que `eslint`, `tsx`, `@types/node`, `typescript-eslint` et `postcss-selector-parser` conservent leurs spécifications identiques entre `package.json` et la racine de `package-lock.json`, avec résolution présente.
+- [ ] Réconcilier les versions de ces dépendances avec les dépôts apparentés et actualiser le lockfile uniquement après validation de la compatibilité ; le contrat précédent ne prouve pas la parité inter-dépôts.
 - [ ] Après Dagger, ne conserver **qu'une** autorité de pipeline ; pas de logique CI dupliquée shell + Dagger.
 - [ ] Retirer runtimes/scripts/assets/pages orphelins seulement après preuve d'absence de consommateurs.
 
