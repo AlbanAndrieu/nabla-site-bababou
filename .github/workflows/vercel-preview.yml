@@ -124,6 +124,7 @@ jobs:
               filename === 'scripts/agent-offline-check.sh' ||
               filename === 'scripts/agent-output-metrics.sh' ||
               filename === 'scripts/lib/agent-quality-support.sh' ||
+              filename === 'scripts/lib/quality-log-excerpt.awk' ||
               filename === 'scripts/lib/production-baseline-classification.sh' ||
               filename === 'scripts/agent-publish.sh' ||
               filename === 'scripts/check_code_size.py' ||
