@@ -128,6 +128,7 @@ test("Dagger dispatch preserves private-source exclusions with a mocked CLI", ()
       },
     });
     assert.equal(result.status, 0, result.stderr);
+    assert.match(result.stdout, /DAGGER_TARGET=p0 DAGGER_WALL_SECONDS=\d+/);
     const args = readFileSync(argumentLog, "utf8");
     for (const expected of [
       "--gitignore=true",
