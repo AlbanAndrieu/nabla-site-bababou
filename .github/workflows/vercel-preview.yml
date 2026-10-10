@@ -122,6 +122,7 @@ jobs:
               filename === 'scripts/agent-quality-gate.sh' ||
               filename === 'scripts/agent-p0-check.sh' ||
               filename === 'scripts/agent-offline-check.sh' ||
+              filename === 'scripts/agent-output-metrics.sh' ||
               filename === 'scripts/lib/agent-quality-support.sh' ||
               filename === 'scripts/lib/production-baseline-classification.sh' ||
               filename === 'scripts/agent-publish.sh' ||

@@ -30,6 +30,10 @@ test("offline agent script is maintenance-only across CI, Preview and baseline",
   assert.equal(scope.split(path).length - 1, 1);
   assert.ok(preview.includes("filename === '" + path + "'"));
   assert.ok(baseline.includes(path));
+  const metricsPath = "scripts/agent-output-metrics.sh";
+  assert.ok(scope.includes(metricsPath));
+  assert.ok(preview.includes("filename === '" + metricsPath + "'"));
+  assert.ok(baseline.includes(metricsPath));
 
   const git = (...args: string[]) =>
     execFileSync("git", args, { cwd: root, encoding: "utf8" }).trim();
