@@ -33,6 +33,9 @@ test("P2 footer navigation name follows the active locale", async () => {
   ]) {
     const value = JSON.parse(content).site.footerNavigationAria;
     assert.equal(typeof value, "string", locale + " footer landmark missing");
-    assert.ok(value.length > 4, locale + " footer landmark must be descriptive");
+    assert.ok(
+      value.length > 4,
+      locale + " footer landmark must be descriptive",
+    );
   }
 });
