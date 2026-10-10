@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFileSync, spawnSync } from "node:child_process";
-import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -9,7 +9,9 @@ import { fileURLToPath } from "node:url";
 test("offline agent script is maintenance-only across CI, Preview and baseline", async (t) => {
   const root = await mkdtemp(join(tmpdir(), "bababou-offline-scope-"));
   t.after(() => rm(root, { recursive: true, force: true }));
-  const script = fileURLToPath(new URL("../scripts/ci-scope.sh", import.meta.url));
+  const script = fileURLToPath(
+    new URL("../scripts/ci-scope.sh", import.meta.url),
+  );
   const read = (path: string) =>
     readFile(new URL("../" + path, import.meta.url), "utf8");
   const [scope, preview, baseline] = await Promise.all([
