@@ -246,9 +246,10 @@ test("OpenCode configuration stays on the maintenance-only CI path", async () =>
   const scope = await read("scripts/ci-scope.sh");
 
   const matches = scope.match(/opencode\.json/g) ?? [];
+  assert.match(scope, /if is_maintenance_only_path "\$1"; then/);
   assert.equal(
     matches.length,
-    2,
-    "opencode.json must be maintenance-only and Preview-safe",
+    1,
+    "opencode.json must use canonical maintenance-only policy reused by Preview",
   );
 });
