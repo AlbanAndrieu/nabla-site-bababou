@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
-import { readFileSync } from 'node:fs';
-import { resolve, sep } from 'node:path';
+import { lstatSync, readFileSync } from 'node:fs';
+import { isAbsolute, join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 // Git blob IDs are content-addresses, not SHA-256 or authenticity proofs.
@@ -19,7 +19,7 @@ export function gitBlobId(buffer) {
 export function verifySnapshot(root, expectedBlobs = UPSTREAM_BLOBS) {
   const results = [];
   for (const [relativePath, expected] of Object.entries(expectedBlobs)) {
-    if (relativePath.startsWith('/') || relativePath.split('/').includes('..')) {
+    if (!relativePath || isAbsolute(relativePath) || relativePath.split(/[\\/]/).some(part => !part || part === '.' || part === '..')) {
       throw new Error(`Unsafe manifest path: ${relativePath}`);
     }
     const absolutePath = resolve(root, relativePath);
@@ -28,7 +28,32 @@ export function verifySnapshot(root, expectedBlobs = UPSTREAM_BLOBS) {
     }
     let actual = null;
     let reason = null;
-    try { actual = gitBlobId(readFileSync(absolutePath)); }
+    try {
+      // Inspect every path component; readFileSync would otherwise follow a symlink
+      // outside the trusted snapshot, possibly reading local secret material.
+      const segments = relativePath.split('/');
+      let current = resolve(root);
+      for (let i = 0; i < segments.length; i++) {
+        current = join(current, segments[i]);
+        const stat = lstatSync(current);
+        if (stat.isSymbolicLink()) {
+          const error = new Error('Symbolic links are forbidden');
+          error.code = 'SYMLINK';
+          throw error;
+        }
+        if (i < segments.length - 1 && !stat.isDirectory()) {
+          const error = new Error('Expected directory');
+          error.code = 'NOT_DIRECTORY';
+          throw error;
+        }
+        if (i === segments.length - 1 && !stat.isFile()) {
+          const error = new Error('Expected regular file');
+          error.code = 'NOT_FILE';
+          throw error;
+        }
+      }
+      actual = gitBlobId(readFileSync(absolutePath));
+    }
     catch (error) { reason = error.code ?? 'READ_ERROR'; }
     results.push({ relativePath, ok: actual === expected, expected, actual, reason });
   }
