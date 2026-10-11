@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { lstatSync, readFileSync } from "node:fs";
+import { lstatSync, readFileSync, readdirSync } from "node:fs";
 import { isAbsolute, join, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -58,6 +58,25 @@ export function gitBlobId(buffer) {
 
 export function verifySnapshot(root, expectedBlobs = UPSTREAM_BLOBS) {
   const results = [];
+  const rootStat = lstatSync(root);
+  if (!rootStat.isDirectory() || rootStat.isSymbolicLink()) {
+    throw new Error("Snapshot root must be a real directory");
+  }
+  const expectedPaths = new Set(Object.keys(expectedBlobs));
+  // Fail closed on any unlisted file or symlink; do not execute injected content.
+  function inspectDirectory(directory, prefix = "") {
+    for (const entry of readdirSync(directory, { withFileTypes: true })) {
+      const relativePath = prefix ? `${prefix}/${entry.name}` : entry.name;
+      if (entry.isSymbolicLink()) {
+        results.push({ relativePath, ok: false, reason: "SYMLINK" });
+      } else if (entry.isDirectory()) {
+        inspectDirectory(join(directory, entry.name), relativePath);
+      } else if (!entry.isFile() || !expectedPaths.has(relativePath)) {
+        results.push({ relativePath, ok: false, reason: "UNEXPECTED_FILE" });
+      }
+    }
+  }
+  if (expectedBlobs === UPSTREAM_BLOBS) inspectDirectory(root);
   for (const [relativePath, expected] of Object.entries(expectedBlobs)) {
     if (
       !relativePath ||
