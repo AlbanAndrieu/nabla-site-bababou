@@ -80,6 +80,20 @@ test("refuses leaf and parent symlinks before reading content", () => {
   }
 });
 
+test("rejects symlinked snapshot root", () => {
+  const parent = mkdtempSync(join(tmpdir(), "audit-root-"));
+  try {
+    mkdirSync(join(parent, "real"));
+    symlinkSync(join(parent, "real"), join(parent, "link"));
+    assert.throws(
+      () => verifySnapshot(join(parent, "link"), {}),
+      /Snapshot root must be a real directory/,
+    );
+  } finally {
+    rmSync(parent, { recursive: true, force: true });
+  }
+});
+
 test("rejects absolute and traversal paths", () => {
   assert.throws(
     () => verifySnapshot("/tmp", { "/etc/passwd": "abc" }),
