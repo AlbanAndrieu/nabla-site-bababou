@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, writeFileSync, rmSync, symlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { gitBlobId, verifySnapshot, UPSTREAM_BLOBS } from '../scripts/verify-security-audit-skill.mjs';
@@ -29,4 +29,25 @@ test('rejects unsafe manifest paths', () => {
 });
 test('pins four upstream blobs', () => {
   assert.equal(Object.keys(UPSTREAM_BLOBS).length, 4);
+});
+
+test('refuses leaf and parent symlinks before reading content', () => {
+  const root = mkdtempSync(join(tmpdir(), 'audit-skill-link-'));
+  const outside = mkdtempSync(join(tmpdir(), 'audit-skill-outside-'));
+  try {
+    writeFileSync(join(outside, 'secret'), 'fixture-secret');
+    symlinkSync(join(outside, 'secret'), join(root, 'LICENSE'));
+    symlinkSync(outside, join(root, 'external'));
+    const id = gitBlobId(Buffer.from('fixture-secret'));
+    const checks = verifySnapshot(root, { LICENSE: id, 'external/secret': id });
+    assert.deepEqual(checks.map(result => [result.ok, result.reason]), [[false, 'SYMLINK'], [false, 'SYMLINK']]);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+    rmSync(outside, { recursive: true, force: true });
+  }
+});
+
+test('rejects absolute and traversal paths', () => {
+  assert.throws(() => verifySnapshot('/tmp', { '/etc/passwd': 'abc' }), /Unsafe manifest path/);
+  assert.throws(() => verifySnapshot('/tmp', { 'a/../b': 'abc' }), /Unsafe manifest path/);
 });
