@@ -86,6 +86,7 @@ P0_TESTS=(
     "unit-tests/zap-preview-workflow-contract.test.ts"
     "unit-tests/opencodeAgentContract.test.ts"
     "unit-tests/migration-structure.test.ts"
+    "unit-tests/verifySecurityAuditSkill.test.mjs"
 )
 
 if [[ "${VERBOSE}" == true ]]; then
