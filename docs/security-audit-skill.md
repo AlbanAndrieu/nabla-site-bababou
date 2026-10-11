@@ -19,7 +19,7 @@ just audit-skill-test
 just audit-skill-verify /chemin/vers/security-audit-skill
 ```
 
-Le second contrôle compare quatre blobs Git upstream épinglés (`LICENSE`, `SKILL.md` et les deux validateurs). Il échoue sur toute modification ou absence de fichier. Il **ne** prouve **ni** que le commit du checkout est authentique, **ni** l'intégrité de tous les autres fichiers, **ni** l'exécution d'un audit ; vérifier séparément la révision complète et l'ensemble des fichiers avant usage. Aucun téléchargement ou envoi de données n'est effectué.
+Le second contrôle compare les **22 blobs Git** présents dans l'arbre upstream épinglé (licence, guide, instructions, schéma et validateurs/tests). Il échoue sur toute modification ou absence de fichier. Il **ne** prouve **ni** que le commit du checkout est authentique, **ni** l'absence de fichiers supplémentaires non répertoriés, **ni** l'exécution d'un audit ; vérifier séparément la révision complète et l'ensemble des fichiers avant usage. Aucun téléchargement ou envoi de données n'est effectué.
 
 ## Procédure locale de qualification
 
