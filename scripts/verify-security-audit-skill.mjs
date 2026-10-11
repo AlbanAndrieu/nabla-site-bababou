@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { lstatSync, readFileSync, readdirSync } from "node:fs";
+import { lstatSync, readdirSync, readFileSync } from "node:fs";
 import { isAbsolute, join, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
