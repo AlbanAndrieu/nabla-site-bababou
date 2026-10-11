@@ -83,10 +83,19 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 - [x] P1/P3/P4 : les métadonnées n'annoncent plus des homepages localisées inexistantes ; canonical legacy `/` conservée jusqu'à parité.
 - [x] P2 : libellé accessible de la navigation footer traduit en FR/EN, avec contrat de régression.
 
+## P0 — Baseline de production Vercel non sain (11/10/2026)
+
+- [ ] **Bloquant CI** : `scripts/verify-production-baseline.sh` refuse le commit `73b8cca53349928f14ef262ba16ce2113a988b23` (`PROD_BASE_UNHEALTHY`, contexte `Vercel=failure`). L'API Vercel associe ce SHA à `dpl_78nerRgqZcGwTf2H98RgPej4Dbb6`, état `ERROR`, code `git_info_fail`.
+- [ ] Diagnostiquer et corriger côté intégration GitHub–Vercel l'échec `git_info_fail` ; ne pas tenter de contourner le garde en choisissant arbitrairement une ancienne version `READY`.
+- [ ] Obtenir **une preuve exacte-SHA** d'un déploiement de production valide, puis les statuts `Production Post-deploy Smoke` et `Production DAST` requis par la gate. Le déploiement `f218b877` est `CANCELED`, donc non probant.
+- [ ] Revalider la CI du HEAD de la PR uniquement après correction de cette cause ; ne pas relancer pour obtenir du vert, ne pas assouplir `verify-production-baseline.sh`.
+
+Ce blocage est **distinct** des contrôles du skill Cloudflare. Si l'infrastructure empêche sa résolution dans l'environnement de l'agent, poursuivre les tâches hors déploiement sans prétendre que la CI est verte.
+
 ## P1 — Audit Cloudflare security-audit-skill
 
 - [x] Identifier upstream, licence MIT et commit `c1c8a8c1471069fb0e188eeaff69b8e8db6564a8` ; procédure et limites : [`docs/security-audit-skill.md`](security-audit-skill.md). **Installation locale et checksum d'archive toujours à faire** ; ne pas confondre le skill générique de code avec un audit du compte Cloudflare.
-- [x] Ajouter un vérificateur hors réseau pour quatre blobs upstream et quatre tests unitaires ; contrôles de contenu locaux validés sur fixtures, mais **vérification d'un checkout upstream réel non exécutée**.
+- [x] Ajouter un vérificateur hors réseau pour quatre blobs upstream et **six tests unitaires** ; le contrôle rejette aussi les liens symboliques et la traversée de répertoires. Les tests sont branchés sur P0 et `npm run test:unit` ; **vérification d'un checkout upstream réel non exécutée**.
 - [ ] Exécuter un audit **local-first, incrémental, en lecture seule et sur périmètre autorisé** : Cloudflare Access, Tunnel/DNS, Vercel Preview, headers, cookies et endpoints publics. Exclure corpus privé, secrets et données familiales.
 - [ ] Conserver un ledger de contrôles (pass / fail / not-run / not-applicable), preuves expurgées, version, HEAD exact, limites et remédiations P0–P4. Ne jamais présenter la checklist comme une preuve d'exécution.
 - [ ] Réconcilier les constats avec STRIDE/DSOMM et les contrôles SAST, Betterleaks, Playwright et ZAP, sans contournement.
