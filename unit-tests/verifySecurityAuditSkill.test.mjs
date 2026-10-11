@@ -80,6 +80,24 @@ test("refuses leaf and parent symlinks before reading content", () => {
   }
 });
 
+test("rejects unexpected files when using the pinned upstream manifest", () => {
+  const root = mkdtempSync(join(tmpdir(), "audit-extra-"));
+  try {
+    writeFileSync(join(root, "unlisted.js"), "untrusted");
+    const results = verifySnapshot(root);
+    assert.ok(
+      results.some(
+        (result) =>
+          result.relativePath === "unlisted.js" &&
+          result.reason === "UNEXPECTED_FILE" &&
+          !result.ok,
+      ),
+    );
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
 test("rejects symlinked snapshot root", () => {
   const parent = mkdtempSync(join(tmpdir(), "audit-root-"));
   try {
