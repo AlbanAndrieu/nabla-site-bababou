@@ -49,8 +49,10 @@ test("rejects unsafe manifest paths", () => {
     /Unsafe manifest path/,
   );
 });
-test("pins four upstream blobs", () => {
-  assert.equal(Object.keys(UPSTREAM_BLOBS).length, 4);
+test("pins every file from the verified upstream Git tree", () => {
+  assert.equal(Object.keys(UPSTREAM_BLOBS).length, 22);
+  assert.ok(UPSTREAM_BLOBS["skills/security-audit/report-schema.json"]);
+  assert.ok(UPSTREAM_BLOBS["skills/security-audit/validate-findings.test.cjs"]);
 });
 
 test("refuses leaf and parent symlinks before reading content", () => {
