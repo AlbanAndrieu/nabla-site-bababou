@@ -1,22 +1,25 @@
-import test from "node:test";
 import assert from "node:assert/strict";
 import {
-  mkdtempSync,
   mkdirSync,
-  writeFileSync,
+  mkdtempSync,
   rmSync,
   symlinkSync,
+  writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import test from "node:test";
 import {
   gitBlobId,
-  verifySnapshot,
   UPSTREAM_BLOBS,
+  verifySnapshot,
 } from "../scripts/verify-security-audit-skill.mjs";
 
 test("Git blob includes length/header", () => {
-  assert.equal(gitBlobId(Buffer.from("test\n")), "9daeafb9864cf43055ae93beb0afd6c7d144bfa4");
+  assert.equal(
+    gitBlobId(Buffer.from("test\n")),
+    "9daeafb9864cf43055ae93beb0afd6c7d144bfa4",
+  );
 });
 test("matches, detects tampering and missing files", () => {
   const root = mkdtempSync(join(tmpdir(), "audit-skill-"));
