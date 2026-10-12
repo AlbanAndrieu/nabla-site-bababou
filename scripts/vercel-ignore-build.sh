@@ -50,7 +50,7 @@ printf '%s\n' "$changed_files"
 
 while IFS= read -r file; do
   case "$file" in
-    .assetsignore|docs/*|unit-tests/*|*.md|.github/*|.github/**/*|.vscode/*|.idea/*|.agents/*|.agents/**/*|.cursor/*|.cursor/**/*|.claude/*|.claude/**/*)
+    .assetsignore|docs/*|unit-tests/*|*.md|.github/*|.vscode/*|.idea/*|.agents/*|.cursor/*|.claude/*)
       ;;
     *)
       echo "Deploy-relevant change detected: $file"
