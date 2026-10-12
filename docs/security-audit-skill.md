@@ -42,3 +42,22 @@ Pour chaque campagne, indiquer : SHA de Site Bababou, SHA upstream, périmètre,
 - **Publication familiale** : gate de confidentialité existante, qui demeure bloquante.
 
 **État initial au 11 octobre 2026** : provenance et structure vérifiées depuis GitHub ; installation, exécution du skill, validateurs sur résultats, tests runtime et audit Cloudflare du compte : **NOT_RUN**.
+
+## Résultats de sécurité et distinction des preuves
+
+**Au 12 octobre 2026 : aucun finding confirmé par le skill sur le code Site Bababou.** Cela signifie que l'audit complet **n'a pas été réalisé**, et non que le site est exempt de vulnérabilités.
+
+Trois niveaux de preuve sont indépendants :
+
+1. **Provenance / intégrité** : comparaison des identifiants Git des 22 fichiers officiels ; ne certifie pas l'authenticité d'un téléchargement et ne teste pas Bababou.
+2. **Fonctionnement des outils** : exécution des tests unitaires du vérificateur et, ultérieurement, des validateurs upstream sur de vrais résultats ; ces tests ne découvrent aucune vulnérabilité applicative.
+3. **Audit de sécurité du site** : reconnaissance, ledger de couverture, recherche de candidats, vérification indépendante, résultats structurés et rapports. Sans `architecture.md`, `coverage-ledger.json`, `findings.json` et validation effective des outputs, statut **NOT_RUN**.
+
+Le skill ne fournit pas automatiquement une analyse d'un compte Cloudflare ; cet audit IAM/Access/Tunnel/WAF relève d'un chantier distinct, avec accès autorisé en lecture seule.
+
+## Reprise sans intervention sur la workstation
+
+- Terminer en premier les éventuels échecs de formatage de la CI avant les nouveaux changements.
+- Exécuter les tests ciblés dans un environnement local isolé ; lorsqu'aucun checkout complet n'est disponible, indiquer `NOT_RUN` au lieu d'inventer un succès.
+- Ne pas consommer de nouvelles exécutions CI pour le seul diagnostic d'un `git_info_fail` historique de production. Ne jamais contourner la gate de baseline.
+- Après vérification de l'upstream complet, conduire un **audit réel du code**, sans corpus privé : renseigner les preuves et les lacunes de couverture, puis réconcilier les findings avec les contrôles BetterLeaks, SAST, Playwright, ZAP et la modélisation STRIDE/DSOMM.
