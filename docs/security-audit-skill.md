@@ -61,3 +61,13 @@ Le skill ne fournit pas automatiquement une analyse d'un compte Cloudflare ; cet
 - Exécuter les tests ciblés dans un environnement local isolé ; lorsqu'aucun checkout complet n'est disponible, indiquer `NOT_RUN` au lieu d'inventer un succès.
 - Ne pas consommer de nouvelles exécutions CI pour le seul diagnostic d'un `git_info_fail` historique de production. Ne jamais contourner la gate de baseline.
 - Après vérification de l'upstream complet, conduire un **audit réel du code**, sans corpus privé : renseigner les preuves et les lacunes de couverture, puis réconcilier les findings avec les contrôles BetterLeaks, SAST, Playwright, ZAP et la modélisation STRIDE/DSOMM.
+
+## Revue de code manuelle limitée — 12 octobre 2026
+
+Revue statique ciblée sur le HEAD de PR `7eb920d28b43ff6db84472e4b521e1b0133099da`, fichiers `app/global-not-found.tsx` et `components/ThemeBootstrap.tsx`, consultés via GitHub. **Ce n'est pas une exécution du skill ni un audit de l'application entière.**
+
+- `ThemeBootstrap.tsx` : script constant embarqué dans le code ; valeur de thème en stockage local limitée à `light`, `dark`, `auto` puis assignée à `dataset.theme`. Aucun flux contrôlé arbitrairement vers le script HTML identifié dans ce périmètre.
+- `global-not-found.tsx` : injection du corps de `public/404.html` (ressource versionnée), après retrait des balises `script` via une expression régulière. Aucun paramètre utilisateur n'est apparent à cet appel ; **absence de vulnérabilité confirmée**, mais la regex ne doit pas être présentée comme une sanitisation HTML générique. La sûreté dépend de la provenance du fichier statique et de la politique de revue des modifications.
+- Couverture partielle : aucune tentative dynamique de XSS, aucun navigateur ou scanner DAST exécuté, aucune revue indépendante, aucun résultat `findings.json` produit. Les autres surfaces (API, authentification, dépendances, en-têtes, déploiement) restent **NOT_RUN**.
+
+Cette revue est une **observation à valider**, pas un verdict `confirmed` du skill.
