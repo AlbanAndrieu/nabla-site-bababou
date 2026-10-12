@@ -3,8 +3,8 @@ import { execFileSync, spawnSync } from "node:child_process";
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 
 const policyScript = fileURLToPath(
   new URL("../scripts/vercel-ignore-build.sh", import.meta.url),
@@ -85,7 +85,10 @@ test("Vercel still builds deploy-relevant commits", async (t) => {
 });
 
 test("Vercel builds when the previous deployed SHA is unknown", async (t) => {
-  const directory = await createRepo("docs: uncertain base", "docs/roadmap.md");
+  const directory = await createRepo(
+    "docs: uncertain base",
+    "docs/roadmap.md",
+  );
   t.after(async () => rm(directory, { recursive: true, force: true }));
 
   const result = runPolicy(directory, { VERCEL_GIT_PREVIOUS_SHA: "" });
@@ -95,7 +98,10 @@ test("Vercel builds when the previous deployed SHA is unknown", async (t) => {
 });
 
 test("Vercel always builds validated Preview checkpoint refs", async (t) => {
-  const directory = await createRepo("docs: checkpoint metadata", "docs/roadmap.md");
+  const directory = await createRepo(
+    "docs: checkpoint metadata",
+    "docs/roadmap.md",
+  );
   t.after(async () => rm(directory, { recursive: true, force: true }));
 
   const result = runPolicy(directory, {
@@ -107,7 +113,10 @@ test("Vercel always builds validated Preview checkpoint refs", async (t) => {
 });
 
 test("Vercel still skips documentation-only commits", async (t) => {
-  const directory = await createRepo("docs: refresh roadmap", "docs/roadmap.md");
+  const directory = await createRepo(
+    "docs: refresh roadmap",
+    "docs/roadmap.md",
+  );
   t.after(async () => rm(directory, { recursive: true, force: true }));
 
   const result = runPolicy(directory);
