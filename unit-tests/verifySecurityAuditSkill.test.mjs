@@ -98,6 +98,26 @@ test("rejects unexpected files when using the pinned upstream manifest", () => {
   }
 });
 
+test("allows only a real root .git metadata directory", () => {
+  const root = mkdtempSync(join(tmpdir(), "audit-metadata-"));
+  try {
+    mkdirSync(join(root, ".git"));
+    writeFileSync(join(root, ".git", "HEAD"), "ref: refs/heads/main\\n");
+    writeFileSync(join(root, "unauthorized.txt"), "extra");
+    const result = verifySnapshot(root);
+    assert.ok(
+      result.some(
+        (item) =>
+          item.relativePath === "unauthorized.txt" &&
+          item.reason === "UNEXPECTED_FILE",
+      ),
+    );
+    assert.ok(!result.some((item) => item.relativePath.startsWith(".git/")));
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
 test("rejects symlinked snapshot root", () => {
   const parent = mkdtempSync(join(tmpdir(), "audit-root-"));
   try {
