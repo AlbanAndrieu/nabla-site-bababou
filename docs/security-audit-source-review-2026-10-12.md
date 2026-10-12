@@ -50,3 +50,13 @@
 2. Exécuter les hunters et validateurs upstream seulement sous les contraintes de sandbox du skill ; conserver les artefacts sensibles hors dépôt.
 3. Reproduire localement les seuls candidats démontrables avec fixtures, faire une validation indépendante et publier un résumé expurgé sans données de l'enfant.
 4. Corriger les findings confirmés dans la PR, préserver la 404 historique et les contrôles BetterLeaks, SAST, Playwright, ZAP.
+
+## Lot complémentaire — chaîne de publication et confidentialité
+
+Revue source-first de `scripts/vercel-ignore-build.sh`, `scripts/privacy-gate.ts`, `scripts/publication-privacy-gate.ts` et `scripts/verify-production-baseline.sh`.
+
+- **Publication Vercel — écart corrigé** : le chemin de repli sur `HEAD^` lorsque `VERCEL_GIT_PREVIOUS_SHA` est absent peut sous-estimer les changements depuis le dernier déploiement valide, notamment si une branche possède plusieurs commits. Le script retourne désormais `1` (« construire ») si le SHA précédent est absent ou invalide, au lieu d'une décision de skip calculée sur un parent non fiable. Test de contrat : `unit-tests/vercelIgnoreBuildContract.test.ts`. C'est un durcissement de **correction et disponibilité des changements**, pas une vulnérabilité confirmée exploitable.
+- **Confidentialité** : le gate de publication interdit explicitement plusieurs formats source bruts et exige une revue préalable, une vérification de rédaction irréversible et le contrôle des métadonnées. Le gate de confidentialité scanne des surfaces publiques et le build ; aucune exécution ni résultat runtime de ces contrôles n'est revendiqué ici.
+- **Baseline production** : le script exige simultanément Vercel, Smoke et DAST, et refuse les statuts en échec. Le blocage actuel `git_info_fail` est conservé. Aucun bypass, fausse attestation de production ou correction de statut GitHub.
+
+**Preuves manquantes** : exécution complète des scripts avec fixtures hermétiques, revue des résultats de scans effectifs, vérification dynamique de la preview et validation indépendante de la séquence de publication.
