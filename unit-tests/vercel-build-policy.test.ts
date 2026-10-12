@@ -160,7 +160,10 @@ test("Vercel compares against the previous deployed SHA across multi-commit chan
   });
 
   assert.equal(result.status, 1, result.stderr);
-  assert.match(result.stdout, /Deploy-relevant change detected: next\.config\.mjs/);
+  assert.match(
+    result.stdout,
+    /Deploy-relevant change detected: next\.config\.mjs/,
+  );
 });
 
 test("vercel.json delegates ignored-build decisions and disables all non-checkpoint branch auto deploys", async () => {
