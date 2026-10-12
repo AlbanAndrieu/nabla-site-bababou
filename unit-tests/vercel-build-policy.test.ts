@@ -85,10 +85,7 @@ test("Vercel still builds deploy-relevant commits", async (t) => {
 });
 
 test("Vercel builds when the previous deployed SHA is unknown", async (t) => {
-  const directory = await createRepo(
-    "docs: uncertain base",
-    "docs/roadmap.md",
-  );
+  const directory = await createRepo("docs: uncertain base", "docs/roadmap.md");
   t.after(async () => rm(directory, { recursive: true, force: true }));
 
   const result = runPolicy(directory, { VERCEL_GIT_PREVIOUS_SHA: "" });
@@ -126,7 +123,10 @@ test("Vercel still skips documentation-only commits", async (t) => {
 });
 
 test("Vercel skips retired Cloudflare asset metadata", async (t) => {
-  const directory = await createRepo("chore: retire asset metadata", ".assetsignore");
+  const directory = await createRepo(
+    "chore: retire asset metadata",
+    ".assetsignore",
+  );
   t.after(async () => rm(directory, { recursive: true, force: true }));
 
   const result = runPolicy(directory);
@@ -136,7 +136,10 @@ test("Vercel skips retired Cloudflare asset metadata", async (t) => {
 });
 
 test("Vercel compares against the previous deployed SHA across multi-commit changes", async (t) => {
-  const directory = await createRepo("fix: runtime baseline", "next.config.mjs");
+  const directory = await createRepo(
+    "fix: runtime baseline",
+    "next.config.mjs",
+  );
   t.after(async () => rm(directory, { recursive: true, force: true }));
 
   const previousSha = execFileSync("git", ["rev-parse", "HEAD^"], {
