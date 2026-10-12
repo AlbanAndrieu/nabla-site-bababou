@@ -46,10 +46,18 @@ async function createRepo(
 }
 
 function runPolicy(directory: string, env: NodeJS.ProcessEnv = {}) {
+  const previousSha = execFileSync("git", ["rev-parse", "HEAD^"], {
+    cwd: directory,
+    encoding: "utf8",
+  }).trim();
   return spawnSync("bash", [policyScript], {
     cwd: directory,
     encoding: "utf8",
-    env: { ...process.env, ...env },
+    env: {
+      ...process.env,
+      VERCEL_GIT_PREVIOUS_SHA: previousSha,
+      ...env,
+    },
   });
 }
 
@@ -74,6 +82,16 @@ test("Vercel still builds deploy-relevant commits", async (t) => {
 
   assert.equal(result.status, 1, result.stderr);
   assert.match(result.stdout, /Deploy-relevant change detected/);
+});
+
+test("Vercel builds when the previous deployed SHA is unknown", async (t) => {
+  const directory = await createRepo("docs: uncertain base", "docs/roadmap.md");
+  t.after(async () => rm(directory, { recursive: true, force: true }));
+
+  const result = runPolicy(directory, { VERCEL_GIT_PREVIOUS_SHA: "" });
+
+  assert.equal(result.status, 1, result.stderr);
+  assert.match(result.stdout, /No verified previous deployment SHA; build/);
 });
 
 test("Vercel always builds validated Preview checkpoint refs", async (t) => {
