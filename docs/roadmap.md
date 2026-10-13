@@ -4,6 +4,8 @@
 
 ## Reprise immédiate — nouveau chat
 
+- [ ] **P0 — GitHub/Vercel baseline de production :** suivre le runbook [`vercel-github-baseline-recovery-2026-10-13.md`](vercel-github-baseline-recovery-2026-10-13.md). Le projet est lié au dépôt, mais le déploiement `73b8cca` est en erreur `git_info_fail` et le build ignoré sur `f218b877` n'est pas une validation de production. Exiger de vraies preuves `READY` + Smoke + DAST, sans statut synthétique.
+
 Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état live GitHub** sans demander de compactage.
 
 1. Identifier la PR ouverte la plus récente sur GitHub. **#229 a été fusionnée le 10 octobre 2026** ; ne pas supposer qu'une PR est encore ouverte. En l'absence de PR, créer une branche depuis le HEAD courant de master et ouvrir une PR draft.
