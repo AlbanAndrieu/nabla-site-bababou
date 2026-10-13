@@ -108,6 +108,7 @@ while :; do
     if (("${#failed[@]}" > 0)); then
         printf '❌ PROD_BASE_UNHEALTHY: %s has non-success production status(es): %s\n' \
             "${candidate}" "${failed[*]}" >&2
+        printf 'ℹ️  Inspect the failed production deployment and restore real exact-SHA Vercel, Smoke and DAST evidence; never fake a status or inherit across a failure.\n' >&2
         exit 1
     fi
 
