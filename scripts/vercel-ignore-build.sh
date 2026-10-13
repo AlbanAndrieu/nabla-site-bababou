@@ -32,13 +32,10 @@ fi
 base_sha="${VERCEL_GIT_PREVIOUS_SHA:-}"
 
 if [[ -z "$base_sha" ]] || ! git cat-file -e "$base_sha^{commit}" 2>/dev/null; then
-  if git rev-parse HEAD^ >/dev/null 2>&1; then
-    base_sha="$(git rev-parse HEAD^)"
-    echo "VERCEL_GIT_PREVIOUS_SHA unavailable; falling back to parent commit $base_sha."
-  else
-    echo "No comparison base available; build deployment."
-    exit 1
-  fi
+  # HEAD^ can miss deploy-relevant changes in an earlier commit of this PR.
+  # When the last deployed SHA is unknown, fail open to BUILD, never to SKIP.
+  echo "No verified previous deployment SHA; build rather than risk skipping changes."
+  exit 1
 fi
 
 changed_files="$(git diff --name-only "$base_sha" HEAD)"
@@ -53,7 +50,7 @@ printf '%s\n' "$changed_files"
 
 while IFS= read -r file; do
   case "$file" in
-    .assetsignore|docs/*|unit-tests/*|*.md|.github/*|.github/**/*|.vscode/*|.idea/*|.agents/*|.agents/**/*|.cursor/*|.cursor/**/*|.claude/*|.claude/**/*)
+    .assetsignore|docs/*|unit-tests/*|*.md|.github/*|.vscode/*|.idea/*|.agents/*|.cursor/*|.claude/*)
       ;;
     *)
       echo "Deploy-relevant change detected: $file"

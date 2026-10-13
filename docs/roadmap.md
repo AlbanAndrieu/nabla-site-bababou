@@ -4,9 +4,11 @@
 
 ## Reprise immédiate — nouveau chat
 
+- [ ] **P0 — GitHub/Vercel baseline de production :** suivre le runbook [`vercel-github-baseline-recovery-2026-10-13.md`](vercel-github-baseline-recovery-2026-10-13.md). Le projet est lié au dépôt, mais le déploiement `73b8cca` est en erreur `git_info_fail` et le build ignoré sur `f218b877` n'est pas une validation de production. Exiger de vraies preuves `READY` + Smoke + DAST, sans statut synthétique.
+
 Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état live GitHub** sans demander de compactage.
 
-1. Identifier la PR ouverte la plus récente sur GitHub. Suivi actif : **#229** (`fix/quality-log-bounded-followup`), après fusion de #227 le 10 octobre 2026 ; revérifier le HEAD et la CI.
+1. Identifier la PR ouverte la plus récente sur GitHub. **#229 a été fusionnée le 10 octobre 2026** ; ne pas supposer qu'une PR est encore ouverte. En l'absence de PR, créer une branche depuis le HEAD courant de master et ouvrir une PR draft.
 2. Lire son **HEAD exact**, sa mergeability et les derniers workflows avant toute modification.
 3. Tout job rouge pertinent est corrigé **avant** le lot suivant ; ne jamais relancer manuellement un workflow uniquement pour obtenir du vert.
 4. Boucle local-first : ciblé → `just p0` (`bash scripts/agent-p0-check.sh`) → `just quality-fix` → revue du diff → `just quality` / `just publish-status` si l'environnement exécutable est disponible.
@@ -83,6 +85,24 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 - [x] P1/P3/P4 : les métadonnées n'annoncent plus des homepages localisées inexistantes ; canonical legacy `/` conservée jusqu'à parité.
 - [x] P2 : libellé accessible de la navigation footer traduit en FR/EN, avec contrat de régression.
 
+## P0 — Baseline de production Vercel non sain (11/10/2026)
+
+- [ ] **Bloquant CI** : `scripts/verify-production-baseline.sh` refuse le commit `73b8cca53349928f14ef262ba16ce2113a988b23` (`PROD_BASE_UNHEALTHY`, contexte `Vercel=failure`). L'API Vercel associe ce SHA à `dpl_78nerRgqZcGwTf2H98RgPej4Dbb6`, état `ERROR`, code `git_info_fail`.
+- [ ] Diagnostiquer et corriger le déploiement Vercel en échec `git_info_fail` : **liaison du projet à `AlbanAndrieu/nabla-site-bababou` confirmée via Vercel**, donc ne pas présumer qu'une reconnexion GitHub est nécessaire. Examiner plutôt les permissions et informations Git du déploiement en échec ; ne pas contourner le garde en choisissant une ancienne version `READY`.
+- [ ] Obtenir **une preuve exacte-SHA** d'un déploiement de production valide, puis les statuts `Production Post-deploy Smoke` et `Production DAST` requis par la gate. Le déploiement `f218b877` est `CANCELED`, donc non probant.
+- [ ] Revalider la CI du HEAD de la PR uniquement après correction de cette cause ; ne pas relancer pour obtenir du vert, ne pas assouplir `verify-production-baseline.sh`.
+
+Ce blocage est **distinct** des contrôles du skill Cloudflare. Si l'infrastructure empêche sa résolution dans l'environnement de l'agent, poursuivre les tâches hors déploiement sans prétendre que la CI est verte.
+
+## P1 — Audit Cloudflare security-audit-skill
+
+- [x] Identifier upstream, licence MIT et commit `c1c8a8c1471069fb0e188eeaff69b8e8db6564a8` ; procédure et limites : [`docs/security-audit-skill.md`](security-audit-skill.md). **Installation locale et checksum d'archive toujours à faire** ; ne pas confondre le skill générique de code avec un audit du compte Cloudflare.
+- [x] Ajouter un vérificateur hors réseau pour les **22 fichiers upstream officiels** et **six tests unitaires** ; le contrôle rejette aussi les liens symboliques et la traversée de répertoires. Les tests sont branchés sur P0 et `npm run test:unit` ; **vérification d'un checkout upstream réel non exécutée**.
+- [ ] Exécuter un audit **local-first, incrémental, en lecture seule et sur périmètre autorisé** : Cloudflare Access, Tunnel/DNS, Vercel Preview, headers, cookies et endpoints publics. Exclure corpus privé, secrets et données familiales. **Étape source-first partielle documentée** : [`docs/security-audit-source-review-2026-10-12.md`](security-audit-source-review-2026-10-12.md), 2 observations à valider, aucun finding confirmé ; les six phases du skill ne sont pas exécutées.
+- [ ] Conserver un ledger de contrôles (pass / fail / not-run / not-applicable), preuves expurgées, version, HEAD exact, limites et remédiations P0–P4. Ne jamais présenter la checklist comme une preuve d'exécution.
+- [ ] Réconcilier les constats avec STRIDE/DSOMM et les contrôles SAST, Betterleaks, Playwright et ZAP, sans contournement.
+- [ ] Clore après reproduction locale, revue des faux positifs et preuves vérifiables.
+
 ## P1 — Homepage owner-controlled
 
 - [ ] Décomposer `app/[locale]/page.tsx` et déplacer progressivement les textes vers i18n sans changer les disclosures approuvées.
@@ -130,7 +150,7 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 ## Ordre de travail
 
 1. **P0 CI courante**.
-2. **P0 agent/tooling** : Betterleaks → Dagger spike → Context7.
+2. **P0 agent/tooling** : Betterleaks → Dagger spike → Context7 ; puis audit Cloudflare P1 en lecture seule.
 3. **P5** dépendances/Renovate.
 4. **P2/P3** accessibilité puis migration documentaire.
 5. **P1** homepage sous contrôle explicite.
