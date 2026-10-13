@@ -86,7 +86,7 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 ## P0 — Baseline de production Vercel non sain (11/10/2026)
 
 - [ ] **Bloquant CI** : `scripts/verify-production-baseline.sh` refuse le commit `73b8cca53349928f14ef262ba16ce2113a988b23` (`PROD_BASE_UNHEALTHY`, contexte `Vercel=failure`). L'API Vercel associe ce SHA à `dpl_78nerRgqZcGwTf2H98RgPej4Dbb6`, état `ERROR`, code `git_info_fail`.
-- [ ] Diagnostiquer et corriger côté intégration GitHub–Vercel l'échec `git_info_fail` ; ne pas tenter de contourner le garde en choisissant arbitrairement une ancienne version `READY`.
+- [ ] Diagnostiquer et corriger le déploiement Vercel en échec `git_info_fail` : **liaison du projet à `AlbanAndrieu/nabla-site-bababou` confirmée via Vercel**, donc ne pas présumer qu'une reconnexion GitHub est nécessaire. Examiner plutôt les permissions et informations Git du déploiement en échec ; ne pas contourner le garde en choisissant une ancienne version `READY`.
 - [ ] Obtenir **une preuve exacte-SHA** d'un déploiement de production valide, puis les statuts `Production Post-deploy Smoke` et `Production DAST` requis par la gate. Le déploiement `f218b877` est `CANCELED`, donc non probant.
 - [ ] Revalider la CI du HEAD de la PR uniquement après correction de cette cause ; ne pas relancer pour obtenir du vert, ne pas assouplir `verify-production-baseline.sh`.
 
