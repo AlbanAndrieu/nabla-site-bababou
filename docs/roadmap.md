@@ -27,7 +27,7 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 - Branche de reprise depuis `master@a0de8d9fdb31d646dffffd7dcb8a9beec380c932`, dans une **nouvelle PR draft**.
 - Les workflows `Playwright Tests`, `Production DAST` et `Post-merge Quality Follow-up` ont réussi sur ce SHA ; `OWASP ZAP Preview` est marqué `skipped` et ne doit pas être annoncé comme un scan exécuté.
 - **Statuts de baseline vérifiés sur `master@a0de8d9` le 14/10** : Vercel, Production Post-deploy Smoke et Production DAST tous `success` (API des commit statuses GitHub). Qualifier séparément la CI exact-HEAD de la PR #232 : aucun run Quality & Security de cette branche n'était visible au relevé initial.
-- **P1 Cloudflare :** `docs/security-audit-coverage-ledger.md` et `docs/security-audit-source-review-2026-10-12.md` sont les preuves de couverture disponibles ; l'audit complet du skill et les findings validés restent à faire.
+- **P1 Cloudflare :** registre documentaire `docs/security-audit-coverage-ledger.md` restauré dans la PR #232 et revue source-first disponibles ; les six phases du skill et les findings validés restent à faire.
 
 ### Snapshot technique de reprise
 
@@ -108,7 +108,7 @@ Ce blocage est **distinct** des contrôles du skill Cloudflare. Si l'infrastruct
 - [x] Identifier upstream, licence MIT et commit `c1c8a8c1471069fb0e188eeaff69b8e8db6564a8` ; procédure et limites : [`docs/security-audit-skill.md`](security-audit-skill.md). **Installation locale et checksum d'archive toujours à faire** ; ne pas confondre le skill générique de code avec un audit du compte Cloudflare.
 - [x] Ajouter un vérificateur hors réseau pour les **22 fichiers upstream officiels** et **six tests unitaires** ; le contrôle rejette aussi les liens symboliques et la traversée de répertoires. Les tests sont branchés sur P0 et `npm run test:unit` ; **vérification d'un checkout upstream réel non exécutée**.
 - [ ] Exécuter un audit **local-first, incrémental, en lecture seule et sur périmètre autorisé** : Cloudflare Access, Tunnel/DNS, Vercel Preview, headers, cookies et endpoints publics. Exclure corpus privé, secrets et données familiales. **Étape source-first partielle documentée** : [`docs/security-audit-source-review-2026-10-12.md`](security-audit-source-review-2026-10-12.md), 2 observations à valider, aucun finding confirmé ; les six phases du skill ne sont pas exécutées.
-- [ ] Conserver un ledger de contrôles (pass / fail / not-run / not-applicable), preuves expurgées, version, HEAD exact, limites et remédiations P0–P4. Ne jamais présenter la checklist comme une preuve d'exécution.
+- [x] Créer le registre documentaire [`security-audit-coverage-ledger.md`](security-audit-coverage-ledger.md), présent dans la branche courante, avec preuves et lacunes P0–P4. [ ] Valider ensuite les contrôles réels sur HEAD exact et produire le `coverage-ledger.json` conforme à l'upstream ; ne jamais assimiler la checklist à une preuve d'exécution.
 - [ ] Réconcilier les constats avec STRIDE/DSOMM et les contrôles SAST, Betterleaks, Playwright et ZAP, sans contournement.
 - [ ] Clore après reproduction locale, revue des faux positifs et preuves vérifiables.
 
