@@ -4,11 +4,11 @@
 
 ## Reprise immédiate — nouveau chat
 
-- [ ] **P0 — GitHub/Vercel baseline de production :** suivre le runbook [`vercel-github-baseline-recovery-2026-10-13.md`](vercel-github-baseline-recovery-2026-10-13.md). Le projet est lié au dépôt, mais le déploiement `73b8cca` est en erreur `git_info_fail` et le build ignoré sur `f218b877` n'est pas une validation de production. Exiger de vraies preuves `READY` + Smoke + DAST, sans statut synthétique.
+- [ ] **P0 — GitHub/Vercel baseline de production :** suivre le runbook [`vercel-github-baseline-recovery-2026-10-13.md`](vercel-github-baseline-recovery-2026-10-13.md). L'échec historique `git_info_fail` sur `73b8cca` et le build ignoré sur `f218b877` ne peuvent pas être considérés comme des validations. **Réévaluer d'abord les statuts du HEAD `master` courant et les preuves exact-SHA** ; le master `a0de8d9` a déjà un workflow Production DAST réussi le 14 octobre, ce qui ne démontre pas à lui seul un triplet Vercel + Smoke + DAST réussi. Ne jamais injecter de statuts synthétiques.
 
 Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état live GitHub** sans demander de compactage.
 
-1. Identifier la PR ouverte la plus récente sur GitHub. **#229 a été fusionnée le 10 octobre 2026** ; ne pas supposer qu'une PR est encore ouverte. En l'absence de PR, créer une branche depuis le HEAD courant de master et ouvrir une PR draft.
+1. Identifier la PR ouverte la plus récente sur GitHub. **#230 a été fusionnée le 13 octobre 2026** ; ne pas supposer qu'une PR est encore ouverte. En l'absence de PR, créer une branche depuis le HEAD courant de master et ouvrir une PR draft.
 2. Lire son **HEAD exact**, sa mergeability et les derniers workflows avant toute modification.
 3. Tout job rouge pertinent est corrigé **avant** le lot suivant ; ne jamais relancer manuellement un workflow uniquement pour obtenir du vert.
 4. Boucle local-first : ciblé → `just p0` (`bash scripts/agent-p0-check.sh`) → `just quality-fix` → revue du diff → `just quality` / `just publish-status` si l'environnement exécutable est disponible.
@@ -19,6 +19,15 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 8. Next.js/Vercel reste la cible ; ne retirer le legacy qu'après parité contenu/comportement/rendu/SEO/accessibilité/routes. Google Translate reste fallback.
 9. `public/404.html` reste la source visuelle protégée ; pas de réécriture React sans accord explicite.
 10. Corpus familial/juridique : originaux hors Git ; **Mr A**, **Mme B / Ms B**, **l'enfant / the child** ; santé/catégories spéciales sur approbation explicite ; données financières du père bloquées ; références judiciaires conservées quand utiles à la vérification.
+
+
+### Passage de relais — 14 octobre 2026
+
+- La PR **#230 est fusionnée** ; ne plus publier de commits sur son ancienne branche.
+- Branche de reprise depuis `master@a0de8d9fdb31d646dffffd7dcb8a9beec380c932`, dans une **nouvelle PR draft**.
+- Les workflows `Playwright Tests`, `Production DAST` et `Post-merge Quality Follow-up` ont réussi sur ce SHA ; `OWASP ZAP Preview` est marqué `skipped` et ne doit pas être annoncé comme un scan exécuté.
+- Revalider les statuts Vercel et Production Smoke avant toute conclusion sur le baseline, puis qualifier le workflow exact-HEAD de la nouvelle PR.
+- **P1 Cloudflare :** `docs/security-audit-coverage-ledger.md` et `docs/security-audit-source-review-2026-10-12.md` sont les preuves de couverture disponibles ; l'audit complet du skill et les findings validés restent à faire.
 
 ### Snapshot technique de reprise
 
