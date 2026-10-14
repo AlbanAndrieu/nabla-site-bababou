@@ -4,7 +4,7 @@
 
 ## Reprise immédiate — nouveau chat
 
-- [ ] **P0 — GitHub/Vercel baseline de production :** suivre le runbook [`vercel-github-baseline-recovery-2026-10-13.md`](vercel-github-baseline-recovery-2026-10-13.md). L'échec historique `git_info_fail` sur `73b8cca` et le build ignoré sur `f218b877` ne peuvent pas être considérés comme des validations. **Réévaluer d'abord les statuts du HEAD `master` courant et les preuves exact-SHA** ; le master `a0de8d9` a déjà un workflow Production DAST réussi le 14 octobre, ce qui ne démontre pas à lui seul un triplet Vercel + Smoke + DAST réussi. Ne jamais injecter de statuts synthétiques.
+- [x] **P0 — Baseline de production rétablie (preuve GitHub du 14/10/2026)** : sur `master@a0de8d9fdb31d646dffffd7dcb8a9beec380c932`, les trois statuts **Vercel / Production Post-deploy Smoke / Production DAST** sont `success`. L'incident historique `git_info_fail` de `73b8cca` est documenté dans [`vercel-github-baseline-recovery-2026-10-13.md`](vercel-github-baseline-recovery-2026-10-13.md) mais ne constitue plus un blocage P0 sur cette base. **Revérifier la base exacte et la CI à chaque PR** ; aucun statut synthétique.
 
 Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état live GitHub** sans demander de compactage.
 
@@ -26,7 +26,7 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 - La PR **#230 est fusionnée** ; ne plus publier de commits sur son ancienne branche.
 - Branche de reprise depuis `master@a0de8d9fdb31d646dffffd7dcb8a9beec380c932`, dans une **nouvelle PR draft**.
 - Les workflows `Playwright Tests`, `Production DAST` et `Post-merge Quality Follow-up` ont réussi sur ce SHA ; `OWASP ZAP Preview` est marqué `skipped` et ne doit pas être annoncé comme un scan exécuté.
-- Revalider les statuts Vercel et Production Smoke avant toute conclusion sur le baseline, puis qualifier le workflow exact-HEAD de la nouvelle PR.
+- **Statuts de baseline vérifiés sur `master@a0de8d9` le 14/10** : Vercel, Production Post-deploy Smoke et Production DAST tous `success` (API des commit statuses GitHub). Qualifier séparément la CI exact-HEAD de la PR #232 : aucun run Quality & Security de cette branche n'était visible au relevé initial.
 - **P1 Cloudflare :** `docs/security-audit-coverage-ledger.md` et `docs/security-audit-source-review-2026-10-12.md` sont les preuves de couverture disponibles ; l'audit complet du skill et les findings validés restent à faire.
 
 ### Snapshot technique de reprise
