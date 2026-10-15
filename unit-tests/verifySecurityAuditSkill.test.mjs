@@ -118,6 +118,26 @@ test("allows only a real root .git metadata directory", () => {
   }
 });
 
+test("allows a Git worktree .git pointer file but rejects other unexpected files", () => {
+  const root = mkdtempSync(join(tmpdir(), "audit-worktree-"));
+  try {
+    writeFileSync(join(root, ".git"), "gitdir: ../.git/worktrees/skill\\n");
+    writeFileSync(join(root, "unexpected.txt"), "untrusted");
+    const results = verifySnapshot(root);
+    assert.ok(!results.some((item) => item.relativePath === ".git"));
+    assert.ok(
+      results.some(
+        (item) =>
+          item.relativePath === "unexpected.txt" &&
+          item.reason === "UNEXPECTED_FILE" &&
+          !item.ok,
+      ),
+    );
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
 test("rejects symlinked snapshot root", () => {
   const parent = mkdtempSync(join(tmpdir(), "audit-root-"));
   try {
