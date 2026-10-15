@@ -69,11 +69,12 @@ export function verifySnapshot(root, expectedBlobs = UPSTREAM_BLOBS) {
       const relativePath = prefix ? `${prefix}/${entry.name}` : entry.name;
       if (entry.isSymbolicLink()) {
         results.push({ relativePath, ok: false, reason: "SYMLINK" });
+      } else if (relativePath === ".git") {
+        // Git metadata may be a directory or a worktree pointer file; neither
+        // belongs to the upstream source manifest. Symlinks remain rejected above.
+        continue;
       } else if (entry.isDirectory()) {
-        // Git metadata is not part of the audited source snapshot.
-        if (relativePath !== ".git") {
-          inspectDirectory(join(directory, entry.name), relativePath);
-        }
+        inspectDirectory(join(directory, entry.name), relativePath);
       } else if (!entry.isFile() || !expectedPaths.has(relativePath)) {
         results.push({ relativePath, ok: false, reason: "UNEXPECTED_FILE" });
       }
