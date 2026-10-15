@@ -23,3 +23,7 @@ Une lecture de code n'est ni un scan exécuté ni une preuve d'absence de vulné
 ## Clôture
 
 Chaque ligne doit conserver un statut séparant `verified-external`, `reviewed-source-only`, `needs-validation`, `implemented-not-verified` et `not-run`. Pour valider un nouveau contrôle : joindre la révision exacte, le périmètre, le résultat daté et une preuve expurgée, sans publier de secrets ni d'informations familiales. Les conclusions de l'audit complet exigent les artefacts upstream et une vérification indépendante des findings.
+
+
+## Correctif du vérificateur de snapshot (PR #232)
+Le contrôle de couverture d'intégrité distingue maintenant les métadonnées Git du contenu upstream pour les deux formes de checkout : répertoire `.git/` et fichier pointeur `.git` des worktrees. Le contrôle de symlink s'exécute avant cette exclusion ; les liens symboliques restent donc refusés. Test unitaire dédié ajouté. Cette modification corrige un faux positif potentiel, mais **ne constitue pas l'exécution de l'audit Cloudflare complet**.
