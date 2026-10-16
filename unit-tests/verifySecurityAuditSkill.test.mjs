@@ -139,6 +139,26 @@ test("allows a Git worktree .git pointer file but rejects other unexpected files
   }
 });
 
+test("rejects a root .git symlink rather than treating it as metadata", () => {
+  const root = mkdtempSync(join(tmpdir(), "audit-git-link-"));
+  const outside = mkdtempSync(join(tmpdir(), "audit-git-target-"));
+  try {
+    symlinkSync(outside, join(root, ".git"));
+    const checks = verifySnapshot(root);
+    assert.ok(
+      checks.some(
+        (item) =>
+          item.relativePath === ".git" &&
+          item.reason === "SYMLINK" &&
+          !item.ok,
+      ),
+    );
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+    rmSync(outside, { recursive: true, force: true });
+  }
+});
+
 test("rejects symlinked snapshot root", () => {
   const parent = mkdtempSync(join(tmpdir(), "audit-root-"));
   try {
