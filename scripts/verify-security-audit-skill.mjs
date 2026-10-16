@@ -70,9 +70,8 @@ export function verifySnapshot(root, expectedBlobs = UPSTREAM_BLOBS) {
       if (entry.isSymbolicLink()) {
         results.push({ relativePath, ok: false, reason: "SYMLINK" });
       } else if (relativePath === ".git") {
-        // Git metadata may be a directory or a worktree pointer file; neither
-        // belongs to the upstream source manifest. Symlinks remain rejected above.
-        continue;
+        // Git metadata can be a directory or a worktree pointer file.
+        // This branch intentionally does nothing; symlinks were rejected above.
       } else if (entry.isDirectory()) {
         inspectDirectory(join(directory, entry.name), relativePath);
       } else if (!entry.isFile() || !expectedPaths.has(relativePath)) {
