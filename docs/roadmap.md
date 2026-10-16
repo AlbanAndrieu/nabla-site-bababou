@@ -21,6 +21,13 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 10. Corpus familial/juridique : originaux hors Git ; **Mr A**, **Mme B / Ms B**, **l'enfant / the child** ; santé/catégories spéciales sur approbation explicite ; données financières du père bloquées ; références judiciaires conservées quand utiles à la vérification.
 
 
+### Lot P1 du 17 octobre 2026 — sans accès aux machines
+
+- Rebase vérifié contre `master@a0de8d9` : `behind_by=0`, aucun nouveau commit de base à intégrer ; ne pas réécrire l'historique pour un rebase vide.
+- Ajout d'un test spécifique : le symlink de métadonnées Git `.git` doit produire `SYMLINK` même si les vrais répertoires et fichiers pointeurs worktree sont autorisés.
+- `docs/security-audit-coverage-ledger.md` précise les critères de clôture : syntaxe Bash, tests Node ciblés, vérification du checkout public à SHA fixé, puis audit complet en sandbox et validation indépendante, avec preuves expurgées.
+- Aucun test local, aucun audit dynamique ni exécution du skill n'a été confirmé ; `[skip ci]` reste appliqué aux commits de préparation, sans désactiver les contrôles.
+
 ### Préparatifs P1 — sans TrueNAS/workstation (16 octobre 2026)
 
 - Rebase vérifié : `master@a0de8d9` est exactement le merge-base de la PR #232 ; `behind_by=0`, `ahead_by=10` au contrôle initial. **Aucune réécriture nécessaire tant que master reste identique**.
