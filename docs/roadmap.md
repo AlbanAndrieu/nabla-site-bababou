@@ -21,6 +21,13 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 10. Corpus familial/juridique : originaux hors Git ; **Mr A**, **Mme B / Ms B**, **l'enfant / the child** ; santé/catégories spéciales sur approbation explicite ; données financières du père bloquées ; références judiciaires conservées quand utiles à la vérification.
 
 
+### Préparatifs P1 — sans TrueNAS/workstation (16 octobre 2026)
+
+- Rebase vérifié : `master@a0de8d9` est exactement le merge-base de la PR #232 ; `behind_by=0`, `ahead_by=10` au contrôle initial. **Aucune réécriture nécessaire tant que master reste identique**.
+- Acquisition explicite et épinglée du skill public : `bash scripts/prepare-security-audit-skill.sh --fetch-verify /tmp/bababou-audit-upstream` (répertoire inexistant requis). Alternative offline : `--verify-existing <checkout>`. Cette étape vérifie SHA Git attendu et 22 blobs, mais **n'exécute pas les six phases de l'audit**.
+- Un environnement isolé, des artefacts expurgés et une validation indépendante restent indispensables avant d'ouvrir des findings. Ne pas transmettre de fichiers familiaux/privés au skill, à une API distante ou aux logs.
+- En l'absence d'accès aux machines de l'utilisateur : préparer les scripts, tests et critères d'acceptation dans cette PR avec `[skip ci]` ; laisser les résultats locaux, Playwright, BetterLeaks, Semgrep et ZAP à `not-run` sur le dernier HEAD.
+
 ### Reprise du 16 octobre 2026 — PR #232, mode sans CI
 
 - PR ouverte : [#232](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/232), branche `docs/roadmap-next-execution-2026-10-14`. **Ne pas merger**.
