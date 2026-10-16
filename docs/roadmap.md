@@ -21,6 +21,14 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 10. Corpus familial/juridique : originaux hors Git ; **Mr A**, **Mme B / Ms B**, **l'enfant / the child** ; santé/catégories spéciales sur approbation explicite ; données financières du père bloquées ; références judiciaires conservées quand utiles à la vérification.
 
 
+### Reprise du 16 octobre 2026 — PR #232, mode sans CI
+
+- PR ouverte : [#232](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/232), branche `docs/roadmap-next-execution-2026-10-14`. **Ne pas merger**.
+- Échec exact-HEAD `b7747a8` : le job `quality` a passé le contrôle des fichiers modifiés, puis `npm run lint` a échoué sur quatre références à `Buffer` non importé dans `unit-tests/verifySecurityAuditSkill.test.mjs`.
+- Correctif `5e94d17` : import explicite depuis `node:buffer` ; message `[skip ci]` à la demande de l'utilisateur. **Aucune validation CI ni quality gate locale confirmée sur ce nouveau SHA**. `[skip ci]` n'est pas une preuve de succès.
+- Pour les prochains lots, privilégier les vérifications locales ciblées, puis les commits `[skip ci]` tant que cette consigne reste active ; **ne jamais désactiver les gates** BetterLeaks, SAST, Playwright, ZAP ou contourner les protections de branche.
+- **Ordre de reprise** : P0 tester localement ESLint et le test du vérificateur ; P1 vérifier le checkout épinglé Cloudflare et exécuter les six phases avec findings validés et preuves expurgées ; P2 parité/accessibilité legacy ; P3 migration Next/i18n ; P4 SEO/OpenGraph. Ne pas marquer P1 terminé à partir du seul contrôle d'intégrité.
+
 ### Passage de relais — 14 octobre 2026
 
 - La PR **#230 est fusionnée** ; ne plus publier de commits sur son ancienne branche.
