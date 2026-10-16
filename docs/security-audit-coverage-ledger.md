@@ -27,3 +27,13 @@ Chaque ligne doit conserver un statut séparant `verified-external`, `reviewed-s
 
 ## Correctif du vérificateur de snapshot (PR #232)
 Le contrôle de couverture d'intégrité distingue maintenant les métadonnées Git du contenu upstream pour les deux formes de checkout : répertoire `.git/` et fichier pointeur `.git` des worktrees. Le contrôle de symlink s'exécute avant cette exclusion ; les liens symboliques restent donc refusés. Test unitaire dédié ajouté. Cette modification corrige un faux positif potentiel, mais **ne constitue pas l'exécution de l'audit Cloudflare complet**.
+
+## Préparation et critères d'acceptation — PR #232 (17 octobre 2026)
+
+- **Acquisition contrôlée, non exécutée** : `scripts/prepare-security-audit-skill.sh` propose `--fetch-verify` dans un chemin inexistant, ou `--verify-existing` sur un checkout existant. La révision Git exacte `c1c8a8c1471069fb0e188eeaff69b8e8db6564a8` et les 22 blobs déclarés doivent correspondre.
+- **Contrat de sûreté renforcé** : `.git` en répertoire réel ou fichier pointeur est autorisé à la racine ; `.git` sous forme de symlink est rejeté avant toute exclusion. Un nouveau test de régression couvre ce dernier cas.
+- **Prochaine preuve L1** : `node --test unit-tests/verifySecurityAuditSkill.test.mjs` et `bash -n scripts/prepare-security-audit-skill.sh`, avec sortie, date et commit exact. Non exécuté dans cette intervention.
+- **Prochaine preuve d'intégrité L2** : appeler le script avec un répertoire public jetable, préserver le résultat final, puis supprimer le checkout après contrôle. Ne pas utiliser de corpus privé.
+- **Audit L3 (distinct)** : effectuer les six phases du skill en sandbox sans accès aux données privées ; faire valider les artefacts selon les schémas et validateurs upstream ; revue humaine indépendante des findings. Aucun scan externe, PII ou fichier familial dans les artefacts versionnés.
+- **Garde-fous** : `[skip ci]` n'est pas un résultat de test ; BetterLeaks, Semgrep, Playwright et ZAP doivent rester intacts et seront à exécuter avant toute fusion.
+
