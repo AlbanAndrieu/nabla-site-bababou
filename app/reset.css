@@ -18,8 +18,9 @@
   border: 0 solid;
 }
 
+/* Browser text-scale opt-in lives in the layout: avoid double scaling. */
 html {
-  font-size: calc(100% * env(preferred-text-scale, 1));
+  font-size: 100%;
 }
 
 html,
