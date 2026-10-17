@@ -36,11 +36,10 @@ const SITE_COPY = {
       "Et familienettsted der Bababous far tar vare på meldinger, gjør det lettere å ta kontakt igjen og dokumenterer familiens historie.",
     imageAlt: "En kjærlig melding fra Bababous far til datteren.",
   },
-} as const satisfies Record<AppLocale, {
-  title: string;
-  description: string;
-  imageAlt: string;
-}>;
+} as const satisfies Record<
+  AppLocale,
+  { title: string; description: string; imageAlt: string }
+>;
 
 const OPEN_GRAPH_LOCALE = {
   fr: "fr_FR",

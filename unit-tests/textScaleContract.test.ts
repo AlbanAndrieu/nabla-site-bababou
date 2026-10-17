@@ -20,5 +20,8 @@ test("preferred text scaling uses browser opt-in without double CSS scaling", as
   assert.match(e2e, /scale: 2/);
   assert.match(e2e, /browserName !== "chromium"/);
   assert.doesNotMatch(e2e, /page\.addStyleTag/);
-  assert.doesNotMatch(e2e, /documentElement\.style\.setProperty\(\s*"font-size"/);
+  assert.doesNotMatch(
+    e2e,
+    /documentElement\.style\.setProperty\(\s*"font-size"/,
+  );
 });
