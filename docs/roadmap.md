@@ -4,11 +4,11 @@
 
 ## Reprise immédiate — nouveau chat
 
-- [ ] **P0 — GitHub/Vercel baseline de production :** suivre le runbook [`vercel-github-baseline-recovery-2026-10-13.md`](vercel-github-baseline-recovery-2026-10-13.md). Le projet est lié au dépôt, mais le déploiement `73b8cca` est en erreur `git_info_fail` et le build ignoré sur `f218b877` n'est pas une validation de production. Exiger de vraies preuves `READY` + Smoke + DAST, sans statut synthétique.
+- [x] **P0 — Baseline de production rétablie (preuve GitHub du 14/10/2026)** : sur `master@a0de8d9fdb31d646dffffd7dcb8a9beec380c932`, les trois statuts **Vercel / Production Post-deploy Smoke / Production DAST** sont `success`. L'incident historique `git_info_fail` de `73b8cca` est documenté dans [`vercel-github-baseline-recovery-2026-10-13.md`](vercel-github-baseline-recovery-2026-10-13.md) mais ne constitue plus un blocage P0 sur cette base. **Revérifier la base exacte et la CI à chaque PR** ; aucun statut synthétique.
 
 Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état live GitHub** sans demander de compactage.
 
-1. Identifier la PR ouverte la plus récente sur GitHub. **#229 a été fusionnée le 10 octobre 2026** ; ne pas supposer qu'une PR est encore ouverte. En l'absence de PR, créer une branche depuis le HEAD courant de master et ouvrir une PR draft.
+1. Identifier la PR ouverte la plus récente sur GitHub. **#230 a été fusionnée le 13 octobre 2026** ; ne pas supposer qu'une PR est encore ouverte. En l'absence de PR, créer une branche depuis le HEAD courant de master et ouvrir une PR draft.
 2. Lire son **HEAD exact**, sa mergeability et les derniers workflows avant toute modification.
 3. Tout job rouge pertinent est corrigé **avant** le lot suivant ; ne jamais relancer manuellement un workflow uniquement pour obtenir du vert.
 4. Boucle local-first : ciblé → `just p0` (`bash scripts/agent-p0-check.sh`) → `just quality-fix` → revue du diff → `just quality` / `just publish-status` si l'environnement exécutable est disponible.
@@ -19,6 +19,44 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 8. Next.js/Vercel reste la cible ; ne retirer le legacy qu'après parité contenu/comportement/rendu/SEO/accessibilité/routes. Google Translate reste fallback.
 9. `public/404.html` reste la source visuelle protégée ; pas de réécriture React sans accord explicite.
 10. Corpus familial/juridique : originaux hors Git ; **Mr A**, **Mme B / Ms B**, **l'enfant / the child** ; santé/catégories spéciales sur approbation explicite ; données financières du père bloquées ; références judiciaires conservées quand utiles à la vérification.
+
+
+### Lot P2 du 17 octobre 2026 — parité de la 404 protégée
+
+- `unit-tests/htmlFromPublic.test.ts` couvre désormais les invariants structurels du rendu de `public/404.html` : titre principal et secondaire, lien explicite vers l'accueil, animation `cloak__wrapper`/`@keyframes swing`, retrait du footer legacy.
+- `public/404.html` n'est pas modifié ; aucune suppression ou redirection legacy sans preuve de parité.
+- **À valider avant merge** : `npm run test:unit`, `npm run lint`, Playwright sur la Preview Vercel et contrôle visuel/accessibilité réel. Ces contrôles n'ont pas été exécutés ici ; `[skip ci]` reste demandé.
+- Suite P2 : ajouter des scénarios clavier/mobile à la Preview ; P3 : compléter l'inventaire des routes et traductions manquantes, en conservant Google Translate comme fallback ; P4 : audit des métadonnées/OG exact-route.
+
+### Lot P1 du 17 octobre 2026 — sans accès aux machines
+
+- Rebase vérifié contre `master@a0de8d9` : `behind_by=0`, aucun nouveau commit de base à intégrer ; ne pas réécrire l'historique pour un rebase vide.
+- Ajout d'un test spécifique : le symlink de métadonnées Git `.git` doit produire `SYMLINK` même si les vrais répertoires et fichiers pointeurs worktree sont autorisés.
+- `docs/security-audit-coverage-ledger.md` précise les critères de clôture : syntaxe Bash, tests Node ciblés, vérification du checkout public à SHA fixé, puis audit complet en sandbox et validation indépendante, avec preuves expurgées.
+- Aucun test local, aucun audit dynamique ni exécution du skill n'a été confirmé ; `[skip ci]` reste appliqué aux commits de préparation, sans désactiver les contrôles.
+
+### Préparatifs P1 — sans TrueNAS/workstation (16 octobre 2026)
+
+- Rebase vérifié : `master@a0de8d9` est exactement le merge-base de la PR #232 ; `behind_by=0`, `ahead_by=10` au contrôle initial. **Aucune réécriture nécessaire tant que master reste identique**.
+- Acquisition explicite et épinglée du skill public : `bash scripts/prepare-security-audit-skill.sh --fetch-verify /tmp/bababou-audit-upstream` (répertoire inexistant requis). Alternative offline : `--verify-existing <checkout>`. Cette étape vérifie SHA Git attendu et 22 blobs, mais **n'exécute pas les six phases de l'audit**.
+- Un environnement isolé, des artefacts expurgés et une validation indépendante restent indispensables avant d'ouvrir des findings. Ne pas transmettre de fichiers familiaux/privés au skill, à une API distante ou aux logs.
+- En l'absence d'accès aux machines de l'utilisateur : préparer les scripts, tests et critères d'acceptation dans cette PR avec `[skip ci]` ; laisser les résultats locaux, Playwright, BetterLeaks, Semgrep et ZAP à `not-run` sur le dernier HEAD.
+
+### Reprise du 16 octobre 2026 — PR #232, mode sans CI
+
+- PR ouverte : [#232](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/232), branche `docs/roadmap-next-execution-2026-10-14`. **Ne pas merger**.
+- Échec exact-HEAD `b7747a8` : le job `quality` a passé le contrôle des fichiers modifiés, puis `npm run lint` a échoué sur quatre références à `Buffer` non importé dans `unit-tests/verifySecurityAuditSkill.test.mjs`.
+- Correctif `5e94d17` : import explicite depuis `node:buffer` ; message `[skip ci]` à la demande de l'utilisateur. **Aucune validation CI ni quality gate locale confirmée sur ce nouveau SHA**. `[skip ci]` n'est pas une preuve de succès.
+- Pour les prochains lots, privilégier les vérifications locales ciblées, puis les commits `[skip ci]` tant que cette consigne reste active ; **ne jamais désactiver les gates** BetterLeaks, SAST, Playwright, ZAP ou contourner les protections de branche.
+- **Ordre de reprise** : P0 tester localement ESLint et le test du vérificateur ; P1 vérifier le checkout épinglé Cloudflare et exécuter les six phases avec findings validés et preuves expurgées ; P2 parité/accessibilité legacy ; P3 migration Next/i18n ; P4 SEO/OpenGraph. Ne pas marquer P1 terminé à partir du seul contrôle d'intégrité.
+
+### Passage de relais — 14 octobre 2026
+
+- La PR **#230 est fusionnée** ; ne plus publier de commits sur son ancienne branche.
+- Branche de reprise depuis `master@a0de8d9fdb31d646dffffd7dcb8a9beec380c932`, dans une **nouvelle PR draft**.
+- Les workflows `Playwright Tests`, `Production DAST` et `Post-merge Quality Follow-up` ont réussi sur ce SHA ; `OWASP ZAP Preview` est marqué `skipped` et ne doit pas être annoncé comme un scan exécuté.
+- **Statuts de baseline vérifiés sur `master@a0de8d9` le 14/10** : Vercel, Production Post-deploy Smoke et Production DAST tous `success` (API des commit statuses GitHub). Qualifier séparément la CI exact-HEAD de la PR #232 : aucun run Quality & Security de cette branche n'était visible au relevé initial.
+- **P1 Cloudflare :** registre documentaire `docs/security-audit-coverage-ledger.md` restauré dans la PR #232 et revue source-first disponibles ; les six phases du skill et les findings validés restent à faire.
 
 ### Snapshot technique de reprise
 
@@ -99,7 +137,7 @@ Ce blocage est **distinct** des contrôles du skill Cloudflare. Si l'infrastruct
 - [x] Identifier upstream, licence MIT et commit `c1c8a8c1471069fb0e188eeaff69b8e8db6564a8` ; procédure et limites : [`docs/security-audit-skill.md`](security-audit-skill.md). **Installation locale et checksum d'archive toujours à faire** ; ne pas confondre le skill générique de code avec un audit du compte Cloudflare.
 - [x] Ajouter un vérificateur hors réseau pour les **22 fichiers upstream officiels** et **six tests unitaires** ; le contrôle rejette aussi les liens symboliques et la traversée de répertoires. Les tests sont branchés sur P0 et `npm run test:unit` ; **vérification d'un checkout upstream réel non exécutée**.
 - [ ] Exécuter un audit **local-first, incrémental, en lecture seule et sur périmètre autorisé** : Cloudflare Access, Tunnel/DNS, Vercel Preview, headers, cookies et endpoints publics. Exclure corpus privé, secrets et données familiales. **Étape source-first partielle documentée** : [`docs/security-audit-source-review-2026-10-12.md`](security-audit-source-review-2026-10-12.md), 2 observations à valider, aucun finding confirmé ; les six phases du skill ne sont pas exécutées.
-- [ ] Conserver un ledger de contrôles (pass / fail / not-run / not-applicable), preuves expurgées, version, HEAD exact, limites et remédiations P0–P4. Ne jamais présenter la checklist comme une preuve d'exécution.
+- [x] Créer le registre documentaire [`security-audit-coverage-ledger.md`](security-audit-coverage-ledger.md), présent dans la branche courante, avec preuves et lacunes P0–P4. [ ] Valider ensuite les contrôles réels sur HEAD exact et produire le `coverage-ledger.json` conforme à l'upstream ; ne jamais assimiler la checklist à une preuve d'exécution.
 - [ ] Réconcilier les constats avec STRIDE/DSOMM et les contrôles SAST, Betterleaks, Playwright et ZAP, sans contournement.
 - [ ] Clore après reproduction locale, revue des faux positifs et preuves vérifiables.
 

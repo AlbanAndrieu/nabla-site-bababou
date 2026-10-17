@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { Buffer } from "node:buffer";
 import {
   mkdirSync,
   mkdtempSync,
@@ -115,6 +116,46 @@ test("allows only a real root .git metadata directory", () => {
     assert.ok(!result.some((item) => item.relativePath.startsWith(".git/")));
   } finally {
     rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("allows a Git worktree .git pointer file but rejects other unexpected files", () => {
+  const root = mkdtempSync(join(tmpdir(), "audit-worktree-"));
+  try {
+    writeFileSync(join(root, ".git"), "gitdir: ../.git/worktrees/skill\\n");
+    writeFileSync(join(root, "unexpected.txt"), "untrusted");
+    const results = verifySnapshot(root);
+    assert.ok(!results.some((item) => item.relativePath === ".git"));
+    assert.ok(
+      results.some(
+        (item) =>
+          item.relativePath === "unexpected.txt" &&
+          item.reason === "UNEXPECTED_FILE" &&
+          !item.ok,
+      ),
+    );
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("rejects a root .git symlink rather than treating it as metadata", () => {
+  const root = mkdtempSync(join(tmpdir(), "audit-git-link-"));
+  const outside = mkdtempSync(join(tmpdir(), "audit-git-target-"));
+  try {
+    symlinkSync(outside, join(root, ".git"));
+    const checks = verifySnapshot(root);
+    assert.ok(
+      checks.some(
+        (item) =>
+          item.relativePath === ".git" &&
+          item.reason === "SYMLINK" &&
+          !item.ok,
+      ),
+    );
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+    rmSync(outside, { recursive: true, force: true });
   }
 });
 
