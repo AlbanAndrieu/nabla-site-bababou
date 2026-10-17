@@ -41,7 +41,11 @@ test("protected 404 retains semantic navigation and animation assets", async () 
 
   assert.match(fragment, /<h1>404<\/h1>/i);
   assert.match(fragment, /<h2>We can.t find that page<\/h2>/i);
-  assert.match(fragment, /<a\b[^>]*href="\/"[^>]*>[\s\S]*?Back to home[\s\S]*?<\/a>/i);
+  // The protected legacy source splits its closing anchor tag across lines.
+  assert.match(
+    fragment,
+    /<a\b[^>]*href="\/"[^>]*>[\s\S]*?Back to home[\s\S]*?<\/a\s*>/i,
+  );
   assert.match(fragment, /class="cloak__wrapper"/);
   assert.match(fragment, /@keyframes swing/);
   assert.doesNotMatch(fragment, /<footer\b/i);
