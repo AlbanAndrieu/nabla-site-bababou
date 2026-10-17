@@ -35,3 +35,14 @@ test("loadPublicHtmlFragment rejects retired bridge sources", async () => {
     );
   }
 });
+
+test("protected 404 retains semantic navigation and animation assets", async () => {
+  const fragment = await loadPublicHtmlFragment("404.html", "body", "en");
+
+  assert.match(fragment, /<h1>404<\/h1>/i);
+  assert.match(fragment, /<h2>We can.t find that page<\/h2>/i);
+  assert.match(fragment, /<a\b[^>]*href="\/"[^>]*>[\s\S]*?Back to home[\s\S]*?<\/a>/i);
+  assert.match(fragment, /class="cloak__wrapper"/);
+  assert.match(fragment, /@keyframes swing/);
+  assert.doesNotMatch(fragment, /<footer\b/i);
+});
