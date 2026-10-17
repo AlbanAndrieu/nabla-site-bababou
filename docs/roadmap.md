@@ -2,63 +2,14 @@
 
 > Source unique des travaux ouverts **et du contexte de reprise**. Les diagnostics restent dans [`docs/operations.md`](operations.md), les règles agent dans [`AGENTS.md`](../AGENTS.md), l'historique détaillé dans Git/PR.
 
-### Suite P2 → P4 — PR #233, 17 octobre 2026
 
-- **P0 CI** : `CI (Quality and Security)` réussie sur `96f6add7` (run `39067493305`). En draft, seules les validations Git-only de préflight sont obligatoires ; les gates complètes et la Preview security sont `skipped`. Ne pas les qualifier de PASS avant la sortie du draft et une exécution exacte.
-- **P3/P4** : nouveau scénario `tests/localized-seo.spec.ts` sur les routes `/contact`, `/en/contact`, `/de/contact`, `/no/contact` : statut HTTP 200, langue HTML, canonical et OpenGraph même origine/chemin, locale OG et Twitter Card ; vérifie les réponses réelles au lieu de s'appuyer exclusivement sur les métadonnées du code source.
-- **À exécuter** : `npx playwright test tests/localized-seo.spec.ts tests/legacy-404-accessibility.spec.ts` sur un serveur de test local ou une Preview déployée exacte-SHA ; puis axes WCAG, contrastes, qualité complète, BetterLeaks, SAST et ZAP. Ne pas lancer ZAP hors Preview Vercel protégée ou en production.
-- La 404 HTML versionnée, la confidentialité des données familiales et le fallback Google Translate ne changent pas. Aucun merge automatique.
+## Reprise active — PR #233 (18 octobre 2026)
 
-### Actualisation P2–P4 — PR #233 et Site Alban #230/#231 (17 octobre 2026)
-
-- Les **10 dernières PR créées** de `nabla-site-alban` sont désormais **#231, #230, #229, #228, #227, #226, #224, #222, #221 et #220**. Le tableau historique ci-dessous est un précédent relevé ; le lot courant ajoute #230/#231 et sort #219/#217 de la fenêtre de dix.
-- **P2 / #231** : `app/[locale]/layout.tsx` déclare `<meta name="text-scale" content="scale" />`, tandis que `app/reset.css` revient à `font-size: 100%` pour éviter la double application de `env(preferred-text-scale)`. `unit-tests/textScaleContract.test.ts` vérifie le contrat ; le scénario Playwright CDP 200 % existant est maintenu.
-- **P2 / #230** : retenir le découpage des gros composants et la séparation des helpers sans copier les composants homelab ; poursuivre uniquement sur les composants Bababou dépassant effectivement les budgets de taille. Les garde-fous de publication restent canoniques.
-- **P2 / #228** : le focus clavier et le reduced motion 404 et le test axe de contraste ont été ajoutés dans le lot antérieur.
-- **P3/P4** : les contrôles localisés OpenGraph/hreflang et le sitemap restent en place ; ne pas modifier le contenu familial legacy ni désactiver Google Translate fallback.
-- **P0 CI, correctif de la dette** : les huit anciens commits `[skip ci]` rendaient impossible le préflight (`QG_CI_SKIP_DIRECTIVE`). La branche a été reconstruite en un commit de consolidation `8703f340` depuis `master@2406fefc`, avec mise à jour protégée par le SHA attendu. Les règles n'ont pas été modifiées.
-- **Preuve exacte et datée** : workflow GitHub Quality and Security **#39067425541** marqué `success` sur `01f4f5a7d9366bae16e9fb0650b839733810c6af` ; Node 24 production compatibility `skipped`. Les tests Playwright Preview, ZAP et vérifications manuelles doivent être qualifiés séparément.
-- Ne pas confondre ce succès avec la validation de tout SHA ultérieur. Aucun merge automatique.
-
-### Transfert sélectif des 10 dernières PR de nabla-site-alban — 17 octobre 2026
-
-Référence : [PR #217 à #229, les 10 dernières créées](https://github.com/AlbanAndrieu/nabla-site-alban/pulls?q=is%3Apr+sort%3Acreated-desc). **Ne pas cherry-pick les évolutions d'infrastructure ou données d'un autre site**.
-
-| PR source | Enseignement | Décision pour Bababou |
-| --- | --- | --- |
-| #229 | Dépendances groupées avec délai de maturation de sept jours | À évaluer dans un lot dépendances distinct : ne pas modifier le lockfile sans exécution des tests |
-| #228 | Contraste WCAG mesuré par axe, styles sémantiques plutôt que classes legacy | **Adapté P2** : focus fort et axe `color-contrast` sur 404 ; reduced motion |
-| #227 | Identifier hook/fichiers responsables des oscillations de formateurs | À étudier P0 séparément ; ne pas recopier scripts de qualité divergents |
-| #226 | AGENTS.md canonique, skills dédupliqués, secrets sans valeurs en clair | Revue documentaire ultérieure, préserver règles privacy existantes |
-| #224 | Réduction du scope Nuclei et de la consommation CI | Ne pas introduire de scan supplémentaire sur Bababou tant que ZAP Preview n'est pas validé |
-| #222 | Distinction santé technique / exposition interne | Non applicable à la surface publique de Bababou |
-| #221 | Source OPML unique + génération déterministe et tests sans réseau | Principe repris dans les contrôles i18n/SEO ; pas de migration RSS sans besoin |
-| #220 | DORA / CTID / FreshRSS et secrets de publication | Non applicable à la roadmap P2–P4 du site familial |
-| #219 | Séparer audit générique Cloudflare du contrôle opérationnel de compte | Déjà suivi en P1 ; pas de fausse attestation d'audit |
-| #217 | Ne pas interpréter un 403 Cloudflare Access comme origine disponible | Règle conservée pour les sondes futures, sans intégration homelab |
-
-**Livré dans #233** :
-- `app/globals.css` : focus visible contrasté et arrêt des animations 404 en mode réduction des mouvements, scoped à `next-global-not-found` ;
-- `tests/legacy-404-accessibility.spec.ts` : contrôle réel `Tab`, axe `color-contrast`, et `prefers-reduced-motion` ;
-- `unit-tests/siteSocialMetadata.test.ts` : canonical, OpenGraph et hreflang vérifiés pour quatre locales.
-
-**Dette bloquante** : `scripts/agent-quality-gate.sh` refuse explicitement tout commit `[skip ci]` dans la plage de la PR (`QG_CI_SKIP_DIRECTIVE`). Les commits initiaux de #233 contiennent cette directive. **Ne pas contourner la règle** : avant publication/merge, reconstruire proprement la branche sur master sans ces directives, puis exécuter les gates sur le nouveau HEAD. Les scans et tests ne sont pas attestés sur ce lot.
-
-### Lot de suivi P2–P4 — PR #233 (17 octobre 2026)
-
-- **P2** : `tests/legacy-404-accessibility.spec.ts` utilise désormais un vrai `Tab` au lieu de `.focus()`, vérifie `:focus-visible`, un indicateur de focus et la visibilité du lien sur le viewport. Contrat à exécuter sur Chromium/Firefox/WebKit et configurations mobiles avant d'affirmer la parité.
-- **P3** : `unit-tests/siteSocialMetadata.test.ts` vérifie les valeurs produites par `localizedSiteMetadata()` pour `fr/en/de/no`, y compris titres, descriptions, image alt et locales OpenGraph ; aucun contenu de la homepage legacy n'a été modifié.
-- **P4** : le même test vérifie `localizedPageMetadata("contact", "de", ...)` : canonical, URL OpenGraph et hreflang alignés. Les contrôles du sitemap restent distincts.
-- **Preuves manquantes** : lint, typecheck, tests unitaires, build Next, Playwright local/Preview (dont clavier et mobile), BetterLeaks, Semgrep, ZAP. Ne pas fusionner avant ces contrôles. Commits `[skip ci]` à la demande de l'utilisateur.
-
-## Nouvelle PR P2 → P4 — 17 octobre 2026
-
-- Base de départ : `master@2406fefc30fdadf6eef985ff6b2b15c87edc11f5` ; la PR #232 ne figure plus parmi les PR ouvertes. Nouvelle branche `feat/p2-p4-accessibility-i18n-social-20261017`.
-- **P2** : nouveau scénario Playwright `tests/legacy-404-accessibility.spec.ts`, réponse 404 vérifiée, titre, lien retour et navigation au clavier/visibilité mobile. `public/404.html` demeure inchangé.
-- **P3** : textes de métadonnées sociales allemand et norvégien de première classe dans `lib/siteSocialMetadata.ts` ; le contenu de la page d'accueil legacy n'est pas modifié, et le fallback Google Translate reste en place.
-- **P4** : contrat du sitemap renforcé : canoniques uniques, alternates `fr/en/de/no/x-default`, même origine HTTPS, pas de query ni de fragment sur les alternates.
-- **Validation différée** : `npm run lint`, `npm run test:unit`, build Next, Playwright desktop/mobile sur Vercel Preview, BetterLeaks, Semgrep et ZAP. Les commits portent `[skip ci]` ; ne pas assimiler l'absence de CI à une gate verte.
-- Aucun merge automatique. Ne jamais supprimer une page HTML legacy ni remplacer la 404 historique sans preuve de parité.
+- **PR** : [#233](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/233), `feat/p2-p4-accessibility-i18n-social-20261017`, ouverte en **draft**, base `master@2406fefc`, aucun commit de retard (`behind_by=0` au contrôle du 18/10). Aucun rebase inutile, aucun merge automatique.
+- **Preuve CI vérifiée sur `9d7d69b`** : [Quality and Security #39072739325](https://github.com/AlbanAndrieu/nabla-site-bababou/actions/runs/39072739325) **success**, mais **préflight Git-only**. Les étapes npm, Semgrep, build et le job Vercel Preview security gates sont **skipped** tant que la PR est en draft : aucun PASS complet revendiqué.
+- **Dernier lot P3/P4** : le scénario Playwright `tests/localized-seo.spec.ts` vérifie désormais sur les quatre routes Contact, en plus des canoniques, OpenGraph, langue HTML et Twitter : **un seul canonical**, exactement cinq `hreflang` (`fr/en/de/no/x-default`), chemins/origine HTTPS identiques à la politique SEO et aucune query/fragment. Commit `6b182d4` ; tests runtime **non exécutés** dans l'environnement actuel (checkout complet, dépendances et navigateurs indisponibles).
+- **Avant merge** : disposer d'un checkout/résultat local complet et exécuter lint, typecheck, tests unitaires, build Next, Playwright multi-navigateur/mobile, BetterLeaks et Semgrep ; ensuite validation exacte-SHA de la Preview Vercel avec ZAP. Ne jamais promouvoir un job `skipped` en preuve de sécurité.
+- **Invariants** : `public/404.html` reste protégé, Google Translate demeure fallback, pas de publication du corpus privé, aucun merge automatique. Les transferts sélectifs des dernières PR de Site Alban et l'historique des commits sont conservés dans la [conversation de la PR #233](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/233) ; la roadmap conserve uniquement décisions actives et actions ouvertes.
 
 ## Reprise immédiate — nouveau chat
 
@@ -181,14 +132,6 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 - [x] P1/P3/P4 : les métadonnées n'annoncent plus des homepages localisées inexistantes ; canonical legacy `/` conservée jusqu'à parité.
 - [x] P2 : libellé accessible de la navigation footer traduit en FR/EN, avec contrat de régression.
 
-## P0 — Baseline de production Vercel non sain (11/10/2026)
-
-- [ ] **Bloquant CI** : `scripts/verify-production-baseline.sh` refuse le commit `73b8cca53349928f14ef262ba16ce2113a988b23` (`PROD_BASE_UNHEALTHY`, contexte `Vercel=failure`). L'API Vercel associe ce SHA à `dpl_78nerRgqZcGwTf2H98RgPej4Dbb6`, état `ERROR`, code `git_info_fail`.
-- [ ] Diagnostiquer et corriger le déploiement Vercel en échec `git_info_fail` : **liaison du projet à `AlbanAndrieu/nabla-site-bababou` confirmée via Vercel**, donc ne pas présumer qu'une reconnexion GitHub est nécessaire. Examiner plutôt les permissions et informations Git du déploiement en échec ; ne pas contourner le garde en choisissant une ancienne version `READY`.
-- [ ] Obtenir **une preuve exacte-SHA** d'un déploiement de production valide, puis les statuts `Production Post-deploy Smoke` et `Production DAST` requis par la gate. Le déploiement `f218b877` est `CANCELED`, donc non probant.
-- [ ] Revalider la CI du HEAD de la PR uniquement après correction de cette cause ; ne pas relancer pour obtenir du vert, ne pas assouplir `verify-production-baseline.sh`.
-
-Ce blocage est **distinct** des contrôles du skill Cloudflare. Si l'infrastructure empêche sa résolution dans l'environnement de l'agent, poursuivre les tâches hors déploiement sans prétendre que la CI est verte.
 
 ## P1 — Audit Cloudflare security-audit-skill
 
