@@ -2,6 +2,17 @@
 
 > Source unique des travaux ouverts **et du contexte de reprise**. Les diagnostics restent dans [`docs/operations.md`](operations.md), les règles agent dans [`AGENTS.md`](../AGENTS.md), l'historique détaillé dans Git/PR.
 
+### Actualisation P2–P4 — PR #233 et Site Alban #230/#231 (17 octobre 2026)
+
+- Les **10 dernières PR créées** de `nabla-site-alban` sont désormais **#231, #230, #229, #228, #227, #226, #224, #222, #221 et #220**. Le tableau historique ci-dessous est un précédent relevé ; le lot courant ajoute #230/#231 et sort #219/#217 de la fenêtre de dix.
+- **P2 / #231** : `app/[locale]/layout.tsx` déclare `<meta name="text-scale" content="scale" />`, tandis que `app/reset.css` revient à `font-size: 100%` pour éviter la double application de `env(preferred-text-scale)`. `unit-tests/textScaleContract.test.ts` vérifie le contrat ; le scénario Playwright CDP 200 % existant est maintenu.
+- **P2 / #230** : retenir le découpage des gros composants et la séparation des helpers sans copier les composants homelab ; poursuivre uniquement sur les composants Bababou dépassant effectivement les budgets de taille. Les garde-fous de publication restent canoniques.
+- **P2 / #228** : le focus clavier et le reduced motion 404 et le test axe de contraste ont été ajoutés dans le lot antérieur.
+- **P3/P4** : les contrôles localisés OpenGraph/hreflang et le sitemap restent en place ; ne pas modifier le contenu familial legacy ni désactiver Google Translate fallback.
+- **P0 CI, correctif de la dette** : les huit anciens commits `[skip ci]` rendaient impossible le préflight (`QG_CI_SKIP_DIRECTIVE`). La branche a été reconstruite en un commit de consolidation `8703f340` depuis `master@2406fefc`, avec mise à jour protégée par le SHA attendu. Les règles n'ont pas été modifiées.
+- **Preuve exacte et datée** : workflow GitHub Quality and Security **#39067425541** marqué `success` sur `01f4f5a7d9366bae16e9fb0650b839733810c6af` ; Node 24 production compatibility `skipped`. Les tests Playwright Preview, ZAP et vérifications manuelles doivent être qualifiés séparément.
+- Ne pas confondre ce succès avec la validation de tout SHA ultérieur. Aucun merge automatique.
+
 ### Transfert sélectif des 10 dernières PR de nabla-site-alban — 17 octobre 2026
 
 Référence : [PR #217 à #229, les 10 dernières créées](https://github.com/AlbanAndrieu/nabla-site-alban/pulls?q=is%3Apr+sort%3Acreated-desc). **Ne pas cherry-pick les évolutions d'infrastructure ou données d'un autre site**.
