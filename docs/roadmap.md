@@ -21,6 +21,13 @@ Un nouveau chat doit pouvoir repartir de **ce fichier + `AGENTS.md` + l'état li
 10. Corpus familial/juridique : originaux hors Git ; **Mr A**, **Mme B / Ms B**, **l'enfant / the child** ; santé/catégories spéciales sur approbation explicite ; données financières du père bloquées ; références judiciaires conservées quand utiles à la vérification.
 
 
+### Lot P2 du 17 octobre 2026 — parité de la 404 protégée
+
+- `unit-tests/htmlFromPublic.test.ts` couvre désormais les invariants structurels du rendu de `public/404.html` : titre principal et secondaire, lien explicite vers l'accueil, animation `cloak__wrapper`/`@keyframes swing`, retrait du footer legacy.
+- `public/404.html` n'est pas modifié ; aucune suppression ou redirection legacy sans preuve de parité.
+- **À valider avant merge** : `npm run test:unit`, `npm run lint`, Playwright sur la Preview Vercel et contrôle visuel/accessibilité réel. Ces contrôles n'ont pas été exécutés ici ; `[skip ci]` reste demandé.
+- Suite P2 : ajouter des scénarios clavier/mobile à la Preview ; P3 : compléter l'inventaire des routes et traductions manquantes, en conservant Google Translate comme fallback ; P4 : audit des métadonnées/OG exact-route.
+
 ### Lot P1 du 17 octobre 2026 — sans accès aux machines
 
 - Rebase vérifié contre `master@a0de8d9` : `behind_by=0`, aucun nouveau commit de base à intégrer ; ne pas réécrire l'historique pour un rebase vide.
