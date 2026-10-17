@@ -2,6 +2,13 @@
 
 > Source unique des travaux ouverts **et du contexte de reprise**. Les diagnostics restent dans [`docs/operations.md`](operations.md), les règles agent dans [`AGENTS.md`](../AGENTS.md), l'historique détaillé dans Git/PR.
 
+### Suite P2 → P4 — PR #233, 17 octobre 2026
+
+- **P0 CI** : `CI (Quality and Security)` réussie sur `96f6add7` (run `39067493305`). En draft, seules les validations Git-only de préflight sont obligatoires ; les gates complètes et la Preview security sont `skipped`. Ne pas les qualifier de PASS avant la sortie du draft et une exécution exacte.
+- **P3/P4** : nouveau scénario `tests/localized-seo.spec.ts` sur les routes `/contact`, `/en/contact`, `/de/contact`, `/no/contact` : statut HTTP 200, langue HTML, canonical et OpenGraph même origine/chemin, locale OG et Twitter Card ; vérifie les réponses réelles au lieu de s'appuyer exclusivement sur les métadonnées du code source.
+- **À exécuter** : `npx playwright test tests/localized-seo.spec.ts tests/legacy-404-accessibility.spec.ts` sur un serveur de test local ou une Preview déployée exacte-SHA ; puis axes WCAG, contrastes, qualité complète, BetterLeaks, SAST et ZAP. Ne pas lancer ZAP hors Preview Vercel protégée ou en production.
+- La 404 HTML versionnée, la confidentialité des données familiales et le fallback Google Translate ne changent pas. Aucun merge automatique.
+
 ### Actualisation P2–P4 — PR #233 et Site Alban #230/#231 (17 octobre 2026)
 
 - Les **10 dernières PR créées** de `nabla-site-alban` sont désormais **#231, #230, #229, #228, #227, #226, #224, #222, #221 et #220**. Le tableau historique ci-dessous est un précédent relevé ; le lot courant ajoute #230/#231 et sort #219/#217 de la fenêtre de dix.
