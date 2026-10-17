@@ -14,6 +14,8 @@ test.describe("P3/P4 — canonical and social metadata on real localized routes"
       expect(response?.status()).toBe(200);
       await expect(page.locator("html")).toHaveAttribute("lang", htmlLang);
 
+      // Duplicate canonicals can silently split SEO signals across locales.
+      await expect(page.locator('link[rel="canonical"]')).toHaveCount(1);
       const canonical = await page
         .locator('link[rel="canonical"]')
         .getAttribute("href");
@@ -38,6 +40,30 @@ test.describe("P3/P4 — canonical and social metadata on real localized routes"
         "content",
         "summary_large_image",
       );
+
+      // Verify Next's *rendered* hreflang tags, not only the metadata helper.
+      const alternatePaths = {
+        fr: "/contact",
+        en: "/en/contact",
+        de: "/de/contact",
+        no: "/no/contact",
+        "x-default": "/contact",
+      };
+      const alternates = page.locator('link[rel="alternate"][hreflang]');
+      await expect(alternates).toHaveCount(Object.keys(alternatePaths).length);
+      for (const [language, expectedPath] of Object.entries(alternatePaths)) {
+        const link = page.locator(
+          `link[rel="alternate"][hreflang="${language}"]`,
+        );
+        await expect(link).toHaveCount(1);
+        const href = await link.getAttribute("href");
+        expect(href).toBeTruthy();
+        const target = new URL(href!, page.url());
+        expect(target.origin).toBe("https://bababou.com");
+        expect(target.pathname).toBe(expectedPath);
+        expect(target.search).toBe("");
+        expect(target.hash).toBe("");
+      }
     });
   }
 });
