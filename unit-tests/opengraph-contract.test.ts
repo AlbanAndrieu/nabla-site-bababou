@@ -48,7 +48,10 @@ test("Next social metadata is centralized and excludes the homepage-only identit
   assert.match(helper, /de: "de_DE"/);
   assert.match(helper, /no: "nb_NO"/);
   assert.match(helper, /satisfies Record<AppLocale, string>/);
-  assert.match(helper, /SITE_COPY\[locale as SiteCopyLocale\] \?\? SITE_COPY\.en/);
+  assert.match(helper, /return SITE_COPY\[locale\]/);
+  assert.match(helper, /satisfies Record<AppLocale/);
+  assert.match(helper, /de: \{/);
+  assert.match(helper, /no: \{/);
   assert.match(helper, /alternateLocale/);
   assert.match(helper, /siteName: "Bababou"/);
   assert.match(helper, /secureUrl: socialImage/);

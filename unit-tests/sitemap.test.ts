@@ -156,3 +156,25 @@ test("legacy sitemap URLs stay canonical and same-origin", () => {
   );
   assert.equal(normalizeLegacyLocation("not a valid URL"), null);
 });
+
+test("SEO pages have unique canonical URLs and complete same-origin hreflang", async () => {
+  const entries = await sitemap();
+  const urls = entries.map((entry) => entry.url);
+  assert.equal(new Set(urls).size, urls.length);
+
+  for (const entry of entries.filter((item) => item.alternates?.languages)) {
+    const languages = entry.alternates?.languages;
+    assert.ok(languages);
+    const canonical = new URL(entry.url);
+    assert.equal(canonical.origin, "https://bababou.com");
+    assert.equal(languages["x-default"], entry.url);
+    for (const locale of ["fr", "en", "de", "no"] as const) {
+      const alternate = languages[locale];
+      assert.ok(alternate, `Missing ${locale} alternate for ${entry.url}`);
+      const parsed = new URL(alternate);
+      assert.equal(parsed.origin, canonical.origin);
+      assert.equal(parsed.search, "");
+      assert.equal(parsed.hash, "");
+    }
+  }
+});

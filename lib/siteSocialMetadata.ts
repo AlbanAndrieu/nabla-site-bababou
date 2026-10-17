@@ -24,7 +24,23 @@ const SITE_COPY = {
       "A family site created by Bababou’s father to preserve messages, make reconnection easier and document the family story.",
     imageAlt: "A heartfelt message from Bababou’s father to his daughter.",
   },
-} as const;
+  de: {
+    title: "Bababou — Familiennachrichten, Kontakt und Geschichte",
+    description:
+      "Eine Familienwebsite, auf der Bababous Vater Nachrichten bewahrt, die Kontaktaufnahme erleichtert und die Familiengeschichte dokumentiert.",
+    imageAlt: "Eine liebevolle Nachricht von Bababous Vater an seine Tochter.",
+  },
+  no: {
+    title: "Bababou — Familiemeldinger, kontakt og historie",
+    description:
+      "Et familienettsted der Bababous far tar vare på meldinger, gjør det lettere å ta kontakt igjen og dokumenterer familiens historie.",
+    imageAlt: "En kjærlig melding fra Bababous far til datteren.",
+  },
+} as const satisfies Record<AppLocale, {
+  title: string;
+  description: string;
+  imageAlt: string;
+}>;
 
 const OPEN_GRAPH_LOCALE = {
   fr: "fr_FR",
@@ -33,13 +49,10 @@ const OPEN_GRAPH_LOCALE = {
   no: "nb_NO",
 } as const satisfies Record<AppLocale, string>;
 
-type SiteCopyLocale = keyof typeof SITE_COPY;
-
 function siteCopy(locale: AppLocale) {
-  // Homepage/disclosure copy remains owner-controlled. New first-class locales
-  // reuse the already-reviewed English fallback until the homepage itself is
-  // explicitly migrated and translated.
-  return SITE_COPY[locale as SiteCopyLocale] ?? SITE_COPY.en;
+  // Social metadata is localized independently of the legacy homepage.
+  // The protected homepage content stays owner-controlled until P3 parity.
+  return SITE_COPY[locale];
 }
 
 function socialMetadata(

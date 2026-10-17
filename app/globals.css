@@ -145,3 +145,19 @@
     padding-inline: var(--ui-space-md);
   }
 }
+
+/* P2: the historic 404 markup stays untouched; only its Next rendering gets
+ * a high-visibility keyboard focus ring and reduced-motion accommodation. */
+html[data-nabla-app="next-global-not-found"] a:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 4px;
+  box-shadow: 0 0 0 6px #111;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-nabla-app="next-global-not-found"] h1,
+  html[data-nabla-app="next-global-not-found"] h1::after,
+  html[data-nabla-app="next-global-not-found"] .cloak {
+    animation: none;
+  }
+}
