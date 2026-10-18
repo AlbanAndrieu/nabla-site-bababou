@@ -159,7 +159,10 @@ test("npm SCA blocks production HIGH/CRITICAL and reports all dev-tool debt", as
     /if: github\.event_name != 'pull_request' \|\| github\.event\.pull_request\.draft == false/,
   );
   assert.match(prod, /run: npm audit --omit=dev --audit-level=high/);
-  assert.doesNotMatch(prod, /continue-on-error|dependencies ==|SNYK_TOKEN|--offline/);
+  assert.doesNotMatch(
+    prod,
+    /continue-on-error|dependencies ==|SNYK_TOKEN|--offline/,
+  );
 
   const full = workflow.slice(fullStart, installStart);
   assert.match(full, /npm audit --json > "\$report"/);
@@ -167,6 +170,9 @@ test("npm SCA blocks production HIGH/CRITICAL and reports all dev-tool debt", as
   assert.match(full, /critical > 0/);
   assert.match(full, /exit 1/);
   assert.match(full, /GITHUB_STEP_SUMMARY/);
-  assert.doesNotMatch(full, /continue-on-error|dependencies ==|SNYK_TOKEN|--omit=dev|--offline/);
+  assert.doesNotMatch(
+    full,
+    /continue-on-error|dependencies ==|SNYK_TOKEN|--omit=dev|--offline/,
+  );
   assert.match(workflow, /name: Run Snyk vulnerability scan/);
 });
