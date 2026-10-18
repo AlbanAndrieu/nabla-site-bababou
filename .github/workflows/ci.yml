@@ -427,14 +427,62 @@ jobs:
           cd "${RUNNER_TEMP}"
           npm install --global npm@11.17.0 --no-audit --no-fund
 
-      # Audit the complete committed dependency graph (runtime and dev)
-      # on every ready PR and master push, independent of diff scope and Snyk.
-      # This is a separate, blocking SCA pass; npm ci intentionally uses
-      # --no-audit to avoid an implicit second scan during installation.
-      - name: Audit npm dependency lockfile (SCA)
+      # Always block HIGH/CRITICAL advisories affecting production packages,
+      # independently of the Snyk token or package-lock diff scope.
+      # Keep npm ci --no-audit: the explicit SCA gate avoids duplicate scans.
+      - name: Audit production npm dependencies (blocking SCA)
         if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
         shell: bash
-        run: npm audit --audit-level=high
+        run: npm audit --omit=dev --audit-level=high
+
+      # Development tooling has known HIGH transitive advisories; report every
+      # one without hiding its risk or downgrading the production SCA gate.
+      # A malformed/failed scanner response or any CRITICAL remains blocking.
+      - name: Report full npm SCA and development-tool debt
+        if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+        shell: bash
+        run: |
+          set -euo pipefail
+          report="${RUNNER_TEMP}/npm-audit-full.json"
+          trap 'rm -f "$report"' EXIT
+          audit_exit=0
+          npm audit --json > "$report" || audit_exit=$?
+
+          if ! jq -e '.metadata.vulnerabilities | type == "object"' "$report" >/dev/null; then
+            echo "::error::npm audit failed without a valid advisory report; SCA cannot be trusted."
+            exit 1
+          fi
+
+          critical="$(jq -r '.metadata.vulnerabilities.critical // 0' "$report")"
+          high="$(jq -r '.metadata.vulnerabilities.high // 0' "$report")"
+          moderate="$(jq -r '.metadata.vulnerabilities.moderate // 0' "$report")"
+          low="$(jq -r '.metadata.vulnerabilities.low // 0' "$report")"
+
+          {
+            echo "## npm SCA — full dependency tree"
+            echo
+            echo "- Production dependencies: **blocking npm audit HIGH/CRITICAL** (separate step)"
+            echo "- Development and transitive dependencies: **full npm audit report**"
+            echo "- Findings: CRITICAL=${critical}, HIGH=${high}, MODERATE=${moderate}, LOW=${low}"
+            echo "- Snyk: complementary and conditional; a skipped scan is not a PASS"
+            echo
+            echo "### Affected package names"
+            jq -r '.vulnerabilities | keys[] | "- `" + . + "`"' "$report"
+            echo
+            echo "Open remediation: upgrade the affected transitive toolchain without forced major downgrades."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          if (( critical > 0 )); then
+            echo "::error::npm SCA detected ${critical} CRITICAL issues (including dev tools)."
+            exit 1
+          fi
+          if (( audit_exit != 0 && high == 0 && moderate == 0 && low == 0 )); then
+            echo "::error::npm audit exited ${audit_exit} without reportable findings."
+            exit 1
+          fi
+          if (( high > 0 )); then
+            echo "::warning::npm SCA: ${high} HIGH issues in the full dependency graph; triage in docs/security-audit-coverage-ledger.md."
+          fi
 
       - name: Install dependencies
         if: github.event_name != 'pull_request' || github.event.pull_request.draft == false

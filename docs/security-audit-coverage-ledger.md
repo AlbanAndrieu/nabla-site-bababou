@@ -16,7 +16,8 @@ Une lecture de code n'est ni un scan exécuté ni une preuve d'absence de vulné
 | Confidentialité | `scripts/privacy-gate.ts`, `scripts/publication-privacy-gate.ts` | reviewed-source-only | Contrôles de publication examinés ; aucun document privé ouvert. | P0 |
 | BetterLeaks | staged / worktree / historique | not-run | Aucun scan exécuté dans cette reprise ; ne pas remplacer par Gitleaks. | P1 |
 | SAST | Semgrep (sources modifiées) | verified-external | Job Quality #39084115761 (SHA `9c56f1d`) : Semgrep `success` ; pas d'analyse exhaustive du dépôt. | P1 |
-| SCA | npm audit (lockfile complet) | implemented-not-verified | Gate `npm audit --audit-level=high` ajouté à la CI sur toute PR non draft ; validation sur le nouvel HEAD attendue. Snyk reste conditionnel, sans claim PASS s'il est skipped. | P0 |
+| SCA production | npm audit --omit=dev --audit-level=high | implemented-not-verified | Bloquant à chaque PR non draft/push master, même sans changement de lockfile. CI sur nouveau HEAD à vérifier ; scan distinct de Snyk. | P0 |
+| SCA complet | npm audit --json (dev inclus) | verified-external-with-debt | Premier run #39156263209 : **13 vulnérabilités, 11 HIGH + 2 MODERATE**, causant un échec du gate full ; politique affinée pour reporter toutes les vulnérabilités dev, bloquer CRITICAL et scanner la production strictement. Voir dette ci-dessous. | P1 |
 | E2E | Playwright | verified-external | Preview #39084318971 sur `9c56f1d` : 191 tests réussis, incluant le contrôle d'exposition technique. | P2 |
 | DAST preview | OWASP ZAP | verified-external | Preview #39084318959 sur `9c56f1d` : 0 FAIL, 9 catégories WARN, sans suppression des règles. | P1 |
 | Audit Cloudflare complet | six phases / `findings.json` | not-run | Aucun rapport complet produit ni finding confirmé par le skill. | P1 |
@@ -49,3 +50,12 @@ Source : [scan Preview #39080516029](https://github.com/AlbanAndrieu/nabla-site-
 - **10038/10098/10027** : CSP absente, CORS et commentaires suspects ; identifier les réponses et occurrences du rapport ; définir un déploiement progressif CSP `Report-Only` sans invalider les styles et scripts legacy, puis vérifier absence de données sensibles exposées.
 
 Aucun `WARN` n'est passé silencieusement à `IGNORE`. Les preuves d'intégrité Cloudflare, les six phases d'audit, BetterLeaks sur un vrai historique Git et les contrôles locaux L3 restent distincts et ouverts.
+
+## Dette SCA avérée — 18 octobre 2026
+
+[Run CI #39156263209](https://github.com/AlbanAndrieu/nabla-site-bababou/actions/runs/39156263209), SHA `fd8bd054f62a4a1d829613b9480b8e673ae4c732` : `npm audit --audit-level=high` a remonté **13 vulnérabilités (11 HIGH, 2 MODERATE)**. Ne pas assimiler ces alertes à 13 exploitations indépendantes : `npm audit` compte notamment des packages parents impactés par une même dépendance.
+
+- Chaîne `opencommit` (dev) → `@actions/github` / `@actions/http-client` / `undici` / `@fastify/busboy` et `axios` : vulnérabilités HTTP, déni de service et injection selon les avis émis. Évaluer suppression de l'outil inutilisé ou montée de version compatible avec régénération complète du lockfile.
+- Chaîne de lint/formatage `eslint-config-next`, `stylelint` → `fast-glob` / `globby` / `micromatch` / `braces` : risque de déni de service à partir de motifs malveillants. `npm audit fix --force` proposait une **régression Stylelint 7.7.0** : **refusée** faute de compatibilité. Étudier les versions patchées et `overrides` validés, pas de changement d'intégrité ou de résolution manuelle non vérifiée.
+- **Contrat de risque** : audit de production `--omit=dev --audit-level=high` obligatoire et bloquant (HIGH/CRITICAL) ; audit complet dev inclus sur chaque PR non draft et sur master, avec noms et nombres des packages impactés dans `GITHUB_STEP_SUMMARY`, erreur de scanner ou CRITICAL toujours bloquants. Les HIGH de dev restent une dette explicitement non résolue et **non éligible au qualificatif "full SCA PASS"**.
+- À clôturer après remédiation vérifiée : 0 HIGH dans le rapport complet, lockfile régénéré par npm réel, tests unitaires, build, SAST et Preview conservés ; **aucun `--force` et aucun contournement des scans existants**.

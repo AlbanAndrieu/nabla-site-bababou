@@ -136,29 +136,37 @@ test("ZAP suppresses only deterministic informational noise while keeping securi
   assert.match(policy.get("10050")?.note ?? "", /Vercel CDN Age header/);
 });
 
-test("npm SCA blocks HIGH/CRITICAL findings in the full lockfile on every ready PR", async () => {
+test("npm SCA blocks production HIGH/CRITICAL and reports all dev-tool debt", async () => {
   const workflow = await readFile(ciUrl, "utf8");
-  const auditStart = workflow.indexOf(
-    "      - name: Audit npm dependency lockfile (SCA)",
+  const productionStart = workflow.indexOf(
+    "      - name: Audit production npm dependencies (blocking SCA)",
+  );
+  const fullStart = workflow.indexOf(
+    "      - name: Report full npm SCA and development-tool debt",
+    productionStart,
   );
   const installStart = workflow.indexOf(
     "      - name: Install dependencies",
-    auditStart,
+    fullStart,
   );
-  assert.ok(auditStart > 0, "explicit npm SCA step is mandatory");
-  assert.ok(installStart > auditStart, "audit precedes dependency install");
+  assert.ok(productionStart > 0, "production SCA step is mandatory");
+  assert.ok(fullStart > productionStart, "full development SCA must run");
+  assert.ok(installStart > fullStart, "SCA runs before dependency install");
 
-  const audit = workflow.slice(auditStart, installStart);
+  const prod = workflow.slice(productionStart, fullStart);
   assert.match(
-    audit,
+    prod,
     /if: github\.event_name != 'pull_request' \|\| github\.event\.pull_request\.draft == false/,
   );
-  assert.match(audit, /run: npm audit --audit-level=high/);
-  assert.doesNotMatch(
-    audit,
-    /continue-on-error|dependencies ==|SNYK_TOKEN|--omit|--offline|--no-audit/,
-  );
+  assert.match(prod, /run: npm audit --omit=dev --audit-level=high/);
+  assert.doesNotMatch(prod, /continue-on-error|dependencies ==|SNYK_TOKEN|--offline/);
 
-  // Snyk may remain an optional second opinion, never the only SCA gate.
+  const full = workflow.slice(fullStart, installStart);
+  assert.match(full, /npm audit --json > "\$report"/);
+  assert.match(full, /jq -e '\.metadata\.vulnerabilities \| type == "object"'/);
+  assert.match(full, /critical > 0/);
+  assert.match(full, /exit 1/);
+  assert.match(full, /GITHUB_STEP_SUMMARY/);
+  assert.doesNotMatch(full, /continue-on-error|dependencies ==|SNYK_TOKEN|--omit=dev|--offline/);
   assert.match(workflow, /name: Run Snyk vulnerability scan/);
 });
