@@ -140,11 +140,9 @@ function validateNuclei(raw) {
   return raw;
 }
 async function upload(report, type, title, engagementId, token) {
-  const file = new File(
-    [JSON.stringify(report)],
-    "approved-findings.json",
-    { type: "application/json" },
-  );
+  const file = new File([JSON.stringify(report)], "approved-findings.json", {
+    type: "application/json",
+  });
   const form = new FormData();
   form.set("scan_type", type);
   form.set("engagement", engagementId);
@@ -214,7 +212,9 @@ async function main() {
     const engagement = process.env.DEFECTDOJO_ENGAGEMENT_ID ?? "";
     const token = process.env.DEFECTDOJO_API_TOKEN ?? "";
     if (!/^[1-9][0-9]*$/.test(engagement) || !token) {
-      throw new Error("Scoped DefectDojo token and numeric engagement ID required");
+      throw new Error(
+        "Scoped DefectDojo token and numeric engagement ID required",
+      );
     }
     if (count(trivy) > 0) {
       await upload(
