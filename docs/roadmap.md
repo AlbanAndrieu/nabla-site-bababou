@@ -1,3 +1,11 @@
+## Sécurité — contrôles PR rapides et audits master approfondis (18 octobre 2026)
+
+- **PR, bloquant** : BetterLeaks v1.9.0 audite les commits `base..HEAD` (distinct du hook staged, vide après checkout) ; Semgrep SAST sur fichiers modifiés ; npm audit production HIGH/CRITICAL ; contrôle de code, tests, Playwright et ZAP baseline existants. Critères : aucun secret détecté ou vulnérabilité CRITICAL/HIGH de production ; les vulnérabilités HIGH déjà présentes dans la toolchain dev restent documentées, non « PASS full SCA ».
+- **Master, hebdomadaire + déclenchement manuel** : `.github/workflows/security-deep.yml` : Trivy 0.74 fs vulnérabilités+licences+misconfigurations et SBOM CycloneDX avec dépendances de développement ; CodeQL JS/TS `security-extended` avec SARIF privé et sans imposer GitHub Code Scanning ; Semgrep full SAST ; Nuclei templates HTTP medium+ non intrusifs à 2 requêtes/s maximum (parité `nabla-site-alban`). Artifacts privés, expiration 3 jours, jamais de raw JSONL Nuclei.
+- **DAST budgets** : ZAP passif Preview sur chaque déploiement nécessaire ; ZAP passif production sur déploiements et mardi/vendredi (au lieu de 7 nuits/semaine). Scan actif potentiellement destructif uniquement sur Preview explicitement sélectionnée, jamais automatique sur production.
+- **DefectDojo** : collecte limitée aux artefacts `master` approuvés via un collecteur **interne** et authentification GitHub à lecture restreinte ; `defectdojo.int.albandrieu.com` ne reçoit jamais les artefacts PR, corpus familial, captures HTTP brutes, logs BetterLeaks ou CodeQL extrait sans revue. Préparer explicitement les formats et comptes de service côté `nabla-compose` avant activation ; aucun port nouveau exposé.
+- **Limite de preuve** : ce lot met en place la CI, ne démontre pas à lui seul l'exécution de CodeQL/Nuclei/Trivy fs ni l'ingestion effective dans DefectDojo. Vérifier le nouveau HEAD, le bootstrap et les résultats de `master` avant de déclarer ces contrôles opérationnels.
+
 # Roadmap — nabla-site-bababou
 
 > Source unique des travaux ouverts **et du contexte de reprise**. Les diagnostics restent dans [`docs/operations.md`](operations.md), les règles agent dans [`AGENTS.md`](../AGENTS.md), l'historique détaillé dans Git/PR.

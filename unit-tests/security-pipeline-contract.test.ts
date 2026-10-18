@@ -176,3 +176,41 @@ test("npm SCA blocks production HIGH/CRITICAL and reports all dev-tool debt", as
   );
   assert.match(workflow, /name: Run Snyk vulnerability scan/);
 });
+
+test("Security deep scans run on master only and keep raw HTTP evidence private", async () => {
+  const workflow = await readFile(
+    new URL("../.github/workflows/security-deep.yml", import.meta.url),
+    "utf8",
+  );
+  assert.match(workflow, /schedule:/);
+  assert.match(workflow, /workflow_dispatch:/);
+  assert.doesNotMatch(workflow, /^\s*pull_request:/m);
+  assert.match(workflow, /github.ref == 'refs\/heads\/master'/);
+  assert.match(workflow, /scanners: vuln,misconfig,license/);
+  assert.match(workflow, /TRIVY_INCLUDE_DEV_DEPS: "true"/);
+  assert.match(workflow, /format: cyclonedx/);
+  assert.match(workflow, /languages: javascript-typescript/);
+  assert.match(workflow, /queries: security-extended/);
+  assert.match(workflow, /upload: never/);
+  assert.match(workflow, /Full source Semgrep with SARIF/);
+  assert.match(workflow, /-rl 2 -c 1 -timeout 5 -retries 0/);
+  assert.match(workflow, /-etags dos,fuzz,bruteforce,intrusive/);
+  assert.doesNotMatch(workflow, /upload-artifact[\s\S]*?path: .*nuclei.jsonl/);
+  assert.match(workflow, /retention-days: 3/g);
+});
+test("Production DAST schedule has bounded cadence (other runs on release)", async () => {
+  const workflow = await readFile(productionDastUrl, "utf8");
+  assert.match(workflow, /cron: "23 3 \* \* 2,5"/);
+  assert.match(workflow, /repository_dispatch:/);
+});
+test("PR BetterLeaks scans committed SHA diff, not the empty staging index", async () => {
+  const workflow = await readFile(ciUrl, "utf8");
+  assert.match(workflow, /name: BetterLeaks committed PR diff \(blocking\)/);
+  assert.match(workflow, /go install github.com\/betterleaks\/betterleaks@v1\.9\.0/);
+  assert.match(workflow, /--log-opts="\$\{BASE_SHA\}\.\.\$\{HEAD_SHA\}"/);
+  assert.match(workflow, /--config \.betterleaks\.toml --redact/);
+  assert.doesNotMatch(
+    workflow.split("name: BetterLeaks committed PR diff")[1]?.split("      - name:")[0] ?? "",
+    /continue-on-error|--staged|\[skip ci\]/,
+  );
+});

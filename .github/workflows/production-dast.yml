@@ -5,7 +5,8 @@ on:
     types:
       - vercel.deployment.success
   schedule:
-    - cron: "23 3 * * *"
+    # Production baseline remains on deployments; twice-weekly background scan caps DAST minutes.
+    - cron: "23 3 * * 2,5"
   workflow_dispatch:
     inputs:
       git_sha:

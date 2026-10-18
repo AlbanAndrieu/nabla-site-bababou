@@ -209,6 +209,26 @@ jobs:
         if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
         run: python -m pip install --disable-pip-version-check --quiet pre-commit==4.6.2
 
+      # A pre-commit --staged scan is empty after actions/checkout.
+      # Inspect every commit introduced by the PR against its exact base,
+      # including secrets committed in earlier PR commits.
+      - name: BetterLeaks committed PR diff (blocking)
+        if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
+        shell: bash
+        env:
+          BASE_SHA: ${{ steps.current-heads.outputs.base-sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$HEAD_SHA"
+          git cat-file -e "${BASE_SHA}^{commit}"
+          command -v go >/dev/null || { echo "::error::Go required for BetterLeaks"; exit 1; }
+          GOBIN="${RUNNER_TEMP}/betterleaks-bin" go install github.com/betterleaks/betterleaks@v1.9.0
+          "${RUNNER_TEMP}/betterleaks-bin/betterleaks" git . \
+            --log-opts="${BASE_SHA}..${HEAD_SHA}" \
+            --config .betterleaks.toml --redact
+          echo "✅ BetterLeaks: committed PR diff scanned (no credential validation or network exfiltration)"
+
       - name: Run canonical changed-file quality gate before network/SAST/npm bootstrap
         id: canonical-quality-gate
         if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
