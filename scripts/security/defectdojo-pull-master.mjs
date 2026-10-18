@@ -140,9 +140,13 @@ function validateNuclei(raw) {
   return raw;
 }
 async function upload(report, type, title, engagementId, token) {
-  const file = new globalThis.File([JSON.stringify(report)], "approved-findings.json", {
-    type: "application/json",
-  });
+  const file = new globalThis.File(
+    [JSON.stringify(report)],
+    "approved-findings.json",
+    {
+      type: "application/json",
+    },
+  );
   const form = new globalThis.FormData();
   form.set("scan_type", type);
   form.set("engagement", engagementId);
