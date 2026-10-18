@@ -140,10 +140,10 @@ function validateNuclei(raw) {
   return raw;
 }
 async function upload(report, type, title, engagementId, token) {
-  const file = new File([JSON.stringify(report)], "approved-findings.json", {
+  const file = new globalThis.File([JSON.stringify(report)], "approved-findings.json", {
     type: "application/json",
   });
-  const form = new FormData();
+  const form = new globalThis.FormData();
   form.set("scan_type", type);
   form.set("engagement", engagementId);
   form.set("test_title", title);
@@ -156,7 +156,7 @@ async function upload(report, type, title, engagementId, token) {
     headers: { Authorization: `Token ${token}` },
     body: form,
     redirect: "error",
-    signal: AbortSignal.timeout(30000),
+    signal: globalThis.AbortSignal.timeout(30000),
   });
   if (!response.ok)
     throw new Error(`DefectDojo import failed (HTTP ${response.status})`);
