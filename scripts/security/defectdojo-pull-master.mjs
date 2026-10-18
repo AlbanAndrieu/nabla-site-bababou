@@ -1,5 +1,5 @@
 import { spawnSync } from "node:child_process";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -7,10 +7,14 @@ const repo = "AlbanAndrieu/nabla-site-bababou";
 const dojoUrl = "https://defectdojo.int.albandrieu.com/api/v2/reimport-scan/";
 const mode = process.argv[2] ?? "--check";
 if (!["--check", "--collect", "--ingest"].includes(mode)) {
-  throw new Error("Usage: node defectdojo-pull-master.mjs [--check|--collect|--ingest]");
+  throw new Error(
+    "Usage: node defectdojo-pull-master.mjs [--check|--collect|--ingest]",
+  );
 }
 if (!process.env.GH_TOKEN) {
-  throw new Error("GH_TOKEN is required (fine-grained Actions:read on Bababou only)");
+  throw new Error(
+    "GH_TOKEN is required (fine-grained Actions:read on Bababou only)",
+  );
 }
 function gh(args) {
   const result = spawnSync("gh", args, {
@@ -49,14 +53,16 @@ function recentMaster(workflow) {
       Number.isInteger(item.databaseId) &&
       /^[0-9a-f]{40}$/.test(item.headSha),
   );
-  if (!run) throw new Error(`NOT_READY: no successful master run for ${workflow}`);
+  if (!run)
+    throw new Error(`NOT_READY: no successful master run for ${workflow}`);
   return run;
 }
 export function sanitizeTrivy(raw) {
   if (!Array.isArray(raw?.Results)) throw new Error("Invalid Trivy report");
   const vulnerabilities = raw.Results.filter((entry) =>
     String(entry.Target ?? "").includes("package-lock.json"),
-  ).flatMap((entry) => entry.Vulnerabilities ?? [])
+  )
+    .flatMap((entry) => entry.Vulnerabilities ?? [])
     .filter((item) => ["HIGH", "CRITICAL"].includes(item.Severity))
     .map((item) => ({
       VulnerabilityID: String(item.VulnerabilityID ?? "").slice(0, 90),
@@ -69,12 +75,14 @@ export function sanitizeTrivy(raw) {
   return {
     SchemaVersion: 2,
     Results: vulnerabilities.length
-      ? [{
-          Target: "package-lock.json",
-          Class: "lang-pkgs",
-          Type: "npm",
-          Vulnerabilities: vulnerabilities,
-        }]
+      ? [
+          {
+            Target: "package-lock.json",
+            Class: "lang-pkgs",
+            Type: "npm",
+            Vulnerabilities: vulnerabilities,
+          },
+        ]
       : [],
   };
 }
@@ -101,10 +109,12 @@ export function sanitizeZap(raw) {
   return {
     version: "2.1.0",
     $schema: "https://json.schemastore.org/sarif-2.1.0.json",
-    runs: [{
-      tool: { driver: { name: "ZAP", rules: [...rules.values()] } },
-      results,
-    }],
+    runs: [
+      {
+        tool: { driver: { name: "ZAP", rules: [...rules.values()] } },
+        results,
+      },
+    ],
   };
 }
 function validateNuclei(raw) {
@@ -116,7 +126,11 @@ function validateNuclei(raw) {
     throw new Error("Unexpected SARIF tool or results");
   }
   for (const result of run.results) {
-    if (Object.keys(result).some((key) => !["ruleId", "level", "message"].includes(key))) {
+    if (
+      Object.keys(result).some(
+        (key) => !["ruleId", "level", "message"].includes(key),
+      )
+    ) {
       throw new Error("Nuclei result contains unapproved data");
     }
     if (/https?:\/\//i.test(String(result.message?.text ?? ""))) {
@@ -146,13 +160,18 @@ async function upload(report, type, title, engagementId, token) {
     redirect: "error",
     signal: AbortSignal.timeout(30000),
   });
-  if (!response.ok) throw new Error(`DefectDojo import failed (HTTP ${response.status})`);
-  console.log(`DefectDojo accepted ${title}; verify server-side parser and deduplication`);
+  if (!response.ok)
+    throw new Error(`DefectDojo import failed (HTTP ${response.status})`);
+  console.log(
+    `DefectDojo accepted ${title}; verify server-side parser and deduplication`,
+  );
 }
 async function main() {
   const deep = recentMaster("security-deep.yml");
   const zap = recentMaster("production-dast.yml");
-  console.log(`Approved master evidence: deep=${deep.databaseId}, ZAP=${zap.databaseId}`);
+  console.log(
+    `Approved master evidence: deep=${deep.databaseId}, ZAP=${zap.databaseId}`,
+  );
   if (mode === "--check") return;
 
   const dir = mkdtempSync(join(tmpdir(), "bababou-dojo-"));
@@ -181,7 +200,10 @@ async function main() {
     const zapReport = sanitizeZap(
       download(zap, "zap-production-report", "report_json.json"),
     );
-    const count = (report) => report.runs?.[0]?.results?.length ?? report.Results?.[0]?.Vulnerabilities?.length ?? 0;
+    const count = (report) =>
+      report.runs?.[0]?.results?.length ??
+      report.Results?.[0]?.Vulnerabilities?.length ??
+      0;
     console.log(
       `Sanitized allowlist: Trivy=${count(trivy)} Nuclei=${count(nuclei)} ZAP=${count(zapReport)}; no raw evidence exported`,
     );
@@ -195,13 +217,31 @@ async function main() {
       throw new Error("Scoped DefectDojo token and numeric engagement ID required");
     }
     if (count(trivy) > 0) {
-      await upload(trivy, "Trivy Scan", "Bababou npm HIGH/CRITICAL", engagement, token);
+      await upload(
+        trivy,
+        "Trivy Scan",
+        "Bababou npm HIGH/CRITICAL",
+        engagement,
+        token,
+      );
     }
     if (process.env.DEFECTDOJO_ALLOW_NUCLEI === "yes" && count(nuclei) > 0) {
-      await upload(nuclei, "SARIF", "Bababou Nuclei safe DAST", engagement, token);
+      await upload(
+        nuclei,
+        "SARIF",
+        "Bababou Nuclei safe DAST",
+        engagement,
+        token,
+      );
     }
     if (process.env.DEFECTDOJO_ALLOW_ZAP === "yes" && count(zapReport) > 0) {
-      await upload(zapReport, "SARIF", "Bababou ZAP safe DAST", engagement, token);
+      await upload(
+        zapReport,
+        "SARIF",
+        "Bababou ZAP safe DAST",
+        engagement,
+        token,
+      );
     }
   } finally {
     rmSync(dir, { recursive: true, force: true });
@@ -210,7 +250,9 @@ async function main() {
 const invoked = process.argv[1]?.endsWith("defectdojo-pull-master.mjs");
 if (invoked) {
   main().catch(() => {
-    console.error("DefectDojo collector failed; no raw GitHub report or token disclosed");
+    console.error(
+      "DefectDojo collector failed; no raw GitHub report or token disclosed",
+    );
     process.exitCode = 1;
   });
 }
