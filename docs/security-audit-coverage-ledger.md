@@ -15,9 +15,10 @@ Une lecture de code n'est ni un scan exécuté ni une preuve d'absence de vulné
 | Routes API | `api/hello.js`, `app/__legacy-html-not-found__/route.ts` | reviewed-source-only | Réponse constante et 404 statique ; tests HTTP non rejoués ici. | P2 |
 | Confidentialité | `scripts/privacy-gate.ts`, `scripts/publication-privacy-gate.ts` | reviewed-source-only | Contrôles de publication examinés ; aucun document privé ouvert. | P0 |
 | BetterLeaks | staged / worktree / historique | not-run | Aucun scan exécuté dans cette reprise ; ne pas remplacer par Gitleaks. | P1 |
-| SAST | Semgrep | verified-external | Job Quality #39080339465 (SHA `021bc5b`) : étape Semgrep `success` ; n'est pas un audit manuel du code. | P1 |
-| E2E | Playwright | verified-external | Preview #39080515987 sur `021bc5b` : 190 tests réussis ; les prochains SHA doivent être revalidés. | P2 |
-| DAST preview | OWASP ZAP | verified-external | Preview #39080516029 sur `021bc5b` : 0 FAIL, 9 catégories WARN, sans suppression des règles. | P1 |
+| SAST | Semgrep (sources modifiées) | verified-external | Job Quality #39084115761 (SHA `9c56f1d`) : Semgrep `success` ; pas d'analyse exhaustive du dépôt. | P1 |
+| SCA | npm audit (lockfile complet) | implemented-not-verified | Gate `npm audit --audit-level=high` ajouté à la CI sur toute PR non draft ; validation sur le nouvel HEAD attendue. Snyk reste conditionnel, sans claim PASS s'il est skipped. | P0 |
+| E2E | Playwright | verified-external | Preview #39084318971 sur `9c56f1d` : 191 tests réussis, incluant le contrôle d'exposition technique. | P2 |
+| DAST preview | OWASP ZAP | verified-external | Preview #39084318959 sur `9c56f1d` : 0 FAIL, 9 catégories WARN, sans suppression des règles. | P1 |
 | Audit Cloudflare complet | six phases / `findings.json` | not-run | Aucun rapport complet produit ni finding confirmé par le skill. | P1 |
 
 ## Clôture

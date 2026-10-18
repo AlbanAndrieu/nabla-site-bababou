@@ -135,3 +135,30 @@ test("ZAP suppresses only deterministic informational noise while keeping securi
   assert.match(policy.get("10010")?.note ?? "", /NEXT_LOCALE/);
   assert.match(policy.get("10050")?.note ?? "", /Vercel CDN Age header/);
 });
+
+test("npm SCA blocks HIGH/CRITICAL findings in the full lockfile on every ready PR", async () => {
+  const workflow = await readFile(ciUrl, "utf8");
+  const auditStart = workflow.indexOf(
+    "      - name: Audit npm dependency lockfile (SCA)",
+  );
+  const installStart = workflow.indexOf(
+    "      - name: Install dependencies",
+    auditStart,
+  );
+  assert.ok(auditStart > 0, "explicit npm SCA step is mandatory");
+  assert.ok(installStart > auditStart, "audit precedes dependency install");
+
+  const audit = workflow.slice(auditStart, installStart);
+  assert.match(
+    audit,
+    /if: github\.event_name != 'pull_request' \|\| github\.event\.pull_request\.draft == false/,
+  );
+  assert.match(audit, /run: npm audit --audit-level=high/);
+  assert.doesNotMatch(
+    audit,
+    /continue-on-error|dependencies ==|SNYK_TOKEN|--omit|--offline|--no-audit/,
+  );
+
+  // Snyk may remain an optional second opinion, never the only SCA gate.
+  assert.match(workflow, /name: Run Snyk vulnerability scan/);
+});

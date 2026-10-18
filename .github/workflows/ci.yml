@@ -427,6 +427,15 @@ jobs:
           cd "${RUNNER_TEMP}"
           npm install --global npm@11.17.0 --no-audit --no-fund
 
+      # Audit the complete committed dependency graph (runtime and dev)
+      # on every ready PR and master push, independent of diff scope and Snyk.
+      # This is a separate, blocking SCA pass; npm ci intentionally uses
+      # --no-audit to avoid an implicit second scan during installation.
+      - name: Audit npm dependency lockfile (SCA)
+        if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+        shell: bash
+        run: npm audit --audit-level=high
+
       - name: Install dependencies
         if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
         id: install
