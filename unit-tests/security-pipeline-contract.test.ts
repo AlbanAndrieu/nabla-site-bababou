@@ -206,11 +206,15 @@ test("Production DAST schedule has bounded cadence (other runs on release)", asy
 test("PR BetterLeaks scans committed SHA diff, not the empty staging index", async () => {
   const workflow = await readFile(ciUrl, "utf8");
   assert.match(workflow, /name: BetterLeaks committed PR diff \(blocking\)/);
-  assert.match(workflow, /go install github.com\/betterleaks\/betterleaks@v1\.9\.0/);
+  assert.match(
+    workflow,
+    /go install github.com\/betterleaks\/betterleaks@v1\.9\.0/,
+  );
   assert.match(workflow, /--log-opts="\$\{BASE_SHA\}\.\.\$\{HEAD_SHA\}"/);
   assert.match(workflow, /--config \.betterleaks\.toml --redact/);
   assert.doesNotMatch(
-    workflow.split("name: BetterLeaks committed PR diff")[1]?.split("      - name:")[0] ?? "",
+    workflow.split("name: BetterLeaks committed PR diff")[1]?.split("      - name:")[0] ??
+      "",
     /continue-on-error|--staged|\[skip ci\]/,
   );
 });

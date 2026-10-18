@@ -27,12 +27,23 @@ for (const finding of findings) {
     rules.set(id, { id, shortDescription: { text: title } });
   }
   // Never transfer matched URLs, IPs, HTTP requests, responses or secrets.
-  results.push({ ruleId: id, level: levels[severity], message: { text: title } });
+  results.push({
+    ruleId: id,
+    level: levels[severity],
+    message: { text: title },
+  });
 }
 const report = {
   version: "2.1.0",
   $schema: "https://json.schemastore.org/sarif-2.1.0.json",
-  runs: [{ tool: { driver: { name: "Nuclei", rules: [...rules.values()] } }, results }],
+  runs: [
+    {
+      tool: { driver: { name: "Nuclei", rules: [...rules.values()] } },
+      results,
+    },
+  ],
 };
 writeFileSync(target, `${JSON.stringify(report, null, 2)}\n`);
-console.log(`Nuclei sanitized results: ${results.length}; original HTTP evidence retained only on ephemeral runner`);
+console.log(
+  `Nuclei sanitized results: ${results.length}; original HTTP evidence retained only on ephemeral runner`,
+);
