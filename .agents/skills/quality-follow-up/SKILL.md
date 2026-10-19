@@ -1,6 +1,9 @@
 ---
 name: quality-follow-up
-description: Mandatory Bababou completion and post-merge quality recovery. Use after CI/quality failures, after a PR was merged while a non-blocking check was red, and before declaring repository work complete.
+description: >-
+  Mandatory Bababou completion and post-merge quality recovery. Use after
+  CI/quality failures, after a PR was merged while a non-blocking check was red,
+  and before declaring repository work complete.
 ---
 
 # Quality follow-up and completion accounting
