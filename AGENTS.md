@@ -1,5 +1,14 @@
 # Repository agent policy
 
+## Fast path — minimum useful context
+
+- Start from the **current PR HEAD, base, CI failing step and scoped diff**. Read only matching files and **one relevant skill**; never preload all of `docs/roadmap.md`, all Next docs, all skills or full CI logs. This reduces input tokens without reducing validation.
+- Maintain a five-field handoff: `PR@SHA | blocker | changed files | evidence | next`. Reuse previously fetched identical content; fetch new material only after a changed SHA, status or hypothesis.
+- Diagnose `workflow → job → failed step → narrow log excerpt` once. Avoid loops polling the same in-progress job; resume verification only when action is possible or the run has changed.
+- Batch coherent edits into a single atomic commit, then run the **scope-selected** tests and CI. Prefer local tests and exact formatter patches, not GitHub Actions as an editor. Never weaken BetterLeaks, SAST, SCA, DAST, privacy or protected legacy gates.
+- Preserve the current checkout and all failing evidence. If only GitHub API is available, classify local execution `NOT_RUN`; do not invent local proof. Never merge automatically.
+
+
 Keep context small, changes scoped, and publication deterministic.
 
 ## Repository bootstrap
@@ -72,41 +81,9 @@ Default diagnostic output is bounded to 12 lines (`QUALITY_LOG_TAIL`, `P0_LOG_TA
 
 ## Tool and context efficiency
 
-GitHub, Vercel, and Playwright are first-class tools for this repository. Do not restrict their use when they are useful for implementation, deployment validation, debugging, or release verification. Token/context optimization must never reduce correctness, test coverage, deployment validation, or incident diagnosis.
+GitHub, Vercel and Playwright remain first-class tools. Prefer targeted connector discovery and previously fetched exact-SHA evidence. Inspect workflow/status → failing job → failing step → relevant logs; request full logs/artifacts only for unresolved failures. Never repeatedly poll unchanged CI/Preview or create one commit per API file edit. Respect `scripts/ci-scope.sh` and the existing local-first proof before publication; Dagger remains opt-in only, never an unreviewed replacement of the canonical gate.
 
-To avoid unnecessary tool-schema, CI and response overhead:
-
-1. Prefer targeted GitHub and Vercel tool discovery over loading broad connector schemas.
-2. Reuse already discovered tool functions and previously returned response resources during the same task.
-3. Prefer specialized GitHub/Vercel operations and targeted file fragments, diffs, statuses, and logs over large generic API responses.
-4. Inspect CI progressively: workflow/status → failing job → failing step → relevant logs or artifact.
-5. Fetch Playwright reports, traces, and screenshots when they are useful for validation or failure diagnosis rather than unconditionally.
-6. Avoid repeatedly polling unchanged workflow or deployment state; re-check when the result can materially change the next action.
-7. Keep iterative PRs draft until the local publication checkpoint is ready; draft Quality is Git-preflight-only.
-8. Let `scripts/ci-scope.sh` keep maintenance-only changes on the lightweight CI path. Do not force Semgrep, Snyk, Next builds or Vercel Previews for files that the classifier explicitly treats as quality/orchestration maintenance.
-9. Keep output retrieval focused, but escalate to full logs/artifacts whenever narrower evidence is insufficient.
-
-Dagger CI is currently an **opt-in spike**, not the canonical gate. Use the shared
-`scripts/dagger-ci.sh` / `just dagger-*` targets only when evaluating the spike.
-Do not expose the host Docker socket, private publication workspaces or local secret
-files to Dagger. Do not claim full-quality parity until the remaining Docker-backed
-pre-commit hooks have been removed or replaced.
-
-Context7 is an optional documentation MCP for APIs that change faster than the model's
-training data. Prefer repository-local/versioned documentation first (especially the
-Next.js docs shipped in `node_modules/next/dist/docs/`). Use Context7 to verify current
-external APIs for React, Vercel, Playwright, Node, Dagger, Betterleaks and similar tooling
-before implementing version-sensitive code. Never send `.private-publication-source/**`,
-`.redaction-work/**`, secrets, private legal/family material, or sensitive logs to
-Context7. Context7 availability/authentication is advisory only: P0, quality and publication
-gates must remain fully usable offline without it.
-
-The following integrations are not currently part of the normal `nabla-site-bababou` workflow and should only be discovered or invoked when explicitly relevant to the task:
-
-- Slack
-- Supabase
-- Gmail
-- Google Calendar
+Context7 is an optional documentation MCP. Prefer repository-local/versioned documentation first, especially Next.js docs shipped in `node_modules`. Its availability must remain fully usable offline without it: P0, quality and publication gates must remain fully usable offline without it. Do not transfer `.private-publication-source/**`, `.redaction-work/**`, secrets or private legal/family material to Context7, Dagger or public services.
 
 ## Validation
 

@@ -189,3 +189,15 @@ et lisibilité des traces, puis décider adopter/différer/rejeter.
 - `docs/publication-redaction.md` — publication/caviardage du corpus familial et juridique ;
 - validation locale :
   `scripts/agent-p0-check.sh`, `scripts/agent-quality-gate.sh`, `scripts/agent-publish.sh`.
+
+## Incident durable — quality-follow-up master (septembre–octobre 2026)
+
+**Signature** : une exécution `CI (Quality and Security)` après push sur `master` échoue sur `Enforce canonical changed-file quality gate` (formatter/pré-commit), ou `Run canonical project checks` (tests/lint/build). Le workflow `post-merge-quality-follow-up.yml` crée une issue `[quality-follow-up] master <sha> is red` via `github-actions[bot]`. Son job de remédiation `success` **ne signifie pas** que la correction ou la gate est verte : contrôler les champs `Deterministic diff`, `Strict validation` et `Remediation PR` dans le commentaire.
+
+Issues historiques à trier (aucune PR de correction automatiquement validée) :
+- **Pré-commit/formatter** : [#228](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/228), [#225](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/225), [#224](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/224), [#217](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/217), [#212](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/212).
+- **Contrats npm/lint/build** : [#231](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/231), [#221](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/221), [#214](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/214), [#196](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/196), [#183](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/183). #196 : diff déterministe préparé, mais gate stricte échouée.
+
+**Diagnostic** : ouvrir l'issue → failed run/job/step → premier diagnostic concret dans les logs → identifier un commit correctif **fusionné** et la CI ultérieure sur `master` du même périmètre. N'ajouter un commentaire de clôture et ne fermer qu'avec ces preuves ; à défaut laisser ouvert. Un run Preview/ZAP vert ou une CI de PR verte ne suffit pas pour solder un incident de quality `master`.
+
+**Incident historique de routage HTML** : les Previews #886/#889 ont montré que Next `afterFiles` et `handle: error` ne récupéraient pas les `*.html` legacy absents, déjà absorbés par `/[locale]`. Le contrat actuel utilise `handle: miss` et `check: true` pour router vers `/__legacy-html-not-found__` avant la route dynamique. Conserver les tests de non-régression et vérifier les headers `x-matched-path` en cas de réapparition.

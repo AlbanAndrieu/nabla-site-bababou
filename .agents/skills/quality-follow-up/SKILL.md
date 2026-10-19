@@ -82,6 +82,25 @@ on its Git-only preflight. Move to ready only at the publication checkpoint;
 maintenance-only changes then use the lightweight remote gate while
 runtime/source changes retain the full build/security path.
 
+## Automated GitHub issues: verified closure only
+
+The `post-merge-quality-follow-up.yml` workflow (not an agent skill) creates
+`[quality-follow-up]` issues as `github-actions[bot]` when Quality fails on
+the **current** `master`. A successful follow-up *workflow job* merely means
+the diagnosis ran; it **does not** prove its remediation succeeded. Inspect
+its `Deterministic diff / Strict validation / Remediation PR` comment and
+the original failed job before classifying the issue.
+
+For issue cleanup: group duplicates by **verified root cause**; close a historical
+issue only when a traceable merged fix and a relevant passing `master` gate
+demonstrate that the specific failure no longer reproduces. Link the fixing
+commit and passing run in the closing comment. Never close merely because
+another PR is green, the issue is old, or the bot ran successfully. If proof
+is incomplete, leave the issue open and record the **minimum diagnostic
+signature and next action** in `docs/operations.md`; avoid creating an
+additional issue for the same failure. Do not downgrade quality/security
+checks or silently delete the only incident evidence.
+
 ## Completion rule — mandatory
 
 Before declaring any repository task complete, account for every requested or
