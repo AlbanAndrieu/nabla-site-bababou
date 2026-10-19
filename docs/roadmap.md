@@ -23,6 +23,7 @@
 
 ## Reprise rapide (sans historique redondant)
 
+- Vérification P0 : `bash scripts/agent-p0-check.sh` dans un checkout valide ; le détail et la méthode de diagnostic restent dans `docs/operations.md`.
 - Consulter le HEAD réel de [PR #233](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/233), ses statuts et sa base. Suivre le **premier échec exploitable**, puis la section ouverte correspondant au périmètre. Ne jamais merger automatiquement.
 - Procédure d'agent : `AGENTS.md` puis skill `roadmap-local-first` ou `quality-follow-up` **à la demande**, pas de chargement du dossier entier. L1/L2/L3 local et CI remote sont des preuves différentes.
 - Baselines, incidents Vercel/404 et erreurs de CI récupérables dans [`docs/operations.md`](operations.md), [récupération Vercel](vercel-github-baseline-recovery-2026-10-13.md) et runs GitHub. L'historique des lots terminés reste dans les PR/commits.
