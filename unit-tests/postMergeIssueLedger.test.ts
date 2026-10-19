@@ -49,7 +49,10 @@ test("ledger closes only after two latest green master push CI runs", async () =
   assert.match(workflow, /branch: 'master', event: 'push'/);
   assert.match(workflow, /workflow_runs\.slice\(0, 2\)/);
   assert.match(workflow, /last\.length !== 2/);
-  assert.match(workflow, /run\.status !== 'completed' \|\| run\.conclusion !== 'success'/);
+  assert.match(
+    workflow,
+    /run\.status !== 'completed' \|\| run\.conclusion !== 'success'/,
+  );
   assert.match(workflow, /state: 'closed'/);
   assert.doesNotMatch(workflow, /labels: \[/);
 });
