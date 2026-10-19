@@ -78,18 +78,30 @@ jobs:
               state: 'all',
               per_page: 100,
             });
-            let issue = issues.find(
-              (candidate) => !candidate.pull_request && candidate.title === title,
-            );
-
-            if (issue && issue.state === 'closed') {
-              const reopened = await github.rest.issues.update({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: issue.number,
-                state: 'open',
+            // Never reuse an issue that a human has edited, labelled, closed,
+            // or commented on. We also never reopen closed issues.
+            const marker = '<!-- bababou-automated-master-quality-v1 -->';
+            async function robotOwned(candidate) {
+              if (candidate.state !== 'open' || candidate.user?.login !== 'github-actions[bot]' ||
+                  !candidate.body?.startsWith(marker)) return false;
+              const events = await github.paginate(github.rest.issues.listEvents, {
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: candidate.number, per_page: 100,
               });
-              issue = reopened.data;
+              const comments = await github.paginate(github.rest.issues.listComments, {
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: candidate.number, per_page: 100,
+              });
+              return !events.some(e => e.actor?.login !== 'github-actions[bot]') &&
+                !comments.some(c => c.user?.login !== 'github-actions[bot]');
+            }
+            let issue = null;
+            for (const candidate of issues) {
+              if (!candidate.pull_request && candidate.title === title &&
+                  await robotOwned(candidate)) {
+                issue = candidate;
+                break;
+              }
             }
 
             if (!issue) {
@@ -98,6 +110,7 @@ jobs:
                 repo: context.repo.repo,
                 title,
                 body: [
+                  marker,
                   '## Automatic post-merge quality incident ledger',
                   '',
                   `- Failed master SHA: \`${failedSha}\``,
@@ -408,9 +421,95 @@ jobs:
               lines.push('- Manual classification/remediation remains required; keep this issue open.');
             }
 
+            const issueNumber = Number(process.env.ISSUE_NUMBER);
+            const { data: owned } = await github.rest.issues.get({
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: issueNumber,
+            });
+            if (owned.state !== 'open' ||
+                owned.user?.login !== 'github-actions[bot]' ||
+                !owned.body?.startsWith('<!-- bababou-automated-master-quality-v1 -->')) {
+              core.notice('Issue is not an active automation-owned ledger.');
+              return;
+            }
+            const events = await github.paginate(github.rest.issues.listEvents, {
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: issueNumber, per_page: 100,
+            });
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: issueNumber, per_page: 100,
+            });
+            if (events.some(e => e.actor?.login !== 'github-actions[bot]') ||
+                comments.some(c => c.user?.login !== 'github-actions[bot]')) {
+              core.notice('Human modification: leave issue untouched.');
+              return;
+            }
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: Number(process.env.ISSUE_NUMBER),
               body: lines.join('\n'),
             });
+
+  close-after-two-green:
+    name: Close untouched Quality ledger after two green master runs
+    if: >-
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'master' &&
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify two consecutive green master CI runs
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        with:
+          script: |
+            const { data } = await github.rest.actions.listWorkflowRuns({
+              owner: context.repo.owner, repo: context.repo.repo,
+              workflow_id: 'ci.yml', branch: 'master', event: 'push', per_page: 10,
+            });
+            const last = data.workflow_runs.slice(0, 2);
+            if (last.length !== 2 ||
+                last[0].id !== context.payload.workflow_run.id ||
+                last.some(run => run.status !== 'completed' || run.conclusion !== 'success')) {
+              core.info('No two consecutive green master CI runs.');
+              return;
+            }
+            const marker = '<!-- bababou-automated-master-quality-v1 -->';
+            const title = '[quality-follow-up] unresolved master Quality failures';
+            const issues = await github.paginate(github.rest.issues.listForRepo, {
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: 'open', per_page: 100,
+            });
+            for (const issue of issues) {
+              if (issue.pull_request || issue.title !== title ||
+                  issue.user?.login !== 'github-actions[bot]' ||
+                  !issue.body?.startsWith(marker)) continue;
+              const events = await github.paginate(github.rest.issues.listEvents, {
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: issue.number, per_page: 100,
+              });
+              const comments = await github.paginate(github.rest.issues.listComments, {
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: issue.number, per_page: 100,
+              });
+              if (events.some(e => e.actor?.login !== 'github-actions[bot]') ||
+                  comments.some(c => c.user?.login !== 'github-actions[bot]')) {
+                core.notice('Issue touched by human, refusing automatic closure.');
+                continue;
+              }
+              await github.rest.issues.createComment({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: issue.number,
+                body: [
+                  'Two consecutive master CI push runs completed successfully:',
+                  ...last.map(run => `- ${run.html_url} (${run.head_sha})`),
+                ].join('\\n'),
+              });
+              await github.rest.issues.update({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: issue.number, state: 'closed',
+                state_reason: 'completed',
+              });
+            }
