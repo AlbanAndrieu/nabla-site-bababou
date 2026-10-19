@@ -31,3 +31,25 @@ test("BetterLeaks caches compilation but never skips scanning", async () => {
   assert.match(workflow, /betterleaks" git \. /);
   assert.doesNotMatch(workflow, /cache.*betterleaks-bin/);
 });
+
+test("no human-edited issue is reopened, rewritten or closed", async () => {
+  const workflow = await readFile(workflowUrl, "utf8");
+  assert.doesNotMatch(workflow, /state: 'open'\s*,?\s*\}\)/);
+  assert.match(workflow, /listEvents/);
+  assert.match(workflow, /listComments/);
+  assert.match(workflow, /actor\?\.login !== 'github-actions\[bot\]'/);
+  assert.match(workflow, /comments\.some/);
+  assert.match(workflow, /bababou-automated-master-quality-v1/);
+});
+
+test("ledger closes only after two latest green master push CI runs", async () => {
+  const workflow = await readFile(workflowUrl, "utf8");
+  assert.match(workflow, /close-after-two-green:/);
+  assert.match(workflow, /workflow_id: 'ci\.yml'/);
+  assert.match(workflow, /branch: 'master', event: 'push'/);
+  assert.match(workflow, /workflow_runs\.slice\(0, 2\)/);
+  assert.match(workflow, /last\.length !== 2/);
+  assert.match(workflow, /run\.status !== 'completed' \|\| run\.conclusion !== 'success'/);
+  assert.match(workflow, /state: 'closed'/);
+  assert.doesNotMatch(workflow, /labels: \[/);
+});
