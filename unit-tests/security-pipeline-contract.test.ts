@@ -241,3 +241,14 @@ test("Trivy deep scan retains evidence before blocking CRITICAL vulnerabilities"
   assert.match(gate, /exit 1/);
   assert.doesNotMatch(gate, /continue-on-error|--ignore-unfixed/);
 });
+
+test("Production ZAP publishes only minimized DAST evidence to the LAN collector", async () => {
+  const workflow = await readFile(productionDastUrl, "utf8");
+  assert.match(workflow, /name: Produce minimized ZAP SARIF for LAN collector/);
+  assert.match(workflow, /zap-safe-report\.mjs report_json\.json zap-production-safe\.sarif/);
+  assert.match(workflow, /name: zap-production-safe-\$\{\{ github\.run_id \}\}/);
+  assert.match(workflow, /retention-days: 3/);
+  assert.match(workflow, /steps\.zap\.outcome == 'success'/);
+  assert.match(workflow, /zap-production-safe\.sarif/);
+  assert.doesNotMatch(workflow, /DEFECTDOJO_API_TOKEN|DEFECTDOJO_IMPORT_APPROVED/);
+});

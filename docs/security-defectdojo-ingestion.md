@@ -30,3 +30,17 @@ Pour importer, l'opérateur installe un jeton Dojo propre au produit avec la per
 - **Minimisation stricte** : reconstruire de zéro les SARIF Nuclei/ZAP à partir des seuls identifiants de règle et niveaux admis. Aucun titre libre, `message`, URL, cookie, payload, HTML ou chemin n'est réexporté, même si l'artefact d'origine a été modifié. Trivy valide les champs identité/package/version et bloque les champs malformés plutôt que de diffuser leur contenu.
 - **Accès en lecture seule** : le collecteur télécharge directement les artefacts GitHub sélectionnés ; DefectDojo ne reçoit que la sortie reconstruite lors du mode `--ingest` validé. L'absence d'opt-in DAST évite même le téléchargement des rapports sources correspondants.
 - **Limite opérationnelle** : les rapports ZAP de production ont une cadence indépendante des scans approfondis. Leurs SHAs peuvent donc différer, sans prétendre à une photographie uniforme du déploiement. Toujours conserver l'identifiant du run de chaque famille de scan. Le import effectif dans votre homelab reste à tester séparément, sans exposer DefectDojo publiquement.
+
+## Compatibilité du collecteur Homelab — 19 octobre 2026
+
+Le collecteur canonique cible est **`nabla-compose` PR #263**, avec GitHub App à token éphémère, collecte depuis TrueNAS et import `/api/v2/reimport-scan/` dans le LAN. Le collecteur Node de Bababou reste un **prototype autonome non déployé** : ne pas en faire un deuxième service ou une seconde source de vérité.
+
+| Origine exacte | Artefact privé | Fichier | Format / scan type proposé | Restriction |
+| --- | --- | --- | --- | --- |
+| `security-deep.yml`, master réussi | `trivy-master-<run_id>` | `trivy-master.json` | `Trivy Scan` après projection stricte du lockfile | Seules vulnérabilités HIGH/CRITICAL, aucun SBOM/licence |
+| `security-deep.yml`, master réussi | `nuclei-master-<run_id>` | `nuclei-master.sarif` | `SARIF` / outil `Nuclei` | Identifiant de règle et sévérité seulement, revalidation LAN |
+| `production-dast.yml`, master réussi | `zap-production-safe-<run_id>` | `zap-production-safe.sarif` | `SARIF` / outil `ZAP` | Rapport sans URL, réponse HTTP, cookie ni titre libre ; filtre MEDIUM/HIGH |
+
+**Important** : le collecteur `nabla-compose` existant est encore configuré uniquement pour `nabla-site-alban` et refuse globalement `SARIF`. Il faut ajouter une allowlist Bababou distincte (deux outils SARIF approuvés seulement), une identité GitHub App autorisée explicitement à lire le dépôt **privé** Bababou et un Engagement DefectDojo isolé. Ne jamais désactiver `defaultDeny`, importer le SARIF générique depuis d'autres producteurs, ni rediriger le jeton GitHub vers DefectDojo.
+
+Le ZAP original `zap-production-report` reste un artefact de diagnostic privé créé par l'action ZAP, **non autorisé pour le collecteur**. Aucun scan additionnel n'est ajouté : la conversion intervient après le ZAP de production existant. L'import et le parseur de DefectDojo ne sont pas attestés tant que le collecteur TrueNAS n'a pas été testé sur un engagement de test ; l'upload d'un artefact SARIF n'est pas une preuve de finding valide.

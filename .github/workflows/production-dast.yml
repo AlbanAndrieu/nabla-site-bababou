@@ -62,6 +62,8 @@ jobs:
           persist-credentials: false
           sparse-checkout: |
             .zap/rules.tsv
+            scripts/security/defectdojo-pull-master.mjs
+            scripts/security/zap-safe-report.mjs
           sparse-checkout-cone-mode: false
 
       - name: Request GitHub OIDC token for Vercel
@@ -154,6 +156,26 @@ jobs:
           artifact_name: zap-production-report
           cmd_options: "-I -T 5"
 
+      # Separate allowlisted export. Do not let the LAN collector read the
+      # baseline action's raw HTTP report just to obtain a finding summary.
+      - name: Produce minimized ZAP SARIF for LAN collector
+        if: steps.preflight.outcome == 'success' && steps.zap.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s report_json.json
+          node scripts/security/zap-safe-report.mjs report_json.json zap-production-safe.sarif
+          jq -e '.version == "2.1.0" and .runs[0].tool.driver.name == "ZAP" and (.runs[0].results | type == "array")' zap-production-safe.sarif >/dev/null
+
+      - name: Preserve minimized ZAP findings privately
+        if: steps.preflight.outcome == 'success' && steps.zap.outcome == 'success'
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: zap-production-safe-${{ github.run_id }}
+          path: zap-production-safe.sarif
+          retention-days: 3
+          if-no-files-found: error
+
       - name: Summarize production DAST
         id: summary
         if: always()
@@ -193,7 +215,7 @@ jobs:
       - name: Clean ZAP production workspace
         if: always()
         shell: bash
-        run: rm -f report_html.html report_json.json report_md.md zap.yaml
+        run: rm -f report_html.html report_json.json report_md.md zap.yaml zap-production-safe.sarif
 
       - name: Enforce production DAST policy
         if: steps.preflight.outcome != 'success' || steps.zap.outcome != 'success'
