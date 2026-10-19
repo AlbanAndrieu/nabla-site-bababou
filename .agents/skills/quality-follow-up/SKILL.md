@@ -5,7 +5,6 @@ description: >-
   CI/quality failures, after a PR was merged while a non-blocking check was red,
   and before declaring repository work complete.
 ---
-
 # Quality follow-up and completion accounting
 
 Use this skill whenever a quality/security gate fails, a formatter or linter
