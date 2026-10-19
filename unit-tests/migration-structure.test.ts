@@ -121,7 +121,8 @@ test("operations docs consolidate deployment, analytics and incident diagnostics
     /agent-quality-gate\.sh --preflight\s+\n\s*bash scripts\/agent-p0-check\.sh/,
   );
 
-  assert.match(roadmapGuide, /bash scripts\/agent-p0-check\.sh/);
+  // The runbook owns executable commands; the compact roadmap links to it.
+  assert.match(roadmapGuide, /docs\/operations\.md/);
   assert.doesNotMatch(roadmapGuide, /npm run test:p0|#209 \/ P0/);
 
   await assert.rejects(access(new URL("../docs/GITHUB_ACTIONS_SETUP.md", import.meta.url)));
