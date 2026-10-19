@@ -5,17 +5,6 @@ import { join } from "node:path";
 
 const repo = "AlbanAndrieu/nabla-site-bababou";
 const dojoUrl = "https://defectdojo.int.albandrieu.com/api/v2/reimport-scan/";
-const mode = process.argv[2] ?? "--check";
-if (!["--check", "--collect", "--ingest"].includes(mode)) {
-  throw new Error(
-    "Usage: node defectdojo-pull-master.mjs [--check|--collect|--ingest]",
-  );
-}
-if (!process.env.GH_TOKEN) {
-  throw new Error(
-    "GH_TOKEN is required (fine-grained Actions:read on Bababou only)",
-  );
-}
 function gh(args) {
   const result = spawnSync("gh", args, {
     encoding: "utf8",
@@ -205,6 +194,13 @@ async function upload(report, type, title, engagementId, token) {
   );
 }
 async function main() {
+  const mode = process.argv[2] ?? "--check";
+  if (!["--check", "--collect", "--ingest"].includes(mode)) {
+    throw new Error("Usage: defectdojo-pull-master.mjs [--check|--collect|--ingest]");
+  }
+  if (!process.env.GH_TOKEN) {
+    throw new Error("GH_TOKEN is required (Actions:read, Bababou only)");
+  }
   // Download optional DAST only when expressly authorized by the operator.
   const includeNuclei = process.env.DEFECTDOJO_ALLOW_NUCLEI === "yes";
   const includeZap = process.env.DEFECTDOJO_ALLOW_ZAP === "yes";
