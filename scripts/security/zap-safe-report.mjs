@@ -1,5 +1,5 @@
 import { readFileSync, writeFileSync } from "node:fs";
-import { sanitizeZap } from "./defectdojo-pull-master.mjs";
+import { sanitizeZap } from "./defectdojo-report-sanitizers.mjs";
 
 const [source, target] = process.argv.slice(2);
 if (!source || !target || process.argv.length !== 4) {

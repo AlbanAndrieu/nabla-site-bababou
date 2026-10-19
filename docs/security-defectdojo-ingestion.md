@@ -2,7 +2,7 @@
 
 ## Objectif et périmètre
 
-Le serveur `https://defectdojo.int.albandrieu.com` demeure **interne**. Aucun nouvel endpoint Vercel, redirection, règle Cloudflare Access publique ni droit général GitHub ne lui est accordé. Un **collecteur interne séparé** tire exclusivement les artefacts GitHub Actions `master` de `AlbanAndrieu/nabla-site-bababou` et n'exporte que des findings préalablement minimisés. Le script `scripts/security/defectdojo-pull-master.mjs` prépare cette connexion, sans l'exécuter sur le TrueNAS.
+Le serveur `https://defectdojo.int.albandrieu.com` demeure **interne**. Aucun nouvel endpoint Vercel, redirection, règle Cloudflare Access publique ni droit général GitHub ne lui est accordé. Un **collecteur interne séparé** tire exclusivement les artefacts GitHub Actions `master` de `AlbanAndrieu/nabla-site-bababou` et n'exporte que des findings préalablement minimisés. Le dépôt Bababou ne contient **aucun collecteur GitHub ni client d’import DefectDojo**. La collecte et l’import sont exclusivement confiés à `nabla-compose` ; Bababou produit les formats normalisés.
 
 ## Sources autorisées
 
@@ -16,9 +16,7 @@ Le serveur `https://defectdojo.int.albandrieu.com` demeure **interne**. Aucun no
 
 ## Exécution du collecteur (après fusion et configuration interne)
 
-En lecture seule : `node scripts/security/defectdojo-pull-master.mjs --check`. Le collecteur exige `GH_TOKEN` avec permission **Actions:read uniquement sur ce repository**. `--collect` télécharge **uniquement le Trivy approuvé par défaut**. `DEFECTDOJO_ALLOW_NUCLEI=yes` et `DEFECTDOJO_ALLOW_ZAP=yes` autorisent séparément le téléchargement des deux types DAST : ils ne sont ni récupérés ni ingérés implicitement. Les fichiers temporaires privés (taille limitée et fichiers réguliers uniquement) sont supprimés ; seuls des compteurs sont journalisés. Les rapports proviennent exclusivement de la **dernière exécution sur `master`**, complète et réussie, avec identifiant et SHA vérifiés et une ancienneté maximale de **10 jours**. Un run plus récent en échec ou en cours n'est jamais remplacé silencieusement par une ancienne réussite ; un scan obsolète ou absent produit `NOT_READY`/`STALE` et empêche la collecte.
-
-Pour importer, l'opérateur installe un jeton Dojo propre au produit avec la permission minimale de reimport sur un engagement identifié. L'appel `--ingest` exige **tous** `GH_TOKEN`, `DEFECTDOJO_API_TOKEN`, `DEFECTDOJO_ENGAGEMENT_ID` (ID numérique déjà créé), `DEFECTDOJO_INGEST_APPROVED=yes`. Sans cette approbation, aucune requête à DefectDojo n'est envoyée. Nuclei et ZAP requièrent deux autorisations supplémentaires séparées ; **pas d'`auto_create_context`**. API TLS vérifiée, URL et repository codés explicitement dans le collecteur ; aucune exposition publique ou credential dans Git.
+En lecture seule : `node scripts/security/defectdojo-pull-master.mjs --check`. Le collecteur GitHub App, sa gestion des secrets, les choix de scans et son mode import sont implémentés et validés uniquement dans `nabla-compose`. Les tests unitaires Bababou ne requièrent aucun secret. Nuclei et ZAP requièrent deux autorisations supplémentaires séparées ; **pas d'`auto_create_context`**. API TLS vérifiée, URL et repository codés explicitement dans le collecteur ; aucune exposition publique ou credential dans Git.
 
 **Activation côté nabla-compose** (non effectuée ici) : prévoir un conteneur collecteur non-root, rootfs read-only, réseau egress limité à `api.github.com`, API DefectDojo et DNS interne ; jetons en secrets montés temporairement depuis Vaultwarden/secret store, pas dans Compose/YAML. Exécuter après la fenêtre des scans master, conserver seulement compteurs et identifiants de run, journaliser les imports acceptés, définir les droits spécifiques du produit/engagement et une politique de rétention. Tester la déduplication et les parsers `Trivy Scan`/`SARIF` sur un engagement de test avant activation périodique.
 
@@ -26,9 +24,8 @@ Pour importer, l'opérateur installe un jeton Dojo propre au produit avec la per
 
 ## Durcissement du collecteur (PR #233)
 
-- **Fraîcheur et statut** : exiger le dernier run `master` terminé et réussi, âgé d'au plus 10 jours. La sélection initiale du dernier run *vert* aurait pu masquer un échec plus récent ; ce risque est désormais couvert par un test.
-- **Minimisation stricte** : reconstruire de zéro les SARIF Nuclei/ZAP à partir des seuls identifiants de règle et niveaux admis. Aucun titre libre, `message`, URL, cookie, payload, HTML ou chemin n'est réexporté, même si l'artefact d'origine a été modifié. Trivy valide les champs identité/package/version et bloque les champs malformés plutôt que de diffuser leur contenu.
-- **Accès en lecture seule** : le collecteur télécharge directement les artefacts GitHub sélectionnés ; DefectDojo ne reçoit que la sortie reconstruite lors du mode `--ingest` validé. L'absence d'opt-in DAST évite même le téléchargement des rapports sources correspondants.
+- **Propriété unique du collecteur** : sélection des runs, fraîcheur, authentification et téléchargement dans `nabla-compose`; seule la projection des rapports est maintenue ici.
+- **Minimisation stricte** : la sortie ZAP/Nuclei est reconstruite sans source libre ni traces HTTP; les rapports de production restent protégés.
 - **Limite opérationnelle** : les rapports ZAP de production ont une cadence indépendante des scans approfondis. Leurs SHAs peuvent donc différer, sans prétendre à une photographie uniforme du déploiement. Toujours conserver l'identifiant du run de chaque famille de scan. Le import effectif dans votre homelab reste à tester séparément, sans exposer DefectDojo publiquement.
 
 ## Compatibilité du collecteur Homelab — 19 octobre 2026
@@ -44,3 +41,5 @@ Le collecteur canonique cible est **`nabla-compose` PR #263**, avec GitHub App �
 **Important** : le collecteur `nabla-compose` existant est encore configuré uniquement pour `nabla-site-alban` et refuse globalement `SARIF`. Il faut ajouter une allowlist Bababou distincte (deux outils SARIF approuvés seulement), une identité GitHub App autorisée explicitement à lire le dépôt **privé** Bababou et un Engagement DefectDojo isolé. Ne jamais désactiver `defaultDeny`, importer le SARIF générique depuis d'autres producteurs, ni rediriger le jeton GitHub vers DefectDojo.
 
 Le ZAP original `zap-production-report` reste un artefact de diagnostic privé créé par l'action ZAP, **non autorisé pour le collecteur**. Aucun scan additionnel n'est ajouté : la conversion intervient après le ZAP de production existant. L'import et le parseur de DefectDojo ne sont pas attestés tant que le collecteur TrueNAS n'a pas été testé sur un engagement de test ; l'upload d'un artefact SARIF n'est pas une preuve de finding valide.
+
+**Décision du 19 octobre** : suppression du collecteur Node Bababou redondant. `scripts/security/defectdojo-report-sanitizers.mjs` exporte uniquement les fonctions de projection testables sans jeton. `nabla-compose` est la source de vérité pour un collecteur multi-dépôts.

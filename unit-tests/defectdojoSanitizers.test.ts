@@ -1,62 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
-  chooseMasterRun,
   sanitizeNuclei,
   sanitizeTrivy,
   sanitizeZap,
-} from "../scripts/security/defectdojo-pull-master.mjs";
-
-const timestamp = Date.parse("2026-10-19T18:00:00Z");
-const headSha = "a".repeat(40);
-const ok = {
-  databaseId: 123,
-  headBranch: "master",
-  headSha,
-  createdAt: "2026-10-19T17:00:00Z",
-  conclusion: "success",
-  status: "completed",
-};
-
-test("DefectDojo selects the latest valid master run, not an older green one", () => {
-  assert.deepEqual(chooseMasterRun([ok], "security-deep.yml", timestamp), ok);
-  assert.throws(
-    () =>
-      chooseMasterRun(
-        [{ ...ok, databaseId: 124, conclusion: "failure" }, ok],
-        "security-deep.yml",
-        timestamp,
-      ),
-    /NOT_READY/,
-  );
-  assert.throws(
-    () =>
-      chooseMasterRun(
-        [{ ...ok, status: "in_progress", conclusion: "" }, ok],
-        "security-deep.yml",
-        timestamp,
-      ),
-    /NOT_READY/,
-  );
-  assert.throws(
-    () =>
-      chooseMasterRun(
-        [{ ...ok, createdAt: "2026-09-01T00:00:00Z" }],
-        "security-deep.yml",
-        timestamp,
-      ),
-    /STALE/,
-  );
-  assert.throws(
-    () =>
-      chooseMasterRun(
-        [{ ...ok, headSha: "invalid" }],
-        "security-deep.yml",
-        timestamp,
-      ),
-    /identity/,
-  );
-});
+} from "../scripts/security/defectdojo-report-sanitizers.mjs";
 
 test("Trivy exports only verified HIGH/CRITICAL npm identifiers and versions", () => {
   const input = {
