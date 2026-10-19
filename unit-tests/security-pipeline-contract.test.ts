@@ -219,3 +219,25 @@ test("PR BetterLeaks scans committed SHA diff, not the empty staging index", asy
     /continue-on-error|--staged|\[skip ci\]/,
   );
 });
+
+test("Trivy deep scan retains evidence before blocking CRITICAL vulnerabilities", async () => {
+  const workflow = await readFile(
+    new URL("../.github/workflows/security-deep.yml", import.meta.url),
+    "utf8",
+  );
+  const artifact = workflow.indexOf(
+    "      - name: Preserve approved master artifacts privately",
+  );
+  const enforcement = workflow.indexOf(
+    "      - name: Enforce CRITICAL Trivy findings after evidence retention",
+  );
+  const nextJob = workflow.indexOf("\n  codeql:", enforcement);
+  assert.ok(artifact > 0);
+  assert.ok(enforcement > artifact);
+  assert.ok(nextJob > enforcement);
+  const gate = workflow.slice(enforcement, nextJob);
+  assert.match(gate, /select\(\.Severity == "CRITICAL"\)/);
+  assert.match(gate, /critical > 0/);
+  assert.match(gate, /exit 1/);
+  assert.doesNotMatch(gate, /continue-on-error|--ignore-unfixed/);
+});

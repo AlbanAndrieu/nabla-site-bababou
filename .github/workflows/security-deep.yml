@@ -83,6 +83,17 @@ jobs:
             sbom-master.cdx.json
           retention-days: 3
           if-no-files-found: error
+      - name: Enforce CRITICAL Trivy findings after evidence retention
+        shell: bash
+        run: |
+          set -euo pipefail
+          jq -e '.Results | type == "array"' trivy-master.json >/dev/null
+          critical="$(jq '[.Results[]?.Vulnerabilities[]? | select(.Severity == "CRITICAL")] | length' trivy-master.json)"
+          echo "Trivy full-repository CRITICAL findings: ${critical}" >> "$GITHUB_STEP_SUMMARY"
+          if (( critical > 0 )); then
+            echo "::error::CRITICAL vulnerabilities found in the full repository dependency graph; inspect retained private Trivy report."
+            exit 1
+          fi
 
   codeql:
     name: CodeQL JS/TS full codebase
