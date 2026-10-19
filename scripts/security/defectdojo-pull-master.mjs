@@ -24,7 +24,9 @@ export function chooseMasterRun(runs, workflow, now = Date.now()) {
   if (!Array.isArray(runs)) throw new Error("Invalid workflow run list");
   const run = runs.find((item) => item?.headBranch === "master");
   if (!run || run.status !== "completed" || run.conclusion !== "success") {
-    throw new Error(`NOT_READY: latest master run for ${workflow} has not passed`);
+    throw new Error(
+      `NOT_READY: latest master run for ${workflow} has not passed`,
+    );
   }
   if (
     !Number.isSafeInteger(run.databaseId) ||
@@ -39,7 +41,9 @@ export function chooseMasterRun(runs, workflow, now = Date.now()) {
     created > now + 60000 ||
     now - created > maxReportAgeMs
   ) {
-    throw new Error(`STALE: master evidence for ${workflow} is older than ten days`);
+    throw new Error(
+      `STALE: master evidence for ${workflow} is older than ten days`,
+    );
   }
   return run;
 }
@@ -65,7 +69,10 @@ function recentMaster(workflow) {
 export function sanitizeTrivy(raw) {
   if (!Array.isArray(raw?.Results)) throw new Error("Invalid Trivy report");
   const vulnerabilities = raw.Results.filter(
-    (entry) => String(entry.Target ?? "").split(/[\\/]/).at(-1) === "package-lock.json",
+    (entry) =>
+      String(entry.Target ?? "")
+        .split(/[\\/]/)
+        .at(-1) === "package-lock.json",
   )
     .flatMap((entry) => entry.Vulnerabilities ?? [])
     .filter((item) => ["HIGH", "CRITICAL"].includes(item.Severity))
@@ -88,7 +95,8 @@ export function sanitizeTrivy(raw) {
       }
       return cleaned;
     });
-  if (vulnerabilities.length > 1000) throw new Error("Excessive Trivy finding count");
+  if (vulnerabilities.length > 1000)
+    throw new Error("Excessive Trivy finding count");
   return {
     SchemaVersion: 2,
     Results: vulnerabilities.length
@@ -142,7 +150,8 @@ export function sanitizeNuclei(raw) {
   if (run.tool?.driver?.name !== "Nuclei" || !Array.isArray(run.results)) {
     throw new Error("Unexpected SARIF tool or results");
   }
-  if (run.results.length > 1000) throw new Error("Excessive Nuclei finding count");
+  if (run.results.length > 1000)
+    throw new Error("Excessive Nuclei finding count");
   const rules = new Map();
   const results = [];
   for (const result of run.results) {
@@ -161,7 +170,12 @@ export function sanitizeNuclei(raw) {
   return {
     version: "2.1.0",
     $schema: "https://json.schemastore.org/sarif-2.1.0.json",
-    runs: [{ tool: { driver: { name: "Nuclei", rules: [...rules.values()] } }, results }],
+    runs: [
+      {
+        tool: { driver: { name: "Nuclei", rules: [...rules.values()] } },
+        results,
+      },
+    ],
   };
 }
 async function upload(report, type, title, engagementId, token) {
@@ -196,7 +210,9 @@ async function upload(report, type, title, engagementId, token) {
 async function main() {
   const mode = process.argv[2] ?? "--check";
   if (!["--check", "--collect", "--ingest"].includes(mode)) {
-    throw new Error("Usage: defectdojo-pull-master.mjs [--check|--collect|--ingest]");
+    throw new Error(
+      "Usage: defectdojo-pull-master.mjs [--check|--collect|--ingest]",
+    );
   }
   if (!process.env.GH_TOKEN) {
     throw new Error("GH_TOKEN is required (Actions:read, Bababou only)");
@@ -238,7 +254,11 @@ async function main() {
     );
     const nuclei = includeNuclei
       ? sanitizeNuclei(
-          download(deep, `nuclei-master-${deep.databaseId}`, "nuclei-master.sarif"),
+          download(
+            deep,
+            `nuclei-master-${deep.databaseId}`,
+            "nuclei-master.sarif",
+          ),
         )
       : null;
     const zapReport = zap

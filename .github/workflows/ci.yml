@@ -236,7 +236,6 @@ jobs:
         env:
           QUALITY_BASE_REF: ${{ steps.current-heads.outputs.base-sha || github.event.before || 'origin/master' }}
           QUALITY_LOG_TAIL: "12"
-          QUALITY_DIFF_LINES: "0" # temporary diagnostic for exact formatter patch
         run: bash scripts/quality-gate.sh
 
       - name: Save pre-commit environments
