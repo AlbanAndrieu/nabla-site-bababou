@@ -49,6 +49,7 @@
 - [ ] **Context7 MCP** : valider une vraie connexion OAuth/OpenCode et une requête documentaire ciblée sans secrets, PII ni dépendance de P0/quality à Internet.
 - [ ] **DAST** : trier les neuf catégories ZAP WARN avec les preuves exactes ; ne durcir la politique bloquante qu'après vérification de la compatibilité du legacy.
 - [ ] **Bot issues Quality** : dix `[quality-follow-up]` historiques (#183, #196, #212, #214, #217, #221, #224, #225, #228, #231). Aucune correction automatique validée dans leurs commentaires. Vérifier les correctifs fusionnés et la CI `master` appropriée **avant toute fermeture** ; voir l'index dans `docs/operations.md`.
+- [ ] **Issue Quality consolidée** : après fusion seulement, vérifier sur le prochain véritable échec `master` que le registre unique conserve SHA/URL et n'ouvre pas d'issue par commit ; ne pas déclencher d'échec artificiel ni rerun GitHub. Poursuivre la qualification des 10 anciennes issues séparément.
 
 ## P1 — Audit Cloudflare security-audit-skill
 

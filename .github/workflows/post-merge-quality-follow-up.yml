@@ -14,7 +14,7 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: post-merge-quality-${{ github.event.workflow_run.head_sha }}
+  group: post-merge-quality-master-ledger
   cancel-in-progress: false
 
 jobs:
@@ -69,8 +69,9 @@ jobs:
         with:
           script: |
             const failedSha = process.env.FAILED_SHA;
-            const shortSha = failedSha.slice(0, 12);
-            const title = `[quality-follow-up] master ${shortSha} is red`;
+            // One triage ledger per repo; each failed master SHA stays distinct
+            // in its own immutable Actions run and diagnosis comment.
+            const title = '[quality-follow-up] unresolved master Quality failures';
             const issues = await github.paginate(github.rest.issues.listForRepo, {
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -97,7 +98,7 @@ jobs:
                 repo: context.repo.repo,
                 title,
                 body: [
-                  '## Automatic post-merge quality follow-up',
+                  '## Automatic post-merge quality incident ledger',
                   '',
                   `- Failed master SHA: \`${failedSha}\``,
                   `- Conclusion: **${process.env.FAILED_CONCLUSION}**`,
@@ -105,7 +106,8 @@ jobs:
                   '',
                   'The remediation workflow will attempt only deterministic formatter/pre-commit fixes derived from the failed commit delta. It will not weaken a gate or edit unrelated files.',
                   '',
-                  'If no safe deterministic diff is produced, this issue remains open for manual classification and remediation. Do not treat the merge itself as proof of quality.',
+                  'Each failed master run is tracked with its exact SHA, workflow URL, and independent diagnostic comment. Reusing this issue does not equate unrelated root causes.',
+                  'Do not close until every recorded failure has an independently verified remedy. A workflow job succeeding is not evidence of a fix.',
                 ].join('\n'),
               });
               issue = created.data;
@@ -365,6 +367,8 @@ jobs:
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         env:
           ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
+          FAILED_SHA: ${{ env.FAILED_SHA }}
+          FAILED_RUN_URL: ${{ env.FAILED_RUN_URL }}
           AUTO_FIX: ${{ steps.fix.outputs.auto_fix }}
           FIX_REASON: ${{ steps.fix.outputs.reason }}
           PREPARED: ${{ steps.prepare.outputs.prepared }}
@@ -380,6 +384,9 @@ jobs:
           script: |
             const lines = [
               '## Automated follow-up result',
+              '',
+              `- Failed master SHA: \`${process.env.FAILED_SHA}\``,
+              `- Original CI run: ${process.env.FAILED_RUN_URL}`,
               '',
               `- Workflow job: **${process.env.CURRENT_JOB_STATUS}**`,
               `- Deterministic diff: **${process.env.AUTO_FIX || 'not reached'}** (${process.env.FIX_REASON || 'n/a'})`,
