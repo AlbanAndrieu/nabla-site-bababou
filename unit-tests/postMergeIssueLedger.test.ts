@@ -8,7 +8,7 @@ const workflowUrl = new URL(
 );
 const ciUrl = new URL("../.github/workflows/ci.yml", import.meta.url);
 
-test("quality failures share a serialized issue ledger without losing SHA", async () => {
+test("quality ledger preserves each failed master SHA", async () => {
   const workflow = await readFile(workflowUrl, "utf8");
   assert.match(workflow, /group: post-merge-quality-master-ledger/);
   assert.match(workflow, /unresolved master Quality failures/);
@@ -18,13 +18,16 @@ test("quality failures share a serialized issue ledger without losing SHA", asyn
   assert.doesNotMatch(workflow, /const title = `\[quality-follow-up\]/);
 });
 
-test("BetterLeaks caches compilation only and always executes its scan", async () => {
+test("BetterLeaks caches compilation but never skips scanning", async () => {
   const workflow = await readFile(ciUrl, "utf8");
   assert.match(workflow, /Restore BetterLeaks Go caches/);
   assert.match(workflow, /Save BetterLeaks Go caches/);
   assert.match(workflow, /go\/pkg\/mod/);
   assert.match(workflow, /\.cache\/go-build/);
-  assert.match(workflow, /go install github\.com\/betterleaks\/betterleaks@v1\.9\.0/);
+  assert.match(
+    workflow,
+    /go install github\.com\/betterleaks\/betterleaks@v1\.9\.0/,
+  );
   assert.match(workflow, /betterleaks" git \. /);
   assert.doesNotMatch(workflow, /cache.*betterleaks-bin/);
 });
