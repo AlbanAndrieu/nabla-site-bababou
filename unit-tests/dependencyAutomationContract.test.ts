@@ -114,6 +114,7 @@ test("npm updates are aged and grouped by operational risk", async () => {
 
   const runtime = rule(config, "Group non-major runtime npm updates weekly");
   assert.equal(runtime.groupName, "runtime dependencies");
+  assert.deepEqual(runtime.matchPackageNames, ["!next"]);
   assert.deepEqual(runtime.schedule, ["* 0-3 * * 1"]);
 
   const development = rule(
@@ -129,6 +130,13 @@ test("npm updates are aged and grouped by operational risk", async () => {
     "Keep Next.js and eslint-config-next aligned weekly",
   );
   assert.deepEqual(nextStack.matchPackageNames, ["next", "eslint-config-next"]);
+  assert.deepEqual(nextStack.matchUpdateTypes, [
+    "major",
+    "minor",
+    "patch",
+    "pin",
+    "digest",
+  ]);
   assert.equal(nextStack.groupName, "Next.js stack");
   assert.deepEqual(nextStack.schedule, ["* 0-3 * * 1"]);
 });

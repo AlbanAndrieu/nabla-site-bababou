@@ -15,6 +15,7 @@
 - [x] Parité de `scripts/agent-output-metrics.sh` avec Alban #238 : séparateur décimal déterministe `LC_ALL=C` et test sous locale française.
 - [x] Intégrer `actionlint v1.7.12` et `zizmor v1.30.1 --offline` dans pre-commit et la CI (audit de tous les workflows avant bootstrap npm, bloquant). **Preuve sur le HEAD en cours requise** : les exceptions éventuelles doivent être justifiées et ciblées, jamais une désactivation globale.
 - [x] Comparer `quality-gate.sh`, pre-commit, `justfile`, CI et contrats de tests : `justfile` devient le point d’entrée local canonique et `mise.toml` épingle `just` ; `Makefile` reste uniquement en compatibilité, sans suppression des contrôles confidentialité, BetterLeaks, Semgrep, SCA, Playwright ou ZAP.
+- [x] Parité Renovate ciblée : `next` exclu du groupe runtime générique, versions majeures Next.js/ESLint Next groupées dans la règle dédiée ; toute mise à jour majeure exige toujours une approbation explicite via le Dependency Dashboard, sans automerge ni hausse du budget de PR. Tests de contrat ajoutés.
 - [ ] Qualifier les autres écarts non pertinents à importer automatiquement : Node/npm et tooling expérimentaux (prek/hk), contexte source hors ligne, politiques BetterLeaks spécifiques, règles de publication privée et DAST ; privilégier la parité comportementale aux copies intégrales de scripts.
 - **Preuve** : valider le P0 et les jobs GitHub sur le SHA exact de cette PR. L'échec Production DAST corrigé ne sera attesté qu'après son exécution réelle sur master.
 

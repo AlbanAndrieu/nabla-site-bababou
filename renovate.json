@@ -41,7 +41,8 @@
       "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
       "groupName": "runtime dependencies",
       "groupSlug": "runtime-dependencies",
-      "schedule": ["* 0-3 * * 1"]
+      "schedule": ["* 0-3 * * 1"],
+      "matchPackageNames": ["!next"]
     },
     {
       "description": "Group non-major development dependencies monthly",
@@ -57,7 +58,7 @@
       "description": "Keep Next.js and eslint-config-next aligned weekly",
       "matchManagers": ["npm"],
       "matchPackageNames": ["next", "eslint-config-next"],
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "matchUpdateTypes": ["major", "minor", "patch", "pin", "digest"],
       "groupName": "Next.js stack",
       "groupSlug": "nextjs-stack",
       "schedule": ["* 0-3 * * 1"]
