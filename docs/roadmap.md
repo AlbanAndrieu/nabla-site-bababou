@@ -13,8 +13,9 @@
 - **PR active : [#234](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/234)**, sans fusion automatique. Base de comparaison : `nabla-site-alban` master@`dca0755` et PR #238@`cd545d8`.
 - [x] Portage de l'amélioration fusionnée dans Alban #227 : diagnostics de cycles pre-commit nommant les hooks, fichiers modifiés et passes, sans exporter les journaux bruts.
 - [x] Parité de `scripts/agent-output-metrics.sh` avec Alban #238 : séparateur décimal déterministe `LC_ALL=C` et test sous locale française.
-- [ ] Évaluer `actionlint` et `zizmor --offline` de la PR Alban #238 sur les workflows Bababou **avant** de les rendre bloquants : conserver la limitation des coûts et les exceptions documentées.
-- [ ] Comparer séparément `quality-gate.sh`, pre-commit, `justfile`, CI et contrats de tests ; ne pas importer les workflows métier Alban ni supprimer les contrôles confidentialité, BetterLeaks, Semgrep, SCA, Playwright et ZAP.
+- [x] Intégrer `actionlint v1.7.12` et `zizmor v1.30.1 --offline` dans pre-commit et la CI (audit de tous les workflows avant bootstrap npm, bloquant). **Preuve sur le HEAD en cours requise** : les exceptions éventuelles doivent être justifiées et ciblées, jamais une désactivation globale.
+- [x] Comparer `quality-gate.sh`, pre-commit, `justfile`, CI et contrats de tests : `justfile` devient le point d’entrée local canonique et `mise.toml` épingle `just` ; `Makefile` reste uniquement en compatibilité, sans suppression des contrôles confidentialité, BetterLeaks, Semgrep, SCA, Playwright ou ZAP.
+- [ ] Qualifier les autres écarts non pertinents à importer automatiquement : Node/npm et tooling expérimentaux (prek/hk), contexte source hors ligne, politiques BetterLeaks spécifiques, règles de publication privée et DAST ; privilégier la parité comportementale aux copies intégrales de scripts.
 - **Preuve** : valider le P0 et les jobs GitHub sur le SHA exact de cette PR. L'échec Production DAST corrigé ne sera attesté qu'après son exécution réelle sur master.
 
 
@@ -22,9 +23,9 @@
 > Source unique des travaux ouverts **et du contexte de reprise**. Les diagnostics restent dans [`docs/operations.md`](operations.md), les règles agent dans [`AGENTS.md`](../AGENTS.md), l'historique détaillé dans Git/PR.
 
 
-## Reprise active — PR #233 (18 octobre 2026)
+## Diagnostic historique — PR #233 (fusionnée le 20 octobre 2026)
 
-- **Branche** : [PR #233](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/233) sur `feat/p2-p4-accessibility-i18n-social-20261017`, **ouverte et ready**, `behind_by=0` par rapport à `master@2406fefc` au contrôle de reprise. Ne jamais fusionner automatiquement.
+- **Archives de validation** : [PR #233](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/233), fusionnée ; les résultats du HEAD historique ci-dessous ne sont pas des preuves pour la PR #234.
 - **Dernier HEAD intégralement validé** : `9c56f1d482121dafa6e88048d3b5ffa478f9761f` — [Quality and Security #39084115761](https://github.com/AlbanAndrieu/nabla-site-bababou/actions/runs/39084115761), [Node 24 #39084115759](https://github.com/AlbanAndrieu/nabla-site-bababou/actions/runs/39084115759), [Playwright Preview #39084318971](https://github.com/AlbanAndrieu/nabla-site-bababou/actions/runs/39084318971) (**191 tests réussis**) et [ZAP Preview #39084318959](https://github.com/AlbanAndrieu/nabla-site-bababou/actions/runs/39084318959) : **success**. Vercel déployé `READY` sur ce SHA. Les résultats ne valent pas pour un commit ultérieur.
 - **P1/P2 validé sur `9c56f1d`** : scénario Playwright `tests/source-disclosure.spec.ts` : 403/404 exigés pour les chemins techniques (Git, secrets, GitHub Actions, manifests, scripts, Python). Inclus dans les **191 tests PASS** de la Preview. Cela ne prouve pas l'absence de toutes les fuites.
 - **Dette ZAP** : 0 échec bloquant mais **9 catégories `WARN`** (dont CSP, cookies, CORS, ressources tierces/SRI/COEP, cache, commentaires suspects et signature Python). Trier avec les preuves exactes avant tout changement d'en-tête ; garder les règles `WARN` actives. Détails et limites dans [security-audit-coverage-ledger.md](security-audit-coverage-ledger.md).
@@ -35,7 +36,7 @@
 ## Reprise rapide (sans historique redondant)
 
 - Vérification P0 : `bash scripts/agent-p0-check.sh` dans un checkout valide ; le détail et la méthode de diagnostic restent dans `docs/operations.md`.
-- Consulter le HEAD réel de [PR #233](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/233), ses statuts et sa base. Suivre le **premier échec exploitable**, puis la section ouverte correspondant au périmètre. Ne jamais merger automatiquement.
+- Consulter le HEAD réel de [PR #234](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/234), ses statuts et sa base. Suivre le **premier échec exploitable**, puis la section ouverte correspondant au périmètre. Ne jamais merger automatiquement.
 - Procédure d'agent : `AGENTS.md` puis skill `roadmap-local-first` ou `quality-follow-up` **à la demande**, pas de chargement du dossier entier. L1/L2/L3 local et CI remote sont des preuves différentes.
 - Baselines, incidents Vercel/404 et erreurs de CI récupérables dans [`docs/operations.md`](operations.md), [récupération Vercel](vercel-github-baseline-recovery-2026-10-13.md) et runs GitHub. L'historique des lots terminés reste dans les PR/commits.
 - Interdits maintenus : pas de directives CI skip, pas de suppression de `public/404.html`, pas de retrait legacy avant parité, Google Translate en fallback, pas de corpus familial privé dans les artefacts.

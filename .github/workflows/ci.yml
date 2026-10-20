@@ -37,6 +37,9 @@ on:
       - ".semgrep/**"
       - "*.{js,cjs,mjs,ts,tsx,json}"
       - "package-lock.json"
+      - ".github/workflows/**"
+      - ".github/actions/**"
+      - ".github/dependabot.yml"
       - ".github/workflows/ci.yml"
       - ".github/workflows/copilot-setup-steps.yml"
       - ".github/workflows/docker-build.yml"
@@ -84,6 +87,9 @@ on:
       - ".semgrep/**"
       - "*.{js,cjs,mjs,ts,tsx,json}"
       - "package-lock.json"
+      - ".github/workflows/**"
+      - ".github/actions/**"
+      - ".github/dependabot.yml"
       - ".github/workflows/ci.yml"
       - ".github/workflows/copilot-setup-steps.yml"
       - ".github/workflows/docker-build.yml"
@@ -270,6 +276,16 @@ jobs:
           QUALITY_LOG_TAIL: "12"
         run: bash scripts/quality-gate.sh
 
+      # Changed-file hooks are not sufficient: unchanged workflows also need a
+      # baseline audit when actionlint/zizmor rules or repository policy evolves.
+      - name: Audit all GitHub Actions workflows (actionlint, zizmor)
+        id: workflow-audit
+        if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+        continue-on-error: true
+        run: |
+          pre-commit run actionlint --all-files
+          pre-commit run zizmor --all-files
+
       - name: Save pre-commit environments
         if: >-
           (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
@@ -284,6 +300,12 @@ jobs:
         if: >-
           (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
           steps.canonical-quality-gate.outcome != 'success'
+        run: exit 1
+
+      - name: Enforce GitHub Actions workflow audit
+        if: >-
+          (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
+          steps.workflow-audit.outcome != 'success'
         run: exit 1
 
       - name: Verify current production baseline before PR build

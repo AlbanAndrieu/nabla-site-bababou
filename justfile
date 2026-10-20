@@ -1,4 +1,4 @@
-# Additive aliases for local-first development. Keep the historical Makefile.
+# Canonical local-first developer interface. Keep Makefile only for legacy targets.
 set shell := ["bash", "-euo", "pipefail", "-c"]
 
 default:
@@ -9,6 +9,23 @@ hooks:
 
 install:
     npm ci --no-audit --no-fund
+
+# Project and publication checks use the existing npm and security contracts.
+check:
+    npm run check
+
+lint:
+    npm run lint
+    npm run lint:css
+
+typecheck:
+    npm run typecheck
+
+unit:
+    npm run test:unit
+
+a11y:
+    npm run test:a11y
 
 dev:
     npm run dev
@@ -34,11 +51,24 @@ quality-fix:
 quality:
     npm run quality:agent
 
+publish:
+    bash scripts/agent-publish.sh
+
 publish-check:
     bash scripts/agent-publish.sh
 
 publish-status:
     bash scripts/agent-publish.sh --status
+
+# Audit the complete workflow baseline without needing a deployment.
+# These two hooks remain mandatory in the CI quality job.
+workflow-audit:
+    pre-commit run actionlint --all-files
+    pre-commit run zizmor --all-files
+
+# Keep historical make recipes available, without making them canonical.
+legacy-help:
+    make help
 
 # Secret scanning is local-first. Private ignored family/legal source files are not staged.
 secrets-config:
