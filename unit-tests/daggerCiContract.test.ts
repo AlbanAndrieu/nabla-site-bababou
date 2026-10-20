@@ -1,6 +1,13 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { chmodSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import {
+  chmodSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -98,10 +105,14 @@ test("Dagger rejects unknown targets without a runtime or network dependency", (
   assert.equal(help.status, 0);
   assert.match(help.stdout, /Dagger spike/);
 
-  const unexpectedHelpArgs = spawnSync("bash", [script.pathname, "--help", "build"], {
-    encoding: "utf8",
-    env: { ...process.env, PATH: "/usr/bin:/bin" },
-  });
+  const unexpectedHelpArgs = spawnSync(
+    "bash",
+    [script.pathname, "--help", "build"],
+    {
+      encoding: "utf8",
+      env: { ...process.env, PATH: "/usr/bin:/bin" },
+    },
+  );
   assert.equal(unexpectedHelpArgs.status, 2);
   assert.match(unexpectedHelpArgs.stderr, /Usage:/);
   assert.doesNotMatch(unexpectedHelpArgs.stderr, /dagger is required/);
@@ -156,14 +167,20 @@ test("Dagger benchmark repeats the same opt-in target with no runtime", async ()
       join(directory, "scripts", "dagger-ci.sh"),
       'printf "%s\\n" "$1" >> "$DAGGER_SAMPLE_LOG"\n',
     );
-    const benchmark = new URL("../scripts/dagger-benchmark.sh", import.meta.url);
+    const benchmark = new URL(
+      "../scripts/dagger-benchmark.sh",
+      import.meta.url,
+    );
     const result = spawnSync("bash", [benchmark.pathname, "p0"], {
       cwd: directory,
       encoding: "utf8",
       env: { ...process.env, DAGGER_SAMPLE_LOG: log },
     });
     assert.equal(result.status, 0, result.stderr);
-    assert.deepEqual(readFileSync(log, "utf8").trim().split("\n"), ["p0", "p0"]);
+    assert.deepEqual(readFileSync(log, "utf8").trim().split("\n"), [
+      "p0",
+      "p0",
+    ]);
     assert.match(result.stdout, /DAGGER_SAMPLE=1 DAGGER_TARGET=p0/);
     assert.match(result.stdout, /DAGGER_SAMPLE=2 DAGGER_TARGET=p0/);
     const invalid = spawnSync("bash", [benchmark.pathname, "unknown"], {

@@ -44,7 +44,10 @@ test("Node runtime policy separates development Current from production compatib
   assert.match(envrc, /NODE_VERSIONS=\$\{NODE_VERSIONS:-"v26\.8\.2"\}/);
   assert.notEqual(envrcStat.mode & 0o111, 0, ".envrc must remain executable");
   assert.match(security, /Node 26 Current/);
-  assert.match(security, /Vercel production uses its supported Node 24\.x runtime/);
+  assert.match(
+    security,
+    /Vercel production uses its supported Node 24\.x runtime/,
+  );
 
   assert.match(workflow, /node-version-file:\s*"\.nvmrc-production"/);
   assert.doesNotMatch(workflow, /node-version:\s*"?\d/);
@@ -72,7 +75,10 @@ test("Node 24 CI follows production runtime inputs instead of generic maintenanc
     "lib/**",
     "messages/**",
   ]) {
-    assert.match(workflow, new RegExp(`- "${path.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"`));
+    assert.match(
+      workflow,
+      new RegExp(`- "${path.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"`),
+    );
   }
 
   assert.match(workflow, /unit-tests\/nodeRuntimeCompatibility\.test\.ts/);

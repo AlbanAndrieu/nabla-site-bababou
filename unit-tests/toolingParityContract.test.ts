@@ -80,7 +80,10 @@ test("P5 tooling dependencies retain package-lock root parity and installed reso
     await readFile(new URL("../package-lock.json", import.meta.url), "utf8"),
   ) as {
     lockfileVersion: number;
-    packages: Record<string, { version?: string; devDependencies?: Record<string, string> }>;
+    packages: Record<
+      string,
+      { version?: string; devDependencies?: Record<string, string> }
+    >;
   };
   assert.equal(lock.lockfileVersion, 3);
   for (const name of [

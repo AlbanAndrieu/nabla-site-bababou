@@ -1,10 +1,17 @@
 import assert from "node:assert/strict";
 import { execFileSync, spawnSync } from "node:child_process";
-import { chmod, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import {
+  chmod,
+  mkdir,
+  mkdtemp,
+  readFile,
+  rm,
+  writeFile,
+} from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { fileURLToPath } from "node:url";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 
 const publisherPath = fileURLToPath(
   new URL("../scripts/agent-publish.sh", import.meta.url),
@@ -37,16 +44,16 @@ async function createFixture() {
   );
   await writeFile(
     join(directory, "scripts", "agent-quality-gate.sh"),
-    "#!/usr/bin/env bash\nset -euo pipefail\necho \"gate:$*\" >> \"$(git rev-parse --git-path agent-publish-test-calls)\"\n",
+    '#!/usr/bin/env bash\nset -euo pipefail\necho "gate:$*" >> "$(git rev-parse --git-path agent-publish-test-calls)"\n',
   );
   await writeFile(
     join(directory, "scripts", "ci-scope.sh"),
     [
       "#!/usr/bin/env bash",
       "set -euo pipefail",
-      "echo \"scope:$*\" >> \"$(git rev-parse --git-path agent-publish-test-calls)\"",
-      "full=\"${FULL_SCOPE:-false}\"",
-      "if [[ \"$full\" == \"true\" ]]; then",
+      'echo "scope:$*" >> "$(git rev-parse --git-path agent-publish-test-calls)"',
+      'full="${FULL_SCOPE:-false}"',
+      'if [[ "$full" == "true" ]]; then',
       "  maintenance=false",
       "  application=true",
       "  build=true",
@@ -55,11 +62,14 @@ async function createFixture() {
       "  application=false",
       "  build=false",
       "fi",
-      "printf 'maintenance_only=%s\\napplication=%s\\nsast=false\\nbuild=%s\\ndependencies=false\\nchanged_count=1\\n' \"$maintenance\" \"$application\" \"$build\"",
+      'printf \'maintenance_only=%s\\napplication=%s\\nsast=false\\nbuild=%s\\ndependencies=false\\nchanged_count=1\\n\' "$maintenance" "$application" "$build"',
       "",
     ].join("\n"),
   );
-  await writeFile(join(directory, "node_modules", ".package-lock.json"), "{}\n");
+  await writeFile(
+    join(directory, "node_modules", ".package-lock.json"),
+    "{}\n",
+  );
 
   const node = join(directory, "bin", "node");
   await writeFile(
@@ -67,9 +77,9 @@ async function createFixture() {
     [
       "#!/usr/bin/env bash",
       "set -euo pipefail",
-      "if [[ \"${1:-}\" == \"-p\" ]]; then echo 24.11.0; exit 0; fi",
-      "if [[ \"${1:-}\" == \"--version\" ]]; then echo v24.11.0; exit 0; fi",
-      "echo \"unexpected node invocation: $*\" >&2",
+      'if [[ "${1:-}" == "-p" ]]; then echo 24.11.0; exit 0; fi',
+      'if [[ "${1:-}" == "--version" ]]; then echo v24.11.0; exit 0; fi',
+      'echo "unexpected node invocation: $*" >&2',
       "exit 2",
       "",
     ].join("\n"),
@@ -81,9 +91,9 @@ async function createFixture() {
     [
       "#!/usr/bin/env bash",
       "set -euo pipefail",
-      "if [[ \"${1:-}\" == \"--version\" ]]; then echo 12.2.0; exit 0; fi",
-      "if [[ \"${1:-}\" == \"run\" ]]; then echo \"npm-run:${2:-}\" >> \"$(git rev-parse --git-path agent-publish-test-calls)\"; exit 0; fi",
-      "echo \"unexpected npm invocation: $*\" >&2",
+      'if [[ "${1:-}" == "--version" ]]; then echo 12.2.0; exit 0; fi',
+      'if [[ "${1:-}" == "run" ]]; then echo "npm-run:${2:-}" >> "$(git rev-parse --git-path agent-publish-test-calls)"; exit 0; fi',
+      'echo "unexpected npm invocation: $*" >&2',
       "exit 2",
       "",
     ].join("\n"),
@@ -91,7 +101,7 @@ async function createFixture() {
   const preCommit = join(directory, "bin", "pre-commit");
   await writeFile(
     preCommit,
-    "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"${1:-}\" == \"--version\" ]]; then echo 'pre-commit 4.6.2'; exit 0; fi\nexit 0\n",
+    '#!/usr/bin/env bash\nset -euo pipefail\nif [[ "${1:-}" == "--version" ]]; then echo \'pre-commit 4.6.2\'; exit 0; fi\nexit 0\n',
   );
 
   for (const path of [
@@ -175,7 +185,6 @@ test("deploy-relevant publication runs build and built-output privacy checks", a
   assert.match(result.stdout, /QG_PUBLISH_PROOF_WRITTEN/);
 });
 
-
 test("publication rejects an unsupported Node toolchain before running the gate", async (t) => {
   const fixture = await createFixture();
   t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
@@ -183,7 +192,7 @@ test("publication rejects an unsupported Node toolchain before running the gate"
   const node = join(fixture.directory, "bin", "node");
   await writeFile(
     node,
-    "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"${1:-}\" == \"-p\" ]]; then echo 24.10.9; exit 0; fi\nif [[ \"${1:-}\" == \"--version\" ]]; then echo v24.10.9; exit 0; fi\nexit 2\n",
+    '#!/usr/bin/env bash\nset -euo pipefail\nif [[ "${1:-}" == "-p" ]]; then echo 24.10.9; exit 0; fi\nif [[ "${1:-}" == "--version" ]]; then echo v24.10.9; exit 0; fi\nexit 2\n',
   );
   await chmod(node, 0o755);
 
@@ -200,7 +209,7 @@ test("publication rejects an unsupported npm toolchain before running the gate",
   const npm = join(fixture.directory, "bin", "npm");
   await writeFile(
     npm,
-    "#!/usr/bin/env bash\nset -euo pipefail\nif [[ \"${1:-}\" == \"--version\" ]]; then echo 12.0.0; exit 0; fi\nexit 2\n",
+    '#!/usr/bin/env bash\nset -euo pipefail\nif [[ "${1:-}" == "--version" ]]; then echo 12.0.0; exit 0; fi\nexit 2\n',
   );
   await chmod(npm, 0o755);
 
@@ -228,12 +237,9 @@ test("publication status audits proof without rerunning checks", async (t) => {
   assert.equal(first.status, 0, first.stderr);
   const calls = await readFile(fixture.callLog, "utf8");
 
-  const status = publish(
-    fixture.directory,
-    fixture.baseSha,
-    false,
-    ["--status"],
-  );
+  const status = publish(fixture.directory, fixture.baseSha, false, [
+    "--status",
+  ]);
   assert.equal(status.status, 0, status.stderr);
   assert.match(status.stdout, /QG_PUBLISH_PROOF_OK/);
   assert.match(status.stdout, /^head=[0-9a-f]{40}$/m);
@@ -246,12 +252,9 @@ test("publication status fails closed without a proof", async (t) => {
   const fixture = await createFixture();
   t.after(async () => rm(fixture.directory, { recursive: true, force: true }));
 
-  const status = publish(
-    fixture.directory,
-    fixture.baseSha,
-    false,
-    ["--status"],
-  );
+  const status = publish(fixture.directory, fixture.baseSha, false, [
+    "--status",
+  ]);
   assert.equal(status.status, 1);
   assert.match(status.stderr, /QG_PUBLISH_PROOF_MISSING/);
 });
