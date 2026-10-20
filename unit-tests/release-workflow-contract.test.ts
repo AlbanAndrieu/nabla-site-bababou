@@ -73,7 +73,9 @@ test("semantic release authenticates before refreshing current master", async ()
   assert.match(freshness, /git fetch --force origin master:/);
   assert.ok(
     workflow.indexOf("- name: Configure release Git authentication") <
-      workflow.indexOf("- name: Verify validated revision is still current master"),
+      workflow.indexOf(
+        "- name: Verify validated revision is still current master",
+      ),
   );
 });
 
@@ -117,7 +119,10 @@ test("semantic release avoids installing the application dependency graph", asyn
   assert.match(semanticRelease, /git config --local user\.email/);
   assert.match(semanticRelease, /npm exec --yes --ignore-scripts/);
   assert.match(semanticRelease, /--package=semantic-release@25\.0\.8/);
-  assert.match(semanticRelease, /--package=@semantic-release\/changelog@7\.0\.0/);
+  assert.match(
+    semanticRelease,
+    /--package=@semantic-release\/changelog@7\.0\.0/,
+  );
   assert.match(semanticRelease, /--package=@semantic-release\/git@11\.0\.1/);
   assert.match(semanticRelease, /--package=@semantic-release\/github@12\.0\.9/);
   assert.doesNotMatch(semanticRelease, /npm run semantic-release/);

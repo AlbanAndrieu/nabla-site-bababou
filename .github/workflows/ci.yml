@@ -278,7 +278,6 @@ jobs:
         env:
           QUALITY_BASE_REF: ${{ steps.current-heads.outputs.base-sha || github.event.before || 'origin/master' }}
           QUALITY_LOG_TAIL: "12"
-          QUALITY_DIFF_LINES: "0"
         run: bash scripts/quality-gate.sh
 
       # Changed-file hooks are not sufficient: unchanged workflows also need a

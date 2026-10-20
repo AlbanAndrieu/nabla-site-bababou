@@ -16,8 +16,16 @@ test("shared agent tooling follows the Node 26 Current development contract", as
   assert.match(setup, /node-version-file:\s*"\.nvmrc"/);
   assert.doesNotMatch(setup, /node-version:\s*"?\d/);
   assert.match(setup, /- name: Restore npm downloads/);
-  assert.ok(setup.includes("actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25"));
-  assert.ok(setup.includes("actions/cache/save@caa296126883cff596d87d8935842f9db880ef25"));
+  assert.ok(
+    setup.includes(
+      "actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25",
+    ),
+  );
+  assert.ok(
+    setup.includes(
+      "actions/cache/save@caa296126883cff596d87d8935842f9db880ef25",
+    ),
+  );
   assert.match(setup, /pre-commit install-hooks/);
   assert.doesNotMatch(setup, /uses: actions\/cache(?:\/(?:restore|save))?@v5/);
   assert.match(setup, /Install pinned npm from Mise/);
@@ -35,7 +43,6 @@ test("shared agent tooling follows the Node 26 Current development contract", as
   assert.doesNotMatch(cursor, /branch from and merge to develop/);
   assert.doesNotMatch(cursor, /feature\/new-feature develop/);
 });
-
 
 test("GitHub primary Node workflows share .nvmrc as their source of truth", async () => {
   const [nvmrc, quality, playwright, copilot, release] = await Promise.all([
@@ -138,15 +145,36 @@ test("security guidance reflects the current dependency and deployment boundary"
   assert.ok(security.includes(`\`${packageJson.engines.node}\``));
   assert.ok(security.includes(`\`${packageJson.engines.npm}\``));
   assert.ok(security.includes(`\`${nvmrc.trim()}\``));
-  assert.match(security, /Vercel production uses its supported Node 24\.x runtime/);
+  assert.match(
+    security,
+    /Vercel production uses its supported Node 24\.x runtime/,
+  );
   assert.match(security, /Node 26 Current/);
-  assert.match(security, /maintenance-only changes intentionally skip Semgrep, the production Next build and dependency scanning/);
-  assert.match(security, /Snyk runs only for dependency-scope Quality changes when `SNYK_TOKEN` is configured/);
-  assert.match(security, /Pre-merge Quality requires a healthy production base/);
+  assert.match(
+    security,
+    /maintenance-only changes intentionally skip Semgrep, the production Next build and dependency scanning/,
+  );
+  assert.match(
+    security,
+    /Snyk runs only for dependency-scope Quality changes when `SNYK_TOKEN` is configured/,
+  );
+  assert.match(
+    security,
+    /Pre-merge Quality requires a healthy production base/,
+  );
   assert.match(security, /Production Post-deploy Smoke/);
   assert.match(security, /Production DAST/);
-  assert.match(security, /metadata-only semantic-release commit may inherit its parent production baseline/);
+  assert.match(
+    security,
+    /metadata-only semantic-release commit may inherit its parent production baseline/,
+  );
   assert.doesNotMatch(security, />=24\.11\.0 <26/);
-  assert.doesNotMatch(security, /first post-merge production DAST\/smoke statuses must be observed/);
-  assert.doesNotMatch(security, /Initial State:|Final State:|remaining vulnerabilities are in deployment tooling/);
+  assert.doesNotMatch(
+    security,
+    /first post-merge production DAST\/smoke statuses must be observed/,
+  );
+  assert.doesNotMatch(
+    security,
+    /Initial State:|Final State:|remaining vulnerabilities are in deployment tooling/,
+  );
 });

@@ -44,12 +44,17 @@ test("Playwright Preview runs reuse the Chromium browser cache", async () => {
   );
 
   assert.match(workflow, /id: playwright-version/);
-  assert.ok(workflow.includes("actions/cache@caa296126883cff596d87d8935842f9db880ef25"));
+  assert.ok(
+    workflow.includes("actions/cache@caa296126883cff596d87d8935842f9db880ef25"),
+  );
   assert.match(
     cache,
     /playwright-chromium-\$\{\{ runner\.os \}\}-\$\{\{ runner\.arch \}\}-\$\{\{ steps\.playwright-version\.outputs\.version \}\}/,
   );
-  assert.match(install, /steps\.playwright-cache\.outputs\.cache-hit != 'true'/);
+  assert.match(
+    install,
+    /steps\.playwright-cache\.outputs\.cache-hit != 'true'/,
+  );
 
   // System packages still need to be present on every fresh GitHub-hosted runner.
   assert.match(workflow, /npx playwright install-deps chromium/);
@@ -72,7 +77,9 @@ test("Playwright npm cache avoids bundled npm project config before pinning", as
     "- name: Install dependencies",
   );
 
-  assert.ok(npmCache.includes("actions/cache@caa296126883cff596d87d8935842f9db880ef25"));
+  assert.ok(
+    npmCache.includes("actions/cache@caa296126883cff596d87d8935842f9db880ef25"),
+  );
   assert.match(npmCache, /path: ~\/\.npm/);
   assert.match(
     npmCache,
@@ -113,7 +120,11 @@ test("Playwright Preview helper actions run on the Node 24 generation", async ()
     "utf8",
   );
 
-  assert.ok(workflow.includes("actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd"));
+  assert.ok(
+    workflow.includes(
+      "actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd",
+    ),
+  );
   assert.doesNotMatch(workflow, /actions\/github-script@v[0-9]+/);
   assert.match(workflow, /persist-credentials: false/);
 });
@@ -131,7 +142,7 @@ test("Playwright Preview rejects Vercel Security Checkpoint responses", async ()
   );
 
   assert.match(accessCheck, /x-vercel-mitigated/);
-  assert.match(accessCheck, /status\" == \"429\"/);
+  assert.match(accessCheck, /status" == "429"/);
   assert.match(accessCheck, /Vercel Security Checkpoint/);
   assert.match(accessCheck, /return 1/);
 });
@@ -158,12 +169,10 @@ test("Playwright production deployment smoke stays lightweight", async () => {
       'request "$DEPLOYMENT_BASE_URL" "/" "deployment /" "" "/index.html"',
     ),
   );
-  assert.match(productionSmoke, /status\" == \"307\"/);
+  assert.match(productionSmoke, /status" == "307"/);
   assert.match(productionSmoke, /redirect_path.*expected_redirect/s);
   assert.ok(
-    productionSmoke.includes(
-      "^location: https://vercel\\.com/(login|sso-api)",
-    ),
+    productionSmoke.includes("^location: https://vercel\\.com/(login|sso-api)"),
   );
   for (const route of [
     "/",
@@ -183,7 +192,6 @@ test("Playwright production deployment smoke stays lightweight", async () => {
   assert.match(productionSmoke, /Production Post-deploy Smoke/);
   assert.match(productionSmoke, /statuses\/\$\{STATUS_SHA\}/);
 });
-
 
 test("Playwright failure summary cross-links the independent exact-SHA ZAP evidence", async () => {
   const workflow = await readFile(
