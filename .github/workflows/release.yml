@@ -139,12 +139,16 @@ jobs:
         run: |
           set -euo pipefail
           existing_v="$(git tag --list 'v[0-9]*.[0-9]*.[0-9]*' --sort=-version:refname | head -n 1)"
+          package_version="$(node -p "require('./package.json').version")"
           if [[ -n "$existing_v" ]]; then
+            if [[ "$existing_v" != "v${package_version}" ]]; then
+              echo "::error::Latest v-prefixed tag and package version differ; manual release-history audit required."
+              exit 1
+            fi
             echo "Using existing v-prefixed release history: $existing_v"
             exit 0
           fi
           legacy_tag="$(git tag --list '[0-9]*.[0-9]*.[0-9]*' --sort=-version:refname | head -n 1)"
-          package_version="$(node -p "require('./package.json').version")"
           if [[ -z "$legacy_tag" || "$legacy_tag" != "$package_version" ]]; then
             echo "::error::Legacy tag does not match package version: manual audit required."
             exit 1
@@ -154,6 +158,10 @@ jobs:
             exit 1
           }
           target_sha="$(git rev-parse "$legacy_tag^{commit}")"
+          git merge-base --is-ancestor "$target_sha" HEAD || {
+            echo "::error::Legacy release tag is not an ancestor of current master."
+            exit 1
+          }
           git tag "v${legacy_tag}" "$target_sha"
           gh api --method POST "repos/${GITHUB_REPOSITORY}/git/refs" \
             -f ref="refs/tags/v${legacy_tag}" -f sha="$target_sha" >/dev/null
@@ -176,26 +184,3 @@ jobs:
             --package=@semantic-release/github@12.0.9 \
             -- semantic-release
 
-      - name: Verify v-prefixed release state
-        if: steps.release_credentials.outputs.enabled == 'true' && steps.freshness.outputs.current == 'true'
-        env:
-          GH_TOKEN: ${{ steps.release_app_token.outputs.token }}
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          PACKAGE_VERSION="$(node -p "require('./package.json').version")"
-          LATEST_TAG="$(git tag --list --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1 || true)"
-
-          if [[ -z "$LATEST_TAG" ]]; then
-            echo "No v-prefixed semantic-release tag exists." >&2
-            exit 1
-          fi
-
-          if [[ "$LATEST_TAG" != "v${PACKAGE_VERSION}" ]]; then
-            echo "package.json version $PACKAGE_VERSION does not match latest v-tag $LATEST_TAG." >&2
-            exit 1
-          fi
-
-          gh release view "$LATEST_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null
-          echo "Verified semantic-release state at $LATEST_TAG."

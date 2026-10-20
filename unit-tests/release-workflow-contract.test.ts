@@ -108,10 +108,8 @@ test("semantic release avoids installing the application dependency graph", asyn
   assert.doesNotMatch(workflow, /Install application dependencies/);
   assert.doesNotMatch(workflow, /npm ci/);
 
-  const semanticRelease = section(
-    workflow,
-    "- name: Run semantic-release",
-    "- name: Verify v-prefixed release state",
+  const semanticRelease = workflow.slice(
+    workflow.indexOf("- name: Run semantic-release"),
   );
   assert.match(semanticRelease, /GITHUB_TOKEN:/);
   assert.match(semanticRelease, /GH_TOKEN:/);
@@ -146,9 +144,9 @@ test("release bridges verified numeric tags into Alban v-prefixed history", asyn
   assert.match(workflow, /Adopt v-prefixed semantic-release baseline/);
   assert.match(workflow, /gh release view "\$legacy_tag"/);
   assert.match(workflow, /git tag "v\$\{legacy_tag\}"/);
-  assert.match(workflow, /LATEST_TAG=/);
-  assert.match(workflow, /PACKAGE_VERSION=/);
-  assert.match(workflow, /gh release view "\$LATEST_TAG"/);
+  assert.match(workflow, /package_version=/);
+  assert.match(workflow, /git merge-base --is-ancestor "\$target_sha" HEAD/);
+  assert.match(workflow, /Latest v-prefixed tag and package version differ/);
 });
 
 test("release token remains least-privileged", async () => {
