@@ -93,7 +93,10 @@ test("Production DAST projection checkout is complete and errors are blocking", 
   assert.ok(checkout);
   assert.match(source, /defectdojo-report-sanitizers/);
   assert.match(checkout, /scripts\/security\/zap-safe-report\.mjs/);
-  assert.match(checkout, /scripts\/security\/defectdojo-report-sanitizers\.mjs/);
+  assert.match(
+    checkout,
+    /scripts\/security\/defectdojo-report-sanitizers\.mjs/,
+  );
   assert.doesNotMatch(checkout, /defectdojo-pull-master/);
   assert.match(workflow, /id: safe-report/);
   assert.match(workflow, /id: safe-upload/);
