@@ -154,7 +154,8 @@ test("release token remains least-privileged", async () => {
 
   assert.doesNotMatch(workflow, /permission-workflows:/);
   assert.doesNotMatch(workflow, /^\s*workflows:\s*write\s*$/m);
-  assert.match(workflow, /^\s*contents:\s*write\s*$/m);
+  assert.match(workflow, /^\s*contents:\s*read\s*$/m);
+  assert.match(workflow, /permission-contents: write/);
 });
 
 test("release tooling stays out of the normal application install", async () => {
@@ -176,7 +177,7 @@ test("release tooling stays out of the normal application install", async () => 
   assert.equal(packageJson.scripts?.["semantic-release"], undefined);
 });
 
-test("semantic release requires dedicated GitHub App credentials and never falls back to GITHUB_TOKEN", async () => {
+test("release requires GitHub App credentials and forbids token fallback", async () => {
   const workflow = await readFile(
     new URL("../.github/workflows/release.yml", import.meta.url),
     "utf8",

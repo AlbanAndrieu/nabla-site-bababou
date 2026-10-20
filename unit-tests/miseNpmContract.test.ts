@@ -17,7 +17,7 @@ const verifier = fileURLToPath(
   new URL("../scripts/verify-mise-npm.sh", import.meta.url),
 );
 
-test("Mise npm verifier accepts the exact pinned version and fails closed on drift", async () => {
+test("Mise npm verifier enforces exact pin and rejects drift", async () => {
   const root = await mkdtemp(join(tmpdir(), "bababou-npm-pin-"));
   try {
     const bin = join(root, "bin");
