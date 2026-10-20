@@ -140,7 +140,6 @@ jobs:
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           persist-credentials: false
-        with:
           ref: ${{ env.FAILED_SHA }}
           fetch-depth: 0
 
@@ -308,7 +307,8 @@ jobs:
           FOLLOWUP_BRANCH: ${{ steps.prepare.outputs.branch }}
         run: |
           set -euo pipefail
-          git push origin "HEAD:refs/heads/${FOLLOWUP_BRANCH}"
+          # Checkout does not persist credentials; authenticate only this scoped push.
+          git -c http.extraheader="AUTHORIZATION: basic $(printf 'x-access-token:%s' "${GH_TOKEN}" | base64 -w0)" push origin "HEAD:refs/heads/${FOLLOWUP_BRANCH}"
 
       - name: Open remediation PR and dispatch authoritative Quality
         id: pr
