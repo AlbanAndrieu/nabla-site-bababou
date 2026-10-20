@@ -114,7 +114,7 @@ precommit_fix_until_stable() {
             return 1
         fi
         seen_fingerprints["${before}"]="${pass}"
-        before_digests="$(fix_file_digests "${fix_files[@]}")
+        before_digests="$(fix_file_digests "${fix_files[@]}")"
         log="$(mktemp)"
         set +e
         pre-commit run --hook-stage pre-commit --files "${fix_files[@]}" >"${log}" 2>&1
