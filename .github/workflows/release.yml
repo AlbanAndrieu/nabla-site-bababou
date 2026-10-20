@@ -185,7 +185,7 @@ jobs:
           set -euo pipefail
 
           PACKAGE_VERSION="$(node -p "require('./package.json').version")"
-          LATEST_TAG="$(git tag --list --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+ | head -n 1 || true)"
+          LATEST_TAG="$(git tag --list --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1 || true)"
 
           if [[ -z "$LATEST_TAG" ]]; then
             echo "No v-prefixed semantic-release tag exists." >&2
@@ -193,21 +193,7 @@ jobs:
           fi
 
           if [[ "$LATEST_TAG" != "v${PACKAGE_VERSION}" ]]; then
-            echo "package.json version $PACKAGE_VERSION does not match latest numeric tag $LATEST_TAG." >&2
-            exit 1
-          fi
-
-          gh release view "$LATEST_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null
-          echo "Verified semantic-release state at $LATEST_TAG."
- | head -n 1 || true)"
-
-          if [[ -z "$LATEST_TAG" ]]; then
-            echo "No v-prefixed semantic-release tag exists." >&2
-            exit 1
-          fi
-
-          if [[ "$LATEST_TAG" != "v${PACKAGE_VERSION}" ]]; then
-            echo "package.json version $PACKAGE_VERSION does not match latest numeric tag $LATEST_TAG." >&2
+            echo "package.json version $PACKAGE_VERSION does not match latest v-tag $LATEST_TAG." >&2
             exit 1
           fi
 
