@@ -66,32 +66,26 @@ test("ZAP negotiates Vercel Automation Bypass or OIDC and scopes the selected he
   assert.match(workflow, /Vercel Security Checkpoint/);
 });
 
-test("ZAP baseline enforces explicit policy and publishes actionable exact-SHA diagnostics", async () => {
+test("ZAP baseline is isolated and never uploads raw scan evidence", async () => {
   const workflow = await readFile(workflowUrl, "utf8");
 
-  assert.ok(
-    workflow.includes(
-      "zaproxy/action-baseline@de8ad967d3548d44ef623df22cf95c3b0baf8b25",
-    ),
-  );
-  assert.match(workflow, /docker_name: ghcr\.io\/zaproxy\/zaproxy:2\.17\.0/);
-  assert.match(workflow, /rules_file_name: "\.zap\/rules\.tsv"/);
-  assert.match(workflow, /allow_issue_writing: false/);
-  assert.match(workflow, /fail_action: true/);
-  assert.match(workflow, /cmd_options: "-I -T 5"/);
-  assert.doesNotMatch(workflow, /cmd_options:.*-c \.zap\/rules\.tsv/);
+  assert.doesNotMatch(workflow, /zaproxy\/action-baseline/);
+  assert.doesNotMatch(workflow, /actions\/upload-artifact/);
+  assert.doesNotMatch(workflow, /artifact_name:/);
+  assert.match(workflow, /ghcr\.io\/zaproxy\/zaproxy:2\.17\.0/);
+  assert.match(workflow, /docker run --rm/);
+  assert.match(workflow, /--user "\$\(id -u\):\$\(id -g\)"/);
+  assert.match(workflow, /--env ZAP_AUTH_HEADER --env ZAP_AUTH_HEADER_VALUE --env ZAP_AUTH_HEADER_SITE/);
+  assert.match(workflow, /zap-baseline\.py -t "\$PREVIEW_BASE_URL" -c rules\.tsv/);
+  assert.match(workflow, /-J report_json\.json -I -T 5 -s/);
   assert.match(workflow, /continue-on-error: true/);
-  assert.match(workflow, /artifact_name: zap-preview-report/);
-  assert.match(workflow, /Summarize ZAP Preview diagnostics/);
+  assert.match(workflow, /ZAP_SCAN_DIR=/);
   assert.match(workflow, /report_json\.json/);
-  assert.match(workflow, /Top alert types/);
-  assert.match(workflow, /id: summary/);
-  assert.match(workflow, /report_available=\$report_available/);
-  assert.match(workflow, /high=\$high/);
-  assert.match(workflow, /medium=\$medium/);
+  assert.match(workflow, /runner-local only/);
+  assert.doesNotMatch(workflow, /Top alert types/);
+  assert.match(workflow, /Clean ZAP Preview workspace/);
   assert.match(workflow, /Enforce ZAP Preview policy/);
   assert.match(workflow, /scanner\/configuration error, not a security finding/);
-  assert.match(workflow, /blocking finding/);
   assert.match(workflow, /context 'OWASP ZAP Preview'/);
   assert.match(workflow, /statuses: write/);
   assert.match(workflow, /ZAP Preview access preflight failed/);
