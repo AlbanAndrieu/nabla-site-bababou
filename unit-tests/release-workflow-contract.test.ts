@@ -39,7 +39,10 @@ test("semantic release refuses stale validated revisions", async () => {
   );
 
   assert.match(workflow, /Verify validated revision is still current master/);
-  assert.match(workflow, /VALIDATED_SHA=/);
+  assert.match(
+    workflow,
+    /VALIDATED_SHA: \$\{\{ github\.event\.workflow_run\.head_sha \}\}/,
+  );
   assert.match(workflow, /git rev-parse origin\/master/);
   assert.match(workflow, /current=false/);
   assert.match(workflow, /steps\.freshness\.outputs\.current == 'true'/);
@@ -83,21 +86,23 @@ test("semantic release avoids installing the application dependency graph", asyn
   const nodeSetup = section(
     workflow,
     "- name: Set up Node.js",
-    "- name: Pin npm",
+    "- name: Install pinned npm from Mise",
   );
   assert.match(nodeSetup, /steps\.freshness\.outputs\.current == 'true'/);
   assert.match(nodeSetup, /node-version-file: "\.nvmrc"/);
   assert.doesNotMatch(nodeSetup, /cache: npm/);
   const npmPin = section(
     workflow,
-    "- name: Pin npm",
+    "- name: Install pinned npm from Mise",
     "- name: Run semantic-release",
   );
-  assert.match(npmPin, /cd "\$\{RUNNER_TEMP\}"/);
   assert.match(
     npmPin,
-    /npm install --global npm@11\.17\.0 --no-audit --no-fund/,
+    /jdx\/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8/,
   );
+  assert.match(npmPin, /install_args: npm/);
+  assert.match(npmPin, /Verify npm toolchain/);
+  assert.doesNotMatch(npmPin, /npm install --global/);
   assert.doesNotMatch(workflow, /Install application dependencies/);
   assert.doesNotMatch(workflow, /npm ci/);
 

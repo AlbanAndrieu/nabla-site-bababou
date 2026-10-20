@@ -61,11 +61,14 @@ test("quality CI records performance around the single canonical Next build", as
     /npm-\$\{\{ runner\.os \}\}-\$\{\{ runner\.arch \}\}-\$\{\{ hashFiles\('package-lock\.json'\) \}\}/,
   );
   assert.doesNotMatch(workflow, /cache: npm/);
-  assert.match(workflow, /cd "\$\{RUNNER_TEMP\}"/);
+  assert.match(workflow, /- name: Install pinned npm from Mise/);
   assert.match(
     workflow,
-    /npm install --global npm@11\.17\.0 --no-audit --no-fund/,
+    /jdx\/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8/,
   );
+  assert.match(workflow, /install_args: npm/);
+  assert.match(workflow, /run: test "\$\(npm --version\)" = "11\.17\.0"/);
+  assert.doesNotMatch(workflow, /npm install --global npm@/);
 
   assert.match(workflow, /id: checks/);
   assert.match(workflow, /npm run check:prebuild/);

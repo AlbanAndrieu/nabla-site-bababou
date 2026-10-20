@@ -67,7 +67,7 @@ test("routine dependency updates have one conservative Renovate owner", async ()
   assert.equal(config.osvVulnerabilityAlerts, false);
   assert.ok(
     config.extends?.includes(
-      ":enableVulnerabilityAlertsWithAdditionalLabel('security')",
+      ":enableVulnerabilityAlertsWithAdditionalLabel(security)",
     ),
   );
   assert.equal(config.vulnerabilityAlerts?.prConcurrentLimit, 1);
@@ -85,7 +85,7 @@ test("security fixes bypass routine release age with their own PR budget", async
   assert.equal(config.osvVulnerabilityAlerts, false);
   assert.ok(
     config.extends?.includes(
-      ":enableVulnerabilityAlertsWithAdditionalLabel('security')",
+      ":enableVulnerabilityAlertsWithAdditionalLabel(security)",
     ),
   );
   assert.equal(config.vulnerabilityAlerts?.prConcurrentLimit, 1);

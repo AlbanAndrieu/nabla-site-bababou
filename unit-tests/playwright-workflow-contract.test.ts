@@ -64,11 +64,11 @@ test("Playwright npm cache avoids bundled npm project config before pinning", as
   const npmCache = section(
     workflow,
     "- name: Cache npm downloads",
-    "- name: Pin npm",
+    "- name: Install pinned npm from Mise",
   );
   const npmPin = section(
     workflow,
-    "- name: Pin npm",
+    "- name: Install pinned npm from Mise",
     "- name: Install dependencies",
   );
 
@@ -79,11 +79,13 @@ test("Playwright npm cache avoids bundled npm project config before pinning", as
     /npm-\$\{\{ runner\.os \}\}-\$\{\{ runner\.arch \}\}-\$\{\{ hashFiles\('package-lock\.json'\) \}\}/,
   );
   assert.doesNotMatch(workflow, /cache: npm/);
-  assert.match(npmPin, /cd "\$\{RUNNER_TEMP\}"/);
   assert.match(
     npmPin,
-    /npm install --global npm@11\.17\.0 --no-audit --no-fund/,
+    /jdx\/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8/,
   );
+  assert.match(npmPin, /install_args: npm/);
+  assert.match(npmPin, /Verify npm toolchain/);
+  assert.doesNotMatch(npmPin, /npm install --global/);
 });
 
 test("Playwright Preview dependency install skips legacy lifecycle scripts", async () => {
@@ -179,7 +181,7 @@ test("Playwright production deployment smoke stays lightweight", async () => {
   assert.doesNotMatch(productionSmoke, /x-vercel-set-bypass-cookie/);
   assert.doesNotMatch(productionSmoke, /npm ci|playwright install|npm test/);
   assert.match(productionSmoke, /Production Post-deploy Smoke/);
-  assert.match(productionSmoke, /statuses\/\$STATUS_SHA/);
+  assert.match(productionSmoke, /statuses\/\$\{STATUS_SHA\}/);
 });
 
 
