@@ -287,3 +287,13 @@ test("Production ZAP publishes only minimized DAST evidence to the LAN collector
     /DEFECTDOJO_API_TOKEN|DEFECTDOJO_IMPORT_APPROVED/,
   );
 });
+
+
+test("CI triggers for shared developer tooling and security policy changes", async () => {
+  const workflow = await readFile(ciUrl, "utf8");
+  const triggerScope = workflow.split("\npermissions:")[0];
+  for (const path of ["justfile", "biome.json", ".betterleaks.toml", ".semgrep/**"]) {
+    const expected = `      - "${path}"`;
+    assert.equal(triggerScope.split(expected).length - 1, 2, `${path} must trigger PR and master CI`);
+  }
+});
