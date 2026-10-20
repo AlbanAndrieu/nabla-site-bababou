@@ -62,7 +62,7 @@ jobs:
           persist-credentials: false
           sparse-checkout: |
             .zap/rules.tsv
-            scripts/security/defectdojo-pull-master.mjs
+            scripts/security/defectdojo-report-sanitizers.mjs
             scripts/security/zap-safe-report.mjs
           sparse-checkout-cone-mode: false
 
@@ -159,6 +159,7 @@ jobs:
       # Separate allowlisted export. Do not let the LAN collector read the
       # baseline action's raw HTTP report just to obtain a finding summary.
       - name: Produce minimized ZAP SARIF for LAN collector
+        id: safe-report
         if: steps.preflight.outcome == 'success' && steps.zap.outcome == 'success'
         shell: bash
         run: |
@@ -168,6 +169,7 @@ jobs:
           jq -e '.version == "2.1.0" and .runs[0].tool.driver.name == "ZAP" and (.runs[0].results | type == "array")' zap-production-safe.sarif >/dev/null
 
       - name: Preserve minimized ZAP findings privately
+        id: safe-upload
         if: steps.preflight.outcome == 'success' && steps.zap.outcome == 'success'
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
@@ -182,6 +184,8 @@ jobs:
         env:
           PREFLIGHT_OUTCOME: ${{ steps.preflight.outcome }}
           ZAP_OUTCOME: ${{ steps.zap.outcome }}
+          SAFE_REPORT_OUTCOME: ${{ steps.safe-report.outcome }}
+          SAFE_UPLOAD_OUTCOME: ${{ steps.safe-upload.outcome }}
         shell: bash
         run: |
           set -euo pipefail
@@ -203,7 +207,7 @@ jobs:
           {
             echo "## Production DAST"
             echo
-            echo "- Result: preflight **${PREFLIGHT_OUTCOME:-unknown}**, scanner **${ZAP_OUTCOME:-not-run}**"
+            echo "- Result: preflight **${PREFLIGHT_OUTCOME:-unknown}**, scanner **${ZAP_OUTCOME:-not-run}**, SARIF **${SAFE_REPORT_OUTCOME:-not-run}**, upload **${SAFE_UPLOAD_OUTCOME:-not-run}**"
             echo "- Target: $BASE_URL"
             echo "- Associated SHA: \`$DEPLOYED_SHA\`"
             echo "- Vercel auth: \`${{ steps.preflight.outputs.auth_mode || 'n/a' }}\`"
@@ -218,10 +222,10 @@ jobs:
         run: rm -f report_html.html report_json.json report_md.md zap.yaml zap-production-safe.sarif
 
       - name: Enforce production DAST policy
-        if: steps.preflight.outcome != 'success' || steps.zap.outcome != 'success'
+        if: always() && (steps.preflight.outcome != 'success' || steps.zap.outcome != 'success' || steps.safe-report.outcome != 'success' || steps.safe-upload.outcome != 'success')
         shell: bash
         run: |
-          echo "::error::Production DAST preflight, scanner, or blocking rule failed. Review the Job Summary and zap-production-report artifact."
+          echo "::error::Production DAST preflight, scanner, safe SARIF, or artifact upload failed. Review the Job Summary and zap-production-report artifact."
           exit 1
 
       - name: Publish production DAST status
@@ -231,6 +235,8 @@ jobs:
           STATUS_SHA: ${{ env.DEPLOYED_SHA }}
           PREFLIGHT_OUTCOME: ${{ steps.preflight.outcome }}
           ZAP_OUTCOME: ${{ steps.zap.outcome }}
+          SAFE_REPORT_OUTCOME: ${{ steps.safe-report.outcome }}
+          SAFE_UPLOAD_OUTCOME: ${{ steps.safe-upload.outcome }}
           HIGH: ${{ steps.summary.outputs.high }}
           MEDIUM: ${{ steps.summary.outputs.medium }}
           LOW: ${{ steps.summary.outputs.low }}
@@ -240,7 +246,7 @@ jobs:
         run: |
           set -euo pipefail
           counts="H${HIGH:-?} M${MEDIUM:-?} L${LOW:-?} I${INFO:-?}"
-          if [[ "$PREFLIGHT_OUTCOME" == "success" && "$ZAP_OUTCOME" == "success" ]]; then
+          if [[ "$PREFLIGHT_OUTCOME" == "success" && "$ZAP_OUTCOME" == "success" && "$SAFE_REPORT_OUTCOME" == "success" && "$SAFE_UPLOAD_OUTCOME" == "success" ]]; then
             STATE=success
             DESCRIPTION="Production ZAP passed $counts"
           else

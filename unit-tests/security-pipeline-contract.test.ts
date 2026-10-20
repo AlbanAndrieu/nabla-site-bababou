@@ -81,6 +81,30 @@ test("Production DAST runs after production deployments and daily with the share
   assert.match(workflow, /H\$high M\$medium L\$low I\$informational/);
 });
 
+
+test("Production DAST projection checkout is complete and errors are blocking", async () => {
+  const workflow = await readFile(productionDastUrl, "utf8");
+  const source = await readFile(
+    new URL("../scripts/security/zap-safe-report.mjs", import.meta.url),
+    "utf8",
+  );
+  const checkout = workflow
+    .split("- name: Checkout production ZAP policy")[1]
+    ?.split("- name: Request GitHub OIDC token")[0];
+  assert.ok(checkout);
+  assert.match(source, /defectdojo-report-sanitizers/);
+  assert.match(checkout, /scripts\/security\/zap-safe-report\.mjs/);
+  assert.match(checkout, /scripts\/security\/defectdojo-report-sanitizers\.mjs/);
+  assert.doesNotMatch(checkout, /defectdojo-pull-master/);
+  assert.match(workflow, /id: safe-report/);
+  assert.match(workflow, /id: safe-upload/);
+  assert.match(workflow, /if: always\(\) && \(steps\.preflight/);
+  assert.match(workflow, /steps\.safe-report\.outcome != 'success'/);
+  assert.match(workflow, /steps\.safe-upload\.outcome != 'success'/);
+  assert.match(workflow, /SAFE_REPORT_OUTCOME.*== "success"/);
+  assert.match(workflow, /SAFE_UPLOAD_OUTCOME.*== "success"/);
+});
+
 test("Preview and production ZAP load the shared policy exactly once", async () => {
   const [preview, production] = await Promise.all([
     readFile(zapPreviewUrl, "utf8"),
