@@ -38,7 +38,7 @@ QUALITY_FORCE_PUBLISH=1 bash scripts/agent-publish.sh
 ```
 
 `agent-p0-check.sh` inclut le preflight Git-only et 28 contrats offline de scope, baseline,
-toolchain, agents, CI/Preview, accessibilité et Vercel, avec les gardes Node `>=24.11 <27` / npm `>=11.17 <12`.
+toolchain, agents, CI/Preview, accessibilité et Vercel, avec les gardes Node `>=24.11 <27` / npm `>=12.2 <13`.
 Le strict gate lui applique aussi shfmt, shell lint et bashate.
 `agent-publish.sh` refuse `master`/detached HEAD et lie la preuve au HEAD, à la base,
 au toolchain et au lockfile installés. `bash scripts/agent-publish.sh --status` audite la

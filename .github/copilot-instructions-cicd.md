@@ -19,7 +19,7 @@ MegaLinter is intentionally not a GitHub workflow: `.mega-linter.yml` remains on
 
 - Development, agents and primary CI use **Node 26 Current** (`26.8.2`) from `.nvmrc`.
 - Vercel production currently uses its supported **Node 24.x** runtime; Node 24 is an explicit production-compatibility target, not the development source of truth. Node 25 is EOL and must not be reintroduced.
-- Package compatibility is `>=24.11.0 <27`; npm is **>=11.17.0 <12** and install scripts are governed by the repository `allowScripts` policy.
+- Package compatibility is `>=24.11.0 <27`; npm is **>=12.2.0 <13** and install scripts are governed by the repository `allowScripts` policy.
 - Run Node/npm commands from the repository root.
 - `package.json` and `package-lock.json` at the root are the only application npm manifests.
 - Vercel deployments come from Git Integration. Only `master` and `vercel-preview-*` refs deploy; deploy-relevant PRs get an automatic exact-SHA checkpoint from `ci.yml` after successful Quality, while `vercel-preview.yml` remains an operator fallback. Do not add a local Vercel CLI deployment workflow unless the project deliberately changes that architecture.

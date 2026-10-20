@@ -111,7 +111,7 @@ test("P0, strict gate and publisher enforce the repository Node/npm engines", as
   };
 
   assert.equal(pkg.engines?.node, ">=24.11.0 <27");
-  assert.equal(pkg.engines?.npm, ">=11.17.0 <12");
+  assert.equal(pkg.engines?.npm, ">=12.2.0 <13");
   assert.match(p0, /require_supported_js_toolchain QG_P0/);
   assert.match(gate, /require_supported_js_toolchain QG_AGENT/);
   assert.match(publish, /require_supported_js_toolchain QG_PUBLISH/);
@@ -119,7 +119,7 @@ test("P0, strict gate and publisher enforce the repository Node/npm engines", as
     support,
     /Node %s is outside repository engines >=24\.11\.0 <27/,
   );
-  assert.match(support, /npm %s is outside repository engines >=11\.17\.0 <12/);
+  assert.match(support, /npm %s is outside repository engines >=12\.2\.0 <12/);
 });
 
 test("npm, mise and pre-push expose the separated publication workflow", async () => {

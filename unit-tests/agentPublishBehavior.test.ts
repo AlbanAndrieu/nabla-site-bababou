@@ -81,7 +81,7 @@ async function createFixture() {
     [
       "#!/usr/bin/env bash",
       "set -euo pipefail",
-      "if [[ \"${1:-}\" == \"--version\" ]]; then echo 11.17.0; exit 0; fi",
+      "if [[ \"${1:-}\" == \"--version\" ]]; then echo 12.2.0; exit 0; fi",
       "if [[ \"${1:-}\" == \"run\" ]]; then echo \"npm-run:${2:-}\" >> \"$(git rev-parse --git-path agent-publish-test-calls)\"; exit 0; fi",
       "echo \"unexpected npm invocation: $*\" >&2",
       "exit 2",

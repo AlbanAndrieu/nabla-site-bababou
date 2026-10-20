@@ -18,7 +18,7 @@ test("Dagger spike is pinned, local-first and does not expose private workspaces
 
   assert.match(script, /DAGGER_REQUIRED_VERSION="v0\.21\.10"/);
   assert.match(script, /node:26\.8\.2-bookworm@sha256:/);
-  assert.match(script, /npm@11\.17\.0/);
+  assert.match(script, /npm@12\.2\.0/);
   assert.match(script, /\.private-publication-source\/\*\*/);
   assert.match(script, /\.redaction-work\/\*\*/);
   assert.match(script, /\.env\.secrets/);
