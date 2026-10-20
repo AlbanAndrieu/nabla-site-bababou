@@ -359,7 +359,7 @@ repos:
     -   id: zizmor
         name: "🔒 github-actions · Audit workflows with zizmor"
         args: ["--offline"]
-        files: ^\\.github/(workflows/[^/]+\\.ya?ml|actions/.+/action\\.ya?ml|dependabot\\.ya?ml)$
+        files: ^\.github/(workflows/[^/]+\.ya?ml|actions/.+/action\.ya?ml|dependabot\.ya?ml)$
 
     ### Deployment Tools ###
 -   repo: https://github.com/hadolint/hadolint

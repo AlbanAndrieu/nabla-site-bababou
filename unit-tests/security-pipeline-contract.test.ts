@@ -314,20 +314,20 @@ test("just is the pinned canonical entrypoint and workflow audits are blocking",
     readFile(ciUrl, "utf8"),
   ]);
 
-  assert.match(mise, /just = "1\\.58\\.0"/);
+  assert.match(mise, /just = "1\.58\.0"/);
   assert.match(justfile, /\ncheck:\n    npm run check/);
   assert.match(justfile, /\nunit:\n    npm run test:unit/);
-  assert.match(justfile, /\npublish:\n    bash scripts\/agent-publish\\.sh/);
+  assert.match(justfile, /\npublish:\n    bash scripts\/agent-publish\.sh/);
   assert.match(justfile, /\nlegacy-help:\n    make help/);
   assert.match(justfile, /\nworkflow-audit:\n    pre-commit run actionlint --all-files\n    pre-commit run zizmor --all-files/);
-  assert.match(precommit, /repo: https:\/\/github\\.com\/rhysd\/actionlint/);
-  assert.match(precommit, /rev: v1\\.7\\.12/);
-  assert.match(precommit, /repo: https:\/\/github\\.com\/zizmorcore\/zizmor-pre-commit/);
-  assert.match(precommit, /rev: v1\\.30\\.1/);
+  assert.match(precommit, /repo: https:\/\/github\.com\/rhysd\/actionlint/);
+  assert.match(precommit, /rev: v1\.7\.12/);
+  assert.match(precommit, /repo: https:\/\/github\.com\/zizmorcore\/zizmor-pre-commit/);
+  assert.match(precommit, /rev: v1\.30\.1/);
   assert.match(precommit, /args: \["--offline"\]/);
   assert.match(workflow, /name: Audit all GitHub Actions workflows \(actionlint, zizmor\)/);
   assert.match(workflow, /pre-commit run actionlint --all-files/);
   assert.match(workflow, /pre-commit run zizmor --all-files/);
-  assert.match(workflow, /steps\\.workflow-audit\\.outcome != 'success'/);
+  assert.match(workflow, /steps\.workflow-audit\.outcome != 'success'/);
   assert.match(workflow, /name: Enforce GitHub Actions workflow audit/);
 });
