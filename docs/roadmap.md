@@ -8,6 +8,17 @@
 
 # Roadmap — nabla-site-bababou
 
+## Reprise P0 — convergence outillage inter-sites (20 octobre 2026)
+
+- **PR active : [#234](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/234)**, sans fusion automatique. Base de comparaison : `nabla-site-alban` master@`dca0755` et PR #238@`cd545d8`.
+- [x] Portage de l'amélioration fusionnée dans Alban #227 : diagnostics de cycles pre-commit nommant les hooks, fichiers modifiés et passes, sans exporter les journaux bruts.
+- [x] Parité de `scripts/agent-output-metrics.sh` avec Alban #238 : séparateur décimal déterministe `LC_ALL=C` et test sous locale française.
+- [ ] Évaluer `actionlint` et `zizmor --offline` de la PR Alban #238 sur les workflows Bababou **avant** de les rendre bloquants : conserver la limitation des coûts et les exceptions documentées.
+- [ ] Comparer séparément `quality-gate.sh`, pre-commit, `justfile`, CI et contrats de tests ; ne pas importer les workflows métier Alban ni supprimer les contrôles confidentialité, BetterLeaks, Semgrep, SCA, Playwright et ZAP.
+- **Preuve** : valider le P0 et les jobs GitHub sur le SHA exact de cette PR. L'échec Production DAST corrigé ne sera attesté qu'après son exécution réelle sur master.
+
+
+
 > Source unique des travaux ouverts **et du contexte de reprise**. Les diagnostics restent dans [`docs/operations.md`](operations.md), les règles agent dans [`AGENTS.md`](../AGENTS.md), l'historique détaillé dans Git/PR.
 
 

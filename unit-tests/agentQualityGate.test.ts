@@ -1,3 +1,5 @@
+import { spawnSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
 import { readFile, stat } from "node:fs/promises";
 import test from "node:test";
@@ -154,6 +156,31 @@ test("npm, mise and pre-push expose the separated publication workflow", async (
   assert.match(prePush, /entry: bash scripts\/agent-publish\.sh/);
 });
 
+test("oscillation diagnostics show only hook IDs, paths and pass numbers", () => {
+  const evidence = [
+    "1\thook\tformatter-a",
+    "1\tfile\tscripts/agent-quality-gate.sh",
+    "2\thook\tformatter-b",
+    "2\tfile\tscripts/agent-quality-gate.sh",
+  ].join("\n");
+  const support = fileURLToPath(
+    new URL("../scripts/lib/agent-quality-support.sh", import.meta.url),
+  );
+  const result = spawnSync(
+    "bash",
+    ["-c", 'source "$1"; report_fix_oscillation 1 3 "$2"', "bash", support, evidence],
+    { encoding: "utf8" },
+  );
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /QG_FIX_OSCILLATION_HOOKS: formatter-a \(passes 1\)/);
+  assert.match(result.stdout, /QG_FIX_OSCILLATION_HOOKS: formatter-b \(passes 2\)/);
+  assert.match(
+    result.stdout,
+    /QG_FIX_OSCILLATION_FILES: scripts\/agent-quality-gate\.sh \(passes 1 2\)/,
+  );
+  assert.doesNotMatch(result.stdout, /SECRET|credentials|token=/);
+});
+
 test("fix mode converges pre-commit before and after npm auto-fixes", async () => {
   const [gate, support] = await Promise.all([
     read("../scripts/agent-quality-gate.sh"),
@@ -166,6 +193,12 @@ test("fix mode converges pre-commit before and after npm auto-fixes", async () =
   assert.match(gate, /npm run lint:fix/);
   assert.match(gate, /npm run lint:css:fix/);
   assert.match(gate, /QG_FIX_DID_NOT_CONVERGE/);
+  assert.match(gate, /QG_FIX_OSCILLATION/);
+  assert.match(gate, /declare -A seen_fingerprints/);
+  assert.match(gate, /report_fix_oscillation/);
+  for (const helper of ["fix_file_digests", "fix_pass_evidence", "report_fix_oscillation"]) {
+    assert.ok(support.includes(`${helper}()`), `missing helper ${helper}`);
+  }
   assert.match(gate, /QG_PRECOMMIT_FAILED/);
   assert.match(support, /AGENT_GATE_SHELL_FILES/);
   assert.match(support, /scripts\/agent-publish\.sh/);

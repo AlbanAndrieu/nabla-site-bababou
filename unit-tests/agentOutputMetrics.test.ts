@@ -37,3 +37,19 @@ test("log metric summary is compact, numeric and privacy-safe", async (t) => {
   assert.equal(invalid.status, 2);
   assert.match(invalid.stderr, /OUTPUT_METRICS_EMPTY_BASELINE/);
 });
+
+test("output percentages use a dot separator under French locale", async (t) => {
+  const dir = await mkdtemp(join(tmpdir(), "bababou-output-metrics-fr-"));
+  t.after(() => rm(dir, { recursive: true, force: true }));
+  const before = join(dir, "baseline.log");
+  const after = join(dir, "current.log");
+  await writeFile(before, "a\nb\nc\n");
+  await writeFile(after, "a\nb\n");
+  const result = spawnSync("bash", [script, before, after], {
+    encoding: "utf8",
+    env: { ...process.env, LC_ALL: "fr_FR.UTF-8", LANG: "fr_FR.UTF-8" },
+  });
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /line_reduction_pct=33\.3/);
+  assert.doesNotMatch(result.stdout, /33,3/);
+});
