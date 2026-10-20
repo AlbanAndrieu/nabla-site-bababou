@@ -81,7 +81,6 @@ test("Production DAST runs after production deployments and daily with the share
   assert.match(workflow, /H\$high M\$medium L\$low I\$informational/);
 });
 
-
 test("Production DAST projection checkout is complete and errors are blocking", async () => {
   const workflow = await readFile(productionDastUrl, "utf8");
   const source = await readFile(

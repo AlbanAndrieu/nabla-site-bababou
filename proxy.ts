@@ -80,5 +80,9 @@ export default function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next|_vercel|.*\\..*).*)", "/private/:path*", "/api/private/:path*"],
+  matcher: [
+    "/((?!api|_next|_vercel|.*\\..*).*)",
+    "/private/:path*",
+    "/api/private/:path*",
+  ],
 };
