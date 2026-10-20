@@ -278,6 +278,7 @@ jobs:
         env:
           QUALITY_BASE_REF: ${{ steps.current-heads.outputs.base-sha || github.event.before || 'origin/master' }}
           QUALITY_LOG_TAIL: "12"
+          QUALITY_DIFF_LINES: "400" # bounded formatter patch for current npm 12 migration diagnosis
         run: bash scripts/quality-gate.sh
 
       # Changed-file hooks are not sufficient: unchanged workflows also need a
