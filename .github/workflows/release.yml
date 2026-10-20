@@ -35,7 +35,7 @@ jobs:
       - name: Resolve release credential policy
         id: release_credentials
         env:
-          RELEASE_APP_PRIVATE_KEY_CONFIGURED: ${ secrets.RELEASE_APP_PRIVATE_KEY != '' }
+          RELEASE_APP_PRIVATE_KEY_CONFIGURED: ${{ secrets.RELEASE_APP_PRIVATE_KEY != '' }}
         shell: bash
         run: |
           set -euo pipefail

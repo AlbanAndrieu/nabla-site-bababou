@@ -1,12 +1,21 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { chmod, mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import {
+  chmod,
+  mkdir,
+  mkdtemp,
+  readFile,
+  rm,
+  writeFile,
+} from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 
-const verifier = fileURLToPath(new URL("../scripts/verify-mise-npm.sh", import.meta.url));
+const verifier = fileURLToPath(
+  new URL("../scripts/verify-mise-npm.sh", import.meta.url),
+);
 
 test("Mise npm verifier accepts the exact pinned version and fails closed on drift", async () => {
   const root = await mkdtemp(join(tmpdir(), "bababou-npm-pin-"));
@@ -55,7 +64,10 @@ test("all GitHub npm setup paths use the canonical mise npm verifier", async () 
     ".github/workflows/playwright.yml",
     ".github/workflows/release.yml",
   ]) {
-    const workflow = await readFile(new URL("../" + path, import.meta.url), "utf8");
+    const workflow = await readFile(
+      new URL("../" + path, import.meta.url),
+      "utf8",
+    );
     assert.match(workflow, /run: bash scripts\/verify-mise-npm\.sh/, path);
     assert.doesNotMatch(workflow, /run: test "\$\(npm --version\)" =/, path);
   }
