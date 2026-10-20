@@ -122,6 +122,9 @@ precommit_fix_until_stable() {
         set -e
         after="$(workspace_fingerprint)"
         evidence+="$(fix_pass_evidence "${pass}" "${log}" "${before_digests}" "$(fix_file_digests "${fix_files[@]}")")"
+
+        if ((rc == 0)); then
+            rm -f "${log}"
             printf '✅ pre-commit auto-fix converged after pass %d\n' "${pass}"
             return 0
         fi
