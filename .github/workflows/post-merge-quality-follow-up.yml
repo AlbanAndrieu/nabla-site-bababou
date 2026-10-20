@@ -305,10 +305,12 @@ jobs:
         shell: bash
         env:
           FOLLOWUP_BRANCH: ${{ steps.prepare.outputs.branch }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          # Checkout does not persist credentials; authenticate only this scoped push.
-          git -c http.extraheader="AUTHORIZATION: basic $(printf 'x-access-token:%s' "${GH_TOKEN}" | base64 -w0)" push origin "HEAD:refs/heads/${FOLLOWUP_BRANCH}"
+          # Checkout does not persist credentials; GitHub CLI supplies ephemeral auth.
+          gh auth setup-git
+          git push origin "HEAD:refs/heads/${FOLLOWUP_BRANCH}"
 
       - name: Open remediation PR and dispatch authoritative Quality
         id: pr

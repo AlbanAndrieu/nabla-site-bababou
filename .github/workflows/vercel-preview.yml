@@ -170,8 +170,11 @@ jobs:
           CHECKPOINT_BRANCH: ${{ steps.preview.outputs.branch }}
           PR_BASE_SHA: ${{ steps.preview.outputs.base_sha }}
           PR_HEAD_SHA: ${{ steps.preview.outputs.sha }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
-        run: >-
+        run: |
+          set -euo pipefail
+          gh auth setup-git
           bash scripts/publish-vercel-preview-checkpoint.sh
           "${CHECKPOINT_BRANCH}" "${PR_BASE_SHA}" "${PR_HEAD_SHA}"
 
