@@ -124,11 +124,12 @@ test("semantic release avoids installing the application dependency graph", asyn
     /--package=@semantic-release\/changelog@7\.0\.0/,
   );
   assert.match(semanticRelease, /--package=@semantic-release\/git@11\.0\.1/);
+  assert.match(semanticRelease, /--package=@semantic-release\/npm@13\.1\.3/);
   assert.match(semanticRelease, /--package=@semantic-release\/github@12\.0\.9/);
   assert.doesNotMatch(semanticRelease, /npm run semantic-release/);
 });
 
-test("semantic release preserves Bababou's established numeric release history", async () => {
+test("release bridges verified numeric tags into Alban v-prefixed history", async () => {
   const config = await readFile(
     new URL("../.releaserc.yaml", import.meta.url),
     "utf8",
@@ -138,9 +139,13 @@ test("semantic release preserves Bababou's established numeric release history",
     "utf8",
   );
 
-  assert.match(config, /tagFormat: "\$\{version\}"/);
+  assert.match(config, /tagFormat: "v\$\{version\}"/);
+  assert.match(config, /@semantic-release\/npm/);
+  assert.match(config, /npmPublish: false/);
   assert.doesNotMatch(workflow, /git tag v0\.0\.0/);
-  assert.doesNotMatch(workflow, /Bootstrap semantic-release baseline/);
+  assert.match(workflow, /Adopt v-prefixed semantic-release baseline/);
+  assert.match(workflow, /gh release view "\$legacy_tag"/);
+  assert.match(workflow, /git tag "v\$\{legacy_tag\}"/);
   assert.match(workflow, /LATEST_TAG=/);
   assert.match(workflow, /PACKAGE_VERSION=/);
   assert.match(workflow, /gh release view "\$LATEST_TAG"/);
@@ -171,6 +176,7 @@ test("release tooling stays out of the normal application install", async () => 
     "@semantic-release/changelog",
     "@semantic-release/git",
     "@semantic-release/github",
+    "@semantic-release/npm",
   ]) {
     assert.equal(packageJson.devDependencies?.[name], undefined);
   }
