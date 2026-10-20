@@ -15,9 +15,9 @@ Load specialized guidance only when the task touches the corresponding surface:
 After editing, prefer the local deterministic path documented in `AGENTS.md`:
 
 ```bash
-npm run quality:agent:fix
+just quality-fix
 # Review deterministic changes and commit them.
-npm run quality:agent:publish
+just publish
 ```
 
 - `QG_AUTOFIX_REQUIRED` means deterministic hooks changed files. Review the exact patch, run the local fix path, commit, and retry; do not start broad CI-log analysis for that condition.

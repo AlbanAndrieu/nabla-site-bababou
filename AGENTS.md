@@ -87,17 +87,19 @@ Context7 is an optional documentation MCP. Prefer repository-local/versioned doc
 
 ## Validation
 
-Le `justfile` offre des alias facultatifs (`just p0`,
-`just quality-fix`, `just publish-check`, `just secrets-config`, `just secrets-staged`)
-en complément du `Makefile` historique. Une commande non exécutée
-ne constitue jamais une preuve de validation.
+Le `justfile` est le **point d’entrée canonique** pour le développement local :
+`just preflight`, `just p0`, `just quality-fix`, `just publish`,
+`just workflow-audit` et `just secrets-staged`. Il délègue aux scripts Bash,
+à npm et à pre-commit, sans réduire leurs contrôles ; le `Makefile` historique
+reste disponible via `just legacy-help`. Une commande non exécutée ne
+constitue jamais une preuve de validation.
 
 For a focused change, run the closest relevant formatter or linter first. After an editing batch, use the repository-specific local workflow:
 
 ```bash
-bash scripts/agent-quality-gate.sh --fix
+just quality-fix
 # Review deterministic formatter/linter changes and commit them.
-bash scripts/agent-publish.sh
+just publish
 ```
 
 `--fix` first converges pre-commit mutations, then applies scoped ESLint/Stylelint fixes when dependencies are available, and converges pre-commit once more. The strict agent gate owns deterministic pre-build checks; `scripts/agent-publish.sh` adds the scope-aware production build and built-output privacy validation only when the change is deploy-relevant.

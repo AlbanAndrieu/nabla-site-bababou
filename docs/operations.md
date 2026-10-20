@@ -141,9 +141,13 @@ politique de consentement/confidentialité.
 Le hook pre-commit utilise **Betterleaks v1.9.0** via son hook Go natif
 pour la détection de secrets ; aucun daemon/socket Docker n'est requis par Betterleaks. Le fichier `.betterleaks.toml` est la policy canonique et conserve les allowlists revues. Betterleaks est le seul scanner de secrets exécuté. Le nom `REPOSITORY_GITLEAKS` subsiste uniquement comme identifiant historique du linter désactivé dans MegaLinter ; aucun binaire/hook Gitleaks n'est exécuté. `detect-private-key` et Secretlint restent des protections complémentaires.
 
-Le `justfile` est facultatif et **additionnel** au `Makefile` :
-`just preflight`, `just p0`, `just quality-fix`, `just quality`, `just publish-check`, `just publish-status`, `just secrets-config`, `just secrets-staged`, `just secrets-worktree`, `just secrets-history`.
-Les scripts npm et mise restent les points d'entrée canoniques.
+Le `justfile` est désormais **le point d’entrée canonique** :
+`just preflight`, `just p0`, `just quality-fix`, `just quality`,
+`just publish`, `just publish-status`, `just workflow-audit`,
+`just secrets-config`, `just secrets-staged`, `just secrets-worktree`,
+`just secrets-history`. Les scripts npm/Bash, Mise et pre-commit restent les
+mécanismes sous-jacents. Le `Makefile` est conservé pour la compatibilité
+(`just legacy-help`), sans devenir la source des quality gates.
 
 `just secrets-staged` analyse uniquement l'index Git : les sources
 familiales et juridiques dans `.private-publication-source/**` et

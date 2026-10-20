@@ -15,15 +15,16 @@ Ce dépôt utilise Next.js, avec les pages localisées sous `app/[locale]/`.
 ## Démarrer
 
 ```bash
-npm install
-npm run dev
+mise install
+just install
+just dev
 ```
 
 ## Qualité de code, CI/CD et Pull Requests
 
-- Exécutez `npm run check` avant chaque commit pour valider lint (JS/TS/CSS), typecheck, unit tests et build Next.js.
+- Utilisez `just` comme interface canonique : `just check` valide lint (JS/TS/CSS), typecheck, tests unitaires, publication privée et build Next.js. `just quality-fix` puis `just publish` préparent et contrôlent la publication.
 - Les hooks pre-commit sur chaque commit : lint/format (biome, stylelint, prettier), secrets (Betterleaks), yamllint, check case, trailing whitespace/EOL...
-- Pour installer : `pre-commit install` — mettre à jour : `pre-commit autoupdate`.
+- Pour installer les hooks : `just hooks` — actualiser leurs versions explicitement avec `mise run hooks-update` ; auditer tous les workflows avec `just workflow-audit`.
 - Playwright : `npm test` (tests e2e).
 - La CI Cloud (GitHub Actions) contrôle : lint, check, pre-commit, tests e2e, audit sécurité.
 - À chaque Pull Request, la checklist du template vérifie la qualité, le passage CI, l'absence de secrets et la documentation.
