@@ -155,14 +155,24 @@ jobs:
         with:
           python-version-file: .python-version
 
-      - name: Pin npm and install remediation tooling
+      - name: Install pinned npm from Mise
+        if: steps.guard.outputs.active == 'true'
+        uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5.1.2
+        with:
+          version: 2026.10.8
+          install_args: npm
+          env: false
+
+      - name: Verify npm toolchain
+        if: steps.guard.outputs.active == 'true'
+        shell: bash
+        run: test "$(npm --version)" = "11.17.0"
+
+      - name: Install remediation tooling
         if: steps.guard.outputs.active == 'true'
         shell: bash
         run: |
           set -euo pipefail
-          cd "${RUNNER_TEMP}"
-          npm install --global npm@11.17.0 --no-audit --no-fund
-          cd "${GITHUB_WORKSPACE}"
           python -m pip install --disable-pip-version-check --quiet pre-commit==4.6.2
           npm ci --no-audit --no-fund
           pre-commit install-hooks

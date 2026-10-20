@@ -504,13 +504,18 @@ jobs:
           restore-keys: |
             next-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('package-lock.json') }}-
 
-      - name: Pin npm
+      - name: Install pinned npm from Mise
+        if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+        uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5.1.2
+        with:
+          version: 2026.10.8
+          install_args: npm
+          env: false
+
+      - name: Verify npm toolchain
         if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
         shell: bash
-        run: |
-          set -euo pipefail
-          cd "${RUNNER_TEMP}"
-          npm install --global npm@11.17.0 --no-audit --no-fund
+        run: test "$(npm --version)" = "11.17.0"
 
       # Always block HIGH/CRITICAL advisories affecting production packages,
       # independently of the Snyk token or package-lock diff scope.

@@ -212,6 +212,7 @@ jobs:
         env:
           PREFLIGHT_OUTCOME: ${{ steps.preflight.outcome }}
           ZAP_OUTCOME: ${{ steps.zap.outcome }}
+          ZAP_AUTH_MODE: ${{ steps.preflight.outputs.auth_mode || 'n/a' }}
           PREVIEW_HOST: ${{ steps.preflight.outputs.host }}
           PREFLIGHT_HTTP_STATUS: ${{ steps.preflight.outputs.http_status }}
           PREFLIGHT_MITIGATED: ${{ steps.preflight.outputs.mitigated }}
@@ -243,7 +244,7 @@ jobs:
             echo "- Exact SHA: \`$DEPLOYED_SHA\`"
             echo "- Preflight HTTP: \`${PREFLIGHT_HTTP_STATUS:-n/a}\`"
             echo "- Vercel mitigation: \`${PREFLIGHT_MITIGATED:-n/a}\`"
-            echo "- Vercel auth: \`${{ steps.preflight.outputs.auth_mode || 'n/a' }}\`"
+            echo "- Vercel auth: \`${ZAP_AUTH_MODE}\`"
             echo "- Policy: \`.zap/rules.tsv\` (explicit FAIL/WARN rules)"
             echo "- Report artifact: **zap-preview-report**"
             echo

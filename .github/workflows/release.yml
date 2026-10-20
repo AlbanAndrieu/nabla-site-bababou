@@ -68,7 +68,6 @@ jobs:
           git fetch --force origin master:refs/remotes/origin/master --tags
           CURRENT_SHA="$(git rev-parse HEAD)"
           MASTER_SHA="$(git rev-parse origin/master)"
-          VALIDATED_SHA="${VALIDATED_SHA}"
 
           if [[ "$CURRENT_SHA" != "$MASTER_SHA" ]]; then
             echo "Checkout $CURRENT_SHA is not current master $MASTER_SHA."
@@ -90,13 +89,18 @@ jobs:
         with:
           node-version-file: ".nvmrc"
 
-      - name: Pin npm
+      - name: Install pinned npm from Mise
+        if: steps.freshness.outputs.current == 'true'
+        uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5.1.2
+        with:
+          version: 2026.10.8
+          install_args: npm
+          env: false
+
+      - name: Verify npm toolchain
         if: steps.freshness.outputs.current == 'true'
         shell: bash
-        run: |
-          set -euo pipefail
-          cd "${RUNNER_TEMP}"
-          npm install --global npm@11.17.0 --no-audit --no-fund
+        run: test "$(npm --version)" = "11.17.0"
 
       # Bababou already has established numeric semantic-release history.
       # Do not recreate Alban's v0.0.0 bootstrap here.

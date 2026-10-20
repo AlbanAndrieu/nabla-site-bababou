@@ -187,6 +187,7 @@ jobs:
         env:
           PREFLIGHT_OUTCOME: ${{ steps.preflight.outcome }}
           ZAP_OUTCOME: ${{ steps.zap.outcome }}
+          ZAP_AUTH_MODE: ${{ steps.preflight.outputs.auth_mode || 'n/a' }}
           SAFE_REPORT_OUTCOME: ${{ steps.safe-report.outcome }}
           SAFE_UPLOAD_OUTCOME: ${{ steps.safe-upload.outcome }}
         shell: bash
@@ -215,7 +216,7 @@ jobs:
             echo "- Result: preflight **${PREFLIGHT_OUTCOME:-unknown}**, scanner **${ZAP_OUTCOME:-not-run}**, SARIF **${SAFE_REPORT_OUTCOME:-not-run}**, upload **${SAFE_UPLOAD_OUTCOME:-not-run}**"
             echo "- Target: $BASE_URL"
             echo "- Associated SHA: \`$DEPLOYED_SHA\`"
-            echo "- Vercel auth: \`${{ steps.preflight.outputs.auth_mode || 'n/a' }}\`"
+            echo "- Vercel auth: \`${ZAP_AUTH_MODE}\`"
             echo "- Policy: \`.zap/rules.tsv\`"
             echo "- Alerts: **H$high M$medium L$low I$informational**"
             echo "- Report artifact: **zap-production-report**"

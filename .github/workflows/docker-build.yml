@@ -220,4 +220,6 @@ jobs:
           docker push "${DOCKERHUB_IMAGE}:${GITHUB_SHA}"
 
       - name: Image digest
-        run: echo "${{ steps.docker_build.outputs.digest }}"
+        env:
+          IMAGE_DIGEST: ${{ steps.docker_build.outputs.digest }}
+        run: echo "$IMAGE_DIGEST"
