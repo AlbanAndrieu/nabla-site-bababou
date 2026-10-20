@@ -11,8 +11,8 @@ test("Copilot root instructions stay thin and defer to canonical repository poli
 
 	assert.ok(Buffer.byteLength(instructions, "utf8") < 5000, "root Copilot instructions must stay compact");
 	assert.match(instructions, /AGENTS\.md/);
-	assert.match(instructions, /quality:agent:fix/);
-	assert.match(instructions, /quality:agent:publish/);
+	assert.match(instructions, /just quality-fix/);
+	assert.match(instructions, /just publish/);
 	assert.match(instructions, /QG_AUTOFIX_REQUIRED/);
 	assert.match(instructions, /copilot-instructions-nextjs\.md/);
 	assert.match(instructions, /copilot-instructions-cicd\.md/);
