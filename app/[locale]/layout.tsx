@@ -63,6 +63,7 @@ export default async function LocaleLayout({
       <head>
         <ThemeBootstrap />
         <meta name="color-scheme" content="light dark" />
+        <meta name="text-scale" content="scale" />
         <link
           rel="alternate"
           type="application/rss+xml"

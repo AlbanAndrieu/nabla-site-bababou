@@ -1,0 +1,206 @@
+name: Security deep scan (master)
+
+# No heavy filesystem/CodeQL/Nuclei scans on PRs. Outputs remain private.
+on:
+  schedule:
+    - cron: "17 4 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-deep-master
+  cancel-in-progress: true
+
+jobs:
+  trivy-repository:
+    name: Trivy filesystem, licenses and SBOM
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Reject private publication sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          for path in .private-publication-source .redaction-work; do
+            if [[ -e "$path" ]]; then
+              echo "::error::Forbidden private publication source: $path"
+              exit 1
+            fi
+          done
+      - name: Trivy full filesystem (lockfile, licenses, misconfiguration)
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        env:
+          TRIVY_INCLUDE_DEV_DEPS: "true"
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln,misconfig,license
+          severity: UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL
+          format: json
+          output: trivy-master.json
+          exit-code: "0"
+          version: v0.74.0
+          skip-dirs: .git,node_modules,.next,.vercel,dist,reports
+      - name: Validate Trivy scan results and summarize debt
+        shell: bash
+        run: |
+          set -euo pipefail
+          jq -e '.Results | type == "array"' trivy-master.json >/dev/null
+          jq -r '[.Results[]?.Vulnerabilities[]? | .Severity] | group_by(.) | map({severity: .[0], count: length})' trivy-master.json \
+            | jq -c . | sed 's/^/Trivy packages by severity: /'
+          echo "Trivy filesystem scan succeeded; production npm audit remains the PR blocking SCA control." >> "$GITHUB_STEP_SUMMARY"
+      - name: Trivy CycloneDX SBOM (filesystem including npm lockfile)
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        env:
+          TRIVY_INCLUDE_DEV_DEPS: "true"
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln
+          format: cyclonedx
+          output: sbom-master.cdx.json
+          exit-code: "0"
+          version: v0.74.0
+          skip-dirs: .git,node_modules,.next,.vercel,dist,reports
+      - name: Verify CycloneDX contents
+        shell: bash
+        run: |
+          jq -e '.bomFormat == "CycloneDX" and (.components | type == "array")' sbom-master.cdx.json >/dev/null
+      - name: Preserve approved master artifacts privately
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: trivy-master-${{ github.run_id }}
+          path: |
+            trivy-master.json
+            sbom-master.cdx.json
+          retention-days: 3
+          if-no-files-found: error
+      - name: Enforce CRITICAL Trivy findings after evidence retention
+        shell: bash
+        run: |
+          set -euo pipefail
+          jq -e '.Results | type == "array"' trivy-master.json >/dev/null
+          critical="$(jq '[.Results[]?.Vulnerabilities[]? | select(.Severity == "CRITICAL")] | length' trivy-master.json)"
+          echo "Trivy full-repository CRITICAL findings: ${critical}" >> "$GITHUB_STEP_SUMMARY"
+          if (( critical > 0 )); then
+            echo "::error::CRITICAL vulnerabilities found in the full repository dependency graph; inspect retained private Trivy report."
+            exit 1
+          fi
+
+  codeql:
+    name: CodeQL JS/TS full codebase
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@cdf488f595d80d6e07e03d4674febd5ab45fa938 # v4
+        with:
+          languages: javascript-typescript
+          build-mode: none
+          queries: security-extended
+      - name: Analyze with CodeQL, no public upload required
+        uses: github/codeql-action/analyze@cdf488f595d80d6e07e03d4674febd5ab45fa938 # v4
+        with:
+          category: security-deep-js
+          upload: never
+          output: codeql-sarif
+          upload-database: "false"
+      - name: Private CodeQL SARIF evidence
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: codeql-master-${{ github.run_id }}
+          path: codeql-sarif/*.sarif
+          retention-days: 3
+          if-no-files-found: error
+
+  semgrep-full:
+    name: Semgrep full SAST
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    timeout-minutes: 17
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.13"
+      - name: Full source Semgrep with SARIF, no private sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m venv "${RUNNER_TEMP}/semgrep"
+          "${RUNNER_TEMP}/semgrep/bin/python" -m pip install --disable-pip-version-check --quiet 'semgrep==1.145.0' 'pydantic==2.12.5'
+          SEMGREP_SEND_METRICS=off "${RUNNER_TEMP}/semgrep/bin/semgrep" scan \
+            --config p/ci --error --metrics=off --sarif --output semgrep-master.sarif \
+            app components i18n lib scripts api
+      - name: Preserve full Semgrep findings
+        if: always() && hashFiles('semgrep-master.sarif') != ''
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: semgrep-master-${{ github.run_id }}
+          path: semgrep-master.sarif
+          retention-days: 3
+
+  nuclei-public:
+    name: Nuclei bounded public templates
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Install pinned Nuclei with checksum verification (Site Alban parity)
+        shell: bash
+        run: |
+          set -euo pipefail
+          archive="${RUNNER_TEMP}/nuclei.zip"
+          curl --fail --location --silent --show-error --max-time 90 \
+            "https://github.com/projectdiscovery/nuclei/releases/download/v3.11.1/nuclei_3.11.1_linux_amd64.zip" --output "$archive"
+          printf '%s  %s\n' 'ea63d4ae232808cd7c6bc00d0142428e231fab59dae01042246097d195835ab6' "$archive" | sha256sum --check --status
+          unzip -p "$archive" nuclei > "${RUNNER_TEMP}/nuclei"
+          chmod 700 "${RUNNER_TEMP}/nuclei"
+          "${RUNNER_TEMP}/nuclei" -ut
+          test -d "${HOME}/nuclei-templates"
+      - name: Scan fixed canonical public origin (rate 2/s, no OAST)
+        shell: bash
+        env:
+          NUCLEI_DISABLE_UPDATE_CHECK: "true"
+          NUCLEI_NO_COLOR: "true"
+        run: |
+          set -euo pipefail
+          "${RUNNER_TEMP}/nuclei" -u https://www.bababou.com \
+            -pt http -ni -duc -tags cve,misconfig,exposure \
+            -severity medium,high,critical -etags dos,fuzz,bruteforce,intrusive \
+            -rl 2 -c 1 -timeout 5 -retries 0 \
+            -jsonl -o "${RUNNER_TEMP}/nuclei.jsonl"
+          test -e "${RUNNER_TEMP}/nuclei.jsonl" || : > "${RUNNER_TEMP}/nuclei.jsonl"
+          # Do not archive JSONL: it can contain request, response, cookies and URLs.
+          node scripts/security/nuclei-safe-report.mjs "${RUNNER_TEMP}/nuclei.jsonl" nuclei-master.sarif
+      - name: Private sanitized Nuclei summary (no raw requests)
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: nuclei-master-${{ github.run_id }}
+          path: nuclei-master.sarif
+          retention-days: 3
+          if-no-files-found: error

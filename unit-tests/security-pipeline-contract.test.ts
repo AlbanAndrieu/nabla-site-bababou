@@ -135,3 +135,129 @@ test("ZAP suppresses only deterministic informational noise while keeping securi
   assert.match(policy.get("10010")?.note ?? "", /NEXT_LOCALE/);
   assert.match(policy.get("10050")?.note ?? "", /Vercel CDN Age header/);
 });
+
+test("npm SCA blocks production HIGH/CRITICAL and reports all dev-tool debt", async () => {
+  const workflow = await readFile(ciUrl, "utf8");
+  const productionStart = workflow.indexOf(
+    "      - name: Audit production npm dependencies (blocking SCA)",
+  );
+  const fullStart = workflow.indexOf(
+    "      - name: Report full npm SCA and development-tool debt",
+    productionStart,
+  );
+  const installStart = workflow.indexOf(
+    "      - name: Install dependencies",
+    fullStart,
+  );
+  assert.ok(productionStart > 0, "production SCA step is mandatory");
+  assert.ok(fullStart > productionStart, "full development SCA must run");
+  assert.ok(installStart > fullStart, "SCA runs before dependency install");
+
+  const prod = workflow.slice(productionStart, fullStart);
+  assert.match(
+    prod,
+    /if: github\.event_name != 'pull_request' \|\| github\.event\.pull_request\.draft == false/,
+  );
+  assert.match(prod, /run: npm audit --omit=dev --audit-level=high/);
+  assert.doesNotMatch(
+    prod,
+    /continue-on-error|dependencies ==|SNYK_TOKEN|--offline/,
+  );
+
+  const full = workflow.slice(fullStart, installStart);
+  assert.match(full, /npm audit --json > "\$report"/);
+  assert.match(full, /jq -e '\.metadata\.vulnerabilities \| type == "object"'/);
+  assert.match(full, /critical > 0/);
+  assert.match(full, /exit 1/);
+  assert.match(full, /GITHUB_STEP_SUMMARY/);
+  assert.doesNotMatch(
+    full,
+    /continue-on-error|dependencies ==|SNYK_TOKEN|--omit=dev|--offline/,
+  );
+  assert.match(workflow, /name: Run Snyk vulnerability scan/);
+});
+
+test("Security deep scans run on master only and keep raw HTTP evidence private", async () => {
+  const workflow = await readFile(
+    new URL("../.github/workflows/security-deep.yml", import.meta.url),
+    "utf8",
+  );
+  assert.match(workflow, /schedule:/);
+  assert.match(workflow, /workflow_dispatch:/);
+  assert.doesNotMatch(workflow, /^\s*pull_request:/m);
+  assert.match(workflow, /github.ref == 'refs\/heads\/master'/);
+  assert.match(workflow, /scanners: vuln,misconfig,license/);
+  assert.match(workflow, /TRIVY_INCLUDE_DEV_DEPS: "true"/);
+  assert.match(workflow, /format: cyclonedx/);
+  assert.match(workflow, /languages: javascript-typescript/);
+  assert.match(workflow, /queries: security-extended/);
+  assert.match(workflow, /upload: never/);
+  assert.match(workflow, /Full source Semgrep with SARIF/);
+  assert.match(workflow, /-rl 2 -c 1 -timeout 5 -retries 0/);
+  assert.match(workflow, /-etags dos,fuzz,bruteforce,intrusive/);
+  assert.doesNotMatch(workflow, /upload-artifact[\s\S]*?path: .*nuclei.jsonl/);
+  assert.match(workflow, /retention-days: 3/g);
+});
+test("Production DAST schedule has bounded cadence (other runs on release)", async () => {
+  const workflow = await readFile(productionDastUrl, "utf8");
+  assert.match(workflow, /cron: "23 3 \* \* 2,5"/);
+  assert.match(workflow, /repository_dispatch:/);
+});
+test("PR BetterLeaks scans committed SHA diff, not the empty staging index", async () => {
+  const workflow = await readFile(ciUrl, "utf8");
+  assert.match(workflow, /name: BetterLeaks committed PR diff \(blocking\)/);
+  assert.match(
+    workflow,
+    /go install github.com\/betterleaks\/betterleaks@v1\.9\.0/,
+  );
+  assert.match(workflow, /--log-opts="\$\{BASE_SHA\}\.\.\$\{HEAD_SHA\}"/);
+  assert.match(workflow, /--config \.betterleaks\.toml --redact/);
+  assert.doesNotMatch(
+    workflow
+      .split("name: BetterLeaks committed PR diff")[1]
+      ?.split("      - name:")[0] ?? "",
+    /continue-on-error|--staged|\[skip ci\]/,
+  );
+});
+
+test("Trivy deep scan retains evidence before blocking CRITICAL vulnerabilities", async () => {
+  const workflow = await readFile(
+    new URL("../.github/workflows/security-deep.yml", import.meta.url),
+    "utf8",
+  );
+  const artifact = workflow.indexOf(
+    "      - name: Preserve approved master artifacts privately",
+  );
+  const enforcement = workflow.indexOf(
+    "      - name: Enforce CRITICAL Trivy findings after evidence retention",
+  );
+  const nextJob = workflow.indexOf("\n  codeql:", enforcement);
+  assert.ok(artifact > 0);
+  assert.ok(enforcement > artifact);
+  assert.ok(nextJob > enforcement);
+  const gate = workflow.slice(enforcement, nextJob);
+  assert.match(gate, /select\(\.Severity == "CRITICAL"\)/);
+  assert.match(gate, /critical > 0/);
+  assert.match(gate, /exit 1/);
+  assert.doesNotMatch(gate, /continue-on-error|--ignore-unfixed/);
+});
+
+test("Production ZAP publishes only minimized DAST evidence to the LAN collector", async () => {
+  const workflow = await readFile(productionDastUrl, "utf8");
+  assert.match(workflow, /name: Produce minimized ZAP SARIF for LAN collector/);
+  assert.match(
+    workflow,
+    /zap-safe-report\.mjs report_json\.json zap-production-safe\.sarif/,
+  );
+  assert.match(
+    workflow,
+    /name: zap-production-safe-\$\{\{ github\.run_id \}\}/,
+  );
+  assert.match(workflow, /retention-days: 3/);
+  assert.match(workflow, /steps\.zap\.outcome == 'success'/);
+  assert.match(workflow, /zap-production-safe\.sarif/);
+  assert.doesNotMatch(
+    workflow,
+    /DEFECTDOJO_API_TOKEN|DEFECTDOJO_IMPORT_APPROVED/,
+  );
+});

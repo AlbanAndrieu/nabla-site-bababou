@@ -189,3 +189,31 @@ et lisibilité des traces, puis décider adopter/différer/rejeter.
 - `docs/publication-redaction.md` — publication/caviardage du corpus familial et juridique ;
 - validation locale :
   `scripts/agent-p0-check.sh`, `scripts/agent-quality-gate.sh`, `scripts/agent-publish.sh`.
+
+## Incident durable — quality-follow-up master (septembre–octobre 2026)
+
+**Signature** : une exécution `CI (Quality and Security)` après push sur `master` échoue sur `Enforce canonical changed-file quality gate` (formatter/pré-commit), ou `Run canonical project checks` (tests/lint/build). Le workflow `post-merge-quality-follow-up.yml` crée une issue `[quality-follow-up] master <sha> is red` via `github-actions[bot]`. Son job de remédiation `success` **ne signifie pas** que la correction ou la gate est verte : contrôler les champs `Deterministic diff`, `Strict validation` et `Remediation PR` dans le commentaire.
+
+Issues historiques à trier (aucune PR de correction automatiquement validée) :
+- **Pré-commit/formatter** : [#228](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/228), [#225](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/225), [#224](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/224), [#217](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/217), [#212](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/212).
+- **Contrats npm/lint/build** : [#231](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/231), [#221](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/221), [#214](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/214), [#196](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/196), [#183](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/183). #196 : diff déterministe préparé, mais gate stricte échouée.
+
+**Diagnostic** : ouvrir l'issue → failed run/job/step → premier diagnostic concret dans les logs → identifier un commit correctif **fusionné** et la CI ultérieure sur `master` du même périmètre. N'ajouter un commentaire de clôture et ne fermer qu'avec ces preuves ; à défaut laisser ouvert. Un run Preview/ZAP vert ou une CI de PR verte ne suffit pas pour solder un incident de quality `master`.
+
+**Incident historique de routage HTML** : les Previews #886/#889 ont montré que Next `afterFiles` et `handle: error` ne récupéraient pas les `*.html` legacy absents, déjà absorbés par `/[locale]`. Le contrat actuel utilise `handle: miss` et `check: true` pour router vers `/__legacy-html-not-found__` avant la route dynamique. Conserver les tests de non-régression et vérifier les headers `x-matched-path` en cas de réapparition.
+
+### Suivi Quality après merge — limitation du bruit GitHub
+
+Le workflow `.github/workflows/post-merge-quality-follow-up.yml` réutilise désormais **une issue de triage ouverte**, `[quality-follow-up] unresolved master Quality failures`, plutôt qu'une nouvelle issue par SHA. Son exécution est sérialisée sur `master` ; chaque commentaire enregistre **son propre SHA et l'URL de la CI échouée**, puis l'issue reste ouverte si une remédiation manque. Cela regroupe les notifications, **pas les causes racines** : chaque échec doit être diagnostiqué indépendamment. Une nouvelle panne après clôture réouvre le registre. Les dix anciennes issues restent conservées jusqu'à une correction et une validation `master` attestées ; ne pas les clôturer par ancienneté.
+
+Dans `ci.yml`, BetterLeaks garde sa commande de compilation épinglée `go install ...@v1.9.0` et son **verdict bloquant**. Seuls les modules Go et objets intermédiaires sont mis en cache pour économiser les téléchargements/compilations répétés sur PR ; **jamais le binaire BetterLeaks prêt à exécuter**. Le cache n'est pas une dispense de scan, et un cache indisponible n'affaiblit pas l'analyse.
+
+### Master Quality : propriété des issues et clôture vérifiable
+
+Workflow réel de Bababou : `post-merge-quality-follow-up.yml` (le nom `master-red-remediation.yml` ne correspond pas à ce dépôt). La remédiation sur un push `master` rouge garde son chemin de PR draft, sans merger. Les nouveaux échecs sont rassemblés dans le registre `[quality-follow-up] unresolved master Quality failures`, sans une issue par SHA. La description est créée une seule fois, chaque échec est tracé par commentaire. Un marqueur identifie les seules issues que l'automatisation possède ; **aucune issue historique n'est réouverte automatiquement**. Toute intervention humaine détectée dans les événements ou commentaires retire l'issue du périmètre des mutations automatisées.
+
+L'issue du registre est fermée seulement si les **deux plus récents** runs du workflow Quality, événement `push`, branche `master`, sont tous les deux terminés avec `success`; un run plus récent en cours, ignoré, annulé ou rouge bloque la clôture. Les issues historiques #183–#231 restent ouvertes tant que cette condition et une revue des preuves ne sont pas satisfaites. Le mécanisme ne modifie ni labels ni descriptions d'issues existantes ; le nettoyage manuel conserve les liens de runs. Éviter les polls répétitifs et les workflows de vérification artificiels.
+
+### Consolidation différée des anciennes issues bot
+
+Les dix tickets historiques `[quality-follow-up] master <SHA> is red` ne sont **pas** considérés corrigés sur la seule base d'un récent succès de PR/Vercel. Ils sont candidats à une clôture administrative `not_planned` (historique supersédé), seulement quand les **deux dernières exécutions CI push master** sont toutes deux `completed/success`. Le workflow préserve un commentaire de clôture donnant les deux liens CI et SHAs. Les tickets réutilisables actuels reçoivent `completed` sous la même condition. Si un ticket présente un commentaire/événement d'un acteur autre que le bot, des labels, assignés ou une milestone, il est **intouchable**, même si la CI est verte. Une issue fermée n'est jamais réouverte.

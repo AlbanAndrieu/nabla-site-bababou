@@ -14,7 +14,10 @@ test("post-merge follow-up watches only red Quality pushes on master", async () 
   assert.match(workflow, /workflow_run:/);
   assert.match(workflow, /CI \(Quality and Security\)/);
   assert.match(workflow, /github\.event\.workflow_run\.event == 'push'/);
-  assert.match(workflow, /github\.event\.workflow_run\.head_branch == 'master'/);
+  assert.match(
+    workflow,
+    /github\.event\.workflow_run\.head_branch == 'master'/,
+  );
   for (const conclusion of [
     "failure",
     "timed_out",
@@ -36,13 +39,17 @@ test("stale red runs cannot mutate a newer master", async () => {
 
 test("remediation opens an issue before attempting a bounded deterministic fix", async () => {
   const workflow = await readFile(workflowUrl, "utf8");
-  const issueIndex = workflow.indexOf("- name: Open or reuse remediation issue");
-  const fixIndex = workflow.indexOf("- name: Attempt bounded deterministic remediation");
+  const issueIndex = workflow.indexOf(
+    "- name: Open or reuse remediation issue",
+  );
+  const fixIndex = workflow.indexOf(
+    "- name: Attempt bounded deterministic remediation",
+  );
 
   assert.ok(issueIndex >= 0);
   assert.ok(fixIndex > issueIndex);
   assert.match(workflow, /issues\.create/);
-  assert.match(workflow, /git rev-parse \"\$\{FAILED_SHA\}\^\"/);
+  assert.match(workflow, /git rev-parse "\$\{FAILED_SHA\}\^"/);
   assert.match(workflow, /scripts\/agent-quality-gate\.sh --fix/);
   assert.match(workflow, /unexpected-path/);
   assert.match(workflow, /unexpected-deletion/);
@@ -52,9 +59,7 @@ test("an automatic PR requires a converged diff and both strict agent gates", as
   const workflow = await readFile(workflowUrl, "utf8");
   const fixIndex = workflow.indexOf("scripts/agent-quality-gate.sh --fix");
   const strictIndex = workflow.indexOf("bash scripts/agent-quality-gate.sh\n");
-  const publishIndex = workflow.indexOf(
-    "bash scripts/agent-publish.sh",
-  );
+  const publishIndex = workflow.indexOf("bash scripts/agent-publish.sh");
   const pushIndex = workflow.indexOf("git push origin");
   const prIndex = workflow.indexOf("github.rest.pulls.create");
 
@@ -98,4 +103,22 @@ test("Quality watches future edits to the post-merge workflow", async () => {
     2,
     "pull_request and master push path filters must both validate the follow-up workflow",
   );
+});
+
+test("two green master CI runs guard automated legacy issue closure", async () => {
+  const workflow = await readFile(workflowUrl, "utf8");
+  assert.match(workflow, /close-after-two-green:/);
+  assert.ok(workflow.includes("last.length !== 2"));
+  assert.ok(
+    workflow.includes(
+      "last.some(run => run.status !== 'completed' || run.conclusion !== 'success')",
+    ),
+  );
+  assert.ok(
+    workflow.includes("const historical = /^\\[quality-follow-up\\] master"),
+  );
+  assert.ok(workflow.includes("issues.listEvents"));
+  assert.ok(workflow.includes("issues.listComments"));
+  assert.ok(workflow.includes("historical ? 'not_planned' : 'completed'"));
+  assert.ok(workflow.includes("candidate.state !== 'open'"));
 });

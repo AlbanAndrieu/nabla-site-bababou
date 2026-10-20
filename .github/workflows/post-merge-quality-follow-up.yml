@@ -14,7 +14,7 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: post-merge-quality-${{ github.event.workflow_run.head_sha }}
+  group: post-merge-quality-master-ledger
   cancel-in-progress: false
 
 jobs:
@@ -69,26 +69,39 @@ jobs:
         with:
           script: |
             const failedSha = process.env.FAILED_SHA;
-            const shortSha = failedSha.slice(0, 12);
-            const title = `[quality-follow-up] master ${shortSha} is red`;
+            // One triage ledger per repo; each failed master SHA stays distinct
+            // in its own immutable Actions run and diagnosis comment.
+            const title = '[quality-follow-up] unresolved master Quality failures';
             const issues = await github.paginate(github.rest.issues.listForRepo, {
               owner: context.repo.owner,
               repo: context.repo.repo,
               state: 'all',
               per_page: 100,
             });
-            let issue = issues.find(
-              (candidate) => !candidate.pull_request && candidate.title === title,
-            );
-
-            if (issue && issue.state === 'closed') {
-              const reopened = await github.rest.issues.update({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: issue.number,
-                state: 'open',
+            // Never reuse an issue that a human has edited, labelled, closed,
+            // or commented on. We also never reopen closed issues.
+            const marker = '<!-- bababou-automated-master-quality-v1 -->';
+            async function robotOwned(candidate) {
+              if (candidate.state !== 'open' || candidate.user?.login !== 'github-actions[bot]' ||
+                  !candidate.body?.startsWith(marker)) return false;
+              const events = await github.paginate(github.rest.issues.listEvents, {
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: candidate.number, per_page: 100,
               });
-              issue = reopened.data;
+              const comments = await github.paginate(github.rest.issues.listComments, {
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: candidate.number, per_page: 100,
+              });
+              return !events.some(e => e.actor?.login !== 'github-actions[bot]') &&
+                !comments.some(c => c.user?.login !== 'github-actions[bot]');
+            }
+            let issue = null;
+            for (const candidate of issues) {
+              if (!candidate.pull_request && candidate.title === title &&
+                  await robotOwned(candidate)) {
+                issue = candidate;
+                break;
+              }
             }
 
             if (!issue) {
@@ -97,7 +110,8 @@ jobs:
                 repo: context.repo.repo,
                 title,
                 body: [
-                  '## Automatic post-merge quality follow-up',
+                  marker,
+                  '## Automatic post-merge quality incident ledger',
                   '',
                   `- Failed master SHA: \`${failedSha}\``,
                   `- Conclusion: **${process.env.FAILED_CONCLUSION}**`,
@@ -105,7 +119,8 @@ jobs:
                   '',
                   'The remediation workflow will attempt only deterministic formatter/pre-commit fixes derived from the failed commit delta. It will not weaken a gate or edit unrelated files.',
                   '',
-                  'If no safe deterministic diff is produced, this issue remains open for manual classification and remediation. Do not treat the merge itself as proof of quality.',
+                  'Each failed master run is tracked with its exact SHA, workflow URL, and independent diagnostic comment. Reusing this issue does not equate unrelated root causes.',
+                  'Do not close until every recorded failure has an independently verified remedy. A workflow job succeeding is not evidence of a fix.',
                 ].join('\n'),
               });
               issue = created.data;
@@ -365,6 +380,8 @@ jobs:
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         env:
           ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
+          FAILED_SHA: ${{ env.FAILED_SHA }}
+          FAILED_RUN_URL: ${{ env.FAILED_RUN_URL }}
           AUTO_FIX: ${{ steps.fix.outputs.auto_fix }}
           FIX_REASON: ${{ steps.fix.outputs.reason }}
           PREPARED: ${{ steps.prepare.outputs.prepared }}
@@ -380,6 +397,9 @@ jobs:
           script: |
             const lines = [
               '## Automated follow-up result',
+              '',
+              `- Failed master SHA: \`${process.env.FAILED_SHA}\``,
+              `- Original CI run: ${process.env.FAILED_RUN_URL}`,
               '',
               `- Workflow job: **${process.env.CURRENT_JOB_STATUS}**`,
               `- Deterministic diff: **${process.env.AUTO_FIX || 'not reached'}** (${process.env.FIX_REASON || 'n/a'})`,
@@ -401,9 +421,105 @@ jobs:
               lines.push('- Manual classification/remediation remains required; keep this issue open.');
             }
 
+            const issueNumber = Number(process.env.ISSUE_NUMBER);
+            const { data: owned } = await github.rest.issues.get({
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: issueNumber,
+            });
+            if (owned.state !== 'open' ||
+                owned.user?.login !== 'github-actions[bot]' ||
+                !owned.body?.startsWith('<!-- bababou-automated-master-quality-v1 -->')) {
+              core.notice('Issue is not an active automation-owned ledger.');
+              return;
+            }
+            const events = await github.paginate(github.rest.issues.listEvents, {
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: issueNumber, per_page: 100,
+            });
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: issueNumber, per_page: 100,
+            });
+            if (events.some(e => e.actor?.login !== 'github-actions[bot]') ||
+                comments.some(c => c.user?.login !== 'github-actions[bot]')) {
+              core.notice('Human modification: leave issue untouched.');
+              return;
+            }
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: Number(process.env.ISSUE_NUMBER),
               body: lines.join('\n'),
             });
+
+  close-after-two-green:
+    name: Close untouched Quality ledger after two green master runs
+    if: >-
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'master' &&
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify two consecutive green master CI runs
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        with:
+          script: |
+            const { data } = await github.rest.actions.listWorkflowRuns({
+              owner: context.repo.owner, repo: context.repo.repo,
+              workflow_id: 'ci.yml', branch: 'master', event: 'push', per_page: 10,
+            });
+            const last = data.workflow_runs.slice(0, 2);
+            if (last.length !== 2 ||
+                last[0].id !== context.payload.workflow_run.id ||
+                last.some(run => run.status !== 'completed' || run.conclusion !== 'success')) {
+              core.info('No two consecutive green master CI runs.');
+              return;
+            }
+            const marker = '<!-- bababou-automated-master-quality-v1 -->';
+            const title = '[quality-follow-up] unresolved master Quality failures';
+            const issues = await github.paginate(github.rest.issues.listForRepo, {
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: 'open', per_page: 100,
+            });
+            for (const issue of issues) {
+              // Historical per-SHA incidents are retired only after the same
+              // two green master runs, with exactly the same human-edit guard.
+              const automatedLedger = issue.title === title &&
+                issue.body?.startsWith(marker);
+              const historical = /^\[quality-follow-up\] master [a-f0-9]{12} is red$/.test(issue.title) &&
+                issue.body?.startsWith('## Automatic post-merge quality follow-up');
+              if (issue.pull_request || issue.user?.login !== 'github-actions[bot]' ||
+                  (!automatedLedger && !historical)) continue;
+              if (issue.assignees?.length || issue.labels?.length || issue.milestone) {
+                core.notice('Issue metadata differs from automation baseline; leave untouched.');
+                continue;
+              }
+              const events = await github.paginate(github.rest.issues.listEvents, {
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: issue.number, per_page: 100,
+              });
+              const comments = await github.paginate(github.rest.issues.listComments, {
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: issue.number, per_page: 100,
+              });
+              if (events.some(e => e.actor?.login !== 'github-actions[bot]') ||
+                  comments.some(c => c.user?.login !== 'github-actions[bot]')) {
+                core.notice('Issue touched by human, refusing automatic closure.');
+                continue;
+              }
+              await github.rest.issues.createComment({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: issue.number,
+                body: [
+                  historical ? 'Historical master quality ticket superseded after two successful master CI push runs (not a claim of root-cause-specific remediation):' :
+                    'Two consecutive master CI push runs completed successfully:',
+                  ...last.map(run => `- ${run.html_url} (${run.head_sha})`),
+                ].join('\\n'),
+              });
+              await github.rest.issues.update({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: issue.number, state: 'closed',
+                state_reason: historical ? 'not_planned' : 'completed',
+              });
+            }
