@@ -111,7 +111,7 @@ test("semantic release avoids installing the application dependency graph", asyn
   const semanticRelease = section(
     workflow,
     "- name: Run semantic-release",
-    "- name: Verify numeric release state",
+    "- name: Verify v-prefixed release state",
   );
   assert.match(semanticRelease, /GITHUB_TOKEN:/);
   assert.match(semanticRelease, /GH_TOKEN:/);

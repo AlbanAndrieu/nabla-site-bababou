@@ -119,6 +119,8 @@ jobs:
               filename === '.pre-commit-pre-push.yaml' ||
               filename === '.python-version' ||
               filename === 'mise.toml' ||
+              filename === 'renovate.json' ||
+              filename === 'scripts/verify-mise-npm.sh' ||
               filename === 'eslint.config.js' ||
               filename === 'stylelint.config.cjs' ||
               filename.startsWith('commitlint.config.') ||

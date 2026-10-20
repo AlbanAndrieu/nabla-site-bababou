@@ -241,7 +241,7 @@ jobs:
             echo
             echo "Target: $BASE_URL"
             echo "Download the **playwright-report** artifact for traces and screenshots when tests reached Playwright."
-            echo "Also inspect the exact-SHA **OWASP ZAP Preview** status and its **zap-preview-report** artifact to distinguish browser regressions from DAST findings."
+            echo "Also inspect the exact-SHA **OWASP ZAP Preview** status and runner-local ZAP diagnostics (aggregate-only GitHub summary) to distinguish browser regressions from DAST findings."
           } >> "$GITHUB_STEP_SUMMARY"
         env:
           BASE_URL: ${{ env.PREVIEW_BASE_URL }}

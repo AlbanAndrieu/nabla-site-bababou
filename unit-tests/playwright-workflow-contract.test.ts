@@ -200,6 +200,7 @@ test("Playwright failure summary cross-links the independent exact-SHA ZAP evide
   );
 
   assert.match(workflow, /OWASP ZAP Preview/);
-  assert.match(workflow, /zap-preview-report/);
+  assert.match(workflow, /runner-local ZAP diagnostics/);
+  assert.doesNotMatch(workflow, /zap-preview-report/);
   assert.match(workflow, /distinguish browser regressions from DAST findings/);
 });
