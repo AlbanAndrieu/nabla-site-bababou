@@ -28,17 +28,14 @@ test("homelab allowlist accepts only configured IPv4 CIDRs", () => {
   );
 });
 
-test(
-  "private paths use Vercel ingress IP, deny on missing configuration",
-  async () => {
-    const proxy = await readFile(new URL("../proxy.ts", import.meta.url), "utf8");
-    assert.match(proxy, /process\.env\.HOMELAB_TRUSTED_CIDRS/);
-    assert.match(proxy, /process\.env\.VERCEL !== "1"/);
-    assert.match(proxy, /request\.headers\.get\("x-real-ip"\)/);
-    assert.match(proxy, /"Cache-Control": "private, no-store"/);
-    assert.match(proxy, /status: 404/);
-    assert.match(proxy, /"\/private\/:path\*"/);
-    assert.match(proxy, /"\/api\/private\/:path\*"/);
-    assert.doesNotMatch(proxy, /cf-connecting-ip/i);
-  },
-);
+test("private paths use Vercel ingress IP, deny on missing configuration", async () => {
+  const proxy = await readFile(new URL("../proxy.ts", import.meta.url), "utf8");
+  assert.match(proxy, /process\.env\.HOMELAB_TRUSTED_CIDRS/);
+  assert.match(proxy, /process\.env\.VERCEL !== "1"/);
+  assert.match(proxy, /request\.headers\.get\("x-real-ip"\)/);
+  assert.match(proxy, /"Cache-Control": "private, no-store"/);
+  assert.match(proxy, /status: 404/);
+  assert.match(proxy, /"\/private\/:path\*"/);
+  assert.match(proxy, /"\/api\/private\/:path\*"/);
+  assert.doesNotMatch(proxy, /cf-connecting-ip/i);
+});
