@@ -1,8 +1,8 @@
-import { spawnSync } from "node:child_process";
-import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import { readFile, stat } from "node:fs/promises";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 
 async function read(relativePath: string) {
   return readFile(new URL(relativePath, import.meta.url), "utf8");
@@ -168,12 +168,24 @@ test("oscillation diagnostics show only hook IDs, paths and pass numbers", () =>
   );
   const result = spawnSync(
     "bash",
-    ["-c", 'source "$1"; report_fix_oscillation 1 3 "$2"', "bash", support, evidence],
+    [
+      "-c",
+      'source "$1"; report_fix_oscillation 1 3 "$2"',
+      "bash",
+      support,
+      evidence,
+    ],
     { encoding: "utf8" },
   );
   assert.equal(result.status, 0, result.stderr);
-  assert.match(result.stdout, /QG_FIX_OSCILLATION_HOOKS: formatter-a \(passes 1\)/);
-  assert.match(result.stdout, /QG_FIX_OSCILLATION_HOOKS: formatter-b \(passes 2\)/);
+  assert.match(
+    result.stdout,
+    /QG_FIX_OSCILLATION_HOOKS: formatter-a \(passes 1\)/,
+  );
+  assert.match(
+    result.stdout,
+    /QG_FIX_OSCILLATION_HOOKS: formatter-b \(passes 2\)/,
+  );
   assert.match(
     result.stdout,
     /QG_FIX_OSCILLATION_FILES: scripts\/agent-quality-gate\.sh \(passes 1 2\)/,
@@ -196,7 +208,11 @@ test("fix mode converges pre-commit before and after npm auto-fixes", async () =
   assert.match(gate, /QG_FIX_OSCILLATION/);
   assert.match(gate, /declare -A seen_fingerprints/);
   assert.match(gate, /report_fix_oscillation/);
-  for (const helper of ["fix_file_digests", "fix_pass_evidence", "report_fix_oscillation"]) {
+  for (const helper of [
+    "fix_file_digests",
+    "fix_pass_evidence",
+    "report_fix_oscillation",
+  ]) {
     assert.ok(support.includes(`${helper}()`), `missing helper ${helper}`);
   }
   assert.match(gate, /QG_PRECOMMIT_FAILED/);
