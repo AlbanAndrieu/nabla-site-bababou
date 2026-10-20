@@ -1,3 +1,10 @@
+# [0.21.0](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.20.1...0.21.0) (2026-10-20)
+
+
+### Features
+
+* **site:** accessibilité 404, métadonnées i18n et contrats SEO (P2–P4) ([#233](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/233)) ([6f44b56](https://github.com/AlbanAndrieu/nabla-site-bababou/commit/6f44b5606322e6568264de11f3bbb50e1b90daa3)), closes [hi#severity](https://github.com/hi/issues/severity)
+
 ## [0.20.1](https://github.com/AlbanAndrieu/nabla-site-bababou/compare/0.20.0...0.20.1) (2026-10-10)
 
 
