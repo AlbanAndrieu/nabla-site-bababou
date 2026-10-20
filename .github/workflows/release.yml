@@ -100,7 +100,7 @@ jobs:
       - name: Verify npm toolchain
         if: steps.freshness.outputs.current == 'true'
         shell: bash
-        run: test "$(npm --version)" = "11.17.0"
+        run: test "$(npm --version)" = "12.2.0"
 
       # Bababou already has established numeric semantic-release history.
       # Do not recreate Alban's v0.0.0 bootstrap here.

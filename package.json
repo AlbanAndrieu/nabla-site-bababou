@@ -16,7 +16,7 @@
   "homepage": "https://github.com/AlbanAndrieu/nabla-site-bababou#readme",
   "engines": {
     "node": ">=24.11.0 <27",
-    "npm": ">=11.17.0 <12"
+    "npm": ">=12.2.0 <13"
   },
   "scripts": {
     "lint": "eslint --format ./scripts/eslint-github-formatter.mjs .",

@@ -35,6 +35,7 @@ test("Node runtime policy separates development Current from production compatib
   assert.equal(nvmrc.trim(), "v26.8.2");
   assert.equal(productionNvmrc.trim(), "v24.11.0");
   assert.equal(packageJson.engines?.node, ">=24.11.0 <27");
+  assert.equal(packageJson.engines?.npm, ">=12.2.0 <13");
   assert.deepEqual(
     lock.packages?.[""]?.engines,
     packageJson.engines,
@@ -49,6 +50,7 @@ test("Node runtime policy separates development Current from production compatib
   assert.doesNotMatch(workflow, /node-version:\s*"?\d/);
   assert.match(workflow, /github\.event\.pull_request\.draft == false/);
   assert.match(workflow, /npm ci --no-audit --no-fund/);
+  assert.match(workflow, /test "\$\(npm --version\)" = "12\.2\.0"/);
   assert.match(workflow, /npm run test:unit/);
   assert.doesNotMatch(workflow, /npm run build|npm run check(?!:)/);
 });

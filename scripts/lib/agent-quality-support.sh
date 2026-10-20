@@ -122,8 +122,8 @@ require_supported_js_toolchain() {
             "${error_prefix}" "${node_version}" >&2
         return 1
     fi
-    if ((npm_major < 11 || npm_major >= 12 || (npm_major == 11 && npm_minor < 17))); then
-        printf '❌ %s_NPM_VERSION: npm %s is outside repository engines >=11.17.0 <12\n' \
+    if ((npm_major != 12 || npm_minor < 2)); then
+        printf '❌ %s_NPM_VERSION: npm %s is outside repository engines >=12.2.0 <13\n' \
             "${error_prefix}" "${npm_version}" >&2
         return 1
     fi

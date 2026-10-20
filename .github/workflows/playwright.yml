@@ -87,7 +87,7 @@ jobs:
 
       - name: Verify npm toolchain
         shell: bash
-        run: test "$(npm --version)" = "11.17.0"
+        run: test "$(npm --version)" = "12.2.0"
 
       # This job exercises an already-built remote Preview. Skip lifecycle
       # scripts to keep dependency installation deterministic and minimal.

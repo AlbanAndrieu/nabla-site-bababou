@@ -95,7 +95,7 @@ jobs:
 
       - name: Verify npm toolchain
         shell: bash
-        run: test "$(npm --version)" = "11.17.0"
+        run: test "$(npm --version)" = "12.2.0"
 
       - name: Install pre-commit
         run: python -m pip install --disable-pip-version-check --quiet pre-commit==4.6.2
