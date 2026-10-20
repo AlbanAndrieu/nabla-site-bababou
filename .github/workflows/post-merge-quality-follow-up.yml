@@ -487,7 +487,7 @@ jobs:
               // two green master runs, with exactly the same human-edit guard.
               const automatedLedger = issue.title === title &&
                 issue.body?.startsWith(marker);
-              const historical = /^\\[quality-follow-up\\] master [a-f0-9]{12} is red$/.test(issue.title) &&
+              const historical = /^\[quality-follow-up\] master [a-f0-9]{12} is red$/.test(issue.title) &&
                 issue.body?.startsWith('## Automatic post-merge quality follow-up');
               if (issue.pull_request || issue.user?.login !== 'github-actions[bot]' ||
                   (!automatedLedger && !historical)) continue;

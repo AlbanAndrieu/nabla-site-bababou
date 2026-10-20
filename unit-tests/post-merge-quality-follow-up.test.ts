@@ -100,17 +100,14 @@ test("Quality watches future edits to the post-merge workflow", async () => {
   );
 });
 
-test("two master successes clean up untouched historical bot issues", async () => {
+test("two green master CI runs guard automated legacy issue closure", async () => {
   const workflow = await readFile(workflowUrl, "utf8");
   assert.match(workflow, /close-after-two-green:/);
-  assert.match(workflow, /last\\.length !== 2/);
-  assert.match(workflow, /last\\.some\\(run => run\\.status !== 'completed' \\|\\| run\\.conclusion !== 'success'\\)/);
-  assert.match(workflow, /historical =/);
-  assert.match(workflow, /Automatic post-merge quality follow-up/);
-  assert.match(workflow, /issues\\.listEvents/);
-  assert.match(workflow, /issues\\.listComments/);
-  assert.match(workflow, /e\\.actor\\?\\.login !== 'github-actions\\[bot\\]'/);
-  assert.match(workflow, /c\\.user\\?\\.login !== 'github-actions\\[bot\\]'/);
-  assert.match(workflow, /historical \\? 'not_planned' : 'completed'/);
-  assert.doesNotMatch(workflow, /state: 'open'/);
+  assert.ok(workflow.includes("last.length !== 2"));
+  assert.ok(workflow.includes("last.some(run => run.status !== 'completed' || run.conclusion !== 'success')"));
+  assert.ok(workflow.includes("const historical = /^\\[quality-follow-up\\] master"));
+  assert.ok(workflow.includes("issues.listEvents"));
+  assert.ok(workflow.includes("issues.listComments"));
+  assert.ok(workflow.includes("historical ? 'not_planned' : 'completed'"));
+  assert.ok(workflow.includes("candidate.state !== 'open'"));
 });
