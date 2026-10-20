@@ -135,8 +135,10 @@ jobs:
             location="$(awk 'BEGIN { IGNORECASE=1 } /^location:/ { sub(/^[^:]+:[[:space:]]*/, ""); sub(/\r$/, ""); print; exit }' "$headers")"
             mitigated="$(awk 'BEGIN { IGNORECASE=1 } /^x-vercel-mitigated:/ { sub(/^[^:]+:[[:space:]]*/, ""); sub(/\r$/, ""); print; exit }' "$headers")"
 
-            echo "http_status=$status" >> "$GITHUB_OUTPUT"
-            echo "mitigated=${mitigated:-none}" >> "$GITHUB_OUTPUT"
+            {
+              echo "http_status=$status"
+              echo "mitigated=${mitigated:-none}"
+            } >> "$GITHUB_OUTPUT"
 
             if [[ "$status" == "429" || "${mitigated,,}" == "challenge" ]]; then
               echo "::warning::$auth_name reached the Vercel Security Checkpoint (HTTP $status, x-vercel-mitigated=${mitigated:-unknown})."
@@ -158,11 +160,15 @@ jobs:
               return 1
             fi
 
-            echo "ZAP_AUTH_HEADER=$header_name" >> "$GITHUB_ENV"
-            echo "ZAP_AUTH_HEADER_VALUE=$header_value" >> "$GITHUB_ENV"
-            echo "ZAP_AUTH_HEADER_SITE=$preview_host" >> "$GITHUB_ENV"
-            echo "auth_mode=$auth_name" >> "$GITHUB_OUTPUT"
-            echo "host=$preview_host" >> "$GITHUB_OUTPUT"
+            {
+              echo "ZAP_AUTH_HEADER=$header_name"
+              echo "ZAP_AUTH_HEADER_VALUE=$header_value"
+              echo "ZAP_AUTH_HEADER_SITE=$preview_host"
+            } >> "$GITHUB_ENV"
+            {
+              echo "auth_mode=$auth_name"
+              echo "host=$preview_host"
+            } >> "$GITHUB_OUTPUT"
             echo "ZAP Preview access accepted with $auth_name (HTTP $status)."
             rm -f "$headers"
             return 0
@@ -263,11 +269,13 @@ jobs:
             fi
           } >> "$GITHUB_STEP_SUMMARY"
 
-          echo "report_available=$report_available" >> "$GITHUB_OUTPUT"
-          echo "high=$high" >> "$GITHUB_OUTPUT"
-          echo "medium=$medium" >> "$GITHUB_OUTPUT"
-          echo "low=$low" >> "$GITHUB_OUTPUT"
-          echo "informational=$informational" >> "$GITHUB_OUTPUT"
+          {
+            echo "report_available=$report_available"
+            echo "high=$high"
+            echo "medium=$medium"
+            echo "low=$low"
+            echo "informational=$informational"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Clean ZAP Preview workspace
         if: always()

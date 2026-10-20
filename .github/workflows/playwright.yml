@@ -230,11 +230,13 @@ jobs:
       - name: Failure summary
         if: failure() && !cancelled()
         run: |
-          echo "## Playwright tests failed" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "Target: $BASE_URL" >> "$GITHUB_STEP_SUMMARY"
-          echo "Download the **playwright-report** artifact for traces and screenshots when tests reached Playwright." >> "$GITHUB_STEP_SUMMARY"
-          echo "Also inspect the exact-SHA **OWASP ZAP Preview** status and its **zap-preview-report** artifact to distinguish browser regressions from DAST findings." >> "$GITHUB_STEP_SUMMARY"
+          {
+            echo "## Playwright tests failed"
+            echo
+            echo "Target: $BASE_URL"
+            echo "Download the **playwright-report** artifact for traces and screenshots when tests reached Playwright."
+            echo "Also inspect the exact-SHA **OWASP ZAP Preview** status and its **zap-preview-report** artifact to distinguish browser regressions from DAST findings."
+          } >> "$GITHUB_STEP_SUMMARY"
         env:
           BASE_URL: ${{ env.PREVIEW_BASE_URL }}
 
