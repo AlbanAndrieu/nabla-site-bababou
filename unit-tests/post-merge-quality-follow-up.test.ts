@@ -59,9 +59,7 @@ test("an automatic PR requires a converged diff and both strict agent gates", as
   const workflow = await readFile(workflowUrl, "utf8");
   const fixIndex = workflow.indexOf("scripts/agent-quality-gate.sh --fix");
   const strictIndex = workflow.indexOf("bash scripts/agent-quality-gate.sh\n");
-  const publishIndex = workflow.indexOf(
-    "bash scripts/agent-publish.sh",
-  );
+  const publishIndex = workflow.indexOf("bash scripts/agent-publish.sh");
   const pushIndex = workflow.indexOf("git push origin");
   const prIndex = workflow.indexOf("github.rest.pulls.create");
 
@@ -116,7 +114,9 @@ test("two green master CI runs guard automated legacy issue closure", async () =
       "last.some(run => run.status !== 'completed' || run.conclusion !== 'success')",
     ),
   );
-  assert.ok(workflow.includes("const historical = /^\\[quality-follow-up\\] master"));
+  assert.ok(
+    workflow.includes("const historical = /^\\[quality-follow-up\\] master"),
+  );
   assert.ok(workflow.includes("issues.listEvents"));
   assert.ok(workflow.includes("issues.listComments"));
   assert.ok(workflow.includes("historical ? 'not_planned' : 'completed'"));
