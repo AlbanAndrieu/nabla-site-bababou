@@ -49,12 +49,15 @@ test("Node runtime policy separates development Current from production compatib
     /Vercel production uses its supported Node 24\.x runtime/,
   );
 
-  assert.match(workflow, /node-version-file:\s*"\.nvmrc-production"/);
-  assert.doesNotMatch(workflow, /node-version:\s*"?\d/);
+  assert.match(workflow, /Resolve minimum Node\.js from package\.json engines/);
+  assert.match(workflow, /node-version: \$\{\{ steps\.node-floor\.outputs\.version \}\}/);
+  assert.doesNotMatch(workflow, /node-version-file:\s*"\.nvmrc-production"/);
   assert.match(workflow, /github\.event\.pull_request\.draft == false/);
   assert.match(workflow, /npm ci --no-audit --no-fund/);
   assert.match(workflow, /bash scripts\/verify-mise-npm\.sh/);
   assert.match(workflow, /npm run test:unit/);
+  assert.match(workflow, /node24-unit-tests\.log/);
+  assert.match(workflow, /Upload failed Node 24 unit-test evidence/);
   assert.doesNotMatch(workflow, /npm run build|npm run check(?!:)/);
 });
 

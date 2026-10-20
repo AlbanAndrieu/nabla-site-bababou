@@ -25,6 +25,6 @@ test("shared platform hardening stays aligned with nabla-site-alban", async () =
   assert.match(nextConfig, /Permissions-Policy/);
   assert.match(nvmrc, /26\.8\.2/);
   assert.equal(productionNvmrc.trim(), "v24.11.0");
-  assert.match(nodeCompat, /node-version-file:\s*"\.nvmrc-production"/);
+  assert.match(nodeCompat, /node-version: \$\{\{ steps\.node-floor\.outputs\.version \}\}/);
   assert.match(nodeCompat, /npm run test:unit/);
 });
