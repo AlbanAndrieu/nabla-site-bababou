@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import createMiddleware from "next-intl/middleware";
 
 import { routing } from "@/i18n/routing";
+import { isTrustedHomelabIpv4 } from "@/lib/homelabTrustedCidrs.mjs";
 
 const intlMiddleware = createMiddleware(routing);
 const defaultLocalePrefix = `/${routing.defaultLocale}`;
@@ -22,6 +23,29 @@ const localeRootRedirects = new Set(
  * the App Router.
  */
 export default function proxy(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+  if (
+    pathname === "/private" ||
+    pathname.startsWith("/private/") ||
+    pathname === "/api/private" ||
+    pathname.startsWith("/api/private/")
+  ) {
+    // Vercel sets x-real-ip at ingress. Do not trust arbitrary forwarding IPs.
+    const clientIp = request.headers.get("x-real-ip");
+    if (
+      process.env.VERCEL !== "1" ||
+      !isTrustedHomelabIpv4(clientIp, process.env.HOMELAB_TRUSTED_CIDRS)
+    ) {
+      return new NextResponse(null, {
+        status: 404,
+        headers: { "Cache-Control": "private, no-store" },
+      });
+    }
+    return NextResponse.next({
+      headers: { "Cache-Control": "private, no-store" },
+    });
+  }
+
   if (request.method === "OPTIONS") {
     return new NextResponse(null, { status: 204 });
   }
@@ -56,5 +80,5 @@ export default function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next|_vercel|.*\\..*).*)"],
+  matcher: ["/((?!api|_next|_vercel|.*\\..*).*)", "/private/:path*", "/api/private/:path*"],
 };
