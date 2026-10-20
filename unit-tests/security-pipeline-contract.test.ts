@@ -72,11 +72,15 @@ test("Production DAST runs after production deployments and daily with the share
   assert.match(workflow, /id-token: write/);
   assert.match(workflow, /x-vercel-protection-bypass/);
   assert.match(workflow, /x-vercel-trusted-oidc-idp-token/);
-  assert.match(workflow, /rules_file_name: "\.zap\/rules\.tsv"/);
-  assert.match(workflow, /cmd_options: "-I -T 5"/);
-  assert.doesNotMatch(workflow, /cmd_options:.*-c \.zap\/rules\.tsv/);
-  assert.match(workflow, /fail_action: true/);
-  assert.match(workflow, /artifact_name: zap-production-report/);
+  assert.match(workflow, /zap-baseline\.py -t "\$BASE_URL" -c rules\.tsv/);
+  assert.match(workflow, /-J report_json\.json -I -T 5 -s/);
+  assert.doesNotMatch(workflow, /zaproxy\/action-baseline/);
+  assert.match(workflow, /docker run --rm/);
+  assert.match(workflow, /ZAP_SCAN_DIR/);
+  assert.match(workflow, /continue-on-error: true/);
+  assert.doesNotMatch(workflow, /artifact_name: zap-production-report/);
+  assert.match(workflow, /name: zap-production-safe-/);
+  assert.match(workflow, /Raw report: \*\*runner-local only\*\*/);
   assert.match(workflow, /context 'Production DAST'/);
   assert.match(workflow, /H\$high M\$medium L\$low I\$informational/);
 });
@@ -114,9 +118,10 @@ test("Preview and production ZAP load the shared policy exactly once", async () 
   ]);
 
   for (const workflow of [preview, production]) {
-    assert.match(workflow, /rules_file_name: "\.zap\/rules\.tsv"/);
-    assert.match(workflow, /cmd_options: "-I -T 5"/);
-    assert.doesNotMatch(workflow, /cmd_options:.*-c \.zap\/rules\.tsv/);
+    assert.match(workflow, /zap-baseline\.py -t/);
+    assert.match(workflow, /-c rules\.tsv/);
+    assert.match(workflow, /-J report_json\.json -I -T 5 -s/);
+    assert.doesNotMatch(workflow, /zaproxy\/action-baseline/);
   }
 });
 
@@ -273,7 +278,7 @@ test("Production ZAP publishes only minimized DAST evidence to the LAN collector
   assert.match(workflow, /name: Produce minimized ZAP SARIF for LAN collector/);
   assert.match(
     workflow,
-    /zap-safe-report\.mjs report_json\.json zap-production-safe\.sarif/,
+    /zap-safe-report\.mjs "\$ZAP_SCAN_DIR\/report_json\.json" zap-production-safe\.sarif/,
   );
   assert.match(
     workflow,

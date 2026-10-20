@@ -22,6 +22,7 @@
 - [x] Parité DAST Preview avec Site Alban : exécution ZAP isolée via `docker run` avec règles versionnées `.zap/rules.tsv`, statut bloquant sur SHA exact, agrégats uniquement ; aucun `action-baseline` ni artefact brut HTTP. Protection des données privées respectée sans divergent scanner.
 - [x] Convergence Node 24 avec Alban : plancher Node dérivé de `package.json#engines.node`, sorties de tests bornées et artefact d’échec conservé 1 jour. Tests de contrat adaptés.
 - [x] Convergence Semantic Release vers Alban : tags `vX.Y.Z`, `@semantic-release/npm` avec `npmPublish: false`, GitHub App seulement et freshness master. Les anciens tags numériques sont préservés ; bootstrap uniquement par alias vérifié contre une GitHub Release existante, sinon échec fermé. Aucune release déclenchée dans cette PR.
+- [x] Production DAST : même scanner ZAP isolé que Preview/Site Alban ; seuls les résultats SARIF minimisés sont conservés pour le collecteur, sans rapport HTTP brut.
 - [ ] Qualifier les autres écarts non pertinents à importer automatiquement : Node/npm et tooling expérimentaux (prek/hk), contexte source hors ligne, politiques BetterLeaks spécifiques, règles de publication privée et DAST ; privilégier la parité comportementale aux copies intégrales de scripts.
 - **Preuve** : valider le P0 et les jobs GitHub sur le SHA exact de cette PR. L'échec Production DAST corrigé ne sera attesté qu'après son exécution réelle sur master.
 
