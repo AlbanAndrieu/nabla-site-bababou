@@ -106,7 +106,6 @@ permissions:
   actions: read
   contents: read
   statuses: read
-  security-events: write
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -116,6 +115,11 @@ jobs:
   quality:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    permissions:
+      actions: read
+      contents: read
+      statuses: read
+      security-events: write
     outputs:
       current-base-sha: ${{ steps.current-heads.outputs.base-sha }}
       preview_required: ${{ steps.ci-scope.outputs.preview_required }}
@@ -441,7 +445,7 @@ jobs:
               echo "- Diagnostic report: **semgrep-sast-report** workflow artifact (7 days)"
             fi
             echo
-            echo 'After enabling GitHub Code Scanning for this private repository, set repository variable `ENABLE_CODE_SCANNING_SARIF=true` to publish Semgrep SARIF to the Security tab.'
+            echo "After enabling GitHub Code Scanning for this private repository, set repository variable \`ENABLE_CODE_SCANNING_SARIF=true\` to publish Semgrep SARIF to the Security tab."
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Preserve failed Semgrep SAST report
@@ -770,6 +774,7 @@ jobs:
         with:
           ref: ${{ steps.preview.outputs.sha }}
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Push automatic Vercel Preview checkpoint
         env:

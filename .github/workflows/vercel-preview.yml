@@ -13,7 +13,7 @@ on:
 
 permissions:
   actions: read
-  contents: write
+  contents: read
   pull-requests: read
 
 concurrency:
@@ -28,6 +28,10 @@ concurrency:
 jobs:
   checkpoint:
     name: Publish requested PR Preview checkpoint
+    permissions:
+      actions: read
+      contents: write
+      pull-requests: read
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
@@ -156,6 +160,8 @@ jobs:
         if: steps.preview.outputs.deploy_relevant == 'true'
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
+          persist-credentials: false
+        with:
           ref: ${{ steps.preview.outputs.sha }}
           fetch-depth: 0
 
@@ -171,6 +177,9 @@ jobs:
           "${CHECKPOINT_BRANCH}" "${PR_BASE_SHA}" "${PR_HEAD_SHA}"
 
   cleanup:
+    permissions:
+      contents: write
+      pull-requests: read
     name: Remove closed PR Preview checkpoint
     if: >-
       github.event_name == 'pull_request' &&

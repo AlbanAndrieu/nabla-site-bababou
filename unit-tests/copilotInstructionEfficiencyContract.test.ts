@@ -32,6 +32,9 @@ test("Copilot setup installs repository hooks and keys pre-commit cache to all h
     /hashFiles\('\.pre-commit-config\.yaml', '\.pre-commit-pre-push\.yaml', '\.python-version', '\.nvmrc'\)/,
   );
   assert.match(workflow, /pre-commit install --hook-type pre-commit/);
-  assert.match(workflow, /pre-commit install --config \.pre-commit-pre-push\.yaml --hook-type pre-push/);
+  assert.match(
+    workflow,
+    /pre-commit install --config \.pre-commit-pre-push\.yaml --hook-type pre-push/,
+  );
   assert.doesNotMatch(workflow, /--hook-type commit-msg/);
 });

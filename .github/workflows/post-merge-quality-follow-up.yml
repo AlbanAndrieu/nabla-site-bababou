@@ -1,6 +1,8 @@
 name: Post-merge Quality Follow-up
 
-on:
+# This privileged workflow runs only for completed push CI on master.
+# The guard verifies head SHA against the current master before checking out code.
+on: # zizmor: ignore[dangerous-triggers]
   workflow_run:
     workflows:
       - CI (Quality and Security)
@@ -8,10 +10,8 @@ on:
       - completed
 
 permissions:
-  actions: write
-  contents: write
-  issues: write
-  pull-requests: write
+  actions: read
+  contents: read
 
 concurrency:
   group: post-merge-quality-master-ledger
@@ -20,6 +20,11 @@ concurrency:
 jobs:
   remediate:
     name: Record and remediate red master
+    permissions:
+      actions: write
+      contents: write
+      issues: write
+      pull-requests: write
     if: >-
       github.event.workflow_run.event == 'push' &&
       github.event.workflow_run.head_branch == 'master' &&
@@ -133,6 +138,8 @@ jobs:
       - name: Checkout failed master revision
         if: steps.guard.outputs.active == 'true'
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
         with:
           ref: ${{ env.FAILED_SHA }}
           fetch-depth: 0
@@ -453,6 +460,10 @@ jobs:
             });
 
   close-after-two-green:
+    permissions:
+      actions: read
+      contents: read
+      issues: write
     name: Close untouched Quality ledger after two green master runs
     if: >-
       github.event.workflow_run.event == 'push' &&

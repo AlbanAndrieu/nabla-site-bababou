@@ -4,7 +4,7 @@
     "config:recommended",
     ":automergeDisabled",
     ":combinePatchMinorReleases",
-    ":enableVulnerabilityAlertsWithAdditionalLabel('security')",
+    ":enableVulnerabilityAlertsWithAdditionalLabel(security)",
     ":enablePreCommit",
     ":maintainLockFilesDisabled"
   ],

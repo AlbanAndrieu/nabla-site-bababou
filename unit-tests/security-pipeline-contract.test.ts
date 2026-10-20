@@ -314,13 +314,13 @@ test("just is the pinned canonical entrypoint and workflow audits are blocking",
   ]);
 
   assert.match(mise, /just = "1\.58\.0"/);
-  assert.match(justfile, /\ncheck:\n    npm run check/);
-  assert.match(justfile, /\nunit:\n    npm run test:unit/);
-  assert.match(justfile, /\npublish:\n    bash scripts\/agent-publish\.sh/);
-  assert.match(justfile, /\nlegacy-help:\n    make help/);
+  assert.match(justfile, /\ncheck:\n {4}npm run check/);
+  assert.match(justfile, /\nunit:\n {4}npm run test:unit/);
+  assert.match(justfile, /\npublish:\n {4}bash scripts\/agent-publish\.sh/);
+  assert.match(justfile, /\nlegacy-help:\n {4}make help/);
   assert.match(
     justfile,
-    /\nworkflow-audit:\n    pre-commit run actionlint --all-files\n    pre-commit run zizmor --all-files/,
+    /\nworkflow-audit:\n {4}pre-commit run actionlint --all-files\n {4}pre-commit run zizmor --all-files/,
   );
   assert.match(precommit, /repo: https:\/\/github\.com\/rhysd\/actionlint/);
   assert.match(precommit, /rev: v1\.7\.12/);

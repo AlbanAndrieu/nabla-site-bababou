@@ -1,6 +1,8 @@
 name: Semantic Release
 
-on:
+# Only the completed successful master CI run can trigger release; the
+# freshness guard matches the current master SHA before any release mutation.
+on: # zizmor: ignore[dangerous-triggers]
   workflow_run:
     workflows:
       - CI (Quality and Security)
@@ -58,6 +60,7 @@ jobs:
       - name: Verify validated revision is still current master
         id: freshness
         env:
+          VALIDATED_SHA: ${{ github.event.workflow_run.head_sha }}
           GH_TOKEN: ${{ steps.release_app_token.outputs.token || secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
@@ -65,7 +68,7 @@ jobs:
           git fetch --force origin master:refs/remotes/origin/master --tags
           CURRENT_SHA="$(git rev-parse HEAD)"
           MASTER_SHA="$(git rev-parse origin/master)"
-          VALIDATED_SHA="${{ github.event.workflow_run.head_sha }}"
+          VALIDATED_SHA="${VALIDATED_SHA}"
 
           if [[ "$CURRENT_SHA" != "$MASTER_SHA" ]]; then
             echo "Checkout $CURRENT_SHA is not current master $MASTER_SHA."
