@@ -30,7 +30,7 @@ test("shared agent tooling follows the Node 26 Current development contract", as
   assert.doesNotMatch(setup, /uses: actions\/cache(?:\/(?:restore|save))?@v5/);
   assert.match(setup, /Install pinned npm from Mise/);
   assert.match(setup, /install_args: npm/);
-  assert.match(setup, /run: test "\$\(npm --version\)" = "12\.2\.0"/);
+  assert.match(setup, /run: bash scripts\/verify-mise-npm\.sh/);
   assert.match(setup, /npm ci --no-audit --no-fund/);
 
   for (const adapter of [vscode, cursor, nextjs]) {

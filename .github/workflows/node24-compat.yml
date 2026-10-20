@@ -6,6 +6,8 @@ on:
     paths:
       - ".nvmrc-production"
       - ".npmrc"
+      - "mise.toml"
+      - "scripts/verify-mise-npm.sh"
       - "package.json"
       - "package-lock.json"
       - "tsconfig.json"
@@ -25,6 +27,8 @@ on:
     paths:
       - ".nvmrc-production"
       - ".npmrc"
+      - "mise.toml"
+      - "scripts/verify-mise-npm.sh"
       - "package.json"
       - "package-lock.json"
       - "tsconfig.json"
@@ -84,7 +88,7 @@ jobs:
 
       - name: Verify npm toolchain
         shell: bash
-        run: test "$(npm --version)" = "12.2.0"
+        run: bash scripts/verify-mise-npm.sh
 
       - name: Install dependencies
         shell: bash

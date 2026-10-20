@@ -175,3 +175,26 @@ test("release tooling stays out of the normal application install", async () => 
   }
   assert.equal(packageJson.scripts?.["semantic-release"], undefined);
 });
+
+test("semantic release requires dedicated GitHub App credentials and never falls back to GITHUB_TOKEN", async () => {
+  const workflow = await readFile(
+    new URL("../.github/workflows/release.yml", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(workflow, /branches:\s*\n\s*- master/);
+  assert.match(workflow, /contents: read/);
+  assert.doesNotMatch(workflow, /^\s*contents: write\s*$/m);
+  assert.match(workflow, /name: Resolve release credential policy/);
+  assert.match(workflow, /RELEASE_APP_PRIVATE_KEY_CONFIGURED:/);
+  assert.match(workflow, /secrets\.RELEASE_APP_PRIVATE_KEY != ''/);
+  assert.match(workflow, /name: Report skipped semantic release/);
+  assert.match(workflow, /steps\.release_credentials\.outputs\.enabled != 'true'/);
+  assert.match(workflow, /if: steps\.release_credentials\.outputs\.enabled == 'true'/);
+  assert.match(workflow, /GH_TOKEN: \$\{\{ steps\.release_app_token\.outputs\.token \}\}/);
+  assert.match(workflow, /GITHUB_TOKEN: \$\{\{ steps\.release_app_token\.outputs\.token \}\}/);
+  assert.doesNotMatch(workflow, /\|\| secrets\.GITHUB_TOKEN/);
+  assert.doesNotMatch(workflow, /\$\{\{ secrets\.GITHUB_TOKEN \}\}/);
+  assert.match(workflow, /Verify validated revision is still current master/);
+  assert.match(workflow, /bash scripts\/verify-mise-npm\.sh/);
+});

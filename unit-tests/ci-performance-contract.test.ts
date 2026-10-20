@@ -67,7 +67,7 @@ test("quality CI records performance around the single canonical Next build", as
     /jdx\/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8/,
   );
   assert.match(workflow, /install_args: npm/);
-  assert.match(workflow, /run: test "\$\(npm --version\)" = "12\.2\.0"/);
+  assert.match(workflow, /run: bash scripts\/verify-mise-npm\.sh/);
   assert.doesNotMatch(workflow, /npm install --global npm@/);
 
   assert.match(workflow, /id: checks/);

@@ -8,12 +8,12 @@ on: # zizmor: ignore[dangerous-triggers]
       - CI (Quality and Security)
     types:
       - completed
+    branches:
+      - master
   workflow_dispatch:
 
 permissions:
-  contents: write
-  issues: write
-  pull-requests: write
+  contents: read
 
 concurrency:
   group: semantic-release-master
@@ -31,7 +31,33 @@ jobs:
       RELEASE_APP_CLIENT_ID: ${{ vars.RELEASE_APP_CLIENT_ID }}
 
     steps:
+      # The default GITHUB_TOKEN must never be a fallback for release mutations.
+      - name: Resolve release credential policy
+        id: release_credentials
+        env:
+          RELEASE_APP_PRIVATE_KEY_CONFIGURED: ${ secrets.RELEASE_APP_PRIVATE_KEY != '' }
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -n "${RELEASE_APP_CLIENT_ID}" && "${RELEASE_APP_PRIVATE_KEY_CONFIGURED}" == "true" ]]; then
+            echo "enabled=true" >> "${GITHUB_OUTPUT}"
+          else
+            echo "::notice::Semantic Release needs the dedicated GitHub App credentials; release mutation skipped."
+            echo "enabled=false" >> "${GITHUB_OUTPUT}"
+          fi
+
+      - name: Report skipped semantic release
+        if: steps.release_credentials.outputs.enabled != 'true'
+        shell: bash
+        run: |
+          {
+            echo "## Semantic Release"
+            echo
+            echo "Release mutation skipped: dedicated GitHub App credentials unavailable."
+          } >> "${GITHUB_STEP_SUMMARY}"
+
       - name: Checkout validated master revision
+        if: steps.release_credentials.outputs.enabled == 'true'
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           ref: master
@@ -40,7 +66,7 @@ jobs:
 
       - name: Create dedicated release App token
         id: release_app_token
-        if: env.RELEASE_APP_CLIENT_ID != ''
+        if: steps.release_credentials.outputs.enabled == 'true'
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
           client-id: ${{ env.RELEASE_APP_CLIENT_ID }}
@@ -50,18 +76,20 @@ jobs:
           permission-pull-requests: write
 
       - name: Configure release Git authentication
+        if: steps.release_credentials.outputs.enabled == 'true'
         env:
-          GH_TOKEN: ${{ steps.release_app_token.outputs.token || secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.release_app_token.outputs.token }}
         shell: bash
         run: |
           set -euo pipefail
           gh auth setup-git
 
       - name: Verify validated revision is still current master
+        if: steps.release_credentials.outputs.enabled == 'true'
         id: freshness
         env:
           VALIDATED_SHA: ${{ github.event.workflow_run.head_sha }}
-          GH_TOKEN: ${{ steps.release_app_token.outputs.token || secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.release_app_token.outputs.token }}
         shell: bash
         run: |
           set -euo pipefail
@@ -84,13 +112,13 @@ jobs:
           echo "current=true" >> "$GITHUB_OUTPUT"
 
       - name: Set up Node.js
-        if: steps.freshness.outputs.current == 'true'
+        if: steps.release_credentials.outputs.enabled == 'true' && steps.freshness.outputs.current == 'true'
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
         with:
           node-version-file: ".nvmrc"
 
       - name: Install pinned npm from Mise
-        if: steps.freshness.outputs.current == 'true'
+        if: steps.release_credentials.outputs.enabled == 'true' && steps.freshness.outputs.current == 'true'
         uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5.1.2
         with:
           version: 2026.10.8
@@ -98,17 +126,17 @@ jobs:
           env: false
 
       - name: Verify npm toolchain
-        if: steps.freshness.outputs.current == 'true'
+        if: steps.release_credentials.outputs.enabled == 'true' && steps.freshness.outputs.current == 'true'
         shell: bash
-        run: test "$(npm --version)" = "12.2.0"
+        run: bash scripts/verify-mise-npm.sh
 
       # Bababou already has established numeric semantic-release history.
       # Do not recreate Alban's v0.0.0 bootstrap here.
       - name: Run semantic-release
-        if: steps.freshness.outputs.current == 'true'
+        if: steps.release_credentials.outputs.enabled == 'true' && steps.freshness.outputs.current == 'true'
         env:
-          GITHUB_TOKEN: ${{ steps.release_app_token.outputs.token || secrets.GITHUB_TOKEN }}
-          GH_TOKEN: ${{ steps.release_app_token.outputs.token || secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.release_app_token.outputs.token }}
+          GH_TOKEN: ${{ steps.release_app_token.outputs.token }}
         shell: bash
         run: |
           set -euo pipefail
@@ -122,9 +150,9 @@ jobs:
             -- semantic-release
 
       - name: Verify numeric release state
-        if: steps.freshness.outputs.current == 'true'
+        if: steps.release_credentials.outputs.enabled == 'true' && steps.freshness.outputs.current == 'true'
         env:
-          GH_TOKEN: ${{ steps.release_app_token.outputs.token || secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.release_app_token.outputs.token }}
         shell: bash
         run: |
           set -euo pipefail

@@ -7,6 +7,9 @@ default:
 hooks:
     mise run hooks
 
+toolchain-check:
+    bash scripts/verify-mise-npm.sh
+
 install:
     npm ci --no-audit --no-fund
 

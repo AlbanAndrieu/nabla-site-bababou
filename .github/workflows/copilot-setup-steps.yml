@@ -15,6 +15,7 @@ on:
       - .pre-commit-config.yaml
       - .pre-commit-pre-push.yaml
       - mise.toml
+      - scripts/verify-mise-npm.sh
       - package.json
       - package-lock.json
       - scripts/agent-quality-gate.sh
@@ -30,6 +31,7 @@ on:
       - .pre-commit-config.yaml
       - .pre-commit-pre-push.yaml
       - mise.toml
+      - scripts/verify-mise-npm.sh
       - package.json
       - package-lock.json
       - scripts/agent-quality-gate.sh
@@ -95,7 +97,7 @@ jobs:
 
       - name: Verify npm toolchain
         shell: bash
-        run: test "$(npm --version)" = "12.2.0"
+        run: bash scripts/verify-mise-npm.sh
 
       - name: Install pre-commit
         run: python -m pip install --disable-pip-version-check --quiet pre-commit==4.6.2

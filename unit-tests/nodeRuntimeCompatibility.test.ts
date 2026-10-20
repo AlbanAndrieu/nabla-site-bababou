@@ -53,7 +53,7 @@ test("Node runtime policy separates development Current from production compatib
   assert.doesNotMatch(workflow, /node-version:\s*"?\d/);
   assert.match(workflow, /github\.event\.pull_request\.draft == false/);
   assert.match(workflow, /npm ci --no-audit --no-fund/);
-  assert.match(workflow, /test "\$\(npm --version\)" = "12\.2\.0"/);
+  assert.match(workflow, /bash scripts\/verify-mise-npm\.sh/);
   assert.match(workflow, /npm run test:unit/);
   assert.doesNotMatch(workflow, /npm run build|npm run check(?!:)/);
 });
