@@ -119,7 +119,7 @@ test("P0, strict gate and publisher enforce the repository Node/npm engines", as
     support,
     /Node %s is outside repository engines >=24\.11\.0 <27/,
   );
-  assert.match(support, /npm %s is outside repository engines >=12\.2\.0 <12/);
+  assert.match(support, /npm %s is outside repository engines >=12\.2\.0 <13/);
 });
 
 test("npm, mise and pre-push expose the separated publication workflow", async () => {
