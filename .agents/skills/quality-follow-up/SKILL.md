@@ -137,3 +137,7 @@ A repository task can be reported complete only when:
 - deployment/runtime evidence required by the change agrees with that SHA; and
 - every remaining risk, warning, deferred item or dependency is represented by
   an unchecked `docs/roadmap.md` item.
+
+### Red master: deux succès avant clôture
+
+Une clôture automatique ne peut être déclenchée que par une **nouvelle exécution CI push master réussie** et seulement si les deux dernières exécutions de cette même CI sont terminées et réussies. Ne pas confondre le job de suivi vert et le job Quality lui-même. Garder la séparation entre résolution technique et fermeture administrative des anciennes issues purement automatiques. Ne jamais modifier, rouvrir, étiqueter ni clore une issue avec trace d'intervention humaine ; ne pas tenter de la « reprendre » en changeant son marqueur.

@@ -483,9 +483,18 @@ jobs:
               state: 'open', per_page: 100,
             });
             for (const issue of issues) {
-              if (issue.pull_request || issue.title !== title ||
-                  issue.user?.login !== 'github-actions[bot]' ||
-                  !issue.body?.startsWith(marker)) continue;
+              // Historical per-SHA incidents are retired only after the same
+              // two green master runs, with exactly the same human-edit guard.
+              const automatedLedger = issue.title === title &&
+                issue.body?.startsWith(marker);
+              const historical = /^\\[quality-follow-up\\] master [a-f0-9]{12} is red$/.test(issue.title) &&
+                issue.body?.startsWith('## Automatic post-merge quality follow-up');
+              if (issue.pull_request || issue.user?.login !== 'github-actions[bot]' ||
+                  (!automatedLedger && !historical)) continue;
+              if (issue.assignees?.length || issue.labels?.length || issue.milestone) {
+                core.notice('Issue metadata differs from automation baseline; leave untouched.');
+                continue;
+              }
               const events = await github.paginate(github.rest.issues.listEvents, {
                 owner: context.repo.owner, repo: context.repo.repo,
                 issue_number: issue.number, per_page: 100,
@@ -503,13 +512,14 @@ jobs:
                 owner: context.repo.owner, repo: context.repo.repo,
                 issue_number: issue.number,
                 body: [
-                  'Two consecutive master CI push runs completed successfully:',
+                  historical ? 'Historical master quality ticket superseded after two successful master CI push runs (not a claim of root-cause-specific remediation):' :
+                    'Two consecutive master CI push runs completed successfully:',
                   ...last.map(run => `- ${run.html_url} (${run.head_sha})`),
                 ].join('\\n'),
               });
               await github.rest.issues.update({
                 owner: context.repo.owner, repo: context.repo.repo,
                 issue_number: issue.number, state: 'closed',
-                state_reason: 'completed',
+                state_reason: historical ? 'not_planned' : 'completed',
               });
             }

@@ -99,3 +99,18 @@ test("Quality watches future edits to the post-merge workflow", async () => {
     "pull_request and master push path filters must both validate the follow-up workflow",
   );
 });
+
+test("two master successes clean up untouched historical bot issues", async () => {
+  const workflow = await readFile(workflowUrl, "utf8");
+  assert.match(workflow, /close-after-two-green:/);
+  assert.match(workflow, /last\\.length !== 2/);
+  assert.match(workflow, /last\\.some\\(run => run\\.status !== 'completed' \\|\\| run\\.conclusion !== 'success'\\)/);
+  assert.match(workflow, /historical =/);
+  assert.match(workflow, /Automatic post-merge quality follow-up/);
+  assert.match(workflow, /issues\\.listEvents/);
+  assert.match(workflow, /issues\\.listComments/);
+  assert.match(workflow, /e\\.actor\\?\\.login !== 'github-actions\\[bot\\]'/);
+  assert.match(workflow, /c\\.user\\?\\.login !== 'github-actions\\[bot\\]'/);
+  assert.match(workflow, /historical \\? 'not_planned' : 'completed'/);
+  assert.doesNotMatch(workflow, /state: 'open'/);
+});

@@ -130,3 +130,7 @@
 - Incidents/logs/chronologies → `docs/operations.md` et Git/PR.
 - Après chaque merge, actualiser le snapshot de reprise.
 - Ne pas créer de `TODO.md`, `MIGRATION.md` ou roadmap parallèle.
+
+## Suivi du registre Quality (non bloquant)
+
+- [ ] Après intégration du workflow, observer deux vraies CI successives `master` (push) avant toute clôture automatique des dix anciens tickets bot. Les issues touchées manuellement restent exclues ; ne pas créer de runs artificiels pour satisfaire ce critère.
