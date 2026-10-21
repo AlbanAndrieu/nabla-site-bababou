@@ -28,6 +28,30 @@
 	var preset = window.NABLA_ANALYTICS_PRESET || {};
 	var DEFAULT_GTM_CONTAINER_ID = "GTM-W7XNV7K6";
 	var DEFAULT_GA_MEASUREMENT_ID = "G-RHL13BHK6K";
+	// Allowlisted business telemetry is disabled until explicit site opt-in.
+	var BUSINESS_EVENTS = {
+		catalog_loaded: ["app", "environment", "catalog_version", "status", "release"],
+		catalog_load_failed: ["app", "environment", "catalog_version", "error_class", "release"],
+		diagnostics_unlock_failed: ["app", "environment", "http_status", "error_class"],
+	};
+	function captureBusinessEvent(name, properties) {
+		if (root?.getAttribute("data-posthog-business-events") !== "true") return false;
+		if (!Object.prototype.hasOwnProperty.call(BUSINESS_EVENTS, name)) return false;
+		if (!window.posthog || typeof window.posthog.capture !== "function") return false;
+		var permitted = BUSINESS_EVENTS[name];
+		var safe = {};
+		if (!properties || typeof properties !== "object" || Array.isArray(properties)) return false;
+		for (var key of Object.keys(properties)) {
+			if (!permitted.includes(key)) return false;
+			var value = properties[key];
+			if ((typeof value !== "string" && typeof value !== "number") ||
+			    (typeof value === "string" && !/^[a-zA-Z0-9_.-]{1,64}$/.test(value)) ||
+			    (typeof value === "number" && (!Number.isInteger(value) || value < 100 || value > 599))) return false;
+			safe[key] = value;
+		}
+		window.posthog.capture(name, safe);
+		return true;
+	}
 	var gtmInjected = false;
 	var gtagInjected = false;
 
@@ -220,6 +244,7 @@
 		window.NABLA_SITE_ANALYTICS = {
 			initGtm: initGtm,
 			initGtag: initGtag,
+			captureBusinessEvent: captureBusinessEvent,
 		};
 		return;
 	}
@@ -549,5 +574,6 @@
 	window.NABLA_SITE_ANALYTICS = {
 		initGtm: initGtm,
 		initGtag: initGtag,
+			captureBusinessEvent: captureBusinessEvent,
 	};
 })();
