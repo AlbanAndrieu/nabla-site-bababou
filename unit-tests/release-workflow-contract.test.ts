@@ -127,26 +127,23 @@ test("semantic release avoids installing the application dependency graph", asyn
   assert.doesNotMatch(semanticRelease, /npm run semantic-release/);
 });
 
-test("release bridges verified numeric tags into Alban v-prefixed history", async () => {
-  const config = await readFile(
-    new URL("../.releaserc.yaml", import.meta.url),
-    "utf8",
-  );
-  const workflow = await readFile(
-    new URL("../.github/workflows/release.yml", import.meta.url),
-    "utf8",
-  );
+test("release bridge preserves history and validates without fake tag equality", async () => {
+  const [config, workflow, bridge] = await Promise.all([
+    readFile(new URL("../.releaserc.yaml", import.meta.url), "utf8"),
+    readFile(new URL("../.github/workflows/release.yml", import.meta.url), "utf8"),
+    readFile(new URL("../scripts/ci/release-tag-bridge.mjs", import.meta.url), "utf8"),
+  ]);
 
   assert.match(config, /tagFormat: "v\$\{version\}"/);
   assert.match(config, /@semantic-release\/npm/);
   assert.match(config, /npmPublish: false/);
+  assert.match(workflow, /Validate and bridge release tag history/);
+  assert.match(workflow, /node scripts\/ci\/release-tag-bridge\.mjs --apply/);
+  assert.match(bridge, /Latest v-prefixed release is newer than package\.json/);
+  assert.match(bridge, /merge-base/);
+  assert.match(bridge, /release", "view", legacy/);
+  assert.match(bridge, /"git", \["tag", `v\$\{legacy\}`, target\]/);
   assert.doesNotMatch(workflow, /git tag v0\.0\.0/);
-  assert.match(workflow, /Adopt v-prefixed semantic-release baseline/);
-  assert.match(workflow, /gh release view "\$legacy_tag"/);
-  assert.match(workflow, /git tag "v\$\{legacy_tag\}"/);
-  assert.match(workflow, /package_version=/);
-  assert.match(workflow, /git merge-base --is-ancestor "\$target_sha" HEAD/);
-  assert.match(workflow, /Latest v-prefixed tag and package version differ/);
 });
 
 test("release token remains least-privileged", async () => {

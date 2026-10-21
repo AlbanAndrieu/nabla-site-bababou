@@ -130,42 +130,13 @@ jobs:
         shell: bash
         run: bash scripts/verify-mise-npm.sh
 
-      # Bridge existing numeric releases without modifying the published history.
-      - name: Adopt v-prefixed semantic-release baseline
+      # Fail closed on missing/invalid history; mutates tags only after CI has passed.
+      - name: Validate and bridge release tag history
         if: steps.release_credentials.outputs.enabled == 'true' && steps.freshness.outputs.current == 'true'
         env:
           GH_TOKEN: ${{ steps.release_app_token.outputs.token }}
         shell: bash
-        run: |
-          set -euo pipefail
-          existing_v="$(git tag --list 'v[0-9]*.[0-9]*.[0-9]*' --sort=-version:refname | head -n 1)"
-          package_version="$(node -p "require('./package.json').version")"
-          if [[ -n "$existing_v" ]]; then
-            if [[ "$existing_v" != "v${package_version}" ]]; then
-              echo "::error::Latest v-prefixed tag and package version differ; manual release-history audit required."
-              exit 1
-            fi
-            echo "Using existing v-prefixed release history: $existing_v"
-            exit 0
-          fi
-          legacy_tag="$(git tag --list '[0-9]*.[0-9]*.[0-9]*' --sort=-version:refname | head -n 1)"
-          if [[ -z "$legacy_tag" || "$legacy_tag" != "$package_version" ]]; then
-            echo "::error::Legacy tag does not match package version: manual audit required."
-            exit 1
-          fi
-          gh release view "$legacy_tag" --repo "$GITHUB_REPOSITORY" >/dev/null || {
-            echo "::error::Legacy numeric tag has no verified GitHub Release."
-            exit 1
-          }
-          target_sha="$(git rev-parse "$legacy_tag^{commit}")"
-          git merge-base --is-ancestor "$target_sha" HEAD || {
-            echo "::error::Legacy release tag is not an ancestor of current master."
-            exit 1
-          }
-          git tag "v${legacy_tag}" "$target_sha"
-          gh api --method POST "repos/${GITHUB_REPOSITORY}/git/refs" \
-            -f ref="refs/tags/v${legacy_tag}" -f sha="$target_sha" >/dev/null
-          echo "Aliased verified legacy release as v${legacy_tag}."
+        run: node scripts/ci/release-tag-bridge.mjs --apply
       - name: Run semantic-release
         if: steps.release_credentials.outputs.enabled == 'true' && steps.freshness.outputs.current == 'true'
         env:

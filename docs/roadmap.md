@@ -1,3 +1,10 @@
+## Stabilisation local-first après fusion #234 — 21 octobre 2026
+
+- [x] Correction du pont Semantic Release : un tag `vX.Y.Z` valide peut précéder la version de `package.json` sans bloquer la publication suivante ; les versions régressives, tags non ancêtres et releases non vérifiées restent rejetés.
+- [x] Script `scripts/ci/release-tag-bridge.mjs` : mode `--check` sans écriture et mode `--apply` limité au workflow Release après contrôle exact-SHA et GitHub App dédiée.
+- [x] Tests exécutés sur l'environnement de l'agent : 3 tests Node 22 contre des dépôts Git temporaires et un `gh` simulé (read-only, idempotence, version future, absence de preuve). Aucun runner GitHub Actions utilisé.
+- [ ] Vérifier en CI GitHub après retour du budget uniquement lorsque la PR sera sortie de draft. Les versions Node 26/npm 12 réelles et la totalité du site/Preview ne sont pas couvertes par ce test ciblé.
+
 ## Sécurité — contrôles PR rapides et audits master approfondis (18 octobre 2026)
 
 ### P0 — Parité ZAP avec Site Alban (21 octobre 2026)
