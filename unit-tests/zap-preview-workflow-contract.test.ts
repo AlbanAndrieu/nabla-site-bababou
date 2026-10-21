@@ -112,6 +112,10 @@ test("Production ZAP distinguishes scanner failure from policy findings and requ
   assert.match(workflow, /ZAP_SCAN_EXIT_CODE=\$zap_exit/);
   assert.match(workflow, /\.site \| type == "array"/);
   assert.match(workflow, /SAFE_REPORT_OUTCOME/);
+  // ZAP exits 1/2 on findings; only verified, sanitized SARIF is exported.
+  assert.match(workflow, /env\.ZAP_SCAN_EXIT_CODE == '1'/);
+  assert.match(workflow, /env\.ZAP_SCAN_EXIT_CODE == '2'/);
+  assert.match(workflow, /if: steps\.safe-report\.outcome == 'success'/);
   assert.match(workflow, /SAFE_UPLOAD_OUTCOME/);
   assert.match(workflow, /Production ZAP scanner failed or invalid report/);
   assert.match(workflow, /zap-production-safe\.sarif/);

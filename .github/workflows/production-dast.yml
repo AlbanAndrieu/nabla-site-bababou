@@ -204,7 +204,11 @@ jobs:
       # Only minimized SARIF is retained; raw HTTP evidence is runner-local.
       - name: Produce minimized ZAP SARIF for LAN collector
         id: safe-report
-        if: steps.preflight.outcome == 'success' && steps.zap.outcome == 'success'
+        if: >-
+          steps.preflight.outcome == 'success' &&
+          (steps.zap.outcome == 'success' ||
+          (steps.zap.outcome == 'failure' &&
+          (env.ZAP_SCAN_EXIT_CODE == '1' || env.ZAP_SCAN_EXIT_CODE == '2')))
         shell: bash
         run: |
           set -euo pipefail
@@ -214,7 +218,7 @@ jobs:
 
       - name: Preserve minimized ZAP findings privately
         id: safe-upload
-        if: steps.preflight.outcome == 'success' && steps.zap.outcome == 'success'
+        if: steps.safe-report.outcome == 'success'
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: zap-production-safe-${{ github.run_id }}

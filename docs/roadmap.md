@@ -4,6 +4,7 @@
 
 - [x] Preview : adopter le scanner exit-code 0/1/2/3, différencier findings et panne technique, classer le no-report sans publier de log brut, exiger un JSON contenant au moins un site; statuts GitHub exact SHA inchangés.
 - [x] Production : même validation stricte des rapports ; 401/403 d'accès, panne Docker/démarrage et scanner KO ne doivent pas être enregistrés comme vulnérabilités ; SARIF minimisé et upload bloquants maintenus.
+- [x] Un scan Production bloqué par des findings (exit 1/2) conserve **uniquement** le SARIF minimisé pour le collecteur DefectDojo privé ; le statut DAST reste failure. Exit 3+, rapport invalide ou sanitizer échoué interdisent l'artefact. Le collecteur devra lire la preuve sans considérer le contrôle réussi.
 - [x] Tests de contrat régressifs ZAP Preview et Production étendus. Le code est modifié sur la PR #234, **scan réel non effectué**.
 - [ ] Les runs CI GitHub sur la PR échouent actuellement avant exécution des étapes (logs indisponibles / BlobNotFound) : diagnostiquer quota, runner, facturation et statut du compte hors dépôt ; **ne pas présenter comme problème corrigé par le code ni désactiver les gates**.
 - [ ] Vérifier Preview exacte et Production DAST après rétablissement des runners ; aucun nouveau scan actif ni publication d'artefacts HTTP bruts.
