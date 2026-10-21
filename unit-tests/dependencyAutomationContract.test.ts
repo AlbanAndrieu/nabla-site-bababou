@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
-import { access, readFile } from "node:fs/promises";
 import { constants } from "node:fs";
+import { access, readFile } from "node:fs/promises";
 import test from "node:test";
 
 type RenovateRule = {
@@ -44,7 +44,9 @@ async function loadConfig() {
 }
 
 function rule(config: RenovateConfig, description: string) {
-  const found = config.packageRules?.find((candidate) => candidate.description === description);
+  const found = config.packageRules?.find(
+    (candidate) => candidate.description === description,
+  );
   assert.ok(found, `missing Renovate rule: ${description}`);
   return found;
 }
@@ -52,7 +54,11 @@ function rule(config: RenovateConfig, description: string) {
 test("routine dependency updates have one conservative Renovate owner", async () => {
   const config = await loadConfig();
 
-  assert.deepEqual(config.enabledManagers, ["npm", "github-actions", "pre-commit"]);
+  assert.deepEqual(config.enabledManagers, [
+    "npm",
+    "github-actions",
+    "pre-commit",
+  ]);
   assert.equal(config.timezone, "Europe/Paris");
   assert.equal(config.dependencyDashboard, true);
   assert.equal(config.automerge, false);
@@ -67,7 +73,7 @@ test("routine dependency updates have one conservative Renovate owner", async ()
   assert.equal(config.osvVulnerabilityAlerts, false);
   assert.ok(
     config.extends?.includes(
-      ":enableVulnerabilityAlertsWithAdditionalLabel('security')",
+      ":enableVulnerabilityAlertsWithAdditionalLabel(security)",
     ),
   );
   assert.equal(config.vulnerabilityAlerts?.prConcurrentLimit, 1);
@@ -85,7 +91,7 @@ test("security fixes bypass routine release age with their own PR budget", async
   assert.equal(config.osvVulnerabilityAlerts, false);
   assert.ok(
     config.extends?.includes(
-      ":enableVulnerabilityAlertsWithAdditionalLabel('security')",
+      ":enableVulnerabilityAlertsWithAdditionalLabel(security)",
     ),
   );
   assert.equal(config.vulnerabilityAlerts?.prConcurrentLimit, 1);
@@ -108,6 +114,7 @@ test("npm updates are aged and grouped by operational risk", async () => {
 
   const runtime = rule(config, "Group non-major runtime npm updates weekly");
   assert.equal(runtime.groupName, "runtime dependencies");
+  assert.deepEqual(runtime.matchPackageNames, ["!next"]);
   assert.deepEqual(runtime.schedule, ["* 0-3 * * 1"]);
 
   const development = rule(
@@ -118,15 +125,28 @@ test("npm updates are aged and grouped by operational risk", async () => {
   assert.deepEqual(development.matchPackageNames, ["!eslint-config-next"]);
   assert.deepEqual(development.schedule, ["* 0-3 1 * *"]);
 
-  const nextStack = rule(config, "Keep Next.js and eslint-config-next aligned weekly");
+  const nextStack = rule(
+    config,
+    "Keep Next.js and eslint-config-next aligned weekly",
+  );
   assert.deepEqual(nextStack.matchPackageNames, ["next", "eslint-config-next"]);
+  assert.deepEqual(nextStack.matchUpdateTypes, [
+    "major",
+    "minor",
+    "patch",
+    "pin",
+    "digest",
+  ]);
   assert.equal(nextStack.groupName, "Next.js stack");
   assert.deepEqual(nextStack.schedule, ["* 0-3 * * 1"]);
 });
 
 test("automation tooling shares one monthly Renovate group", async () => {
   const config = await loadConfig();
-  const automation = rule(config, "Group automation tooling maintenance monthly");
+  const automation = rule(
+    config,
+    "Group automation tooling maintenance monthly",
+  );
 
   assert.deepEqual(automation.matchManagers, ["github-actions", "pre-commit"]);
   assert.equal(automation.groupName, "automation toolchain");

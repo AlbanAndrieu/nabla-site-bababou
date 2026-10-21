@@ -14,7 +14,7 @@ test("shared runtime and test toolchain versions remain internally aligned", asy
   const mise = await readFile(miseUrl, "utf8");
 
   assert.equal(pkg.engines.node, ">=24.11.0 <27");
-  assert.equal(pkg.engines.npm, ">=11.17.0 <12");
+  assert.equal(pkg.engines.npm, ">=12.2.0 <13");
 
   for (const [name, version] of Object.entries({
     next: "16.3.8",
@@ -80,7 +80,10 @@ test("P5 tooling dependencies retain package-lock root parity and installed reso
     await readFile(new URL("../package-lock.json", import.meta.url), "utf8"),
   ) as {
     lockfileVersion: number;
-    packages: Record<string, { version?: string; devDependencies?: Record<string, string> }>;
+    packages: Record<
+      string,
+      { version?: string; devDependencies?: Record<string, string> }
+    >;
   };
   assert.equal(lock.lockfileVersion, 3);
   for (const name of [

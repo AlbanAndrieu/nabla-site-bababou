@@ -38,7 +38,7 @@ QUALITY_FORCE_PUBLISH=1 bash scripts/agent-publish.sh
 ```
 
 `agent-p0-check.sh` inclut le preflight Git-only et 28 contrats offline de scope, baseline,
-toolchain, agents, CI/Preview, accessibilité et Vercel, avec les gardes Node `>=24.11 <27` / npm `>=11.17 <12`.
+toolchain, agents, CI/Preview, accessibilité et Vercel, avec les gardes Node `>=24.11 <27` / npm `>=12.2 <13`.
 Le strict gate lui applique aussi shfmt, shell lint et bashate.
 `agent-publish.sh` refuse `master`/detached HEAD et lie la preuve au HEAD, à la base,
 au toolchain et au lockfile installés. `bash scripts/agent-publish.sh --status` audite la
@@ -81,9 +81,25 @@ steps=[] ou steps=null
 aucun log de step
 ```
 
-Échec avant exécution du code : quota, facturation ou provisioning runner. Ne pas modifier
-le code ni relancer manuellement lorsque les crédits sont indisponibles ; maximiser les
-preuves locales et conserver la preuve runner-backed comme dette.
+Échec avant exécution du code : quota, facturation, permissions Actions ou provisioning
+runner possibles, **sans attribution de cause sans preuve**. Le diagnostic est
+en lecture seule ; il n'exécute aucun workflow :
+
+```bash
+just ci-diagnose 39556443405
+# ou avec contrôle de SHA :
+bash scripts/ci/diagnose-actions-startup.sh AlbanAndrieu/nabla-site-bababou 39556443405 <SHA_40_CARACTERES>
+```
+
+Codes de sortie : `0` succès, `1` échec d'un step exécuté, `2` job échoué avant
+tout step, `3` en attente, `4` réponse/API/identité inconclusive. Un code `2`
+**ne prouve pas** une panne de code ni une panne de facturation : inspecter
+Settings → Billing & licensing → Budgets and usage → Actions, puis Settings →
+Actions → General et les runners GitHub-hosted. Si GitHub n'expose pas
+l'origine du refus, ouvrir un ticket Support avec les IDs run/job.
+
+Ne pas modifier les quality gates ni multiplier les relances lorsque les crédits
+sont indisponibles ; conserver la validation runner-backed comme dette.
 
 ### Vercel Security Checkpoint
 
@@ -141,9 +157,13 @@ politique de consentement/confidentialité.
 Le hook pre-commit utilise **Betterleaks v1.9.0** via son hook Go natif
 pour la détection de secrets ; aucun daemon/socket Docker n'est requis par Betterleaks. Le fichier `.betterleaks.toml` est la policy canonique et conserve les allowlists revues. Betterleaks est le seul scanner de secrets exécuté. Le nom `REPOSITORY_GITLEAKS` subsiste uniquement comme identifiant historique du linter désactivé dans MegaLinter ; aucun binaire/hook Gitleaks n'est exécuté. `detect-private-key` et Secretlint restent des protections complémentaires.
 
-Le `justfile` est facultatif et **additionnel** au `Makefile` :
-`just preflight`, `just p0`, `just quality-fix`, `just quality`, `just publish-check`, `just publish-status`, `just secrets-config`, `just secrets-staged`, `just secrets-worktree`, `just secrets-history`.
-Les scripts npm et mise restent les points d'entrée canoniques.
+Le `justfile` est désormais **le point d’entrée canonique** :
+`just preflight`, `just p0`, `just quality-fix`, `just quality`,
+`just publish`, `just publish-status`, `just workflow-audit`,
+`just secrets-config`, `just secrets-staged`, `just secrets-worktree`,
+`just secrets-history`. Les scripts npm/Bash, Mise et pre-commit restent les
+mécanismes sous-jacents. Le `Makefile` est conservé pour la compatibilité
+(`just legacy-help`), sans devenir la source des quality gates.
 
 `just secrets-staged` analyse uniquement l'index Git : les sources
 familiales et juridiques dans `.private-publication-source/**` et

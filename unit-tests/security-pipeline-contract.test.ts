@@ -72,13 +72,43 @@ test("Production DAST runs after production deployments and daily with the share
   assert.match(workflow, /id-token: write/);
   assert.match(workflow, /x-vercel-protection-bypass/);
   assert.match(workflow, /x-vercel-trusted-oidc-idp-token/);
-  assert.match(workflow, /rules_file_name: "\.zap\/rules\.tsv"/);
-  assert.match(workflow, /cmd_options: "-I -T 5"/);
-  assert.doesNotMatch(workflow, /cmd_options:.*-c \.zap\/rules\.tsv/);
-  assert.match(workflow, /fail_action: true/);
-  assert.match(workflow, /artifact_name: zap-production-report/);
+  assert.match(workflow, /zap-baseline\.py -t "\$BASE_URL" -c rules\.tsv/);
+  assert.match(workflow, /-J report_json\.json -I -T 5 -s/);
+  assert.doesNotMatch(workflow, /zaproxy\/action-baseline/);
+  assert.match(workflow, /docker run --rm/);
+  assert.match(workflow, /ZAP_SCAN_DIR/);
+  assert.match(workflow, /continue-on-error: true/);
+  assert.doesNotMatch(workflow, /artifact_name: zap-production-report/);
+  assert.match(workflow, /name: zap-production-safe-/);
+  assert.match(workflow, /Raw report: \*\*runner-local only\*\*/);
   assert.match(workflow, /context 'Production DAST'/);
   assert.match(workflow, /H\$high M\$medium L\$low I\$informational/);
+});
+
+test("Production DAST projection checkout is complete and errors are blocking", async () => {
+  const workflow = await readFile(productionDastUrl, "utf8");
+  const source = await readFile(
+    new URL("../scripts/security/zap-safe-report.mjs", import.meta.url),
+    "utf8",
+  );
+  const checkout = workflow
+    .split("- name: Checkout production ZAP policy")[1]
+    ?.split("- name: Request GitHub OIDC token")[0];
+  assert.ok(checkout);
+  assert.match(source, /defectdojo-report-sanitizers/);
+  assert.match(checkout, /scripts\/security\/zap-safe-report\.mjs/);
+  assert.match(
+    checkout,
+    /scripts\/security\/defectdojo-report-sanitizers\.mjs/,
+  );
+  assert.doesNotMatch(checkout, /defectdojo-pull-master/);
+  assert.match(workflow, /id: safe-report/);
+  assert.match(workflow, /id: safe-upload/);
+  assert.match(workflow, /if: always\(\) && \(steps\.preflight/);
+  assert.match(workflow, /steps\.safe-report\.outcome != 'success'/);
+  assert.match(workflow, /steps\.safe-upload\.outcome != 'success'/);
+  assert.match(workflow, /SAFE_REPORT_OUTCOME.*== "success"/);
+  assert.match(workflow, /SAFE_UPLOAD_OUTCOME.*== "success"/);
 });
 
 test("Preview and production ZAP load the shared policy exactly once", async () => {
@@ -88,9 +118,10 @@ test("Preview and production ZAP load the shared policy exactly once", async () 
   ]);
 
   for (const workflow of [preview, production]) {
-    assert.match(workflow, /rules_file_name: "\.zap\/rules\.tsv"/);
-    assert.match(workflow, /cmd_options: "-I -T 5"/);
-    assert.doesNotMatch(workflow, /cmd_options:.*-c \.zap\/rules\.tsv/);
+    assert.match(workflow, /zap-baseline\.py -t/);
+    assert.match(workflow, /-c rules\.tsv/);
+    assert.match(workflow, /-J report_json\.json -I -T 5 -s/);
+    assert.doesNotMatch(workflow, /zaproxy\/action-baseline/);
   }
 });
 
@@ -247,7 +278,7 @@ test("Production ZAP publishes only minimized DAST evidence to the LAN collector
   assert.match(workflow, /name: Produce minimized ZAP SARIF for LAN collector/);
   assert.match(
     workflow,
-    /zap-safe-report\.mjs report_json\.json zap-production-safe\.sarif/,
+    /zap-safe-report\.mjs "\$ZAP_SCAN_DIR\/report_json\.json" zap-production-safe\.sarif/,
   );
   assert.match(
     workflow,
@@ -260,4 +291,56 @@ test("Production ZAP publishes only minimized DAST evidence to the LAN collector
     workflow,
     /DEFECTDOJO_API_TOKEN|DEFECTDOJO_IMPORT_APPROVED/,
   );
+});
+
+test("CI triggers for shared developer tooling and security policy changes", async () => {
+  const workflow = await readFile(ciUrl, "utf8");
+  const triggerScope = workflow.split("\npermissions:")[0];
+  for (const path of [
+    "justfile",
+    "biome.json",
+    ".betterleaks.toml",
+    ".semgrep/**",
+  ]) {
+    const expected = `      - "${path}"`;
+    assert.equal(
+      triggerScope.split(expected).length - 1,
+      2,
+      `${path} must trigger PR and master CI`,
+    );
+  }
+});
+test("just is the pinned canonical entrypoint and workflow audits are blocking", async () => {
+  const [justfile, mise, precommit, workflow] = await Promise.all([
+    readFile(new URL("../justfile", import.meta.url), "utf8"),
+    readFile(new URL("../mise.toml", import.meta.url), "utf8"),
+    readFile(new URL("../.pre-commit-config.yaml", import.meta.url), "utf8"),
+    readFile(ciUrl, "utf8"),
+  ]);
+
+  assert.match(mise, /just = "1\.58\.0"/);
+  assert.match(justfile, /\ncheck:\n {4}npm run check/);
+  assert.match(justfile, /\nunit:\n {4}npm run test:unit/);
+  assert.match(justfile, /\npublish:\n {4}bash scripts\/agent-publish\.sh/);
+  assert.match(justfile, /\nlegacy-help:\n {4}make help/);
+  assert.match(
+    justfile,
+    /\nworkflow-audit:\n {4}pre-commit run actionlint --all-files\n {4}pre-commit run zizmor --all-files/,
+  );
+  assert.match(precommit, /repo: https:\/\/github\.com\/rhysd\/actionlint/);
+  assert.match(precommit, /rev: v1\.7\.12/);
+  assert.match(
+    precommit,
+    /repo: https:\/\/github\.com\/zizmorcore\/zizmor-pre-commit/,
+  );
+  assert.match(precommit, /rev: v1\.30\.1/);
+  assert.match(precommit, /args: \["--offline"\]/);
+  assert.match(
+    workflow,
+    /name: Audit all GitHub Actions workflows \(actionlint, zizmor\)/,
+  );
+  assert.match(workflow, /pre-commit run actionlint --all-files/);
+  assert.match(workflow, /pre-commit run zizmor --all-files/);
+  assert.match(workflow, /steps\.workflow-audit\.outcome != 'success'/);
+  assert.match(workflow, /name: Enforce GitHub Actions workflow audit/);
 });

@@ -31,8 +31,15 @@ on:
       - "tests/**"
       - "unit-tests/**"
       - "mise.toml"
+      - "justfile"
+      - "biome.json"
+      - ".betterleaks.toml"
+      - ".semgrep/**"
       - "*.{js,cjs,mjs,ts,tsx,json}"
       - "package-lock.json"
+      - ".github/workflows/**"
+      - ".github/actions/**"
+      - ".github/dependabot.yml"
       - ".github/workflows/ci.yml"
       - ".github/workflows/copilot-setup-steps.yml"
       - ".github/workflows/docker-build.yml"
@@ -74,8 +81,15 @@ on:
       - "tests/**"
       - "unit-tests/**"
       - "mise.toml"
+      - "justfile"
+      - "biome.json"
+      - ".betterleaks.toml"
+      - ".semgrep/**"
       - "*.{js,cjs,mjs,ts,tsx,json}"
       - "package-lock.json"
+      - ".github/workflows/**"
+      - ".github/actions/**"
+      - ".github/dependabot.yml"
       - ".github/workflows/ci.yml"
       - ".github/workflows/copilot-setup-steps.yml"
       - ".github/workflows/docker-build.yml"
@@ -92,7 +106,6 @@ permissions:
   actions: read
   contents: read
   statuses: read
-  security-events: write
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -100,8 +113,14 @@ concurrency:
 
 jobs:
   quality:
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    permissions:
+      actions: read
+      contents: read
+      statuses: read
+      security-events: write
     outputs:
       current-base-sha: ${{ steps.current-heads.outputs.base-sha }}
       preview_required: ${{ steps.ci-scope.outputs.preview_required }}
@@ -262,6 +281,23 @@ jobs:
           QUALITY_LOG_TAIL: "12"
         run: bash scripts/quality-gate.sh
 
+      # Changed-file hooks are not sufficient: unchanged workflows also need a
+      # baseline audit when actionlint/zizmor rules or repository policy evolves.
+      - name: Audit all GitHub Actions workflows (actionlint, zizmor)
+        id: workflow-audit
+        if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+        continue-on-error: true
+        shell: bash
+        run: |
+          actionlint_rc=0
+          zizmor_rc=0
+          pre-commit run actionlint --all-files || actionlint_rc=$?
+          pre-commit run zizmor --all-files || zizmor_rc=$?
+          if ((actionlint_rc != 0 || zizmor_rc != 0)); then
+            echo "::error::GitHub Actions audit failed (actionlint=$actionlint_rc, zizmor=$zizmor_rc)"
+            exit 1
+          fi
+
       - name: Save pre-commit environments
         if: >-
           (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
@@ -276,6 +312,12 @@ jobs:
         if: >-
           (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
           steps.canonical-quality-gate.outcome != 'success'
+        run: exit 1
+
+      - name: Enforce GitHub Actions workflow audit
+        if: >-
+          (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
+          steps.workflow-audit.outcome != 'success'
         run: exit 1
 
       - name: Verify current production baseline before PR build
@@ -404,7 +446,7 @@ jobs:
               echo "- Diagnostic report: **semgrep-sast-report** workflow artifact (7 days)"
             fi
             echo
-            echo "After enabling GitHub Code Scanning for this private repository, set repository variable `ENABLE_CODE_SCANNING_SARIF=true` to publish Semgrep SARIF to the Security tab."
+            echo "After enabling GitHub Code Scanning for this private repository, set repository variable \`ENABLE_CODE_SCANNING_SARIF=true\` to publish Semgrep SARIF to the Security tab."
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Preserve failed Semgrep SAST report
@@ -463,13 +505,18 @@ jobs:
           restore-keys: |
             next-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('package-lock.json') }}-
 
-      - name: Pin npm
+      - name: Install pinned npm from Mise
+        if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
+        uses: jdx/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8 # v5.1.2
+        with:
+          version: 2026.10.8
+          install_args: npm
+          env: false
+
+      - name: Verify npm toolchain
         if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
         shell: bash
-        run: |
-          set -euo pipefail
-          cd "${RUNNER_TEMP}"
-          npm install --global npm@11.17.0 --no-audit --no-fund
+        run: bash scripts/verify-mise-npm.sh
 
       # Always block HIGH/CRITICAL advisories affecting production packages,
       # independently of the Snyk token or package-lock diff scope.
@@ -733,16 +780,22 @@ jobs:
         with:
           ref: ${{ steps.preview.outputs.sha }}
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Push automatic Vercel Preview checkpoint
         env:
           CHECKPOINT_BRANCH: ${{ steps.preview.outputs.branch }}
           PR_BASE_SHA: ${{ needs.quality.outputs.current-base-sha }}
           PR_HEAD_SHA: ${{ steps.preview.outputs.sha }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
-        run: >-
-          bash scripts/publish-vercel-preview-checkpoint.sh
-          "${CHECKPOINT_BRANCH}" "${PR_BASE_SHA}" "${PR_HEAD_SHA}"
+        run: |
+          set -euo pipefail
+          # The checkout deliberately does not persist credentials.
+          # Authenticate only this exact-SHA checkpoint publishing step.
+          gh auth setup-git
+          bash scripts/publish-vercel-preview-checkpoint.sh \
+            "${CHECKPOINT_BRANCH}" "${PR_BASE_SHA}" "${PR_HEAD_SHA}"
 
       - name: Wait for Vercel, Playwright and ZAP Preview statuses
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8

@@ -62,7 +62,7 @@ jobs:
           persist-credentials: false
           sparse-checkout: |
             .zap/rules.tsv
-            scripts/security/defectdojo-pull-master.mjs
+            scripts/security/defectdojo-report-sanitizers.mjs
             scripts/security/zap-safe-report.mjs
           sparse-checkout-cone-mode: false
 
@@ -88,7 +88,7 @@ jobs:
             local auth_name="$1"
             local header_name="$2"
             local header_value="$3"
-            local headers status location mitigated
+            local headers status mitigated
 
             headers="$(mktemp)"
             status="$(curl --silent --show-error \
@@ -97,7 +97,6 @@ jobs:
               --write-out '%{http_code}' \
               --header "$header_name: $header_value" \
               "$BASE_URL/")"
-            location="$(awk 'BEGIN { IGNORECASE=1 } /^location:/ { sub(/^[^:]+:[[:space:]]*/, ""); sub(/\r$/, ""); print; exit }' "$headers")"
             mitigated="$(awk 'BEGIN { IGNORECASE=1 } /^x-vercel-mitigated:/ { sub(/^[^:]+:[[:space:]]*/, ""); sub(/\r$/, ""); print; exit }' "$headers")"
 
             if [[ "$status" == "429" || "${mitigated,,}" == "challenge" ]]; then
@@ -117,12 +116,16 @@ jobs:
               return 1
             fi
 
-            echo "ZAP_AUTH_HEADER=$header_name" >> "$GITHUB_ENV"
-            echo "ZAP_AUTH_HEADER_VALUE=$header_value" >> "$GITHUB_ENV"
-            echo "ZAP_AUTH_HEADER_SITE=www.bababou.com" >> "$GITHUB_ENV"
-            echo "auth_mode=$auth_name" >> "$GITHUB_OUTPUT"
-            echo "http_status=$status" >> "$GITHUB_OUTPUT"
-            echo "mitigated=${mitigated:-none}" >> "$GITHUB_OUTPUT"
+            {
+              echo "ZAP_AUTH_HEADER=$header_name"
+              echo "ZAP_AUTH_HEADER_VALUE=$header_value"
+              echo "ZAP_AUTH_HEADER_SITE=www.bababou.com"
+            } >> "$GITHUB_ENV"
+            {
+              echo "auth_mode=$auth_name"
+              echo "http_status=$status"
+              echo "mitigated=${mitigated:-none}"
+            } >> "$GITHUB_OUTPUT"
             rm -f "$headers"
             return 0
           }
@@ -144,31 +147,78 @@ jobs:
           echo "::error::Production DAST could not authenticate to www.bababou.com."
           exit 1
 
+      # Isolated baseline shared with Alban Preview; raw HTTP stays runner-local.
       - name: Run OWASP ZAP baseline on canonical production
         id: zap
         continue-on-error: true
-        uses: zaproxy/action-baseline@de8ad967d3548d44ef623df22cf95c3b0baf8b25 # v0.15.0
-        with:
-          target: ${{ env.BASE_URL }}
-          rules_file_name: ".zap/rules.tsv"
-          allow_issue_writing: false
-          fail_action: true
-          artifact_name: zap-production-report
-          cmd_options: "-I -T 5"
-
-      # Separate allowlisted export. Do not let the LAN collector read the
-      # baseline action's raw HTTP report just to obtain a finding summary.
-      - name: Produce minimized ZAP SARIF for LAN collector
-        if: steps.preflight.outcome == 'success' && steps.zap.outcome == 'success'
         shell: bash
         run: |
           set -euo pipefail
-          test -s report_json.json
-          node scripts/security/zap-safe-report.mjs report_json.json zap-production-safe.sarif
+          scan_dir="$(mktemp -d "${RUNNER_TEMP}/zap-production.XXXXXX")"
+          echo "ZAP_SCAN_DIR=$scan_dir" >> "$GITHUB_ENV"
+          cp .zap/rules.tsv "$scan_dir/rules.tsv"
+          # Preserve the exit code: 1/2 means findings, 3 means scanner failure.
+          zap_exit=0
+          docker run --rm \
+            --user "$(id -u):$(id -g)" \
+            --env HOME=/tmp \
+            --env ZAP_AUTH_HEADER --env ZAP_AUTH_HEADER_VALUE --env ZAP_AUTH_HEADER_SITE \
+            --volume "$scan_dir:/zap/wrk:rw" \
+            ghcr.io/zaproxy/zaproxy:2.17.0 \
+            zap-baseline.py -t "$BASE_URL" -c rules.tsv \
+              -J report_json.json -I -T 5 -s \
+            > "$scan_dir/console.log" 2>&1 || zap_exit=$?
+          echo "ZAP_SCAN_EXIT_CODE=$zap_exit" >> "$GITHUB_ENV"
+          if [[ ! -s "$scan_dir/report_json.json" ]]; then
+            category=unknown
+            if grep -Eiq 'permission denied|read-only file system' "$scan_dir/console.log"; then
+              category=filesystem-permission
+            elif grep -Eiq 'no space left on device|disk quota' "$scan_dir/console.log"; then
+              category=runner-disk
+            elif grep -Eiq 'connection refused|timed out|failed to connect|name resolution' "$scan_dir/console.log"; then
+              category=network
+            elif grep -Eiq 'unauthorized|forbidden|status code: 40[13]|HTTP 40[13]' "$scan_dir/console.log"; then
+              category=production-auth
+            elif grep -Eiq 'invalid option|unrecognized arguments|usage: zap-baseline' "$scan_dir/console.log"; then
+              category=scanner-arguments
+            elif grep -Eiq 'failed to start ZAP|failed to access summary file|java.*exception|address already in use' "$scan_dir/console.log"; then
+              category=zap-startup
+            elif grep -Eiq 'error response from daemon|manifest unknown|pull access denied' "$scan_dir/console.log"; then
+              category=docker-image
+            fi
+            echo "::error::PRODUCTION_ZAP_NO_REPORT class=$category exit=$zap_exit (raw evidence withheld)"
+            exit 1
+          fi
+          if ! jq -e '(.site | type == "array") and ((.site | length) > 0)' "$scan_dir/report_json.json" >/dev/null 2>&1; then
+            echo "::error::PRODUCTION_ZAP_INVALID_REPORT: missing scanned sites"
+            exit 1
+          fi
+          if (( zap_exit == 3 || zap_exit > 3 )); then
+            echo "::error::PRODUCTION_ZAP_SCANNER_ERROR exit=$zap_exit (raw evidence withheld)"
+            exit 1
+          fi
+          if (( zap_exit != 0 )); then
+            echo "::error::Production ZAP blocking findings; counts only in summary."
+            exit 1
+          fi
+      # Only minimized SARIF is retained; raw HTTP evidence is runner-local.
+      - name: Produce minimized ZAP SARIF for LAN collector
+        id: safe-report
+        if: >-
+          steps.preflight.outcome == 'success' &&
+          (steps.zap.outcome == 'success' ||
+          (steps.zap.outcome == 'failure' &&
+          (env.ZAP_SCAN_EXIT_CODE == '1' || env.ZAP_SCAN_EXIT_CODE == '2')))
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s "$ZAP_SCAN_DIR/report_json.json"
+          node scripts/security/zap-safe-report.mjs "$ZAP_SCAN_DIR/report_json.json" zap-production-safe.sarif
           jq -e '.version == "2.1.0" and .runs[0].tool.driver.name == "ZAP" and (.runs[0].results | type == "array")' zap-production-safe.sarif >/dev/null
 
       - name: Preserve minimized ZAP findings privately
-        if: steps.preflight.outcome == 'success' && steps.zap.outcome == 'success'
+        id: safe-upload
+        if: steps.safe-report.outcome == 'success'
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: zap-production-safe-${{ github.run_id }}
@@ -182,6 +232,9 @@ jobs:
         env:
           PREFLIGHT_OUTCOME: ${{ steps.preflight.outcome }}
           ZAP_OUTCOME: ${{ steps.zap.outcome }}
+          ZAP_AUTH_MODE: ${{ steps.preflight.outputs.auth_mode || 'n/a' }}
+          SAFE_REPORT_OUTCOME: ${{ steps.safe-report.outcome }}
+          SAFE_UPLOAD_OUTCOME: ${{ steps.safe-upload.outcome }}
         shell: bash
         run: |
           set -euo pipefail
@@ -189,39 +242,47 @@ jobs:
           medium=0
           low=0
           informational=0
-          if [[ -s report_json.json ]]; then
-            high="$(jq '[.site[]?.alerts[]? | select(((.riskcode // "0") | tonumber) == 3)] | length' report_json.json)"
-            medium="$(jq '[.site[]?.alerts[]? | select(((.riskcode // "0") | tonumber) == 2)] | length' report_json.json)"
-            low="$(jq '[.site[]?.alerts[]? | select(((.riskcode // "0") | tonumber) == 1)] | length' report_json.json)"
-            informational="$(jq '[.site[]?.alerts[]? | select(((.riskcode // "0") | tonumber) == 0)] | length' report_json.json)"
+          report_available=false
+          if [[ -n "${ZAP_SCAN_DIR:-}" && -s "$ZAP_SCAN_DIR/report_json.json" ]] && \
+             jq -e '(.site | type == "array") and ((.site | length) > 0)' "$ZAP_SCAN_DIR/report_json.json" >/dev/null 2>&1; then
+            report_available=true
+            high="$(jq '[.site[]?.alerts[]? | select(((.riskcode // "0") | tonumber) == 3)] | length' "$ZAP_SCAN_DIR/report_json.json")"
+            medium="$(jq '[.site[]?.alerts[]? | select(((.riskcode // "0") | tonumber) == 2)] | length' "$ZAP_SCAN_DIR/report_json.json")"
+            low="$(jq '[.site[]?.alerts[]? | select(((.riskcode // "0") | tonumber) == 1)] | length' "$ZAP_SCAN_DIR/report_json.json")"
+            informational="$(jq '[.site[]?.alerts[]? | select(((.riskcode // "0") | tonumber) == 0)] | length' "$ZAP_SCAN_DIR/report_json.json")"
           fi
-          echo "high=$high" >> "$GITHUB_OUTPUT"
-          echo "medium=$medium" >> "$GITHUB_OUTPUT"
-          echo "low=$low" >> "$GITHUB_OUTPUT"
-          echo "informational=$informational" >> "$GITHUB_OUTPUT"
+          {
+            echo "report_available=$report_available"
+            echo "high=$high"
+            echo "medium=$medium"
+            echo "low=$low"
+            echo "informational=$informational"
+          } >> "$GITHUB_OUTPUT"
 
           {
             echo "## Production DAST"
             echo
-            echo "- Result: preflight **${PREFLIGHT_OUTCOME:-unknown}**, scanner **${ZAP_OUTCOME:-not-run}**"
+            echo "- Result: preflight **${PREFLIGHT_OUTCOME:-unknown}**, scanner **${ZAP_OUTCOME:-not-run}**, SARIF **${SAFE_REPORT_OUTCOME:-not-run}**, upload **${SAFE_UPLOAD_OUTCOME:-not-run}**"
             echo "- Target: $BASE_URL"
             echo "- Associated SHA: \`$DEPLOYED_SHA\`"
-            echo "- Vercel auth: \`${{ steps.preflight.outputs.auth_mode || 'n/a' }}\`"
+            echo "- Vercel auth: \`${ZAP_AUTH_MODE}\`"
             echo "- Policy: \`.zap/rules.tsv\`"
             echo "- Alerts: **H$high M$medium L$low I$informational**"
-            echo "- Report artifact: **zap-production-report**"
+            echo "- Raw report: **runner-local only**; only minimized SARIF is uploaded"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Clean ZAP production workspace
         if: always()
         shell: bash
-        run: rm -f report_html.html report_json.json report_md.md zap.yaml zap-production-safe.sarif
+        run: |
+          if [[ -n "${ZAP_SCAN_DIR:-}" ]]; then rm -rf -- "$ZAP_SCAN_DIR"; fi
+          rm -f zap-production-safe.sarif
 
       - name: Enforce production DAST policy
-        if: steps.preflight.outcome != 'success' || steps.zap.outcome != 'success'
+        if: always() && (steps.preflight.outcome != 'success' || steps.zap.outcome != 'success' || steps.safe-report.outcome != 'success' || steps.safe-upload.outcome != 'success')
         shell: bash
         run: |
-          echo "::error::Production DAST preflight, scanner, or blocking rule failed. Review the Job Summary and zap-production-report artifact."
+          echo "::error::Production DAST preflight, scanner, safe SARIF, or artifact upload failed. Review the job summary and minimized SARIF artifact only."
           exit 1
 
       - name: Publish production DAST status
@@ -231,6 +292,10 @@ jobs:
           STATUS_SHA: ${{ env.DEPLOYED_SHA }}
           PREFLIGHT_OUTCOME: ${{ steps.preflight.outcome }}
           ZAP_OUTCOME: ${{ steps.zap.outcome }}
+          SCAN_EXIT_CODE: ${{ env.ZAP_SCAN_EXIT_CODE }}
+          REPORT_AVAILABLE: ${{ steps.summary.outputs.report_available }}
+          SAFE_REPORT_OUTCOME: ${{ steps.safe-report.outcome }}
+          SAFE_UPLOAD_OUTCOME: ${{ steps.safe-upload.outcome }}
           HIGH: ${{ steps.summary.outputs.high }}
           MEDIUM: ${{ steps.summary.outputs.medium }}
           LOW: ${{ steps.summary.outputs.low }}
@@ -240,12 +305,21 @@ jobs:
         run: |
           set -euo pipefail
           counts="H${HIGH:-?} M${MEDIUM:-?} L${LOW:-?} I${INFO:-?}"
-          if [[ "$PREFLIGHT_OUTCOME" == "success" && "$ZAP_OUTCOME" == "success" ]]; then
+          if [[ "$PREFLIGHT_OUTCOME" != "success" ]]; then
+            STATE=failure
+            DESCRIPTION="Production ZAP preflight failed"
+          elif [[ "$ZAP_OUTCOME" == "success" && "$SAFE_REPORT_OUTCOME" == "success" && "$SAFE_UPLOAD_OUTCOME" == "success" ]]; then
             STATE=success
             DESCRIPTION="Production ZAP passed $counts"
+          elif [[ "$ZAP_OUTCOME" == "cancelled" ]]; then
+            STATE=error
+            DESCRIPTION="Production ZAP cancelled"
+          elif [[ "$ZAP_OUTCOME" != "success" && ( "${SCAN_EXIT_CODE:-}" == "3" || "${SCAN_EXIT_CODE:-}" -gt 3 || "$REPORT_AVAILABLE" != "true" ) ]]; then
+            STATE=error
+            DESCRIPTION="Production ZAP scanner failed or invalid report"
           else
             STATE=failure
-            DESCRIPTION="Production ZAP blocked/error $counts"
+            DESCRIPTION="Production ZAP blocked/SARIF failed $counts"
           fi
 
           payload="$(jq -n \
@@ -260,5 +334,5 @@ jobs:
             --header "Authorization: Bearer $GH_TOKEN" \
             --header 'Accept: application/vnd.github+json' \
             --header 'X-GitHub-Api-Version: 2022-11-28' \
-            "${{ github.api_url }}/repos/${{ github.repository }}/statuses/$STATUS_SHA" \
+            "${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/statuses/${STATUS_SHA}" \
             --data "$payload"

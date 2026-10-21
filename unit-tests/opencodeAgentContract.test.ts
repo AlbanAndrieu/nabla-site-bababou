@@ -141,7 +141,7 @@ test("dependency-free P0 checkpoint stays canonical and maintenance-only", async
   assert.match(p0, /require_supported_js_toolchain QG_P0/);
   assert.match(support, /%s_NODE_VERSION/);
   assert.match(support, />=24\.11\.0 <27/);
-  assert.match(support, />=11\.17\.0 <12/);
+  assert.match(support, />=12\.2\.0 <13/);
   assert.match(p0, /node --experimental-strip-types --test/);
   for (const testFile of [
     "unit-tests/ciScopeBehavior.test.ts",

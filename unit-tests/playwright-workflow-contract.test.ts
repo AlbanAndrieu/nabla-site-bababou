@@ -44,12 +44,17 @@ test("Playwright Preview runs reuse the Chromium browser cache", async () => {
   );
 
   assert.match(workflow, /id: playwright-version/);
-  assert.ok(workflow.includes("actions/cache@caa296126883cff596d87d8935842f9db880ef25"));
+  assert.ok(
+    workflow.includes("actions/cache@caa296126883cff596d87d8935842f9db880ef25"),
+  );
   assert.match(
     cache,
     /playwright-chromium-\$\{\{ runner\.os \}\}-\$\{\{ runner\.arch \}\}-\$\{\{ steps\.playwright-version\.outputs\.version \}\}/,
   );
-  assert.match(install, /steps\.playwright-cache\.outputs\.cache-hit != 'true'/);
+  assert.match(
+    install,
+    /steps\.playwright-cache\.outputs\.cache-hit != 'true'/,
+  );
 
   // System packages still need to be present on every fresh GitHub-hosted runner.
   assert.match(workflow, /npx playwright install-deps chromium/);
@@ -64,26 +69,30 @@ test("Playwright npm cache avoids bundled npm project config before pinning", as
   const npmCache = section(
     workflow,
     "- name: Cache npm downloads",
-    "- name: Pin npm",
+    "- name: Install pinned npm from Mise",
   );
   const npmPin = section(
     workflow,
-    "- name: Pin npm",
+    "- name: Install pinned npm from Mise",
     "- name: Install dependencies",
   );
 
-  assert.ok(npmCache.includes("actions/cache@caa296126883cff596d87d8935842f9db880ef25"));
+  assert.ok(
+    npmCache.includes("actions/cache@caa296126883cff596d87d8935842f9db880ef25"),
+  );
   assert.match(npmCache, /path: ~\/\.npm/);
   assert.match(
     npmCache,
     /npm-\$\{\{ runner\.os \}\}-\$\{\{ runner\.arch \}\}-\$\{\{ hashFiles\('package-lock\.json'\) \}\}/,
   );
   assert.doesNotMatch(workflow, /cache: npm/);
-  assert.match(npmPin, /cd "\$\{RUNNER_TEMP\}"/);
   assert.match(
     npmPin,
-    /npm install --global npm@11\.17\.0 --no-audit --no-fund/,
+    /jdx\/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8/,
   );
+  assert.match(npmPin, /install_args: npm/);
+  assert.match(npmPin, /Verify npm toolchain/);
+  assert.doesNotMatch(npmPin, /npm install --global/);
 });
 
 test("Playwright Preview dependency install skips legacy lifecycle scripts", async () => {
@@ -111,7 +120,11 @@ test("Playwright Preview helper actions run on the Node 24 generation", async ()
     "utf8",
   );
 
-  assert.ok(workflow.includes("actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd"));
+  assert.ok(
+    workflow.includes(
+      "actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd",
+    ),
+  );
   assert.doesNotMatch(workflow, /actions\/github-script@v[0-9]+/);
   assert.match(workflow, /persist-credentials: false/);
 });
@@ -129,7 +142,7 @@ test("Playwright Preview rejects Vercel Security Checkpoint responses", async ()
   );
 
   assert.match(accessCheck, /x-vercel-mitigated/);
-  assert.match(accessCheck, /status\" == \"429\"/);
+  assert.match(accessCheck, /status" == "429"/);
   assert.match(accessCheck, /Vercel Security Checkpoint/);
   assert.match(accessCheck, /return 1/);
 });
@@ -156,12 +169,10 @@ test("Playwright production deployment smoke stays lightweight", async () => {
       'request "$DEPLOYMENT_BASE_URL" "/" "deployment /" "" "/index.html"',
     ),
   );
-  assert.match(productionSmoke, /status\" == \"307\"/);
+  assert.match(productionSmoke, /status" == "307"/);
   assert.match(productionSmoke, /redirect_path.*expected_redirect/s);
   assert.ok(
-    productionSmoke.includes(
-      "^location: https://vercel\\.com/(login|sso-api)",
-    ),
+    productionSmoke.includes("^location: https://vercel\\.com/(login|sso-api)"),
   );
   for (const route of [
     "/",
@@ -179,9 +190,8 @@ test("Playwright production deployment smoke stays lightweight", async () => {
   assert.doesNotMatch(productionSmoke, /x-vercel-set-bypass-cookie/);
   assert.doesNotMatch(productionSmoke, /npm ci|playwright install|npm test/);
   assert.match(productionSmoke, /Production Post-deploy Smoke/);
-  assert.match(productionSmoke, /statuses\/\$STATUS_SHA/);
+  assert.match(productionSmoke, /statuses\/\$\{STATUS_SHA\}/);
 });
-
 
 test("Playwright failure summary cross-links the independent exact-SHA ZAP evidence", async () => {
   const workflow = await readFile(
@@ -190,6 +200,7 @@ test("Playwright failure summary cross-links the independent exact-SHA ZAP evide
   );
 
   assert.match(workflow, /OWASP ZAP Preview/);
-  assert.match(workflow, /zap-preview-report/);
+  assert.match(workflow, /runner-local ZAP diagnostics/);
+  assert.doesNotMatch(workflow, /zap-preview-report/);
   assert.match(workflow, /distinguish browser regressions from DAST findings/);
 });

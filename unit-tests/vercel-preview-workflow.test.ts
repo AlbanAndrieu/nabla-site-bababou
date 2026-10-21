@@ -44,6 +44,8 @@ test("on-demand Preview keeps maintenance policy aligned without hiding runtime 
     "filename.startsWith('.zap/')",
     "filename.startsWith('commitlint.config.')",
     "filename.startsWith('playwright.config.')",
+    "filename === 'renovate.json'",
+    "filename === 'scripts/verify-mise-npm.sh'",
   ]) {
     assert.ok(workflow.includes(predicate), predicate);
   }

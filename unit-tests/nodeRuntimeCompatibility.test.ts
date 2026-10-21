@@ -35,6 +35,7 @@ test("Node runtime policy separates development Current from production compatib
   assert.equal(nvmrc.trim(), "v26.8.2");
   assert.equal(productionNvmrc.trim(), "v24.11.0");
   assert.equal(packageJson.engines?.node, ">=24.11.0 <27");
+  assert.equal(packageJson.engines?.npm, ">=12.2.0 <13");
   assert.deepEqual(
     lock.packages?.[""]?.engines,
     packageJson.engines,
@@ -43,13 +44,20 @@ test("Node runtime policy separates development Current from production compatib
   assert.match(envrc, /NODE_VERSIONS=\$\{NODE_VERSIONS:-"v26\.8\.2"\}/);
   assert.notEqual(envrcStat.mode & 0o111, 0, ".envrc must remain executable");
   assert.match(security, /Node 26 Current/);
-  assert.match(security, /Vercel production uses its supported Node 24\.x runtime/);
+  assert.match(
+    security,
+    /Vercel production uses its supported Node 24\.x runtime/,
+  );
 
-  assert.match(workflow, /node-version-file:\s*"\.nvmrc-production"/);
-  assert.doesNotMatch(workflow, /node-version:\s*"?\d/);
+  assert.match(workflow, /Resolve minimum Node\.js from package\.json engines/);
+  assert.match(workflow, /node-version: \$\{\{ steps\.node-floor\.outputs\.version \}\}/);
+  assert.doesNotMatch(workflow, /node-version-file:\s*"\.nvmrc-production"/);
   assert.match(workflow, /github\.event\.pull_request\.draft == false/);
   assert.match(workflow, /npm ci --no-audit --no-fund/);
+  assert.match(workflow, /bash scripts\/verify-mise-npm\.sh/);
   assert.match(workflow, /npm run test:unit/);
+  assert.match(workflow, /node24-unit-tests\.log/);
+  assert.match(workflow, /Upload failed Node 24 unit-test evidence/);
   assert.doesNotMatch(workflow, /npm run build|npm run check(?!:)/);
 });
 
@@ -70,7 +78,10 @@ test("Node 24 CI follows production runtime inputs instead of generic maintenanc
     "lib/**",
     "messages/**",
   ]) {
-    assert.match(workflow, new RegExp(`- "${path.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"`));
+    assert.match(
+      workflow,
+      new RegExp(`- "${path.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"`),
+    );
   }
 
   assert.match(workflow, /unit-tests\/nodeRuntimeCompatibility\.test\.ts/);

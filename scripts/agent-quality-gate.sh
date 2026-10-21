@@ -92,6 +92,10 @@ precommit_fix_until_stable() {
     local after
     local log
     local rc
+    local before_digests
+    local pass_evidence
+    local evidence=""
+    declare -A seen_fingerprints=()
 
     for ((pass = 1; pass <= FIX_PASSES; pass++)); do
         mapfile -t fix_files < <(collect_changed_files)
@@ -101,12 +105,26 @@ precommit_fix_until_stable() {
         fi
 
         before="$(workspace_fingerprint)"
+        if [[ -n "${seen_fingerprints[${before}]:-}" ]]; then
+            printf '❌ QG_FIX_OSCILLATION: workspace fingerprint repeated (passes %s and %s).\n' \
+                "${seen_fingerprints[${before}]}" "${pass}" >&2
+            report_fix_oscillation "${seen_fingerprints[${before}]}" "${pass}" "${evidence}" >&2
+            printf "   Inspect mutating pre-commit hooks and files.\n" >&2
+            git status --short >&2
+            return 1
+        fi
+        seen_fingerprints["${before}"]="${pass}"
+        before_digests="$(fix_file_digests "${fix_files[@]}")"
         log="$(mktemp)"
         set +e
         pre-commit run --hook-stage pre-commit --files "${fix_files[@]}" >"${log}" 2>&1
         rc=$?
         set -e
         after="$(workspace_fingerprint)"
+        pass_evidence="$(fix_pass_evidence "${pass}" "${log}" "${before_digests}" "$(fix_file_digests "${fix_files[@]}")")"
+        if [[ -n "${pass_evidence}" ]]; then
+            printf -v evidence "%s%s\n" "${evidence}" "${pass_evidence}"
+        fi
 
         if ((rc == 0)); then
             rm -f "${log}"

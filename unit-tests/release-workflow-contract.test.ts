@@ -39,7 +39,10 @@ test("semantic release refuses stale validated revisions", async () => {
   );
 
   assert.match(workflow, /Verify validated revision is still current master/);
-  assert.match(workflow, /VALIDATED_SHA=/);
+  assert.match(
+    workflow,
+    /VALIDATED_SHA: \$\{\{ github\.event\.workflow_run\.head_sha \}\}/,
+  );
   assert.match(workflow, /git rev-parse origin\/master/);
   assert.match(workflow, /current=false/);
   assert.match(workflow, /steps\.freshness\.outputs\.current == 'true'/);
@@ -70,7 +73,9 @@ test("semantic release authenticates before refreshing current master", async ()
   assert.match(freshness, /git fetch --force origin master:/);
   assert.ok(
     workflow.indexOf("- name: Configure release Git authentication") <
-      workflow.indexOf("- name: Verify validated revision is still current master"),
+      workflow.indexOf(
+        "- name: Verify validated revision is still current master",
+      ),
   );
 });
 
@@ -83,28 +88,28 @@ test("semantic release avoids installing the application dependency graph", asyn
   const nodeSetup = section(
     workflow,
     "- name: Set up Node.js",
-    "- name: Pin npm",
+    "- name: Install pinned npm from Mise",
   );
   assert.match(nodeSetup, /steps\.freshness\.outputs\.current == 'true'/);
   assert.match(nodeSetup, /node-version-file: "\.nvmrc"/);
   assert.doesNotMatch(nodeSetup, /cache: npm/);
   const npmPin = section(
     workflow,
-    "- name: Pin npm",
+    "- name: Install pinned npm from Mise",
     "- name: Run semantic-release",
   );
-  assert.match(npmPin, /cd "\$\{RUNNER_TEMP\}"/);
   assert.match(
     npmPin,
-    /npm install --global npm@11\.17\.0 --no-audit --no-fund/,
+    /jdx\/mise-action@08ae2a091c038e1e05ec6f5115dc5c69d5a2a6b8/,
   );
+  assert.match(npmPin, /install_args: npm/);
+  assert.match(npmPin, /Verify npm toolchain/);
+  assert.doesNotMatch(npmPin, /npm install --global/);
   assert.doesNotMatch(workflow, /Install application dependencies/);
   assert.doesNotMatch(workflow, /npm ci/);
 
-  const semanticRelease = section(
-    workflow,
-    "- name: Run semantic-release",
-    "- name: Verify numeric release state",
+  const semanticRelease = workflow.slice(
+    workflow.indexOf("- name: Run semantic-release"),
   );
   assert.match(semanticRelease, /GITHUB_TOKEN:/);
   assert.match(semanticRelease, /GH_TOKEN:/);
@@ -112,13 +117,17 @@ test("semantic release avoids installing the application dependency graph", asyn
   assert.match(semanticRelease, /git config --local user\.email/);
   assert.match(semanticRelease, /npm exec --yes --ignore-scripts/);
   assert.match(semanticRelease, /--package=semantic-release@25\.0\.8/);
-  assert.match(semanticRelease, /--package=@semantic-release\/changelog@7\.0\.0/);
+  assert.match(
+    semanticRelease,
+    /--package=@semantic-release\/changelog@7\.0\.0/,
+  );
   assert.match(semanticRelease, /--package=@semantic-release\/git@11\.0\.1/);
+  assert.match(semanticRelease, /--package=@semantic-release\/npm@13\.1\.3/);
   assert.match(semanticRelease, /--package=@semantic-release\/github@12\.0\.9/);
   assert.doesNotMatch(semanticRelease, /npm run semantic-release/);
 });
 
-test("semantic release preserves Bababou's established numeric release history", async () => {
+test("release bridges verified numeric tags into Alban v-prefixed history", async () => {
   const config = await readFile(
     new URL("../.releaserc.yaml", import.meta.url),
     "utf8",
@@ -128,12 +137,16 @@ test("semantic release preserves Bababou's established numeric release history",
     "utf8",
   );
 
-  assert.match(config, /tagFormat: "\$\{version\}"/);
+  assert.match(config, /tagFormat: "v\$\{version\}"/);
+  assert.match(config, /@semantic-release\/npm/);
+  assert.match(config, /npmPublish: false/);
   assert.doesNotMatch(workflow, /git tag v0\.0\.0/);
-  assert.doesNotMatch(workflow, /Bootstrap semantic-release baseline/);
-  assert.match(workflow, /LATEST_TAG=/);
-  assert.match(workflow, /PACKAGE_VERSION=/);
-  assert.match(workflow, /gh release view "\$LATEST_TAG"/);
+  assert.match(workflow, /Adopt v-prefixed semantic-release baseline/);
+  assert.match(workflow, /gh release view "\$legacy_tag"/);
+  assert.match(workflow, /git tag "v\$\{legacy_tag\}"/);
+  assert.match(workflow, /package_version=/);
+  assert.match(workflow, /git merge-base --is-ancestor "\$target_sha" HEAD/);
+  assert.match(workflow, /Latest v-prefixed tag and package version differ/);
 });
 
 test("release token remains least-privileged", async () => {
@@ -144,7 +157,8 @@ test("release token remains least-privileged", async () => {
 
   assert.doesNotMatch(workflow, /permission-workflows:/);
   assert.doesNotMatch(workflow, /^\s*workflows:\s*write\s*$/m);
-  assert.match(workflow, /^\s*contents:\s*write\s*$/m);
+  assert.match(workflow, /^\s*contents:\s*read\s*$/m);
+  assert.match(workflow, /permission-contents: write/);
 });
 
 test("release tooling stays out of the normal application install", async () => {
@@ -160,8 +174,32 @@ test("release tooling stays out of the normal application install", async () => 
     "@semantic-release/changelog",
     "@semantic-release/git",
     "@semantic-release/github",
+    "@semantic-release/npm",
   ]) {
     assert.equal(packageJson.devDependencies?.[name], undefined);
   }
   assert.equal(packageJson.scripts?.["semantic-release"], undefined);
+});
+
+test("release requires GitHub App credentials and forbids token fallback", async () => {
+  const workflow = await readFile(
+    new URL("../.github/workflows/release.yml", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(workflow, /branches:\s*\n\s*- master/);
+  assert.match(workflow, /contents: read/);
+  assert.doesNotMatch(workflow, /^\s*contents: write\s*$/m);
+  assert.match(workflow, /name: Resolve release credential policy/);
+  assert.match(workflow, /RELEASE_APP_PRIVATE_KEY_CONFIGURED:/);
+  assert.match(workflow, /secrets\.RELEASE_APP_PRIVATE_KEY != ''/);
+  assert.match(workflow, /name: Report skipped semantic release/);
+  assert.match(workflow, /steps\.release_credentials\.outputs\.enabled != 'true'/);
+  assert.match(workflow, /if: steps\.release_credentials\.outputs\.enabled == 'true'/);
+  assert.match(workflow, /GH_TOKEN: \$\{\{ steps\.release_app_token\.outputs\.token \}\}/);
+  assert.match(workflow, /GITHUB_TOKEN: \$\{\{ steps\.release_app_token\.outputs\.token \}\}/);
+  assert.doesNotMatch(workflow, /\|\| secrets\.GITHUB_TOKEN/);
+  assert.doesNotMatch(workflow, /\$\{\{ secrets\.GITHUB_TOKEN \}\}/);
+  assert.match(workflow, /Verify validated revision is still current master/);
+  assert.match(workflow, /bash scripts\/verify-mise-npm\.sh/);
 });
