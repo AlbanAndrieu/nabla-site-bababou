@@ -71,6 +71,23 @@ contrôler `Vercel`, `Production Post-deploy Smoke` et `Production DAST`.
 Les changements documentation/maintenance peuvent être ignorés par
 `scripts/vercel-ignore-build.sh`. Un checkpoint `vercel-preview-*` doit construire.
 
+### Historique Semantic Release (sans déploiement ni crédit Actions)
+
+Le pont `scripts/ci/release-tag-bridge.mjs` corrige l'ancien refus d'un tag
+`vX.Y.Z` plus ancien que `package.json` (cas normal avant une nouvelle release).
+Pour diagnostiquer sans **aucune écriture**, utiliser sur un checkout Git complet
+avec l'accès en lecture aux GitHub Releases :
+
+```bash
+node scripts/ci/release-tag-bridge.mjs --check
+node --test --experimental-strip-types unit-tests/releaseTagBridge.test.ts
+```
+
+`--apply` est réservé au workflow Release après contrôle SHA master et jeton
+GitHub App dédié ; il peut créer un alias `vX.Y.Z` vers un tag historique
+préexistant, jamais une nouvelle version. Le test utilise un mock de `gh`,
+ne touche pas aux tags distants et ne consomme pas de crédits GitHub Actions.
+
 ## 4. Signatures d'incident
 
 ### Runner GitHub non alloué

@@ -1,3 +1,16 @@
+## Stabilisation local-first après fusion #234 — 21 octobre 2026
+
+- [x] Correction du pont Semantic Release : un tag `vX.Y.Z` valide peut précéder la version de `package.json` sans bloquer la publication suivante ; les versions régressives, tags non ancêtres et releases non vérifiées restent rejetés.
+- [x] Script `scripts/ci/release-tag-bridge.mjs` : mode `--check` sans écriture et mode `--apply` limité au workflow Release après contrôle exact-SHA et GitHub App dédiée.
+- [x] Tests exécutés sur l'environnement de l'agent : 3 tests Node 22 contre des dépôts Git temporaires et un `gh` simulé (read-only, idempotence, version future, absence de preuve). Aucun runner GitHub Actions utilisé.
+- [ ] Vérifier en CI GitHub après retour du budget uniquement lorsque la PR sera sortie de draft. Les versions Node 26/npm 12 réelles et la totalité du site/Preview ne sont pas couvertes par ce test ciblé.
+
+## Local-first — PR #235 (21 octobre 2026)
+
+- [x] Migration Semantic Release sécurisée : tolère `package.json` plus récent que le dernier `vX.Y.Z`, refuse un tag numérique plus récent que le dernier `vX.Y.Z` (historique divergent), exige l'ascendance du tag et la preuve de GitHub Release avant tout alias.
+- [x] 4 tests Git/Node exécutés dans le conteneur agent sur dépôts temporaires + `gh` simulé ; script vérifié par `node --check`. Aucun `npm ci`, Playwright, ZAP, Biome ou Node 26 exécuté : **ne pas assimiler au quality gate complet**.
+- [ ] Revalider Quality + Preview exact-SHA une fois les crédits rétablis et la PR passée de draft à normale, sans contourner les gates.
+
 ## Sécurité — contrôles PR rapides et audits master approfondis (18 octobre 2026)
 
 ### P0 — Parité ZAP avec Site Alban (21 octobre 2026)
@@ -18,9 +31,9 @@
 
 # Roadmap — nabla-site-bababou
 
-## Reprise P0 — convergence outillage inter-sites (20 octobre 2026)
+## Acquis P0 — convergence outillage inter-sites (fusion #234, 21 octobre 2026)
 
-- **PR active : [#234](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/234)**, sans fusion automatique. Base de comparaison : `nabla-site-alban` master@`dca0755` et PR #238@`cd545d8`.
+- **Base fusionnée** : [PR #234](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/234) ; **travail actuel** : [PR #235](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/235) en draft, commits `[skip ci]`, tests Git/Node locaux, aucune CI lancée. Les références Alban #238 sont historiques.
 - [x] Portage de l'amélioration fusionnée dans Alban #227 : diagnostics de cycles pre-commit nommant les hooks, fichiers modifiés et passes, sans exporter les journaux bruts.
 - [x] Parité de `scripts/agent-output-metrics.sh` avec Alban #238 : séparateur décimal déterministe `LC_ALL=C` et test sous locale française.
 - [x] Intégrer `actionlint v1.7.12` et `zizmor v1.30.1 --offline` dans pre-commit et la CI (audit de tous les workflows avant bootstrap npm, bloquant). **Preuve sur le HEAD en cours requise** : les exceptions éventuelles doivent être justifiées et ciblées, jamais une désactivation globale.
@@ -37,7 +50,7 @@
 - [x] Script maison `scripts/semantic-release-version.mjs` retiré : `@semantic-release/npm` est désormais le mécanisme commun pour la synchronisation des manifestes, avec `npmPublish: false`.
 - [ ] Parité cross-repo à finaliser sur `nabla-site-alban` : reproduire la baseline production DAST, les exigences BetterLeaks PR le cas échéant et les règles de sécurité supplémentaires, plutôt que supprimer les protections Bababou. La confidentialité des données reste l’unique exception fonctionnelle intentionnelle.
 - [x] Diagnostic GitHub Actions local-first : `just ci-diagnose <RUN_ID>` détecte les échecs pré-runner (`steps: null`), les vrais tests en erreur et les SHAs incohérents via deux appels API GET uniquement. Contrats de tests avec `gh` simulé, sans relancer de workflow ni publier d'information privée.
-- [ ] Lever le blocage d'exécution des runners GitHub Actions sur Bababou : la relance ciblée de Quality #39556443405 a échoué **à nouveau avec zéro step**. Cause externe exacte non attestée ; vérifier budgets, configuration Actions et runner provisioning. **Aucun PASS CI prétendu** sur cette PR.
+- [ ] **Budget GitHub Actions épuisé, confirmé par le propriétaire** : aucune exécution CI additionnelle ; les anciens runs #39556443405 ont échoué sans step. Préparer/valider localement et laisser la PR #235 en draft + `[skip ci]` jusqu'au renouvellement de crédit. Le diagnostic précis des anciens refus de runner n'est pas établi.
 - [ ] Qualifier les autres écarts non pertinents à importer automatiquement : Node/npm et tooling expérimentaux (prek/hk), contexte source hors ligne, politiques BetterLeaks spécifiques, règles de publication privée et DAST ; privilégier la parité comportementale aux copies intégrales de scripts.
 - **Preuve** : valider le P0 et les jobs GitHub sur le SHA exact de cette PR. L'échec Production DAST corrigé ne sera attesté qu'après son exécution réelle sur master.
 
