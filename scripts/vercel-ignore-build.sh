@@ -39,10 +39,7 @@ if [[ -z "$changed_files" ]]; then
   exit 0
 fi
 
-# A release metadata commit is not sufficient evidence to skip deployment:
-# earlier commits since the last deployed SHA may change runtime code.
-commit_subject="$(git log -1 --pretty=%s)"
-
+# Always assess the full delta, including semantic-release commits.
 echo "Changed files since $base_sha:"
 printf '%s\n' "$changed_files"
 
@@ -56,10 +53,6 @@ while IFS= read -r file; do
       ;;
   esac
 done <<< "$changed_files"
-
-if [[ "$commit_subject" =~ ^chore\\(release\\):\\ [0-9]+\\.[0-9]+\\.[0-9]+\\ \\[skip\\ ci\\]$ ]]; then
-  echo "Semantic-release metadata-only delta; skip duplicate deployment."
-fi
 
 echo "Only documentation, tests, editor metadata, agent instructions, retired asset metadata, or GitHub maintenance changed; skip Vercel deployment."
 exit 0
