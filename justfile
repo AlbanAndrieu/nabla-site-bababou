@@ -118,6 +118,15 @@ offline-release:
     node --check scripts/ci/release-tag-bridge.mjs
     node --test unit-tests/releaseTagBridge.test.mjs
 
+offline-draft-policy:
+    node --check scripts/ci/check-draft-workflows.mjs
+    node --test unit-tests/workflowDraftBudget.test.mjs
+    node scripts/ci/check-draft-workflows.mjs
+
+offline-contracts:
+    node --test unit-tests/releaseTagBridge.test.mjs unit-tests/workflowDraftBudget.test.mjs
+    node scripts/ci/check-draft-workflows.mjs
+
 offline-l1:
     bash scripts/agent-offline-check.sh
 
