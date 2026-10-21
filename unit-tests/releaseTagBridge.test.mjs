@@ -109,7 +109,6 @@ test("mixed tag histories reject newer numeric releases", (t) => {
   assert.equal(mixed.git("tag", "--list", "v*"), "v0.19.0");
 });
 
-
 test("semantic versions are sorted numerically, not lexicographically", (t) => {
   const { git, run } = scenario(t);
   git("tag", "-d", "0.20.0");
