@@ -230,7 +230,7 @@ jobs:
           path: |
             playwright-report/
             test-results/
-          retention-days: 3
+          retention-days: 2
           if-no-files-found: ignore
 
       - name: Failure summary
