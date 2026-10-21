@@ -60,7 +60,9 @@ try {
   const legacy = latest(tags, false);
   if (existing) {
     if (legacy && compareVersions(legacy, existing.slice(1)) > 0) {
-      throw new Error("Numeric release is newer than the latest v-tag; manual audit required");
+      throw new Error(
+        "Numeric release is newer than the latest v-tag; manual audit required",
+      );
     }
     assertAncestor(existing);
     if (compareVersions(existing.slice(1), packageVersion) > 0) {

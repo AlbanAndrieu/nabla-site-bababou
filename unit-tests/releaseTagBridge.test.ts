@@ -24,7 +24,10 @@ type ScenarioOptions = {
   permitRelease?: boolean;
 };
 
-function scenario(t: { after: (fn: () => void) => void }, options: ScenarioOptions = {}) {
+function scenario(
+  t: { after: (fn: () => void) => void },
+  options: ScenarioOptions = {},
+) {
   const root = mkdtempSync(join(tmpdir(), "bababou-tag-"));
   t.after(() => rmSync(root, { recursive: true, force: true }));
   const bin = join(root, "bin");
@@ -49,7 +52,10 @@ function scenario(t: { after: (fn: () => void) => void }, options: ScenarioOptio
   git("init", "-q");
   git("config", "user.email", "test@example.invalid");
   git("config", "user.name", "Test");
-  writeFileSync(join(root, "package.json"), JSON.stringify({ version: "0.20.0" }));
+  writeFileSync(
+    join(root, "package.json"),
+    JSON.stringify({ version: "0.20.0" }),
+  );
   git("add", ".");
   git("commit", "-qm", "baseline");
   if (options.legacy !== false) git("tag", "0.20.0");
