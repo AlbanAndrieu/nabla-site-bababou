@@ -9,8 +9,8 @@ const files = [
   ".github/workflows/node24-compat.yml",
   ".github/workflows/copilot-setup-steps.yml",
 ];
-const root = process.argv.length === 3 && process.argv[2] === "--self-test" ? null : resolve(process.argv[2] ?? ".");
-if (root === null || process.argv.length > 3) {
+const root = resolve(process.argv[2] ?? ".");
+if (process.argv.length > 3) {
   console.error("Usage: node scripts/ci/check-draft-workflows.mjs [REPO_ROOT]");
   process.exit(2);
 }
@@ -45,7 +45,9 @@ for (const path of files) {
     workflow = readFileSync(resolve(root, path), "utf8");
     const event = /^  pull_request:\s*$/m.test(workflow);
     const review = /ready_for_review/.test(workflow.split("\njobs:")[0]);
-    if (!event || !review) throw new Error("missing pull_request/ready_for_review trigger");
+    if (!event || !review) {
+      throw new Error("missing pull_request/ready_for_review trigger");
+    }
     const jobs = jobsIn(workflow);
     if (jobs.length === 0) throw new Error("missing configured jobs");
     for (const job of jobs) {

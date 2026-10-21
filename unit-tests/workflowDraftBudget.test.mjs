@@ -6,7 +6,9 @@ import { join } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 
-const checker = fileURLToPath(new URL("../scripts/ci/check-draft-workflows.mjs", import.meta.url));
+const checker = fileURLToPath(
+  new URL("../scripts/ci/check-draft-workflows.mjs", import.meta.url),
+);
 const workflows = ["ci", "docker-build", "node24-compat", "copilot-setup-steps"];
 
 function fixture(t, { unguarded, missingReview } = {}) {
@@ -15,21 +17,30 @@ function fixture(t, { unguarded, missingReview } = {}) {
   const dir = join(root, ".github", "workflows");
   mkdirSync(dir, { recursive: true });
   for (const name of workflows) {
-    const guard = name === unguarded ? "" : "    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false\n";
-    const review = name === missingReview ? "opened, synchronize" : "opened, synchronize, ready_for_review";
-    writeFileSync(join(dir, `${name}.yml`), [
-      `name: ${name}`,
-      "on:",
-      "  pull_request:",
-      `    types: [${review}]`,
-      "jobs:",
-      "  quality:",
-      guard.trimEnd(),
-      "    runs-on: ubuntu-latest",
-      "    steps:",
-      "      - run: echo valid",
-      "",
-    ].filter(Boolean).join("\n"));
+    const guard =
+      name === unguarded
+        ? ""
+        : "    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false\n";
+    const review =
+      name === missingReview
+        ? "opened, synchronize"
+        : "opened, synchronize, ready_for_review";
+    writeFileSync(
+      join(dir, `${name}.yml`),
+      [
+        `name: ${name}`,
+        "on:",
+        "  pull_request:",
+        `    types: [${review}]`,
+        "jobs:",
+        "  quality:",
+        guard.trimEnd(),
+        "    runs-on: ubuntu-latest",
+        "    steps:",
+        "      - run: echo valid",
+        "",
+      ].filter(Boolean).join("\n"),
+    );
   }
   return () => spawnSync(process.execPath, [checker, root], { encoding: "utf8" });
 }
