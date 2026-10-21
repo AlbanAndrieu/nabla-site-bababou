@@ -1,3 +1,9 @@
+## Suite locale sans crédits Actions — 21 octobre 2026
+
+- [x] Les 4 scénarios TypeScript du pont Semantic Release sont repris dans un fichier de test natif `.mjs`, complétés par les versions ordonnées numériquement et le rejet d'une version invalide. Aucun `tsx` ni `npm ci` requis pour `just offline-release`.
+- [x] Tests ciblés exécutés dans l'environnement de l'agent (Node 22, dépôts Git temporaires, faux client `gh`) : **6 scénarios réussis**, aucun appel réseau ni minute GitHub Actions. Cela ne valide pas l'intégralité du dépôt ni la version Node 26 épinglée.
+- [ ] À la réactivation du budget : sortir la PR de draft pour déclencher la CI, sans modifier les contrôles bloquants. Ne pas merger automatiquement.
+
 ## Stabilisation local-first après fusion #234 — 21 octobre 2026
 
 - [x] Correction du pont Semantic Release : un tag `vX.Y.Z` valide peut précéder la version de `package.json` sans bloquer la publication suivante ; les versions régressives, tags non ancêtres et releases non vérifiées restent rejetés.

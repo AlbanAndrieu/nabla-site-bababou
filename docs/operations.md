@@ -80,7 +80,7 @@ avec l'accès en lecture aux GitHub Releases :
 
 ```bash
 node scripts/ci/release-tag-bridge.mjs --check
-node --test --experimental-strip-types unit-tests/releaseTagBridge.test.ts
+just offline-release  # ou node --test unit-tests/releaseTagBridge.test.mjs
 ```
 
 `--apply` est réservé au workflow Release après contrôle SHA master et jeton
