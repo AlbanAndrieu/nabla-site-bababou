@@ -1,5 +1,14 @@
 ## Sécurité — contrôles PR rapides et audits master approfondis (18 octobre 2026)
 
+### P0 — Parité ZAP avec Site Alban (21 octobre 2026)
+
+- [x] Preview : adopter le scanner exit-code 0/1/2/3, différencier findings et panne technique, classer le no-report sans publier de log brut, exiger un JSON contenant au moins un site; statuts GitHub exact SHA inchangés.
+- [x] Production : même validation stricte des rapports ; 401/403 d'accès, panne Docker/démarrage et scanner KO ne doivent pas être enregistrés comme vulnérabilités ; SARIF minimisé et upload bloquants maintenus.
+- [x] Tests de contrat régressifs ZAP Preview et Production étendus. Le code est modifié sur la PR #234, **scan réel non effectué**.
+- [ ] Les runs CI GitHub sur la PR échouent actuellement avant exécution des étapes (logs indisponibles / BlobNotFound) : diagnostiquer quota, runner, facturation et statut du compte hors dépôt ; **ne pas présenter comme problème corrigé par le code ni désactiver les gates**.
+- [ ] Vérifier Preview exacte et Production DAST après rétablissement des runners ; aucun nouveau scan actif ni publication d'artefacts HTTP bruts.
+
+
 - **PR, bloquant** : BetterLeaks v1.9.0 audite les commits `base..HEAD` (distinct du hook staged, vide après checkout) ; Semgrep SAST sur fichiers modifiés ; npm audit production HIGH/CRITICAL ; contrôle de code, tests, Playwright et ZAP baseline existants. Critères : aucun secret détecté ou vulnérabilité CRITICAL/HIGH de production ; les vulnérabilités HIGH déjà présentes dans la toolchain dev restent documentées, non « PASS full SCA ».
 - **Master, hebdomadaire + déclenchement manuel** : `.github/workflows/security-deep.yml` : Trivy 0.74 fs vulnérabilités+licences+misconfigurations et SBOM CycloneDX avec dépendances de développement ; CodeQL JS/TS `security-extended` avec SARIF privé et sans imposer GitHub Code Scanning ; Semgrep full SAST ; Nuclei templates HTTP medium+ non intrusifs à 2 requêtes/s maximum (parité `nabla-site-alban`). Artifacts privés, expiration 3 jours, jamais de raw JSONL Nuclei.
 - **DAST budgets** : ZAP passif Preview sur chaque déploiement nécessaire ; ZAP passif production sur déploiements et mardi/vendredi (au lieu de 7 nuits/semaine). Workflow `.github/workflows/zap-active-preview.yml` disponible **manuellement** uniquement après autorisation explicite et correspondance Preview/SHA, avec max 25 min et blocage HIGH ; **jamais automatiquement sur production**.

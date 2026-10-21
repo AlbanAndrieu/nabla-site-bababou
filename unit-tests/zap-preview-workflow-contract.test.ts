@@ -90,6 +90,31 @@ test("ZAP baseline is isolated and never uploads raw scan evidence", async () =>
   assert.match(workflow, /statuses: write/);
   assert.match(workflow, /ZAP Preview access preflight failed/);
   assert.match(workflow, /ZAP Preview passed \$counts/);
-  assert.match(workflow, /ZAP Preview scanner error: no report/);
+  assert.match(workflow, /ZAP Preview scanner failed or invalid report/);
+  assert.match(workflow, /ZAP_NO_REPORT class=\$category/);
+  assert.match(workflow, /ZAP_INVALID_REPORT/);
+  assert.match(workflow, /ZAP_SCANNER_ERROR/);
+  assert.match(workflow, /ZAP_SCAN_EXIT_CODE=\$zap_exit/);
+  assert.match(workflow, /\.site \| type == "array"/);
+  assert.match(workflow, /zap-startup/);
+  assert.match(workflow, /docker-image/);
   assert.match(workflow, /ZAP Preview blocked \$counts/);
+});
+
+test("Production ZAP distinguishes scanner failure from policy findings and requires sanitized SARIF", async () => {
+  const workflow = await readFile(
+    new URL("../.github/workflows/production-dast.yml", import.meta.url),
+    "utf8",
+  );
+  assert.match(workflow, /PRODUCTION_ZAP_NO_REPORT class=\$category/);
+  assert.match(workflow, /PRODUCTION_ZAP_INVALID_REPORT/);
+  assert.match(workflow, /PRODUCTION_ZAP_SCANNER_ERROR/);
+  assert.match(workflow, /ZAP_SCAN_EXIT_CODE=\$zap_exit/);
+  assert.match(workflow, /\.site \| type == "array"/);
+  assert.match(workflow, /SAFE_REPORT_OUTCOME/);
+  assert.match(workflow, /SAFE_UPLOAD_OUTCOME/);
+  assert.match(workflow, /Production ZAP scanner failed or invalid report/);
+  assert.match(workflow, /zap-production-safe\.sarif/);
+  assert.doesNotMatch(workflow, /zaproxy\/action-baseline/);
+  assert.doesNotMatch(workflow, /cat "\$scan_dir\/console\.log"/);
 });

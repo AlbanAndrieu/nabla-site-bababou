@@ -157,7 +157,9 @@ jobs:
           scan_dir="$(mktemp -d "${RUNNER_TEMP}/zap-production.XXXXXX")"
           echo "ZAP_SCAN_DIR=$scan_dir" >> "$GITHUB_ENV"
           cp .zap/rules.tsv "$scan_dir/rules.tsv"
-          if ! docker run --rm \
+          # Preserve the exit code: 1/2 means findings, 3 means scanner failure.
+          zap_exit=0
+          docker run --rm \
             --user "$(id -u):$(id -g)" \
             --env HOME=/tmp \
             --env ZAP_AUTH_HEADER --env ZAP_AUTH_HEADER_VALUE --env ZAP_AUTH_HEADER_SITE \
@@ -165,14 +167,40 @@ jobs:
             ghcr.io/zaproxy/zaproxy:2.17.0 \
             zap-baseline.py -t "$BASE_URL" -c rules.tsv \
               -J report_json.json -I -T 5 -s \
-            > "$scan_dir/console.log" 2>&1; then
-            echo "::error::Production ZAP blocked or failed; raw HTTP evidence withheld."
+            > "$scan_dir/console.log" 2>&1 || zap_exit=$?
+          echo "ZAP_SCAN_EXIT_CODE=$zap_exit" >> "$GITHUB_ENV"
+          if [[ ! -s "$scan_dir/report_json.json" ]]; then
+            category=unknown
+            if grep -Eiq 'permission denied|read-only file system' "$scan_dir/console.log"; then
+              category=filesystem-permission
+            elif grep -Eiq 'no space left on device|disk quota' "$scan_dir/console.log"; then
+              category=runner-disk
+            elif grep -Eiq 'connection refused|timed out|failed to connect|name resolution' "$scan_dir/console.log"; then
+              category=network
+            elif grep -Eiq 'unauthorized|forbidden|status code: 40[13]|HTTP 40[13]' "$scan_dir/console.log"; then
+              category=production-auth
+            elif grep -Eiq 'invalid option|unrecognized arguments|usage: zap-baseline' "$scan_dir/console.log"; then
+              category=scanner-arguments
+            elif grep -Eiq 'failed to start ZAP|failed to access summary file|java.*exception|address already in use' "$scan_dir/console.log"; then
+              category=zap-startup
+            elif grep -Eiq 'error response from daemon|manifest unknown|pull access denied' "$scan_dir/console.log"; then
+              category=docker-image
+            fi
+            echo "::error::PRODUCTION_ZAP_NO_REPORT class=$category exit=$zap_exit (raw evidence withheld)"
             exit 1
           fi
-          test -s "$scan_dir/report_json.json" || {
-            echo "::error::Production ZAP did not produce a report (INCOMPLETE)."
+          if ! jq -e '(.site | type == "array") and ((.site | length) > 0)' "$scan_dir/report_json.json" >/dev/null 2>&1; then
+            echo "::error::PRODUCTION_ZAP_INVALID_REPORT: missing scanned sites"
             exit 1
-          }
+          fi
+          if (( zap_exit == 3 || zap_exit > 3 )); then
+            echo "::error::PRODUCTION_ZAP_SCANNER_ERROR exit=$zap_exit (raw evidence withheld)"
+            exit 1
+          fi
+          if (( zap_exit != 0 )); then
+            echo "::error::Production ZAP blocking findings; counts only in summary."
+            exit 1
+          fi
       # Only minimized SARIF is retained; raw HTTP evidence is runner-local.
       - name: Produce minimized ZAP SARIF for LAN collector
         id: safe-report
@@ -210,13 +238,17 @@ jobs:
           medium=0
           low=0
           informational=0
-          if [[ -n "${ZAP_SCAN_DIR:-}" && -s "$ZAP_SCAN_DIR/report_json.json" ]]; then
+          report_available=false
+          if [[ -n "${ZAP_SCAN_DIR:-}" && -s "$ZAP_SCAN_DIR/report_json.json" ]] && \
+             jq -e '(.site | type == "array") and ((.site | length) > 0)' "$ZAP_SCAN_DIR/report_json.json" >/dev/null 2>&1; then
+            report_available=true
             high="$(jq '[.site[]?.alerts[]? | select(((.riskcode // "0") | tonumber) == 3)] | length' "$ZAP_SCAN_DIR/report_json.json")"
             medium="$(jq '[.site[]?.alerts[]? | select(((.riskcode // "0") | tonumber) == 2)] | length' "$ZAP_SCAN_DIR/report_json.json")"
             low="$(jq '[.site[]?.alerts[]? | select(((.riskcode // "0") | tonumber) == 1)] | length' "$ZAP_SCAN_DIR/report_json.json")"
             informational="$(jq '[.site[]?.alerts[]? | select(((.riskcode // "0") | tonumber) == 0)] | length' "$ZAP_SCAN_DIR/report_json.json")"
           fi
           {
+            echo "report_available=$report_available"
             echo "high=$high"
             echo "medium=$medium"
             echo "low=$low"
@@ -256,6 +288,8 @@ jobs:
           STATUS_SHA: ${{ env.DEPLOYED_SHA }}
           PREFLIGHT_OUTCOME: ${{ steps.preflight.outcome }}
           ZAP_OUTCOME: ${{ steps.zap.outcome }}
+          SCAN_EXIT_CODE: ${{ env.ZAP_SCAN_EXIT_CODE }}
+          REPORT_AVAILABLE: ${{ steps.summary.outputs.report_available }}
           SAFE_REPORT_OUTCOME: ${{ steps.safe-report.outcome }}
           SAFE_UPLOAD_OUTCOME: ${{ steps.safe-upload.outcome }}
           HIGH: ${{ steps.summary.outputs.high }}
@@ -267,12 +301,21 @@ jobs:
         run: |
           set -euo pipefail
           counts="H${HIGH:-?} M${MEDIUM:-?} L${LOW:-?} I${INFO:-?}"
-          if [[ "$PREFLIGHT_OUTCOME" == "success" && "$ZAP_OUTCOME" == "success" && "$SAFE_REPORT_OUTCOME" == "success" && "$SAFE_UPLOAD_OUTCOME" == "success" ]]; then
+          if [[ "$PREFLIGHT_OUTCOME" != "success" ]]; then
+            STATE=failure
+            DESCRIPTION="Production ZAP preflight failed"
+          elif [[ "$ZAP_OUTCOME" == "success" && "$SAFE_REPORT_OUTCOME" == "success" && "$SAFE_UPLOAD_OUTCOME" == "success" ]]; then
             STATE=success
             DESCRIPTION="Production ZAP passed $counts"
+          elif [[ "$ZAP_OUTCOME" == "cancelled" ]]; then
+            STATE=error
+            DESCRIPTION="Production ZAP cancelled"
+          elif [[ "$ZAP_OUTCOME" != "success" && ( "${SCAN_EXIT_CODE:-}" == "3" || "${SCAN_EXIT_CODE:-}" -gt 3 || "$REPORT_AVAILABLE" != "true" ) ]]; then
+            STATE=error
+            DESCRIPTION="Production ZAP scanner failed or invalid report"
           else
             STATE=failure
-            DESCRIPTION="Production ZAP blocked/error $counts"
+            DESCRIPTION="Production ZAP blocked/SARIF failed $counts"
           fi
 
           payload="$(jq -n \
