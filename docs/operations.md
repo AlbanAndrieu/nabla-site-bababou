@@ -81,9 +81,25 @@ steps=[] ou steps=null
 aucun log de step
 ```
 
-Échec avant exécution du code : quota, facturation ou provisioning runner. Ne pas modifier
-le code ni relancer manuellement lorsque les crédits sont indisponibles ; maximiser les
-preuves locales et conserver la preuve runner-backed comme dette.
+Échec avant exécution du code : quota, facturation, permissions Actions ou provisioning
+runner possibles, **sans attribution de cause sans preuve**. Le diagnostic est
+en lecture seule ; il n'exécute aucun workflow :
+
+```bash
+just ci-diagnose 39556443405
+# ou avec contrôle de SHA :
+bash scripts/ci/diagnose-actions-startup.sh AlbanAndrieu/nabla-site-bababou 39556443405 <SHA_40_CARACTERES>
+```
+
+Codes de sortie : `0` succès, `1` échec d'un step exécuté, `2` job échoué avant
+tout step, `3` en attente, `4` réponse/API/identité inconclusive. Un code `2`
+**ne prouve pas** une panne de code ni une panne de facturation : inspecter
+Settings → Billing & licensing → Budgets and usage → Actions, puis Settings →
+Actions → General et les runners GitHub-hosted. Si GitHub n'expose pas
+l'origine du refus, ouvrir un ticket Support avec les IDs run/job.
+
+Ne pas modifier les quality gates ni multiplier les relances lorsque les crédits
+sont indisponibles ; conserver la validation runner-backed comme dette.
 
 ### Vercel Security Checkpoint
 

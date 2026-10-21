@@ -69,6 +69,10 @@ workflow-audit:
     pre-commit run actionlint --all-files
     pre-commit run zizmor --all-files
 
+# Read-only runner triage; never consumes a new GitHub Actions job.
+ci-diagnose run_id:
+    bash scripts/ci/diagnose-actions-startup.sh AlbanAndrieu/nabla-site-bababou "{{run_id}}"
+
 # Keep historical make recipes available, without making them canonical.
 legacy-help:
     make help
