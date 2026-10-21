@@ -105,3 +105,10 @@ test("fail closed on unverified releases, regressions and missing tags", (t) => 
   const missing = scenario(t, { legacy: false });
   assert.equal(missing.run().status, 1);
 });
+
+test("mixed tag histories reject newer numeric releases", (t) => {
+  const mixed = scenario(t, { vtag: "v0.19.0" });
+  assert.equal(mixed.run().status, 1);
+  assert.match(mixed.run().stderr, /Numeric release is newer/);
+  assert.equal(mixed.git("tag", "--list", "v*"), "v0.19.0");
+});

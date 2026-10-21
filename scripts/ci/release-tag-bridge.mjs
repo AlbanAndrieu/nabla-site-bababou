@@ -57,7 +57,11 @@ try {
   semverParts(packageVersion);
   const tags = run("git", ["tag", "--list"]).split("\n");
   const existing = latest(tags, true);
+  const legacy = latest(tags, false);
   if (existing) {
+    if (legacy && compareVersions(legacy, existing.slice(1)) > 0) {
+      throw new Error("Numeric release is newer than the latest v-tag; manual audit required");
+    }
     assertAncestor(existing);
     if (compareVersions(existing.slice(1), packageVersion) > 0) {
       throw new Error("Latest v-prefixed release is newer than package.json");
@@ -66,7 +70,6 @@ try {
     process.exit(0);
   }
 
-  const legacy = latest(tags, false);
   if (!legacy || compareVersions(legacy, packageVersion) > 0) {
     throw new Error("No valid legacy baseline compatible with package.json");
   }
