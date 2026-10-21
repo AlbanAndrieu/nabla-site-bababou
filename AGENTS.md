@@ -11,6 +11,7 @@
 ## Fast path — minimum useful context
 
 - Start from the **current PR HEAD, base, CI failing step and scoped diff**. Read only matching files and **one relevant skill**; never preload all of `docs/roadmap.md`, all Next docs, all skills or full CI logs. This reduces input tokens without reducing validation.
+- When the GitHub Actions budget is exhausted, **keep the PR Draft** and run `node --test unit-tests/releaseTagBridge.test.mjs unit-tests/workflowDraftBudget.test.mjs` plus `node scripts/ci/check-draft-workflows.mjs` (or `just offline-contracts` if Just is installed). These are dependency-free targeted contracts, never a substitute for `just p0`, BetterLeaks/SAST/SCA or deployed Playwright/ZAP. Do not mark Ready, request a rerun, or imply runner-backed validation.
 - Maintain a five-field handoff: `PR@SHA | blocker | changed files | evidence | next`. Reuse previously fetched identical content; fetch new material only after a changed SHA, status or hypothesis.
 - Diagnose `workflow → job → failed step → narrow log excerpt` once. Avoid loops polling the same in-progress job; resume verification only when action is possible or the run has changed.
 - Batch coherent edits into a single atomic commit, then run the **scope-selected** tests and CI. Prefer local tests and exact formatter patches, not GitHub Actions as an editor. Never weaken BetterLeaks, SAST, SCA, DAST, privacy or protected legacy gates.
