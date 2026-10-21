@@ -70,3 +70,10 @@ test("a missing workflow file is never treated as green", (t) => {
   assert.equal(result.status, 1);
   assert.match(result.stderr, /DRAFT_GUARD_FAIL/);
 });
+
+test("checked-in workflows retain draft guards across every runnable job", () => {
+  const root = fileURLToPath(new URL("../", import.meta.url));
+  const result = spawnSync(process.execPath, [checker, root], { encoding: "utf8" });
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /DRAFT_GUARD_OK workflows=4 jobs=5/);
+});

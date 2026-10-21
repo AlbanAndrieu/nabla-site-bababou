@@ -1,7 +1,7 @@
 ## Protection du budget CI — 21 octobre 2026
 
 - [x] `scripts/ci/check-draft-workflows.mjs` bloque localement toute régression des garde-fous PR Draft sur Quality, Docker, Node 24 et Copilot. Vérification de la présence de `ready_for_review` ; contrôles sans réseau ni dépendances.
-- [x] 4 tests Node autonomes ont réussi dans l'environnement de l'agent contre des workflows temporaires (cas valides, job non protégé, déclencheur absent, fichier manquant) et vérification statique des 5 jobs GitHub actuels. Les validations réelles de GitHub Actions restent suspendues volontairement.
+- [x] 5 tests Node autonomes (cas valides, job non protégé, déclencheur absent, fichier manquant, **scan des workflows du dépôt**) et vérification des 5 jobs réels. Ces tests font partie de `npm run test:unit` ; les tests applicatifs complets ne sont pas exécutés sans checkout. Les validations réelles de GitHub Actions restent suspendues volontairement.
 - [ ] Lancer la CI uniquement après autorisation explicite de sortir la PR Draft ; ne pas supprimer les quality gates bloquantes.
 
 ## Suite locale sans crédits Actions — 21 octobre 2026
