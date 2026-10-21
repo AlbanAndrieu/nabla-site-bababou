@@ -18,7 +18,7 @@ const verifier = fileURLToPath(
 );
 const sha = "a".repeat(40);
 
-test("read-only Actions triage distinguishes runner failure from real test failure", async () => {
+test("CI runner triage classifies pre-run and executed failures", async () => {
   const root = await mkdtemp(join(tmpdir(), "bababou-actions-triage-"));
   try {
     const bin = join(root, "bin");
@@ -26,7 +26,14 @@ test("read-only Actions triage distinguishes runner failure from real test failu
     const gh = join(bin, "gh");
     await writeFile(
       gh,
-      '#!/usr/bin/env bash\ncase "${@: -1}" in\n  *"/jobs?per_page=100") cat "$FAKE_JOBS" ;;\n  *) cat "$FAKE_RUN" ;;\nesac\n',
+      [
+        "#!/usr/bin/env bash",
+        'case "${@: -1}" in',
+        '  *"/jobs?per_page=100") cat "$FAKE_JOBS" ;;',
+        '  *) cat "$FAKE_RUN" ;;',
+        "esac",
+        "",
+      ].join("\n"),
     );
     await chmod(gh, 0o755);
     const runPath = join(root, "run.json");
@@ -48,13 +55,26 @@ test("read-only Actions triage distinguishes runner failure from real test failu
 
     await writeFile(
       runPath,
-      JSON.stringify({ id: 123, status: "completed", conclusion: "failure", head_sha: sha }),
+      JSON.stringify({
+        id: 123,
+        status: "completed",
+        conclusion: "failure",
+        head_sha: sha,
+      }),
     );
     await writeFile(
       jobsPath,
       JSON.stringify({
         total_count: 1,
-        jobs: [{ id: 456, name: "quality", conclusion: "failure", runner_id: null, steps: null }],
+        jobs: [
+          {
+            id: 456,
+            name: "quality",
+            conclusion: "failure",
+            runner_id: null,
+            steps: null,
+          },
+        ],
       }),
     );
     const preRun = run();
@@ -66,7 +86,15 @@ test("read-only Actions triage distinguishes runner failure from real test failu
       jobsPath,
       JSON.stringify({
         total_count: 1,
-        jobs: [{ id: 456, name: "quality", conclusion: "failure", runner_id: 789, steps: [{ name: "Run tests" }] }],
+        jobs: [
+          {
+            id: 456,
+            name: "quality",
+            conclusion: "failure",
+            runner_id: 789,
+            steps: [{ name: "Run tests" }],
+          },
+        ],
       }),
     );
     const executed = run();
@@ -75,13 +103,26 @@ test("read-only Actions triage distinguishes runner failure from real test failu
 
     await writeFile(
       runPath,
-      JSON.stringify({ id: 123, status: "completed", conclusion: "success", head_sha: sha }),
+      JSON.stringify({
+        id: 123,
+        status: "completed",
+        conclusion: "success",
+        head_sha: sha,
+      }),
     );
     await writeFile(
       jobsPath,
       JSON.stringify({
         total_count: 1,
-        jobs: [{ id: 456, name: "quality", conclusion: "success", runner_id: 789, steps: [{ name: "Test" }] }],
+        jobs: [
+          {
+            id: 456,
+            name: "quality",
+            conclusion: "success",
+            runner_id: 789,
+            steps: [{ name: "Test" }],
+          },
+        ],
       }),
     );
     assert.equal(run().status, 0);
