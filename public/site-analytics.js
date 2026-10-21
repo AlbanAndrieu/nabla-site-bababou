@@ -449,7 +449,11 @@
 	})(document, window.posthog || []);
 	posthog.init("phc_IeJIEt7g86e7IWXUfcfXqhtSCxRq04PQDarTOJ9So48", {
 		api_host: "https://eu.i.posthog.com",
-		person_profiles: "identified_only", // or 'always' to create profiles for anonymous users as well
+		person_profiles: "identified_only",
+		// Sensitive family content must never enter recordings or DOM autocapture.
+		disable_session_recording: true,
+		mask_all_text: true,
+		mask_all_element_attributes: true,
 	});
 
 	/* Heap */
@@ -534,8 +538,8 @@
 				// Specify a version number to identify the deployed version of your application in Datadog
 				version: "1.0.0",
 				sessionSampleRate: 100,
-				sessionReplaySampleRate: 20,
-				defaultPrivacyLevel: "allow",
+				sessionReplaySampleRate: 0,
+				defaultPrivacyLevel: "mask",
 			});
 		});
 	}
