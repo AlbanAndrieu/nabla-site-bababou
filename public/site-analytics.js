@@ -36,21 +36,32 @@
 	};
 	function captureBusinessEvent(name, properties) {
 		if (root?.getAttribute("data-posthog-business-events") !== "true") return false;
+		if (skipRemoteAnalyticsOnLocalDev()) return false;
 		if (!Object.prototype.hasOwnProperty.call(BUSINESS_EVENTS, name)) return false;
 		if (!window.posthog || typeof window.posthog.capture !== "function") return false;
+		if (!properties || typeof properties !== "object" || Array.isArray(properties)) return false;
 		var permitted = BUSINESS_EVENTS[name];
 		var safe = {};
-		if (!properties || typeof properties !== "object" || Array.isArray(properties)) return false;
+		var apps = ["nabla-site-alban", "nabla-site-bababou", "fastapi-sample"];
+		var errors = ["unauthorized", "forbidden", "upstream", "timeout", "unavailable", "invalid_response"];
 		for (var key of Object.keys(properties)) {
 			if (!permitted.includes(key)) return false;
 			var value = properties[key];
-			if ((typeof value !== "string" && typeof value !== "number") ||
-			    (typeof value === "string" && !/^[a-zA-Z0-9_.-]{1,64}$/.test(value)) ||
-			    (typeof value === "number" && (!Number.isInteger(value) || value < 100 || value > 599))) return false;
+			if (key === "http_status") {
+				if (!Number.isInteger(value) || ![401, 403, 404, 429, 500, 502, 503, 504].includes(value)) return false;
+			} else if (typeof value !== "string" || !/^[a-zA-Z0-9_.-]{1,64}$/.test(value)) return false;
+			if (key === "app" && !apps.includes(value)) return false;
+			if (key === "environment" && !["production", "preview", "development"].includes(value)) return false;
+			if (key === "status" && !["OK", "WARN", "FAIL", "UNKNOWN"].includes(value)) return false;
+			if (key === "error_class" && !errors.includes(value)) return false;
 			safe[key] = value;
 		}
-		window.posthog.capture(name, safe);
-		return true;
+		try {
+			window.posthog.capture(name, safe);
+			return true;
+		} catch (_error) {
+			return false;
+		}
 	}
 	var gtmInjected = false;
 	var gtagInjected = false;
@@ -574,6 +585,6 @@
 	window.NABLA_SITE_ANALYTICS = {
 		initGtm: initGtm,
 		initGtag: initGtag,
-			captureBusinessEvent: captureBusinessEvent,
+		captureBusinessEvent: captureBusinessEvent,
 	};
 })();
