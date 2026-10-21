@@ -15,3 +15,13 @@ test("Datadog RUM does not record sensitive family sessions", () => {
   assert.match(source, /sessionReplaySampleRate:\s*0/);
   assert.match(source, /defaultPrivacyLevel:\s*["']mask["']/);
 });
+
+test("business telemetry is explicit opt-in with fixed event and property allowlists", () => {
+  assert.match(source, /data-posthog-business-events/);
+  assert.match(source, /catalog_loaded:/);
+  assert.match(source, /catalog_load_failed:/);
+  assert.match(source, /diagnostics_unlock_failed:/);
+  assert.match(source, /skipRemoteAnalyticsOnLocalDev\(\)/);
+  assert.match(source, /Object\.prototype\.hasOwnProperty\.call\(BUSINESS_EVENTS, name\)/);
+  assert.match(source, /Number\.isInteger\(value\)/);
+});
