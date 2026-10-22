@@ -173,3 +173,23 @@ test("conflicting remote alias fails closed without changing local refs", (t) =>
   assert.match(result.stderr, /does not match/);
   assert.equal(git("tag", "--list", "v*"), "");
 });
+
+
+test("legacy tag must belong to the checked-out commit history", (t) => {
+  const { run, git } = scenario(t);
+  const orphan = git("commit-tree", "HEAD^{tree}", "-m", "unrelated");
+  git("tag", "-f", "0.20.0", orphan);
+  const result = run("--apply");
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /not an ancestor/);
+  assert.equal(git("tag", "--list", "v*"), "");
+});
+
+test("existing v-prefixed tag must belong to the checkout history", (t) => {
+  const { run, git } = scenario(t, { vtag: "v0.20.0" });
+  const orphan = git("commit-tree", "HEAD^{tree}", "-m", "unrelated");
+  git("tag", "-f", "v0.20.0", orphan);
+  const result = run();
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /not an ancestor/);
+});
