@@ -15,7 +15,7 @@ usage() {
   cat <<'HELP'
 Usage: BABABOU_K8S_IMAGE=ghcr.io/albanandrieu/nabla-site-bababou-next@sha256:<digest> \
   bash scripts/k8s/deploy-bababou.sh [--render|--preflight|--server-dry-run|--apply]
-Render is offline/read-only. Apply also needs BABABOU_K8S_ALLOW_APPLY=true.
+Render is offline/read-only. Apply needs BABABOU_K8S_ALLOW_APPLY=true and\nBABABOU_K8S_NETWORK_BOUNDARY_REVIEWED=true after LAN-only ingress/firewall review.
 Public domain and Vercel traffic remain unchanged.
 HELP
 }
@@ -33,6 +33,9 @@ esac
 [[ "$CONTEXT" =~ ^[a-zA-Z0-9@_.-]+$ ]] || fail "invalid Kubernetes context"
 if [[ "$MODE" == --apply && "${BABABOU_K8S_ALLOW_APPLY:-false}" != true ]]; then
   fail "set BABABOU_K8S_ALLOW_APPLY=true explicitly before deploying"
+fi
+if [[ "$MODE" == --apply && "${BABABOU_K8S_NETWORK_BOUNDARY_REVIEWED:-false}" != true ]]; then
+  fail "review Traefik listener and pfSense LAN-only boundary; set BABABOU_K8S_NETWORK_BOUNDARY_REVIEWED=true"
 fi
 
 preflight() {
