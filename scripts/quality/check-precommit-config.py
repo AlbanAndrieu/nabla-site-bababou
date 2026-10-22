@@ -42,15 +42,14 @@ StrictLoader.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, _co
 # Exact numbered release tags or commit SHAs; never use a moving branch name.
 # A version tag can still be moved by its maintainer, so pre-commit's revision
 # is a reproducible tag reference, not a cryptographic provenance guarantee.
-RELEASE_TAG = re.compile(r"v?[0-9]+(?:\\.[0-9]+){1,2}(?:[-.][A-Za-z0-9.-]+)?\\Z")
-COMMIT_SHA = re.compile(r"[a-fA-F0-9]{7,40}\\Z")
+RELEASE_TAG = re.compile(r"v?[0-9]+(?:\.[0-9]+){1,2}(?:[-.][A-Za-z0-9.-]+)?\Z")
+COMMIT_SHA = re.compile(r"[a-fA-F0-9]{7,40}\Z")
 
 
 def is_reviewable_revision(rev: object) -> bool:
     return isinstance(rev, str) and bool(
         RELEASE_TAG.fullmatch(rev) or COMMIT_SHA.fullmatch(rev)
     )
-
 
 
 def validate(config: object) -> list[str]:
