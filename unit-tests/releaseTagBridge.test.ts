@@ -44,6 +44,7 @@ function scenario(
       "  exit $?",
       "fi",
       'printf "%s\\n" "$*" >> "$MUTATION_LOG"',
+      '[[ "${FAIL_REMOTE_WRITE:-0}" != 1 ]]',
       "",
     ].join("\n"),
   );
