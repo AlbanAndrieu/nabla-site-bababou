@@ -44,6 +44,11 @@ function scenario(
       "  exit $?",
       "fi",
       'printf "%s\\n" "$*" >> "$MUTATION_LOG"',
+      'if [[ "$1" == api && "$2" == repos/*/git/ref/tags/* ]]; then',
+      '  [[ -n "${REMOTE_REF_SHA:-}" ]] || exit 1',
+      '  printf "%s\\n" "$REMOTE_REF_SHA"',
+      '  exit 0',
+      'fi',
       '[[ "${FAIL_REMOTE_WRITE:-0}" != 1 ]]',
       "",
     ].join("\n"),
@@ -68,7 +73,7 @@ function scenario(
   );
   git("add", ".");
   git("commit", "-qm", "next change");
-  const run = (arg = "--check") =>
+  const run = (arg = "--check", envOverride: Record<string, string> = {}) =>
     spawnSync(process.execPath, [tool, arg], {
       cwd: root,
       encoding: "utf8",
@@ -79,6 +84,7 @@ function scenario(
         ALLOW_RELEASE: options.permitRelease === false ? "0" : "1",
         MUTATION_LOG: marker,
         FAIL_REMOTE_WRITE: options.failRemoteWrite ? "1" : "0",
+        ...envOverride,
       },
     });
   return { marker, git, run };
@@ -147,4 +153,23 @@ test("malformed package versions fail closed without writing remote refs", (t) =
   assert.match(result.stderr, /complete numeric semver/);
   assert.equal(git("tag", "--list", "v*"), "");
   assert.throws(() => readFileSync(marker, "utf8"));
+});
+
+test("retry reuses only a matching remotely persisted alias", (t) => {
+  const { run, marker, git } = scenario(t, { failRemoteWrite: true });
+  const sha = git("rev-parse", "0.20.0^{commit}");
+  const result = run("--apply", { REMOTE_REF_SHA: sha });
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /RELEASE_TAG_REUSED alias=v0\.20\.0/);
+  assert.equal(git("tag", "--list", "v*"), "v0.20.0");
+  assert.equal(readFileSync(marker, "utf8").trim().split("\n").length, 1);
+});
+
+test("conflicting remote alias fails closed without changing local refs", (t) => {
+  const { run, git } = scenario(t, { failRemoteWrite: true });
+  const otherSha = git("rev-parse", "HEAD");
+  const result = run("--apply", { REMOTE_REF_SHA: otherSha });
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /does not match/);
+  assert.equal(git("tag", "--list", "v*"), "");
 });
