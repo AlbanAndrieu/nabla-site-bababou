@@ -65,6 +65,7 @@ if ((MAX_PATHS > 0 && ${#files[@]} > MAX_PATHS)); then
     exit 2
 fi
 checked=0
+declare -a python_files=() json_files=()
 for file in "${files[@]}"; do
     [[ -f "$file" && ! -L "$file" ]] || continue
     case "$file" in
@@ -81,23 +82,34 @@ for file in "${files[@]}"; do
             checked=$((checked + 1))
             ;;
         *.py)
-            command -v python3 >/dev/null 2>&1 || {
-                echo "❌ OFFLINE_PYTHON_MISSING" >&2
-                exit 2
-            }
-            python3 -c 'import ast,sys; from pathlib import Path; ast.parse(Path(sys.argv[1]).read_text(encoding="utf-8"),filename=sys.argv[1])' "$file"
-            checked=$((checked + 1))
+            python_files+=("$file")
             ;;
         *.json)
-            command -v python3 >/dev/null 2>&1 || {
-                echo "❌ OFFLINE_PYTHON_MISSING" >&2
-                exit 2
-            }
-            python3 -c 'import json,sys; from pathlib import Path; json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))' "$file"
-            checked=$((checked + 1))
+            json_files+=("$file")
             ;;
     esac
 done
+# A single Python interpreter validates all changed .py and strict .json files.
+# This avoids expensive per-file launches while preserving fail-closed parsing.
+if ((${#python_files[@]} + ${#json_files[@]} > 0)); then
+    command -v python3 >/dev/null 2>&1 || {
+        echo "❌ OFFLINE_PYTHON_MISSING" >&2
+        exit 2
+    }
+    python3 - "${#python_files[@]}" "${python_files[@]}" "${json_files[@]}" <<'PY'
+import ast
+import json
+import sys
+from pathlib import Path
+
+python_count = int(sys.argv[1])
+for file in sys.argv[2:2 + python_count]:
+    ast.parse(Path(file).read_text(encoding="utf-8"), filename=file)
+for file in sys.argv[2 + python_count:]:
+    json.loads(Path(file).read_text(encoding="utf-8"))
+PY
+    checked=$((checked + ${#python_files[@]} + ${#json_files[@]}))
+fi
 if [[ "$base_available" == true ]]; then
     git diff --check "$BASE...HEAD"
 fi
