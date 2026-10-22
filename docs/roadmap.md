@@ -1,3 +1,11 @@
+## P0 — contrôle strict hors ligne des PR (23 octobre 2026)
+
+- [x] `scripts/agent-offline-check.sh` : séparer le diagnostic exploratoire du contrôle strict (`AGENT_OFFLINE_REQUIRE_BASE=1`). Une base manquante ou divergente bloque désormais le mode strict, sans réseau ni suppression de contrôles.
+- [x] Corriger l'inventaire Git en délimitation NUL (`git -z`, `sort -z`, `mapfile -d ''`) : les noms comportant des sauts de ligne ou commençant par un tiret ne peuvent plus contourner les vérifications de syntaxe.
+- [x] Couvrir ces contrats par `unit-tests/agentOfflineBase.test.mjs`, `just offline-pr`, `just offline-base-test`, `just offline-contracts` et P0. Les **5 scénarios de référence Git et 3 scénarios de noms inhabituels** ont été exécutés dans une reproduction locale exacte du script (Git blob SHA concordant), sans Actions.
+- [ ] Faire passer `just offline-pr` depuis un checkout réel avec la base de la PR ; exécuter la gate complète locale avec Node 26/npm 12. Les vérifications d'environnement simulé ne constituent pas une validation du dépôt intégral.
+- [ ] Avant de sortir #238 de Draft, traiter les messages de commit `[skip ci]` historiques par une stratégie de réécriture de branche revue et sûre, sans désactiver `QG_CI_SKIP_DIRECTIVE`. Ne pas faire de force-push implicite.
+
 ## Convergence quality / pre-commit depuis nabla-compose (22 octobre 2026)
 
 - [x] Récupérer le contrat d'intégrité du manifeste de `nabla-compose` (PR #269), adapté à Bababou : hooks uniques, dépôts externes sans doublons, `rev` obligatoire et détection des clés YAML répétées, sans réseau.
