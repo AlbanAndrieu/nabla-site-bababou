@@ -7,6 +7,7 @@ Only standard output statistics are emitted; no secret-bearing configuration val
 
 from __future__ import annotations
 
+import re
 import sys
 from pathlib import Path
 
@@ -38,6 +39,19 @@ def _construct_mapping(loader: StrictLoader, node: yaml.MappingNode, deep: bool 
 
 StrictLoader.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, _construct_mapping)
 
+# Exact numbered release tags or commit SHAs; never use a moving branch name.
+# A version tag can still be moved by its maintainer, so pre-commit's revision
+# is a reproducible tag reference, not a cryptographic provenance guarantee.
+RELEASE_TAG = re.compile(r"v?[0-9]+(?:\\.[0-9]+){1,2}(?:[-.][A-Za-z0-9.-]+)?\\Z")
+COMMIT_SHA = re.compile(r"[a-fA-F0-9]{7,40}\\Z")
+
+
+def is_reviewable_revision(rev: object) -> bool:
+    return isinstance(rev, str) and bool(
+        RELEASE_TAG.fullmatch(rev) or COMMIT_SHA.fullmatch(rev)
+    )
+
+
 
 def validate(config: object) -> list[str]:
     """Check structural integrity, duplicate hooks and unpinned external sources."""
@@ -58,6 +72,8 @@ def validate(config: object) -> list[str]:
             rev = item.get("rev")
             if not isinstance(rev, str) or not rev.strip():
                 errors.append(f"{repo}: missing revision pin")
+            elif not is_reviewable_revision(rev):
+                errors.append(f"{repo}: non-versioned or moving revision reference")
             if repo in seen_external:
                 errors.append(f"duplicate external repository: {repo}")
             seen_external.add(repo)
