@@ -88,3 +88,29 @@ test("strict offline PR mode validates its boolean setting", (t) => {
   assert.match(result.stderr, /OFFLINE_REQUIRE_BASE_INVALID/);
   assert.doesNotMatch(result.stdout, /OFFLINE_L1_PASS/);
 });
+
+
+test("NUL-delimited inventory parses unusual untracked and committed filenames", (t) => {
+  const { root, run, git } = scenario(t);
+  const newlinePath = join(root, "multi\nline.sh");
+  const leadingDashPath = join(root, "-leading-dash.sh");
+
+  writeFileSync(newlinePath, "if then\n");
+  const first = run();
+  assert.notEqual(first.status, 0);
+  assert.match(first.stderr, /syntax error/);
+  assert.doesNotMatch(first.stdout, /OFFLINE_L1_PASS/);
+
+  writeFileSync(newlinePath, "true\n");
+  writeFileSync(leadingDashPath, "if then\n");
+  const second = run();
+  assert.notEqual(second.status, 0);
+  assert.match(second.stderr, /syntax error/);
+
+  writeFileSync(leadingDashPath, "true\n");
+  git("add", ".");
+  git("commit", "-qm", "commit filenames with LF and leading dash");
+  const accepted = run();
+  assert.equal(accepted.status, 0, accepted.stderr);
+  assert.match(accepted.stdout, /paths=3 syntax_checked=3/);
+});
