@@ -18,7 +18,11 @@ bash scripts/verify-mise-npm.sh
 bash scripts/agent-quality-gate.sh
 betterleaks git . --redact --config .betterleaks.toml
 docker buildx build --load --platform linux/amd64 --file Dockerfile.k8s \
-  --tag "$IMAGE" .
+  --build-arg "VCS_REF=$SHA" --tag "$IMAGE" .
+[[ "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.revision"}}' "$IMAGE")" == "$SHA" ]] || {
+  echo "Image revision label does not match the tested source SHA" >&2
+  exit 1
+}
 [[ "$(docker image inspect --format '{{.Config.User}}' "$IMAGE")" == "10001:10001" ]] || {
   echo "Unexpected container user" >&2
   exit 1
