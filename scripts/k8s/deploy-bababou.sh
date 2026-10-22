@@ -70,8 +70,13 @@ import socket
 import sys
 host = sys.argv[1]
 addresses = {entry[4][0] for entry in socket.getaddrinfo(host, 443, type=socket.SOCK_STREAM)}
-if not addresses or not all(ipaddress.ip_address(ip).is_private for ip in addresses):
-    raise SystemExit("DNS must resolve to private addresses only")
+lan_ranges = [ipaddress.ip_network(cidr) for cidr in
+              ("10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16")]
+if not addresses or not all(
+    any(ipaddress.ip_address(ip) in network for network in lan_ranges)
+    for ip in addresses
+):
+    raise SystemExit("DNS must resolve exclusively to RFC1918 IPv4 LAN addresses")
 print(f"Private DNS verified: {host}")
 PY
   printf 'Preflight OK: %s (%s)\n' "$CONTEXT" "$NAMESPACE"
