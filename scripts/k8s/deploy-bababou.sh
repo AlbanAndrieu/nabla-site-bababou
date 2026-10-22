@@ -45,16 +45,16 @@ preflight() {
   actual_context="$(kubectl config current-context)" || fail "cannot inspect kubeconfig"
   [[ "$actual_context" == "$CONTEXT" ]] ||
     fail "wrong Kubernetes context: $actual_context (expected $CONTEXT)"
-  kubectl get ingressclass "$INGRESS_CLASS" >/dev/null ||
+  kubectl --context "$CONTEXT" get ingressclass "$INGRESS_CLASS" >/dev/null ||
     fail "IngressClass unavailable"
-  kubectl get namespace "$NAMESPACE" >/dev/null ||
+  kubectl --context "$CONTEXT" get namespace "$NAMESPACE" >/dev/null ||
     fail "namespace missing: bootstrap it and install the TLS secret first"
   local secret_type
-  secret_type="$(kubectl -n "$NAMESPACE" get secret "$TLS_SECRET" -o jsonpath='{.type}')" ||
+  secret_type="$(kubectl --context "$CONTEXT" -n "$NAMESPACE" get secret "$TLS_SECRET" -o jsonpath='{.type}')" ||
     fail "TLS secret unavailable"
   [[ "$secret_type" == kubernetes.io/tls ]] || fail "expected kubernetes.io/tls secret"
   local claims
-  claims="$(kubectl get ingress -A -o json | jq -r \
+  claims="$(kubectl --context "$CONTEXT" get ingress -A -o json | jq -r \
     --arg host "$HOST" --arg namespace "$NAMESPACE" \
     '.items[] | select(any(.spec.rules[]?; .host == $host))
      | select(.metadata.namespace != $namespace or .metadata.name != "nabla-site-bababou")
@@ -188,12 +188,12 @@ case "$MODE" in
   --render) cat "$manifest" ;;
   --server-dry-run)
     preflight
-    kubectl apply --dry-run=server -f "$manifest"
+    kubectl --context "$CONTEXT" apply --dry-run=server -f "$manifest"
     ;;
   --apply)
     preflight
-    kubectl apply --dry-run=server -f "$manifest"
-    kubectl apply -f "$manifest"
-    kubectl -n "$NAMESPACE" rollout status deployment/"$DEPLOYMENT" --timeout=180s
+    kubectl --context "$CONTEXT" apply --dry-run=server -f "$manifest"
+    kubectl --context "$CONTEXT" apply -f "$manifest"
+    kubectl --context "$CONTEXT" -n "$NAMESPACE" rollout status deployment/"$DEPLOYMENT" --timeout=180s
     ;;
 esac
