@@ -1,3 +1,11 @@
+## Audit hors ligne des révisions pre-commit — 23 octobre 2026
+
+- [x] Renforcer le portage de `nabla-compose` : refuser les branches mouvantes (`main`, `master`, `HEAD`, `latest`, `refs/heads/*`) et les pseudo-versions `v1.2.x`. Conserver les tags de release numérotés explicites et les SHA Git.
+- [x] Tester la validation réelle hors réseau sur la **copie exacte** de `scripts/quality/check-precommit-config.py` et de `unit-tests/test_precommit_integrity.py` : hashes Git `e8dd25b370b5fbe3300f19581ea806f5bbe2aaf1` et `462246dc556e6da71df77c9f21e418dc2dff5749`, **9/9 unittest PASS** sur manifeste isolé représentant les 23 versions externes. Les 23 `rev` du manifeste distant actuel ont été vérifiées séparément, 23/23 compatibles avec le filtre. Ne pas confondre cette validation avec `just quality` sur checkout complet.
+- [ ] À reprendre au prochain accès au dépôt complet : `just precommit-config-test`, `just offline-pr`, `just p0`, puis `just quality` sous Node 26/npm 12 et les scanners habituels. Si la branche diverge de `master`, rebase contrôlé et revue des conflits avant publication.
+- [ ] **Dette bloquante historique** : les commits `[skip ci]` dans la PR Draft déclenchent volontairement `QG_CI_SKIP_DIRECTIVE`. Regrouper/recréer les commits en un historique revu et sans directive de saut avant Ready ; ne pas supprimer, affaiblir ou contourner le garde-fou. Cette étape n'est pas réalisée par les tests ciblés.
+- Aucun nouveau Dockerfile, aucun workflow GitHub Actions déclenché, aucune fusion.
+
 ## P0 — contrôle strict hors ligne des PR (23 octobre 2026)
 
 - [x] `scripts/agent-offline-check.sh` : séparer le diagnostic exploratoire du contrôle strict (`AGENT_OFFLINE_REQUIRE_BASE=1`). Une base manquante ou divergente bloque désormais le mode strict, sans réseau ni suppression de contrôles.
