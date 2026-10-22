@@ -60,6 +60,19 @@ Preview exacte sans démarrer de serveur local. En local, `npm run test:a11y` pa
 Playwright existant puis restaure `next-env.d.ts` à la sortie. Le wrapper
 `run-next-clean.sh` reste la garde générique des commandes Next.
 
+### Validation locale sans crédits GitHub
+
+`just offline-l1` vérifie en lecture seule les chemins modifiés du Git diff,
+le Bash (`bash -n`), la syntaxe Python et le JSON strict, ainsi que les erreurs
+de whitespace Git. Si l'historique de base est indisponible, le script examine
+tous les fichiers locaux suivis et non suivis, avec un avertissement explicite.
+Il ne contacte pas GitHub et n'installe aucune dépendance.
+
+`just p0` complète ce niveau par les contrats offline de la toolchain npm,
+de Semantic Release et du diagnostic des runners. P0 nécessite une version
+Node prise en charge ; L1 ne prétend jamais remplacer les gates de sécurité,
+les builds Next.js, Playwright, ZAP ni la CI sur runner.
+
 ## 3. Preview et production
 
 Pour un changement deploy-relevant : valider localement, obtenir un commit propre, puis laisser
