@@ -77,6 +77,13 @@ test("apply cannot reach kubectl without an explicit operator opt-in", () => {
   assert.equal(result.stdout, "");
 });
 
+test("apply also requires a reviewed LAN-only Traefik and firewall boundary", () => {
+  const result = run("--apply", { BABABOU_K8S_ALLOW_APPLY: "true" });
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /BABABOU_K8S_NETWORK_BOUNDARY_REVIEWED=true/);
+  assert.equal(result.stdout, "");
+});
+
 test("preflight is read-only and requires explicit cluster configuration", () => {
   const result = run("--preflight", { KUBECONFIG: "" });
   assert.notEqual(result.status, 0);
