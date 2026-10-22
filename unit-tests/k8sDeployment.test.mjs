@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
+import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+import { resolve } from "node:path";
 import test from "node:test";
 
 const script = fileURLToPath(new URL("../scripts/k8s/deploy-bababou.sh", import.meta.url));
@@ -79,4 +81,25 @@ test("preflight is read-only and requires explicit cluster configuration", () =>
   const result = run("--preflight", { KUBECONFIG: "" });
   assert.notEqual(result.status, 0);
   assert.equal(result.stdout, "");
+});
+
+test("container build stays separate from Vercel and the static Nginx fallback", () => {
+  const root = resolve(fileURLToPath(new URL("..", import.meta.url)));
+  const nextConfig = readFileSync(resolve(root, "next.config.mjs"), "utf8");
+  const dockerfile = readFileSync(resolve(root, "Dockerfile.k8s"), "utf8");
+  const ignore = readFileSync(resolve(root, "Dockerfile.k8s.dockerignore"), "utf8");
+  const legacy = readFileSync(resolve(root, "Dockerfile"), "utf8");
+  assert.match(nextConfig, /BABABOU_CONTAINER_BUILD === "1"/);
+  assert.match(dockerfile, /BABABOU_CONTAINER_BUILD=1/);
+  assert.match(dockerfile, /next build/);
+  assert.match(dockerfile, /\/app\/\.next\/standalone/);
+  assert.match(dockerfile, /USER 10001:10001/);
+  assert.match(dockerfile, /CMD \["node", "server\.js"\]/);
+  assert.match(legacy, /nginx-unprivileged/);
+  assert.match(ignore, /^\*\*$/m);
+  assert.match(ignore, /^!public\/\*\*$/m);
+  for (const forbidden of [".git", ".env", ".private-publication-source", ".cursor/"]) {
+    assert.ok(!ignore.split("\n").some((line) => line.startsWith("!" + forbidden)),
+      "Container context must not admit " + forbidden);
+  }
 });
