@@ -19,6 +19,10 @@ RUN ./node_modules/.bin/next build \
     && test -d .next/static
 
 FROM ${NODE_IMAGE} AS runtime
+ARG VCS_REF
+LABEL org.opencontainers.image.source="https://github.com/AlbanAndrieu/nabla-site-bababou" \
+      org.opencontainers.image.revision="${VCS_REF}" \
+      org.opencontainers.image.title="nabla-site-bababou-next"
 ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 \
     HOSTNAME=0.0.0.0 PORT=3000
 WORKDIR /app
