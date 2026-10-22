@@ -76,6 +76,18 @@ Next.js, la confidentialité complète, Playwright, ZAP ou les scans SAST/SCA.
 Ne sortir la PR de Draft et ne réactiver GitHub Actions qu’après accord explicite
 et retour des crédits.
 
+### Contrôles additionnels sans budget GitHub
+
+`just offline-l1` vérifie les chemins Git modifiés, le Bash, la syntaxe Python
+et le JSON strict, puis `git diff --check`. Aucun téléchargement ni runner
+GitHub n'est requis. Sans ref de base, l'intégralité des fichiers suivis et
+non suivis est inspectée avec un avertissement de couverture.
+
+`just p0` couvre en outre les contrats locaux des workflows Release,
+des versions npm/Mise et du diagnostic de démarrage des runners. Il requiert
+un Node compatible et ne remplace pas BetterLeaks, Semgrep, SCA, Next,
+Playwright, ZAP ni le contrôle CI réel.
+
 ## 3. Preview et production
 
 Pour un changement deploy-relevant : valider localement, obtenir un commit propre, puis laisser

@@ -1,3 +1,10 @@
+## P0 / L1 hors ligne — 22 octobre 2026
+
+- [x] Étendre P0 aux contrats npm/Mise, Semantic Release et diagnostic des runners, pour éviter des régressions non détectées pendant l'indisponibilité d'Actions.
+- [x] Étendre L1 à la validation JSON stricte des fichiers modifiés (Python standard uniquement), avec échec bloquant sur configuration malformée.
+- [ ] Vérifier l'intégralité de la gate locale avec Node 26/npm 12 depuis un checkout du dépôt et sa chaîne de dépendances lorsque l'environnement le permet ; ne pas faire passer les vérifications statiques pour un succès CI.
+- [ ] Réactiver CI exclusivement quand un budget GitHub Actions est disponible et après passage volontaire de la PR Draft en « Ready for review ».
+
 ## Protection du budget CI — 21 octobre 2026
 
 - [x] `scripts/ci/check-draft-workflows.mjs` bloque localement toute régression des garde-fous PR Draft sur Quality, Docker, Node 24 et Copilot. Vérification de la présence de `ready_for_review` ; contrôles sans réseau ni dépendances.

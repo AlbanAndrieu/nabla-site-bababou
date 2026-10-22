@@ -64,6 +64,14 @@ for file in "${files[@]}"; do
             python3 -c 'import ast,sys; from pathlib import Path; ast.parse(Path(sys.argv[1]).read_text(encoding="utf-8"),filename=sys.argv[1])' "$file"
             checked=$((checked + 1))
             ;;
+        *.json)
+            command -v python3 >/dev/null 2>&1 || {
+                echo "❌ OFFLINE_PYTHON_MISSING" >&2
+                exit 2
+            }
+            python3 -c 'import json,sys; from pathlib import Path; json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))' "$file"
+            checked=$((checked + 1))
+            ;;
     esac
 done
 if [[ "$base_available" == true ]]; then
