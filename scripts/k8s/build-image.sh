@@ -12,7 +12,7 @@ SHA="$(git rev-parse HEAD)"
   echo "Refusing image build from a dirty checkout" >&2
   exit 1
 }
-IMAGE="ghcr.io/albanandrieu/nabla-site-bababou:$SHA"
+IMAGE="ghcr.io/albanandrieu/nabla-site-bababou-next:$SHA"
 # Keep the canonical full local checks; do not downgrade privacy/security requirements.
 bash scripts/verify-mise-npm.sh
 bash scripts/agent-quality-gate.sh
