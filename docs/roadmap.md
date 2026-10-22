@@ -1,3 +1,13 @@
+## Convergence quality / pre-commit depuis nabla-compose (22 octobre 2026)
+
+- [x] Récupérer le contrat d'intégrité du manifeste de `nabla-compose` (PR #269), adapté à Bababou : hooks uniques, dépôts externes sans doublons, `rev` obligatoire et détection des clés YAML répétées, sans réseau.
+- [x] Ajouter le hook local `precommit-integrity`, la validation précoce dans la CI et le contrôle strict de `scripts/agent-quality-gate.sh`. Les contrôles BetterLeaks, actionlint, zizmor, Semgrep, SCA, Playwright, ZAP restent bloquants.
+- [x] Ajouter `just precommit-config-test` et `just loop` (L1 + intégrité + contrats rapides). **Ne pas confondre** ces contrôles locaux avec `just quality` ou les tests Preview au SHA exact.
+- [x] Supprimer l'ébauche du deuxième Dockerfile Talos et les scripts/tests/doc associés, sans toucher au `Dockerfile` Nginx historique. Vercel utilise son intégration native Next.js, pas un Dockerfile.
+- [ ] Après retour des crédits, valider sur le HEAD réel : `just precommit-config-test`, `just loop`, `just quality`, BetterLeaks puis Quality/Preview/ZAP. Les commits historiques `[skip ci]` de la PR restent incompatibles avec le garde-fou `QG_CI_SKIP_DIRECTIVE` tant qu'ils ne sont pas consolidés de manière revue.
+- [ ] Aligner les stratégies non spécifiques du dépôt avec `nabla-compose` uniquement après mesure : ShellCheck natif, sévérité/format des logs, stages pre-commit et workflows. Ne pas copier les hooks TrueNAS/Compose ni modifier la confidentialité.
+- **Pilotage des coûts commun** : réutiliser `nabla-compose/scripts/github-actions-usage.py` (PR #269) pour l'inventaire borné des Actions au lieu de dupliquer l'outil dans chaque site. Indicateurs partiels => non conclusifs, minutes wall-clock ≠ minutes facturées.
+
 ## Déploiement Talos — décision d'architecture
 
 - [ ] Ne pas introduire de deuxième Dockerfile ou d'image Next.js sans décision d'architecture. Vercel déploie nativement Next.js et ne dépend pas du `Dockerfile` actuel, réservé au fallback statique Nginx.
