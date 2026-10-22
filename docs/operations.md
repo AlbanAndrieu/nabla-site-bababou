@@ -23,6 +23,22 @@ Bababou reprend cette vérification et ajoute le refus des clés YAML répétée
 `just quality` reste la gate complète et bloquante. Les modes `--preflight`
 et `offline-l1` ne requièrent pas PyYAML et restent accessibles en mode déconnecté.
 
+Pour un diagnostic de PR **sans appel réseau ni crédit Actions** :
+
+```bash
+just offline-l1                # exploratoire : sans base Git, inventaire total + avertissement
+QUALITY_BASE_REF=origin/master just offline-pr  # strict : base existante et ancêtre
+just offline-base-test         # tests Git natifs sans dépendances npm
+```
+
+Le mode strict `AGENT_OFFLINE_REQUIRE_BASE=1` échoue avec
+`OFFLINE_BASE_REQUIRED` lorsque la référence Git est absente, et avec
+`OFFLINE_BASE_DIVERGED` lorsqu'elle n'est pas ancêtre de HEAD. Aucun fallback
+silencieux ne peut attester la PR. Le mode L1 utilise désormais les chemins Git
+terminés par `NUL` pour détecter les fichiers avec espaces, retours à la ligne
+ou noms commençant par `-`. Ces checks ne remplacent ni la CI ni l'audit des
+45 commits historiques `[skip ci]`, à consolider avant la publication.
+
 Pour les budgets GitHub Actions, conserver le collecteur central plutôt que
 dupliquer son code :
 
