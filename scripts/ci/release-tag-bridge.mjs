@@ -92,7 +92,8 @@ try {
     process.exit(0);
   }
 
-  run("git", ["tag", `v${legacy}`, target]);
+  // Publish the authoritative remote ref first. A failed API call must not
+  // leave a local v-tag that makes a retry incorrectly report success.
   run("gh", [
     "api",
     "--method",
@@ -103,6 +104,7 @@ try {
     "-f",
     `sha=${target}`,
   ]);
+  run("git", ["tag", `v${legacy}`, target]);
   console.log(`RELEASE_TAG_CREATED alias=v${legacy} target=${target}`);
 } catch (error) {
   console.error(`RELEASE_TAG_BLOCKED: ${error.message}`);
