@@ -114,3 +114,26 @@ test("NUL-delimited inventory parses unusual untracked and committed filenames",
   assert.equal(accepted.status, 0, accepted.stderr);
   assert.match(accepted.stdout, /paths=3 syntax_checked=3/);
 });
+
+
+test("batched Python/JSON parser preserves fail-closed syntax checks", (t) => {
+  const { root, run } = scenario(t);
+  for (let i = 0; i < 12; i++) {
+    writeFileSync(join(root, "sample-" + i + ".py"), "value = " + i + "\n");
+    writeFileSync(join(root, "record-" + i + ".json"), '{"value": ' + i + "}\n");
+  }
+  const valid = run();
+  assert.equal(valid.status, 0, valid.stderr);
+  assert.match(valid.stdout, /paths=25 syntax_checked=25/);
+
+  writeFileSync(join(root, "record-7.json"), "{invalid json\n");
+  const badJson = run();
+  assert.notEqual(badJson.status, 0);
+  assert.doesNotMatch(badJson.stdout, /OFFLINE_L1_PASS/);
+
+  writeFileSync(join(root, "record-7.json"), "{}\n");
+  writeFileSync(join(root, "sample-7.py"), "if not valid\n");
+  const badPython = run();
+  assert.notEqual(badPython.status, 0);
+  assert.doesNotMatch(badPython.stdout, /OFFLINE_L1_PASS/);
+});
