@@ -38,7 +38,7 @@ Si le package GHCR est privé, prévoir un `imagePullSecret` dans le namespace o
 
 - Contrôler les trois nœuds Ready, `kubectl`, les politiques Pod Security et l'IngressClass `traefik` dans le cluster géré par `nabla-compose`.
 - Préparer le namespace `nabla-site-bababou` avec labels `pod-security.kubernetes.io/{enforce,audit,warn}=restricted` et un Secret TLS `bababou-internal-tls` de type `kubernetes.io/tls`, provisionné par la gestion de secrets existante (Vaultwarden / opérateur). Vérifier expiration et SAN du certificat.
-- Créer **uniquement après vérification** l'entrée DNS LAN privée candidate `bababou.int.albandrieu.com`, pointant sur l'Ingress interne. Vérifier la terminaison HTTPS et l'absence d'ouverture WAN. Le script refuse un host hors `*.int.albandrieu.com` et toute résolution DNS publique.
+- Créer **uniquement après vérification** l'entrée DNS LAN privée candidate `bababou.int.albandrieu.com`, pointant sur l'Ingress interne. Vérifier la terminaison HTTPS et l'absence d'ouverture WAN. Le script refuse un host hors `*.int.albandrieu.com` et toute résolution DNS ne pointant pas exclusivement vers des adresses IPv4 RFC1918 (pas de loopback, lien local ou IP publique).
 - **Important : le DNS privé n'est pas un contrôle d'accès.** Vérifier que le listener Traefik/HAProxy et les règles pfSense interdisent réellement les requêtes Internet, même si l'en-tête `Host` est forcé ; exiger redirection HTTP→HTTPS et certificat correspondant. `--apply` demande une attestation explicite supplémentaire `BABABOU_K8S_NETWORK_BOUNDARY_REVIEWED=true`.
 - Le namespace et le certificat doivent exister avant le préflight ; cela permet d'éviter un apply initial qui activerait un Ingress non sécurisé.
 
@@ -60,7 +60,7 @@ BABABOU_K8S_ALLOW_APPLY=true BABABOU_K8S_NETWORK_BOUNDARY_REVIEWED=true \\
   bash scripts/k8s/deploy-bababou.sh --apply
 ```
 
-`--render` n'utilise ni kubectl ni réseau. `--preflight` reste en lecture seule : contexte kubeconfig explicite, IngressClass existante, namespace, Secret TLS, unicité du nom d'hôte et IP privées. `--server-dry-run` demande la validation Kubernetes sans persister. `--apply` exige les deux flags explicites d'autorisation et de revue LAN-only, en plus des mêmes contrôles. Ce flag est une attestation opérateur, **pas une preuve technique** de blocage WAN.
+`--render` n'utilise ni kubectl ni réseau. `--preflight` reste en lecture seule : contexte kubeconfig explicite, IngressClass existante, namespace, Secret TLS, unicité du nom d'hôte et adresses LAN RFC1918. `--server-dry-run` demande la validation Kubernetes sans persister. `--apply` exige les deux flags explicites d'autorisation et de revue LAN-only, en plus des mêmes contrôles. Ce flag est une attestation opérateur, **pas une preuve technique** de blocage WAN.
 
 ## 4. Critères d'acceptation et rollback
 
