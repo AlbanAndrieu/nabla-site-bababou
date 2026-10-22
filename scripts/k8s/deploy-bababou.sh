@@ -13,7 +13,7 @@ DEPLOYMENT=nabla-site-bababou
 fail() { printf '❌ %s\n' "$*" >&2; exit 1; }
 usage() {
   cat <<'HELP'
-Usage: BABABOU_K8S_IMAGE=ghcr.io/albanandrieu/nabla-site-bababou@sha256:<digest> \
+Usage: BABABOU_K8S_IMAGE=ghcr.io/albanandrieu/nabla-site-bababou-next@sha256:<digest> \
   bash scripts/k8s/deploy-bababou.sh [--render|--preflight|--server-dry-run|--apply]
 Render is offline/read-only. Apply also needs BABABOU_K8S_ALLOW_APPLY=true.
 Public domain and Vercel traffic remain unchanged.
@@ -74,7 +74,7 @@ PY
   printf 'Preflight OK: %s (%s)\n' "$CONTEXT" "$NAMESPACE"
 }
 if [[ "$MODE" == --preflight ]]; then preflight; exit 0; fi
-[[ "$IMAGE" =~ ^ghcr\.io/albanandrieu/nabla-site-bababou@sha256:[a-f0-9]{64}$ ]] ||
+[[ "$IMAGE" =~ ^ghcr\.io/albanandrieu/nabla-site-bababou-next@sha256:[a-f0-9]{64}$ ]] ||
   fail "BABABOU_K8S_IMAGE must be the exact approved GHCR digest"
 
 manifest="$(mktemp)"
