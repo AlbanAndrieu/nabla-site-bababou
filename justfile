@@ -130,20 +130,6 @@ offline-contracts:
 offline-l1:
     bash scripts/agent-offline-check.sh
 
-# Talos deployment: manifest rendering and unit contracts are fully offline.
-k8s-contracts:
-    bash -n scripts/k8s/deploy-bababou.sh
-    bash -n scripts/k8s/build-image.sh
-    node --test unit-tests/k8sDeployment.test.mjs
-
-k8s-render:
-    bash scripts/k8s/deploy-bababou.sh --render
-
-# Local build only, requires Docker/Trivy and the full existing quality gate.
-# No image push and no change to public Vercel routing.
-k8s-build:
-    bash scripts/k8s/build-image.sh
-
 # Offline provenance check, requires an already downloaded official upstream checkout.
 audit-skill-verify upstream:
     node scripts/verify-security-audit-skill.mjs "{{upstream}}"
