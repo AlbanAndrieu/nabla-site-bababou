@@ -130,3 +130,21 @@ test("failed remote publish cannot leave a misleading local release alias", (t) 
   assert.equal(git("tag", "--list", "v*"), "");
   assert.match(result.stderr, /RELEASE_TAG_BLOCKED/);
 });
+
+test("numeric tags use semantic version ordering, not lexicographic order", (t) => {
+  const { run, git } = scenario(t, { version: "0.21.0" });
+  git("tag", "0.9.0");
+  git("tag", "0.10.0");
+  const result = run();
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /alias=v0\\.20\\.0/);
+});
+
+test("malformed package versions fail closed without writing remote refs", (t) => {
+  const { run, marker, git } = scenario(t, { version: "0.21.0-beta.1" });
+  const result = run("--apply");
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /complete numeric semver/);
+  assert.equal(git("tag", "--list", "v*"), "");
+  assert.throws(() => readFileSync(marker, "utf8"));
+});
