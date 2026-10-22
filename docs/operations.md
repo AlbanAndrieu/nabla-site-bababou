@@ -116,6 +116,13 @@ GitHub App dédié ; il peut créer un alias `vX.Y.Z` vers un tag historique
 préexistant, jamais une nouvelle version. Le test utilise un mock de `gh`,
 ne touche pas aux tags distants et ne consomme pas de crédits GitHub Actions.
 
+Si GitHub a enregistré un alias mais que la réponse API a été perdue, `--apply`
+réutilise l'alias **uniquement après lecture et comparaison du SHA distant**.
+Un SHA différent ou une lecture impossible provoque un échec bloquant, sans
+création de tag local. Les tests reproduisent ces scénarios avec un faux `gh` ;
+ce n'est pas une preuve de publication réelle. La CI, le build et ZAP restent
+à valider ultérieurement sur le SHA exact.
+
 ## 4. Signatures d'incident
 
 ### Runner GitHub non alloué
