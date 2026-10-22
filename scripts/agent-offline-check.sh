@@ -56,6 +56,14 @@ for file in "${files[@]}"; do
             bash -n "$file"
             checked=$((checked + 1))
             ;;
+        *.mjs|*.cjs)
+            command -v node >/dev/null 2>&1 || {
+                echo "❌ OFFLINE_NODE_MISSING" >&2
+                exit 2
+            }
+            node --check "$file"
+            checked=$((checked + 1))
+            ;;
         *.py)
             command -v python3 >/dev/null 2>&1 || {
                 echo "❌ OFFLINE_PYTHON_MISSING" >&2
