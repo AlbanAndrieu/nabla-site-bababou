@@ -113,6 +113,20 @@ dagger-build:
 dagger-benchmark:
     bash scripts/dagger-benchmark.sh p0
 
+# Fast offline checks during iteration; not a substitute for just quality/publish.
+# Mirrors the bounded local-first feedback pattern from nabla-compose.
+loop:
+    just offline-l1
+    just precommit-config-test
+    just offline-contracts
+
+# Validate pre-commit structural integrity without fetching or executing hooks.
+# Uses PyYAML already supplied by the local pre-commit Python installation.
+precommit-config-test:
+    python3 -m py_compile scripts/quality/check-precommit-config.py
+    python3 scripts/quality/check-precommit-config.py
+    python3 -m unittest discover -s unit-tests -p 'test_precommit_integrity.py' -q
+
 # Dependency-free L1 fallback when GitHub, registries, or hooks are inaccessible.
 offline-release:
     node --check scripts/ci/release-tag-bridge.mjs
