@@ -2,7 +2,8 @@
 
 - [x] `scripts/agent-offline-check.sh` : séparer le diagnostic exploratoire du contrôle strict (`AGENT_OFFLINE_REQUIRE_BASE=1`). Une base manquante ou divergente bloque désormais le mode strict, sans réseau ni suppression de contrôles.
 - [x] Corriger l'inventaire Git en délimitation NUL (`git -z`, `sort -z`, `mapfile -d ''`) : les noms comportant des sauts de ligne ou commençant par un tiret ne peuvent plus contourner les vérifications de syntaxe.
-- [x] Couvrir ces contrats par `unit-tests/agentOfflineBase.test.mjs`, `just offline-pr`, `just offline-base-test`, `just offline-contracts` et P0. Les **5 scénarios de référence Git et 3 scénarios de noms inhabituels** ont été exécutés dans une reproduction locale exacte du script (Git blob SHA concordant), sans Actions.
+- [x] Reprendre l'optimisation de `nabla-compose` : parser les fichiers Python et JSON en une seule invocation `python3` par passage L1, sans supprimer les erreurs bloquantes. Testée sur 30 fichiers syntaxiquement valides, puis sur JSON et Python volontairement malformés.
+- [x] Couvrir ces contrats par `unit-tests/agentOfflineBase.test.mjs`, `just offline-pr`, `just offline-base-test`, `just offline-contracts` et P0. **6/6 tests Node natifs** réussis sur les octets exacts des fichiers poussés, plus les cas indépendants Python/JSON et chemins Git. Empreintes Git concordantes ; aucun runner GitHub Actions.
 - [ ] Faire passer `just offline-pr` depuis un checkout réel avec la base de la PR ; exécuter la gate complète locale avec Node 26/npm 12. Les vérifications d'environnement simulé ne constituent pas une validation du dépôt intégral.
 - [ ] Avant de sortir #238 de Draft, traiter les messages de commit `[skip ci]` historiques par une stratégie de réécriture de branche revue et sûre, sans désactiver `QG_CI_SKIP_DIRECTIVE`. Ne pas faire de force-push implicite.
 
