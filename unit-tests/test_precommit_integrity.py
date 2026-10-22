@@ -39,6 +39,24 @@ class PrecommitIntegrityTest(unittest.TestCase):
         config = {"repos": [{"repo": "https://example.invalid/hooks", "hooks": [{"id": "x"}]}]}
         self.assertTrue(any("missing revision pin" in error for error in module.validate(config)))
 
+    def test_moving_revisions_are_rejected(self) -> None:
+        for revision in ("main", "master", "HEAD", "latest", "stable",
+                         "refs/heads/main", "origin/main", "release/1.x", "v1",
+                         "v1.2.x", "", "  ", 42, None):
+            item = {"repo": "https://example.invalid/hooks",
+                    "rev": revision, "hooks": [{"id": "test"}]}
+            errors = module.validate({"repos": [item]})
+            self.assertTrue(errors, f"invalid revision accepted: {revision!r}")
+
+    def test_version_tags_and_commit_shas_are_accepted(self) -> None:
+        for revision in ("v6.0.0", "v3.13.1-1", "2.1.1", "0.37.4",
+                         "b3680b6ebf9f7cf29b19307f246adef66756feef",
+                         "9a39d56"):
+            item = {"repo": "https://example.invalid/hooks",
+                    "rev": revision, "hooks": [{"id": "test"}]}
+            self.assertEqual(module.validate({"repos": [item]}), [],
+                             f"valid version refused: {revision}")
+
     def test_invalid_shapes(self) -> None:
         for config in ({}, {"repos": "bad"}, None):
             self.assertEqual(module.validate(config), ["pre-commit config must contain a repos list"])
