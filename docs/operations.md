@@ -13,6 +13,28 @@
   `next.config.mjs` et `scripts/vercel-ignore-build.sh`.
 - Toute preuve Preview/runtime doit viser le **SHA exact**.
 
+### Parité locale avec nabla-compose
+
+La PR [nabla-compose #269](https://github.com/AlbanAndrieu/nabla-compose/pull/269) introduit
+une vérification hors ligne des hooks `pre-commit` dupliqués et de leurs sources.
+Bababou reprend cette vérification et ajoute le refus des clés YAML répétées :
+`just precommit-config-test` (PyYAML déjà fourni par pre-commit), puis
+`just loop` pour combiner L1, intégrité et contrats Node sans réseau.
+`just quality` reste la gate complète et bloquante. Les modes `--preflight`
+et `offline-l1` ne requièrent pas PyYAML et restent accessibles en mode déconnecté.
+
+Pour les budgets GitHub Actions, conserver le collecteur central plutôt que
+dupliquer son code :
+
+```bash
+python3 ../nabla-compose/scripts/github-actions-usage.py --days 30 --repo nabla-site-bababou
+```
+
+Ce script ne crée pas de runs ; il exige néanmoins `gh` authentifié et le
+réseau pour la lecture des métriques. Ses minutes de durée d'exécution
+ne sont pas des minutes facturées. Les échecs API et historiques tronqués
+doivent être affichés comme mesures **incomplètes**.
+
 ## 2. Validation locale avant publication
 
 Checkpoint P0 sans `node_modules` :
