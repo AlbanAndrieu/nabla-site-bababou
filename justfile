@@ -144,6 +144,15 @@ offline-contracts:
 offline-l1:
     bash scripts/agent-offline-check.sh
 
+# Require the Git comparison base to exist and to be an ancestor.
+# This is a PR readiness diagnostic, not a CI replacement.
+offline-pr:
+    AGENT_OFFLINE_REQUIRE_BASE=1 bash scripts/agent-offline-check.sh
+
+offline-base-test:
+    node --check unit-tests/agentOfflineBase.test.mjs
+    node --test unit-tests/agentOfflineBase.test.mjs
+
 # Offline provenance check, requires an already downloaded official upstream checkout.
 audit-skill-verify upstream:
     node scripts/verify-security-audit-skill.mjs "{{upstream}}"
