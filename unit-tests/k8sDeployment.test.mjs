@@ -5,7 +5,7 @@ import test from "node:test";
 
 const script = fileURLToPath(new URL("../scripts/k8s/deploy-bababou.sh", import.meta.url));
 const digest = "a".repeat(64);
-const image = "ghcr.io/albanandrieu/nabla-site-bababou@sha256:" + digest;
+const image = "ghcr.io/albanandrieu/nabla-site-bababou-next@sha256:" + digest;
 
 function run(mode = "--render", overrides = {}) {
   return spawnSync("bash", [script, mode], {
@@ -49,8 +49,8 @@ test("offline rendering emits a digest-pinned, private and restricted workload",
 });
 
 test("rendering fails closed when the image is absent or mutable", () => {
-  for (const bad of ["", "ghcr.io/albanandrieu/nabla-site-bababou:latest",
-    "ghcr.io/other/website@sha256:" + digest, "ghcr.io/albanandrieu/nabla-site-bababou@sha256:no"]) {
+  for (const bad of ["", "ghcr.io/albanandrieu/nabla-site-bababou-next:latest",
+    "ghcr.io/other/website@sha256:" + digest, "ghcr.io/albanandrieu/nabla-site-bababou-next@sha256:no"]) {
     const result = run("--render", { BABABOU_K8S_IMAGE: bad });
     assert.notEqual(result.status, 0);
     assert.equal(result.stdout, "");
