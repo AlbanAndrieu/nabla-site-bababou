@@ -92,20 +92,40 @@ try {
     process.exit(0);
   }
 
-  // Publish the authoritative remote ref first. A failed API call must not
-  // leave a local v-tag that makes a retry incorrectly report success.
-  run("gh", [
-    "api",
-    "--method",
-    "POST",
-    `repos/${repository}/git/refs`,
-    "-f",
-    `ref=refs/tags/v${legacy}`,
-    "-f",
-    `sha=${target}`,
-  ]);
+  // A failed POST can still have persisted remotely (lost response).
+  // Read back the remote ref and only reuse an exact SHA match.
+  let created = true;
+  try {
+    run("gh", [
+      "api",
+      "--method",
+      "POST",
+      `repos/${repository}/git/refs`,
+      "-f",
+      `ref=refs/tags/v${legacy}`,
+      "-f",
+      `sha=${target}`,
+    ]);
+  } catch {
+    let remoteSha;
+    try {
+      remoteSha = run("gh", [
+        "api",
+        `repos/${repository}/git/ref/tags/v${legacy}`,
+        "--jq",
+        ".object.sha",
+      ]);
+    } catch {
+      throw new Error("Release alias publish failed; remote tag could not be verified");
+    }
+    if (remoteSha !== target) {
+      throw new Error("Existing remote release alias does not match the verified legacy commit");
+    }
+    created = false;
+  }
+  // Do not change local refs until remote persistence is confirmed.
   run("git", ["tag", `v${legacy}`, target]);
-  console.log(`RELEASE_TAG_CREATED alias=v${legacy} target=${target}`);
+  console.log(`RELEASE_TAG_${created ? "CREATED" : "REUSED"} alias=v${legacy} target=${target}`);
 } catch (error) {
   console.error(`RELEASE_TAG_BLOCKED: ${error.message}`);
   process.exit(1);
