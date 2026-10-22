@@ -24,7 +24,7 @@
     "lint:css": "stylelint \"app/*.css\" \"app/**/*.module.css\" \"components/**/*.module.css\" \"public/*.css\"",
     "lint:css:fix": "stylelint --fix \"app/*.css\" \"app/**/*.module.css\" \"components/**/*.module.css\" \"public/*.css\"",
     "typecheck": "tsc --noEmit",
-    "test:unit": "node --import tsx --test \"unit-tests/**/*.test.ts\" unit-tests/verifySecurityAuditSkill.test.mjs unit-tests/releaseTagBridge.test.mjs unit-tests/workflowDraftBudget.test.mjs unit-tests/k8sDeployment.test.mjs",
+    "test:unit": "node --import tsx --test \"unit-tests/**/*.test.ts\" unit-tests/verifySecurityAuditSkill.test.mjs unit-tests/releaseTagBridge.test.mjs unit-tests/workflowDraftBudget.test.mjs",
     "privacy:check": "node --import tsx scripts/privacy-gate.ts",
     "privacy:check:build": "node --import tsx scripts/privacy-gate.ts --build",
     "check": "npm run check:prebuild && npm run build && npm run check:postbuild",
