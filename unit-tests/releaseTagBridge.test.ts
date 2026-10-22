@@ -22,6 +22,7 @@ type ScenarioOptions = {
   legacy?: boolean;
   vtag?: string;
   permitRelease?: boolean;
+  failRemoteWrite?: boolean;
 };
 
 function scenario(
@@ -76,6 +77,7 @@ function scenario(
         GITHUB_REPOSITORY: "AlbanAndrieu/nabla-site-bababou",
         ALLOW_RELEASE: options.permitRelease === false ? "0" : "1",
         MUTATION_LOG: marker,
+        FAIL_REMOTE_WRITE: options.failRemoteWrite ? "1" : "0",
       },
     });
   return { marker, git, run };
@@ -117,4 +119,13 @@ test("mixed tag histories reject newer numeric releases", (t) => {
   assert.equal(mixed.run().status, 1);
   assert.match(mixed.run().stderr, /Numeric release is newer/);
   assert.equal(mixed.git("tag", "--list", "v*"), "v0.19.0");
+});
+
+
+test("failed remote publish cannot leave a misleading local release alias", (t) => {
+  const { run, git } = scenario(t, { failRemoteWrite: true });
+  const result = run("--apply");
+  assert.equal(result.status, 1);
+  assert.equal(git("tag", "--list", "v*"), "");
+  assert.match(result.stderr, /RELEASE_TAG_BLOCKED/);
 });
