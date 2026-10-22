@@ -41,11 +41,11 @@ if [[ "$base_available" == true ]]; then
     fi
     # Execute Git in the current shell: process-substitution errors could be lost.
     {
-        git diff --name-only --diff-filter=ACMR "$BASE...HEAD"
-        git diff --name-only --diff-filter=ACMR
-        git diff --cached --name-only --diff-filter=ACMR
-        git ls-files --others --exclude-standard
-    } | LC_ALL=C sort -u >"$scope_file"
+        git diff --name-only -z --diff-filter=ACMR "$BASE...HEAD"
+        git diff --name-only -z --diff-filter=ACMR
+        git diff --cached --name-only -z --diff-filter=ACMR
+        git ls-files --others --exclude-standard -z
+    } | LC_ALL=C sort -zu >"$scope_file"
     printf 'ℹ️ OFFLINE_SCOPE_DIFF: %s...HEAD + worktree\n' "$BASE"
 else
     if [[ "$REQUIRE_BASE" == 1 ]]; then
@@ -54,12 +54,12 @@ else
     fi
     # Never silently truncate the file set or claim PR-completeness without a base.
     {
-        git ls-files
-        git ls-files --others --exclude-standard
-    } | LC_ALL=C sort -u >"$scope_file"
+        git ls-files -z
+        git ls-files --others --exclude-standard -z
+    } | LC_ALL=C sort -zu >"$scope_file"
     echo "⚠️ OFFLINE_BASE_UNAVAILABLE: checking every local tracked/untracked path; PR completeness NOT VERIFIED" >&2
 fi
-mapfile -t files <"$scope_file"
+mapfile -d '' -t files <"$scope_file"
 if ((MAX_PATHS > 0 && ${#files[@]} > MAX_PATHS)); then
     printf '❌ OFFLINE_LIMIT_EXCEEDED: %d paths exceed explicit limit %d\n' "${#files[@]}" "$MAX_PATHS" >&2
     exit 2
@@ -69,7 +69,7 @@ for file in "${files[@]}"; do
     [[ -f "$file" && ! -L "$file" ]] || continue
     case "$file" in
         *.sh)
-            bash -n "$file"
+            bash -n "./$file"
             checked=$((checked + 1))
             ;;
         *.mjs|*.cjs)
@@ -77,7 +77,7 @@ for file in "${files[@]}"; do
                 echo "❌ OFFLINE_NODE_MISSING" >&2
                 exit 2
             }
-            node --check "$file"
+            node --check "./$file"
             checked=$((checked + 1))
             ;;
         *.py)
