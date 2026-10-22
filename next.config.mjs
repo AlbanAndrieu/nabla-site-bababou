@@ -69,6 +69,10 @@ const securityHeaders = [
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Opt-in only: Vercel retains its native Next.js build contract.
+  ...(process.env.BABABOU_CONTAINER_BUILD === "1"
+    ? { output: "standalone" }
+    : {}),
   reactStrictMode: true,
   poweredByHeader: false,
   experimental: {
