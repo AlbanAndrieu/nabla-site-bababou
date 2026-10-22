@@ -57,7 +57,7 @@
     "privacy:consolidate-private": "node --experimental-strip-types scripts/prepare-private-consolidation.ts"
   },
   "dependencies": {
-    "next": "16.3.8",
+    "next": "16.4.2",
     "next-intl": "^4.9.2",
     "react": "^19.2.4",
     "react-dom": "^19.2.4"
