@@ -1,21 +1,7 @@
-## Talos / TrueNAS — préparation Next.js Kubernetes (22 octobre 2026)
+## Déploiement Talos — décision d'architecture
 
-- [x] Ajouter `Dockerfile.k8s` multi-stage Next.js standalone, isolé du fallback Nginx et de Vercel ; contexte Docker allowlist excluant les secrets et les sources familiales privées.
-- [x] Séparer la nouvelle image `ghcr.io/albanandrieu/nabla-site-bababou-next` de l'image GHCR statique existante ; exiger un digest SHA-256 exact pour tout manifeste Kubernetes.
-- [x] Préparer un manifeste `Namespace/Deployment/Service/Ingress` via `scripts/k8s/deploy-bababou.sh`, rendu hors ligne par défaut et application uniquement sur opt-in, avec contexte Talos explicite, HTTPS interne, host privé et garde anti-collision.
-- [x] Intégrer `just k8s-contracts`, `just k8s-render`, `just k8s-build` ; build local soumis aux quality gates, BetterLeaks et Trivy, sans push ni CI automatique. Tests Node de contrats ajoutés mais non exécutés sur un checkout complet dans cet environnement.
-- [ ] **P0 runtime** : valider `npm ci --ignore-scripts`, base Node 26.8.2, sortie standalone, certificats, cache writable sur volume ephemeral, fichier `public/404.html` et toutes les routes legacy dans un véritable conteneur (image signée/épinglée, scan sans HIGH/CRITICAL).
-- [ ] **P1 Talos** : vérifier `kubectl --dry-run=server`, Traefik/Kubara, TLS et DNS LAN, namespace PSA, pull GHCR, ressources, logs/probes, puis opt-in deploy dans `nabla-compose` sans modifier le domaine Vercel.
-- [ ] **P2 sécurité** : parité des contrôles de confidentialité, Playwright et ZAP sur la cible Talos privée, NetworkPolicy après vérification de la topologie ingress/egress, rollback documenté.
-- [ ] **P3 GitOps** : transférer l'ownership du déploiement, des secrets et du routage au dépôt `nabla-compose` ; ne pas créer de second contrôleur d'Ingress ni de pipeline Actions payant.
-- **Guide unique** : [`docs/kubernetes-talos-deployment.md`](kubernetes-talos-deployment.md). Aucun build Docker ni déploiement réel attesté à ce stade.
-
-## P0 / L1 hors ligne — 22 octobre 2026
-
-- [x] Étendre P0 aux contrats npm/Mise, Semantic Release et diagnostic des runners, pour éviter des régressions non détectées pendant l'indisponibilité d'Actions.
-- [x] Étendre L1 à la validation JSON stricte des fichiers modifiés (Python standard uniquement), avec échec bloquant sur configuration malformée.
-- [ ] Vérifier l'intégralité de la gate locale avec Node 26/npm 12 depuis un checkout du dépôt et sa chaîne de dépendances lorsque l'environnement le permet ; ne pas faire passer les vérifications statiques pour un succès CI.
-- [ ] Réactiver CI exclusivement quand un budget GitHub Actions est disponible et après passage volontaire de la PR Draft en « Ready for review ».
+- [ ] Ne pas introduire de deuxième Dockerfile ou d'image Next.js sans décision d'architecture. Vercel déploie nativement Next.js et ne dépend pas du `Dockerfile` actuel, réservé au fallback statique Nginx.
+- [ ] Avant tout déploiement sur Talos, choisir la stratégie **unique** de construction d'image (image existante à faire évoluer ou buildpack standard), puis valider le runtime Next.js, la confidentialité, l'accès privé, l'Ingress Traefik et les contrôles exact-SHA. Aucune modification du cluster ou de Vercel.
 
 ## Protection du budget CI — 21 octobre 2026
 
