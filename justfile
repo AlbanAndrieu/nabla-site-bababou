@@ -113,6 +113,12 @@ dagger-build:
 dagger-benchmark:
     bash scripts/dagger-benchmark.sh p0
 
+# Native Node test runner; no npm install, network, or GitHub Actions required.
+# Node 22 requires explicit TS stripping (Node 24+ may enable it by default).
+offline-release:
+    node --check scripts/ci/release-tag-bridge.mjs
+    node --experimental-strip-types --test unit-tests/releaseTagBridge.test.ts
+
 # Dependency-free L1 fallback when GitHub, registries, or hooks are inaccessible.
 offline-l1:
     bash scripts/agent-offline-check.sh
