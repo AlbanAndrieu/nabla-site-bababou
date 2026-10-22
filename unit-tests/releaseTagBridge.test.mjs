@@ -17,17 +17,7 @@ const tool = fileURLToPath(
   new URL("../scripts/ci/release-tag-bridge.mjs", import.meta.url),
 );
 
-type ScenarioOptions = {
-  version?: string;
-  legacy?: boolean;
-  vtag?: string;
-  permitRelease?: boolean;
-};
-
-function scenario(
-  t: { after: (fn: () => void) => void },
-  options: ScenarioOptions = {},
-) {
+function scenario(t, options = {}) {
   const root = mkdtempSync(join(tmpdir(), "bababou-tag-"));
   t.after(() => rmSync(root, { recursive: true, force: true }));
   const bin = join(root, "bin");
@@ -47,7 +37,7 @@ function scenario(
     ].join("\n"),
   );
   chmodSync(gh, 0o755);
-  const git = (...args: string[]) =>
+  const git = (...args) =>
     execFileSync("git", args, { cwd: root, encoding: "utf8" }).trim();
   git("init", "-q");
   git("config", "user.email", "test@example.invalid");
@@ -117,4 +107,25 @@ test("mixed tag histories reject newer numeric releases", (t) => {
   assert.equal(mixed.run().status, 1);
   assert.match(mixed.run().stderr, /Numeric release is newer/);
   assert.equal(mixed.git("tag", "--list", "v*"), "v0.19.0");
+});
+
+test("semantic versions are sorted numerically, not lexicographically", (t) => {
+  const { git, run } = scenario(t);
+  git("tag", "-d", "0.20.0");
+  git("tag", "0.9.0");
+  git("tag", "0.10.0");
+  const result = run();
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /RELEASE_TAG_CHECK alias=v0\.10\.0/);
+});
+
+test("invalid package semver fails without creating a release tag", (t) => {
+  const { git, run, marker } = scenario(t, {
+    version: "0.21.0-beta.1",
+  });
+  const result = run("--apply");
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /complete numeric semver/);
+  assert.equal(git("tag", "--list", "v*"), "");
+  assert.throws(() => readFileSync(marker, "utf8"));
 });

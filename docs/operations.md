@@ -60,6 +60,22 @@ Preview exacte sans démarrer de serveur local. En local, `npm run test:a11y` pa
 Playwright existant puis restaure `next-env.d.ts` à la sortie. Le wrapper
 `run-next-clean.sh` reste la garde générique des commandes Next.
 
+### Itération sans crédits GitHub Actions (PR Draft)
+
+```bash
+# Node natif et Git, sans npm ci, tsx, GitHub CLI ni réseau
+node --test unit-tests/releaseTagBridge.test.mjs unit-tests/workflowDraftBudget.test.mjs
+node scripts/ci/check-draft-workflows.mjs
+# Equivalent sur un environnement où Just est disponible :
+just offline-contracts
+```
+
+Cette suite cible les contrats Semantic Release et l’absence de runner sur les
+PR Draft. Elle ne valide pas les hooks, les dépendances Node 26/npm 12, le build
+Next.js, la confidentialité complète, Playwright, ZAP ou les scans SAST/SCA.
+Ne sortir la PR de Draft et ne réactiver GitHub Actions qu’après accord explicite
+et retour des crédits.
+
 ## 3. Preview et production
 
 Pour un changement deploy-relevant : valider localement, obtenir un commit propre, puis laisser
@@ -80,7 +96,7 @@ avec l'accès en lecture aux GitHub Releases :
 
 ```bash
 node scripts/ci/release-tag-bridge.mjs --check
-node --test --experimental-strip-types unit-tests/releaseTagBridge.test.ts
+just offline-release  # ou node --test unit-tests/releaseTagBridge.test.mjs
 ```
 
 `--apply` est réservé au workflow Release après contrôle SHA master et jeton
