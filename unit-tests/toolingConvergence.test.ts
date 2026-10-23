@@ -53,7 +53,7 @@ test("GitHub primary Node workflows share .nvmrc as their source of truth", asyn
     read(".github/workflows/release.yml"),
   ]);
 
-  assert.equal(nvmrc.trim(), "v26.8.2");
+  assert.equal(nvmrc.trim(), "v26.12.1");
 
   for (const workflow of [quality, playwright, copilot, release]) {
     assert.match(workflow, /node-version-file:\s*"\.nvmrc"/);

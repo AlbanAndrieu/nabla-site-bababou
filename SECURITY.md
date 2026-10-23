@@ -10,8 +10,8 @@
 
 ## Dependency supply-chain controls
 
-- The Node.js package engine is `>=24.11.0 <27`; local development, agents and primary CI are pinned by `.nvmrc` to Node 26 Current (`v26.8.2`). Vercel production uses its supported Node 24.x runtime, which remains an explicit compatibility target rather than the development source of truth. Node 25 is EOL and must not be reintroduced.
-- npm is constrained to `>=12.2.0 <13`, with 12.2.0 pinned by Mise in local development, CI, Node 24 compatibility checks, Playwright and release. Node 26 remains the development runtime and Node 24 remains the Vercel compatibility target.
+- The Node.js package engine is `>=24.11.0 <27`; GitHub CI is pinned by `.nvmrc` to Node 26 Current (`v26.12.1`), while Mise defaults to Node 24 LTS for local Claude compatibility (reviewed master change `5831394`). Vercel production uses its supported Node 24.x runtime, which remains an explicit compatibility target rather than the development source of truth. Node 25 is EOL and must not be reintroduced.
+- npm is constrained to `>=12.2.0 <13`, with 12.2.1 pinned by Mise in local development, CI, Node 24 compatibility checks, Playwright and release. Node 26 remains the development runtime and Node 24 remains the Vercel compatibility target (`.nvmrc-production`: `v24.22.1`); Vercel currently uses bundled npm 11.19.1, producing non-blocking EBADENGINE until a reviewed npm 12 install contract is in place.
 - `.npmrc` enables `strict-allow-scripts=true`.
 - Packages with reviewed install scripts are explicitly denied through `package.json#allowScripts`; any new install script must fail until reviewed.
 - Never enable `dangerously-allow-all-scripts`.

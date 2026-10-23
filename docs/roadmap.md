@@ -1,3 +1,18 @@
+## P0 — Vercel Node 24 et build Next.js 16.4.2 (23 octobre 2026)
+
+- [x] Rebase squash de la PR #241 sur `master` (`5831394`) : conserver le changement volontaire `mise.toml` → Node 24 pour Claude, garder `.nvmrc` Node 26.12.1 pour GitHub CI et Vercel Node 24. Les tests et docs sont corrigés sans déclencher Actions. Le commit `[skip ci]` de la PR Draft doit être nettoyé après validation complète avant passage en Ready.
+
+- [x] Vérifier le projet Vercel : `nabla-site-bababou` est configuré sur **Node 24.x**, version majeure la plus récente supportée (Node 26 non proposé). Le déploiement production `bdeb3d316cf1c47452a1974b60428f3ad5bd88e1` a échoué avec `missing_root_layout` sur `app/page.tsx`; ce constat ne prouve pas que le dernier déploiement sain ne sert plus le domaine.
+- [x] Préparer la correction dans une PR Draft, **sans déploiement** : déplacer le placeholder `/` dans `app/(legacy-home)/page.tsx` avec son propre `layout.tsx` contenant `html/body`. Préserver `app/[locale]/layout.tsx`, `app/global-not-found.tsx` et la réécriture de `/` vers `public/index.html` dans `proxy.ts`. Référence : conventions Next.js 16, layouts racine multiples via route groups.
+- [x] Ajouter `unit-tests/vercelNode24Layout.test.mjs` aux tests unitaires, au P0 et à `just offline-contracts`. Test Node 22 exécuté localement dans une fixture isolée : 4/4 PASS ; les trois fichiers nouveaux sont identiques (Git blob SHA) aux fichiers poussés. **Ce n'est pas un vrai build Next.js**.
+- [ ] **P0 avant tout merge/Ready** : exécuter `npm ci`, le build Next.js 16.4.2, les checks confidentialité, le smoke des routes `/`, `/en`, `/de`, `/no`, `/policy/*`, le fallback 404, puis Playwright et ZAP sur une Preview exacte-SHA. Aucune validation complète disponible dans l'environnement agent sans le checkout et les dépendances.
+- [ ] **P1 écart npm** : les logs Vercel montrent Node `24.22.1` et npm `11.19.1` alors que `package.json#engines.npm` exige `>=12.2.0 <13` ; actuellement `EBADENGINE` non bloquant. Examiner l'installation npm 12 via les options officielles Vercel (Install Command / Corepack) et mesurer avant de changer le contrat npm commun, sans supprimer `strict-allow-scripts` ni le contrôle des scripts npm.
+- [x] Aligner `eslint-config-next` et `@next/eslint-plugin-next` sur Next.js `16.4.2` (manifest + lockfile : seules les deux entrées ESLint, le root lock et le manifest ont changé). Vérification statique des dépendances : **15/15 contrôles PASS** sur fichiers exacts de la branche.
+- [x] Corriger les assertions périmées : versions Next.js et Node des tests locaux, guide agent Next.js, règle Vercel sur les modifications de `package.json` même pour les commits Semantic Release.
+- [x] Exécuter les contrats hors ligne : **4/4** tests de structure Next.js sur fixture dont les 3 blobs sont identiques aux fichiers GitHub, plus **8/8** scénarios Vercel avec copie du script `scripts/vercel-ignore-build.sh` au SHA Git `1974064c`. Aucune exécution de Next/npm, Playwright ou ZAP attestée.
+- [ ] Après stabilisation du build Vercel, traiter séparément l'upgrade React 19.3.1 avec un lockfile régénéré par npm 12 et des tests complets sur Node 24 et 26.
+- **Budget** : pas de workflow Actions volontairement déclenché ; PR Draft et commits `[skip ci]` jusqu'à obtention de crédits, sans désactiver les gates de publication.
+
 ## Audit hors ligne des révisions pre-commit — 23 octobre 2026
 
 - [x] Renforcer le portage de `nabla-compose` : refuser les branches mouvantes (`main`, `master`, `HEAD`, `latest`, `refs/heads/*`) et les pseudo-versions `v1.2.x`. Conserver les tags de release numérotés explicites et les SHA Git.

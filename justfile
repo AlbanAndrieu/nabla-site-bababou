@@ -138,7 +138,7 @@ offline-draft-policy:
     node scripts/ci/check-draft-workflows.mjs
 
 offline-contracts:
-    node --test unit-tests/releaseTagBridge.test.mjs unit-tests/workflowDraftBudget.test.mjs unit-tests/agentOfflineBase.test.mjs
+    node --test unit-tests/releaseTagBridge.test.mjs unit-tests/workflowDraftBudget.test.mjs unit-tests/agentOfflineBase.test.mjs unit-tests/vercelNode24Layout.test.mjs
     node scripts/ci/check-draft-workflows.mjs
 
 offline-l1:

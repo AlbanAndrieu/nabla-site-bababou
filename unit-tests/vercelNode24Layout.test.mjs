@@ -1,0 +1,48 @@
+import assert from "node:assert/strict";
+import { readFileSync, existsSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import test from "node:test";
+
+const root = dirname(dirname(fileURLToPath(import.meta.url)));
+const read = (path) => readFileSync(join(root, path), "utf8");
+
+test("Next.js 16.4 has a root layout for its unprefixed homepage route", () => {
+  assert.equal(existsSync(join(root, "app/page.tsx")), false);
+  assert.equal(existsSync(join(root, "app/layout.tsx")), false);
+  const layout = read("app/(legacy-home)/layout.tsx");
+  assert.match(layout, /<html\s+lang="en">/);
+  assert.match(layout, /<body>\{children\}<\/body>/);
+  const placeholder = read("app/(legacy-home)/page.tsx");
+  assert.match(placeholder, /return null;/);
+});
+
+test("localized routes retain independent HTML root and Next global 404", () => {
+  const localized = read("app/[locale]/layout.tsx");
+  assert.match(localized, /<html\s+lang=\{locale\}/);
+  assert.match(localized, /<body>/);
+  assert.match(read("app/global-not-found.tsx"), /<html/);
+  assert.match(read("next.config.mjs"), /globalNotFound: true/);
+});
+
+test("legacy homepage remains a proxy rewrite rather than an unreviewed Next page", () => {
+  const proxy = read("proxy.ts");
+  assert.match(proxy, /request\.nextUrl\.pathname === "\/"/);
+  assert.match(proxy, /NextResponse\.rewrite\(new URL\("\/index\.html"/);
+  const vercel = JSON.parse(read("vercel.json"));
+  assert.equal(vercel.framework, "nextjs");
+  assert.equal(vercel.git.deploymentEnabled.master, true);
+  assert.equal(vercel.git.deploymentEnabled["*"], false);
+  assert.equal(vercel.git.deploymentEnabled["**"], false);
+  const ignore = read(".vercelignore");
+  assert.doesNotMatch(ignore, /^\s*\/?app\/?\s*$/m);
+});
+
+test("production is on Vercel-supported Node 24; local Node 26 remains separate", () => {
+  const pkg = JSON.parse(read("package.json"));
+  assert.match(read(".nvmrc-production").trim(), /^v24\./);
+  assert.match(read(".nvmrc").trim(), /^v26\./);
+  assert.match(read("mise.toml"), /^node = "24"$/m);
+  assert.match(pkg.engines.node, /24/);
+  assert.match(pkg.engines.node, /27/);
+});

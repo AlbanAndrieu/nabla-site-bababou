@@ -32,8 +32,8 @@ test("Node runtime policy separates development Current from production compatib
     packages?: { ""?: { engines?: { node?: string; npm?: string } } };
   };
 
-  assert.equal(nvmrc.trim(), "v26.8.2");
-  assert.equal(productionNvmrc.trim(), "v24.11.0");
+  assert.equal(nvmrc.trim(), "v26.12.1");
+  assert.equal(productionNvmrc.trim(), "v24.22.1");
   assert.equal(packageJson.engines?.node, ">=24.11.0 <27");
   assert.equal(packageJson.engines?.npm, ">=12.2.0 <13");
   assert.deepEqual(
@@ -41,7 +41,7 @@ test("Node runtime policy separates development Current from production compatib
     packageJson.engines,
     "package-lock root engines must stay synchronized with package.json",
   );
-  assert.match(envrc, /NODE_VERSIONS=\$\{NODE_VERSIONS:-"v26\.8\.2"\}/);
+  assert.match(envrc, /NODE_VERSIONS=\$\{NODE_VERSIONS:-"v26\.12\.1"\}/);
   assert.notEqual(envrcStat.mode & 0o111, 0, ".envrc must remain executable");
   assert.match(security, /Node 26 Current/);
   assert.match(
