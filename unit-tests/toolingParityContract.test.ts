@@ -17,10 +17,10 @@ test("shared runtime and test toolchain versions remain internally aligned", asy
   assert.equal(pkg.engines.npm, ">=12.2.0 <13");
 
   for (const [name, version] of Object.entries({
-    next: "16.3.8",
+    next: "16.4.2",
     "next-intl": "^4.9.2",
-    react: "^19.2.4",
-    "react-dom": "^19.2.4",
+    react: "^19.3.1",
+    "react-dom": "^19.3.1",
   })) {
     assert.equal(pkg.dependencies[name], version, `unexpected ${name} version`);
   }
@@ -56,7 +56,7 @@ test("shared runtime and test toolchain versions remain internally aligned", asy
     "Playwright runner and package must stay aligned",
   );
 
-  assert.match(mise, /node = "26\.8\.2"/);
+  assert.match(mise, /node = "26\.12\.1"/);
   assert.match(mise, /pre-commit = "4\.6\.2"/);
 });
 
