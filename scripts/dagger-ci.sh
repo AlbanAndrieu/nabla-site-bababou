@@ -60,7 +60,7 @@ git commit -qm "chore: dagger isolated snapshot"
 '
 
 readonly NODE_BOOTSTRAP='
-npm install --global "npm@12.2.0" --no-audit --no-fund
+npm install --global "npm@12.2.1" --no-audit --no-fund
 npm ci --no-audit --no-fund
 '
 
