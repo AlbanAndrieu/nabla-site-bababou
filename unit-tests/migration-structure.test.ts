@@ -84,7 +84,7 @@ test(
       legacyTestScript,
       /@vercel\/(?:analytics|speed-insights)/,
     );
-    assert.match(nextInstructions, /Next\.js[^\n]*16\.3\.4/);
+    assert.match(nextInstructions, /Next\.js[^\n]*16\.4\.2/);
     assert.doesNotMatch(nextInstructions, /cd app|vercel deploy|app\/package\.json/);
 
     const mcpConfig = await readFile(new URL("../.mcp.json", import.meta.url), "utf8");

@@ -17,7 +17,7 @@ MegaLinter is intentionally not a GitHub workflow: `.mega-linter.yml` remains on
 
 ## Runtime
 
-- Development, agents and primary CI use **Node 26 Current** (`26.8.2`) from `.nvmrc`.
+- GitHub CI uses **Node 26 Current** (`26.12.1`) from `.nvmrc`; Mise deliberately defaults to **Node 24 LTS** for local Claude compatibility (preserved from master).
 - Vercel production currently uses its supported **Node 24.x** runtime; Node 24 is an explicit production-compatibility target, not the development source of truth. Node 25 is EOL and must not be reintroduced.
 - Package compatibility is `>=24.11.0 <27`; npm is **>=12.2.0 <13** and install scripts are governed by the repository `allowScripts` policy.
 - Run Node/npm commands from the repository root.

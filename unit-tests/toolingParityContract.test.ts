@@ -17,7 +17,7 @@ test("shared runtime and test toolchain versions remain internally aligned", asy
   assert.equal(pkg.engines.npm, ">=12.2.0 <13");
 
   for (const [name, version] of Object.entries({
-    next: "16.3.8",
+    next: "16.4.2",
     "next-intl": "^4.9.2",
     react: "^19.2.4",
     "react-dom": "^19.2.4",
@@ -56,7 +56,11 @@ test("shared runtime and test toolchain versions remain internally aligned", asy
     "Playwright runner and package must stay aligned",
   );
 
-  assert.match(mise, /node = "26\.8\.2"/);
+  // Preserve the deliberate master override for Claude's local Node 24.
+  // GitHub CI still consumes .nvmrc (Node 26).
+  const nvmrc = await readFile(new URL("../.nvmrc", import.meta.url), "utf8");
+  assert.equal(nvmrc.trim(), "v26.12.1");
+  assert.match(mise, /node = "24"/);
   assert.match(mise, /pre-commit = "4\.6\.2"/);
 });
 

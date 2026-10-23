@@ -61,7 +61,7 @@ function runPolicy(directory: string, env: NodeJS.ProcessEnv = {}) {
   });
 }
 
-test("Vercel skips semantic-release metadata commits", async (t) => {
+test("Vercel builds package changes even with semantic-release skip-ci markers", async (t) => {
   const directory = await createRepo(
     "chore(release): 0.2.1 [skip ci]",
     "package.json",
@@ -70,8 +70,8 @@ test("Vercel skips semantic-release metadata commits", async (t) => {
 
   const result = runPolicy(directory);
 
-  assert.equal(result.status, 0, result.stderr);
-  assert.match(result.stdout, /Semantic-release metadata commit detected/);
+  assert.equal(result.status, 1, result.stderr);
+  assert.match(result.stdout, /Deploy-relevant change detected: package\.json/);
 });
 
 test("Vercel still builds deploy-relevant commits", async (t) => {
