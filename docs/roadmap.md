@@ -1,3 +1,14 @@
+## Upgrade stack — 23 octobre 2026 (PR #238 Draft)
+
+- [x] **Next.js 16.4.2** + `eslint-config-next 16.4.2` et `@next/eslint-plugin-next 16.4.2` : lock Next repris de la PR Dependabot #239 déjà fusionnée. Lint/Next ne doivent pas diverger.
+- [x] **React / React DOM 19.3.1**, `scheduler 0.28.0`, `@types/react` et `@types/react-dom 19.3.0` : déclarations et entrées du lock alignées. Les intégrités SHA-512 ont été croisées entre deux lockfiles publics indépendants ; ne pas confondre ce contrôle avec une validation npm officielle.
+- [x] **Node 26.12.1** pour la dev/CI (`.nvmrc`, Mise, direnv) ; **Node 24.22.1 LTS** comme version de compatibilité Vercel (`.nvmrc-production`) ; **npm 12.2.1** pour Mise/Dagger. Le contrat d'engine `>=24.11.0 <27` et la prévention d'exécution de scripts npm inconnus restent inchangés.
+- [x] Réaligner les tests unitaires de parité des versions et ajouter `unit-tests/stackUpgrade.test.mjs` aux suites npm, P0 et `just offline-contracts`. Les contrôles BetterLeaks, SAST/SCA, Playwright, ZAP et publication Preview SHA exact restent inchangés.
+- [ ] **P0 avant Ready** : dans un checkout complet avec accès contrôlé au registre npm, exécuter `npm ci --ignore-scripts --no-audit --no-fund` (dans les mêmes contraintes que l'installation sécurisée), vérifier `npm ls next eslint-config-next react react-dom scheduler`, `just offline-pr`, `just p0`, `just quality`, `npm run check`, la privacy gate build et les tests Playwright/ZAP sur la Preview Vercel du SHA exact. Ne pas considérer les seuls SHA-512 du lock comme une preuve d'installation/build.
+- [ ] **P1 runtime** : confirmer la compatibilité du SSR Next.js 16.4 et de React 19.3 sur Vercel Node 24 LTS et le fallback de traduction. Ne pas déployer automatiquement.
+- [ ] **P2 Dagger** : revalider l'image Docker `node:26.12.1-bookworm` et obtenir son **digest SHA-256 vérifié** avant de remplacer le digest de l'image `node:26.8.2-bookworm` existante. Ne jamais retirer le pin par digest pour une mise à niveau non vérifiée.
+- [ ] **P0 historique Git** : regrouper/recréer les anciens commits `[skip ci]` sous supervision avant le passage en Ready : `QG_CI_SKIP_DIRECTIVE` doit rester bloquant. Aucun workflow GitHub Actions n'a été volontairement lancé, aucune fusion.
+
 ## Audit hors ligne des révisions pre-commit — 23 octobre 2026
 
 - [x] Renforcer le portage de `nabla-compose` : refuser les branches mouvantes (`main`, `master`, `HEAD`, `latest`, `refs/heads/*`) et les pseudo-versions `v1.2.x`. Conserver les tags de release numérotés explicites et les SHA Git.
