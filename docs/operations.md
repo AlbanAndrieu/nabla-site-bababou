@@ -13,6 +13,44 @@
   `next.config.mjs` et `scripts/vercel-ignore-build.sh`.
 - Toute preuve Preview/runtime doit viser le **SHA exact**.
 
+### Parité locale avec nabla-compose
+
+La PR [nabla-compose #269](https://github.com/AlbanAndrieu/nabla-compose/pull/269) introduit
+une vérification hors ligne des hooks `pre-commit` dupliqués et de leurs sources.
+Bababou reprend cette vérification et ajoute le refus des clés YAML répétées :
+`just precommit-config-test` (PyYAML déjà fourni par pre-commit), puis
+`just loop` pour combiner L1, intégrité et contrats Node sans réseau.
+`just quality` reste la gate complète et bloquante. Les modes `--preflight`
+et `offline-l1` ne requièrent pas PyYAML et restent accessibles en mode déconnecté.
+
+Pour un diagnostic de PR **sans appel réseau ni crédit Actions** :
+
+```bash
+just offline-l1                # exploratoire : sans base Git, inventaire total + avertissement
+QUALITY_BASE_REF=origin/master just offline-pr  # strict : base existante et ancêtre
+just offline-base-test         # tests Git natifs sans dépendances npm
+```
+
+Le mode strict `AGENT_OFFLINE_REQUIRE_BASE=1` échoue avec
+`OFFLINE_BASE_REQUIRED` lorsque la référence Git est absente, et avec
+`OFFLINE_BASE_DIVERGED` lorsqu'elle n'est pas ancêtre de HEAD. Aucun fallback
+silencieux ne peut attester la PR. Le mode L1 utilise désormais les chemins Git
+terminés par `NUL` pour détecter les fichiers avec espaces, retours à la ligne
+ou noms commençant par `-`. Ces checks ne remplacent ni la CI ni l'audit des
+45 commits historiques `[skip ci]`, à consolider avant la publication.
+
+Pour les budgets GitHub Actions, conserver le collecteur central plutôt que
+dupliquer son code :
+
+```bash
+python3 ../nabla-compose/scripts/github-actions-usage.py --days 30 --repo nabla-site-bababou
+```
+
+Ce script ne crée pas de runs ; il exige néanmoins `gh` authentifié et le
+réseau pour la lecture des métriques. Ses minutes de durée d'exécution
+ne sont pas des minutes facturées. Les échecs API et historiques tronqués
+doivent être affichés comme mesures **incomplètes**.
+
 ## 2. Validation locale avant publication
 
 Checkpoint P0 sans `node_modules` :
@@ -76,6 +114,18 @@ Next.js, la confidentialité complète, Playwright, ZAP ou les scans SAST/SCA.
 Ne sortir la PR de Draft et ne réactiver GitHub Actions qu’après accord explicite
 et retour des crédits.
 
+### Contrôles additionnels sans budget GitHub
+
+`just offline-l1` vérifie les chemins Git modifiés, le Bash, la syntaxe Python
+et le JSON strict, puis `git diff --check`. Aucun téléchargement ni runner
+GitHub n'est requis. Sans ref de base, l'intégralité des fichiers suivis et
+non suivis est inspectée avec un avertissement de couverture.
+
+`just p0` couvre en outre les contrats locaux des workflows Release,
+des versions npm/Mise et du diagnostic de démarrage des runners. Il requiert
+un Node compatible et ne remplace pas BetterLeaks, Semgrep, SCA, Next,
+Playwright, ZAP ni le contrôle CI réel.
+
 ## 3. Preview et production
 
 Pour un changement deploy-relevant : valider localement, obtenir un commit propre, puis laisser
@@ -103,6 +153,13 @@ just offline-release  # ou node --test unit-tests/releaseTagBridge.test.mjs
 GitHub App dédié ; il peut créer un alias `vX.Y.Z` vers un tag historique
 préexistant, jamais une nouvelle version. Le test utilise un mock de `gh`,
 ne touche pas aux tags distants et ne consomme pas de crédits GitHub Actions.
+
+Si GitHub a enregistré un alias mais que la réponse API a été perdue, `--apply`
+réutilise l'alias **uniquement après lecture et comparaison du SHA distant**.
+Un SHA différent ou une lecture impossible provoque un échec bloquant, sans
+création de tag local. Les tests reproduisent ces scénarios avec un faux `gh` ;
+ce n'est pas une preuve de publication réelle. La CI, le build et ZAP restent
+à valider ultérieurement sur le SHA exact.
 
 ## 4. Signatures d'incident
 

@@ -310,6 +310,11 @@ command -v pre-commit >/dev/null 2>&1 || {
     exit 1
 }
 
+# Detect duplicate/overridden hook definitions before invoking any hook runtime.
+# Preflight remains dependency-free; strict quality runs after pre-commit setup.
+run_compact "pre-commit configuration integrity" \
+    python3 scripts/quality/check-precommit-config.py
+
 classify_changed_files "${CHANGED_FILES[@]}"
 
 if [[ "${MODE}" != "fix" && "${agent_gate_changed}" == true && "${QUALITY_CANONICAL_GATE_VERIFIED:-0}" != "1" ]]; then

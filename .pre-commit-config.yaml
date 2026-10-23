@@ -447,3 +447,14 @@ repos:
     # ---------------------------------------------------------------------------- #
     # MegaLinter remains disabled here because the incremental local/project gates
     # are substantially cheaper and already cover the active source surfaces.
+
+# Local-first manifest integrity, ported from nabla-compose PR #269.
+# Runs without fetching hooks; installation via the existing Python pre-commit environment.
+-   repo: local
+    hooks:
+    -   id: precommit-integrity
+        name: "🔎 quality · Reject duplicate pre-commit hooks and repositories"
+        language: system
+        entry: python3 scripts/quality/check-precommit-config.py
+        pass_filenames: false
+        files: '^([.]pre-commit-config[.]yaml|scripts/quality/check-precommit-config[.]py|unit-tests/test_precommit_integrity[.]py)$'

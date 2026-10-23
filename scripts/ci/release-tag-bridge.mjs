@@ -92,18 +92,46 @@ try {
     process.exit(0);
   }
 
+  // A failed POST may have persisted server-side even when its response was lost.
+  // Reuse a remote alias only after verifying its exact commit SHA.
+  let created = true;
+  try {
+    run("gh", [
+      "api",
+      "--method",
+      "POST",
+      `repos/${repository}/git/refs`,
+      "-f",
+      `ref=refs/tags/v${legacy}`,
+      "-f",
+      `sha=${target}`,
+    ]);
+  } catch {
+    let remoteSha;
+    try {
+      remoteSha = run("gh", [
+        "api",
+        `repos/${repository}/git/ref/tags/v${legacy}`,
+        "--jq",
+        ".object.sha",
+      ]);
+    } catch {
+      throw new Error(
+        "Release alias publish failed; remote tag could not be verified",
+      );
+    }
+    if (remoteSha !== target) {
+      throw new Error(
+        "Existing remote release alias does not match the verified legacy commit",
+      );
+    }
+    created = false;
+  }
+  // A failed API mutation must not leave a misleading local tag.
   run("git", ["tag", `v${legacy}`, target]);
-  run("gh", [
-    "api",
-    "--method",
-    "POST",
-    `repos/${repository}/git/refs`,
-    "-f",
-    `ref=refs/tags/v${legacy}`,
-    "-f",
-    `sha=${target}`,
-  ]);
-  console.log(`RELEASE_TAG_CREATED alias=v${legacy} target=${target}`);
+  console.log(
+    `RELEASE_TAG_${created ? "CREATED" : "REUSED"} alias=v${legacy} target=${target}`,
+  );
 } catch (error) {
   console.error(`RELEASE_TAG_BLOCKED: ${error.message}`);
   process.exit(1);

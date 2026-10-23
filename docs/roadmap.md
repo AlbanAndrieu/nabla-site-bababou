@@ -1,3 +1,35 @@
+## Audit hors ligne des révisions pre-commit — 23 octobre 2026
+
+- [x] Renforcer le portage de `nabla-compose` : refuser les branches mouvantes (`main`, `master`, `HEAD`, `latest`, `refs/heads/*`) et les pseudo-versions `v1.2.x`. Conserver les tags de release numérotés explicites et les SHA Git.
+- [x] Tester la validation réelle hors réseau sur la **copie exacte** de `scripts/quality/check-precommit-config.py` et de `unit-tests/test_precommit_integrity.py` : hashes Git `e8dd25b370b5fbe3300f19581ea806f5bbe2aaf1` et `462246dc556e6da71df77c9f21e418dc2dff5749`, **9/9 unittest PASS** sur manifeste isolé représentant les 23 versions externes. Les 23 `rev` du manifeste distant actuel ont été vérifiées séparément, 23/23 compatibles avec le filtre. Ne pas confondre cette validation avec `just quality` sur checkout complet.
+- [ ] À reprendre au prochain accès au dépôt complet : `just precommit-config-test`, `just offline-pr`, `just p0`, puis `just quality` sous Node 26/npm 12 et les scanners habituels. Si la branche diverge de `master`, rebase contrôlé et revue des conflits avant publication.
+- [ ] **Dette bloquante historique** : les commits `[skip ci]` dans la PR Draft déclenchent volontairement `QG_CI_SKIP_DIRECTIVE`. Regrouper/recréer les commits en un historique revu et sans directive de saut avant Ready ; ne pas supprimer, affaiblir ou contourner le garde-fou. Cette étape n'est pas réalisée par les tests ciblés.
+- Aucun nouveau Dockerfile, aucun workflow GitHub Actions déclenché, aucune fusion.
+
+## P0 — contrôle strict hors ligne des PR (23 octobre 2026)
+
+- [x] `scripts/agent-offline-check.sh` : séparer le diagnostic exploratoire du contrôle strict (`AGENT_OFFLINE_REQUIRE_BASE=1`). Une base manquante ou divergente bloque désormais le mode strict, sans réseau ni suppression de contrôles.
+- [x] Corriger l'inventaire Git en délimitation NUL (`git -z`, `sort -z`, `mapfile -d ''`) : les noms comportant des sauts de ligne ou commençant par un tiret ne peuvent plus contourner les vérifications de syntaxe.
+- [x] Reprendre l'optimisation de `nabla-compose` : parser les fichiers Python et JSON en une seule invocation `python3` par passage L1, sans supprimer les erreurs bloquantes. Testée sur 30 fichiers syntaxiquement valides, puis sur JSON et Python volontairement malformés.
+- [x] Couvrir ces contrats par `unit-tests/agentOfflineBase.test.mjs`, `just offline-pr`, `just offline-base-test`, `just offline-contracts` et P0. **6/6 tests Node natifs** réussis sur les octets exacts des fichiers poussés, plus les cas indépendants Python/JSON et chemins Git. Empreintes Git concordantes ; aucun runner GitHub Actions.
+- [ ] Faire passer `just offline-pr` depuis un checkout réel avec la base de la PR ; exécuter la gate complète locale avec Node 26/npm 12. Les vérifications d'environnement simulé ne constituent pas une validation du dépôt intégral.
+- [ ] Avant de sortir #238 de Draft, traiter les messages de commit `[skip ci]` historiques par une stratégie de réécriture de branche revue et sûre, sans désactiver `QG_CI_SKIP_DIRECTIVE`. Ne pas faire de force-push implicite.
+
+## Convergence quality / pre-commit depuis nabla-compose (22 octobre 2026)
+
+- [x] Récupérer le contrat d'intégrité du manifeste de `nabla-compose` (PR #269), adapté à Bababou : hooks uniques, dépôts externes sans doublons, `rev` obligatoire et détection des clés YAML répétées, sans réseau.
+- [x] Ajouter le hook local `precommit-integrity`, la validation précoce dans la CI et le contrôle strict de `scripts/agent-quality-gate.sh`. Les contrôles BetterLeaks, actionlint, zizmor, Semgrep, SCA, Playwright, ZAP restent bloquants.
+- [x] Ajouter `just precommit-config-test` et `just loop` (L1 + intégrité + contrats rapides). **Ne pas confondre** ces contrôles locaux avec `just quality` ou les tests Preview au SHA exact.
+- [x] Supprimer l'ébauche du deuxième Dockerfile Talos et les scripts/tests/doc associés, sans toucher au `Dockerfile` Nginx historique. Vercel utilise son intégration native Next.js, pas un Dockerfile.
+- [ ] Après retour des crédits, valider sur le HEAD réel : `just precommit-config-test`, `just loop`, `just quality`, BetterLeaks puis Quality/Preview/ZAP. Les commits historiques `[skip ci]` de la PR restent incompatibles avec le garde-fou `QG_CI_SKIP_DIRECTIVE` tant qu'ils ne sont pas consolidés de manière revue.
+- [ ] Aligner les stratégies non spécifiques du dépôt avec `nabla-compose` uniquement après mesure : ShellCheck natif, sévérité/format des logs, stages pre-commit et workflows. Ne pas copier les hooks TrueNAS/Compose ni modifier la confidentialité.
+- **Pilotage des coûts commun** : réutiliser `nabla-compose/scripts/github-actions-usage.py` (PR #269) pour l'inventaire borné des Actions au lieu de dupliquer l'outil dans chaque site. Indicateurs partiels => non conclusifs, minutes wall-clock ≠ minutes facturées.
+
+## Déploiement Talos — décision d'architecture
+
+- [ ] Ne pas introduire de deuxième Dockerfile ou d'image Next.js sans décision d'architecture. Vercel déploie nativement Next.js et ne dépend pas du `Dockerfile` actuel, réservé au fallback statique Nginx.
+- [ ] Avant tout déploiement sur Talos, choisir la stratégie **unique** de construction d'image (image existante à faire évoluer ou buildpack standard), puis valider le runtime Next.js, la confidentialité, l'accès privé, l'Ingress Traefik et les contrôles exact-SHA. Aucune modification du cluster ou de Vercel.
+
 ## Protection du budget CI — 21 octobre 2026
 
 - [x] `scripts/ci/check-draft-workflows.mjs` bloque localement toute régression des garde-fous PR Draft sur Quality, Docker, Node 24 et Copilot. Vérification de la présence de `ready_for_review` ; contrôles sans réseau ni dépendances.

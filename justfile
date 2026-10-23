@@ -113,6 +113,20 @@ dagger-build:
 dagger-benchmark:
     bash scripts/dagger-benchmark.sh p0
 
+# Fast offline checks during iteration; not a substitute for just quality/publish.
+# Mirrors the bounded local-first feedback pattern from nabla-compose.
+loop:
+    just offline-l1
+    just precommit-config-test
+    just offline-contracts
+
+# Validate pre-commit structural integrity without fetching or executing hooks.
+# Uses PyYAML already supplied by the local pre-commit Python installation.
+precommit-config-test:
+    python3 -m py_compile scripts/quality/check-precommit-config.py
+    python3 scripts/quality/check-precommit-config.py
+    python3 -m unittest discover -s unit-tests -p 'test_precommit_integrity.py' -q
+
 # Dependency-free L1 fallback when GitHub, registries, or hooks are inaccessible.
 offline-release:
     node --check scripts/ci/release-tag-bridge.mjs
@@ -124,11 +138,20 @@ offline-draft-policy:
     node scripts/ci/check-draft-workflows.mjs
 
 offline-contracts:
-    node --test unit-tests/releaseTagBridge.test.mjs unit-tests/workflowDraftBudget.test.mjs
+    node --test unit-tests/releaseTagBridge.test.mjs unit-tests/workflowDraftBudget.test.mjs unit-tests/agentOfflineBase.test.mjs
     node scripts/ci/check-draft-workflows.mjs
 
 offline-l1:
     bash scripts/agent-offline-check.sh
+
+# Require the Git comparison base to exist and to be an ancestor.
+# This is a PR readiness diagnostic, not a CI replacement.
+offline-pr:
+    AGENT_OFFLINE_REQUIRE_BASE=1 bash scripts/agent-offline-check.sh
+
+offline-base-test:
+    node --check unit-tests/agentOfflineBase.test.mjs
+    node --test unit-tests/agentOfflineBase.test.mjs
 
 # Offline provenance check, requires an already downloaded official upstream checkout.
 audit-skill-verify upstream:
