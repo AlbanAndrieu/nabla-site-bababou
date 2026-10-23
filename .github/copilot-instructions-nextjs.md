@@ -6,7 +6,7 @@ Use `/AGENTS.md` as the canonical repository policy.
 
 - App Router lives at repository-root `app/`; there is no nested application package.
 - Next.js 16.3.4 / React 19 / TypeScript / `next-intl`.
-- Node.js local/agents/primary CI is pinned to `26.8.2`; package engine stays `>=24.11.0 <27`. Vercel production currently uses its supported Node 24.x runtime, which remains an explicit compatibility target; npm is `>=12.2.0 <13`.
+- Node.js local/agents/primary CI is pinned to `26.12.1`; package engine stays `>=24.11.0 <27`. Vercel production currently uses its supported Node 24.x runtime, which remains an explicit compatibility target; npm is `>=12.2.0 <13`.
 - First-class locales: `fr`, `en`, `de`, `no`; French is the unprefixed default on migrated routes.
 - Vercel Git Integration owns deployment; no local Vercel CLI dependency or wrapper is expected.
 - Ordinary PR branches do not auto-deploy. Runtime validation uses an explicit `vercel-preview-pr-*` checkpoint after Quality succeeds.
