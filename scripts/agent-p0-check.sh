@@ -53,6 +53,7 @@ P0_TESTS=(
     "unit-tests/ciScopeBehavior.test.ts"
     "unit-tests/agentOfflineContract.test.ts"
     "unit-tests/agentOfflineBase.test.mjs"
+    "unit-tests/stackUpgrade.test.mjs"
     "unit-tests/ciSemgrepContract.test.ts"
     "unit-tests/security-pipeline-contract.test.ts"
     "unit-tests/justBetterleaksContract.test.ts"
