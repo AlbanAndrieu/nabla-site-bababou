@@ -10,7 +10,15 @@ test("migrated legacy html routes redirect to localized Next canonicals", async 
   );
 
   assert.match(source, /LEGACY_HTML_REDIRECT_SLUGS\.flatMap/);
-  for (const slug of ["contact", "email", "link", "success", "cancel", "central-authorities", "central-authorities-failures"]) {
+  for (const slug of [
+    "contact",
+    "email",
+    "link",
+    "success",
+    "cancel",
+    "central-authorities",
+    "central-authorities-failures",
+  ]) {
     assert.ok(LEGACY_HTML_REDIRECT_SLUGS.includes(slug), slug);
   }
   assert.match(
