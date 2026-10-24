@@ -8,6 +8,10 @@ import LegacyOpeningSection from "@/components/home/LegacyOpeningSection";
 import LegacyMessageSection from "@/components/home/LegacyMessageSection";
 import LegacyFoundWebsiteSection from "@/components/home/LegacyFoundWebsiteSection";
 import LegacyLegalResourcesSection from "@/components/home/LegacyLegalResourcesSection";
+import LegacyPeopleSection from "@/components/home/LegacyPeopleSection";
+import LegacyAssociationsSection from "@/components/home/LegacyAssociationsSection";
+import LegacyDisclosureSection from "@/components/home/LegacyDisclosureSection";
+import LegacyFooterSection from "@/components/home/LegacyFooterSection";
 import SkipToMainContent from "@/components/SkipToMainContent";
 import { routing } from "@/i18n/routing";
 import styles from "./page.module.css";
@@ -72,6 +76,9 @@ export default async function HomePreview({
         <LegacyMessageSection />
         <LegacyFoundWebsiteSection />
         <LegacyLegalResourcesSection />
+        <LegacyPeopleSection />
+        <LegacyAssociationsSection />
+        <LegacyDisclosureSection />
         <section className={styles.resources} aria-labelledby="preview-resources">
           <h2 id="preview-resources">{t("linksTitle")}</h2>
           <ul>
@@ -81,6 +88,7 @@ export default async function HomePreview({
           </ul>
           <p className={styles.note}>{t("note")}</p>
         </section>
+        <LegacyFooterSection />
       </main>
     </>
   );
