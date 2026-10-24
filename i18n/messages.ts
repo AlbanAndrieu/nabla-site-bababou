@@ -16,6 +16,13 @@ const HOMEPAGE_PREVIEW_LOADERS = {
   no: () => import("@/messages/homepage-preview/no.json"),
 } as const satisfies Record<AppLocale, CatalogLoader>;
 
+const POLICY_INDEX_LOADERS = {
+  fr: () => import("@/messages/policy-index/fr.json"),
+  en: () => import("@/messages/policy-index/en.json"),
+  de: () => import("@/messages/policy-index/de.json"),
+  no: () => import("@/messages/policy-index/no.json"),
+} as const satisfies Record<AppLocale, CatalogLoader>;
+
 const CONTACT_LOADERS = {
   fr: () => import("@/messages/contact/fr.json"),
   en: () => import("@/messages/contact/en.json"),
@@ -101,6 +108,7 @@ export async function loadMessages(locale: AppLocale) {
   const [
     { default: site },
     { default: homepagePreview },
+    { default: policyIndex },
     { default: contact },
     { default: centralAuthorities },
     { default: centralAuthoritiesFailures },
@@ -113,6 +121,7 @@ export async function loadMessages(locale: AppLocale) {
   ] = await Promise.all([
     SITE_LOADERS[locale](),
     HOMEPAGE_PREVIEW_LOADERS[locale](),
+    POLICY_INDEX_LOADERS[locale](),
     CONTACT_LOADERS[locale](),
     CENTRAL_AUTHORITIES_LOADERS[locale](),
     CENTRAL_AUTHORITIES_FAILURES_LOADERS[locale](),
@@ -127,6 +136,7 @@ export async function loadMessages(locale: AppLocale) {
   const catalogs = [
     site,
     homepagePreview,
+    policyIndex,
     contact,
     centralAuthorities,
     centralAuthoritiesFailures,
