@@ -150,7 +150,8 @@ offline-contracts:
 # TypeScript parser requires npm ci; not part of dependency-free offline-l1.
 source-check:
     npm run check:jsx-attributes
-    node --test unit-tests/jsxDuplicateAttributes.test.mjs unit-tests/siteUiConvergenceContract.test.mjs
+    node --test unit-tests/jsxDuplicateAttributes.test.mjs unit-tests/siteUiConvergenceContract.test.mjs unit-tests/homepageRuntimeParity.test.mjs unit-tests/homepageAssociationsParity.test.mjs unit-tests/backToTopMotionContract.test.mjs
+    node scripts/quality/homepage-runtime-parity.mjs
     @echo "QG_SOURCE_CHECK_OK: targeted source tests only; build and publication NOT_RUN"
 
 offline-l1:
