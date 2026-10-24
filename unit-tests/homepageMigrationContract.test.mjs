@@ -247,3 +247,20 @@ test("legal resource introduction keeps approved text without duplicating sensit
   assert.ok(page.indexOf("<LegacyFoundWebsiteSection />") < page.indexOf("<LegacyLegalResourcesSection />"));
   assert.doesNotMatch(component, /passport-fr-bababou|flag-norway-location|14CV32249/);
 });
+
+test("approved public supporting sections remain in document order and preserve native disclosure", () => {
+  const page = read("app/[locale]/home-preview/page.tsx");
+  const names = ["LegacyLegalResourcesSection", "LegacyPeopleSection", "LegacyAssociationsSection", "LegacyDisclosureSection", "LegacyFooterSection"];
+  const positions = names.map((name) => page.indexOf("<" + name + " />"));
+  assert.ok(positions.every((position) => position !== -1));
+  assert.deepEqual(positions, [...positions].sort((a, b) => a - b));
+  const disclosure = read("components/home/LegacyDisclosureSection.tsx");
+  assert.match(disclosure, /<details>/);
+  assert.match(disclosure, /<summary>/);
+  for (const target of ["service_terms", "privacy_policy", "impressum", "accessibility_statement", "cookie_policy"]) {
+    assert.match(read("components/home/LegacyFooterSection.tsx"), new RegExp(target));
+  }
+  const people = read("components/home/LegacyPeopleSection.tsx");
+  assert.match(people, /href="\/people-contacted\.html"/);
+  assert.match(people, /href="\/central-authorities\.html"/);
+});
