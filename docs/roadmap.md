@@ -36,7 +36,13 @@ La priorité de développement est **P1 parité → P2 accessibilité → P3 i18
 
 ## P2 — Accessibilité WCAG 2.2 AA
 
-- [ ] **Action du propriétaire — installation manuelle du skill Vercel (à demander explicitement)** : demander au propriétaire d'exécuter sur sa machine `npx skills use "https://github.com/vercel-labs/agent-skills" --skill "web-design-guidelines"`. L'agent ne peut pas confirmer l'installation (accès npm indisponible). Après installation, appliquer la sortie complète du skill et résoudre les chemins relatifs depuis le répertoire `supporting-files` indiqué.
+- [x] **Installation manuelle confirmée du skill Vercel** : le propriétaire a fourni la sortie de `npx skills list` et de `find`. Fichier présent dans son workspace : `.agents/skills/web-design-guidelines/SKILL.md`. Cette installation locale n'est pas encore présente sur la branche GitHub et ne valide pas l'interface.
+- [ ] **Revue de commit du skill** : vérifier `skills-lock.json` et les éventuels liens d'agents avant de versionner le skill. Ne jamais inclure de secrets ou de fichiers générés.
+- [x] **Revue statique Vercel Web Interface Guidelines** : lire les règles actuelles de `vercel-labs/web-interface-guidelines/main/command.md` et auditer la prévisualisation React, le header et le footer. Aucune conformité WCAG navigateur n'est attestée.
+- [ ] **P2 clavier** — `app/[locale]/layout.tsx:92`, `app/[locale]/home-preview/page.tsx:59` : placer le lien d'évitement avant les contrôles du header dans l'ordre du DOM, en évitant un second lien sur les pages déjà équipées. Vérifier la cible `#main-content` pour chaque route.
+- [ ] **P2 formulaire** — `components/RouteHeader.tsx:101` : donner au sélecteur de langue un `name` et un `autoComplete` appropriés, sans modifier la navigation i18n.
+- [ ] **P2 thème** — `app/[locale]/layout.tsx:65`, `app/design-tokens.css:81` : synchroniser la propriété CSS `color-scheme` avec `data-theme` ; vérifier visuellement les contrôles natifs et les scrollbars en thème sombre.
+
 
 - [x] Définir pour la prévisualisation une structure `main`/titres, un lien d'évitement, un focus visible, des cibles tactiles et le respect de `prefers-reduced-motion`.
 - [x] Appliquer les règles Vercel Web Interface Guidelines aux liens, titres et ancres de la prévisualisation. Ajouter les tests source et Playwright responsive (320/375/768/1280 px). La validation navigateur réelle reste à faire.
