@@ -1,4 +1,5 @@
 import { type AppLocale, routing } from "@/i18n/routing";
+import { NEXT_CANONICAL_SLUGS } from "@/lib/mainContentRoute.mjs";
 
 export type PageCategory =
   | "primaryVisibility"
@@ -90,17 +91,7 @@ export const SEO_PAGE_SLUGS = sitePageEntries
   .map(([slug]) => slug) as SeoPageSlug[];
 
 const seoPageSlugs = new Set<SitePageSlug>(SEO_PAGE_SLUGS);
-const nextCanonicalSlugs = new Set<SitePageSlug>([
-  "contact",
-  "central-authorities",
-  "central-authorities-failures",
-  "central-authorities-documents",
-  "nre",
-  "email",
-  "link",
-  "success",
-  "cancel",
-]);
+const nextCanonicalSlugs = new Set<string>(NEXT_CANONICAL_SLUGS);
 
 export const NON_INDEXABLE_ROBOTS = { index: false, follow: false } as const;
 
