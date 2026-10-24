@@ -46,7 +46,7 @@ La priorité de développement est **P1 parité → P2 accessibilité → P3 i18
 - [x] **Parité associations — Site Alban #255** : reprendre le principe de repli local quand une illustration échoue. Trois SVG approuvés et liens inchangés, sans image externe ; noms textuels disponibles. Contrat Node + Playwright ajouté, exécution navigateur `NOT_RUN`.
 - [x] **Revue statique Vercel Web Interface Guidelines** : lire les règles actuelles de `vercel-labs/web-interface-guidelines/main/command.md` et auditer la prévisualisation React, le header et le footer. Aucune conformité WCAG navigateur n'est attestée.
 - [x] **P2 clavier — homepage prévisualisation** : placer l'unique lien d'évitement en première position dans le header Next, avant les contrôles. Test clavier ajouté dans Playwright (NOT_RUN navigateur).
-- [ ] **P2 clavier — autres pages** : inventorier les liens d'évitement et les cibles main avant toute généralisation. Ne pas introduire de doublons.
+- [x] **P2 clavier — pages Next** : le header gère un lien d’évitement unique et premier au clavier pour les 12 pages Next concernées et la Preview. Les liens dans les pages ont été retirés ; le helper refuse les routes inconnues et les identifiants mal typés. Contrat Node ajouté ; Playwright adapté mais NOT_RUN.
 
 - [x] Définir pour la prévisualisation une structure `main`/titres, un lien d'évitement, un focus visible, des cibles tactiles et le respect de `prefers-reduced-motion`.
 - [x] Appliquer les règles Vercel Web Interface Guidelines aux liens, titres et ancres de la prévisualisation. Ajouter les tests source et Playwright responsive (320/375/768/1280 px). La validation navigateur réelle reste à faire.

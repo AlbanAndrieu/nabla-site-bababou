@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 
-import SkipToMainContent from "@/components/SkipToMainContent";
 import TopAnchor from "@/components/TopAnchor";
 import ActionLink from "@/components/ui/ActionLink";
 import Container from "@/components/ui/Container";
@@ -142,7 +141,6 @@ export default async function PolicyIndexPage({
   return (
     <>
       <TopAnchor />
-      <SkipToMainContent />
       <main
         id="main-content"
         className={`site-content-page ${layout.main}`}

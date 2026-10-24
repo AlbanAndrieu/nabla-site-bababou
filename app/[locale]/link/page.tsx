@@ -3,7 +3,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import SkipToMainContent from "@/components/SkipToMainContent";
 import TopAnchor from "@/components/TopAnchor";
 import Container from "@/components/ui/Container";
 import layout from "@/components/ui/ContentLayout.module.css";
@@ -61,7 +60,6 @@ export default async function LinkPage({
   return (
     <div className="site-content-page page-dark">
       <TopAnchor />
-      <SkipToMainContent />
       <main id="main-content" className={layout.main}>
         <Container>
           <header className={layout.centeredHeader}>

@@ -21,7 +21,8 @@ test("explicit themes control native form widgets and scrollbars", () => {
 test("the preview keeps a unique skip link before the navigation controls", () => {
   const header = read("components/RouteHeader.tsx");
   const preview = read("app/[locale]/home-preview/page.tsx");
-  assert.match(header, /parts.length === 1 && parts\[0\] === "home-preview"/);
+  assert.match(header, /hasMainContentRoute\(parts\)/);
+  assert.match(header, /hasMainContent \? \(/);
   assert.equal((header.match(/<a className="skip-to-main"/g) ?? []).length, 1);
   assert.ok(header.indexOf('<a className="skip-to-main"') < header.indexOf("<Container "));
   assert.doesNotMatch(preview, /<SkipToMainContent \/>/);

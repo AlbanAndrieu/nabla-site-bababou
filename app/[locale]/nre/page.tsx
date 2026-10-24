@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 
-import SkipToMainContent from "@/components/SkipToMainContent";
 import TopAnchor from "@/components/TopAnchor";
 import Container from "@/components/ui/Container";
 import { type AppLocale, routing } from "@/i18n/routing";
@@ -51,7 +50,6 @@ export default async function NrePage({ params }: PageProps<"/[locale]/nre">) {
   return (
     <>
       <TopAnchor />
-      <SkipToMainContent />
       <main id="main-content" className={styles.page}>
         <Container>
           <NreHero copy={copy} />

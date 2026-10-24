@@ -7,6 +7,7 @@ import type { ChangeEvent } from "react";
 
 import Container from "@/components/ui/Container";
 import { type AppLocale, routing } from "@/i18n/routing";
+import { hasMainContentRoute } from "@/lib/mainContentRoute.mjs";
 import { canonicalPagePath } from "@/lib/sitePageCatalog";
 import styles from "./RouteHeader.module.css";
 
@@ -43,7 +44,7 @@ export default function RouteHeader() {
   const router = useRouter();
   const parts = routeParts(pathname);
   const showNavigation = parts.length > 0;
-  const isHomePreview = parts.length === 1 && parts[0] === "home-preview";
+  const hasMainContent = hasMainContentRoute(parts);
   const showLanguageSwitcher = ROUTE_HEADER_LANGUAGE_SWITCHER_ENABLED;
 
   if (!showNavigation && !showLanguageSwitcher) return null;
@@ -72,7 +73,7 @@ export default function RouteHeader() {
 
   return (
     <header className={headerClassName}>
-      {isHomePreview ? (
+      {hasMainContent ? (
         <a className="skip-to-main" href="#main-content">
           {t("skipToMainContent")}
         </a>

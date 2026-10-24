@@ -7,7 +7,6 @@ import LegalPolicyContent from "@/components/policy/LegalPolicyContent";
 import PrivacyPolicyContent from "@/components/policy/PrivacyPolicyContent";
 import PublicPolicyContent from "@/components/policy/PublicPolicyContent";
 import ServiceTermsContent from "@/components/policy/ServiceTermsContent";
-import SkipToMainContent from "@/components/SkipToMainContent";
 import TopAnchor from "@/components/TopAnchor";
 import Container from "@/components/ui/Container";
 import layout from "@/components/ui/ContentLayout.module.css";
@@ -127,7 +126,6 @@ export default async function PolicyPage({
   return (
     <>
       <TopAnchor />
-      <SkipToMainContent />
       <main
         id="main-content"
         className={`site-content-page policy-legal ${layout.main}`}

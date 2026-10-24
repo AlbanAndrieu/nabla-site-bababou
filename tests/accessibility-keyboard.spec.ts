@@ -32,15 +32,16 @@ test.describe("Keyboard focus visibility", () => {
       await page.goto(route, { waitUntil: "domcontentloaded" });
       await expect(page.locator("body")).toBeVisible();
 
+      const skipLink = page.locator('a.skip-to-main[href="#main-content"]');
+      await expect(skipLink).toHaveCount(1);
+      await page.keyboard.press("Tab");
+      await expect(skipLink).toBeFocused();
+      await expectVisibleFocus(skipLink);
+
       const localeSelect = page.locator("#route-header-locale");
       await expect(localeSelect).toBeVisible();
       await tabUntilFocused(page, localeSelect, 10);
       await expectVisibleFocus(localeSelect);
-
-      const skipLink = page.locator('a.skip-to-main[href="#main-content"]');
-      await expect(skipLink).toHaveCount(1);
-      await tabUntilFocused(page, skipLink, 10);
-      await expectVisibleFocus(skipLink);
 
       const mainAction = page.locator('main a[href]:visible, main button:not([disabled]):visible, main summary:visible').first();
       await expect(mainAction).toBeVisible();
