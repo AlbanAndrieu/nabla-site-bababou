@@ -66,6 +66,20 @@ La publication de nouvelles données familiales relève de [publication-redactio
 
 `scripts/production-home-smoke.sh` effectue les requêtes publiques en lecture seule. `PRODUCTION_SMOKE_VERBOSE=1` développe le détail. Distinguer `403`/auth, `429`/challenge, indisponibilité DNS et véritable `5xx`.
 
+### Recette dédiée — refactoring des routes et politiques
+
+Les listes communes sont dans `lib/mainContentRoute.mjs`. Le module `lib/nativePolicyCatalog.ts` décide des URL et du contenu juridique. Les traductions de l'index sont chargées par `i18n/messages.ts`. Avant publication de ce type de refactoring :
+
+1. Exécuter `just offline-contracts` pour la parité des slugs, des ancres et des catalogues.
+2. Exécuter `npm run test:unit` sur Node 24/npm 12 pour le fournisseur juridique typé et les anciens contrats de routage.
+3. Exécuter `npm run typecheck` après génération des types Next.
+4. Exécuter `npm run build` et comparer les redirections `.html`, `/ca/index.html` et `/nre-{fr,en}.html`.
+5. Exécuter `npx playwright test tests/policy-index.spec.ts tests/policy-next.spec.ts tests/accessibility-keyboard.spec.ts` sur une Preview **au SHA exact** et autorisée.
+6. Comparer les six liens juridiques, les titres, descriptions, canonical et hreflang sur FR/EN/DE/NO.
+7. Réexécuter `just quality`, la vérification privée et les scanners avant Ready/merge.
+
+Une égalité de listes et de traductions vérifiée dans les sources est une **preuve L0**, pas une recette HTTP ni un build validé. Préserver la page `public/index.html` et les fichiers juridiques historiques.
+
 ## 4. Diagnostic — signatures qui ne sont pas déductibles du code
 
 | Signature | Hypothèse à vérifier | Action en lecture seule |
