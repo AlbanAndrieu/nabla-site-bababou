@@ -24,7 +24,20 @@ test("all reviewed policy pages are owned by the native registry", async () => {
   assert.match(route, /POLICY_PAGE_SLUGS/);
   assert.match(route, /generateStaticParams/);
   assert.match(route, /getPolicyPage/);
-  assert.match(route, /<SkipToMainContent \/>/);
+  // The header owns the first keyboard tab stop and the page owns the target.
+  const header = await readFile(
+    new URL("../components/RouteHeader.tsx", import.meta.url),
+    "utf8",
+  );
+  const routeGuard = await readFile(
+    new URL("../lib/mainContentRoute.mjs", import.meta.url),
+    "utf8",
+  );
+  assert.doesNotMatch(route, /<SkipToMainContent \/>/);
+  assert.match(route, /id="main-content"/);
+  assert.match(header, /hasMainContentRoute\(parts\)/);
+  assert.match(header, /className="skip-to-main" href="#main-content"/);
+  assert.match(routeGuard, /"policy"/);
   assert.match(route, /<TopAnchor \/>/);
   assert.doesNotMatch(route, /PublicHtmlFragment/);
   assert.doesNotMatch(route, /htmlFromPublic/);
