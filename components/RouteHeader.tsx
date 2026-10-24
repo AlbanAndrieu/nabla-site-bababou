@@ -7,6 +7,7 @@ import type { ChangeEvent } from "react";
 
 import Container from "@/components/ui/Container";
 import { type AppLocale, routing } from "@/i18n/routing";
+import { hasMainContentRoute } from "@/lib/mainContentRoute.mjs";
 import { canonicalPagePath } from "@/lib/sitePageCatalog";
 import styles from "./RouteHeader.module.css";
 
@@ -43,6 +44,7 @@ export default function RouteHeader() {
   const router = useRouter();
   const parts = routeParts(pathname);
   const showNavigation = parts.length > 0;
+  const hasMainContent = hasMainContentRoute(parts);
   const showLanguageSwitcher = ROUTE_HEADER_LANGUAGE_SWITCHER_ENABLED;
 
   if (!showNavigation && !showLanguageSwitcher) return null;
@@ -71,6 +73,11 @@ export default function RouteHeader() {
 
   return (
     <header className={headerClassName}>
+      {hasMainContent ? (
+        <a className="skip-to-main" href="#main-content">
+          {t("skipToMainContent")}
+        </a>
+      ) : null}
       <Container className={styles.inner}>
         {showNavigation ? (
           <nav className={styles.nav} aria-label={t("breadcrumbLabel")}>
@@ -100,6 +107,8 @@ export default function RouteHeader() {
             <span>{t("localeSwitcherLabel")}</span>
             <select
               id="route-header-locale"
+              name="locale"
+              autoComplete="off"
               value={locale}
               onChange={handleLocaleChange}
               aria-label={t("switchLanguage")}

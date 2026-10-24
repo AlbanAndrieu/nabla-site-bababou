@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import ContactHero from "@/components/ContactHero";
-import SkipToMainContent from "@/components/SkipToMainContent";
 import TopAnchor from "@/components/TopAnchor";
 import ActionLink from "@/components/ui/ActionLink";
 import { routing } from "@/i18n/routing";
@@ -35,7 +34,6 @@ export default async function ContactPage({
   return (
     <>
       <TopAnchor />
-      <SkipToMainContent />
       <main
         id="main-content"
         className="site-content-page page-contact page-dark"

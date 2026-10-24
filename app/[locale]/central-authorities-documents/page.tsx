@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import SkipToMainContent from "@/components/SkipToMainContent";
 import TopAnchor from "@/components/TopAnchor";
 import Container from "@/components/ui/Container";
 import { routing } from "@/i18n/routing";
@@ -62,7 +61,6 @@ export default async function CentralAuthorityDocumentsPage({
   return (
     <>
       <TopAnchor />
-      <SkipToMainContent />
       <main id="main-content" className={styles.page}>
         <Container>
           <header className={styles.hero}>

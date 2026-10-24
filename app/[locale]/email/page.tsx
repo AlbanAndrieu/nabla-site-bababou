@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import SiteWidgetsScript from "@/components/SiteWidgetsScript";
-import SkipToMainContent from "@/components/SkipToMainContent";
 import TopAnchor from "@/components/TopAnchor";
 import Container from "@/components/ui/Container";
 import layout from "@/components/ui/ContentLayout.module.css";
@@ -46,7 +45,6 @@ export default async function EmailPage({
   return (
     <div className="site-content-page page-dark">
       <TopAnchor />
-      <SkipToMainContent />
       <main id="main-content" className={layout.main}>
         <Container>
           <header className={layout.header}>

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import SkipToMainContent from "@/components/SkipToMainContent";
 import TopAnchor from "@/components/TopAnchor";
 import ActionLink from "@/components/ui/ActionLink";
 import Container from "@/components/ui/Container";
@@ -40,7 +39,6 @@ export default async function TestPage({
   return (
     <div className="site-content-page page-dark">
       <TopAnchor />
-      <SkipToMainContent />
       <main id="main-content" className={layout.main}>
         <Container>
           <header className={layout.header}>

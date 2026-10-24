@@ -12,7 +12,6 @@ import LegacyPeopleSection from "@/components/home/LegacyPeopleSection";
 import LegacyAssociationsSection from "@/components/home/LegacyAssociationsSection";
 import LegacyDisclosureSection from "@/components/home/LegacyDisclosureSection";
 import LegacyFooterSection from "@/components/home/LegacyFooterSection";
-import SkipToMainContent from "@/components/SkipToMainContent";
 import { routing } from "@/i18n/routing";
 import styles from "./page.module.css";
 
@@ -56,7 +55,6 @@ export default async function HomePreview({
 
   return (
     <>
-      <SkipToMainContent />
       <main id="main-content" className={styles.main}>
         <section className={styles.hero} aria-labelledby="preview-title">
           <p className={styles.eyebrow}>{t("eyebrow")}</p>
@@ -82,9 +80,8 @@ export default async function HomePreview({
         <section className={styles.resources} aria-labelledby="preview-resources">
           <h2 id="preview-resources">{t("linksTitle")}</h2>
           <ul>
-            <li><a href="/people-contacted.html">{t("history")}</a></li>
-            <li><a href="/for-fathers.html">{t("fathers")}</a></li>
             <li><a href="/feed.xml">{t("rss")}</a></li>
+            <li><a href="/eleonore-feed.xml">{t("rss")} — Éléonore</a></li>
           </ul>
           <p className={styles.note}>{t("note")}</p>
         </section>

@@ -28,14 +28,15 @@
 | Contact et lien mailto | `public/index.html` → `components/home/LegacyContactSection.tsx` | Première section reprise à l'identique (titre, adresse et message) avec test de parité ; traduction validée encore à faire |
 | Introduction aux ressources juridiques | `public/index.html` → `components/home/LegacyLegalResourcesSection.tsx` | Paragraphe public et lien `/for-fathers.html` migrés ; les cartes contenant des identifiants, des lieux et des assertions sur des tiers restent hors de la prévisualisation | 
 | Navigation « People I contacted » et « Central Authorities » | `public/index.html` → `LegacyPeopleSection.tsx` | Titres, description et liens migrés ; page D3/ARF historique conservée | 
-| Associations soutenues | `public/index.html` → `LegacyAssociationsSection.tsx` | Trois liens publiés migrés ; images historiques non nécessaires aux liens fonctionnels | 
-| Notice documentaire | `public/index.html` → `LegacyDisclosureSection.tsx` | Notice publique et interaction native `details/summary` reprises | 
-| Footer légal | `public/index.html` → `LegacyFooterSection.tsx` | Cinq liens politiques et retour au contenu principal | 
+| Associations soutenues | `public/index.html` → `LegacyAssociationsSection.tsx` | Trois liens et trois SVG locaux restaurés en React ; texte accessible permanent et fallback monogramme en cas de 404 (navigateur NOT_RUN) | 
+| Notice documentaire | `public/index.html` → `LegacyDisclosureSection.tsx` | Titre et deux paragraphes vérifiés à l'identique ; interaction native `details/summary`, cible tactile de 44 px, focus et survol ; navigateur NOT_RUN | 
+| Navigation légale dans la prévisualisation | `public/index.html` → `LegacyFooterSection.tsx` | Cinq liens conservés, cibles vers `POLICY_PAGES.*.canonicalPath`, liste accessible et retour au contenu ; le footer Next global reste le seul pied de page du document | 
 | Personnes contactées | `public/people-contacted.html`, D3/ARF | Lien conservé ; comportement interactif non migré |
 | Informations pour les pères | `public/for-fathers.html` | Lien conservé ; contenu non migré |
 | Flux RSS principal et dédié | `public/feed.xml`, `public/eleonore-feed.xml` | Flux existants conservés ; footer commun |
 | Google Translate | `public/site-google-translate.js` | À conserver en fallback pour contenu sans traduction approuvée |
 | Thèmes et animations | `public/theme-toggle.js`, CSS legacy | À vérifier sous clavier, contraste et reduced-motion |
+| Scripts et intégrations de la homepage | `scripts/quality/homepage-runtime-parity.mjs` | Contrôle source des 15 scripts approuvés. Les fonctionnalités `partial` ou `pending` ne sont pas considérées comme migrées ; les nouveaux scripts demandent une mise à jour du registre |
 | Widgets, statut, anti-robots | `public/site-widgets.js`, Turnstile, scripts legacy | À inventorier avant remplacement |
 | Page expérimentale et script Mixpanel historique | `public/test.html`, `public/index.js` | Utilisé par `/test.html` : ne pas supprimer sans décision sur ce comportement et sa collecte |
 | Analytics et médias externes | `public/site-analytics.js`, scripts du HTML legacy | À valider sans augmenter la collecte |
@@ -80,3 +81,11 @@ Ne pas retirer `public/index.html` et ses ressources avant l'approbation. Ne pas
 ## État de fin de migration des sections sûres — 24 octobre 2026
 
 Les blocs textuels publics sans données sensibles ont été portés dans la prévisualisation React, sans changer la page publique. La migration **complète** du HTML historique n'est pas attestée : les cartes contenant données personnelles ou accusations demandent une revue de publication ; D3/ARF, Turnstile, widgets, thème, traduction automatique, analytics et intégrations tierces doivent obtenir une équivalence testée avant bascule. Aucun test visuel, navigateur ou quality gate complète exécuté lors de ce lot.
+
+## Contrat source des scripts — 24 octobre 2026
+
+- Exécuter `just homepage-runtime-parity` pour comparer les inclusions de scripts de `public/index.html` au registre versionné.
+- Le contrôle échoue si un script est ajouté, supprimé ou dupliqué sans réconciliation, ou si `/`, `noindex`, le drapeau de Preview ou la frontière analytics changent.
+- Les 15 scripts connus comprennent Font Awesome, connexion, Turnstile, thème, Google Translate, analytics, D3, ARF, jQuery, Popper, Bootstrap, annonce de statut et widgets.
+- L’état `partial` décrit seulement une partie du comportement ; `pending` signifie qu’aucune parité n’est revendiquée.
+- Tests Node ciblés sur fixtures : 5/5 PASS. Les fichiers testés portent les empreintes SHA des fichiers publiés. Exécution sur le checkout complet et navigateur : NOT_RUN.

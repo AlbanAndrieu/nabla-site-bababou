@@ -36,7 +36,10 @@ test("preview is opt-in, non-indexable and cannot replace the approved homepage"
 
 test("preview uses accessible navigation and keeps legacy resources available", () => {
   const page = read("app/[locale]/home-preview/page.tsx");
-  assert.match(page, /<SkipToMainContent \/>/);
+  assert.doesNotMatch(page, /<SkipToMainContent \/>/);
+  const header = read("components/RouteHeader.tsx");
+  assert.match(header, /hasMainContent \? \(/);
+  assert.match(header, /<a className="skip-to-main" href="#main-content">/);
   assert.match(page, /<main id="main-content"/);
   assert.match(page, /aria-labelledby="preview-title"/);
   assert.match(page, /href="#preview-contact"/);
@@ -255,12 +258,39 @@ test("approved public supporting sections remain in document order and preserve 
   assert.ok(positions.every((position) => position !== -1));
   assert.deepEqual(positions, [...positions].sort((a, b) => a - b));
   const disclosure = read("components/home/LegacyDisclosureSection.tsx");
-  assert.match(disclosure, /<details>/);
-  assert.match(disclosure, /<summary>/);
+  assert.match(disclosure, /<details className=\{styles\.details\}>/);
+  assert.match(disclosure, /<summary className=\{styles\.summary\}>/);
+  const disclosureCss = read("components/home/LegacyDisclosureSection.module.css");
+  assert.match(disclosureCss, /min-height: 2\.75rem/);
+  assert.match(disclosureCss, /\.summary:focus-visible/);
+  assert.match(disclosureCss, /\.summary:hover/);
+  assert.doesNotMatch(disclosureCss, /transition:\s*all\b|outline:\s*none\b/);
   for (const target of ["service_terms", "privacy_policy", "impressum", "accessibility_statement", "cookie_policy"]) {
     assert.match(read("components/home/LegacyFooterSection.tsx"), new RegExp(target));
   }
   const people = read("components/home/LegacyPeopleSection.tsx");
   assert.match(people, /href="\/people-contacted\.html"/);
   assert.match(people, /href="\/central-authorities\.html"/);
+});
+
+test("document disclosure keeps the exact approved public text", () => {
+  const legacy = read("public/index.html");
+  const component = read("components/home/LegacyDisclosureSection.tsx");
+  const original = legacy.match(
+    /<summary id="documents-disclosure-heading"[^>]*>([\s\S]*?)<\/summary>[\s\S]*?<div class="mt-3">([\s\S]*?)<\/div>/,
+  );
+  const migrated = component.match(
+    /<summary className=\{styles\.summary\}>([\s\S]*?)<\/summary>[\s\S]*?<div className=\{styles\.content\}>([\s\S]*?)<\/div>/,
+  );
+  assert.ok(original && migrated, "missing disclosure section");
+
+  const normalize = (value) => value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+  const paragraphs = (body) => [...body.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/g)]
+    .map((match) => normalize(match[1]));
+
+  assert.equal(normalize(migrated[1]), normalize(original[1]));
+  assert.deepEqual(paragraphs(migrated[2]), paragraphs(original[2]));
+  assert.equal(paragraphs(original[2]).length, 2);
+  assert.match(component, /<details className=\{styles\.details\}>/);
+  assert.match(component, /<summary className=\{styles\.summary\}>/);
 });

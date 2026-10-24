@@ -1,16 +1,22 @@
 {
   "version": 1,
   "skills": {
-    "liteparse": {
-      "source": "run-llama/llamaparse-agent-skills",
-      "sourceType": "github",
-      "computedHash": "93b85e81ea3e469a0628e9a31a14c510f11a4531f72f3647783ab5e5cac71858"
-    },
     "agent-browser": {
       "source": "vercel-labs/agent-browser",
       "sourceType": "github",
       "skillPath": "skills/agent-browser/SKILL.md",
       "computedHash": "ecc7641aea05f85ca3b11e7759d32aaf52fe05946ab4b63739c7bf78a41237a2"
+    },
+    "frontend-design": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "skillPath": "skills/frontend-design/SKILL.md",
+      "computedHash": "89496d5dd00f4810205f351759594fc2742bf8eea85a2f2b2d1de59f4bd91576"
+    },
+    "liteparse": {
+      "source": "run-llama/llamaparse-agent-skills",
+      "sourceType": "github",
+      "computedHash": "93b85e81ea3e469a0628e9a31a14c510f11a4531f72f3647783ab5e5cac71858"
     },
     "next-cache-components-adoption": {
       "source": "vercel/next.js",
@@ -49,6 +55,12 @@
       "source": "docs.stripe.com",
       "sourceType": "well-known",
       "computedHash": "46bb3c16878f93b953ed901b950686d64f04f90c67400bf31e1a0d7790d889df"
+    },
+    "web-design-guidelines": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/web-design-guidelines/SKILL.md",
+      "computedHash": "a6a44d5498f7e8f68289902f3dedfc6f38ae0cee1e96527c80724cf27f727c2a"
     }
   }
 }

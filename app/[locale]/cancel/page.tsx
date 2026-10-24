@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import CheckoutResultCard from "@/components/CheckoutResultCard";
-import SkipToMainContent from "@/components/SkipToMainContent";
 import TopAnchor from "@/components/TopAnchor";
 import ActionLink, {
   actionClassName,
@@ -53,7 +52,6 @@ export default async function CancelPage({
   return (
     <div className="site-content-page page-dark">
       <TopAnchor />
-      <SkipToMainContent />
       <main id="main-content" className={layout.main}>
         <Container>
           <CheckoutResultCard

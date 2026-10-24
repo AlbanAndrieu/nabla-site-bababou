@@ -18,8 +18,11 @@ test("priority keyboard surfaces expose visible focus contracts", async () => {
   assert.match(theme, /a:focus-visible,\s*button:focus-visible\s*{[^}]*outline:\s*2px solid/s);
   assert.match(routeHeader, /\.select:focus-visible\s*{[^}]*outline:\s*3px solid var\(--ui-focus-ring\)/s);
   assert.match(action, /\.action:focus-visible\s*{[^}]*outline:\s*3px solid var\(--ui-focus-ring\)/s);
-  assert.match(contact, /<SkipToMainContent \/>/);
-  assert.match(policy, /<SkipToMainContent \/>/);
+  assert.doesNotMatch(contact, /<SkipToMainContent \/>/);
+  assert.doesNotMatch(policy, /<SkipToMainContent \/>/);
+  const header = await read("components/RouteHeader.tsx");
+  assert.match(header, /hasMainContentRoute\(parts\)/);
+  assert.match(header, /<a className="skip-to-main" href="#main-content">/);
   assert.match(contact, /id="main-content"/);
   assert.match(policy, /id="main-content"/);
 
