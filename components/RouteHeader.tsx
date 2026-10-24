@@ -100,6 +100,8 @@ export default function RouteHeader() {
             <span>{t("localeSwitcherLabel")}</span>
             <select
               id="route-header-locale"
+              name="locale"
+              autoComplete="off"
               value={locale}
               onChange={handleLocaleChange}
               aria-label={t("switchLanguage")}

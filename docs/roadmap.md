@@ -37,11 +37,14 @@ La priorité de développement est **P1 parité → P2 accessibilité → P3 i18
 ## P2 — Accessibilité WCAG 2.2 AA
 
 - [x] **Installation manuelle confirmée du skill Vercel** : le propriétaire a fourni la sortie de `npx skills list` et de `find`. Fichier présent dans son workspace : `.agents/skills/web-design-guidelines/SKILL.md`. Cette installation locale n'est pas encore présente sur la branche GitHub et ne valide pas l'interface.
-- [ ] **Revue de commit du skill** : vérifier `skills-lock.json` et les éventuels liens d'agents avant de versionner le skill. Ne jamais inclure de secrets ou de fichiers générés.
+- [x] **Skills versionnés** : frontend-design, web-design-guidelines et liens symboliques sont présents dans la PR #245 ; mise.lock est également présent.
+- [x] **P2 sélecteur de langue** : name="locale" et autoComplete="off" préservent le choix contrôlé par la navigation React.
+- [x] **P2 thème** : color-scheme light/dark suit les attributs data-theme explicites ; rendu réel navigateur NOT_RUN.
+- [x] **Convergence Alban #255** : contrôle des attributs JSX dupliqués (TS17001) via TypeScript pour app/ et components/, tests ciblés et just source-check avec npm installé.
+- [ ] **Validation au HEAD** : exécuter le contrôle source sur un checkout complet sous Node 24/npm 12 puis build, Playwright, axe et ZAP. Les preuves partielles ne sont pas une validation L3.
 - [x] **Revue statique Vercel Web Interface Guidelines** : lire les règles actuelles de `vercel-labs/web-interface-guidelines/main/command.md` et auditer la prévisualisation React, le header et le footer. Aucune conformité WCAG navigateur n'est attestée.
 - [ ] **P2 clavier** — `app/[locale]/layout.tsx:92`, `app/[locale]/home-preview/page.tsx:59` : placer le lien d'évitement avant les contrôles du header dans l'ordre du DOM, en évitant un second lien sur les pages déjà équipées. Vérifier la cible `#main-content` pour chaque route.
-- [ ] **P2 formulaire** — `components/RouteHeader.tsx:101` : donner au sélecteur de langue un `name` et un `autoComplete` appropriés, sans modifier la navigation i18n.
-- [ ] **P2 thème** — `app/[locale]/layout.tsx:65`, `app/design-tokens.css:81` : synchroniser la propriété CSS `color-scheme` avec `data-theme` ; vérifier visuellement les contrôles natifs et les scrollbars en thème sombre.
+- [x] **P2 formulaire et thème** : valeurs name/autoComplete et color-scheme mises à jour ; tests statiques ajoutés. Navigateur NOT_RUN.
 
 
 - [x] Définir pour la prévisualisation une structure `main`/titres, un lien d'évitement, un focus visible, des cibles tactiles et le respect de `prefers-reduced-motion`.
@@ -93,7 +96,7 @@ Ne pas supprimer, désactiver ou contourner les protections dans le code. Le **r
 ## P5 — Dépendances et outillage (après P1–P4)
 
 - [ ] Valider les premiers lots Renovate groupés et les correctifs des vulnerability alerts.
-- [ ] Comparer les versions non spécifiques au site avec `nabla-site-alban` et `nabla-compose`.
+- [x] Comparer la PR `nabla-site-alban#255` et reprendre la protection JSX TS17001 et la commande source-check ; exclure le code TrueNAS/OWNER spécifique à Site Alban.
 - [ ] Tester React 19.3.1 et le lockfile npm 12, sans mélange avec les migrations fonctionnelles.
 - [ ] Évaluer Dagger sur moteur réel (cache, exclusions, hadolint) puis choisir une seule autorité de pipeline.
 - [ ] Valider Context7 MCP sans secrets ni dépendance réseau dans P0.

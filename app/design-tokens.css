@@ -67,6 +67,7 @@
 }
 
 html[data-theme="light"] {
+  color-scheme: light;
   --ui-info-surface: #cff4fc;
   --ui-info-border: #9eeaf9;
   --ui-info-text: #055160;
@@ -79,6 +80,7 @@ html[data-theme="light"] {
 }
 
 html[data-theme="dark"] {
+  color-scheme: dark;
   --ui-info-surface: #073642;
   --ui-info-border: #0aa2c0;
   --ui-info-text: #b6effb;
