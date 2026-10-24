@@ -43,6 +43,7 @@ La priorité de développement est **P1 parité → P2 accessibilité → P3 i18
 - [x] **P2 thème** : color-scheme light/dark suit les attributs data-theme explicites ; rendu réel navigateur NOT_RUN.
 - [x] **Convergence Alban #255** : contrôle des attributs JSX dupliqués (TS17001) via TypeScript pour app/ et components/, tests ciblés et just source-check avec npm installé.
 - [ ] **Validation au HEAD** : exécuter le contrôle source sur un checkout complet sous Node 24/npm 12 puis build, Playwright, axe et ZAP. Les preuves partielles ne sont pas une validation L3.
+- [x] **Parité associations — Site Alban #255** : reprendre le principe de repli local quand une illustration échoue. Trois SVG approuvés et liens inchangés, sans image externe ; noms textuels disponibles. Contrat Node + Playwright ajouté, exécution navigateur `NOT_RUN`.
 - [x] **Revue statique Vercel Web Interface Guidelines** : lire les règles actuelles de `vercel-labs/web-interface-guidelines/main/command.md` et auditer la prévisualisation React, le header et le footer. Aucune conformité WCAG navigateur n'est attestée.
 - [x] **P2 clavier — homepage prévisualisation** : placer l'unique lien d'évitement en première position dans le header Next, avant les contrôles. Test clavier ajouté dans Playwright (NOT_RUN navigateur).
 - [ ] **P2 clavier — autres pages** : inventorier les liens d'évitement et les cibles main avant toute généralisation. Ne pas introduire de doublons.
@@ -81,6 +82,7 @@ La priorité de développement est **P1 parité → P2 accessibilité → P3 i18
 - [ ] **Bloqué par DNS dans l'environnement agent** : `curl` renvoie `Could not resolve host: bababou.com` pour `/`, `/en`, `/for-fathers.html`, `/feed.xml`. L'outil de consultation Web ne peut pas ouvrir les URL non plus. **Aucun résultat de disponibilité en production n'est confirmé** ; ne pas affirmer que le site fonctionne ou qu'il est en panne.
 - [x] Consulter Vercel : dernier déploiement production `dpl_5tG2o87GafcsGKFw4ENNUepSDGoz` en état `READY` sur le commit `bc3694b8aa3b91baa1dc4f40cb606b430ef46e9e` (fusion #242). Ce statut atteste le déploiement réussi, pas le bon fonctionnement de chaque route ni de `bababou.com`.
 - [ ] Exécuter le smoke dans un environnement disposant du DNS public ; vérifier en plus les headers et le comportement de la réécriture `/`.
+- [ ] **Validation Vercel exacte-SHA** (méthode reprise de `nabla-site-alban#255` au SHA `baadf2c`) : vérifier Node 24.x, le SHA réellement construit, les journaux de compilation/TypeScript/Next, la protection de la Preview, puis les routes sans désactiver les contrôles d’accès. Un build Vercel `READY` est une preuve distante de build ; pas une preuve L3 locale ni une recette fonctionnelle. Ne pas promouvoir en production sans approbation explicite.
 
 ## P0 — Contrôles de sécurité reportés temporairement
 
