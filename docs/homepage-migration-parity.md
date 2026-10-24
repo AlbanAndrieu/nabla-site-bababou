@@ -36,6 +36,7 @@
 | Flux RSS principal et dédié | `public/feed.xml`, `public/eleonore-feed.xml` | Flux existants conservés ; footer commun |
 | Google Translate | `public/site-google-translate.js` | À conserver en fallback pour contenu sans traduction approuvée |
 | Thèmes et animations | `public/theme-toggle.js`, CSS legacy | À vérifier sous clavier, contraste et reduced-motion |
+| Scripts et intégrations de la homepage | `scripts/quality/homepage-runtime-parity.mjs` | Contrôle source des 15 scripts approuvés. Les fonctionnalités `partial` ou `pending` ne sont pas considérées comme migrées ; les nouveaux scripts demandent une mise à jour du registre |
 | Widgets, statut, anti-robots | `public/site-widgets.js`, Turnstile, scripts legacy | À inventorier avant remplacement |
 | Page expérimentale et script Mixpanel historique | `public/test.html`, `public/index.js` | Utilisé par `/test.html` : ne pas supprimer sans décision sur ce comportement et sa collecte |
 | Analytics et médias externes | `public/site-analytics.js`, scripts du HTML legacy | À valider sans augmenter la collecte |
@@ -80,3 +81,11 @@ Ne pas retirer `public/index.html` et ses ressources avant l'approbation. Ne pas
 ## État de fin de migration des sections sûres — 24 octobre 2026
 
 Les blocs textuels publics sans données sensibles ont été portés dans la prévisualisation React, sans changer la page publique. La migration **complète** du HTML historique n'est pas attestée : les cartes contenant données personnelles ou accusations demandent une revue de publication ; D3/ARF, Turnstile, widgets, thème, traduction automatique, analytics et intégrations tierces doivent obtenir une équivalence testée avant bascule. Aucun test visuel, navigateur ou quality gate complète exécuté lors de ce lot.
+
+## Contrat source des scripts — 24 octobre 2026
+
+- Exécuter `just homepage-runtime-parity` pour comparer les inclusions de scripts de `public/index.html` au registre versionné.
+- Le contrôle échoue si un script est ajouté, supprimé ou dupliqué sans réconciliation, ou si `/`, `noindex`, le drapeau de Preview ou la frontière analytics changent.
+- Les 15 scripts connus comprennent Font Awesome, connexion, Turnstile, thème, Google Translate, analytics, D3, ARF, jQuery, Popper, Bootstrap, annonce de statut et widgets.
+- L’état `partial` décrit seulement une partie du comportement ; `pending` signifie qu’aucune parité n’est revendiquée.
+- Tests Node ciblés sur fixtures : 5/5 PASS. Les fichiers testés portent les empreintes SHA des fichiers publiés. Exécution sur le checkout complet et navigateur : NOT_RUN.
