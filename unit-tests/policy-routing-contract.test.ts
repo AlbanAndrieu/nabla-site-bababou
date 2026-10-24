@@ -86,6 +86,14 @@ test("localized policies own native content instead of the legacy HTML bridge", 
     new URL("../app/[locale]/policy/[policy]/page.tsx", import.meta.url),
     "utf8",
   );
+  const copyProvider = await readFile(
+    new URL("../lib/nativePolicyCatalog.ts", import.meta.url),
+    "utf8",
+  );
+  assert.match(route, /getNativePolicyCopy/);
+  assert.match(route, /localizedPolicyPath/);
+  assert.match(copyProvider, /getNativePolicyCopy/);
+  assert.match(copyProvider, /localizedPolicyPath/);
   const privacyContent = await readFile(
     new URL("../components/policy/PrivacyPolicyContent.tsx", import.meta.url),
     "utf8",
@@ -141,7 +149,7 @@ test("localized policies own native content instead of the legacy HTML bridge", 
   );
 
   assert.match(route, /<PublicPolicyContent locale=\{locale\} policy=\{policy\} \/>/);
-  assert.match(route, /getPublicPolicyCopy/);
+  assert.match(copyProvider, /getPublicPolicyCopy/);
   assert.match(publicContent, /getPublicPolicyCopy/);
   assert.match(
     publicCopy,
