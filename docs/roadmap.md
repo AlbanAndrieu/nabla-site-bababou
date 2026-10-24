@@ -24,7 +24,9 @@ La priorité est **P1 → P2 → P3 → P4**. La quality gate complète est **re
 - [x] Migrer l’avis « If you are Éléonore » et la phrase de bas de message dans `LegacyFoundWebsiteSection.tsx`. Conserver leur texte anglais et leur ordre ; vérifier la parité avec `public/index.html`. Ne pas traiter le texte statique comme une alerte temps réel pour le lecteur d’écran.
 - [x] Préparer les critères de parité dans `docs/homepage-migration-parity.md`.
 - [x] Migrer le paragraphe public de présentation du cadre juridique et son lien vers `/for-fathers.html` dans `LegacyLegalResourcesSection.tsx`, sans dupliquer les cartes contenant identifiants, localisations ou accusations.
-- [ ] Migrer progressivement les autres sections du message approuvé vers des composants React réutilisables.
+- [x] Porter les sections publiques non sensibles complémentaires dans React : navigation People contacted / Central Authorities, associations, notice documentaire native `details/summary`, et footer politique/accessibilité.
+- [ ] Réconcilier les cartes illustrées sensibles individuellement après revue de confidentialité ; ne pas recopier les identifiants personnels ni les localisations.
+- [ ] Confirmer la parité fonctionnelle des scripts legacy (D3/ARF, widgets, analytics, Google Translate, thème et Turnstile) avant de basculer `/`.
 - [ ] Traiter séparément les sections avec identifiants personnels, informations de localisation ou accusations sur des tiers. Exiger une revue de confidentialité avant toute duplication dans les composants publics.
 - [ ] Préserver les interactions D3/ARF, Turnstile, le thème, les widgets, le contact et les liens.
 - [ ] Mesurer la parité du contenu, des scripts et du rendu à plusieurs largeurs d'écran.
