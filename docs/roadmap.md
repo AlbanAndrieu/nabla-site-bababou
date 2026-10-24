@@ -23,7 +23,8 @@ La priorité est **P1 → P2 → P3 → P4**. La quality gate complète est **re
 - [x] Migrer les trois paragraphes du message « A Message from Your Papa » dans un composant React sémantique. Conserver le texte anglais approuvé avec `lang="en"` et tester la parité avec `public/index.html`.
 - [x] Migrer l’avis « If you are Éléonore » et la phrase de bas de message dans `LegacyFoundWebsiteSection.tsx`. Conserver leur texte anglais et leur ordre ; vérifier la parité avec `public/index.html`. Ne pas traiter le texte statique comme une alerte temps réel pour le lecteur d’écran.
 - [x] Préparer les critères de parité dans `docs/homepage-migration-parity.md`.
-- [ ] Migrer progressivement les sections du message approuvé vers des composants React réutilisables.
+- [x] Migrer le paragraphe public de présentation du cadre juridique et son lien vers `/for-fathers.html` dans `LegacyLegalResourcesSection.tsx`, sans dupliquer les cartes contenant identifiants, localisations ou accusations.
+- [ ] Migrer progressivement les autres sections du message approuvé vers des composants React réutilisables.
 - [ ] Traiter séparément les sections avec identifiants personnels, informations de localisation ou accusations sur des tiers. Exiger une revue de confidentialité avant toute duplication dans les composants publics.
 - [ ] Préserver les interactions D3/ARF, Turnstile, le thème, les widgets, le contact et les liens.
 - [ ] Mesurer la parité du contenu, des scripts et du rendu à plusieurs largeurs d'écran.
@@ -31,7 +32,7 @@ La priorité est **P1 → P2 → P3 → P4**. La quality gate complète est **re
 
 ## P2 — Accessibilité WCAG 2.2 AA
 
-- [ ] **Installation manuelle du skill Vercel** : demander au propriétaire d'exécuter sur sa machine `npx skills use "https://github.com/vercel-labs/agent-skills" --skill "web-design-guidelines"`. L'agent ne peut pas confirmer l'installation (accès npm indisponible). Après installation, appliquer la sortie complète du skill et résoudre les chemins relatifs depuis le répertoire `supporting-files` indiqué.
+- [ ] **Action du propriétaire — installation manuelle du skill Vercel (à demander explicitement)** : demander au propriétaire d'exécuter sur sa machine `npx skills use "https://github.com/vercel-labs/agent-skills" --skill "web-design-guidelines"`. L'agent ne peut pas confirmer l'installation (accès npm indisponible). Après installation, appliquer la sortie complète du skill et résoudre les chemins relatifs depuis le répertoire `supporting-files` indiqué.
 
 - [x] Définir pour la prévisualisation une structure `main`/titres, un lien d'évitement, un focus visible, des cibles tactiles et le respect de `prefers-reduced-motion`.
 - [x] Appliquer les règles Vercel Web Interface Guidelines aux liens, titres et ancres de la prévisualisation. Ajouter les tests source et Playwright responsive (320/375/768/1280 px). La validation navigateur réelle reste à faire.
