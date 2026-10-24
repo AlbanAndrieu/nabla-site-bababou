@@ -36,8 +36,8 @@ La priorité de développement est **P1 parité → P2 accessibilité → P3 i18
 
 ## P2 — Accessibilité WCAG 2.2 AA
 
-- [x] **Installation manuelle confirmée du skill Vercel** : le propriétaire a fourni la sortie de `npx skills list` et de `find`. Fichier présent dans son workspace : `.agents/skills/web-design-guidelines/SKILL.md`. Cette installation locale n'est pas encore présente sur la branche GitHub et ne valide pas l'interface.
-- [x] **Skills versionnés** : frontend-design, web-design-guidelines et liens symboliques sont présents dans la PR #245 ; mise.lock est également présent.
+- [x] **Skills installés et versionnés** : `frontend-design` et `web-design-guidelines` sont disponibles dans le workspace utilisateur et publiés sur la branche de PR. L'installation seule ne valide pas l'interface.
+- [x] **Outillage reproductible** : les liens symboliques des skills, `skills-lock.json` et `mise.lock` sont inclus dans la PR #245.
 - [x] **P2 sélecteur de langue** : name="locale" et autoComplete="off" préservent le choix contrôlé par la navigation React.
 - [x] **P2 thème** : color-scheme light/dark suit les attributs data-theme explicites ; rendu réel navigateur NOT_RUN.
 - [x] **Convergence Alban #255** : contrôle des attributs JSX dupliqués (TS17001) via TypeScript pour app/ et components/, tests ciblés et just source-check avec npm installé.
@@ -45,8 +45,6 @@ La priorité de développement est **P1 parité → P2 accessibilité → P3 i18
 - [x] **Revue statique Vercel Web Interface Guidelines** : lire les règles actuelles de `vercel-labs/web-interface-guidelines/main/command.md` et auditer la prévisualisation React, le header et le footer. Aucune conformité WCAG navigateur n'est attestée.
 - [x] **P2 clavier — homepage prévisualisation** : placer l'unique lien d'évitement en première position dans le header Next, avant les contrôles. Test clavier ajouté dans Playwright (NOT_RUN navigateur).
 - [ ] **P2 clavier — autres pages** : inventorier les liens d'évitement et les cibles main avant toute généralisation. Ne pas introduire de doublons.
-- [x] **P2 formulaire et thème** : valeurs name/autoComplete et color-scheme mises à jour ; tests statiques ajoutés. Navigateur NOT_RUN.
-
 
 - [x] Définir pour la prévisualisation une structure `main`/titres, un lien d'évitement, un focus visible, des cibles tactiles et le respect de `prefers-reduced-motion`.
 - [x] Appliquer les règles Vercel Web Interface Guidelines aux liens, titres et ancres de la prévisualisation. Ajouter les tests source et Playwright responsive (320/375/768/1280 px). La validation navigateur réelle reste à faire.
