@@ -49,8 +49,8 @@ Ce document contient uniquement les **travaux ouverts** et leurs critères d'acc
 
 Ces candidats proviennent d'une **revue de sources** ; ils ne sont pas tous des bugs démontrés.
 
-- [ ] **Routes :** réduire la double maintenance entre `lib/mainContentRoute.mjs`, `lib/sitePageCatalog.ts`, `lib/policyPages.ts` et les alias de `proxy.ts`. Introduire un registre ou un contrat généré seulement après avoir prouvé la parité des routes historiques et des liens d'évitement.
-- [ ] **i18n :** extraire les copies localisées déclarées directement dans `app/[locale]/policy/page.tsx` vers les catalogues de messages. Vérifier l'égalité des textes approuvés avant modification.
+- [ ] **Routes — recette runtime** : les listes des canoniques, des anciennes redirections HTML et des slugs des politiques sont mutualisées via `lib/mainContentRoute.mjs` entre Next, SEO et navigation clavier. Contrôle offline ajouté. Vérifier la compilation Next et les redirections/404 sur le SHA exact avant clôture.
+- [ ] **i18n — recette runtime** : index juridique FR/EN/DE/NO déplacé vers les catalogues `messages/policy-index/*.json` avec 20/20 chaînes strictement inchangées, et chargeur `next-intl` central. Vérifier le rendu et les métadonnées sur les quatre langues en Preview avant clôture.
 - [ ] **Widgets :** inventorier les responsabilités des grands scripts `public/site-widgets.js`, `public/site-analytics.js` et `public/theme-toggle.js` avant toute extraction de module. Préserver l'initialisation précoce du thème, le consentement et les intégrations legacy.
 - [ ] **Tests :** remplacer les assertions de code-source fragiles par des tests comportementaux lorsque les prérequis sont disponibles, sans supprimer les contrôles offline qui détectent une dérive à faible coût.
 - [ ] **Toolchain :** stabiliser Node/npm et les lockfiles, évaluer les changements React/Next par lots indépendants. Garder `justfile` canonique et `Makefile` compatible.
