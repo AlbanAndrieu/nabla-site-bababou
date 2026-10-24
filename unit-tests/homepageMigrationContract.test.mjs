@@ -231,3 +231,19 @@ test("opening message preserves the published heading and first two paragraphs",
   assert.ok(order.every((position) => position !== -1), "all approved sections render");
   assert.deepEqual(order, [...order].sort((a, b) => a - b), "preserve section order");
 });
+
+test("legal resource introduction keeps approved text without duplicating sensitive cards", () => {
+  const legacy = read("public/index.html");
+  const component = read("components/home/LegacyLegalResourcesSection.tsx");
+  const page = read("app/[locale]/home-preview/page.tsx");
+  const original = legacy.match(/<p>\s*(Information for parents in difficulty:[\s\S]*?)<\/p>/)?.[1];
+  const migrated = component.match(/<p>\s*(Information for parents in difficulty:[\s\S]*?)<\/p>/)?.[1];
+  const normalize = (value) => value.replace(/\s+/g, " ").trim();
+  assert.ok(original && migrated);
+  assert.equal(normalize(migrated), normalize(original));
+  assert.match(component, /lang="en"/);
+  assert.match(component, /href="\/for-fathers\.html"/);
+  assert.match(page, /<LegacyLegalResourcesSection \/>/);
+  assert.ok(page.indexOf("<LegacyFoundWebsiteSection />") < page.indexOf("<LegacyLegalResourcesSection />"));
+  assert.doesNotMatch(component, /passport-fr-bababou|flag-norway-location|14CV32249/);
+});
