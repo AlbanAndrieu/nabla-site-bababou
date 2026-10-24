@@ -3,6 +3,7 @@ import { readFile, readdir } from "node:fs/promises";
 import test from "node:test";
 
 import { POLICY_PAGES, POLICY_PAGE_SLUGS } from "../lib/policyPages.ts";
+import { POLICY_ROUTE_SLUGS } from "../lib/mainContentRoute.mjs";
 
 test("all reviewed policy pages are owned by the native registry", async () => {
   const config = await readFile(
@@ -20,7 +21,8 @@ test("all reviewed policy pages are owned by the native registry", async () => {
 
   assert.doesNotMatch(config, /policyRewrites/);
   assert.doesNotMatch(config, /localizedPolicyRewrites/);
-  assert.match(config, /const migratedPolicyRedirects = \[/);
+  assert.match(config, /const migratedPolicyRedirects = POLICY_ROUTE_SLUGS\.map/);
+  assert.deepEqual([...POLICY_ROUTE_SLUGS].sort(), [...POLICY_PAGE_SLUGS].sort());
   assert.match(route, /POLICY_PAGE_SLUGS/);
   assert.match(route, /generateStaticParams/);
   assert.match(route, /getPolicyPage/);
@@ -62,7 +64,7 @@ test("all reviewed policy pages are owned by the native registry", async () => {
       legacy.includes(`<title>${policy.title}</title>`),
       `${policy.sourceFile} metadata should stay represented in the registry`,
     );
-    assert.match(config, new RegExp(`\\"${slug}\\"`));
+    assert.ok(POLICY_ROUTE_SLUGS.includes(slug), slug);
   }
 });
 
