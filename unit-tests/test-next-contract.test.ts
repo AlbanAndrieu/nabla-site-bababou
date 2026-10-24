@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { access, readFile } from "node:fs/promises";
 import test from "node:test";
+import { NEXT_CANONICAL_SLUGS } from "../lib/mainContentRoute.mjs";
 
 const projectUrl = (path: string) => new URL(`../${path}`, import.meta.url);
 const read = (path: string) => readFile(projectUrl(path), "utf8");
@@ -55,9 +56,6 @@ test("legacy test HTML stays published until ARF and sensitive-corpus parity is 
 
   assert.doesNotMatch(nextConfig, /source:\s*[`"']\/test\.html/);
 
-  const canonicalBlock = catalog.match(
-    /const nextCanonicalSlugs = new Set<SitePageSlug>\(\[([\s\S]*?)\]\);/,
-  );
-  assert.ok(canonicalBlock);
-  assert.doesNotMatch(canonicalBlock[1], /"test"/);
+  assert.match(catalog, /new Set<string>\(NEXT_CANONICAL_SLUGS\)/);
+  assert.equal(NEXT_CANONICAL_SLUGS.includes("test"), false);
 });
