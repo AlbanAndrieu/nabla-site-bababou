@@ -27,6 +27,10 @@
 | Avis « If you are Éléonore » et texte de bas de message | `public/index.html` → `components/home/LegacyFoundWebsiteSection.tsx` | Texte anglais existant migré sans modification ; ordre du document conservé ; section statique sans `role="alert"` pour éviter une annonce non sollicitée |
 | Contact et lien mailto | `public/index.html` → `components/home/LegacyContactSection.tsx` | Première section reprise à l'identique (titre, adresse et message) avec test de parité ; traduction validée encore à faire |
 | Introduction aux ressources juridiques | `public/index.html` → `components/home/LegacyLegalResourcesSection.tsx` | Paragraphe public et lien `/for-fathers.html` migrés ; les cartes contenant des identifiants, des lieux et des assertions sur des tiers restent hors de la prévisualisation | 
+| Navigation « People I contacted » et « Central Authorities » | `public/index.html` → `LegacyPeopleSection.tsx` | Titres, description et liens migrés ; page D3/ARF historique conservée | 
+| Associations soutenues | `public/index.html` → `LegacyAssociationsSection.tsx` | Trois liens publiés migrés ; images historiques non nécessaires aux liens fonctionnels | 
+| Notice documentaire | `public/index.html` → `LegacyDisclosureSection.tsx` | Notice publique et interaction native `details/summary` reprises | 
+| Footer légal | `public/index.html` → `LegacyFooterSection.tsx` | Cinq liens politiques et retour au contenu principal | 
 | Personnes contactées | `public/people-contacted.html`, D3/ARF | Lien conservé ; comportement interactif non migré |
 | Informations pour les pères | `public/for-fathers.html` | Lien conservé ; contenu non migré |
 | Flux RSS principal et dédié | `public/feed.xml`, `public/eleonore-feed.xml` | Flux existants conservés ; footer commun |
@@ -72,3 +76,7 @@ Source de référence : `vercel-labs/agent-skills/skills/web-design-guidelines/S
 9. Approuver explicitement le remplacement de `/`.
 
 Ne pas retirer `public/index.html` et ses ressources avant l'approbation. Ne pas supprimer Google Translate comme fallback.
+
+## État de fin de migration des sections sûres — 24 octobre 2026
+
+Les blocs textuels publics sans données sensibles ont été portés dans la prévisualisation React, sans changer la page publique. La migration **complète** du HTML historique n'est pas attestée : les cartes contenant données personnelles ou accusations demandent une revue de publication ; D3/ARF, Turnstile, widgets, thème, traduction automatique, analytics et intégrations tierces doivent obtenir une équivalence testée avant bascule. Aucun test visuel, navigateur ou quality gate complète exécuté lors de ce lot.
