@@ -1,337 +1,117 @@
-# Opérations et diagnostic
-
-> Runbook unique pour CI, Vercel, Preview, production et analytics.
-> La roadmap garde seulement les travaux ouverts ; l'historique détaillé reste dans Git/PR.
-
-## Reprise active — 24 octobre 2026
-
-- PR : [#242](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/242), Draft. Aucune fusion automatique.
-- Priorités actuelles : P1 homepage Next.js, P2 WCAG 2.2 AA, P3 i18n et pages, P4 SEO. La quality gate complète est temporairement reportée, mais ses protections restent intactes.
-- Le public continue d'utiliser `/` via `public/index.html`. `/[locale]/home-preview` est réservé à la migration, désactivé sans `HOMEPAGE_PREVIEW_ENABLED=true`, et exclu de l'indexation.
-- Source de parité : [homepage-migration-parity.md](homepage-migration-parity.md).
-- Ne pas activer la prévisualisation sur le site public avant validation explicite du contenu et des comportements.
-- La PR Draft bloque les jobs GitHub payants. Ne pas ajouter de directive CI-skip.
-
-## 1. Contrat opérationnel
-
-- **GitHub Actions** valide le dépôt ; `.github/workflows/` est l'autorité.
-- **Vercel Git integration** déploie le projet Next.js racine.
-  Aucun second projet npm sous `app/` ni Vercel CLI local n'est requis.
-- `master` publie la production ; les Preview contrôlées utilisent `vercel-preview-*`.
-- Le contrat build/routing est défini par `vercel.json`, `package.json`, `proxy.ts`,
-  `next.config.mjs` et `scripts/vercel-ignore-build.sh`.
-- Toute preuve Preview/runtime doit viser le **SHA exact**.
-
-### Parité locale avec nabla-compose
-
-La PR [nabla-compose #269](https://github.com/AlbanAndrieu/nabla-compose/pull/269) introduit
-une vérification hors ligne des hooks `pre-commit` dupliqués et de leurs sources.
-Bababou reprend cette vérification et ajoute le refus des clés YAML répétées :
-`just precommit-config-test` (PyYAML déjà fourni par pre-commit), puis
-`just loop` pour combiner L1, intégrité et contrats Node sans réseau.
-`just quality` reste la gate complète et bloquante. Les modes `--preflight`
-et `offline-l1` ne requièrent pas PyYAML et restent accessibles en mode déconnecté.
-
-Pour un diagnostic de PR **sans appel réseau ni crédit Actions** :
-
-```bash
-just offline-l1                # exploratoire : sans base Git, inventaire total + avertissement
-QUALITY_BASE_REF=origin/master just offline-pr  # strict : base existante et ancêtre
-just offline-base-test         # tests Git natifs sans dépendances npm
-```
-
-Le mode strict `AGENT_OFFLINE_REQUIRE_BASE=1` échoue avec
-`OFFLINE_BASE_REQUIRED` lorsque la référence Git est absente, et avec
-`OFFLINE_BASE_DIVERGED` lorsqu'elle n'est pas ancêtre de HEAD. Aucun fallback
-silencieux ne peut attester la PR. Le mode L1 utilise désormais les chemins Git
-terminés par `NUL` pour détecter les fichiers avec espaces, retours à la ligne
-ou noms commençant par `-`. Ces checks ne remplacent ni la CI ni l'audit des commits historiques. La PR #242 actuelle a un commit consolidé sans directive de saut. Conserver le contrôle `QG_CI_SKIP_DIRECTIVE`.
-
-Pour les budgets GitHub Actions, conserver le collecteur central plutôt que
-dupliquer son code :
-
-```bash
-python3 ../nabla-compose/scripts/github-actions-usage.py --days 30 --repo nabla-site-bababou
-```
-
-Ce script ne crée pas de runs ; il exige néanmoins `gh` authentifié et le
-réseau pour la lecture des métriques. Ses minutes de durée d'exécution
-ne sont pas des minutes facturées. Les échecs API et historiques tronqués
-doivent être affichés comme mesures **incomplètes**.
-
-## 2. Validation locale avant publication
-
-Checkpoint P0 sans `node_modules` :
-
-```bash
-bash scripts/agent-p0-check.sh
-# diagnostic complet uniquement si nécessaire
-bash scripts/agent-p0-check.sh --verbose
-```
-
-**Budgets de sortie par défaut :** `QUALITY_LOG_TAIL=12`, `P0_LOG_TAIL=12`, patch autofix `QUALITY_DIFF_LINES=36` (0 = patch complet). CI préflight : 20 lignes au maximum ; les erreurs restent bloquantes. `PRODUCTION_SMOKE_VERBOSE=0` résume les cinq probes HTTP en une ligne de succès, tandis que `=1` affiche chaque probe. Les erreurs HTTP/auth/challenge restent visibles quel que soit le mode. Ces paramètres limitent la sortie console, pas les contrôles effectués.
-
-Le mode par défaut compacte la sortie du preflight et des contrats Node. En cas d'échec,
-il affiche seulement les tests/assertions utiles avec un nombre de lignes borné par
-`P0_LOG_TAIL` ; `--verbose` conserve la sortie native pour l'investigation.
-
-Convergence puis preuve exacte :
-
-```bash
-bash scripts/agent-quality-gate.sh --fix
-# inspecter puis committer toute mutation déterministe
-QUALITY_FORCE_PUBLISH=1 bash scripts/agent-publish.sh
-```
-
-`agent-p0-check.sh` inclut le preflight Git-only et 28 contrats offline de scope, baseline,
-toolchain, agents, CI/Preview, accessibilité et Vercel, avec les gardes Node `>=24.11 <27` / npm `>=12.2 <13`.
-Le strict gate lui applique aussi shfmt, shell lint et bashate.
-`agent-publish.sh` refuse `master`/detached HEAD et lie la preuve au HEAD, à la base,
-au toolchain et au lockfile installés. `bash scripts/agent-publish.sh --status` audite la
-preuve sans relancer le gate.
-Ne jamais revendiquer un build, browser check ou scan non exécuté.
-
-Audit accessibilité ciblé, borné à Chromium :
-
-```bash
-npm run test:a11y
-BASE_URL=https://<preview-exact-sha> npm run test:a11y
-```
-
-Le premier mode valide le serveur local ; le second réutilise la même suite contre une
-Preview exacte sans démarrer de serveur local. En local, `npm run test:a11y` passe par
-`scripts/run-a11y-local.sh` : le harness refuse un `next-env.d.ts` déjà sale, nettoie
-`.next` et `test-results`, choisit un port loopback libre à chaque exécution
-(`PLAYWRIGHT_PORT` reste un override explicite), désactive la réutilisation d'un serveur
-Playwright existant puis restaure `next-env.d.ts` à la sortie. Le wrapper
-`run-next-clean.sh` reste la garde générique des commandes Next.
-
-### Itération sans crédits GitHub Actions (PR Draft)
-
-```bash
-# Node natif et Git, sans npm ci, tsx, GitHub CLI ni réseau
-node --test unit-tests/releaseTagBridge.test.mjs unit-tests/workflowDraftBudget.test.mjs
-node scripts/ci/check-draft-workflows.mjs
-# Equivalent sur un environnement où Just est disponible :
-just offline-contracts
-```
-
-Cette suite cible les contrats Semantic Release et l’absence de runner sur les
-PR Draft. Elle ne valide pas les hooks, les dépendances Node 26/npm 12, le build
-Next.js, la confidentialité complète, Playwright, ZAP ou les scans SAST/SCA.
-Ne sortir la PR de Draft et ne réactiver GitHub Actions qu’après accord explicite
-et retour des crédits.
-
-### Contrôles additionnels sans budget GitHub
-
-`just offline-l1` vérifie les chemins Git modifiés, le Bash, la syntaxe Python
-et le JSON strict, puis `git diff --check`. Aucun téléchargement ni runner
-GitHub n'est requis. Sans ref de base, l'intégralité des fichiers suivis et
-non suivis est inspectée avec un avertissement de couverture.
-
-`just p0` couvre en outre les contrats locaux des workflows Release,
-des versions npm/Mise et du diagnostic de démarrage des runners. Il requiert
-un Node compatible et ne remplace pas BetterLeaks, Semgrep, SCA, Next,
-Playwright, ZAP ni le contrôle CI réel.
-
-## 3. Preview et production
-
-Pour un changement deploy-relevant : valider localement, obtenir un commit propre, puis laisser
-Quality classifier le scope. Après Quality verte, `ci.yml` publie automatiquement
-`vercel-preview-pr-<n>` au **SHA exact** ; Vercel doit atteindre `READY` avant
-Playwright/ZAP. `Vercel Preview (On Demand)` reste un fallback opérateur. Après merge,
-contrôler `Vercel`, `Production Post-deploy Smoke` et `Production DAST`.
-
-Les changements documentation/maintenance peuvent être ignorés par
-`scripts/vercel-ignore-build.sh`. Un checkpoint `vercel-preview-*` doit construire.
-
-### Historique Semantic Release (sans déploiement ni crédit Actions)
+# Opérations — runbook unique Bababou
 
-Le pont `scripts/ci/release-tag-bridge.mjs` corrige l'ancien refus d'un tag
-`vX.Y.Z` plus ancien que `package.json` (cas normal avant une nouvelle release).
-Pour diagnostiquer sans **aucune écriture**, utiliser sur un checkout Git complet
-avec l'accès en lecture aux GitHub Releases :
-
-```bash
-node scripts/ci/release-tag-bridge.mjs --check
-just offline-release  # ou node --test unit-tests/releaseTagBridge.test.mjs
-```
+**Périmètre :** Git/PR, contrôles locaux, Vercel, routage hybride, sécurité et incidents CI. La [roadmap](roadmap.md) suit les tâches encore ouvertes ; [homepage-migration-parity.md](homepage-migration-parity.md) définit la parité fonctionnelle ; [publication-redaction.md](publication-redaction.md) protège les contenus sensibles. Les anciens SHAs, runs et PR sont des **preuves historiques**, pas un état courant.
 
-`--apply` est réservé au workflow Release après contrôle SHA master et jeton
-GitHub App dédié ; il peut créer un alias `vX.Y.Z` vers un tag historique
-préexistant, jamais une nouvelle version. Le test utilise un mock de `gh`,
-ne touche pas aux tags distants et ne consomme pas de crédits GitHub Actions.
-
-Si GitHub a enregistré un alias mais que la réponse API a été perdue, `--apply`
-réutilise l'alias **uniquement après lecture et comparaison du SHA distant**.
-Un SHA différent ou une lecture impossible provoque un échec bloquant, sans
-création de tag local. Les tests reproduisent ces scénarios avec un faux `gh` ;
-ce n'est pas une preuve de publication réelle. La CI, le build et ZAP restent
-à valider ultérieurement sur le SHA exact.
-
-## 4. Signatures d'incident
-
-### Runner GitHub non alloué
-
-```text
-runner_id=0
-steps=[] ou steps=null
-aucun log de step
-```
-
-Échec avant exécution du code : quota, facturation, permissions Actions ou provisioning
-runner possibles, **sans attribution de cause sans preuve**. Le diagnostic est
-en lecture seule ; il n'exécute aucun workflow :
+## 1. Autorités et invariants
 
-```bash
-just ci-diagnose 39556443405
-# ou avec contrôle de SHA :
-bash scripts/ci/diagnose-actions-startup.sh AlbanAndrieu/nabla-site-bababou 39556443405 <SHA_40_CARACTERES>
-```
-
-Codes de sortie : `0` succès, `1` échec d'un step exécuté, `2` job échoué avant
-tout step, `3` en attente, `4` réponse/API/identité inconclusive. Un code `2`
-**ne prouve pas** une panne de code ni une panne de facturation : inspecter
-Settings → Billing & licensing → Budgets and usage → Actions, puis Settings →
-Actions → General et les runners GitHub-hosted. Si GitHub n'expose pas
-l'origine du refus, ouvrir un ticket Support avec les IDs run/job.
-
-Ne pas modifier les quality gates ni multiplier les relances lorsque les crédits
-sont indisponibles ; conserver la validation runner-backed comme dette.
-
-### Vercel Security Checkpoint
-
-```text
-HTTP 429
-x-vercel-mitigated: challenge
-```
-
-Si le deployment exact est sain, ce signal indique un challenge Vercel et non une panne
-applicative. Vérifier séparément deployment exact et binding du domaine.
-
-### Homepage hybride et bypass
-
-- `/` peut répondre `307` vers `/index.html` ; valider ensuite `/index.html` en `200`.
-- `x-vercel-set-bypass-cookie: true` peut produire un handshake `307 Location: /`.
-- Le smoke production utilise bypass header-only + OIDC ; le cookie reste au preflight Preview.
-
-### Checkpoint Git sans Preview
-
-Une ref `vercel-preview-*` créée ne prouve pas qu'un deployment existe. Vérifier
-**événement Git → deployment Vercel**, pas seulement la branche ; une identité automatisée
-peut pousser la ref sans déclencher Vercel.
+- `.github/workflows/` définit la CI. La **Git integration Vercel** déploie le projet Next.js racine ; aucun Vercel CLI local ni sous-projet `app/` supplémentaire.
+- `vercel.json`, `package.json`, `proxy.ts`, `next.config.mjs` et `scripts/vercel-ignore-build.sh` définissent le contrat de build et de routage.
+- `justfile` est l'interface locale canonique ; conserver `Makefile` pour compatibilité. Les versions sont verrouillées par `mise.toml`, `mise.lock`, `package.json` et `package-lock.json`.
+- La homepage `/` continue de servir le HTML legacy approuvé. La Preview React `/[locale]/home-preview` requiert un opt-in serveur et reste `noindex`. Ne pas la publier ni activer la collecte additionnelle sans revue.
+- Une PR d'agent reste **Draft**. Les workflows qui filtrent les Draft peuvent être `skipped`, mais **Draft ne garantit pas zéro workflow**. Ne pas ajouter `[skip ci]`, ne pas court-circuiter les gates et ne pas relancer les Actions payantes pour déboguer un formatage local.
+- Aucun acteur ne fusionne, ne promeut ou ne modifie des protections sans demande explicite.
 
-### Preview `READY` mais Playwright/ZAP rouge
+## 2. Reprise locale — procédure
 
-Vérifier dans l'ordre : SHA, URL exacte, trace/screenshot ou alerte, routing/bypass, puis
-seulement le code applicatif. Une ancienne Preview verte n'est jamais une preuve pour un
-nouveau SHA.
+Exécuter les commandes dans un checkout Git complet et sur une branche non-default. Un runbook n'est pas une preuve d'exécution.
 
-## 5. Diagnostic progressif
+1. Contrôler la branche avec `git branch --show-current`.
+2. Contrôler les changements avec `git status --short`.
+3. Contrôler les outils avec `just toolchain-check`.
+4. Contrôler la syntaxe locale avec `just offline-l1`.
+5. Contrôler la base Git disponible avec `QUALITY_BASE_REF=origin/master just offline-pr`.
+6. Exécuter les contrats Node sans dépendances avec `just offline-contracts`.
+7. Après `npm ci`, exécuter `just source-check`.
+8. Exécuter le préflight et les contrats P0 avec `just p0`.
+9. Exécuter `just quality-fix` si une correction déterministe est nécessaire.
+10. Examiner toute mutation avec `git diff --check`.
+11. Exécuter `just quality`.
+12. Sur un HEAD committé propre, exécuter `just publish`.
+13. Contrôler la preuve exacte sans relancer les gates avec `just publish-status`.
 
-Inspecter dans l'ordre : workflow/deployment → job → step → extrait de log/artifact →
-logs complets seulement si nécessaire. Si CI est saine mais Vercel échoue, privilégier
-les logs build/runtime et la configuration du projet plutôt qu'un déploiement CLI.
+Les commandes `offline-*` ne valident pas les dépendances, le build, l'accessibilité ni les scanners de sécurité. `just source-check` utilise le parseur TypeScript, l'inventaire des scripts legacy et les contrats React ciblés. `just homepage-runtime-parity` surveille **15 inclusions** du HTML historique ; une absence de dérive ne prouve pas l'équivalence des widgets.
 
-## 6. Analytics et Speed Insights
+Pour les erreurs des scripts qualité : `bash scripts/agent-p0-check.sh --verbose` développe les logs ; `P0_LOG_TAIL`, `QUALITY_LOG_TAIL` et `QUALITY_DIFF_LINES` limitent uniquement le volume affiché. Les avertissements ou `NOT_RUN` ne sont pas transformés en succès.
 
-`public/site-analytics.js` charge directement :
+### Travail en worktree / terminal interactif
 
-```text
-/_vercel/insights/script.js
-/_vercel/speed-insights/script.js
-```
+- Ne pas envoyer `set -euo pipefail` directement dans le shell interactif parent. Lancer les séquences strictes dans un script Bash enfant ou un sous-shell.
+- Isoler chaque worktree et ses répertoires `node_modules`, `.next` et `.venv`. Ne partager que des caches de téléchargement sûrs. Sérialiser les écritures de métadonnées Git entre agents.
+- Ne pas effacer des modifications inconnues par `reset --hard`, `clean -fd` ou `worktree prune`.
+- Ne pas sourcer automatiquement `.envrc`/direnv ni charger les secrets production pour une vérification read-only.
+- Si le réseau GitHub/npm est absent, ne pas répéter des requêtes identiquement vouées à l'échec. Utiliser un snapshot vérifié au SHA exact ou les fichiers minimaux avec un niveau de preuve L0/L1 clairement identifié.
 
-Le dépôt n'utilise ni `@vercel/speed-insights` ni Vercel CLI local. Les scripts distants
-restent désactivés sur localhost ordinaire sauf override explicite. Le contrat navigateur
-est couvert par `tests/site-analytics.spec.ts`.
+### Classification des preuves
 
-Pour valider : activer Web Analytics/Speed Insights dans Vercel, déployer via Git integration,
-vérifier les deux endpoints sur le deployment attendu puis les données après trafic, avec la
-politique de consentement/confidentialité.
+| Niveau | Ce qui est attesté |
+| --- | --- |
+| L0 | Lecture de source/configuration au SHA donné |
+| L1 | Exécution ciblée sur fichiers réels ou fixture explicitement délimitée |
+| L2 | Convergence locale des contrôles concernés et corrections déterministes |
+| L3 | `just publish` vert, sur un HEAD committé propre et vérifié |
 
-## 7. Secrets et sécurité
+Un statut CI GitHub/Vercel est une preuve **distante distincte**. Déclarer `NOT_RUN` ou `BLOCKED` pour les vérifications absentes. Ne pas présenter un test Node 22 comme un build Next.js Node 24 LTS/npm 12.
 
-Le hook pre-commit utilise **Betterleaks v1.9.0** via son hook Go natif
-pour la détection de secrets ; aucun daemon/socket Docker n'est requis par Betterleaks. Le fichier `.betterleaks.toml` est la policy canonique et conserve les allowlists revues. Betterleaks est le seul scanner de secrets exécuté. Le nom `REPOSITORY_GITLEAKS` subsiste uniquement comme identifiant historique du linter désactivé dans MegaLinter ; aucun binaire/hook Gitleaks n'est exécuté. `detect-private-key` et Secretlint restent des protections complémentaires.
+## 3. Preview et validation production
 
-Le `justfile` est désormais **le point d’entrée canonique** :
-`just preflight`, `just p0`, `just quality-fix`, `just quality`,
-`just publish`, `just publish-status`, `just workflow-audit`,
-`just secrets-config`, `just secrets-staged`, `just secrets-worktree`,
-`just secrets-history`. Les scripts npm/Bash, Mise et pre-commit restent les
-mécanismes sous-jacents. Le `Makefile` est conservé pour la compatibilité
-(`just legacy-help`), sans devenir la source des quality gates.
+1. Vérifier le HEAD demandé et le SHA réellement construit dans Vercel.
+2. Vérifier Node 24.x, la compilation Next et TypeScript dans les logs du même déploiement.
+3. Vérifier l'état `READY` du déploiement ; un build ignoré par `scripts/vercel-ignore-build.sh` ne vaut pas un build.
+4. Vérifier la protection de la Preview ; ne pas désactiver Password Protection pour faciliter un test.
+5. Vérifier les routes, le contenu approuvé, la navigation, le responsive, les redirections et les réponses 404 sur cette Preview.
+6. Exécuter Playwright, WCAG/axe et ZAP sur **cette même révision**, depuis un environnement autorisé.
+7. Après promotion approuvée, vérifier le domaine, `Production Post-deploy Smoke` et `Production DAST` au SHA réellement servi.
 
-`just secrets-staged` analyse uniquement l'index Git : les sources
-familiales et juridiques dans `.private-publication-source/**` et
-`.redaction-work/**` ne doivent jamais être ajoutées à l'index ni
-publiées dans les logs et artefacts CI.
+La publication de nouvelles données familiales relève de [publication-redaction.md](publication-redaction.md). Aucun `READY`, `success` ou en-tête HTTP isolé ne valide la confidentialité de bout en bout.
 
-- ne jamais committer credentials, tokens ou `.vercel/` ;
-- ajouter un secret seulement si un workflow versionné le consomme ;
-- appliquer le moindre privilège et retirer les secrets sans consommateur ;
-- traiter logs/artifacts comme surfaces de divulgation ;
-- ne pas ajouter de credentials Vercel CLI tant que Git integration reste le mécanisme.
+`scripts/production-home-smoke.sh` effectue les requêtes publiques en lecture seule. `PRODUCTION_SMOKE_VERBOSE=1` développe le détail. Distinguer `403`/auth, `429`/challenge, indisponibilité DNS et véritable `5xx`.
 
-## 8. Dagger CI spike
+## 4. Diagnostic — signatures qui ne sont pas déductibles du code
 
-Le POC Dagger est **opt-in** et épingle Dagger `v0.21.10`. Le même wrapper
-`scripts/dagger-ci.sh` est appelé localement via `just dagger-*` et par
-`.github/workflows/dagger-spike.yml` (workflow manuel/réutilisable uniquement).
+| Signature | Hypothèse à vérifier | Action en lecture seule |
+| --- | --- | --- |
+| `runner_id=0`, `steps=[]` ou `null` | Job non alloué ; quotas, droits ou infrastructure possibles | `just ci-diagnose <run_id>` ; consulter Billing/Actions ; ne pas conclure à un bug de code |
+| Vercel `git_info_fail` | Métadonnées Git ou liaison projet/intégration GitHub défaillantes | Vérifier Project → Settings → Git et les événements du déploiement ; préserver [l'incident daté](vercel-github-baseline-recovery-2026-10-13.md) |
+| Statut Vercel `success` avec `Canceled by Ignored Build Step` | Build volontairement ignoré, pas un déploiement `READY` | Vérifier les fichiers du scope et le SHA d'un véritable build |
+| `PROD_BASE_UNHEALTHY` | La référence de production n'a pas de preuves Vercel/Smoke/DAST suffisantes | `scripts/verify-production-baseline.sh` et preuves externes ; ne pas assouplir la garde |
+| `HTTP 429` + `x-vercel-mitigated: challenge` | Vercel Security Checkpoint | Distinguer challenge de panne applicative ; vérifier identité et environnement autorisés |
+| Preview `READY`, Playwright/ZAP rouge | SHA, bypass, routing, accès ou défaillance réelle | Vérifier SHA → URL → trace/alerte → configuration → code |
+| Ref `vercel-preview-*` sans deployment | Ref Git non consommée par Vercel | Examiner événement Git et association au deployment réel |
+| Legacy HTML absente / 404 routée vers `/[locale]` | Next intercepte la route avant le fallback | Vérifier `next.config.mjs`, `handle: miss`, `check: true`, `x-matched-path` et le test 404 |
+| `master` Quality rouge après merge | Echec réel du job ou problème de runner | Lire workflow → job → step → première erreur ; ne pas attribuer un `success` de remédiation à la gate source |
 
-Cibles actuelles :
+Les codes de `scripts/ci/diagnose-actions-startup.sh` : `0` succès d'analyse, `1` step exécuté en échec, `2` échec avant step, `3` en attente, `4` lecture inconclusive. Un code `2` n'atteste pas une cause de facturation. Les log/artifacts complets ne sont consultés qu'après identification du premier défaut.
 
-- `dagger-p0` : snapshot Git isolé + `agent-p0-check.sh` ;
-- `dagger-quality-preflight` : preflight dependency-free uniquement ;
-- `dagger-test` : `npm ci` + tests unitaires ;
-- `dagger-build` : `npm ci` + build Next de production.
+### Incidents quality `master` sans prolifération d'issues
 
-Le source transféré vers l'engine exclut explicitement `.git/**`,
-`.private-publication-source/**`, `.redaction-work/**`, les fichiers
-`.env.*` privés, `.vercel/**`, `node_modules/**` et les sorties générées.
-Le spike n'utilise ni `--privileged` ni socket Docker hôte.
+Le workflow `.github/workflows/post-merge-quality-follow-up.yml` possède son registre `[quality-follow-up] unresolved master Quality failures` et prépare une PR Draft si une remédiation est possible. Il ne fusionne pas. Il conserve un commentaire par SHA/run au lieu d'une issue par run ; l'automatisation ne doit ni reprendre une issue modifiée manuellement ni rouvrir une issue fermée.
 
-Le **full quality gate n'est pas revendiqué dans Dagger** : le pre-commit canonique
-contient encore `shfmt-docker` et `hadolint-docker`. Avant adoption, migrer ces
-deux hooks vers des exécutions natives ou démontrer une autre solution sans
-Docker-in-Docker. Ensuite seulement comparer temps à froid/chaud, cache, réseau
-et lisibilité des traces, puis décider adopter/différer/rejeter.
+**Clôture :** seuls les **deux plus récents** runs `CI (Quality and Security)`, événement `push`, branche `master`, tous deux `completed/success`, permettent d'envisager la clôture d'un ticket strictement détenu par le bot. Un run plus récent rouge, en attente, ignoré ou annulé bloque cette clôture. Les dix anciens tickets Quality (#183–#231) exigent aussi revue des preuves ; une Preview verte ne les résout pas. La remédiation réussie au sens de l'agent ne vaut pas une Quality `master` verte.
 
-## 9. Références
+### Release / ancien routage
 
-- `AGENTS.md` — politique agent/local-first ;
-- `docs/roadmap.md` — travaux ouverts et acquis structurants ;
-- `.github/vercel-deployment-instructions.md` — contrat Vercel concis ;
-- `SECURITY.md` — supply-chain et sécurité ;
-- `docs/publication-redaction.md` — publication/caviardage du corpus familial et juridique ;
-- validation locale :
-  `scripts/agent-p0-check.sh`, `scripts/agent-quality-gate.sh`, `scripts/agent-publish.sh`.
+- `node scripts/ci/release-tag-bridge.mjs --check` vérifie la cohérence de tags sans écriture. `--apply` est réservé au workflow de Release et exige la vérification du SHA distant.
+- Le routage `*.html` peut dépendre de `handle: miss` + `check: true` ; ne pas revenir à `afterFiles`/`handle: error` sans tests. Voir tests de régression route 404.
+- Le fallback homepage `/` peut inclure des `307` de handshake ou un cookie de bypass ; distinguer cette transition de l'état final `200` attendu sur le HTML.
 
-## Incident durable — quality-follow-up master (septembre–octobre 2026)
+## 5. Sécurité, confidentialité et outillage annexe
 
-**Signature** : une exécution `CI (Quality and Security)` après push sur `master` échoue sur `Enforce canonical changed-file quality gate` (formatter/pré-commit), ou `Run canonical project checks` (tests/lint/build). Le workflow `post-merge-quality-follow-up.yml` crée une issue `[quality-follow-up] master <sha> is red` via `github-actions[bot]`. Son job de remédiation `success` **ne signifie pas** que la correction ou la gate est verte : contrôler les champs `Deterministic diff`, `Strict validation` et `Remediation PR` dans le commentaire.
+`just secrets-config`, `just secrets-staged`, `just secrets-worktree` et `just secrets-history` utilisent **BetterLeaks v1.9.0**, sans Gitleaks. Les scanners SAST/SCA, la publication privée, Playwright et ZAP restent distincts et bloquants selon le scope. Ne jamais indexer `.private-publication-source/**` ou `.redaction-work/**`, ni exposer les secrets dans logs/artefacts. Lire [publication-redaction.md](publication-redaction.md) avant toute publication et [security-audit-coverage-ledger.md](security-audit-coverage-ledger.md) pour les constats datés.
 
-Issues historiques à trier (aucune PR de correction automatiquement validée) :
-- **Pré-commit/formatter** : [#228](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/228), [#225](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/225), [#224](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/224), [#217](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/217), [#212](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/212).
-- **Contrats npm/lint/build** : [#231](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/231), [#221](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/221), [#214](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/214), [#196](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/196), [#183](https://github.com/AlbanAndrieu/nabla-site-bababou/issues/183). #196 : diff déterministe préparé, mais gate stricte échouée.
-
-**Diagnostic** : ouvrir l'issue → failed run/job/step → premier diagnostic concret dans les logs → identifier un commit correctif **fusionné** et la CI ultérieure sur `master` du même périmètre. N'ajouter un commentaire de clôture et ne fermer qu'avec ces preuves ; à défaut laisser ouvert. Un run Preview/ZAP vert ou une CI de PR verte ne suffit pas pour solder un incident de quality `master`.
-
-**Incident historique de routage HTML** : les Previews #886/#889 ont montré que Next `afterFiles` et `handle: error` ne récupéraient pas les `*.html` legacy absents, déjà absorbés par `/[locale]`. Le contrat actuel utilise `handle: miss` et `check: true` pour router vers `/__legacy-html-not-found__` avant la route dynamique. Conserver les tests de non-régression et vérifier les headers `x-matched-path` en cas de réapparition.
-
-### Suivi Quality après merge — limitation du bruit GitHub
-
-Le workflow `.github/workflows/post-merge-quality-follow-up.yml` réutilise désormais **une issue de triage ouverte**, `[quality-follow-up] unresolved master Quality failures`, plutôt qu'une nouvelle issue par SHA. Son exécution est sérialisée sur `master` ; chaque commentaire enregistre **son propre SHA et l'URL de la CI échouée**, puis l'issue reste ouverte si une remédiation manque. Cela regroupe les notifications, **pas les causes racines** : chaque échec doit être diagnostiqué indépendamment. Une nouvelle panne après clôture réouvre le registre. Les dix anciennes issues restent conservées jusqu'à une correction et une validation `master` attestées ; ne pas les clôturer par ancienneté.
-
-Dans `ci.yml`, BetterLeaks garde sa commande de compilation épinglée `go install ...@v1.9.0` et son **verdict bloquant**. Seuls les modules Go et objets intermédiaires sont mis en cache pour économiser les téléchargements/compilations répétés sur PR ; **jamais le binaire BetterLeaks prêt à exécuter**. Le cache n'est pas une dispense de scan, et un cache indisponible n'affaiblit pas l'analyse.
-
-### Master Quality : propriété des issues et clôture vérifiable
-
-Workflow réel de Bababou : `post-merge-quality-follow-up.yml` (le nom `master-red-remediation.yml` ne correspond pas à ce dépôt). La remédiation sur un push `master` rouge garde son chemin de PR draft, sans merger. Les nouveaux échecs sont rassemblés dans le registre `[quality-follow-up] unresolved master Quality failures`, sans une issue par SHA. La description est créée une seule fois, chaque échec est tracé par commentaire. Un marqueur identifie les seules issues que l'automatisation possède ; **aucune issue historique n'est réouverte automatiquement**. Toute intervention humaine détectée dans les événements ou commentaires retire l'issue du périmètre des mutations automatisées.
-
-L'issue du registre est fermée seulement si les **deux plus récents** runs du workflow Quality, événement `push`, branche `master`, sont tous les deux terminés avec `success`; un run plus récent en cours, ignoré, annulé ou rouge bloque la clôture. Les issues historiques #183–#231 restent ouvertes tant que cette condition et une revue des preuves ne sont pas satisfaites. Le mécanisme ne modifie ni labels ni descriptions d'issues existantes ; le nettoyage manuel conserve les liens de runs. Éviter les polls répétitifs et les workflows de vérification artificiels.
-
-### Consolidation différée des anciennes issues bot
-
-Les dix tickets historiques `[quality-follow-up] master <SHA> is red` ne sont **pas** considérés corrigés sur la seule base d'un récent succès de PR/Vercel. Ils sont candidats à une clôture administrative `not_planned` (historique supersédé), seulement quand les **deux dernières exécutions CI push master** sont toutes deux `completed/success`. Le workflow préserve un commentaire de clôture donnant les deux liens CI et SHAs. Les tickets réutilisables actuels reçoivent `completed` sous la même condition. Si un ticket présente un commentaire/événement d'un acteur autre que le bot, des labels, assignés ou une milestone, il est **intouchable**, même si la CI est verte. Une issue fermée n'est jamais réouverte.
+`public/site-analytics.js` charge Web Analytics et Speed Insights selon la configuration, sans exiger de Vercel CLI local. Vérifier les endpoints `/_vercel/insights/script.js`, `/_vercel/speed-insights/script.js` et le consentement sur un vrai déploiement.
+
+Dagger est un **POC opt-in** via `just dagger-*`. Les hooks `shfmt-docker` et `hadolint-docker` empêchent encore de revendiquer une parité de qualité complète sur le moteur isolé. Context7 et Cloudflare security-audit-skill ne doivent jamais recevoir des documents privés ; leur installation ou usage n'est pas une preuve de résultat.
+
+## 6. Références et historique à conserver
+
+- [README](../README.md) — vue d'ensemble et carte de navigation documentaire.
+- [Roadmap](roadmap.md) — travaux **ouverts** et critères d'acceptation.
+- [Parité homepage](homepage-migration-parity.md) — contenu et comportement à préserver.
+- [Publication/redaction](publication-redaction.md) — politique opérationnelle sensible.
+- [Couverture des audits](security-audit-coverage-ledger.md) — preuves ZAP/SAST/SCA datées.
+- [Cloudflare security-audit-skill](security-audit-skill.md) — qualification du skill sans divulgation.
+- [Revue statique de sécurité du 12 octobre](security-audit-source-review-2026-10-12.md) — preuve historique partielle, non remplacée par un scan.
+- [Incident Vercel/GitHub du 13 octobre](vercel-github-baseline-recovery-2026-10-13.md) — diagnostic historique `git_info_fail`.
+- [Déploiement Vercel](../.github/vercel-deployment-instructions.md) — paramètres d'intégration.
+
+**Ne pas recopier l'historique de commits, les SHAs anciens et les comptes rendus de tests dans la roadmap.** Les rapports datés restent des pièces de preuve ; ils ne dirigent pas les opérations courantes.
