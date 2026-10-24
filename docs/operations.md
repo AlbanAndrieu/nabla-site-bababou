@@ -129,3 +129,90 @@ Dagger est un **POC opt-in** via `just dagger-*`. Les hooks `shfmt-docker` et `h
 - [Déploiement Vercel](../.github/vercel-deployment-instructions.md) — paramètres d'intégration.
 
 **Ne pas recopier l'historique de commits, les SHAs anciens et les comptes rendus de tests dans la roadmap.** Les rapports datés restent des pièces de preuve ; ils ne dirigent pas les opérations courantes.
+
+## Annexe A — reprise d'un agent sans accès réseau
+
+Cette annexe conserve les prérequis de diagnostic qui ne sont pas visibles dans le code du site et les décisions à prendre face à une erreur de lancement. Elle ne permet pas de déclarer une compilation Next verte sans dépendances.
+
+### A.1 Séparer les deux versions de Node sans modifier les fichiers d'outillage
+
+- Le développement et les workflows principaux utilisent `.nvmrc` : **Node 26 Current**.
+- Vercel utilise `.nvmrc-production` : **Node 24.x**.
+- Mise déclare `node = "24"` et `npm = "12.2.1"` pour les contrôles de compatibilité.
+- Le fichier `.nvmrc` ne doit pas être remplacé silencieusement par la version Mise : les deux chemins couvrent des environnements distincts.
+- Les intervalles exacts de `package.json#engines` sont vérifiés avant l'exécution des tests.
+- En local, identifier explicitement le runtime actif plutôt que déduire la version depuis le nom du terminal.
+
+```bash
+git rev-parse --show-toplevel
+git rev-parse HEAD
+node --version
+npm --version
+cat .nvmrc
+cat .nvmrc-production
+mise current node npm  # seulement si mise est déjà présent
+```
+
+Le diagnostic de version doit signaler un runtime incompatible avant un téléchargement de 300 Mo ou un build. Un changement de runtime ne remplace pas un test de régression.
+
+### A.2 Vérifications hors réseau
+
+1. Lire `git status --short` sans supprimer les modifications d'un autre agent.
+2. Comparer `git rev-parse HEAD` au SHA de la PR à diagnostiquer.
+3. Vérifier `node --version` et la politique des deux runtimes.
+4. Exécuter `just offline-l1` si `just` et le checkout Git sont présents.
+5. Exécuter `just offline-contracts` avec un Node compatible.
+6. Exécuter `just homepage-runtime-parity` pour les scripts historiques.
+7. Lire les résultats en distinguant `PASS`, `FAIL`, `BLOCKED` et `NOT_RUN`.
+8. Ne pas lancer de `npm install` si les registres sont inaccessibles.
+
+Sans accès DNS à GitHub/npm, ne pas prétendre avoir installé les dépendances ni exécuté le build. Les fichiers lus via le connecteur GitHub fournissent uniquement une preuve de source, pas un checkout local.
+
+### A.3 Vérifications du build avec dépendances présentes
+
+1. Vérifier les versions verrouillées avec `just toolchain-check`.
+2. Installer uniquement depuis le lockfile avec `npm ci --no-audit --no-fund`.
+3. Lancer `just source-check` avant les tests lourds.
+4. Lancer `npm run test:unit` sur le même checkout.
+5. Générer les types Next avec `npx next typegen`.
+6. Lancer `npm run typecheck` après génération des types.
+7. Lancer `npm run build` en conservant le statut de sortie.
+8. Exécuter les navigateurs seulement si le build attendu et l'accès au site sont disponibles.
+9. Conserver le premier message d'erreur et le SHA, sans poster d'identifiants sensibles.
+10. Ne pas substituer le code retour d'une commande de diagnostic à celui du build.
+
+### A.4 Scénarios d'échec à classifier
+
+| Signal | Classe | Vérification initiale |
+| --- | --- | --- |
+| `ENOTFOUND` / `EAI_AGAIN` sur le registre npm | Réseau | DNS/résolution ; ne pas répéter sans changement de contexte |
+| `npm ERR! EBADENGINE` | Runtime | Comparer `node -v` et `package.json#engines` |
+| `npm ci` refuse le lockfile | Dépendances | Comparer `package-lock.json` et `package.json`, sans `npm install` correctif automatique |
+| `Cannot find module next` | Prérequis | Vérifier le checkout et `node_modules`, ne pas qualifier une erreur applicative |
+| `Cannot find module typescript` | Prérequis | Vérifier `npm ci` avant `just source-check` |
+| `TS17001` | Compilation | Contrôler les attributs JSX dupliqués avec `check:jsx-attributes` |
+| `TS2307` | Imports | Vérifier alias `@/`, noms de fichiers et dépendances verrouillées |
+| `TS7016` pour un `.mjs` | Types | Vérifier `allowJs` et `tsconfig.json`, sans créer un shim non examiné |
+| `Module not found` pendant Next | Build | Lire l'import précis, la casse et le bundler Turbopack |
+| `next-env.d.ts` modifié | Génération | Utiliser le wrapper `run-next-clean.sh` et comparer le diff final |
+| `QG_LARGE_DELETION` | Protection | Vérifier le contenu supprimé depuis la base ; conserver les diagnostics essentiels |
+| `QG_BASE_STALE` | Git | Rebaser avec une base valide sans écraser les changements locaux |
+| `QG_PUBLISH_PROOF_STALE` | Preuve | Réexécuter la gate sur le HEAD final au lieu de réutiliser une ancienne trace |
+| `404` sur une ancienne URL HTML | Routage | Examiner la réécriture legacy et les redirections localisées |
+| `401`/`403` sur Preview | Accès | Vérifier la protection Vercel et le jeton autorisé, sans la désactiver |
+| `429` avec challenge | Mitigation | Vérifier `x-vercel-mitigated` avant de conclure à une panne |
+| `READY` sans build | Déploiement | Vérifier `scripts/vercel-ignore-build.sh` et les événements Git |
+
+### A.5 Particularités des contrats du site
+
+- La racine `/` reste le document HTML historique, y compris lorsque les pages Next compilent.
+- Les pages locales de test ne sont pas automatiquement une preuve de publication de la homepage.
+- Les 15 scripts historiques peuvent rester présents sans avoir de parité React.
+- Le test des politiques vérifie 6 slugs × 4 locales ; les traductions de l'index représentent 20 chaînes approuvées.
+- La centralisation des routes ne justifie aucune modification de canonical, hreflang, sitemap ou 404.
+- Les preuves du rendu doivent être obtenues sur le deployment exact, pas sur une autre Preview.
+- Les données familiales privées, les secrets et les originaux non expurgés restent hors des journaux de l'agent.
+
+### A.6 Résultat à enregistrer dans la description de PR
+
+Indiquer le SHA, le runtime actif, les commandes exécutées, les contrôles réussis et les limites `NOT_RUN`. L'absence de registre npm ou de clone Git empêche une preuve L2/L3. Conserver séparément les vérifications L0 du code et les tests L1 réellement exécutés. Ne pas déclencher de CI payante pour faire disparaître un statut `BLOCKED`.
