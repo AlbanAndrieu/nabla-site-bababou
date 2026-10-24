@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import TopAnchor from "@/components/TopAnchor";
 import ActionLink from "@/components/ui/ActionLink";
@@ -18,54 +18,6 @@ import {
 import { getPrivacyPolicyCopy } from "@/lib/privacyPolicy";
 import { getPublicPolicyCopy } from "@/lib/publicPolicies";
 import { getServiceTermsCopy } from "@/lib/serviceTerms";
-
-const POLICY_INDEX_COPY = {
-  fr: {
-    metadataTitle: "Politiques et informations légales | Bababou",
-    metadataDescription:
-      "Consultez les politiques, mentions légales, conditions d’utilisation, règles de confidentialité, cookies et accessibilité de bababou.com.",
-    heading: "Politiques et informations légales",
-    intro:
-      "Retrouvez ici l’ensemble des politiques et informations légales applicables à bababou.com.",
-    open: "Consulter",
-  },
-  en: {
-    metadataTitle: "Policies and legal information | Bababou",
-    metadataDescription:
-      "Review the policies, legal notices, terms of service, privacy, cookies and accessibility information for bababou.com.",
-    heading: "Policies and legal information",
-    intro:
-      "Find all policies and legal information applicable to bababou.com in one place.",
-    open: "View policy",
-  },
-  de: {
-    metadataTitle: "Richtlinien und rechtliche Informationen | Bababou",
-    metadataDescription:
-      "Lesen Sie die Richtlinien, rechtlichen Hinweise, Nutzungsbedingungen sowie Datenschutz-, Cookie- und Barrierefreiheitsinformationen von bababou.com.",
-    heading: "Richtlinien und rechtliche Informationen",
-    intro:
-      "Hier finden Sie alle für bababou.com geltenden Richtlinien und rechtlichen Informationen.",
-    open: "Richtlinie öffnen",
-  },
-  no: {
-    metadataTitle: "Retningslinjer og juridisk informasjon | Bababou",
-    metadataDescription:
-      "Se retningslinjer, juridiske merknader, bruksvilkår samt informasjon om personvern, informasjonskapsler og tilgjengelighet for bababou.com.",
-    heading: "Retningslinjer og juridisk informasjon",
-    intro:
-      "Her finner du alle retningslinjer og juridisk informasjon som gjelder for bababou.com.",
-    open: "Åpne retningslinjen",
-  },
-} as const satisfies Record<
-  AppLocale,
-  Readonly<{
-    metadataTitle: string;
-    metadataDescription: string;
-    heading: string;
-    intro: string;
-    open: string;
-  }>
->;
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -95,7 +47,7 @@ export async function generateMetadata({
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) return {};
 
-  const copy = POLICY_INDEX_COPY[locale];
+  const t = await getTranslations({ locale, namespace: "policyIndexPage" });
   const canonical = localizedPolicyIndexPath(locale);
   const languages = Object.fromEntries(
     routing.locales.map((alternateLocale) => [
@@ -105,8 +57,8 @@ export async function generateMetadata({
   );
 
   return {
-    title: copy.metadataTitle,
-    description: copy.metadataDescription,
+    title: t("metadataTitle"),
+    description: t("metadataDescription"),
     alternates: {
       canonical,
       languages: {
@@ -117,14 +69,14 @@ export async function generateMetadata({
     openGraph: {
       type: "website",
       url: canonical,
-      title: copy.metadataTitle,
-      description: copy.metadataDescription,
+      title: t("metadataTitle"),
+      description: t("metadataDescription"),
       siteName: "Bababou",
     },
     twitter: {
       card: "summary",
-      title: copy.metadataTitle,
-      description: copy.metadataDescription,
+      title: t("metadataTitle"),
+      description: t("metadataDescription"),
     },
   };
 }
@@ -136,7 +88,7 @@ export default async function PolicyIndexPage({
   if (!hasLocale(routing.locales, locale)) notFound();
 
   setRequestLocale(locale);
-  const copy = POLICY_INDEX_COPY[locale];
+  const t = await getTranslations({ locale, namespace: "policyIndexPage" });
 
   return (
     <>
@@ -148,8 +100,8 @@ export default async function PolicyIndexPage({
       >
         <Container>
           <header className={layout.centeredHeader}>
-            <h1 className={layout.title}>{copy.heading}</h1>
-            <p className={layout.lead}>{copy.intro}</p>
+            <h1 className={layout.title}>{t("heading")}</h1>
+            <p className={layout.lead}>{t("intro")}</p>
           </header>
 
           <div className={layout.twoColumnGrid}>
@@ -168,7 +120,7 @@ export default async function PolicyIndexPage({
                     variant="outline"
                     size="compact"
                   >
-                    {copy.open}
+                    {t("open")}
                   </ActionLink>
                 </article>
               );
