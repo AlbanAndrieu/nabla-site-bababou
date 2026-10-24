@@ -10,6 +10,8 @@ just install
 just hooks
 ```
 
+`just hooks` utilise `mise run hooks`. Conserver le même outillage local que la CI.
+
 Utiliser les versions enregistrées dans `mise.toml`, `mise.lock` et `package-lock.json`. Conserver une `node_modules` et un répertoire `.next` propres à chaque worktree. Ne pas sourcer automatiquement `.envrc` ou des secrets de production pour un contrôle local.
 
 ## Développer
@@ -28,8 +30,14 @@ just p0
 
 Avant une publication, revoir les changements déterministes produits par `just quality-fix`, committer seulement les fichiers intentionnels, puis exécuter `just quality` et `just publish` sur le HEAD propre. Un contrôle `offline-l1` réussi ne remplace pas BetterLeaks, SAST/SCA, Playwright ni ZAP.
 
+OpenCommit reste facultatif via `npm run oco` ; Commitlint reste l'autorité.
+
 Utiliser les conventions de commit (par exemple `fix:`, `refactor:`, `docs:`, `test:`). Ne pas utiliser `--no-verify`, `[skip ci]` ou de force-push sans nécessité et accord. Ne jamais fusionner automatiquement.
 
 ## Confidentialité
 
 La homepage approuvée `public/index.html`, la 404 et les documents publiés ont des contrats de parité. Lire [publication-redaction.md](docs/publication-redaction.md) avant toute mutation de contenu familial ou juridique. Ne pas recopier les originaux privés dans les tests, prompts, logs ou artefacts.
+
+## Licence
+
+Les contributions au dépôt restent sous **MIT License**.
