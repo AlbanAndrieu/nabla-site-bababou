@@ -102,6 +102,15 @@ test.describe("opt-in homepage migration preview", () => {
       for (const href of ["/", "/people-contacted.html", "/for-fathers.html", "/feed.xml", "/eleonore-feed.xml"]) {
         await expect(page.locator(`main a[href="${href}"]`)).toHaveCount(1);
       }
+      const associationLinks = page.locator("#preview-associations li a");
+      await expect(associationLinks).toHaveCount(3);
+      for (const image of [
+        "/assets/auction-law-svgrepo-com.svg",
+        "/assets/sos-warning-svgrepo-com.svg",
+        "/assets/japan-kanji-svgrepo-com.svg",
+      ]) {
+        await expect(page.locator(`#preview-associations img[src="${image}"]`)).toHaveCount(1);
+      }
       const disclosure = page.locator("#preview-document-disclosure details");
       const summary = disclosure.locator("summary");
       await expect(disclosure).not.toHaveAttribute("open", "");
@@ -117,4 +126,15 @@ test.describe("opt-in homepage migration preview", () => {
       }
     });
   }
+});
+
+test("association artwork has a local fallback when a bundled SVG fails", async ({ page }) => {
+  test.skip(!enabled, "Set HOMEPAGE_PREVIEW_ENABLED=true on the test server");
+  await page.route("**/assets/auction-law-svgrepo-com.svg", (route) =>
+    route.fulfill({ status: 404, contentType: "image/svg+xml", body: "" }),
+  );
+  await page.goto("/home-preview");
+  const link = page.locator('#preview-associations a[href="http://paternet.fr/tag/combat-des-peres//"]');
+  await expect(link).toContainText("Paternet");
+  await expect(link.locator('[data-association-icon-fallback="paternet"]')).toBeVisible();
 });
