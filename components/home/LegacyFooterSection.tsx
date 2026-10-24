@@ -1,13 +1,40 @@
-/** Approved public policy links, preserved on the React preview. */
+import { POLICY_PAGES } from "@/lib/policyPages";
+import styles from "./LegacyFooterSection.module.css";
+
+// Keep approved English labels. Canonical paths come from the shared SEO registry.
+const policyLinks = [
+  { label: "Terms of Use", href: POLICY_PAGES.service_terms.canonicalPath },
+  { label: "Privacy Policy", href: POLICY_PAGES.privacy_policy.canonicalPath },
+  { label: "Impressum", href: POLICY_PAGES.impressum.canonicalPath },
+  { label: "Accessibility", href: POLICY_PAGES.accessibility_statement.canonicalPath },
+  { label: "Cookie Policy", href: POLICY_PAGES.cookie_policy.canonicalPath },
+] as const;
+
+/**
+ * This section sits inside the preview's main element.
+ * The shared Next layout already renders the document's single site footer.
+ */
 export default function LegacyFooterSection() {
-  return <footer id="preview-footer" lang="en" aria-label="Site footer">
-    <nav aria-label="Legal and accessibility links">
-      <a href="/policy/service_terms.html">Terms of Use</a>{" · "}
-      <a href="/policy/privacy_policy.html">Privacy Policy</a>{" · "}
-      <a href="/policy/impressum.html">Impressum</a>{" · "}
-      <a href="/policy/accessibility_statement.html">Accessibility</a>{" · "}
-      <a href="/policy/cookie_policy.html">Cookie Policy</a>
-    </nav>
-    <p><a href="#main-content">Back to top</a></p>
-  </footer>;
+  return (
+    <section
+      id="preview-footer"
+      className={styles.section}
+      lang="en"
+      aria-labelledby="preview-policies-heading"
+    >
+      <h2 id="preview-policies-heading">Site Policies</h2>
+      <nav aria-label="Legal and accessibility links">
+        <ul className={styles.links}>
+          {policyLinks.map(({ label, href }) => (
+            <li key={href}>
+              <a href={href}>{label}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+      <p className={styles.returnLink}>
+        <a href="#main-content">Back to top</a>
+      </p>
+    </section>
+  );
 }

@@ -71,10 +71,41 @@ test.describe("opt-in homepage migration preview", () => {
       await expect(page.locator("#preview-found-website")).toContainText(
         "He has been searching for you since 2015.",
       );
+      // The preview shares the layout footer. Its legal links form a
+      // separate named section, not a second document footer.
+      await expect(page.locator("#preview-footer nav")).toHaveAttribute(
+        "aria-label",
+        "Legal and accessibility links",
+      );
+      await expect(page.locator("main footer")).toHaveCount(0);
+      for (const href of [
+        "/policy/service_terms",
+        "/policy/privacy_policy",
+        "/policy/impressum",
+        "/policy/accessibility_statement",
+        "/policy/cookie_policy",
+      ]) {
+        await expect(page.locator(`#preview-footer a[href="${href}"]`)).toHaveCount(1);
+      }
+      const firstPolicyLink = page.locator(
+        '#preview-footer a[href="/policy/service_terms"]',
+      );
+      await firstPolicyLink.focus();
+      await expect(firstPolicyLink).toBeFocused();
+      await page.keyboard.press("Tab");
+      await expect(
+        page.locator('#preview-footer a[href="/policy/privacy_policy"]'),
+      ).toBeFocused();
       await expect(page.locator('main a[href^="mailto:"]')).toHaveCount(1);
-      for (const href of ["/", "/people-contacted.html", "/for-fathers.html", "/feed.xml"]) {
+      for (const href of ["/", "/people-contacted.html", "/for-fathers.html", "/feed.xml", "/eleonore-feed.xml"]) {
         await expect(page.locator(`main a[href="${href}"]`)).toHaveCount(1);
       }
+      const disclosure = page.locator("#preview-document-disclosure details");
+      const summary = disclosure.locator("summary");
+      await expect(disclosure).not.toHaveAttribute("open", "");
+      await summary.focus();
+      await page.keyboard.press("Enter");
+      await expect(disclosure).toHaveAttribute("open", "");
       for (const width of [320, 375, 768, 1280]) {
         await page.setViewportSize({ width, height: 800 });
         const hasOverflow = await page.evaluate(

@@ -82,9 +82,8 @@ export default async function HomePreview({
         <section className={styles.resources} aria-labelledby="preview-resources">
           <h2 id="preview-resources">{t("linksTitle")}</h2>
           <ul>
-            <li><a href="/people-contacted.html">{t("history")}</a></li>
-            <li><a href="/for-fathers.html">{t("fathers")}</a></li>
             <li><a href="/feed.xml">{t("rss")}</a></li>
+            <li><a href="/eleonore-feed.xml">{t("rss")} — Éléonore</a></li>
           </ul>
           <p className={styles.note}>{t("note")}</p>
         </section>

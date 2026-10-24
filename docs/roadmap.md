@@ -1,8 +1,8 @@
 # Roadmap — nabla-site-bababou
 
-État au 24 octobre 2026. **PR de travail : [#242](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/242), Draft.** Base vérifiée : `master@911366d`.
+État au 24 octobre 2026. **PR #242 fusionnée ; PR #245 en Draft** et basée sur le dernier `master`. La page publique demeure legacy jusqu'à une approbation explicite.
 
-La priorité est **P1 → P2 → P3 → P4**. La quality gate complète est **reportée**, pas supprimée ni considérée comme réussie. Aucun GitHub Actions payant, déploiement ou merge automatique.
+La priorité de développement est **P1 parité → P2 accessibilité → P3 i18n → P4 SEO**. L'audit HTTP read-only reste distinct. La quality gate complète est **reportée**, pas supprimée ni considérée comme réussie. Aucun GitHub Actions payant, déploiement ou merge automatique.
 
 ## Reprise rapide
 
@@ -25,6 +25,8 @@ La priorité est **P1 → P2 → P3 → P4**. La quality gate complète est **re
 - [x] Préparer les critères de parité dans `docs/homepage-migration-parity.md`.
 - [x] Migrer le paragraphe public de présentation du cadre juridique et son lien vers `/for-fathers.html` dans `LegacyLegalResourcesSection.tsx`, sans dupliquer les cartes contenant identifiants, localisations ou accusations.
 - [x] Porter les sections publiques non sensibles complémentaires dans React : navigation People contacted / Central Authorities, associations, notice documentaire native `details/summary`, et footer politique/accessibilité.
+- [x] Corriger la navigation légale de la prévisualisation : utiliser les URL canoniques de `lib/policyPages.ts`, une section sémantique, une liste responsive, des cibles 44 px et un focus visible. Tests Node locaux 4/4, contrôle des routes et de l'ordre du clavier dans Playwright (NOT_RUN navigateur). Les URL `.html` publiques restent compatibles.
+- [x] Corriger les liens de ressources dupliqués dans la prévisualisation React. Conserver les liens dans leurs sections approuvées. Afficher les deux flux RSS. Contrat Node ciblé : 2/2 tests PASS sur des fichiers exacts récupérés de GitHub ; tests navigateur et build : NOT_RUN.
 - [ ] Réconcilier les cartes illustrées sensibles individuellement après revue de confidentialité ; ne pas recopier les identifiants personnels ni les localisations.
 - [ ] Confirmer la parité fonctionnelle des scripts legacy (D3/ARF, widgets, analytics, Google Translate, thème et Turnstile) avant de basculer `/`.
 - [ ] Traiter séparément les sections avec identifiants personnels, informations de localisation ou accusations sur des tiers. Exiger une revue de confidentialité avant toute duplication dans les composants publics.
@@ -38,6 +40,7 @@ La priorité est **P1 → P2 → P3 → P4**. La quality gate complète est **re
 
 - [x] Définir pour la prévisualisation une structure `main`/titres, un lien d'évitement, un focus visible, des cibles tactiles et le respect de `prefers-reduced-motion`.
 - [x] Appliquer les règles Vercel Web Interface Guidelines aux liens, titres et ancres de la prévisualisation. Ajouter les tests source et Playwright responsive (320/375/768/1280 px). La validation navigateur réelle reste à faire.
+- [x] Conserver le disclosure documentaire natif avec un focus visible et une cible tactile de 44 px. Contrôler les deux paragraphes publiés : 6/6 vérifications statiques, 4 tests locaux des styles et de la structure ; rendu navigateur NOT_RUN.
 - [ ] Vérifier au rendu réel les routes prioritaires FR/EN avec axe, lecteur d'écran et clavier.
 - [ ] Vérifier contraste, zoom 200 %, absence de défilement horizontal, erreurs de formulaire et focus.
 - [ ] Vérifier les vues mobile/tablette et les navigateurs Chromium, Firefox et WebKit.
@@ -60,6 +63,14 @@ La priorité est **P1 → P2 → P3 → P4**. La quality gate complète est **re
 - [ ] Vérifier canonical, hreflang FR/EN/DE/NO, x-default et les redirects des URL legacy.
 - [ ] Vérifier sitemap Next/legacy, robots.txt, pages techniques non indexables et 404.
 - [ ] Valider les nouvelles URL et les métadonnées de la homepage avant son indexation.
+
+## Audit production — 24 octobre 2026
+
+- [x] Vérifier le statut GitHub : la PR #242 est fusionnée ; ne pas continuer sur sa branche comme si elle était ouverte.
+- [x] Ajouter `scripts/production-home-smoke.sh` (GET read-only, routes EN/FR/DE/NO, pages legacy, politiques, RSS, robots ; code de sortie en échec si réponse différente de 200 ou erreur réseau).
+- [ ] **Bloqué par DNS dans l'environnement agent** : `curl` renvoie `Could not resolve host: bababou.com` pour `/`, `/en`, `/for-fathers.html`, `/feed.xml`. L'outil de consultation Web ne peut pas ouvrir les URL non plus. **Aucun résultat de disponibilité en production n'est confirmé** ; ne pas affirmer que le site fonctionne ou qu'il est en panne.
+- [x] Consulter Vercel : dernier déploiement production `dpl_5tG2o87GafcsGKFw4ENNUepSDGoz` en état `READY` sur le commit `bc3694b8aa3b91baa1dc4f40cb606b430ef46e9e` (fusion #242). Ce statut atteste le déploiement réussi, pas le bon fonctionnement de chaque route ni de `bababou.com`.
+- [ ] Exécuter le smoke dans un environnement disposant du DNS public ; vérifier en plus les headers et le comportement de la réécriture `/`.
 
 ## P0 — Contrôles de sécurité reportés temporairement
 

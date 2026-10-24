@@ -63,6 +63,7 @@ P0_TESTS=(
     "unit-tests/agentScopeNullPaths.test.mjs"
     "unit-tests/gitScopeFailClosed.test.mjs"
     "unit-tests/homepageMigrationContract.test.mjs"
+    "unit-tests/homepagePolicyNavigation.test.mjs"
     "unit-tests/ciSemgrepContract.test.ts"
     "unit-tests/security-pipeline-contract.test.ts"
     "unit-tests/justBetterleaksContract.test.ts"

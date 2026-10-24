@@ -1,0 +1,46 @@
+.section {
+  max-width: 64rem;
+  margin-inline: auto;
+  padding: clamp(1.5rem, 5vw, 4rem);
+  border-block-start: 1px solid var(--ui-border, #bbb);
+}
+
+.details {
+  border: 1px solid var(--ui-border, #bbb);
+  border-radius: 0.5rem;
+  background: var(--ui-surface, #fff);
+}
+
+.summary {
+  min-height: 2.75rem;
+  padding: 0.75rem 1rem;
+  color: var(--ui-text-primary, #1f2937);
+  font-weight: 700;
+  cursor: pointer;
+  touch-action: manipulation;
+  overflow-wrap: anywhere;
+}
+
+.summary:hover {
+  background: var(--ui-surface-muted, #f3f4f6);
+}
+
+.summary:focus-visible {
+  outline: 3px solid var(--ui-focus-ring, #e58c00);
+  outline-offset: 3px;
+}
+
+.content {
+  padding: 0 1rem 1rem;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.content p {
+  max-width: 70ch;
+  margin-block: 0 1rem;
+}
+
+.content p:last-child {
+  margin-block-end: 0;
+}
