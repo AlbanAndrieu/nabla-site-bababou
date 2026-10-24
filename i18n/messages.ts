@@ -9,6 +9,13 @@ const SITE_LOADERS = {
   no: () => import("@/messages/site/no.json"),
 } as const satisfies Record<AppLocale, CatalogLoader>;
 
+const HOMEPAGE_PREVIEW_LOADERS = {
+  fr: () => import("@/messages/homepage-preview/fr.json"),
+  en: () => import("@/messages/homepage-preview/en.json"),
+  de: () => import("@/messages/homepage-preview/de.json"),
+  no: () => import("@/messages/homepage-preview/no.json"),
+} as const satisfies Record<AppLocale, CatalogLoader>;
+
 const CONTACT_LOADERS = {
   fr: () => import("@/messages/contact/fr.json"),
   en: () => import("@/messages/contact/en.json"),
@@ -93,6 +100,7 @@ function assertUniqueTopLevelNamespaces(
 export async function loadMessages(locale: AppLocale) {
   const [
     { default: site },
+    { default: homepagePreview },
     { default: contact },
     { default: centralAuthorities },
     { default: centralAuthoritiesFailures },
@@ -104,6 +112,7 @@ export async function loadMessages(locale: AppLocale) {
     { default: testSurface },
   ] = await Promise.all([
     SITE_LOADERS[locale](),
+    HOMEPAGE_PREVIEW_LOADERS[locale](),
     CONTACT_LOADERS[locale](),
     CENTRAL_AUTHORITIES_LOADERS[locale](),
     CENTRAL_AUTHORITIES_FAILURES_LOADERS[locale](),
@@ -117,6 +126,7 @@ export async function loadMessages(locale: AppLocale) {
 
   const catalogs = [
     site,
+    homepagePreview,
     contact,
     centralAuthorities,
     centralAuthoritiesFailures,

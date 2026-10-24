@@ -39,25 +39,32 @@ if [[ "$base_available" == true ]]; then
         fi
         echo "⚠️ OFFLINE_BASE_DIVERGED: $BASE is not an ancestor; PR freshness NOT VERIFIED" >&2
     fi
-    # Execute Git in the current shell: process-substitution errors could be lost.
-    {
-        git diff --name-only -z --diff-filter=ACMR "$BASE...HEAD"
-        git diff --name-only -z --diff-filter=ACMR
-        git diff --cached --name-only -z --diff-filter=ACMR
-        git ls-files --others --exclude-standard -z
-    } | LC_ALL=C sort -zu >"$scope_file"
+    # Do not pipe a Git group into sort: earlier failed commands can be hidden
+    # by a later successful Git invocation.
+    if ! git diff --no-renames --name-only -z --diff-filter=ACMR "$BASE...HEAD" >>"$scope_file" ||
+        ! git diff --no-renames --name-only -z --diff-filter=ACMR >>"$scope_file" ||
+        ! git diff --no-renames --cached --name-only -z --diff-filter=ACMR >>"$scope_file" ||
+        ! git ls-files --others --exclude-standard -z >>"$scope_file"; then
+        echo "❌ OFFLINE_GIT_SCOPE_FAILED: incomplete diff inventory" >&2
+        exit 2
+    fi
     printf 'ℹ️ OFFLINE_SCOPE_DIFF: %s...HEAD + worktree\n' "$BASE"
 else
     if [[ "$REQUIRE_BASE" == 1 ]]; then
         echo "❌ OFFLINE_BASE_REQUIRED: Git comparison base is missing or unrelated; cannot attest PR completeness" >&2
         exit 2
     fi
-    # Never silently truncate the file set or claim PR-completeness without a base.
-    {
-        git ls-files -z
-        git ls-files --others --exclude-standard -z
-    } | LC_ALL=C sort -zu >"$scope_file"
+    # Without a usable Git base, only a full local inventory can be checked.
+    if ! git ls-files -z >>"$scope_file" ||
+        ! git ls-files --others --exclude-standard -z >>"$scope_file"; then
+        echo "❌ OFFLINE_GIT_SCOPE_FAILED: incomplete fallback inventory" >&2
+        exit 2
+    fi
     echo "⚠️ OFFLINE_BASE_UNAVAILABLE: checking every local tracked/untracked path; PR completeness NOT VERIFIED" >&2
+fi
+if ! LC_ALL=C sort -zu -o "$scope_file" "$scope_file"; then
+    echo "❌ OFFLINE_GIT_SCOPE_FAILED: cannot sort Git paths" >&2
+    exit 2
 fi
 mapfile -d '' -t files <"$scope_file"
 if ((MAX_PATHS > 0 && ${#files[@]} > MAX_PATHS)); then

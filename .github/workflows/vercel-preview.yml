@@ -104,7 +104,8 @@ jobs:
 
             const safeOnly = (filename) =>
               filename.startsWith('docs/') ||
-              filename.endsWith('.md') ||
+              // Markdown beneath public/ is a runtime asset, not maintenance.
+              (filename.endsWith('.md') && !filename.includes('/')) ||
               filename.startsWith('unit-tests/') ||
               filename.startsWith('tests/') ||
               filename.startsWith('.github/') ||
@@ -143,8 +144,15 @@ jobs:
               filename === 'scripts/eslint-github-formatter.mjs';
 
             const deployRelevant = files
-              .map((file) => file.filename)
-              .filter((filename) => !safeOnly(filename));
+              // GitHub's PR file list describes renames by the destination.
+              // Include the source path too: deleting public/foo.md via a
+              // rename into docs/foo.md is a deploy-relevant change.
+              .flatMap((file) =>
+                file.status === 'renamed'
+                  ? [file.filename, file.previous_filename ?? '']
+                  : [file.filename],
+              )
+              .filter((filename) => !filename || !safeOnly(filename));
 
             core.setOutput('sha', sha);
             core.setOutput('base_sha', pr.base.sha);

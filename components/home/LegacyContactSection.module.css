@@ -1,0 +1,42 @@
+.section {
+  max-width: 64rem;
+  margin-inline: auto;
+  padding: clamp(1.5rem, 5vw, 4rem);
+  border-block-start: 1px solid var(--ui-border, #bbb);
+  line-height: 1.65;
+  scroll-margin-top: 1.5rem;
+}
+
+.section h2 {
+  margin-block-end: 1rem;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  line-height: 1.25;
+  text-wrap: balance;
+  scroll-margin-top: 1.5rem;
+}
+
+.section p {
+  margin-block: 0 1rem;
+  max-width: 65ch;
+  overflow-wrap: anywhere;
+}
+
+.section a {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  color: var(--ui-link, #2053a3);
+  text-decoration: underline;
+  text-underline-offset: .2em;
+  touch-action: manipulation;
+}
+
+.section a:hover {
+  text-decoration-thickness: 0.16em;
+  text-underline-offset: 0.28em;
+}
+
+.section a:focus-visible {
+  outline: 3px solid var(--ui-focus-ring, #e58c00);
+  outline-offset: 4px;
+}

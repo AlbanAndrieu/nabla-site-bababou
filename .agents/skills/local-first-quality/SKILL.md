@@ -9,6 +9,19 @@ description: >-
 
 Adapted from `nabla-compose#251` at `575314e27510e59fd47af4eb9ec2c59d908cefdf` (`.agents/skills/local-first-quality/SKILL.md`). Preserve the source's evidence model; use **this repository's actual commands**, not Compose-only task names.
 
+## Communication — esprit ASD-STE100
+
+Applique cette règle à toutes tes réponses, aux rapports de validation, aux procédures et aux descriptions de PR :
+
+> Explique cela dans l’esprit de l’ASD-STE100. Utilise des phrases simples et directes. Décris une seule action par étape de procédure. Évite les synonymes inutiles.
+
+- Préfère les phrases courtes, la voix active et les termes techniques précis.
+- Utilise toujours le même terme pour la même notion.
+- Donne **une seule action par étape** dans les procédures. Sépare les actions différentes.
+- Distingue les faits vérifiés, les tests réellement exécutés et les contrôles non exécutés.
+- Évite les formulations ambiguës et les synonymes sans utilité.
+- Respecte l'esprit de l'ASD-STE100 sans revendiquer une conformité officielle.
+
 ## Principle and evidence levels
 
 Start with the cheapest deterministic check able to falsify the patch. Widen only once it passes. Never treat a green GitHub check, an API file read, or an archive without `.git` as an **L3 local publication** pass.
@@ -72,6 +85,6 @@ For external library APIs use repository-versioned docs first; Context7 is optio
 
 ## Remote CI policy and reports
 
-Inspect current PR/checks before each new logical batch; fix actual failures first. Check workflow → failing job → failing step; only expand relevant log/artifact. Respect GitHub Actions credit constraints; do not manually rerun workflows. Unlike Compose, **do not use `[skip ci]`**: Bababou's GitHub skip-directive guard forbids it. Use the repository's scope-based maintenance classification and batch atomic commits when supported to limit Preview builds.
+Inspect current PR/checks before each new logical batch; fix actual failures first. Check workflow → failing job → failing step; only expand relevant log/artifact. Respect GitHub Actions credit constraints; do not manually rerun workflows. **N'utilise pas `[skip ci]`.** Le contrôle `QG_CI_SKIP_DIRECTIVE` interdit cette directive. Garde la PR en Draft pour éviter les jobs GitHub payants. Vérifie les conditions `draft == false` avant de publier un commit. Utilise la classification de scope pour limiter les builds Preview. Ne passe en Ready qu'après la validation locale requise.
 
 Keep PR descriptions **in French**, PR **draft** while iterating, and never merge automatically. Report: exact SHA, changed paths, L0/L1/L2/L3 checks actually run, remote checks on that SHA, and remaining blockers. A complete local quality gate is green **only after L3 on that exact HEAD**.

@@ -39,6 +39,7 @@ release_only_hop() {
     local parent_lock_root_version
     local child_lock_root_version
     local parent_count
+    local -a release_files=()
 
     message="$(git log -1 --format=%B "${child}")"
     subject="${message%%$'\n'*}"
@@ -53,7 +54,16 @@ release_only_hop() {
         return 1
     fi
 
-    mapfile -t release_files < <(git diff --name-only --diff-filter=ACMRD "${parent}" "${child}" | awk 'NF' | sort -u)
+    # Never parse Git filenames on newlines or accept errors hidden by process substitution.
+    local release_scope_file
+    release_scope_file="$(mktemp)" || return 1
+    if ! git diff --no-renames --name-only -z --diff-filter=ACMRD "${parent}" "${child}" > "${release_scope_file}"; then
+        rm -f "${release_scope_file}"
+        printf '❌ PROD_BASE_RELEASE_GIT: cannot enumerate changed paths for %s -> %s\n' "${parent}" "${child}" >&2
+        return 1
+    fi
+    mapfile -d '' -t release_files < "${release_scope_file}"
+    rm -f "${release_scope_file}"
     if (("${#release_files[@]}" == 0)); then
         return 1
     fi
@@ -140,6 +150,7 @@ maintenance_only_hop() {
     local child="$2"
     local parent_count
     local file
+    local -a maintenance_files=()
 
     parent_count="$(git rev-list --parents -n 1 "${child}" | awk '{print NF - 1}')"
     if [[ "${parent_count}" != "1" ]]; then
@@ -148,14 +159,27 @@ maintenance_only_hop() {
         return 1
     fi
 
-    mapfile -t maintenance_files < <(git diff --name-only --diff-filter=ACMRD "${parent}" "${child}" | awk 'NF' | sort -u)
+    # Never parse Git filenames on newlines or accept errors hidden by process substitution.
+    local maintenance_scope_file
+    maintenance_scope_file="$(mktemp)" || return 1
+    if ! git diff --no-renames --name-only -z --diff-filter=ACMRD "${parent}" "${child}" > "${maintenance_scope_file}"; then
+        rm -f "${maintenance_scope_file}"
+        printf '❌ PROD_BASE_MAINTENANCE_GIT: cannot enumerate changed paths for %s -> %s\n' "${parent}" "${child}" >&2
+        return 1
+    fi
+    mapfile -d '' -t maintenance_files < "${maintenance_scope_file}"
+    rm -f "${maintenance_scope_file}"
     if (("${#maintenance_files[@]}" == 0)); then
         return 1
     fi
 
     for file in "${maintenance_files[@]}"; do
+        # Never inherit a production baseline across public Markdown changes.
+        if [[ "${file}" == *.md && "${file}" != */* ]]; then
+            continue
+        fi
         case "${file}" in
-            .assetsignore | docs/* | unit-tests/* | *.md | .github/* | .vscode/* | .idea/* | .agents/* | .cursor/* | .claude/* | .zap/* | .pre-commit-config.yaml | .pre-commit-pre-push.yaml | .python-version | mise.toml | eslint.config.js | stylelint.config.cjs | scripts/agent-quality-gate.sh | scripts/agent-p0-check.sh | scripts/agent-offline-check.sh | scripts/agent-output-metrics.sh | scripts/agent-publish.sh | scripts/lib/agent-quality-support.sh | scripts/lib/quality-log-excerpt.awk | scripts/lib/production-baseline-classification.sh | scripts/ci-scope.sh | scripts/verify-production-baseline.sh | scripts/verify-production-live.sh | scripts/ci-performance-budget.sh | scripts/publish-vercel-preview-checkpoint.sh | scripts/check_code_size.py | scripts/quality-gate.sh | scripts/eslint-github-formatter.mjs)
+            .assetsignore | docs/* | unit-tests/* | .github/* | .vscode/* | .idea/* | .agents/* | .cursor/* | .claude/* | .zap/* | .pre-commit-config.yaml | .pre-commit-pre-push.yaml | .python-version | mise.toml | eslint.config.js | stylelint.config.cjs | scripts/agent-quality-gate.sh | scripts/agent-p0-check.sh | scripts/agent-offline-check.sh | scripts/agent-output-metrics.sh | scripts/agent-publish.sh | scripts/lib/agent-quality-support.sh | scripts/lib/quality-log-excerpt.awk | scripts/lib/production-baseline-classification.sh | scripts/ci-scope.sh | scripts/verify-production-baseline.sh | scripts/verify-production-live.sh | scripts/ci-performance-budget.sh | scripts/publish-vercel-preview-checkpoint.sh | scripts/check_code_size.py | scripts/quality-gate.sh | scripts/eslint-github-formatter.mjs)
                 ;;
             *)
                 printf '❌ PROD_BASE_MAINTENANCE_SCOPE: %s changes deploy-relevant file %s\n' "${child}" "${file}" >&2

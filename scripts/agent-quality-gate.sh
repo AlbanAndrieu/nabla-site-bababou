@@ -83,8 +83,18 @@ if ((ci_skip_directive_failed != 0)); then
 fi
 printf '✅ CI skip-directive guard\n'
 
-mapfile -t CHANGED_FILES < <(collect_changed_files)
-mapfile -t DELETED_FILES < <(collect_deleted_files)
+# Avoid process substitution: a failed Git scope must never look like an empty PR.
+changed_scope_file="$(mktemp)"
+deleted_scope_file="$(mktemp)"
+if ! collect_changed_files >"${changed_scope_file}" ||
+    ! collect_deleted_files >"${deleted_scope_file}"; then
+    rm -f "${changed_scope_file}" "${deleted_scope_file}"
+    echo "❌ QG_SCOPE_ENUMERATION_FAILED: failed to collect changed or deleted Git paths" >&2
+    exit 1
+fi
+mapfile -d '' -t CHANGED_FILES <"${changed_scope_file}"
+mapfile -d '' -t DELETED_FILES <"${deleted_scope_file}"
+rm -f "${changed_scope_file}" "${deleted_scope_file}"
 
 precommit_fix_until_stable() {
     local pass
@@ -98,7 +108,14 @@ precommit_fix_until_stable() {
     declare -A seen_fingerprints=()
 
     for ((pass = 1; pass <= FIX_PASSES; pass++)); do
-        mapfile -t fix_files < <(collect_changed_files)
+        local fix_scope_file
+        fix_scope_file="$(mktemp)" || return 1
+        if ! collect_changed_files >"${fix_scope_file}"; then
+            rm -f "${fix_scope_file}"
+            return 1
+        fi
+        mapfile -d '' -t fix_files <"${fix_scope_file}"
+        rm -f "${fix_scope_file}"
         if (("${#fix_files[@]}" == 0)); then
             echo "✅ no changed files require pre-commit auto-fixes"
             return 0
@@ -250,14 +267,27 @@ validate_untracked_whitespace() {
     local file
     local log
     local rc
+    local untracked_scope_file
 
-    while IFS= read -r file; do
+    # Git pathnames may contain tabs/newlines. Process substitution hides
+    # enumeration errors, so read a checked NUL-delimited inventory instead.
+    untracked_scope_file="$(mktemp)" || return 1
+    if ! git ls-files --others --exclude-standard -z >"${untracked_scope_file}"; then
+        rm -f "${untracked_scope_file}"
+        echo "❌ QG_UNTRACKED_GIT_FAILED: cannot enumerate untracked files" >&2
+        return 1
+    fi
+
+    while IFS= read -r -d '' file; do
         [[ -f "${file}" ]] || continue
 
         # Keep this independent from the destructive-diff allowlist: pre-commit's
         # filesystem whitespace hooks are broader, and git diff safely treats
         # binary files as ordinary content differences without whitespace errors.
-        log="$(mktemp)"
+        log="$(mktemp)" || {
+            rm -f "${untracked_scope_file}"
+            return 1
+        }
         set +e
         git diff --no-index --check /dev/null -- "${file}" >"${log}" 2>&1
         rc=$?
@@ -267,11 +297,12 @@ validate_untracked_whitespace() {
         # Whitespace errors and command failures return a value greater than 1.
         if ((rc > 1)); then
             cat "${log}" >&2
-            rm -f "${log}"
+            rm -f "${log}" "${untracked_scope_file}"
             return 1
         fi
         rm -f "${log}"
-    done < <(git ls-files --others --exclude-standard)
+    done <"${untracked_scope_file}"
+    rm -f "${untracked_scope_file}"
 }
 
 run_dependency_free_preflight() {

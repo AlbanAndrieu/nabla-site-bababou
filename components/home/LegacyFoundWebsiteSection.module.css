@@ -1,0 +1,28 @@
+.section {
+  max-width: 64rem;
+  margin-inline: auto;
+  padding: clamp(1.5rem, 5vw, 4rem);
+  border-block-start: 1px solid var(--ui-border, #bbb);
+  overflow-wrap: anywhere;
+  line-height: 1.65;
+  scroll-margin-top: 1.5rem;
+}
+
+.section h2 {
+  max-width: 36ch;
+  margin-block: 0 1rem;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  line-height: 1.25;
+  text-wrap: balance;
+}
+
+.section p {
+  max-width: 70ch;
+  margin-block: 0 1rem;
+  text-wrap: pretty;
+}
+
+.section .tagline {
+  margin-block: 1.5rem 0;
+  font-size: .95rem;
+}
