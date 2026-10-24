@@ -1,72 +1,35 @@
-# Contributing to nabla-site-bababou
+# Contribuer à nabla-site-bababou
 
-Follow `AGENTS.md` as the canonical repository policy.
+Consulter d'abord [AGENTS.md](AGENTS.md) pour les règles Git, la confidentialité, les gates et les responsabilités des agents. La [roadmap](docs/roadmap.md) décrit les travaux ouverts ; le [runbook](docs/operations.md) explique leur validation.
 
-## Getting started
-
-```bash
-git clone https://github.com/AlbanAndrieu/nabla-site-bababou.git
-cd nabla-site-bababou
-npm ci
-mise run hooks
-```
-
-Node.js local/CI is pinned through `.nvmrc` / `mise.toml`; the package engine remains compatible with the supported Vercel runtime.
-
-## Development workflow
-
-> Never write or push directly to `master`. Create a non-default branch and integrate changes through a pull request.
+## Préparer le dépôt
 
 ```bash
-git checkout -b feature/your-change
-npm run dev
+mise install
+just install
+just hooks
 ```
 
-Before publication:
+Utiliser les versions enregistrées dans `mise.toml`, `mise.lock` et `package-lock.json`. Conserver une `node_modules` et un répertoire `.next` propres à chaque worktree. Ne pas sourcer automatiquement `.envrc` ou des secrets de production pour un contrôle local.
+
+## Développer
+
+Travailler sur une branche différente de `master`. Préférer une PR Draft pendant les changements et conserver les protections CI. Le site est hybride ; ne pas créer un second projet Next.js sous `app/` ou `public/`. Préserver les URL historiques et les pages approuvées.
 
 ```bash
-bash scripts/quality-gate.sh
+just dev
+just offline-l1
+just offline-contracts
+just source-check
+just p0
 ```
 
-For focused checks, use the root scripts such as `npm run lint`, `npm run test:unit`, `npm run build`, or `npm test`.
+`just source-check` nécessite `npm ci`. Les tests unitaires complets utilisent `just unit`, les tests navigateur `npm test` et les tests accessibilité `just a11y`.
 
-OpenCommit remains available as an optional local helper:
+Avant une publication, revoir les changements déterministes produits par `just quality-fix`, committer seulement les fichiers intentionnels, puis exécuter `just quality` et `just publish` sur le HEAD propre. Un contrôle `offline-l1` réussi ne remplace pas BetterLeaks, SAST/SCA, Playwright ni ZAP.
 
-```bash
-npm run oco
-# or
-npm run opencommit
-```
+Utiliser les conventions de commit (par exemple `fix:`, `refactor:`, `docs:`, `test:`). Ne pas utiliser `--no-verify`, `[skip ci]` ou de force-push sans nécessité et accord. Ne jamais fusionner automatiquement.
 
-Commitlint remains authoritative. Use Conventional Commits such as `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`, `ci:`, `build:`, `perf:` and `revert:`.
+## Confidentialité
 
-## Project structure
-
-```text
-nabla-site-bababou/
-├── app/                 # Next.js App Router
-├── api/                 # Optional Vercel serverless handlers
-├── public/              # Shared assets + retained legacy HTML during migration
-├── messages/            # first-class next-intl catalogs
-├── unit-tests/          # Node contract tests
-├── tests/               # Playwright E2E tests
-└── .github/             # GitHub workflows and repository instructions
-```
-
-Bababou remains hybrid while migration parity is being proven. Do not create a second npm/Next application under `public/`.
-
-## Pull requests
-
-- Keep changes focused and use one atomic commit for API-authored multi-file changes when practical.
-- Preserve the owner-controlled homepage and protected `public/404.html` rules.
-- Do not change family/legal publication or pseudonymization rules outside the explicit policy in `AGENTS.md`.
-- For deploy-relevant changes, use the validated on-demand Vercel Preview checkpoint and exact-SHA Playwright flow.
-- Update documentation and regression contracts when the repository architecture changes.
-
-## Security
-
-Never commit secrets or realistic credentials. `npm audit` is advisory; review dependency changes instead of applying blind `--force` upgrades.
-
-## License
-
-Contributions are licensed under the repository's **MIT License**.
+La homepage approuvée `public/index.html`, la 404 et les documents publiés ont des contrats de parité. Lire [publication-redaction.md](docs/publication-redaction.md) avant toute mutation de contenu familial ou juridique. Ne pas recopier les originaux privés dans les tests, prompts, logs ou artefacts.
