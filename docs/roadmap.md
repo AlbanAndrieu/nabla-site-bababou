@@ -28,9 +28,9 @@ La priorité de développement est **P1 parité → P2 accessibilité → P3 i18
 - [x] Corriger la navigation légale de la prévisualisation : utiliser les URL canoniques de `lib/policyPages.ts`, une section sémantique, une liste responsive, des cibles 44 px et un focus visible. Tests Node locaux 4/4, contrôle des routes et de l'ordre du clavier dans Playwright (NOT_RUN navigateur). Les URL `.html` publiques restent compatibles.
 - [x] Corriger les liens de ressources dupliqués dans la prévisualisation React. Conserver les liens dans leurs sections approuvées. Afficher les deux flux RSS. Contrat Node ciblé : 2/2 tests PASS sur des fichiers exacts récupérés de GitHub ; tests navigateur et build : NOT_RUN.
 - [ ] Réconcilier les cartes illustrées sensibles individuellement après revue de confidentialité ; ne pas recopier les identifiants personnels ni les localisations.
-- [ ] Confirmer la parité fonctionnelle des scripts legacy (D3/ARF, widgets, analytics, Google Translate, thème et Turnstile) avant de basculer `/`.
+- [x] Inventorier les 15 scripts approuvés de la homepage ; ajouter `just homepage-runtime-parity` et un contrat de non-régression. 5/5 tests Node ciblés PASS ; exécution sur checkout complet NOT_RUN.
+- [ ] Confirmer la parité fonctionnelle des scripts legacy (D3/ARF, widgets, analytics, Google Translate, connexion, thème et Turnstile) avant de basculer `/`.
 - [ ] Traiter séparément les sections avec identifiants personnels, informations de localisation ou accusations sur des tiers. Exiger une revue de confidentialité avant toute duplication dans les composants publics.
-- [ ] Préserver les interactions D3/ARF, Turnstile, le thème, les widgets, le contact et les liens.
 - [ ] Mesurer la parité du contenu, des scripts et du rendu à plusieurs largeurs d'écran.
 - [ ] Remplacer `/` et retirer le fallback seulement après revue explicite du propriétaire et validation du rendu final.
 
@@ -50,6 +50,7 @@ La priorité de développement est **P1 parité → P2 accessibilité → P3 i18
 - [x] Appliquer les règles Vercel Web Interface Guidelines aux liens, titres et ancres de la prévisualisation. Ajouter les tests source et Playwright responsive (320/375/768/1280 px). La validation navigateur réelle reste à faire.
 - [x] Conserver le disclosure documentaire natif avec un focus visible et une cible tactile de 44 px. Contrôler les deux paragraphes publiés : 6/6 vérifications statiques, 4 tests locaux des styles et de la structure ; rendu navigateur NOT_RUN.
 - [ ] Vérifier au rendu réel les routes prioritaires FR/EN avec axe, lecteur d'écran et clavier.
+- [x] Le bouton Next de retour en haut respecte désormais `prefers-reduced-motion`. Test source ciblé PASS ; navigateur NOT_RUN.
 - [ ] Vérifier contraste, zoom 200 %, absence de défilement horizontal, erreurs de formulaire et focus.
 - [ ] Vérifier les vues mobile/tablette et les navigateurs Chromium, Firefox et WebKit.
 - [ ] Corriger les défauts prouvés dans les composants partagés ; conserver les protections de la 404 legacy.
@@ -99,6 +100,7 @@ Ne pas supprimer, désactiver ou contourner les protections dans le code. Le **r
 - [ ] Tester React 19.3.1 et le lockfile npm 12, sans mélange avec les migrations fonctionnelles.
 - [ ] Évaluer Dagger sur moteur réel (cache, exclusions, hadolint) puis choisir une seule autorité de pipeline.
 - [ ] Valider Context7 MCP sans secrets ni dépendance réseau dans P0.
+- [ ] Aligner le skill `local-first-quality` avec les règles pertinentes de Site Alban #255 : script Bash enfant plutôt que `set -euo pipefail` dans un terminal interactif ; worktrees isolés ; caches de téléchargement partagés, mais `.venv`/`node_modules` propres au worktree ; SHA distant vérifié avant écriture. Mise à jour directe du skill bloquée lors de ce lot.
 - [ ] Mesurer coût et latence des agents sur tâches/HEAD comparables.
 - [ ] Retirer code, scripts et assets orphelins seulement après preuve d'absence de consommateurs.
 - [ ] Avant Talos, décider d'une stratégie d'image unique. Vercel ne dépend pas du Dockerfile fallback actuel.
