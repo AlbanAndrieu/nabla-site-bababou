@@ -36,7 +36,10 @@ test("preview is opt-in, non-indexable and cannot replace the approved homepage"
 
 test("preview uses accessible navigation and keeps legacy resources available", () => {
   const page = read("app/[locale]/home-preview/page.tsx");
-  assert.match(page, /<SkipToMainContent \/>/);
+  assert.doesNotMatch(page, /<SkipToMainContent \/>/);
+  const header = read("components/RouteHeader.tsx");
+  assert.match(header, /isHomePreview \? \(/);
+  assert.match(header, /<a className="skip-to-main" href="#main-content">/);
   assert.match(page, /<main id="main-content"/);
   assert.match(page, /aria-labelledby="preview-title"/);
   assert.match(page, /href="#preview-contact"/);

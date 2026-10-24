@@ -27,6 +27,8 @@ test.describe("opt-in homepage migration preview", () => {
     }) => {
       const response = await page.goto(path);
       expect(response?.status()).toBe(200);
+      await page.keyboard.press("Tab");
+      await expect(page.locator('a.skip-to-main[href="#main-content"]')).toBeFocused();
       await expect(page.locator("html")).toHaveAttribute("lang", code);
       await expect(page.locator("main#main-content h1")).toHaveCount(1);
       await expect(page.locator('a.skip-to-main[href="#main-content"]')).toHaveCount(1);

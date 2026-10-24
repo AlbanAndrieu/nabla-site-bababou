@@ -43,6 +43,7 @@ export default function RouteHeader() {
   const router = useRouter();
   const parts = routeParts(pathname);
   const showNavigation = parts.length > 0;
+  const isHomePreview = parts.length === 1 && parts[0] === "home-preview";
   const showLanguageSwitcher = ROUTE_HEADER_LANGUAGE_SWITCHER_ENABLED;
 
   if (!showNavigation && !showLanguageSwitcher) return null;
@@ -71,6 +72,11 @@ export default function RouteHeader() {
 
   return (
     <header className={headerClassName}>
+      {isHomePreview ? (
+        <a className="skip-to-main" href="#main-content">
+          {t("skipToMainContent")}
+        </a>
+      ) : null}
       <Container className={styles.inner}>
         {showNavigation ? (
           <nav className={styles.nav} aria-label={t("breadcrumbLabel")}>

@@ -12,7 +12,6 @@ import LegacyPeopleSection from "@/components/home/LegacyPeopleSection";
 import LegacyAssociationsSection from "@/components/home/LegacyAssociationsSection";
 import LegacyDisclosureSection from "@/components/home/LegacyDisclosureSection";
 import LegacyFooterSection from "@/components/home/LegacyFooterSection";
-import SkipToMainContent from "@/components/SkipToMainContent";
 import { routing } from "@/i18n/routing";
 import styles from "./page.module.css";
 
@@ -56,7 +55,6 @@ export default async function HomePreview({
 
   return (
     <>
-      <SkipToMainContent />
       <main id="main-content" className={styles.main}>
         <section className={styles.hero} aria-labelledby="preview-title">
           <p className={styles.eyebrow}>{t("eyebrow")}</p>

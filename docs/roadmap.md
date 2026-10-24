@@ -43,7 +43,8 @@ La priorité de développement est **P1 parité → P2 accessibilité → P3 i18
 - [x] **Convergence Alban #255** : contrôle des attributs JSX dupliqués (TS17001) via TypeScript pour app/ et components/, tests ciblés et just source-check avec npm installé.
 - [ ] **Validation au HEAD** : exécuter le contrôle source sur un checkout complet sous Node 24/npm 12 puis build, Playwright, axe et ZAP. Les preuves partielles ne sont pas une validation L3.
 - [x] **Revue statique Vercel Web Interface Guidelines** : lire les règles actuelles de `vercel-labs/web-interface-guidelines/main/command.md` et auditer la prévisualisation React, le header et le footer. Aucune conformité WCAG navigateur n'est attestée.
-- [ ] **P2 clavier** — `app/[locale]/layout.tsx:92`, `app/[locale]/home-preview/page.tsx:59` : placer le lien d'évitement avant les contrôles du header dans l'ordre du DOM, en évitant un second lien sur les pages déjà équipées. Vérifier la cible `#main-content` pour chaque route.
+- [x] **P2 clavier — homepage prévisualisation** : placer l'unique lien d'évitement en première position dans le header Next, avant les contrôles. Test clavier ajouté dans Playwright (NOT_RUN navigateur).
+- [ ] **P2 clavier — autres pages** : inventorier les liens d'évitement et les cibles main avant toute généralisation. Ne pas introduire de doublons.
 - [x] **P2 formulaire et thème** : valeurs name/autoComplete et color-scheme mises à jour ; tests statiques ajoutés. Navigateur NOT_RUN.
 
 
