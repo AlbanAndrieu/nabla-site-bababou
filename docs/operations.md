@@ -170,6 +170,9 @@ Sans accès DNS à GitHub/npm, ne pas prétendre avoir installé les dépendance
 
 ### A.3 Vérifications du build avec dépendances présentes
 
+La commande canonique pour un agent est `just agent-local-build` : elle exécute `scripts/quality/agent-local-build-preflight.mjs`, puis `npm run check` seulement si tous les prérequis sont présents. Son code `2` signifie **prérequis bloquants**, pas erreur de code. Cette commande ne contacte jamais GitHub Actions et n'autorise pas un merge.
+
+
 1. Vérifier les versions verrouillées avec `just toolchain-check`.
 2. Installer uniquement depuis le lockfile avec `npm ci --no-audit --no-fund`.
 3. Lancer `just source-check` avant les tests lourds.
