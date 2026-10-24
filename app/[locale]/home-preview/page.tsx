@@ -7,6 +7,7 @@ import LegacyContactSection from "@/components/home/LegacyContactSection";
 import LegacyOpeningSection from "@/components/home/LegacyOpeningSection";
 import LegacyMessageSection from "@/components/home/LegacyMessageSection";
 import LegacyFoundWebsiteSection from "@/components/home/LegacyFoundWebsiteSection";
+import LegacyLegalResourcesSection from "@/components/home/LegacyLegalResourcesSection";
 import SkipToMainContent from "@/components/SkipToMainContent";
 import { routing } from "@/i18n/routing";
 import styles from "./page.module.css";
@@ -70,6 +71,7 @@ export default async function HomePreview({
         <LegacyContactSection />
         <LegacyMessageSection />
         <LegacyFoundWebsiteSection />
+        <LegacyLegalResourcesSection />
         <section className={styles.resources} aria-labelledby="preview-resources">
           <h2 id="preview-resources">{t("linksTitle")}</h2>
           <ul>
