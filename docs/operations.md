@@ -3,6 +3,15 @@
 > Runbook unique pour CI, Vercel, Preview, production et analytics.
 > La roadmap garde seulement les travaux ouverts ; l'historique détaillé reste dans Git/PR.
 
+## Reprise active — 24 octobre 2026
+
+- PR : [#242](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/242), Draft. Aucune fusion automatique.
+- Priorités actuelles : P1 homepage Next.js, P2 WCAG 2.2 AA, P3 i18n et pages, P4 SEO. La quality gate complète est temporairement reportée, mais ses protections restent intactes.
+- Le public continue d'utiliser `/` via `public/index.html`. `/[locale]/home-preview` est réservé à la migration, désactivé sans `HOMEPAGE_PREVIEW_ENABLED=true`, et exclu de l'indexation.
+- Source de parité : [homepage-migration-parity.md](homepage-migration-parity.md).
+- Ne pas activer la prévisualisation sur le site public avant validation explicite du contenu et des comportements.
+- La PR Draft bloque les jobs GitHub payants. Ne pas ajouter de directive CI-skip.
+
 ## 1. Contrat opérationnel
 
 - **GitHub Actions** valide le dépôt ; `.github/workflows/` est l'autorité.
@@ -36,8 +45,7 @@ Le mode strict `AGENT_OFFLINE_REQUIRE_BASE=1` échoue avec
 `OFFLINE_BASE_DIVERGED` lorsqu'elle n'est pas ancêtre de HEAD. Aucun fallback
 silencieux ne peut attester la PR. Le mode L1 utilise désormais les chemins Git
 terminés par `NUL` pour détecter les fichiers avec espaces, retours à la ligne
-ou noms commençant par `-`. Ces checks ne remplacent ni la CI ni l'audit des
-45 commits historiques `[skip ci]`, à consolider avant la publication.
+ou noms commençant par `-`. Ces checks ne remplacent ni la CI ni l'audit des commits historiques. La PR #242 actuelle a un commit consolidé sans directive de saut. Conserver le contrôle `QG_CI_SKIP_DIRECTIVE`.
 
 Pour les budgets GitHub Actions, conserver le collecteur central plutôt que
 dupliquer son code :

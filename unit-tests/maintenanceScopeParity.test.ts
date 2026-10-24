@@ -88,7 +88,7 @@ test("maintenance paths stay aligned across canonical scope, on-demand Preview a
 
   const maintenanceStart = scope.indexOf("is_maintenance_only_path() {");
   const previewStart = scope.indexOf("is_preview_safe_path() {");
-  const changedFilesStart = scope.indexOf("mapfile -t CHANGED_FILES");
+  const changedFilesStart = scope.indexOf("mapfile -d \"\" -t CHANGED_FILES");
   assert.ok(
     maintenanceStart >= 0 &&
       previewStart > maintenanceStart &&

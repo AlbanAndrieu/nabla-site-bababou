@@ -47,8 +47,12 @@ is_source_file() {
 }
 
 is_maintenance_only_path() {
+    # Only root Markdown is repository-only: public/**/*.md is live content.
+    if [[ "$1" == *.md && "$1" != */* ]]; then
+        return 0
+    fi
     case "$1" in
-        docs/* | unit-tests/* | tests/* | *.md | \
+        docs/* | unit-tests/* | tests/* | \
             .pre-commit-config.yaml | .pre-commit-pre-push.yaml | .python-version | \
             Makefile | justfile | .mega-linter.yml | .betterleaks.toml | \
             mise.toml | opencode.json | renovate.json | eslint.config.js | stylelint.config.cjs | commitlint.config.* | playwright.config.* | \
@@ -81,29 +85,37 @@ is_preview_safe_path() {
     esac
 }
 
-# Keep git errors visible: mapfile + process substitution swallow failures.
+# Count both sides of a rename: moving public/ content into docs/ must
+# never become maintenance-only simply because Git chose a rename status.
+# Use NUL-delimited names: a Git filename can contain newlines or tabs.
+# Git errors must stay visible; process substitution can swallow failures.
 scope_file="$(mktemp)"
 trap 'rm -f "$scope_file"' EXIT
 if [[ "${HEAD_REF}" == "WORKTREE" ]]; then
-    if ! {
-        if [[ "${BASE_REF}" != "HEAD" ]]; then
-            git diff --name-only --diff-filter=ACMRD "${BASE_REF}...HEAD"
-        fi
-        git diff --name-only --diff-filter=ACMRD
-        git diff --cached --name-only --diff-filter=ACMRD
-        git ls-files --others --exclude-standard
-    } | awk 'NF' | LC_ALL=C sort -u >"$scope_file"; then
-        echo '❌ CI_SCOPE_GIT_FAILED: unable to enumerate worktree changes' >&2
+    # Each Git command must be checked separately. A successful last command
+    # may otherwise conceal a failed earlier diff inside a command group.
+    if [[ "${BASE_REF}" != "HEAD" ]] &&
+        ! git diff --no-renames --name-only -z --diff-filter=ACMRD "${BASE_REF}...HEAD" >>"${scope_file}"; then
+        echo '❌ CI_SCOPE_GIT_FAILED: cannot enumerate committed changes' >&2
+        exit 2
+    fi
+    if ! git diff --no-renames --name-only -z --diff-filter=ACMRD >>"${scope_file}" ||
+        ! git diff --no-renames --cached --name-only -z --diff-filter=ACMRD >>"${scope_file}" ||
+        ! git ls-files --others --exclude-standard -z >>"${scope_file}"; then
+        echo '❌ CI_SCOPE_GIT_FAILED: incomplete worktree inventory' >&2
         exit 2
     fi
 else
-    if ! git diff --name-only --diff-filter=ACMRD "${BASE_REF}" "${HEAD_REF}" |
-        awk 'NF' | LC_ALL=C sort -u >"$scope_file"; then
+    if ! git diff --no-renames --name-only -z --diff-filter=ACMRD "${BASE_REF}" "${HEAD_REF}" >"${scope_file}"; then
         echo '❌ CI_SCOPE_GIT_FAILED: unable to enumerate committed changes' >&2
         exit 2
     fi
 fi
-mapfile -t CHANGED_FILES <"$scope_file"
+if ! LC_ALL=C sort -zu -o "${scope_file}" "${scope_file}"; then
+    echo '❌ CI_SCOPE_GIT_FAILED: unable to sort changed paths' >&2
+    exit 2
+fi
+mapfile -d "" -t CHANGED_FILES <"$scope_file"
 
 maintenance_only=true
 application=false

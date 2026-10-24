@@ -133,45 +133,82 @@ require_supported_js_toolchain() {
 }
 
 collect_changed_files() {
-    {
-        if [[ "${BASE_REF}" != "HEAD" ]] && git rev-parse --verify "${BASE_REF}^{commit}" >/dev/null 2>&1; then
-            git diff --name-only --diff-filter=ACMR "${BASE_REF}...HEAD"
+    local scope_file file
+    scope_file="$(mktemp)" || return 1
+    # Git commands must be checked individually. A successful ls-files after a
+    # failed diff must NEVER turn an incomplete inventory into a valid scope.
+    if [[ "${BASE_REF}" != "HEAD" ]] && git rev-parse --verify "${BASE_REF}^{commit}" >/dev/null 2>&1; then
+        if ! git diff --no-renames --name-only -z --diff-filter=ACMR "${BASE_REF}...HEAD" >>"${scope_file}"; then
+            rm -f "${scope_file}"
+            echo "❌ QG_GIT_SCOPE_FAILED: committed diff failed" >&2
+            return 1
         fi
-        git diff --name-only --diff-filter=ACMR
-        git diff --cached --name-only --diff-filter=ACMR
-        git ls-files --others --exclude-standard
-    } |
-        awk 'NF' |
-        sort -u |
-        while IFS= read -r file; do
-            [[ -f "${file}" ]] && printf '%s\n' "${file}"
-        done
+    fi
+    if ! git diff --no-renames --name-only -z --diff-filter=ACMR >>"${scope_file}" ||
+        ! git diff --no-renames --cached --name-only -z --diff-filter=ACMR >>"${scope_file}" ||
+        ! git ls-files --others --exclude-standard -z >>"${scope_file}" ||
+        ! LC_ALL=C sort -zu -o "${scope_file}" "${scope_file}"; then
+        rm -f "${scope_file}"
+        echo "❌ QG_GIT_SCOPE_FAILED: incomplete changed-file inventory" >&2
+        return 1
+    fi
+    # NUL-delimited paths preserve embedded tabs/newlines and filenames with spaces.
+    while IFS= read -r -d '' file; do
+        [[ -f "${file}" ]] && printf '%s\0' "${file}"
+    done <"${scope_file}"
+    rm -f "${scope_file}"
 }
 
 collect_deleted_files() {
-    {
-        if [[ "${BASE_REF}" != "HEAD" ]] && git rev-parse --verify "${BASE_REF}^{commit}" >/dev/null 2>&1; then
-            git diff --name-only --diff-filter=D "${BASE_REF}...HEAD"
+    local scope_file
+    scope_file="$(mktemp)" || return 1
+    if [[ "${BASE_REF}" != "HEAD" ]] && git rev-parse --verify "${BASE_REF}^{commit}" >/dev/null 2>&1; then
+        if ! git diff --no-renames --name-only -z --diff-filter=D "${BASE_REF}...HEAD" >>"${scope_file}"; then
+            rm -f "${scope_file}"
+            echo "❌ QG_GIT_DELETED_SCOPE_FAILED: committed diff failed" >&2
+            return 1
         fi
-        git diff --name-only --diff-filter=D
-        git diff --cached --name-only --diff-filter=D
-    } |
-        awk 'NF' |
-        sort -u
+    fi
+    if ! git diff --no-renames --name-only -z --diff-filter=D >>"${scope_file}" ||
+        ! git diff --no-renames --cached --name-only -z --diff-filter=D >>"${scope_file}" ||
+        ! LC_ALL=C sort -zu -o "${scope_file}" "${scope_file}"; then
+        rm -f "${scope_file}"
+        echo "❌ QG_GIT_DELETED_SCOPE_FAILED: incomplete deleted-file inventory" >&2
+        return 1
+    fi
+    cat "${scope_file}"
+    rm -f "${scope_file}"
 }
 
 workspace_fingerprint() {
-    local file
-    {
-        git diff --binary
-        git diff --cached --binary
-        git status --porcelain=v1 --untracked-files=all
-        while IFS= read -r file; do
-            [[ -f "${file}" ]] || continue
-            printf 'file:%s\n' "${file}"
-            sha256sum "${file}"
-        done < <(collect_changed_files)
-    } | sha256sum | awk '{print $1}'
+    local file scope_file payload_file fingerprint
+    scope_file="$(mktemp)" || return 1
+    payload_file="$(mktemp)" || {
+        rm -f "${scope_file}"
+        return 1
+    }
+    if ! collect_changed_files >"${scope_file}" ||
+        ! git diff --binary >"${payload_file}" ||
+        ! git diff --cached --binary >>"${payload_file}" ||
+        ! git status --porcelain=v1 -z --untracked-files=all >>"${payload_file}"; then
+        rm -f "${scope_file}" "${payload_file}"
+        echo "❌ QG_WORKSPACE_FINGERPRINT_FAILED: incomplete workspace inventory" >&2
+        return 1
+    fi
+    while IFS= read -r -d '' file; do
+        [[ -f "${file}" ]] || continue
+        printf 'file:%s\0' "${file}" >>"${payload_file}"
+        if ! sha256sum -- "${file}" >>"${payload_file}"; then
+            rm -f "${scope_file}" "${payload_file}"
+            return 1
+        fi
+    done <"${scope_file}"
+    if ! fingerprint="$(sha256sum -- "${payload_file}" | awk '{print $1}')"; then
+        rm -f "${scope_file}" "${payload_file}"
+        return 1
+    fi
+    rm -f "${scope_file}" "${payload_file}"
+    printf '%s\n' "${fingerprint}"
 }
 
 # Print "<digest>\t<path>" for each file; deleted files hash as "missing".

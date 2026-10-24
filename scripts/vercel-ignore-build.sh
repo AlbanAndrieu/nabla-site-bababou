@@ -1,58 +1,64 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Vercel's Ignored Build Step uses an inverted exit convention:
-#   0 => skip the deployment
-#   1 => continue building
-#
-# Bababou remains a hybrid Next.js/static migration. public/** is production
-# runtime content until each legacy page is explicitly retired, so it is never
-# classified as maintenance-only.
-#
-# Compare against the last successful Vercel deployment when available. This is
-# important for on-demand checkpoint branches: a PR may contain several commits,
-# and HEAD^ alone can miss an earlier deploy-relevant change.
+# Vercel's Ignored Build Step has inverted exit codes:
+#   0 = skip deployment, 1 = build.
+# public/** is a production asset tree in the hybrid Next/static site, including
+# markdown files. A generic *.md maintenance exemption is therefore unsafe.
 
 git_ref="${VERCEL_GIT_COMMIT_REF:-}"
-
-# Explicit Preview checkpoint refs are CI-validated publication targets.
-# Always build the checkpoint so Vercel and Playwright validate the exact PR SHA,
-# even when the changed files themselves would normally be maintenance-only.
 if [[ "$git_ref" == vercel-preview-* ]]; then
   echo "Validated checkpoint $git_ref; build exact deployment."
   exit 1
 fi
 
 base_sha="${VERCEL_GIT_PREVIOUS_SHA:-}"
-
 if [[ -z "$base_sha" ]] || ! git cat-file -e "$base_sha^{commit}" 2>/dev/null; then
-  # HEAD^ can miss deploy-relevant changes in an earlier commit of this PR.
-  # When the last deployed SHA is unknown, fail open to BUILD, never to SKIP.
   echo "No verified previous deployment SHA; build rather than risk skipping changes."
   exit 1
 fi
+if ! git merge-base --is-ancestor "$base_sha" HEAD 2>/dev/null; then
+  echo "Previous deployment SHA is not an ancestor of HEAD; build rather than guess scope."
+  exit 1
+fi
 
-changed_files="$(git diff --name-only "$base_sha" HEAD)"
-
-if [[ -z "$changed_files" ]]; then
+# Disable rename detection: a rename FROM public/ INTO docs/ also deletes
+# a served asset and must build even when the destination is maintenance.
+# A NUL-delimited diff is required: Git may quote filenames containing spaces,
+# tabs or newlines in line-delimited output. Never infer scope from such quotes.
+changes="$(mktemp)"
+trap 'rm -f "$changes"' EXIT
+if ! git -c core.quotePath=false diff --no-renames --no-ext-diff --name-only -z "$base_sha" HEAD >"$changes"; then
+  echo "Cannot compare deployment refs; build rather than risk skipping changes."
+  exit 1
+fi
+if [[ ! -s "$changes" ]]; then
   echo "No changed files detected since $base_sha; skip deployment."
   exit 0
 fi
 
-# Always assess the full delta, including semantic-release commits.
 echo "Changed files since $base_sha:"
-printf '%s\n' "$changed_files"
-
-while IFS= read -r file; do
+while IFS= read -r -d '' file; do
+  # Render the filename safely in logs, including newline/control characters.
+  printf '  %q\n' "$file"
   case "$file" in
-    .assetsignore|docs/*|unit-tests/*|*.md|.github/*|.vscode/*|.idea/*|.agents/*|.cursor/*|.claude/*)
+    .assetsignore|docs/*|unit-tests/*|.github/*|.vscode/*|.idea/*|.agents/*|.cursor/*|.claude/*)
+      ;;
+    *.md)
+      # Only root-level Markdown is unquestionably repository documentation.
+      # public/**/*.md, app/**/*.md and any other nested Markdown must build.
+      if [[ "$file" != */* ]]; then
+        continue
+      fi
+      echo "Deploy-relevant change detected: $file"
+      exit 1
       ;;
     *)
       echo "Deploy-relevant change detected: $file"
       exit 1
       ;;
   esac
-done <<< "$changed_files"
+done <"$changes"
 
-echo "Only documentation, tests, editor metadata, agent instructions, retired asset metadata, or GitHub maintenance changed; skip Vercel deployment."
+echo "Only root documentation, tests, editor metadata, agent instructions, retired asset metadata, or GitHub maintenance changed; skip Vercel deployment."
 exit 0

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -76,4 +76,18 @@ test("checked-in workflows retain draft guards across every runnable job", () =>
   const result = spawnSync(process.execPath, [checker, root], { encoding: "utf8" });
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, /DRAFT_GUARD_OK workflows=4 jobs=5/);
+});
+
+test("local-first skill forbids CI-skip and preserves the blocking guard", () => {
+  const skill = readFileSync(
+    new URL("../.agents/skills/local-first-quality/SKILL.md", import.meta.url),
+    "utf8",
+  );
+  const gate = readFileSync(
+    new URL("../scripts/agent-quality-gate.sh", import.meta.url),
+    "utf8",
+  );
+  assert.ok(skill.includes("N'utilise pas `[skip ci]`"));
+  assert.match(skill, /PR en Draft/);
+  assert.match(gate, /QG_CI_SKIP_DIRECTIVE/);
 });
