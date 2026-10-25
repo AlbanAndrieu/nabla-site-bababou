@@ -38,6 +38,10 @@ build:
 
 # Never contact CI; fail closed before expensive local Next checks.
 # Requires an existing npm ci installation from the committed lockfile.
+# Node 22/npm 10: dependency-free JavaScript contracts only. No install, Next or CI.
+agent-local-tests:
+    npm run test:agent-local
+
 agent-local-build:
     node scripts/quality/agent-local-build-preflight.mjs
     npm run check
