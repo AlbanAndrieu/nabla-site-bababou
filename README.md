@@ -1,6 +1,6 @@
 # Bababou — site hybride Next.js et pages historiques
 
-Le site `bababou.com` combine **Next.js App Router**, `next-intl` (FR/EN/DE/NO) et les pages historiques de `public/`. La homepage publique `/` reste la page `public/index.html` pendant la migration. La route `/[locale]/home-preview` est **désactivée par défaut**, `noindex` et réservée à la vérification avant bascule.
+Le site `bababou.com` combine **Next.js App Router**, `next-intl` (FR/EN/DE/NO) et les pages historiques de `public/`. La homepage publique `/` reste la page `public/index.html` pendant la migration. La route de revue React `/home-preview` est **consultable**, `noindex`, et n'est pas la homepage publique. `/fr/home-preview` redirige vers `/home-preview`; `/en/home-preview`, `/de/home-preview` et `/no/home-preview` restent disponibles.
 
 **Ne pas publier de nouveaux documents familiaux, identifiants personnels ou traductions non approuvées.**
 
