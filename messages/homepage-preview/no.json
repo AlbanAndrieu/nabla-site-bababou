@@ -10,6 +10,12 @@
     "history": "Personer som er kontaktet",
     "fathers": "Informasjon for fedre",
     "rss": "Les oppdateringer",
-    "note": "Dette er en forhåndsvisning. Den erstatter ikke den nåværende forsiden."
+    "note": "Dette er en forhåndsvisning. Den erstatter ikke den nåværende forsiden.",
+    "sectionNavigation": "På denne siden",
+    "navStory": "Historien",
+    "navJourney": "Landene",
+    "navGallery": "Meldinger og ressurser",
+    "navContact": "Kontakt",
+    "navDocuments": "Dokumenter"
   }
 }
