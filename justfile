@@ -140,7 +140,8 @@ precommit-config-test:
 # Source-only functional inventory. Pending legacy integrations remain pending.
 homepage-runtime-parity:
     node scripts/quality/homepage-runtime-parity.mjs
-    node --test unit-tests/homepageRuntimeParity.test.mjs
+    node scripts/quality/homepage-preview-links.mjs
+    node --test unit-tests/homepageRuntimeParity.test.mjs unit-tests/homepagePreviewLinks.test.mjs
 
 # Dependency-free L1 fallback when GitHub, registries, or hooks are inaccessible.
 offline-release:
@@ -153,15 +154,17 @@ offline-draft-policy:
     node scripts/ci/check-draft-workflows.mjs
 
 offline-contracts:
-    node --test unit-tests/releaseTagBridge.test.mjs unit-tests/workflowDraftBudget.test.mjs unit-tests/agentOfflineBase.test.mjs unit-tests/vercelNode24Layout.test.mjs unit-tests/vercelIgnoredBuildSafety.test.mjs unit-tests/publicAssetScopeParity.test.mjs unit-tests/publicAssetRenameSafety.test.mjs unit-tests/ciScopeNullPaths.test.mjs unit-tests/gitPathDelimiterSafety.test.mjs unit-tests/agentUntrackedWhitespace.test.mjs unit-tests/agentScopeNullPaths.test.mjs unit-tests/gitScopeFailClosed.test.mjs unit-tests/homepageMigrationContract.test.mjs unit-tests/homepagePolicyNavigation.test.mjs unit-tests/siteUiConvergenceContract.test.mjs unit-tests/homepageRuntimeParity.test.mjs unit-tests/backToTopMotionContract.test.mjs unit-tests/homepageAssociationsParity.test.mjs unit-tests/mainContentRoute.test.mjs unit-tests/routeRegistryContract.test.mjs unit-tests/policyIndexTranslations.test.mjs unit-tests/agentLocalBuildPreflight.test.mjs unit-tests/analyticsLocalHost.test.mjs unit-tests/documentationNavigation.test.mjs
+    node --test unit-tests/releaseTagBridge.test.mjs unit-tests/workflowDraftBudget.test.mjs unit-tests/agentOfflineBase.test.mjs unit-tests/vercelNode24Layout.test.mjs unit-tests/vercelIgnoredBuildSafety.test.mjs unit-tests/publicAssetScopeParity.test.mjs unit-tests/publicAssetRenameSafety.test.mjs unit-tests/ciScopeNullPaths.test.mjs unit-tests/gitPathDelimiterSafety.test.mjs unit-tests/agentUntrackedWhitespace.test.mjs unit-tests/agentScopeNullPaths.test.mjs unit-tests/gitScopeFailClosed.test.mjs unit-tests/homepageMigrationContract.test.mjs unit-tests/homepagePolicyNavigation.test.mjs unit-tests/siteUiConvergenceContract.test.mjs unit-tests/homepageRuntimeParity.test.mjs unit-tests/homepagePreviewLinks.test.mjs unit-tests/backToTopMotionContract.test.mjs unit-tests/homepageAssociationsParity.test.mjs unit-tests/mainContentRoute.test.mjs unit-tests/routeRegistryContract.test.mjs unit-tests/policyIndexTranslations.test.mjs unit-tests/agentLocalBuildPreflight.test.mjs unit-tests/analyticsLocalHost.test.mjs unit-tests/documentationNavigation.test.mjs
     node scripts/quality/homepage-runtime-parity.mjs
+    node scripts/quality/homepage-preview-links.mjs
     node scripts/ci/check-draft-workflows.mjs
 
 # TypeScript parser requires npm ci; not part of dependency-free offline-l1.
 source-check:
     npm run check:jsx-attributes
-    node --test unit-tests/jsxDuplicateAttributes.test.mjs unit-tests/siteUiConvergenceContract.test.mjs unit-tests/homepageRuntimeParity.test.mjs unit-tests/homepageAssociationsParity.test.mjs unit-tests/backToTopMotionContract.test.mjs unit-tests/mainContentRoute.test.mjs unit-tests/routeRegistryContract.test.mjs unit-tests/policyIndexTranslations.test.mjs unit-tests/agentLocalBuildPreflight.test.mjs unit-tests/analyticsLocalHost.test.mjs
+    node --test unit-tests/jsxDuplicateAttributes.test.mjs unit-tests/siteUiConvergenceContract.test.mjs unit-tests/homepageRuntimeParity.test.mjs unit-tests/homepagePreviewLinks.test.mjs unit-tests/homepageAssociationsParity.test.mjs unit-tests/backToTopMotionContract.test.mjs unit-tests/mainContentRoute.test.mjs unit-tests/routeRegistryContract.test.mjs unit-tests/policyIndexTranslations.test.mjs unit-tests/agentLocalBuildPreflight.test.mjs unit-tests/analyticsLocalHost.test.mjs
     node scripts/quality/homepage-runtime-parity.mjs
+    node scripts/quality/homepage-preview-links.mjs
     @echo "QG_SOURCE_CHECK_OK: targeted source tests only; build and publication NOT_RUN"
 
 offline-l1:
