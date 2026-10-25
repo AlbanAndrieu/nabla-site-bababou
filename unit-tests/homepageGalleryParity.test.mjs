@@ -68,3 +68,16 @@ test("each gallery card has a safe local fragment and readable link text", () =>
     }
   }
 });
+
+
+test("gallery images have an accessible, network-free rendering fallback", () => {
+  const gallery = read("components/home/LegacyStoryGallerySection.tsx");
+  const media = read("components/home/GalleryCardMedia.tsx");
+  assert.match(gallery, /<GalleryCardMedia image=\{card\.image\} \/>/);
+  assert.match(media, /"use client"/);
+  assert.match(media, /useState\(false\)/);
+  assert.match(media, /onError=\{\(\) => setFailed\(true\)\}/);
+  assert.match(media, /data-gallery-media-fallback/);
+  assert.match(media, /aria-hidden="true"/);
+  assert.doesNotMatch(media, /fetch\(|sendBeacon\(|setTimeout\(/);
+});
