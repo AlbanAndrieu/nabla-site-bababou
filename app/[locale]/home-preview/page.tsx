@@ -65,6 +65,13 @@ export default async function HomePreview({
             </a>
           </div>
         </section>
+        <nav className={styles.sectionNav} data-home-section-nav aria-label={t("sectionNavigation")}>
+          <a href="#preview-opening">{t("navStory")}</a>
+          <a href="#preview-journey">{t("navJourney")}</a>
+          <a href="#preview-story-gallery">{t("navGallery")}</a>
+          <a href="#preview-contact">{t("navContact")}</a>
+          <a href="#preview-document-disclosure">{t("navDocuments")}</a>
+        </nav>
         <LegacyOpeningSection />
         <LegacyFamilyFactsSection />
         <LegacyContactSection />
