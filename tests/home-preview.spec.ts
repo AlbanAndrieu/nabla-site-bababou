@@ -156,3 +156,41 @@ test("association artwork has a local fallback when a bundled SVG fails", async 
   await expect(link).toContainText("Paternet");
   await expect(link.locator('[data-association-icon-fallback="paternet"]')).toBeVisible();
 });
+
+test("React preview theme and print controls work without legacy widget scripts", async ({ page }) => {
+  test.skip(!enabled, "Set HOMEPAGE_PREVIEW_ENABLED=true on the test server");
+
+  await page.goto("/home-preview");
+  const controls = page.getByRole("region", { name: "Page controls" });
+  const themes = controls.getByRole("group", { name: "Display theme" });
+  const dark = themes.getByRole("button", { name: "Dark", exact: true });
+  const auto = themes.getByRole("button", { name: "Auto (system)" });
+
+  await dark.click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await expect(dark).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator('script[src="/site-widgets.js"]')).toHaveCount(0);
+  await expect(page.locator('script[src="/theme-toggle.js"]')).toHaveCount(0);
+
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await expect(themes.getByRole("button", { name: "Dark", exact: true })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+
+  await auto.click();
+  await expect(auto).toHaveAttribute("aria-pressed", "true");
+
+  await page.evaluate(() => {
+    const state = window as Window & { __printCalls?: number };
+    state.__printCalls = 0;
+    window.print = () => {
+      state.__printCalls = (state.__printCalls ?? 0) + 1;
+    };
+  });
+  await controls.getByRole("button", { name: "Print / Save as PDF" }).click();
+  await expect
+    .poll(() => page.evaluate(() => (window as Window & { __printCalls?: number }).__printCalls))
+    .toBe(1);
+});
