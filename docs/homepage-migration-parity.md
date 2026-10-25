@@ -21,7 +21,7 @@
 
 | Fonction de la page approuvée | Source | État Next |
 |---|---|---|
-| Message principal et sections de la homepage | `public/index.html` | Migration progressive. Texte d'accueil et autres sections à porter après revue |
+| Message principal et sections de la homepage | `public/index.html` | Blocs approuvés repris de manière partielle ; parité complète non attestée |
 | Ouverture et deux paragraphes d'accueil | `public/index.html` → `components/home/LegacyOpeningSection.tsx` | Texte anglais conservé ; H1 de la source converti en H2 dans la prévisualisation ; tests de parité et d'ordre |
 | Message « A Message from Your Papa » | `public/index.html` → `components/home/LegacyMessageSection.tsx` | 3 paragraphes anglais migrés, sans réécriture ; contrôle de parité sur les textes ; traduction approuvée en attente |
 | Avis « If you are Éléonore » et texte de bas de message | `public/index.html` → `components/home/LegacyFoundWebsiteSection.tsx` | Texte anglais existant migré sans modification ; ordre du document conservé ; section statique sans `role="alert"` pour éviter une annonce non sollicitée |
@@ -44,25 +44,13 @@
 | Canonical, hreflang, OG/Twitter, sitemap | HTML legacy et métadonnées Next | À vérifier par locale avant indexation |
 | Responsive, WCAG 2.2 AA et navigateurs | Page legacy, tests Playwright | À valider sur rendu réel avant bascule |
 
-## Revue Vercel Web Interface Guidelines (24 octobre 2026)
+## Contrats d'interface — preuves requises
 
-- Référence : [web-design-guidelines](https://github.com/vercel-labs/agent-skills/tree/main/skills/web-design-guidelines) et [règles source](https://github.com/vercel-labs/web-interface-guidelines/blob/main/command.md).
-- La commande `npx skills use` a échoué dans l'agent avec `EAI_AGAIN` (DNS npm). Le contenu complet du skill et de ses règles a été lu via GitHub. Aucun répertoire `supporting-files` n'est indiqué par ce fichier source.
-- `app/[locale]/home-preview/page.module.css` : améliorer le survol des liens, l'alignement des ancres et l'équilibre typographique des titres.
-- `components/home/LegacyContactSection.module.css` : ajouter le retour visuel au survol, le touch-action et le scroll-margin pour les ancres.
-- `components/home/LegacyMessageSection.tsx` : structure `section` + `blockquote` + titres cohérents. Conserver le texte approuvé même lorsque sa ponctuation ne suit pas les règles typographiques génériques.
-- Vérifications ciblées : texte source identique, focus-visible présent et absence de `transition: all` ou `outline: none`.
-- **NOT_RUN** : build complet, axe, contraste réel, lecteur d'écran et tests multi-navigateurs. La revue du code ne prouve pas la conformité WCAG.
+Références : le skill versionné `.agents/skills/web-design-guidelines/SKILL.md` et les [règles Vercel](https://github.com/vercel-labs/web-interface-guidelines/blob/main/command.md). Les états source (focus visible, survol, `text-wrap`, `scroll-margin`, cibles tactiles et `lang="en"`) disposent de contrôles dans `unit-tests/homepageMigrationContract.test.mjs`, `unit-tests/homepageAssociationsParity.test.mjs` et `unit-tests/mainContentRoute.test.mjs`.
 
-## Audit interface — Vercel Web Interface Guidelines
+Le header Next gère l'unique lien d'évitement avant la navigation. Les trois SVG des associations ont un monogramme local de repli si l'image échoue. Les tests Playwright correspondants sont dans `tests/home-preview.spec.ts` et `tests/accessibility-keyboard.spec.ts`.
 
-Source de référence : `vercel-labs/agent-skills/skills/web-design-guidelines/SKILL.md` ; règles : `vercel-labs/web-interface-guidelines/command.md` (consultées le 24 octobre 2026).
-
-- `app/[locale]/home-preview/page.module.css` : focus visible, liens avec état hover, `text-wrap: balance` et marges d'ancrage vérifiés sur la source.
-- `components/home/LegacyContactSection.module.css` : lien mailto avec cible tactile, focus visible et hover vérifiés sur la source.
-- `components/home/LegacyMessageSection.tsx` : structure sémantique et langue `en` vérifiées sur la source.
-- `unit-tests/homepageMigrationContract.test.mjs` : corriger le contrôle du lien mailto après son extraction du composant `page.tsx` ; la route ne porte plus ce lien directement.
-- État : revue **statique**, pas d'audit WCAG 2.2 AA réussi. Les vérifications clavier, lecteur d'écran, contraste, zoom et navigateurs restent nécessaires.
+**Limite :** lecture de source et contrats Node ne valent pas validation WCAG ou parité navigateur ; l'état des validations appartient au rapport de PR portant le SHA effectivement testé.
 
 ## Critères de bascule
 
@@ -78,14 +66,10 @@ Source de référence : `vercel-labs/agent-skills/skills/web-design-guidelines/S
 
 Ne pas retirer `public/index.html` et ses ressources avant l'approbation. Ne pas supprimer Google Translate comme fallback.
 
-## État de fin de migration des sections sûres — 24 octobre 2026
+## Inventaire et limites de parité
 
-Les blocs textuels publics sans données sensibles ont été portés dans la prévisualisation React, sans changer la page publique. La migration **complète** du HTML historique n'est pas attestée : les cartes contenant données personnelles ou accusations demandent une revue de publication ; D3/ARF, Turnstile, widgets, thème, traduction automatique, analytics et intégrations tierces doivent obtenir une équivalence testée avant bascule. Aucun test visuel, navigateur ou quality gate complète exécuté lors de ce lot.
+Exécuter `just homepage-runtime-parity` pour contrôler les 15 inclusions de scripts de `public/index.html`. Le contrat échoue en cas d'ajout, suppression, doublon ou modification des gardes `/`, `HOMEPAGE_PREVIEW_ENABLED`, `noindex` et de l'analytics partagé. Les états `partial` et `pending` décrivent **des comportements non validés**, pas des lots migrés.
 
-## Contrat source des scripts — 24 octobre 2026
+D3/ARF, Turnstile, Google Translate, widgets, thème, analytics et médias tiers doivent faire l'objet de tests fonctionnels explicites avant bascule. Les cartes avec données personnelles, localisations ou affirmations sur des tiers restent exclues de la Preview jusqu'à [revue de publication](publication-redaction.md). Conserver le corpus public approuvé sans duplication.
 
-- Exécuter `just homepage-runtime-parity` pour comparer les inclusions de scripts de `public/index.html` au registre versionné.
-- Le contrôle échoue si un script est ajouté, supprimé ou dupliqué sans réconciliation, ou si `/`, `noindex`, le drapeau de Preview ou la frontière analytics changent.
-- Les 15 scripts connus comprennent Font Awesome, connexion, Turnstile, thème, Google Translate, analytics, D3, ARF, jQuery, Popper, Bootstrap, annonce de statut et widgets.
-- L’état `partial` décrit seulement une partie du comportement ; `pending` signifie qu’aucune parité n’est revendiquée.
-- Tests Node ciblés sur fixtures : 5/5 PASS. Les fichiers testés portent les empreintes SHA des fichiers publiés. Exécution sur le checkout complet et navigateur : NOT_RUN.
+Pour l'exécution des tests, les incidents et la recette Preview exact-SHA, consulter [operations.md](operations.md). Les travaux encore ouverts sont dans [roadmap.md](roadmap.md).

@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+
 import { expect, test } from "@playwright/test";
 
 const POLICY_INDEX_CASES = [
@@ -23,6 +25,33 @@ test.describe("policy index", () => {
       expect(response?.status()).toBe(200);
 
       await expect(page.locator("html")).toHaveAttribute("lang", pageCase.lang);
+
+      const expected = JSON.parse(
+        readFileSync(
+          new URL(`../messages/policy-index/${pageCase.lang}.json`, import.meta.url),
+          "utf8",
+        ),
+      ).policyIndexPage as {
+        metadataTitle: string;
+        metadataDescription: string;
+        heading: string;
+        intro: string;
+      };
+      await expect(page).toHaveTitle(expected.metadataTitle);
+      await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+        "content",
+        expected.metadataDescription,
+      );
+      await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
+        "content",
+        expected.metadataTitle,
+      );
+      await expect(page.locator('meta[name="twitter:description"]')).toHaveAttribute(
+        "content",
+        expected.metadataDescription,
+      );
+      await expect(page.locator("main h1")).toHaveText(expected.heading);
+      await expect(page.locator("main header p")).toHaveText(expected.intro);
       await expect(
         page.getByRole("heading", { level: 1, name: pageCase.heading }),
       ).toBeVisible();

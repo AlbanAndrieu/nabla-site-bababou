@@ -2,19 +2,12 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import createNextIntlPlugin from "next-intl/plugin";
+import { LEGACY_HTML_REDIRECT_SLUGS, POLICY_ROUTE_SLUGS } from "./lib/mainContentRoute.mjs";
 
 const projectRoot = path.dirname(fileURLToPath(import.meta.url));
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
-const migratedLegacyRedirects = [
-  "contact",
-  "email",
-  "link",
-  "success",
-  "cancel",
-  "central-authorities",
-  "central-authorities-failures",
-].flatMap((slug) => [
+const migratedLegacyRedirects = LEGACY_HTML_REDIRECT_SLUGS.flatMap((slug) => [
   // Legacy root pages were English before the Next locale policy changed.
   { source: `/${slug}.html`, destination: `/en/${slug}`, permanent: true },
   // Legacy French pages lived below /fr; French is now the unprefixed default.
@@ -44,14 +37,7 @@ const migratedCentralAuthorityDocumentHubRedirects = [
  * native policy registry, but their public legacy URLs now converge on the
  * extensionless App Router canonicals.
  */
-const migratedPolicyRedirects = [
-  "accessibility_statement",
-  "cookie_policy",
-  "impressum",
-  "legal",
-  "privacy_policy",
-  "service_terms",
-].map((slug) => ({
+const migratedPolicyRedirects = POLICY_ROUTE_SLUGS.map((slug) => ({
   source: `/policy/${slug}.html`,
   destination: `/policy/${slug}`,
   permanent: true,

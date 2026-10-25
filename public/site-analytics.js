@@ -78,12 +78,11 @@
 
 	function isLikelyLocalHost() {
 		try {
-			var h = location.hostname;
-			return (
-				h === "localhost" ||
-				h === "127.0.0.1" ||
-				h === "[::1]"
-			);
+			var host = String(location.hostname || "").toLowerCase().replace(/\.$/, "");
+			if (host === "localhost" || host.endsWith(".localhost")) return true;
+			if (host === "::1" || host === "[::1]" || host === "0.0.0.0") return true;
+			var loopback = /^127\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(host);
+			return !!loopback && loopback.slice(1).every((octet) => Number(octet) <= 255);
 		} catch (_e2) {
 			return false;
 		}

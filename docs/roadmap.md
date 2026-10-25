@@ -1,137 +1,73 @@
-# Roadmap — nabla-site-bababou
+# Roadmap active — nabla-site-bababou
 
-État au 24 octobre 2026. **PR #242 fusionnée ; PR #245 en Draft** et basée sur le dernier `master`. La page publique demeure legacy jusqu'à une approbation explicite.
+État au **25 octobre 2026**. La PR #245 est **fusionnée** sur `master`. Le site reste hybride : la homepage publique `/` utilise toujours `public/index.html`. La migration React est disponible uniquement via `/[locale]/home-preview` avec `HOMEPAGE_PREVIEW_ENABLED=true` (désactivé par défaut et `noindex`). **Aucune bascule publique sans approbation explicite.**
 
-La priorité de développement est **P1 parité → P2 accessibilité → P3 i18n → P4 SEO**. L'audit HTTP read-only reste distinct. La quality gate complète est **reportée**, pas supprimée ni considérée comme réussie. Aucun GitHub Actions payant, déploiement ou merge automatique.
+Ce document contient uniquement les **travaux ouverts** et leurs critères d'acceptation. Les réalisations sont dans le code et l'historique Git ; les procédures et incidents dans [operations.md](operations.md) ; la correspondance du contenu dans [homepage-migration-parity.md](homepage-migration-parity.md) ; la confidentialité dans [publication-redaction.md](publication-redaction.md).
 
-## Reprise rapide
+## Ordre des priorités
 
-- Source approuvée de la homepage : `public/index.html`. `proxy.ts` conserve `/` sur cette source.
-- Source de parité et critères de bascule : [homepage-migration-parity.md](homepage-migration-parity.md).
-- `/[locale]/home-preview` prépare les quatre langues. Drapeau serveur `HOMEPAGE_PREVIEW_ENABLED=true`, **désactivé par défaut**. Route non indexable. Ne pas activer publiquement sans revue.
-- Exécuter les tests ciblés qui restent accessibles en local. Ne pas présenter le build Next.js, la validation WCAG ou la qualité complète comme réussis sans preuve.
-- La validation visuelle est reportée sur instruction du propriétaire. Continuer les migrations React et les tests statiques dans la PR Draft. Garder les contrôles navigateur et WCAG comme critères distincts avant toute bascule publique.
-- Incidents, signatures de panne et reprise GitHub : [operations.md](operations.md). Contrats de confidentialité : [publication-redaction.md](publication-redaction.md).
-- Consignes agents : [local-first-quality](../.agents/skills/local-first-quality/SKILL.md), `AGENTS.md`.
+**P1 Homepage → P2 Accessibilité → P3 i18n/pages → P4 SEO.** P0 sécurité, conformité de la CI et confidentialité restent des conditions obligatoires pour chaque publication. Conserver la PR de travail en Draft ; ne pas consommer volontairement des minutes GitHub Actions pour les itérations locales ; ne jamais affaiblir les gates.
 
-## P1 — Homepage Next.js (priorité active)
+## P1 — Parité fonctionnelle de la homepage React
 
-- [x] Conserver la homepage legacy et ses routes pendant la migration.
-- [x] Créer un premier rendu Next.js opt-in et `noindex` ; conserver le contact, les liens legacy et les flux RSS.
-- [x] Migrer la section de contact publique en React. Conserver les phrases anglaises approuvées. Ajouter `lang="en"` et un contrôle de parité entre HTML et JSX.
-- [x] Migrer le titre public « Éléonore (Bababou) — If you are reading this » et les deux paragraphes d'ouverture dans `LegacyOpeningSection.tsx`. Conserver le texte approuvé et adapter les niveaux de titres au H1 existant de la prévisualisation.
-- [x] Migrer les trois paragraphes du message « A Message from Your Papa » dans un composant React sémantique. Conserver le texte anglais approuvé avec `lang="en"` et tester la parité avec `public/index.html`.
-- [x] Migrer l’avis « If you are Éléonore » et la phrase de bas de message dans `LegacyFoundWebsiteSection.tsx`. Conserver leur texte anglais et leur ordre ; vérifier la parité avec `public/index.html`. Ne pas traiter le texte statique comme une alerte temps réel pour le lecteur d’écran.
-- [x] Préparer les critères de parité dans `docs/homepage-migration-parity.md`.
-- [x] Migrer le paragraphe public de présentation du cadre juridique et son lien vers `/for-fathers.html` dans `LegacyLegalResourcesSection.tsx`, sans dupliquer les cartes contenant identifiants, localisations ou accusations.
-- [x] Porter les sections publiques non sensibles complémentaires dans React : navigation People contacted / Central Authorities, associations, notice documentaire native `details/summary`, et footer politique/accessibilité.
-- [x] Restaurer les trois illustrations locales des associations dans React. Chaque lien garde son nom accessible et un monogramme local remplace une image cassée. Contrats de parité avec `public/index.html` ajoutés ; affichage et scénario 404 Playwright `NOT_RUN`.
-- [x] Corriger la navigation légale de la prévisualisation : utiliser les URL canoniques de `lib/policyPages.ts`, une section sémantique, une liste responsive, des cibles 44 px et un focus visible. Tests Node locaux 4/4, contrôle des routes et de l'ordre du clavier dans Playwright (NOT_RUN navigateur). Les URL `.html` publiques restent compatibles.
-- [x] Corriger les liens de ressources dupliqués dans la prévisualisation React. Conserver les liens dans leurs sections approuvées. Afficher les deux flux RSS. Contrat Node ciblé : 2/2 tests PASS sur des fichiers exacts récupérés de GitHub ; tests navigateur et build : NOT_RUN.
-- [ ] Réconcilier les cartes illustrées sensibles individuellement après revue de confidentialité ; ne pas recopier les identifiants personnels ni les localisations.
-- [x] Inventorier les 15 scripts approuvés de la homepage ; ajouter `just homepage-runtime-parity` et un contrat de non-régression. 5/5 tests Node ciblés PASS ; exécution sur checkout complet NOT_RUN.
-- [ ] Confirmer la parité fonctionnelle des scripts legacy (D3/ARF, widgets, analytics, Google Translate, connexion, thème et Turnstile) avant de basculer `/`.
-- [ ] Traiter séparément les sections avec identifiants personnels, informations de localisation ou accusations sur des tiers. Exiger une revue de confidentialité avant toute duplication dans les composants publics.
-- [ ] Mesurer la parité du contenu, des scripts et du rendu à plusieurs largeurs d'écran.
-- [ ] Remplacer `/` et retirer le fallback seulement après revue explicite du propriétaire et validation du rendu final.
+- [ ] Comparer les **15 scripts** du HTML approuvé aux comportements réellement disponibles en React avec `just homepage-runtime-parity`. Ce contrôle ne prouve que la stabilité de l'inventaire : D3/ARF, Turnstile, Google Translate, thème, widgets et analytics demeurent à valider individuellement.
+- [ ] Définir le sort de chaque interaction : migration React, adaptation sûre du script existant ou maintien de la route legacy. Conserver les consentements et ne pas augmenter la collecte analytics.
+- [ ] Vérifier les liens, le contact, les flux RSS, les SVG d'associations (y compris échec 404), la navigation clavier et les scripts sur FR/EN/DE/NO. Les tests de source ne remplacent pas les vérifications en navigateur.
+- [ ] Examiner **séparément** toute carte avec identifiant personnel, localisation, illustration sensible ou accusation. Ne rien recopier dans la Preview sans revue selon [publication-redaction.md](publication-redaction.md).
+- [ ] Faire approuver la parité de contenu, le responsive et les interactions, puis seulement envisager le remplacement de `/`. Conserver `public/index.html` et la 404 tant que la bascule n'est pas autorisée.
 
 ## P2 — Accessibilité WCAG 2.2 AA
 
-- [x] **Skills installés et versionnés** : `frontend-design` et `web-design-guidelines` sont disponibles dans le workspace utilisateur et publiés sur la branche de PR. L'installation seule ne valide pas l'interface.
-- [x] **Outillage reproductible** : les liens symboliques des skills, `skills-lock.json` et `mise.lock` sont inclus dans la PR #245.
-- [x] **P2 sélecteur de langue** : name="locale" et autoComplete="off" préservent le choix contrôlé par la navigation React.
-- [x] **P2 thème** : color-scheme light/dark suit les attributs data-theme explicites ; rendu réel navigateur NOT_RUN.
-- [x] **Convergence Alban #255** : contrôle des attributs JSX dupliqués (TS17001) via TypeScript pour app/ et components/, tests ciblés et just source-check avec npm installé.
-- [ ] **Validation au HEAD** : exécuter le contrôle source sur un checkout complet sous Node 24/npm 12 puis build, Playwright, axe et ZAP. Les preuves partielles ne sont pas une validation L3.
-- [x] **Parité associations — Site Alban #255** : reprendre le principe de repli local quand une illustration échoue. Trois SVG approuvés et liens inchangés, sans image externe ; noms textuels disponibles. Contrat Node + Playwright ajouté, exécution navigateur `NOT_RUN`.
-- [x] **Revue statique Vercel Web Interface Guidelines** : lire les règles actuelles de `vercel-labs/web-interface-guidelines/main/command.md` et auditer la prévisualisation React, le header et le footer. Aucune conformité WCAG navigateur n'est attestée.
-- [x] **P2 clavier — homepage prévisualisation** : placer l'unique lien d'évitement en première position dans le header Next, avant les contrôles. Test clavier ajouté dans Playwright (NOT_RUN navigateur).
-- [x] **P2 clavier — pages Next** : le header gère un lien d’évitement unique et premier au clavier pour les 12 pages Next concernées et la Preview. Les liens dans les pages ont été retirés ; le helper refuse les routes inconnues et les identifiants mal typés. Contrat Node ajouté ; Playwright adapté mais NOT_RUN.
+- [ ] Exécuter les tests axe, clavier, lecteurs d'écran, contraste, zoom à 200 %, débordement horizontal et réduction des animations sur les pages prioritaires FR/EN et sur la Preview opt-in.
+- [ ] Vérifier la première tabulation vers le lien d'évitement pour les pages Next, y compris les alias HTML ; contrôler ensuite le focus et la cible `#main-content` avec Chromium, Firefox et WebKit.
+- [ ] Vérifier le sélecteur de langue, les contrôles natifs en modes clair/sombre, les cibles tactiles de 44 px et les images de secours des associations.
+- [ ] Ne clôturer un défaut WCAG qu'avec une preuve navigateur sur une version identifiable ; conserver les régressions statiques dans les tests.
 
-- [x] Définir pour la prévisualisation une structure `main`/titres, un lien d'évitement, un focus visible, des cibles tactiles et le respect de `prefers-reduced-motion`.
-- [x] Appliquer les règles Vercel Web Interface Guidelines aux liens, titres et ancres de la prévisualisation. Ajouter les tests source et Playwright responsive (320/375/768/1280 px). La validation navigateur réelle reste à faire.
-- [x] Conserver le disclosure documentaire natif avec un focus visible et une cible tactile de 44 px. Contrôler les deux paragraphes publiés : 6/6 vérifications statiques, 4 tests locaux des styles et de la structure ; rendu navigateur NOT_RUN.
-- [ ] Vérifier au rendu réel les routes prioritaires FR/EN avec axe, lecteur d'écran et clavier.
-- [x] Le bouton Next de retour en haut respecte désormais `prefers-reduced-motion`. Test source ciblé PASS ; navigateur NOT_RUN.
-- [ ] Vérifier contraste, zoom 200 %, absence de défilement horizontal, erreurs de formulaire et focus.
-- [ ] Vérifier les vues mobile/tablette et les navigateurs Chromium, Firefox et WebKit.
-- [ ] Corriger les défauts prouvés dans les composants partagés ; conserver les protections de la 404 legacy.
+## P3 — i18n et migration des pages
 
-## P3 — Langues et pages publiques
-
-- [x] Préparer un catalogue `homepagePreview` complet pour FR/EN/DE/NO, intégré à `next-intl`.
-- [ ] Comparer les textes de la homepage aux originaux approuvés. Faire valider les traductions.
-- [ ] Migrer les pages publiques simples par petits lots ; conserver leurs URL et fallbacks legacy.
-- [ ] Conserver Google Translate pour le contenu sans traduction i18n approuvée.
-- [ ] Consolider les pages documentaires FR/EN seulement à partir des sources privées auditées.
-- [ ] Faire revoir les textes juridiques DE/NO avant toute publication.
-- [ ] Migrer `people-contacted.html` à part, sans perdre D3/ARF ; conserver `public/test.html` jusqu'à décision sur son usage.
+- [ ] Revoir les traductions FR/EN/DE/NO des textes de la homepage ; les extraits anglais déjà approuvés portent `lang="en"` et ne doivent pas être traduits automatiquement pour publication.
+- [ ] Migrer les pages publiques simples en lots limités, en gardant leurs URL et fallbacks legacy. Ne pas supprimer `public/test.html` sans analyse de ses scripts/collecte.
+- [ ] Traiter `people-contacted.html` à part : préserver D3/ARF, les liens et les vérifications de confidentialité.
+- [ ] Conserver Google Translate comme recours pour les pages sans traduction humaine validée.
+- [ ] Soumettre les textes juridiques DE/NO et toute nouvelle publication documentaire FR/EN à une validation explicite.
 
 ## P4 — SEO et découvrabilité
 
-- [x] Garder le canonical `/` et `noindex, nofollow` sur la prévisualisation ; ne pas l'ajouter au sitemap.
-- [ ] Vérifier les métadonnées title, description, OpenGraph et Twitter après chaque migration.
-- [ ] Vérifier canonical, hreflang FR/EN/DE/NO, x-default et les redirects des URL legacy.
-- [ ] Vérifier sitemap Next/legacy, robots.txt, pages techniques non indexables et 404.
-- [ ] Valider les nouvelles URL et les métadonnées de la homepage avant son indexation.
+- [ ] Vérifier title, description, OpenGraph, Twitter, canonical et hreflang (FR/EN/DE/NO, `x-default`) sur les routes réellement publiées.
+- [ ] Vérifier sitemap, robots.txt, RSS, redirections des anciennes URL, statuts 404 et absence d'indexation de la Preview et des pages techniques.
+- [ ] Exécuter le smoke HTTP production en lecture seule sur le déploiement et le SHA réellement servis. Un statut Vercel `READY` ne valide ni les liens, ni l'accessibilité, ni la sécurité.
 
-## Audit production — 24 octobre 2026
+## P0 — Publication et sécurité (transversal, bloquant)
 
-- [x] Vérifier le statut GitHub : la PR #242 est fusionnée ; ne pas continuer sur sa branche comme si elle était ouverte.
-- [x] Ajouter `scripts/production-home-smoke.sh` (GET read-only, routes EN/FR/DE/NO, pages legacy, politiques, RSS, robots ; code de sortie en échec si réponse différente de 200 ou erreur réseau).
-- [ ] **Bloqué par DNS dans l'environnement agent** : `curl` renvoie `Could not resolve host: bababou.com` pour `/`, `/en`, `/for-fathers.html`, `/feed.xml`. L'outil de consultation Web ne peut pas ouvrir les URL non plus. **Aucun résultat de disponibilité en production n'est confirmé** ; ne pas affirmer que le site fonctionne ou qu'il est en panne.
-- [x] Consulter Vercel : dernier déploiement production `dpl_5tG2o87GafcsGKFw4ENNUepSDGoz` en état `READY` sur le commit `bc3694b8aa3b91baa1dc4f40cb606b430ef46e9e` (fusion #242). Ce statut atteste le déploiement réussi, pas le bon fonctionnement de chaque route ni de `bababou.com`.
-- [ ] Exécuter le smoke dans un environnement disposant du DNS public ; vérifier en plus les headers et le comportement de la réécriture `/`.
-- [ ] **Validation Vercel exacte-SHA** (méthode reprise de `nabla-site-alban#255` au SHA `baadf2c`) : vérifier Node 24.x, le SHA réellement construit, les journaux de compilation/TypeScript/Next, la protection de la Preview, puis les routes sans désactiver les contrôles d’accès. Un build Vercel `READY` est une preuve distante de build ; pas une preuve L3 locale ni une recette fonctionnelle. Ne pas promouvoir en production sans approbation explicite.
+- [ ] Sur un checkout propre et un **HEAD exact**, exécuter `npm ci`, `just source-check`, `just offline-contracts`, `just p0`, `just quality` et `just publish` avec la toolchain supportée. Enregistrer les contrôles impossibles comme `NOT_RUN`.
+- [ ] **Validation du build agent au HEAD** : `just agent-local-build` conserve le préflight Node 26 (développement) ou Node 24 (Vercel), npm 12.2.1, puis `npm run check`. **Build complet : BLOCKED** sur cet agent (Node 22/npm 10, DNS GitHub/npm indisponible, pas de checkout complet).
+- [ ] **Tests locaux compatibles Node 22/npm 10** : `just agent-local-tests` ou `npm run test:agent-local` exécute neuf fichiers de contrats `.mjs` sans installation ni CI. Préflight `--tests-only` séparé de la gate de build. **Preuve L1 ciblée : 12/12 PASS** (préflight + inventaire des scripts de homepage, quatre fichiers à blobs Git identiques au HEAD). Les sept autres fichiers et la suite totale sur checkout complet restent `NOT_RUN` ; ne pas revendiquer de build.
+- [ ] Exécuter BetterLeaks (index, worktree, historique), SAST/SCA, contrôles de confidentialité, tests Playwright et ZAP ; aucune réduction des gates sans décision de sécurité.
+- [ ] Valider la Preview exact-SHA, ses logs de build et ses protections d'accès, puis le comportement métier ; ne pas contourner l'authentification Vercel.
+- [ ] Traiter les catégories ZAP WARN et la dette SCA documentées dans [security-audit-coverage-ledger.md](security-audit-coverage-ledger.md). Ne pas transposer un constat d'un ancien SHA à un nouveau.
+- [ ] Qualifier les anciennes issues de Quality sur `master` à partir des runs réels ; respecter l'appropriation humaine et la règle des **deux derniers runs push master verts** avant clôture automatique. Voir [operations.md](operations.md).
 
-## P0 — Contrôles de sécurité reportés temporairement
+## P5 — Refactoring et outillage (après blocages P1/P2)
 
-Ne pas supprimer, désactiver ou contourner les protections dans le code. Le **report** concerne uniquement l'exécution de la quality gate complète pendant cette phase de développement.
+Ces candidats proviennent d'une **revue de sources** ; ils ne sont pas tous des bugs démontrés.
 
-- [ ] Exécuter `npm ci`, le build Next.js, `just offline-contracts`, `just offline-pr` et `just p0` sur un checkout réel avec les versions Node/npm attendues.
-- [ ] Exécuter `just quality` et la publication locale L3 sur le HEAD exact.
-- [ ] Exécuter BetterLeaks staged/worktree/history, SAST/SCA, scans de confidentialité et contrôles de publication documentaire.
-- [ ] Valider Preview exacte-SHA, Playwright et ZAP avant Ready/merge ; ne pas lancer de workflow payant maintenant.
-- [ ] Réévaluer l'écart Vercel Node 24/npm 11 contre npm 12 exigé sans affaiblir `strict-allow-scripts`.
-- [ ] Trier les neuf catégories ZAP WARN historiques. Les preuves figurent dans [security-audit-coverage-ledger.md](security-audit-coverage-ledger.md).
-- [ ] Qualifier les dix issues bot historiques avec [operations.md](operations.md). Ne clôturer automatiquement qu'après deux vrais runs `master` verts et sans modification manuelle.
+- [ ] **Routes — recette runtime** : les listes des canoniques, des anciennes redirections HTML et des slugs des politiques sont mutualisées via `lib/mainContentRoute.mjs` entre Next, SEO et navigation clavier. Contrôle offline ajouté. Vérifier la compilation Next et les redirections/404 sur le SHA exact avant clôture.
+- [ ] **i18n — recette runtime** : index juridique FR/EN/DE/NO déplacé vers les catalogues `messages/policy-index/*.json` avec 20/20 chaînes strictement inchangées, et chargeur `next-intl` central. Vérifier le rendu et les métadonnées sur les quatre langues en Preview avant clôture.
+- [ ] **Politiques — recette runtime** : `lib/nativePolicyCatalog.ts` mutualise les URL et le choix du contenu entre l’index et les six pages détaillées. Vérifier avec `unit-tests/nativePolicyCatalog.test.ts`, les pages réelles et la confidentialité, sans changer le contenu juridique approuvé.
+- [ ] **Widgets :** inventorier les responsabilités des grands scripts `public/site-widgets.js`, `public/site-analytics.js` et `public/theme-toggle.js` avant toute extraction de module. Préserver l'initialisation précoce du thème, le consentement et les intégrations legacy. Une garde locale analytics couvre désormais localhost, IPv6 loopback et 127.0.0.0/8 ; tests isolés 15/15 PASS, recette Playwright NOT_RUN.
+- [ ] **Tests :** remplacer les assertions de code-source fragiles par des tests comportementaux lorsque les prérequis sont disponibles, sans supprimer les contrôles offline qui détectent une dérive à faible coût.
+- [ ] **Toolchain :** stabiliser Node/npm et les lockfiles, évaluer les changements React/Next par lots indépendants. Garder `justfile` canonique et `Makefile` compatible.
+- [ ] **Agent local-first :** compléter le skill avec l'isolation des worktrees, les scripts Bash enfants, une `.venv` propre par worktree et un cache de téléchargement partagé. Ne jamais exécuter `set -euo pipefail` dans un terminal interactif parent.
+- [ ] **Dagger/Context7 :** valider le POC Dagger avec moteur et exclusions réels ; ne pas rendre Context7 dépendant du réseau dans les gates. Éviter tout outil recevant des documents privés.
+- [ ] **Déploiement hors Vercel :** définir une image unique uniquement lors du chantier Talos/Kubernetes ; ne pas dédupliquer les Dockerfiles sans preuve des consommateurs.
 
-## P5 — Dépendances et outillage (après P1–P4)
+## P6 — Confidentialité et publication
 
-- [ ] Valider les premiers lots Renovate groupés et les correctifs des vulnerability alerts.
-- [x] Comparer la PR `nabla-site-alban#255` et reprendre la protection JSX TS17001 et la commande source-check ; exclure le code TrueNAS/OWNER spécifique à Site Alban.
-- [ ] Tester React 19.3.1 et le lockfile npm 12, sans mélange avec les migrations fonctionnelles.
-- [ ] Évaluer Dagger sur moteur réel (cache, exclusions, hadolint) puis choisir une seule autorité de pipeline.
-- [ ] Valider Context7 MCP sans secrets ni dépendance réseau dans P0.
-- [ ] Aligner le skill `local-first-quality` avec les règles pertinentes de Site Alban #255 : script Bash enfant plutôt que `set -euo pipefail` dans un terminal interactif ; worktrees isolés ; caches de téléchargement partagés, mais `.venv`/`node_modules` propres au worktree ; SHA distant vérifié avant écriture. Mise à jour directe du skill bloquée lors de ce lot.
-- [ ] Mesurer coût et latence des agents sur tâches/HEAD comparables.
-- [ ] Retirer code, scripts et assets orphelins seulement après preuve d'absence de consommateurs.
-- [ ] Avant Talos, décider d'une stratégie d'image unique. Vercel ne dépend pas du Dockerfile fallback actuel.
-
-## P6 — Confidentialité et publication (sur approbation)
-
-- [ ] Publier uniquement par petits lots via `config/publication-review.json` et `npm run privacy:publication`.
-- [ ] Consolider les e-mails en pages canoniques FR/EN. Ne pas publier les exports originaux.
-- [ ] Conserver les pseudonymes approuvés dans les documents officiels et les références nécessaires à la vérification.
-- [ ] Exiger la source vérifiée et l'accord explicite pour toute donnée sensible.
-- [ ] Bloquer les détails opérationnels ou financiers facilitant une pression sur la famille.
-- [ ] Caviarder irréversiblement PDF/images, y compris texte, OCR et métadonnées ; ne pas publier de photo identifiable sans approbation.
-- [ ] Ne pas modifier automatiquement le contenu de `/` ou `public/index.html`.
-
-## Sécurité Cloudflare / DAST (planification)
-
-- [ ] Exécuter `cloudflare/security-audit-skill` en lecture seule sur un périmètre autorisé (Access, Tunnel/DNS, Vercel Preview, cookies et headers).
-- [ ] Confronter les constats vérifiés à STRIDE/DSOMM, BetterLeaks, SAST et ZAP.
-- [ ] Intégrer les rapports nettoyés au collecteur DefectDojo de `nabla-compose` après validation, sans données privées ni HTTP brut.
+- [ ] Publier uniquement des lots explicitement approuvés via `config/publication-review.json` et `npm run privacy:publication`.
+- [ ] Caviarder les informations sensibles dans le contenu **et** les métadonnées des PDF/images ; vérifier le rendu et l'absence de données récupérables.
+- [ ] Ne pas publier les originaux, données de localisation, coordonnées privées, éléments facilitant des pressions familiales ou photos identifiables sans approbation.
+- [ ] Évaluer Cloudflare `security-audit-skill` en lecture seule, sous périmètre autorisé. Intégrer uniquement des rapports nettoyés vers DefectDojo après validation.
 
 ## Critère de fin d'un lot
 
-1. Vérifier le HEAD et la base de la PR.
-2. Examiner le diff des fichiers modifiés.
-3. Exécuter les tests ciblés disponibles.
-4. Enregistrer les contrôles non exécutés comme `NOT_RUN`.
-5. Mettre à jour cette roadmap sans recopier l'historique Git.
-6. Conserver la PR Draft.
-7. Ne pas fusionner automatiquement.
-
-Les résultats antérieurs à ce HEAD ne sont pas des validations du HEAD courant. Les diagnostics restent dans `docs/operations.md`.
+Vérifier le HEAD et le diff ; exécuter les tests ciblés disponibles ; classifier chaque preuve (L0/L1/L2/L3 ou `NOT_RUN`) ; consigner uniquement la dette **encore ouverte** ci-dessus ; conserver la PR Draft ; ne jamais fusionner ni promouvoir automatiquement. Les commandes et incidents de reprise sont dans [operations.md](operations.md).

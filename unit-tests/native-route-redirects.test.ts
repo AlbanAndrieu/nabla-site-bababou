@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
+import { LEGACY_HTML_REDIRECT_SLUGS } from "../lib/mainContentRoute.mjs";
 
 test("migrated legacy html routes redirect to localized Next canonicals", async () => {
   const source = await readFile(
@@ -8,8 +9,17 @@ test("migrated legacy html routes redirect to localized Next canonicals", async 
     "utf8",
   );
 
-  for (const slug of ["contact", "email", "link", "success", "cancel"]) {
-    assert.match(source, new RegExp(`"${slug}"`));
+  assert.match(source, /LEGACY_HTML_REDIRECT_SLUGS\.flatMap/);
+  for (const slug of [
+    "contact",
+    "email",
+    "link",
+    "success",
+    "cancel",
+    "central-authorities",
+    "central-authorities-failures",
+  ]) {
+    assert.ok(LEGACY_HTML_REDIRECT_SLUGS.includes(slug), slug);
   }
   assert.match(
     source,

@@ -4,6 +4,7 @@ import test from "node:test";
 
 const DOMAIN_CATALOGS = [
   ["site", "site"],
+  ["policy-index", "policyIndexPage"],
   ["contact", "contactPage"],
   ["email", "email"],
   ["link", "linkPage"],
@@ -103,7 +104,7 @@ test("operations docs consolidate deployment, analytics and incident diagnostics
   ]);
 
   for (const guide of [vercelGuide, operationsGuide]) {
-    assert.match(guide, /Vercel Git integration/i);
+    assert.match(guide, /Vercel Git integration|Git integration Vercel/i);
     assert.doesNotMatch(guide, /rootDirectory["`:\s]+app|cd app|VERCEL_TOKEN/);
   }
 
@@ -112,7 +113,8 @@ test("operations docs consolidate deployment, analytics and incident diagnostics
   assert.match(operationsGuide, /x-vercel-mitigated: challenge/);
   assert.match(operationsGuide, /\/_vercel\/speed-insights\/script\.js/);
   assert.match(operationsGuide, /bash scripts\/agent-p0-check\.sh/);
-  assert.match(operationsGuide, /ci\.yml.*publie automatiquement/is);
+  assert.match(operationsGuide, /\.github\/workflows\//);
+  assert.match(operationsGuide, /SHA exact/);
   assert.match(vercelGuide, /ci\.yml.*automatically publishes/is);
   assert.match(vercelGuide, /On Demand.*fallback/is);
   assert.doesNotMatch(vercelGuide, /normal deployment workflow[\s\S]*dispatch \*\*Vercel Preview \(On Demand\)\*\*/i);
@@ -121,7 +123,7 @@ test("operations docs consolidate deployment, analytics and incident diagnostics
     /agent-quality-gate\.sh --preflight\s+\n\s*bash scripts\/agent-p0-check\.sh/,
   );
 
-  assert.match(roadmapGuide, /bash scripts\/agent-p0-check\.sh/);
+  assert.match(roadmapGuide, /just p0/);
   assert.doesNotMatch(roadmapGuide, /npm run test:p0|#209 \/ P0/);
 
   await assert.rejects(access(new URL("../docs/GITHUB_ACTIONS_SETUP.md", import.meta.url)));

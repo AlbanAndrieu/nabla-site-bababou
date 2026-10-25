@@ -3,6 +3,7 @@ import { readFile, readdir } from "node:fs/promises";
 import test from "node:test";
 
 import { POLICY_PAGES, POLICY_PAGE_SLUGS } from "../lib/policyPages.ts";
+import { POLICY_ROUTE_SLUGS } from "../lib/mainContentRoute.mjs";
 
 test("all reviewed policy pages are owned by the native registry", async () => {
   const config = await readFile(
@@ -20,11 +21,25 @@ test("all reviewed policy pages are owned by the native registry", async () => {
 
   assert.doesNotMatch(config, /policyRewrites/);
   assert.doesNotMatch(config, /localizedPolicyRewrites/);
-  assert.match(config, /const migratedPolicyRedirects = \[/);
+  assert.match(config, /const migratedPolicyRedirects = POLICY_ROUTE_SLUGS\.map/);
+  assert.deepEqual([...POLICY_ROUTE_SLUGS].sort(), [...POLICY_PAGE_SLUGS].sort());
   assert.match(route, /POLICY_PAGE_SLUGS/);
   assert.match(route, /generateStaticParams/);
   assert.match(route, /getPolicyPage/);
-  assert.match(route, /<SkipToMainContent \/>/);
+  // The header owns the first keyboard tab stop and the page owns the target.
+  const header = await readFile(
+    new URL("../components/RouteHeader.tsx", import.meta.url),
+    "utf8",
+  );
+  const routeGuard = await readFile(
+    new URL("../lib/mainContentRoute.mjs", import.meta.url),
+    "utf8",
+  );
+  assert.doesNotMatch(route, /<SkipToMainContent \/>/);
+  assert.match(route, /id="main-content"/);
+  assert.match(header, /hasMainContentRoute\(parts\)/);
+  assert.match(header, /className="skip-to-main" href="#main-content"/);
+  assert.match(routeGuard, /"policy"/);
   assert.match(route, /<TopAnchor \/>/);
   assert.doesNotMatch(route, /PublicHtmlFragment/);
   assert.doesNotMatch(route, /htmlFromPublic/);
@@ -49,7 +64,7 @@ test("all reviewed policy pages are owned by the native registry", async () => {
       legacy.includes(`<title>${policy.title}</title>`),
       `${policy.sourceFile} metadata should stay represented in the registry`,
     );
-    assert.match(config, new RegExp(`\\"${slug}\\"`));
+    assert.ok(POLICY_ROUTE_SLUGS.includes(slug), slug);
   }
 });
 
@@ -71,6 +86,14 @@ test("localized policies own native content instead of the legacy HTML bridge", 
     new URL("../app/[locale]/policy/[policy]/page.tsx", import.meta.url),
     "utf8",
   );
+  const copyProvider = await readFile(
+    new URL("../lib/nativePolicyCatalog.ts", import.meta.url),
+    "utf8",
+  );
+  assert.match(route, /getNativePolicyCopy/);
+  assert.match(route, /localizedPolicyPath/);
+  assert.match(copyProvider, /getNativePolicyCopy/);
+  assert.match(copyProvider, /localizedPolicyPath/);
   const privacyContent = await readFile(
     new URL("../components/policy/PrivacyPolicyContent.tsx", import.meta.url),
     "utf8",
@@ -126,7 +149,7 @@ test("localized policies own native content instead of the legacy HTML bridge", 
   );
 
   assert.match(route, /<PublicPolicyContent locale=\{locale\} policy=\{policy\} \/>/);
-  assert.match(route, /getPublicPolicyCopy/);
+  assert.match(copyProvider, /getPublicPolicyCopy/);
   assert.match(publicContent, /getPublicPolicyCopy/);
   assert.match(
     publicCopy,
