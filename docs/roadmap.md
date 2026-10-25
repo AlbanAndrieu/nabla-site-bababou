@@ -8,8 +8,9 @@ La homepage publique `/` utilise toujours `public/index.html`. La Preview React 
 
 ## P1 — Homepage React : parité et approbation
 
-- [ ] Établir, à partir de `just homepage-runtime-parity`, le comportement de chacun des **15 scripts legacy** ; traiter D3/ARF, Turnstile, Google Translate, consentement, thème, widgets et analytics. Un inventaire source intact ne prouve aucune parité interactive.
+- [ ] **Recette des interactions héritées** : les 15 scripts legacy sont inventoriés dans `just homepage-runtime-parity` et leurs traitements sont documentés dans [homepage-migration-parity.md](homepage-migration-parity.md). Thème clair/sombre/auto et impression sont désormais des contrôles React dans la Preview ; FontAwesome, liens natifs et footer utilisent déjà Next. Valider en navigateur les contrôles migrés ; préserver les destinations D3/ARF et les services tiers nécessitant consentement/revue.
 - [ ] Vérifier le contenu **approuvé**, les trois icônes d'association et leurs fallbacks, le contact, les RSS, le responsive et les interactions sur la Preview. Le nouveau `scripts/quality/homepage-preview-links.mjs` contrôle hors réseau 9 sections React, les ancres, IDs et liens vers les fichiers publics ; il ne prouve pas le rendu navigateur ni la parité des scripts tiers. Exclure les cartes sensibles tant que leur publication n'a pas été approuvée.
+- [ ] **Décisions nécessaires** : ne pas déplacer automatiquement les données personnelles des anciennes cartes ou de `people-contacted.html` ; ne pas initialiser Google Translate, Turnstile ou les widgets externes sur une page React sans action serveur/consentement justifié. La parité de ces fonctions est explicitement **différée**, et non déclarée terminée.
 - [ ] Remplacer `/` seulement après parité fonctionnelle et visuelle, validation de confidentialité, tests navigateur et approbation explicite. Conserver `public/index.html` et la 404 jusqu'à cette décision.
 
 ## P2 — WCAG 2.2 AA
@@ -30,7 +31,7 @@ La homepage publique `/` utilise toujours `public/index.html`. La Preview React 
 
 ## P5 — Refactoring complémentaire et agents
 
-- [ ] Isoler progressivement les responsabilités de `public/site-widgets.js`, `public/theme-toggle.js` et `public/site-analytics.js`, en conservant l'application du thème avant peinture, le consentement et les garde-fous de télémétrie. Éviter toute nouvelle dépendance réseau nécessaire aux gates.
+- [ ] Continuer l'isolation de `public/site-widgets.js`, `public/theme-toggle.js` et `public/site-analytics.js` **pour les pages legacy** ; la Preview remplace déjà le thème et l'impression par `HomePreviewControls.tsx` et la mise en thème précoce par `ThemeBootstrap.tsx`. Conserver le consentement, les protections télémétrie et le fonctionnement des anciennes URL tant que la recette React n'est pas achevée.
 - [ ] Remplacer les contrats source fragiles par des tests de comportement lorsque possible, tout en gardant les gardes offline local-first. Maintenir `justfile` canonique et `Makefile` compatible.
 - [ ] Harmoniser le skill d'agent : worktrees isolés, environnement mutable par worktree, cache de téléchargement réutilisable, pas de `set -euo pipefail` dans le terminal interactif parent. **Demander à l'opérateur d'installer lui-même** les skills tiers `web-design-guidelines`, `frontend-design` et `security-audit-skill` avant usage. Évaluer Dagger/Context7 sans faire transiter de documents privés.
 - [ ] L'image de déploiement Kubernetes et les services d'infrastructure relèvent de la roadmap **nabla-compose**, pas de Bababou. Ne pas ouvrir de chantier de Dockerfile ici sans preuve d'un consommateur.
