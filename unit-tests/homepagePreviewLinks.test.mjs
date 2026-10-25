@@ -8,7 +8,9 @@ import {
 function fixture() {
   return {
     page: '<main id="main-content"><a href="#preview-contact">Contact</a><a href="/feed.xml">RSS</a></main>',
-    sectionSources: ['<section id="preview-contact" aria-labelledby="contact-heading"><h2 id="contact-heading">Contact</h2></section>'],
+    sectionSources: [
+      '<section id="preview-contact" aria-labelledby="contact-heading"><h2 id="contact-heading">Contact</h2></section>',
+    ],
     publicExists: (href) => href === "/feed.xml",
   };
 }
