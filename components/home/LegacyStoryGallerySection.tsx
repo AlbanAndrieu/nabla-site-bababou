@@ -1,6 +1,6 @@
-import Image from "next/image";
 import { HOME_GALLERY_CARDS } from "@/lib/homeGalleryCatalog.mjs";
 
+import GalleryCardMedia from "./GalleryCardMedia";
 import styles from "./LegacyStoryGallerySection.module.css";
 
 /**
@@ -30,20 +30,7 @@ export default function LegacyStoryGallerySection() {
       <ul className={styles.grid}>
         {HOME_GALLERY_CARDS.map((card) => (
           <li key={card.title} className={styles.card}>
-            <div className={styles.media}>
-              {card.image ? (
-                <Image
-                  src={card.image}
-                  alt=""
-                  width={800}
-                  height={460}
-                  sizes="(max-width: 40rem) 100vw, (max-width: 64rem) 50vw, 33vw"
-                  className={styles.image}
-                />
-              ) : (
-                <span className={styles.fallback} aria-hidden="true">♥</span>
-              )}
-            </div>
+            <GalleryCardMedia image={card.image} />
             <div className={styles.body}>
               <h3>{card.title}</h3>
               <p>{card.description}</p>
