@@ -68,6 +68,22 @@ export function assessLocalBuild({
   return blockers;
 }
 
+/** A reduced, dependency-free test tier is safe on Node 22/npm 10.
+ * This tier never certifies the repository engines, Next.js, privacy or security gates.
+ */
+export function assessLocalTests({ nodeVersion, npmVersion }) {
+  const blockers = [];
+  const node = version(nodeVersion);
+  const npm = version(npmVersion);
+  if (!node || node[0] < 22 || node[0] >= 27) {
+    blockers.push("LOCAL_TEST_NODE_UNSUPPORTED: require Node 22 to 26");
+  }
+  if (!npm || npm[0] < 10 || npm[0] >= 13) {
+    blockers.push("LOCAL_TEST_NPM_UNSUPPORTED: require npm 10 to 12");
+  }
+  return blockers;
+}
+
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const read = (path) => readFileSync(join(root, path), "utf8");
   const npmVersion = (() => {
@@ -80,7 +96,16 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
       return "missing";
     }
   })();
-  const blockers = assessLocalBuild({
+  const args = process.argv.slice(2);
+  const testsOnly = args.length === 1 && args[0] === "--tests-only";
+  if (args.length !== 0 && !testsOnly) {
+    console.error("usage: node agent-local-build-preflight.mjs [--tests-only]");
+    process.exitCode = 2;
+  } else {
+  const blockers = testsOnly ? assessLocalTests({
+    nodeVersion: process.version,
+    npmVersion,
+  }) : assessLocalBuild({
     nodeVersion: process.version,
     npmVersion,
     developmentNode: read(".nvmrc"),
@@ -93,10 +118,13 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   });
   if (blockers.length) {
     for (const blocker of blockers) {
-      console.error("LOCAL_BUILD_BLOCKED " + blocker);
+      console.error((testsOnly ? "LOCAL_TEST_BLOCKED " : "LOCAL_BUILD_BLOCKED ") + blocker);
     }
-    console.error("NOT_RUN: Next compilation, typecheck, tests and privacy checks");
+    console.error("NOT_RUN: Next compilation, typecheck, full suite and privacy/security gates");
     process.exitCode = 2;
+  } else if (testsOnly) {
+    console.log("LOCAL_TESTS_READY node=" + process.version + " npm=" + npmVersion +
+      "; dependency-free Node tests only; build NOT_RUN");
   } else {
     console.log(
       "LOCAL_BUILD_READY node=" +
@@ -105,5 +133,6 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
         npmVersion +
         "; execute npm run check on this worktree",
     );
+  }
   }
 }
