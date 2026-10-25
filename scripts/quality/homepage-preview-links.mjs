@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { HOME_GALLERY_CARDS } from "../../lib/homeGalleryCatalog.mjs";
 
 const root = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 const sections = [
@@ -24,7 +25,7 @@ const sections = [
  * Dynamic association/policy links have their own route contracts.
  * Browser, third-party scripts and private/publication safety are NOT attested.
  */
-export function auditPreviewLinks({ page, sectionSources, publicExists }) {
+export function auditPreviewLinks({ page, sectionSources, publicExists, dynamicHrefs = [] }) {
   const issues = [];
   const source = [page, ...sectionSources].join("\n");
   const readAttributes = (attribute) =>
@@ -38,7 +39,7 @@ export function auditPreviewLinks({ page, sectionSources, publicExists }) {
   for (const [id, count] of counts) {
     if (count !== 1) issues.push("DUPLICATE_ID: " + id);
   }
-  const hrefs = readAttributes("href");
+  const hrefs = [...readAttributes("href"), ...dynamicHrefs];
   const anchors = hrefs.filter((href) => href.startsWith("#"));
   for (const ref of [...anchors.map((href) => href.slice(1)), ...readAttributes("aria-labelledby")]) {
     for (const id of ref.split(/\s+/)) {
@@ -76,6 +77,7 @@ export function auditRepositoryPreview() {
     page,
     sectionSources: sections.map((section) => read("components/home/" + section + ".tsx")),
     publicExists: (href) => existsSync(join(root, "public", href.slice(1))),
+    dynamicHrefs: HOME_GALLERY_CARDS.map(({href}) => href),
   });
 }
 

@@ -56,3 +56,10 @@ test("missing main landmark and broken aria-labelledby are errors", () => {
   assert.ok(result.issues.includes("MISSING_MAIN_LANDMARK"));
   assert.ok(result.issues.includes("MISSING_TARGET: missing"));
 });
+
+test("a card destination without a page target fails the real audit", () => {
+  const input = fixture();
+  input.dynamicHrefs = ["#missing-gallery-target"];
+  const result = auditPreviewLinks(input);
+  assert.ok(result.issues.includes("MISSING_TARGET: missing-gallery-target"));
+});

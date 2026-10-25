@@ -26,7 +26,7 @@ test("review route has explicit noindex and no-store response headers", () => {
 
 test("the ten-card gallery preserves translator calls without republishing sensitive details", () => {
   const page = read("app/[locale]/home-preview/page.tsx");
-  const cards = read("components/home/LegacyStoryGallerySection.tsx");
+  const cards = read("lib/homeGalleryCatalog.mjs");
   assert.match(page, /<LegacyStoryGallerySection \/>/);
   assert.match(cards, /Looking for Norwegian Translator/);
   assert.match(cards, /Looking for German Translator/);
