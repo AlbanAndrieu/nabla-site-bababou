@@ -294,3 +294,28 @@ test("document disclosure keeps the exact approved public text", () => {
   assert.match(component, /<details className=\{styles\.details\}>/);
   assert.match(component, /<summary className=\{styles\.summary\}>/);
 });
+
+
+test("localized in-page review navigation resolves five safe sections", () => {
+  const page = read("app/[locale]/home-preview/page.tsx");
+  const css = read("app/[locale]/home-preview/page.module.css");
+  const targets = [
+    "preview-opening", "preview-journey", "preview-story-gallery",
+    "preview-contact", "preview-document-disclosure",
+  ];
+  assert.match(page, /data-home-section-nav/);
+  assert.match(page, /aria-label=\{t\("sectionNavigation"\)\}/);
+  for (const target of targets) {
+    assert.ok(page.includes('href="#' + target + '"'), target);
+  }
+  const labels = ["sectionNavigation", "navStory", "navJourney", "navGallery", "navContact", "navDocuments"];
+  for (const locale of supported) {
+    const catalog = JSON.parse(read('messages/homepage-preview/' + locale + '.json')).homepagePreview;
+    for (const label of labels) {
+      assert.ok(typeof catalog[label] === "string" && catalog[label].trim(), locale + ":" + label);
+    }
+  }
+  assert.match(css, /\.sectionNav a:focus-visible/);
+  assert.match(css, /min-height: 2\.75rem/);
+  assert.match(css, /flex-wrap: wrap/);
+});
