@@ -55,7 +55,8 @@
     "privacy:publication": "node --experimental-strip-types scripts/publication-privacy-gate.ts",
     "privacy:audit-private": "node --experimental-strip-types scripts/audit-private-publication.ts",
     "privacy:consolidate-private": "node --experimental-strip-types scripts/prepare-private-consolidation.ts",
-    "check:jsx-attributes": "node scripts/quality/check-jsx-duplicate-attributes.mjs"
+    "check:jsx-attributes": "node scripts/quality/check-jsx-duplicate-attributes.mjs",
+    "test:agent-local": "node scripts/quality/agent-local-build-preflight.mjs --tests-only && node --test unit-tests/agentLocalBuildPreflight.test.mjs unit-tests/analyticsLocalHost.test.mjs unit-tests/routeRegistryContract.test.mjs unit-tests/policyIndexTranslations.test.mjs unit-tests/documentationNavigation.test.mjs unit-tests/homepageRuntimeParity.test.mjs unit-tests/mainContentRoute.test.mjs unit-tests/homepageAssociationsParity.test.mjs unit-tests/siteUiConvergenceContract.test.mjs"
   },
   "dependencies": {
     "next": "16.4.2",
