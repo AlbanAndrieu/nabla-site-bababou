@@ -66,7 +66,7 @@ Pour les tests : `unit-tests/homepageGalleryParity.test.mjs`, `unit-tests/homepa
 
 ## Évolution de la PR #249
 
-- Les **dix cartes** sont déclarées dans `lib/homeGalleryCatalog.mjs` et consommées par le composant React ; le même catalogue est vérifié par `homepage-preview-links.mjs`. Les ancres dynamiques, absentes des anciens contrôles statiques, sont maintenant auditées.
+- Les **dix cartes** sont déclarées dans `lib/homeGalleryCatalog.mjs` et consommées par le composant React ; le même catalogue est vérifié par `homepage-preview-links.mjs`. Les ancres dynamiques, absentes des anciens contrôles statiques, sont maintenant auditées. `GalleryCardMedia.tsx` garantit un repli local sur erreur de chargement, sans nouvel appel réseau.
 - Une navigation interne accessible dessert cinq sections de la homepage (récit, pays, cartes, contact, documents). Ses libellés utilisent `messages/homepage-preview/{fr,en,de,no}.json`, avec tests de complétude des locales et scénario navigateur.
 - Le volet About conserve Calendly et Ko-fi **sous forme de liens explicites** sans widget chargé automatiquement.
 - **Statut :** implémenté dans la PR en cours ; build Next et recette navigateur à vérifier au HEAD exact. Aucune suppression de `public/index.html`.
