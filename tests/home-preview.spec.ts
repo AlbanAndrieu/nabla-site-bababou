@@ -193,3 +193,31 @@ test("React preview theme and print controls work without legacy widget scripts"
     .poll(() => page.evaluate(() => (window as Window & { __printCalls?: number }).__printCalls))
     .toBe(1);
 });
+
+test("safe ten-card gallery and country timeline match the legacy structure", async ({ page }) => {
+  await page.goto("/home-preview");
+  const gallery = page.locator("#preview-story-gallery");
+  await expect(gallery.getByRole("listitem")).toHaveCount(10);
+  await expect(gallery).toContainText("Looking for Norwegian Translator");
+  await expect(gallery).toContainText("Looking for German Translator");
+  await expect(gallery.getByRole("img")).toHaveCount(0);
+  await expect(gallery.locator("img")).toHaveCount(6);
+
+  const timeline = page.locator("#preview-journey");
+  await expect(timeline.locator("li")).toHaveCount(3);
+  for (const country of ["France", "Norway", "Germany"]) {
+    await expect(timeline).toContainText(country);
+  }
+  await expect(page.locator("#preview-important-information")).toBeVisible();
+  await expect(page.locator("#preview-contact")).toBeVisible();
+
+  const plainText = await page.locator("main").innerText();
+  expect(plainText).not.toMatch(/14CV\d{5}|kept prisoner|escape justice/i);
+  for (const width of [320, 375, 768, 1280]) {
+    await page.setViewportSize({ width, height: 800 });
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth > window.innerWidth + 1,
+    );
+    expect(overflow, `gallery at width ${width}`).toBe(false);
+  }
+});
