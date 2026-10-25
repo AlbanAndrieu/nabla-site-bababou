@@ -1,6 +1,6 @@
-import { type AppLocale, routing } from "@/i18n/routing";
+import type { AppLocale } from "@/i18n/routing";
 import { getLegalPolicyCopy } from "@/lib/legalPolicies";
-import { getPolicyPage, type PolicyPageSlug } from "@/lib/policyPages";
+import type { PolicyPageSlug } from "@/lib/policyPages";
 import { getPrivacyPolicyCopy } from "@/lib/privacyPolicy";
 import { getPublicPolicyCopy } from "@/lib/publicPolicies";
 import { getServiceTermsCopy } from "@/lib/serviceTerms";
@@ -15,11 +15,5 @@ export function getNativePolicyCopy(policy: PolicyPageSlug, locale: AppLocale) {
   return getPublicPolicyCopy(policy, locale);
 }
 
-/**
- * The legacy policy files remain in public/ but their public canonicals
- * are the extensionless Next routes. French remains the default locale.
- */
-export function localizedPolicyPath(policy: PolicyPageSlug, locale: AppLocale) {
-  const base = getPolicyPage(policy).canonicalPath;
-  return locale === routing.defaultLocale ? base : `/${locale}${base}`;
-}
+// Preserve the public import while letting sitemap use only lightweight URL helpers.
+export { localizedPolicyPath } from "@/lib/policyRoutePaths";
