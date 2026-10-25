@@ -128,6 +128,24 @@ test.describe("opt-in homepage migration preview", () => {
   }
 });
 
+test("preview section links and ARIA references resolve in the rendered DOM", async ({ page }) => {
+  test.skip(!enabled, "Set HOMEPAGE_PREVIEW_ENABLED=true on the test server");
+  await page.goto("/home-preview");
+  const link = page.locator('main a[href="#preview-contact"]');
+  await link.click();
+  await expect(page).toHaveURL(/#preview-contact$/);
+  await expect(page.locator("#preview-contact")).toBeVisible();
+
+  const unresolved = await page.locator("main [aria-labelledby]").evaluateAll((elements) =>
+    elements.flatMap((element) =>
+      (element.getAttribute("aria-labelledby") ?? "")
+        .split(/\\s+/)
+        .filter((id) => id && document.getElementById(id) === null),
+    ),
+  );
+  expect(unresolved).toEqual([]);
+});
+
 test("association artwork has a local fallback when a bundled SVG fails", async ({ page }) => {
   test.skip(!enabled, "Set HOMEPAGE_PREVIEW_ENABLED=true on the test server");
   await page.route("**/assets/auction-law-svgrepo-com.svg", (route) =>
