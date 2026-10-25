@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { assessLocalBuild } from "../scripts/quality/agent-local-build-preflight.mjs";
+import { assessLocalBuild, assessLocalTests } from "../scripts/quality/agent-local-build-preflight.mjs";
 
 const ready = {
   nodeVersion: "v26.12.1",
@@ -57,4 +57,29 @@ test("build engine changes require explicit review", () => {
       reason.startsWith("ENGINES_POLICY_DRIFT"),
     ),
   );
+});
+
+test("Node 22/npm 10 is supported for dependency-free tests only", () => {
+  assert.deepEqual(
+    assessLocalTests({ nodeVersion: "v22.16.0", npmVersion: "10.9.2" }),
+    [],
+  );
+  assert.ok(
+    assessLocalBuild({
+      ...ready,
+      nodeVersion: "v22.16.0",
+      npmVersion: "10.9.2",
+      dependenciesReady: false,
+    }).some((reason) => reason.startsWith("NODE_UNSUPPORTED")),
+  );
+});
+
+test("reduced tier rejects Node 20/npm 9 and unknown toolchains", () => {
+  for (const input of [
+    { nodeVersion: "v20.19.0", npmVersion: "10.9.2" },
+    { nodeVersion: "v22.16.0", npmVersion: "9.9.9" },
+    { nodeVersion: "unknown", npmVersion: "missing" },
+  ]) {
+    assert.ok(assessLocalTests(input).length > 0);
+  }
 });
