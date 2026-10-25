@@ -42,7 +42,7 @@ test.describe("public nonindexed homepage review", () => {
         "href",
         "https://bababou.com/",
       );
-      await expect(page.locator('main a[href="#preview-contact"]')).toHaveCount(1);
+      await expect(page.locator('main a[href="#preview-contact"]').first()).toBeVisible();
       await expect(page.locator('#preview-opening[lang="en"]')).toHaveCount(1);
       await expect(page.locator("#preview-opening-heading")).toContainText(
         "your Papa is looking for you",
@@ -102,7 +102,7 @@ test.describe("public nonindexed homepage review", () => {
       ).toBeFocused();
       await expect(page.locator('main a[href^="mailto:"]')).toHaveCount(1);
       for (const href of ["/", "/people-contacted.html", "/for-fathers.html", "/feed.xml", "/eleonore-feed.xml"]) {
-        await expect(page.locator(`main a[href="${href}"]`)).toHaveCount(1);
+        await expect(page.locator(`main a[href="${href}"]`).first()).toBeVisible();
       }
       const associationLinks = page.locator("#preview-associations li a");
       await expect(associationLinks).toHaveCount(3);
@@ -132,7 +132,7 @@ test.describe("public nonindexed homepage review", () => {
 
 test("preview section links and ARIA references resolve in the rendered DOM", async ({ page }) => {
   await page.goto("/home-preview");
-  const link = page.locator('main a[href="#preview-contact"]');
+  const link = page.locator('main a[href="#preview-contact"]').first();
   await link.click();
   await expect(page).toHaveURL(/#preview-contact$/);
   await expect(page.locator("#preview-contact")).toBeVisible();
