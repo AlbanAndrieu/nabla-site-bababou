@@ -69,6 +69,31 @@ test.describe("Page chrome structure regression coverage", () => {
     }
   });
 
+  test("all native Next routes expose theme and print controls without legacy scripts", async ({ request }) => {
+    for (const pageCase of MIGRATED_NEXT_PAGES) {
+      const html = await fetchHtml(pageCase.path, request);
+      await test.step(pageCase.label, async () => {
+        expect(html).toContain('aria-label="Display theme"');
+        expect(html).toContain("Print / Save as PDF");
+        expect(html).not.toMatch(/<script[^>]+site-widgets\\.js/i);
+      });
+    }
+  });
+
+  test("theme preference persists when navigating between native pages", async ({ page }) => {
+    await page.goto("/contact");
+    const group = page.getByRole("group", { name: "Display theme" });
+    await expect(group).toHaveCount(1);
+    await group.getByRole("button", { name: "Dark", exact: true }).click();
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+
+    await page.goto("/policy");
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+    await expect(page.getByRole("group", { name: "Display theme" })).toHaveCount(1);
+    await page.getByRole("group", { name: "Display theme" })
+      .getByRole("button", { name: "Auto (system)" }).click();
+  });
+
   test("404 stays in minimal chrome mode", async ({ request }) => {
     const response = await request.get("/missing-next-route-for-page-chrome");
     expect(response.status()).toBe(404);
