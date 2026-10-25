@@ -139,7 +139,7 @@ test("preview section links and ARIA references resolve in the rendered DOM", as
   const unresolved = await page.locator("main [aria-labelledby]").evaluateAll((elements) =>
     elements.flatMap((element) =>
       (element.getAttribute("aria-labelledby") ?? "")
-        .split(/\\s+/)
+        .split(/\s+/)
         .filter((id) => id && document.getElementById(id) === null),
     ),
   );
