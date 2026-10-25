@@ -37,7 +37,7 @@ export function auditRuntimeParity({ legacyHtml, previewPage, localeLayout, prox
   const duplicates = actual.filter((src, i) => actual.indexOf(src) !== i);
   const gates = {
     legacyHomepage: proxy.includes('NextResponse.rewrite(new URL("/index.html"'),
-    previewOptIn: previewPage.includes('process.env.HOMEPAGE_PREVIEW_ENABLED === "true"'),
+    previewReviewAvailable: !previewPage.includes("HOMEPAGE_PREVIEW_ENABLED") && previewPage.includes("export default async function HomePreview"),
     previewNoIndex: previewPage.includes('robots: { index: false, follow: false }'),
     sharedAnalytics: localeLayout.includes('src="/site-analytics.js"'),
     noLegacyScriptsInPreview: !/<script\b/i.test(previewPage) && !/<Script\b/.test(previewPage),
