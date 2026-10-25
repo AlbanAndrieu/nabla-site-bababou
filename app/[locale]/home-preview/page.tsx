@@ -4,6 +4,7 @@ import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import LegacyContactSection from "@/components/home/LegacyContactSection";
+import HomePreviewControls from "@/components/home/HomePreviewControls";
 import LegacyOpeningSection from "@/components/home/LegacyOpeningSection";
 import LegacyMessageSection from "@/components/home/LegacyMessageSection";
 import LegacyFoundWebsiteSection from "@/components/home/LegacyFoundWebsiteSection";
@@ -69,6 +70,7 @@ export default async function HomePreview({
             </a>
           </div>
         </section>
+        <HomePreviewControls />
         <LegacyOpeningSection />
         <LegacyContactSection />
         <LegacyMessageSection />
