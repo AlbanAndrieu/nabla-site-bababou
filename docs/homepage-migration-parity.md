@@ -21,7 +21,7 @@
 
 | Fonction de la page approuvée | Source | État Next |
 |---|---|---|
-| Message principal et sections de la homepage | `public/index.html` | Blocs approuvés repris de manière partielle ; parité complète non attestée |
+| Message principal et sections de la homepage | `public/index.html` | Structure React complète pour les contenus publiables ; textes sensibles caviardés, parité éditoriale intégrale non attestée |
 | Ouverture et deux paragraphes d'accueil | `public/index.html` → `components/home/LegacyOpeningSection.tsx` | Texte anglais conservé ; H1 de la source converti en H2 dans la prévisualisation ; tests de parité et d'ordre |
 | Message « A Message from Your Papa » | `public/index.html` → `components/home/LegacyMessageSection.tsx` | 3 paragraphes anglais migrés, sans réécriture ; contrôle de parité sur les textes ; traduction approuvée en attente |
 | Avis « If you are Éléonore » et texte de bas de message | `public/index.html` → `components/home/LegacyFoundWebsiteSection.tsx` | Texte anglais existant migré sans modification ; ordre du document conservé ; section statique sans `role="alert"` pour éviter une annonce non sollicitée |
@@ -31,7 +31,7 @@
 | Associations soutenues | `public/index.html` → `LegacyAssociationsSection.tsx` | Trois liens et trois SVG locaux restaurés en React ; texte accessible permanent et fallback monogramme en cas de 404 (navigateur NOT_RUN) | 
 | Notice documentaire | `public/index.html` → `LegacyDisclosureSection.tsx` | Titre et deux paragraphes vérifiés à l'identique ; interaction native `details/summary`, cible tactile de 44 px, focus et survol ; navigateur NOT_RUN | 
 | Navigation légale dans la prévisualisation | `public/index.html` → `LegacyFooterSection.tsx` | Cinq liens conservés, cibles vers `POLICY_PAGES.*.canonicalPath`, liste accessible et retour au contenu ; le footer Next global reste le seul pied de page du document | 
-| Appels aux traducteurs | `public/index.html` | Titres publics « Looking for Norwegian Translator » et « Looking for German Translator » repris dans `LegacyTranslatorHelpSection.tsx` avec liens vers le contact existant ; accusations, données personnelles et cartes sensibles non recopiées. |
+| Appels aux traducteurs | `public/index.html` | Deux cartes dans la grille React commune `LegacyStoryGallerySection.tsx`, liens vers le contact ; accusations, données personnelles et lieux précis non recopiés. |
 | Personnes contactées | `public/people-contacted.html`, D3/ARF | Lien conservé ; comportement interactif non migré |
 | Informations pour les pères | `public/for-fathers.html` | Lien conservé ; contenu non migré |
 | Flux RSS principal et dédié | `public/feed.xml`, `public/eleonore-feed.xml` | Flux existants conservés ; footer commun |
@@ -49,6 +49,19 @@
 | 404 et URLs HTML historiques | `public/404.html`, `next.config.mjs` | À conserver jusqu'aux tests exact-SHA |
 | Canonical, hreflang, OG/Twitter, sitemap | HTML legacy et métadonnées Next | À vérifier par locale avant indexation |
 | Responsive, WCAG 2.2 AA et navigateurs | Page legacy, tests Playwright | À valider sur rendu réel avant bascule |
+
+## Parité structurelle de la galerie — livraison de la PR #248
+
+Le HTML historique présente un bandeau d'informations, une chronologie par pays et **dix cartes illustrées**. La page de revue React intègre maintenant :
+
+- `LegacyFamilyFactsSection.tsx` : informations essentielles et contact, sans référence de passeport ni allégations sur des tiers.
+- `LegacyJourneySection.tsx` : France → Norvège → Allemagne au niveau des pays, sans lieu précis, localisation actuelle présumée ni destination spéculative.
+- `LegacyStoryGallerySection.tsx` : **dix cartes**, images locales pertinentes, appels aux traducteurs, liens internes et grille de 3/2/1 colonnes ; pas d'intégration tierce.
+- `LegacyTranslatorHelpSection.tsx` est remplacé, pour éviter deux grilles de traducteurs superposées.
+
+Ce travail **termine la parité des grandes structures publiques** (texte de présentation, contact, lettre, chronologie, grille, associations, documents, navigation et footer), **mais pas l'identité textuelle du corpus sensible**. La galerie précédente contenait un identifiant officiel de mineure, des références de localisation et des imputations sur des tiers ; ces contenus ne sont pas recopiés dans une nouvelle route publique. `public/index.html` reste consultable tant qu'une revue de publication n'autorise pas sa substitution. Ne pas décrire cette substitution rédactionnelle comme une copie littérale complète.
+
+Pour les tests : `unit-tests/homepageGalleryParity.test.mjs`, `unit-tests/homepagePreviewLinks.test.mjs`, `tests/home-preview.spec.ts`. Les contrôles de source ne remplacent pas une recette Playwright réelle.
 
 ## Contrats d'interface — preuves requises
 
