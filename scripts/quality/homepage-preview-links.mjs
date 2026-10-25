@@ -5,11 +5,13 @@ import { fileURLToPath } from "node:url";
 const root = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 const sections = [
   "LegacyOpeningSection",
+  "LegacyFamilyFactsSection",
   "LegacyContactSection",
   "LegacyMessageSection",
   "LegacyFoundWebsiteSection",
+  "LegacyJourneySection",
   "LegacyLegalResourcesSection",
-  "LegacyTranslatorHelpSection",
+  "LegacyStoryGallerySection",
   "LegacyPeopleSection",
   "LegacyAssociationsSection",
   "LegacyDisclosureSection",
