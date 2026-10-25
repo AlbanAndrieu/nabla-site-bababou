@@ -1,6 +1,9 @@
 import { expect, test } from "@playwright/test";
 
-const paths = ["/contact", "/en/contact", "/policy", "/en/policy"] as const;
+const paths = [
+  "/contact", "/en/contact", "/policy", "/en/policy",
+  "/home-preview", "/en/home-preview", "/de/home-preview", "/no/home-preview",
+] as const;
 
 test.describe("Accessible responsive reflow", () => {
   test("reflows at 200% text and honors reduced motion on small mobile", async ({

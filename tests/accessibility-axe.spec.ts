@@ -4,6 +4,8 @@ import { expect, test } from "@playwright/test";
 const localizedRoutePairs = [
   ["/contact", "/en/contact"],
   ["/policy", "/en/policy"],
+  ["/home-preview", "/en/home-preview"],
+  ["/de/home-preview", "/no/home-preview"],
 ] as const;
 
 function formatViolations(violations: Awaited<ReturnType<AxeBuilder["analyze"]>>["violations"]): string {
@@ -18,7 +20,7 @@ function formatViolations(violations: Awaited<ReturnType<AxeBuilder["analyze"]>>
   }).join("\n");
 }
 
-test.describe("axe accessibility audit FR/EN", () => {
+test.describe("axe accessibility audit: localized routes and React review", () => {
   for (const [frenchRoute, englishRoute] of localizedRoutePairs) {
     for (const route of [frenchRoute, englishRoute]) {
       test(`${route} has no WCAG A/AA axe violations`, async ({ page }) => {

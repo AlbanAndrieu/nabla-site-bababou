@@ -16,6 +16,8 @@ La homepage publique `/` utilise toujours `public/index.html`. La page de revue 
 
 ## P2 — WCAG 2.2 AA
 
+- [ ] **Couverture automatisée de la Preview en quatre langues** : étendre les scénarios Playwright axe WCAG 2.2 AA, parcours clavier/focus et reflow 200 % à `/home-preview`, `/en/home-preview`, `/de/home-preview` et `/no/home-preview` ; les nouveaux scénarios sont définis, **NOT_RUN** tant qu’un navigateur autorisé et les dépendances ne sont pas disponibles.
+
 - [ ] Valider au clavier et avec axe/lecteur d'écran les pages FR/EN/DE/NO et la Preview : lien d'évitement, `#main-content`, sélection de langue, focus, images de secours et formulaires. Le contrôle source des IDREF et un scénario Playwright de navigation vers `#preview-contact` ont été ajoutés ; le navigateur reste `NOT_RUN`.
 - [ ] Vérifier contraste, thème clair/sombre, zoom 200 %, débordements, cibles tactiles, `prefers-reduced-motion` et Chromium/Firefox/WebKit ; fournir une preuve navigateur au SHA exact, non uniquement des tests de source.
 

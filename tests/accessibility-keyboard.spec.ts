@@ -1,6 +1,9 @@
 import { expect, type Locator, type Page, test } from "@playwright/test";
 
-const priorityRoutes = ["/contact", "/en/contact", "/policy", "/en/policy"] as const;
+const priorityRoutes = [
+  "/contact", "/en/contact", "/policy", "/en/policy",
+  "/home-preview", "/en/home-preview", "/de/home-preview", "/no/home-preview",
+] as const;
 
 async function tabUntilFocused(page: Page, target: Locator, maxTabs = 40): Promise<void> {
   for (let attempt = 0; attempt < maxTabs; attempt++) {
