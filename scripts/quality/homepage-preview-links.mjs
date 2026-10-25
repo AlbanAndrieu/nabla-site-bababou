@@ -28,8 +28,9 @@ const sections = [
 export function auditPreviewLinks({ page, sectionSources, publicExists, dynamicHrefs = [] }) {
   const issues = [];
   const source = [page, ...sectionSources].join("\n");
+  // Match actual JSX/HTML attributes, not data-id/data-href/data-aria-labelledby decoys.
   const readAttributes = (attribute) =>
-    [...source.matchAll(new RegExp("\\b" + attribute + '="([^"]+)"', "g"))]
+    [...source.matchAll(new RegExp("(?:^|[\\s<])" + attribute + '="([^"]+)"', "g"))]
       .map((match) => match[1]);
   const ids = readAttributes("id");
   const counts = new Map();
