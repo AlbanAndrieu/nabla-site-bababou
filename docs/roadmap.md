@@ -9,23 +9,23 @@ La homepage publique `/` utilise toujours `public/index.html`. La Preview React 
 ## P1 — Homepage React : parité et approbation
 
 - [ ] Établir, à partir de `just homepage-runtime-parity`, le comportement de chacun des **15 scripts legacy** ; traiter D3/ARF, Turnstile, Google Translate, consentement, thème, widgets et analytics. Un inventaire source intact ne prouve aucune parité interactive.
-- [ ] Vérifier le contenu **approuvé**, les liens, les trois icônes d'association et leurs fallbacks, le contact, les RSS, le responsive et les interactions sur la Preview. Exclure les cartes sensibles de la Preview tant que leur publication n'a pas été approuvée.
+- [ ] Vérifier le contenu **approuvé**, les trois icônes d'association et leurs fallbacks, le contact, les RSS, le responsive et les interactions sur la Preview. Le nouveau `scripts/quality/homepage-preview-links.mjs` contrôle hors réseau 9 sections React, les ancres, IDs et liens vers les fichiers publics ; il ne prouve pas le rendu navigateur ni la parité des scripts tiers. Exclure les cartes sensibles tant que leur publication n'a pas été approuvée.
 - [ ] Remplacer `/` seulement après parité fonctionnelle et visuelle, validation de confidentialité, tests navigateur et approbation explicite. Conserver `public/index.html` et la 404 jusqu'à cette décision.
 
 ## P2 — WCAG 2.2 AA
 
-- [ ] Valider au clavier et avec axe/lecteur d'écran les pages FR/EN/DE/NO et la Preview : premier lien d'évitement, `#main-content`, sélection de langue, focus, images de secours et formulaires.
+- [ ] Valider au clavier et avec axe/lecteur d'écran les pages FR/EN/DE/NO et la Preview : lien d'évitement, `#main-content`, sélection de langue, focus, images de secours et formulaires. Le contrôle source des IDREF et un scénario Playwright de navigation vers `#preview-contact` ont été ajoutés ; le navigateur reste `NOT_RUN`.
 - [ ] Vérifier contraste, thème clair/sombre, zoom 200 %, débordements, cibles tactiles, `prefers-reduced-motion` et Chromium/Firefox/WebKit ; fournir une preuve navigateur au SHA exact, non uniquement des tests de source.
 
 ## P3 — i18n et pages publiques
 
-- [ ] Faire relire les contenus et textes juridiques des quatre langues. Les **20 chaînes** de l'index des politiques sont déjà migrées à l'identique vers `messages/policy-index/*.json` : vérifier leur rendu et leurs métadonnées, ne pas recommencer la migration.
+- [ ] Faire relire les contenus et textes juridiques des quatre langues. Les **20 chaînes** de l'index des politiques sont déjà migrées vers `messages/policy-index/*.json`. Les URL localisées des politiques sont maintenant construites dans `lib/policyRoutePaths.ts` par l'index et le sitemap. Vérifier leur rendu et leurs métadonnées, sans recommencer la migration.
 - [ ] Migrer progressivement les pages publiques restantes, en conservant les URL/fallbacks existants ; préserver `people-contacted.html` (D3/ARF) et `public/test.html` tant que leurs comportements ne sont pas validés.
 - [ ] Conserver Google Translate comme recours pour les pages non traduites et ne jamais publier une traduction automatique de documents sensibles sans revue.
 
 ## P4 — SEO, liens et découvrabilité
 
-- [ ] Contrôler title, description, canonical, OpenGraph, Twitter, hreflang et `x-default` sur les pages réellement servies dans les quatre langues.
+- [ ] Contrôler title, description, canonical, OpenGraph, Twitter, hreflang et `x-default` sur les pages réellement servies dans les quatre langues. Sitemap et pages juridiques partagent le même constructeur d'URL canonique ; `policyRouteOwnership.test.mjs` protège cette propriété, sans remplacer la recette Next/Vercel.
 - [ ] Vérifier sitemap, robots, RSS, redirections legacy, 404 et `noindex` de la Preview avec les tests locaux et, lors de la recette externe différée, une vérification HTTP autorisée.
 
 ## P5 — Refactoring complémentaire et agents
