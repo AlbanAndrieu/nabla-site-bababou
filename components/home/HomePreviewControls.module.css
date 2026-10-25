@@ -55,7 +55,7 @@
   outline-offset: 3px;
 }
 
-:global(html[data-theme="dark"]) .button[aria-pressed="true"] {
+html[data-theme="dark"] .button[aria-pressed="true"] {
   background: var(--ui-surface-raised, #364152);
   color: var(--ui-text-primary, #fff);
 }
