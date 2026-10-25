@@ -14,7 +14,7 @@
 - Drapeau serveur : `HOMEPAGE_PREVIEW_ENABLED=true`. Valeur absente ou différente : `notFound()`. Activer le drapeau avant de construire/démarrer le serveur de test ; un changement de variable après compilation peut nécessiter un nouveau build.
 - SEO : `noindex, nofollow` et canonical `/`. Pas de déclaration sitemap ou hreflang pour la prévisualisation.
 - La prévisualisation ne remplace pas `/`. Ne pas activer sur une production accessible au public avant revue.
-- La prévisualisation contient le message de présentation neutre, les liens publics et quatre blocs de contenu anglais migrés de `public/index.html` : ouverture, contact, lettre et avis final.
+- La prévisualisation contient le message de présentation neutre, les liens publics et quatre blocs de contenu anglais migrés de `public/index.html` : ouverture, contact, lettre et avis final. Les contrôles thème/impression sont maintenant natifs React ; le reste des scripts tiers n'est pas automatiquement activé.
 - Les quatre blocs de contenu anglais sont balisés `lang="en"` sur les quatre routes. Ne pas publier de traduction non relue.
 
 ## Registre de parité avant bascule
@@ -35,7 +35,12 @@
 | Informations pour les pères | `public/for-fathers.html` | Lien conservé ; contenu non migré |
 | Flux RSS principal et dédié | `public/feed.xml`, `public/eleonore-feed.xml` | Flux existants conservés ; footer commun |
 | Google Translate | `public/site-google-translate.js` | À conserver en fallback pour contenu sans traduction approuvée |
-| Thèmes et animations | `public/theme-toggle.js`, CSS legacy | À vérifier sous clavier, contraste et reduced-motion |
+| Thème et impression | `public/theme-toggle.js`, `public/site-widgets.js` | Contrôles React sans dépendance tierce dans `HomePreviewControls.tsx` : clair, sombre, automatique, conservation `site-theme-preference`, réaction au thème système et `window.print()`. Pas de changement à `/` ; contrat Node intégré, Playwright ajouté mais **NOT_RUN**. |
+| Anciennes dépendances de mise en page | jQuery, Popper, Bootstrap 4 | Les contrôles approuvés de la Preview utilisent React, CSS, `details/summary` et liens natifs ; aucune de ces trois bibliothèques n'est injectée dans la Preview. La parité navigateur reste `NOT_RUN`. |
+| D3/ARF, personnes contactées | `public/people-contacted.html`, `arf.js`, `d3.v3.min.js` | Les liens vers la page historique restent présents. Déplacer le contenu nominatif vers React nécessite une revue spécifique ; **pas de suppression legacy**. |
+| Anti-robot Turnstile | Script externe de `public/index.html` | La Preview approuvée n'a **pas** de formulaire soumis au serveur : le contact est un `mailto:`. Ne pas injecter Turnstile sans action serveur à protéger. |
+| Traduction automatique | `public/site-google-translate.js` | Maintenue sur les pages legacy en attendant des traductions humaines relues. La Preview n'injecte pas Google et ne transmet pas son DOM à un service tiers sans choix explicite. |
+| Widgets tiers | BetterStack, Axeptio, Intercom, Ko-fi | Pas de chargement automatique supplémentaire dans la Preview. La décision sur consentement, utilité et parité des intégrations restantes est encore ouverte. |
 | Scripts et intégrations de la homepage | `scripts/quality/homepage-runtime-parity.mjs` | Contrôle source des 15 scripts approuvés. Les fonctionnalités `partial` ou `pending` ne sont pas considérées comme migrées ; les nouveaux scripts demandent une mise à jour du registre |
 | Widgets, statut, anti-robots | `public/site-widgets.js`, Turnstile, scripts legacy | À inventorier avant remplacement |
 | Page expérimentale et script Mixpanel historique | `public/test.html`, `public/index.js` | Utilisé par `/test.html` : ne pas supprimer sans décision sur ce comportement et sa collecte |
