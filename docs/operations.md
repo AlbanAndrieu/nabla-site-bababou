@@ -157,6 +157,12 @@ Le diagnostic de version doit signaler un runtime incompatible avant un téléch
 
 ### A.2 Vérifications hors réseau
 
+Sur Node **22.16.0** et npm **10.9.2**, commencer par `npm run test:agent-local` (ou `just agent-local-tests` si `just` est disponible). Cette commande exécute `node scripts/quality/agent-local-build-preflight.mjs --tests-only` et une suite ciblée de **neuf fichiers .mjs**, sans `npm ci`, `tsx` ni connexion réseau. Le code `0` atteste les tests réellement exécutés, pas la validation du build. Le mode `--tests-only` n'affaiblit pas le mode strict de `just agent-local-build`.
+
+**Preuve du 25 octobre 2026 :** l'agent a exécuté `node --test unit-tests/agentLocalBuildPreflight.test.mjs unit-tests/homepageRuntimeParity.test.mjs` sous Node 22/npm 10 : **12/12 PASS**. Les deux modules et leurs deux tests avaient des blobs identiques aux sources de la PR #246. Les sept autres fichiers de `test:agent-local` ne sont pas validés par cette preuve partielle, faute de checkout complet.
+
+
+
 1. Lire `git status --short` sans supprimer les modifications d'un autre agent.
 2. Comparer `git rev-parse HEAD` au SHA de la PR à diagnostiquer.
 3. Vérifier `node --version` et la politique des deux runtimes.
