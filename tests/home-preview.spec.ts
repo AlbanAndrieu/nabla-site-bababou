@@ -241,3 +241,13 @@ test("localized section navigation reaches the React landmarks", async ({ page }
     await expect(page).toHaveURL(/#preview-story-gallery$/);
   }
 });
+
+
+test("React gallery recovers from missing image without third-party fallback", async ({ page }) => {
+  await page.route(/alone-1\.jpg/, (route) =>
+    route.fulfill({ status: 404, contentType: "text/plain", body: "" }),
+  );
+  await page.goto("/home-preview");
+  await expect(page.locator('#preview-story-gallery [data-gallery-media-fallback="error"]')).toBeVisible();
+  await expect(page.locator("#preview-story-gallery li")).toHaveCount(10);
+});
