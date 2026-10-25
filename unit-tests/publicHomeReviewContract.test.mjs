@@ -1,0 +1,36 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import test from "node:test";
+
+const read = (path) => readFileSync(new URL("../" + path, import.meta.url), "utf8");
+
+test("public React review is visible without runtime env opt-in, while / remains legacy", () => {
+  const preview = read("app/[locale]/home-preview/page.tsx");
+  const proxy = read("proxy.ts");
+  assert.doesNotMatch(preview, /HOMEPAGE_PREVIEW_ENABLED|previewEnabled\(/);
+  assert.match(preview, /export default async function HomePreview/);
+  assert.match(preview, /robots: \{ index: false, follow: false \}/);
+  assert.match(preview, /alternates: \{ canonical: "\/" \}/);
+  assert.match(proxy, /NextResponse\.rewrite\(new URL\("\/index\.html"/);
+  assert.match(proxy, /pathname === "\/fr\/home-preview"/);
+  assert.match(proxy, /new URL\("\/home-preview", request\.url\), 307/);
+});
+
+test("review route has explicit noindex and no-store response headers", () => {
+  const config = read("next.config.mjs");
+  assert.match(config, /"\/home-preview"/);
+  assert.match(config, /"\/:locale\/home-preview"/);
+  assert.match(config, /"X-Robots-Tag", value: "noindex, nofollow, nosnippet"/);
+  assert.match(config, /"Cache-Control", value: "private, no-store"/);
+});
+
+test("approved translator calls are neutral and contact remains on the existing section", () => {
+  const page = read("app/[locale]/home-preview/page.tsx");
+  const cards = read("components/home/LegacyTranslatorHelpSection.tsx");
+  assert.match(page, /<LegacyTranslatorHelpSection \/>/);
+  assert.match(cards, /Looking for Norwegian Translator/);
+  assert.match(cards, /Looking for German Translator/);
+  assert.match(cards, /href="#preview-contact"/);
+  assert.doesNotMatch(cards, /14CV|Francfort|passport|Norwegian authorities|German authorities/i);
+  assert.doesNotMatch(cards, /fetch\(|sendBeacon\(|<Script|<iframe/i);
+});
