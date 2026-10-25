@@ -41,13 +41,13 @@ La homepage publique `/` utilise toujours `public/index.html`. La Preview React 
 - [ ] **Dette sécurité restante** : traiter uniquement les findings ZAP/SCA toujours présents, selon [security-audit-coverage-ledger.md](security-audit-coverage-ledger.md). Ne pas assimiler l'absence de logs runtime à une preuve de sécurité ; les workflows GitHub manquants restent `NOT_RUN`.
 - [ ] **Issues Quality master** : trier les incidents historiques uniquement avec les deux derniers runs `push master` réussis et sans modifier les issues reprises manuellement. Conserver la procédure dans [operations.md](operations.md).
 
+## Critère de fin d'un lot
+
+Vérifier le HEAD exact et la protection des contenus ; exécuter les contrôles compatibles avec le runtime disponible ; marquer `NOT_RUN` ou `BLOCKED` sans transformer une preuve L0/L1 en build certifié. PR d'agent en Draft tant que les crédits CI sont indisponibles ; aucun merge, désarmement de sécurité ou déploiement automatique. Conserver les incidents irremplaçables dans le runbook, pas les listes de tâches terminées.
+
 ## En dernier — Revues différées à la demande du propriétaire
 
 - [ ] **Revue de confidentialité du contenu public — différée** : vérifier avec le propriétaire la nécessité de publier des identifiants officiels d'une mineure, des indications de localisation et des affirmations nominatives sur des tiers dans `public/index.html` et les métadonnées/assets. Ne pas reproduire ces valeurs dans les rapports, prompts, tests ou issues. Préparer une version minimisée/caviardée uniquement après arbitrage explicite ; contrôler le DOM, les images, les flux et les documents liés. L'approbation passée du HTML n'est pas une preuve de minimisation actuelle.
 - [ ] **Validation HTTP / Vercel Security Checkpoint — différée** : diagnostiquer le `429` Vercel Security Checkpoint sans désactiver WAF ni Deployment Protection ; obtenir un accès de test approuvé pour `/`, `/policy`, `/en/policy`, `/de/policy`, `/no/policy`, les routes de contact, les anciennes URL `.html`, la 404, `robots.txt`, `sitemap.xml` et les deux flux RSS. Distinguer challenge d'accès, échec DNS, code applicatif et erreur de déploiement.
 
 Ces deux revues ne bloquent pas le travail **local** sur P1–P5. Elles restent nécessaires avant de déclarer une nouvelle publication pleinement validée. Ne pas affaiblir les contrôles de confidentialité existants ni le WAF.
-
-## Critère de fin d'un lot
-
-Vérifier le HEAD exact et la protection des contenus ; exécuter les contrôles compatibles avec le runtime disponible ; marquer `NOT_RUN` ou `BLOCKED` sans transformer une preuve L0/L1 en build certifié. PR d'agent en Draft tant que les crédits CI sont indisponibles ; aucun merge, désarmement de sécurité ou déploiement automatique. Conserver les incidents irremplaçables dans le runbook, pas les listes de tâches terminées.
