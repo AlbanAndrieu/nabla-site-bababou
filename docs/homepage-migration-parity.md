@@ -14,7 +14,7 @@
 - Drapeau serveur : `HOMEPAGE_PREVIEW_ENABLED=true`. Valeur absente ou différente : `notFound()`. Activer le drapeau avant de construire/démarrer le serveur de test ; un changement de variable après compilation peut nécessiter un nouveau build.
 - SEO : `noindex, nofollow` et canonical `/`. Pas de déclaration sitemap ou hreflang pour la prévisualisation.
 - La prévisualisation ne remplace pas `/`. Ne pas activer sur une production accessible au public avant revue.
-- La prévisualisation contient le message de présentation neutre, les liens publics et quatre blocs de contenu anglais migrés de `public/index.html` : ouverture, contact, lettre et avis final. Les contrôles thème/impression sont maintenant natifs React ; le reste des scripts tiers n'est pas automatiquement activé.
+- La prévisualisation contient le message de présentation neutre, les liens publics et quatre blocs de contenu anglais migrés de `public/index.html` : ouverture, contact, lettre et avis final. Les contrôles thème/impression sont désormais partagés par le footer Next sur toutes les pages migrées, y compris la Preview ; le reste des scripts tiers n'est pas automatiquement activé.
 - Les quatre blocs de contenu anglais sont balisés `lang="en"` sur les quatre routes. Ne pas publier de traduction non relue.
 
 ## Registre de parité avant bascule
@@ -35,7 +35,7 @@
 | Informations pour les pères | `public/for-fathers.html` | Lien conservé ; contenu non migré |
 | Flux RSS principal et dédié | `public/feed.xml`, `public/eleonore-feed.xml` | Flux existants conservés ; footer commun |
 | Google Translate | `public/site-google-translate.js` | À conserver en fallback pour contenu sans traduction approuvée |
-| Thème et impression | `public/theme-toggle.js`, `public/site-widgets.js` | Contrôles React sans dépendance tierce dans `HomePreviewControls.tsx` : clair, sombre, automatique, conservation `site-theme-preference`, réaction au thème système et `window.print()`. Pas de changement à `/` ; contrat Node intégré, Playwright ajouté mais **NOT_RUN**. |
+| Thème et impression | `public/theme-toggle.js`, `public/site-widgets.js` | Contrôles React partagés dans `components/SiteDisplayControls.tsx` via `app/components/Footer.tsx` : clair, sombre, automatique, conservation `site-theme-preference`, réaction au thème système et `window.print()`. Pas de changement à `/` ; contrat Node intégré, Playwright sur les pages Next et la Preview ajouté mais **NOT_RUN**. |
 | Anciennes dépendances de mise en page | jQuery, Popper, Bootstrap 4 | Les contrôles approuvés de la Preview utilisent React, CSS, `details/summary` et liens natifs ; aucune de ces trois bibliothèques n'est injectée dans la Preview. La parité navigateur reste `NOT_RUN`. |
 | D3/ARF, personnes contactées | `public/people-contacted.html`, `arf.js`, `d3.v3.min.js` | Les liens vers la page historique restent présents. Déplacer le contenu nominatif vers React nécessite une revue spécifique ; **pas de suppression legacy**. |
 | Anti-robot Turnstile | Script externe de `public/index.html` | La Preview approuvée n'a **pas** de formulaire soumis au serveur : le contact est un `mailto:`. Ne pas injecter Turnstile sans action serveur à protéger. |
