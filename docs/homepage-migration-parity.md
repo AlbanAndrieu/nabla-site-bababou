@@ -8,12 +8,12 @@
 - Le contenu, les disclosures et l'identité de la page publique restent sous contrôle du propriétaire.
 - La migration n'autorise pas la publication de nouveaux documents familiaux ou juridiques.
 
-## Prévisualisation non publique
+## Page de revue publique et non indexable
 
-- Route de travail : `/[locale]/home-preview` (`fr`, `en`, `de`, `no`).
-- Drapeau serveur : `HOMEPAGE_PREVIEW_ENABLED=true`. Valeur absente ou différente : `notFound()`. Activer le drapeau avant de construire/démarrer le serveur de test ; un changement de variable après compilation peut nécessiter un nouveau build.
+- Route accessible : `/home-preview` (fr, locale par défaut), `/en/home-preview`, `/de/home-preview`, `/no/home-preview`. `/fr/home-preview` redirige en 307 vers `/home-preview`.
+- Aucun drapeau serveur n'est nécessaire pour consulter la route : le précédent verrou a été retiré à la demande du propriétaire, uniquement pour la revue de contenus déjà approuvés et non sensibles.
 - SEO : `noindex, nofollow` et canonical `/`. Pas de déclaration sitemap ou hreflang pour la prévisualisation.
-- La prévisualisation ne remplace pas `/`. Ne pas activer sur une production accessible au public avant revue.
+- La page de revue ne remplace pas `/`. Son HTML est public mais marqué `noindex, nofollow, nosnippet` (métadonnées et en-tête HTTP) et `Cache-Control: private, no-store`. Aucun contenu non approuvé ne doit être ajouté.
 - La prévisualisation contient le message de présentation neutre, les liens publics et quatre blocs de contenu anglais migrés de `public/index.html` : ouverture, contact, lettre et avis final. Les contrôles thème/impression sont désormais partagés par le footer Next sur toutes les pages migrées, y compris la Preview ; le reste des scripts tiers n'est pas automatiquement activé.
 - Les quatre blocs de contenu anglais sont balisés `lang="en"` sur les quatre routes. Ne pas publier de traduction non relue.
 
@@ -31,6 +31,7 @@
 | Associations soutenues | `public/index.html` → `LegacyAssociationsSection.tsx` | Trois liens et trois SVG locaux restaurés en React ; texte accessible permanent et fallback monogramme en cas de 404 (navigateur NOT_RUN) | 
 | Notice documentaire | `public/index.html` → `LegacyDisclosureSection.tsx` | Titre et deux paragraphes vérifiés à l'identique ; interaction native `details/summary`, cible tactile de 44 px, focus et survol ; navigateur NOT_RUN | 
 | Navigation légale dans la prévisualisation | `public/index.html` → `LegacyFooterSection.tsx` | Cinq liens conservés, cibles vers `POLICY_PAGES.*.canonicalPath`, liste accessible et retour au contenu ; le footer Next global reste le seul pied de page du document | 
+| Appels aux traducteurs | `public/index.html` | Titres publics « Looking for Norwegian Translator » et « Looking for German Translator » repris dans `LegacyTranslatorHelpSection.tsx` avec liens vers le contact existant ; accusations, données personnelles et cartes sensibles non recopiées. |
 | Personnes contactées | `public/people-contacted.html`, D3/ARF | Lien conservé ; comportement interactif non migré |
 | Informations pour les pères | `public/for-fathers.html` | Lien conservé ; contenu non migré |
 | Flux RSS principal et dédié | `public/feed.xml`, `public/eleonore-feed.xml` | Flux existants conservés ; footer commun |
