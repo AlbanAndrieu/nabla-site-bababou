@@ -5,11 +5,13 @@ import test from "node:test";
 const read = (path) =>
   readFileSync(new URL("../" + path, import.meta.url), "utf8");
 
-test("the opt-in React preview owns its native theme and print controls", () => {
+test("the Next shared footer owns native theme and print controls", () => {
   const page = read("app/[locale]/home-preview/page.tsx");
-  const control = read("components/home/HomePreviewControls.tsx");
+  const control = read("components/SiteDisplayControls.tsx");
   const boot = read("components/ThemeBootstrap.tsx");
-  assert.match(page, /<HomePreviewControls\s*\/>/);
+  const footer = read("app/components/Footer.tsx");
+  assert.match(footer, /<SiteDisplayControls\s*\/>/);
+  assert.doesNotMatch(page, /<SiteDisplayControls\s*\/>/);
   assert.match(page, /process\.env\.HOMEPAGE_PREVIEW_ENABLED === "true"/);
   assert.match(page, /robots: \{ index: false, follow: false \}/);
   assert.match(boot, /site-theme-preference/);
@@ -24,11 +26,11 @@ test("the opt-in React preview owns its native theme and print controls", () => 
 });
 
 test("no new third-party scripts or tracking are introduced by controls", () => {
-  const control = read("components/home/HomePreviewControls.tsx");
+  const control = read("components/SiteDisplayControls.tsx");
   assert.doesNotMatch(control, /<Script\b|createElement\("script"\)|<iframe|fetch\(|sendBeacon\(|gtag\(/);
   assert.match(control, /window\.addEventListener\("storage"/);
   assert.match(control, /window\.dispatchEvent\(new Event\(PREFERENCE_EVENT\)\)/);
-  const css = read("components/home/HomePreviewControls.module.css");
+  const css = read("components/SiteDisplayControls.module.css");
   assert.match(css, /focus-visible/);
   assert.match(css, /min-height: 2\.75rem/);
   assert.match(css, /@media print/);
@@ -41,4 +43,5 @@ test("Next's shared footer retains one back-to-top control; avoid duplicate widg
   assert.doesNotMatch(page, /<Script\s+src="\/site-widgets\.js"|src="\/theme-toggle\.js"/);
   assert.match(layout, /<ThemeBootstrap\s*\/>/);
   assert.match(footer, /<BackToTopButton/);
+  assert.match(footer, /<SiteDisplayControls/);
 });
