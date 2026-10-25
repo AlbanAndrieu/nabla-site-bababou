@@ -1,6 +1,5 @@
 import { expect, test } from "@playwright/test";
 
-const enabled = process.env.HOMEPAGE_PREVIEW_ENABLED === "true";
 const locales = [
   { code: "fr", path: "/home-preview" },
   { code: "en", path: "/en/home-preview" },
@@ -8,18 +7,21 @@ const locales = [
   { code: "no", path: "/no/home-preview" },
 ] as const;
 
-test("homepage preview is not public without explicit server opt-in", async ({
-  request,
-}) => {
-  test.skip(enabled, "Homepage preview is enabled for this test run");
+test("homepage review is available on all four locale paths", async ({ request }) => {
   for (const { path } of locales) {
     const response = await request.get(path);
-    expect(response.status(), path).toBe(404);
+    expect(response.status(), path).toBe(200);
+    expect(response.headers()["x-robots-tag"] ?? "").toMatch(/noindex/);
   }
 });
 
-test.describe("opt-in homepage migration preview", () => {
-  test.skip(!enabled, "Set HOMEPAGE_PREVIEW_ENABLED=true on the test server");
+test("explicit French /fr/home-preview redirects to the canonical /home-preview", async ({ request }) => {
+  const response = await request.get("/fr/home-preview", { maxRedirects: 0 });
+  expect(response.status()).toBe(307);
+  expect(response.headers().location).toBe("/home-preview");
+});
+
+test.describe("public nonindexed homepage review", () => {
 
   for (const { code, path } of locales) {
     test(`${code}: accessible landmarks, links and non-indexable metadata`, async ({
@@ -129,7 +131,6 @@ test.describe("opt-in homepage migration preview", () => {
 });
 
 test("preview section links and ARIA references resolve in the rendered DOM", async ({ page }) => {
-  test.skip(!enabled, "Set HOMEPAGE_PREVIEW_ENABLED=true on the test server");
   await page.goto("/home-preview");
   const link = page.locator('main a[href="#preview-contact"]');
   await link.click();
@@ -147,7 +148,6 @@ test("preview section links and ARIA references resolve in the rendered DOM", as
 });
 
 test("association artwork has a local fallback when a bundled SVG fails", async ({ page }) => {
-  test.skip(!enabled, "Set HOMEPAGE_PREVIEW_ENABLED=true on the test server");
   await page.route("**/assets/auction-law-svgrepo-com.svg", (route) =>
     route.fulfill({ status: 404, contentType: "image/svg+xml", body: "" }),
   );
@@ -158,7 +158,6 @@ test("association artwork has a local fallback when a bundled SVG fails", async 
 });
 
 test("React preview theme and print controls work without legacy widget scripts", async ({ page }) => {
-  test.skip(!enabled, "Set HOMEPAGE_PREVIEW_ENABLED=true on the test server");
 
   await page.goto("/home-preview");
   const controls = page.getByRole("region", { name: "Page controls" });
