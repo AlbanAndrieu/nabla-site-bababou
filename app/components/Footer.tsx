@@ -1,4 +1,5 @@
 import BackToTopButton from "@/components/BackToTopButton";
+import SiteDisplayControls from "@/components/SiteDisplayControls";
 import ActionLink, { actionClassName } from "@/components/ui/ActionLink";
 import type { AppLocale } from "@/i18n/routing";
 import { canonicalPagePath } from "@/lib/sitePageCatalog";
@@ -74,6 +75,7 @@ export default function Footer({
           className={actionClassName("secondary")}
         />
       </nav>
+      <SiteDisplayControls />
       <p className={`${styles.copyright} footer-copyright`}>{copyright}</p>
     </footer>
   );

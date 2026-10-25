@@ -1,0 +1,67 @@
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  max-width: 64rem;
+  margin-inline: auto;
+  padding: 0 clamp(1.5rem, 5vw, 4rem) 1.5rem;
+}
+
+.theme {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.button,
+.print {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 2.75rem;
+  padding: 0.55rem 0.85rem;
+  border: 2px solid currentColor;
+  border-radius: 0.5rem;
+  color: inherit;
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.button[aria-pressed="true"] {
+  background: var(--ui-surface-raised, #eceff4);
+  color: var(--ui-text-primary, #1f2937);
+  border-width: 3px;
+}
+
+.print {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.button:hover,
+.print:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 0.15em;
+}
+
+.button:focus-visible,
+.print:focus-visible {
+  outline: 3px solid #e58c00;
+  outline-offset: 3px;
+}
+
+html[data-theme="dark"] .button[aria-pressed="true"] {
+  background: var(--ui-surface-raised, #364152);
+  color: var(--ui-text-primary, #fff);
+}
+
+@media print {
+  .controls {
+    display: none;
+  }
+}

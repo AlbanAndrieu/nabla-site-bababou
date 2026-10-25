@@ -2,12 +2,12 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import type { MetadataRoute } from "next";
 
-import { type AppLocale, routing } from "@/i18n/routing";
+import { routing } from "@/i18n/routing";
+import { localizedPolicyIndexPath, localizedPolicyPath } from "@/lib/policyRoutePaths";
 import {
   isPolicyPageSlug,
   POLICY_PAGE_SLUGS,
   POLICY_PAGES,
-  type PolicyPageSlug,
 } from "@/lib/policyPages";
 import {
   canonicalPagePath,
@@ -99,17 +99,6 @@ function parseLegacySitemap(xml: string): MetadataRoute.Sitemap {
   }
 
   return entries;
-}
-
-function localizedPolicyIndexPath(locale: AppLocale) {
-  return locale === routing.defaultLocale ? "/policy" : `/${locale}/policy`;
-}
-
-function localizedPolicyPath(slug: PolicyPageSlug, locale: AppLocale) {
-  const primaryPath = POLICY_PAGES[slug].canonicalPath;
-  return locale === routing.defaultLocale
-    ? primaryPath
-    : `/${locale}${primaryPath}`;
 }
 
 function policyIndexSitemapEntry(): SitemapEntry {

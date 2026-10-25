@@ -7,6 +7,7 @@ import {
   localizedPolicyPath,
 } from "../lib/nativePolicyCatalog.ts";
 import { getPolicyPage, POLICY_PAGE_SLUGS } from "../lib/policyPages.ts";
+import { localizedPolicyIndexPath } from "../lib/policyRoutePaths.ts";
 
 test("six policy slugs retain the same extensionless canonicals across four locales", () => {
   for (const locale of routing.locales) {
@@ -33,5 +34,13 @@ test("native policy provider resolves reviewed titles and descriptions for every
       assert.equal(typeof copy.metadataDescription, "string");
       assert.ok(copy.metadataDescription.trim());
     }
+  }
+});
+
+test("policy index canonicals share the same locale paths as the sitemap", () => {
+  for (const locale of routing.locales) {
+    const expected =
+      locale === routing.defaultLocale ? "/policy" : `/${locale}/policy`;
+    assert.equal(localizedPolicyIndexPath(locale), expected, locale);
   }
 });

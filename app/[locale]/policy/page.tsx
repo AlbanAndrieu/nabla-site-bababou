@@ -8,16 +8,13 @@ import ActionLink from "@/components/ui/ActionLink";
 import Container from "@/components/ui/Container";
 import layout from "@/components/ui/ContentLayout.module.css";
 import surface from "@/components/ui/Surface.module.css";
-import { type AppLocale, routing } from "@/i18n/routing";
+import { routing } from "@/i18n/routing";
+import { localizedPolicyIndexPath } from "@/lib/policyRoutePaths";
 import { getNativePolicyCopy, localizedPolicyPath } from "@/lib/nativePolicyCatalog";
 import { POLICY_PAGE_SLUGS } from "@/lib/policyPages";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
-}
-
-function localizedPolicyIndexPath(locale: AppLocale) {
-  return locale === routing.defaultLocale ? "/policy" : `/${locale}/policy`;
 }
 
 export async function generateMetadata({
