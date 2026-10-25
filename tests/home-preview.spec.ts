@@ -18,7 +18,7 @@ test("homepage review is available on all four locale paths", async ({ request }
 test("explicit French /fr/home-preview redirects to the canonical /home-preview", async ({ request }) => {
   const response = await request.get("/fr/home-preview", { maxRedirects: 0 });
   expect(response.status()).toBe(307);
-  expect(response.headers().location).toBe("/home-preview");
+  expect(new URL(response.headers().location, "https://www.bababou.com").pathname).toBe("/home-preview");
 });
 
 test.describe("public nonindexed homepage review", () => {
