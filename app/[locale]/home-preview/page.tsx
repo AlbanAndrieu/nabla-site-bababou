@@ -8,6 +8,9 @@ import LegacyOpeningSection from "@/components/home/LegacyOpeningSection";
 import LegacyMessageSection from "@/components/home/LegacyMessageSection";
 import LegacyFoundWebsiteSection from "@/components/home/LegacyFoundWebsiteSection";
 import LegacyLegalResourcesSection from "@/components/home/LegacyLegalResourcesSection";
+import LegacyFamilyFactsSection from "@/components/home/LegacyFamilyFactsSection";
+import LegacyJourneySection from "@/components/home/LegacyJourneySection";
+import LegacyStoryGallerySection from "@/components/home/LegacyStoryGallerySection";
 import LegacyPeopleSection from "@/components/home/LegacyPeopleSection";
 import LegacyAssociationsSection from "@/components/home/LegacyAssociationsSection";
 import LegacyDisclosureSection from "@/components/home/LegacyDisclosureSection";
@@ -16,21 +19,15 @@ import { routing } from "@/i18n/routing";
 import styles from "./page.module.css";
 
 /**
- * Migration workspace, not a public homepage.
- *
- * Keep public/index.html as the approved source until all legacy sections,
- * interactive widgets, accessibility checks and SEO contracts have parity.
- * This server-only flag is intentionally disabled by default.
+ * Public review-only route. Content is restricted to the already-approved,
+ * nonsensitive subset; this is NOT the production homepage.
+ * Always noindex; retain the existing public/index.html for /.
  */
-function previewEnabled() {
-  return process.env.HOMEPAGE_PREVIEW_ENABLED === "true";
-}
-
 export async function generateMetadata({
   params,
 }: PageProps<"/[locale]/home-preview">): Promise<Metadata> {
   const { locale } = await params;
-  if (!previewEnabled() || !hasLocale(routing.locales, locale)) {
+  if (!hasLocale(routing.locales, locale)) {
     return { robots: { index: false, follow: false } };
   }
   const t = await getTranslations({ locale, namespace: "homepagePreview" });
@@ -46,8 +43,6 @@ export async function generateMetadata({
 export default async function HomePreview({
   params,
 }: PageProps<"/[locale]/home-preview">) {
-  if (!previewEnabled()) notFound();
-
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
@@ -70,10 +65,13 @@ export default async function HomePreview({
           </div>
         </section>
         <LegacyOpeningSection />
+        <LegacyFamilyFactsSection />
         <LegacyContactSection />
         <LegacyMessageSection />
         <LegacyFoundWebsiteSection />
+        <LegacyJourneySection />
         <LegacyLegalResourcesSection />
+        <LegacyStoryGallerySection />
         <LegacyPeopleSection />
         <LegacyAssociationsSection />
         <LegacyDisclosureSection />

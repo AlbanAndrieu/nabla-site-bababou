@@ -14,7 +14,7 @@ npm run test:report         # Rapport du dernier run
 
 Le Playwright standard utilise `http://127.0.0.1:3000` par défaut (port `PLAYWRIGHT_PORT` configurable). Il lance `npm run dev:test` localement, ou `npm run start:test` sous CI. `BASE_URL` cible une Preview existante sans lancer de serveur. Les projets déclarés sont Chromium, Firefox, WebKit, Mobile Chrome et Mobile Safari.
 
-La Preview de migration de la homepage est **désactivée** tant que `HOMEPAGE_PREVIEW_ENABLED` n'est pas `true`. Ne pas exposer la Preview ni assouplir les contrôles Vercel pour faire passer un test.
+La page de revue `/home-preview` est disponible sans variable d'environnement, mais reste `noindex` et ne remplace pas `/`. Sur un déploiement Preview protégé, utiliser un accès Vercel autorisé, sans désactiver les protections.
 
 ## Preview protégée
 

@@ -1,6 +1,5 @@
 import { expect, test } from "@playwright/test";
 
-const enabled = process.env.HOMEPAGE_PREVIEW_ENABLED === "true";
 const locales = [
   { code: "fr", path: "/home-preview" },
   { code: "en", path: "/en/home-preview" },
@@ -8,18 +7,21 @@ const locales = [
   { code: "no", path: "/no/home-preview" },
 ] as const;
 
-test("homepage preview is not public without explicit server opt-in", async ({
-  request,
-}) => {
-  test.skip(enabled, "Homepage preview is enabled for this test run");
+test("homepage review is available on all four locale paths", async ({ request }) => {
   for (const { path } of locales) {
     const response = await request.get(path);
-    expect(response.status(), path).toBe(404);
+    expect(response.status(), path).toBe(200);
+    expect(response.headers()["x-robots-tag"] ?? "").toMatch(/noindex/);
   }
 });
 
-test.describe("opt-in homepage migration preview", () => {
-  test.skip(!enabled, "Set HOMEPAGE_PREVIEW_ENABLED=true on the test server");
+test("explicit French /fr/home-preview redirects to the canonical /home-preview", async ({ request }) => {
+  const response = await request.get("/fr/home-preview", { maxRedirects: 0 });
+  expect(response.status()).toBe(307);
+  expect(new URL(response.headers().location, "https://www.bababou.com").pathname).toBe("/home-preview");
+});
+
+test.describe("public nonindexed homepage review", () => {
 
   for (const { code, path } of locales) {
     test(`${code}: accessible landmarks, links and non-indexable metadata`, async ({
@@ -40,7 +42,7 @@ test.describe("opt-in homepage migration preview", () => {
         "href",
         "https://bababou.com/",
       );
-      await expect(page.locator('main a[href="#preview-contact"]')).toHaveCount(1);
+      await expect(page.locator('main a[href="#preview-contact"]').first()).toBeVisible();
       await expect(page.locator('#preview-opening[lang="en"]')).toHaveCount(1);
       await expect(page.locator("#preview-opening-heading")).toContainText(
         "your Papa is looking for you",
@@ -100,7 +102,7 @@ test.describe("opt-in homepage migration preview", () => {
       ).toBeFocused();
       await expect(page.locator('main a[href^="mailto:"]')).toHaveCount(1);
       for (const href of ["/", "/people-contacted.html", "/for-fathers.html", "/feed.xml", "/eleonore-feed.xml"]) {
-        await expect(page.locator(`main a[href="${href}"]`)).toHaveCount(1);
+        await expect(page.locator(`main a[href="${href}"]`).first()).toBeVisible();
       }
       const associationLinks = page.locator("#preview-associations li a");
       await expect(associationLinks).toHaveCount(3);
@@ -129,9 +131,8 @@ test.describe("opt-in homepage migration preview", () => {
 });
 
 test("preview section links and ARIA references resolve in the rendered DOM", async ({ page }) => {
-  test.skip(!enabled, "Set HOMEPAGE_PREVIEW_ENABLED=true on the test server");
   await page.goto("/home-preview");
-  const link = page.locator('main a[href="#preview-contact"]');
+  const link = page.locator('main a[href="#preview-contact"]').first();
   await link.click();
   await expect(page).toHaveURL(/#preview-contact$/);
   await expect(page.locator("#preview-contact")).toBeVisible();
@@ -147,7 +148,6 @@ test("preview section links and ARIA references resolve in the rendered DOM", as
 });
 
 test("association artwork has a local fallback when a bundled SVG fails", async ({ page }) => {
-  test.skip(!enabled, "Set HOMEPAGE_PREVIEW_ENABLED=true on the test server");
   await page.route("**/assets/auction-law-svgrepo-com.svg", (route) =>
     route.fulfill({ status: 404, contentType: "image/svg+xml", body: "" }),
   );
@@ -158,7 +158,6 @@ test("association artwork has a local fallback when a bundled SVG fails", async 
 });
 
 test("React preview theme and print controls work without legacy widget scripts", async ({ page }) => {
-  test.skip(!enabled, "Set HOMEPAGE_PREVIEW_ENABLED=true on the test server");
 
   await page.goto("/home-preview");
   const controls = page.getByRole("region", { name: "Page controls" });
@@ -193,4 +192,32 @@ test("React preview theme and print controls work without legacy widget scripts"
   await expect
     .poll(() => page.evaluate(() => (window as Window & { __printCalls?: number }).__printCalls))
     .toBe(1);
+});
+
+test("safe ten-card gallery and country timeline match the legacy structure", async ({ page }) => {
+  await page.goto("/home-preview");
+  const gallery = page.locator("#preview-story-gallery");
+  await expect(gallery.getByRole("listitem")).toHaveCount(10);
+  await expect(gallery).toContainText("Looking for Norwegian Translator");
+  await expect(gallery).toContainText("Looking for German Translator");
+  await expect(gallery.getByRole("img")).toHaveCount(0);
+  await expect(gallery.locator("img")).toHaveCount(6);
+
+  const timeline = page.locator("#preview-journey");
+  await expect(timeline.locator("li")).toHaveCount(3);
+  for (const country of ["France", "Norway", "Germany"]) {
+    await expect(timeline).toContainText(country);
+  }
+  await expect(page.locator("#preview-important-information")).toBeVisible();
+  await expect(page.locator("#preview-contact")).toBeVisible();
+
+  const plainText = await page.locator("main").innerText();
+  expect(plainText).not.toMatch(/14CV\d{5}|kept prisoner|escape justice/i);
+  for (const width of [320, 375, 768, 1280]) {
+    await page.setViewportSize({ width, height: 800 });
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth > window.innerWidth + 1,
+    );
+    expect(overflow, `gallery at width ${width}`).toBe(false);
+  }
 });

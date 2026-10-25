@@ -22,10 +22,10 @@ test("homepage preview catalogs are complete across all four locales", () => {
   assert.ok(baseline.includes("contact") && baseline.includes("legacy"));
 });
 
-test("preview is opt-in, non-indexable and cannot replace the approved homepage", () => {
+test("review page is accessible, non-indexable and cannot replace the approved homepage", () => {
   const page = read("app/[locale]/home-preview/page.tsx");
-  assert.match(page, /process\.env\.HOMEPAGE_PREVIEW_ENABLED === "true"/);
-  assert.match(page, /if \(!previewEnabled\(\)\) notFound\(\)/);
+  assert.doesNotMatch(page, /HOMEPAGE_PREVIEW_ENABLED/);
+  assert.match(page, /export default async function HomePreview/);
   assert.match(page, /robots: \{ index: false, follow: false \}/);
   assert.match(page, /alternates: \{ canonical: "\/" \}/);
   assert.match(page, /getTranslations\("homepagePreview"\)/);

@@ -12,7 +12,7 @@ test("the Next shared footer owns native theme and print controls", () => {
   const footer = read("app/components/Footer.tsx");
   assert.match(footer, /<SiteDisplayControls\s*\/>/);
   assert.doesNotMatch(page, /<SiteDisplayControls\s*\/>/);
-  assert.match(page, /process\.env\.HOMEPAGE_PREVIEW_ENABLED === "true"/);
+  assert.doesNotMatch(page, /HOMEPAGE_PREVIEW_ENABLED/);
   assert.match(page, /robots: \{ index: false, follow: false \}/);
   assert.match(boot, /site-theme-preference/);
   assert.match(control, /site-theme-preference/);

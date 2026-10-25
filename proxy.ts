@@ -50,6 +50,12 @@ export default function proxy(request: NextRequest) {
     return new NextResponse(null, { status: 204 });
   }
 
+  // French is the unprefixed default. Keep the user's explicit /fr URL
+  // working as a temporary redirect to the canonical review route.
+  if (pathname === "/fr/home-preview") {
+    return NextResponse.redirect(new URL("/home-preview", request.url), 307);
+  }
+
   if (request.nextUrl.pathname === "/") {
     return NextResponse.rewrite(new URL("/index.html", request.url));
   }

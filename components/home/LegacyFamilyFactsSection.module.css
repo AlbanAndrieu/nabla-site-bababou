@@ -1,0 +1,42 @@
+.section {
+  max-width: 64rem;
+  margin-inline: auto;
+  padding: clamp(1.5rem, 5vw, 4rem);
+  border-top: 1px solid var(--ui-border, #d1d5db);
+}
+
+.section h2 {
+  margin-bottom: 1rem;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  line-height: 1.25;
+  text-wrap: balance;
+}
+
+.list {
+  display: grid;
+  gap: 0.8rem;
+  max-width: 60ch;
+  margin: 0;
+  padding-inline-start: 1.35rem;
+  line-height: 1.65;
+}
+
+.list li::marker {
+  color: var(--ui-text-primary, #1f2937);
+}
+
+.contact {
+  margin-block-start: 1.5rem;
+}
+
+.contact a {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  text-underline-offset: 0.2em;
+}
+
+.contact a:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 3px;
+}
