@@ -24,13 +24,13 @@ test("review route has explicit noindex and no-store response headers", () => {
   assert.match(config, /"Cache-Control", value: "private, no-store"/);
 });
 
-test("approved translator calls are neutral and contact remains on the existing section", () => {
+test("the ten-card gallery preserves translator calls without republishing sensitive details", () => {
   const page = read("app/[locale]/home-preview/page.tsx");
-  const cards = read("components/home/LegacyTranslatorHelpSection.tsx");
-  assert.match(page, /<LegacyTranslatorHelpSection \/>/);
+  const cards = read("components/home/LegacyStoryGallerySection.tsx");
+  assert.match(page, /<LegacyStoryGallerySection \/>/);
   assert.match(cards, /Looking for Norwegian Translator/);
   assert.match(cards, /Looking for German Translator/);
-  assert.match(cards, /href="#preview-contact"/);
+  assert.match(cards, /href: "#preview-contact"/);
   assert.doesNotMatch(cards, /14CV|Francfort|passport|Norwegian authorities|German authorities/i);
   assert.doesNotMatch(cards, /fetch\(|sendBeacon\(|<Script|<iframe/i);
 });
