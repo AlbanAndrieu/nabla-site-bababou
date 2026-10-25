@@ -4,7 +4,7 @@ import { auditRuntimeParity, LEGACY_SCRIPTS, scriptSources } from "../scripts/qu
 
 const valid = () => ({
   legacyHtml: LEGACY_SCRIPTS.map(({ src }) => '<script src="' + src + '" defer></script>').join("\n"),
-  previewPage: 'export default async function HomePreview; "true"; robots: { index: false, follow: false }',
+  previewPage: 'export default async function HomePreview; robots: { index: false, follow: false }',
   localeLayout: '<Script src="/site-analytics.js" />',
   proxy: 'NextResponse.rewrite(new URL("/index.html", request.url))',
 });
@@ -32,7 +32,7 @@ test("fails closed on missing, new, or duplicate legacy scripts", () => {
   assert.deepEqual(result.duplicates, ["/site-widgets.js"]);
 });
 
-test("keeps the approved homepage route, public noindex preview and noindex", () => {
+test("keeps the legacy homepage and public nonindexable React review separate", () => {
   const fixture = valid();
   fixture.previewPage = 'robots: { index: true, follow: true }';
   fixture.proxy = '';
