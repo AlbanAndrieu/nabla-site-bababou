@@ -16,21 +16,15 @@ import { routing } from "@/i18n/routing";
 import styles from "./page.module.css";
 
 /**
- * Migration workspace, not a public homepage.
- *
- * Keep public/index.html as the approved source until all legacy sections,
- * interactive widgets, accessibility checks and SEO contracts have parity.
- * This server-only flag is intentionally disabled by default.
+ * Public review-only route. Content is restricted to the already-approved,
+ * nonsensitive subset; this is NOT the production homepage.
+ * Always noindex; retain the existing public/index.html for /.
  */
-function previewEnabled() {
-  return process.env.HOMEPAGE_PREVIEW_ENABLED === "true";
-}
-
 export async function generateMetadata({
   params,
 }: PageProps<"/[locale]/home-preview">): Promise<Metadata> {
   const { locale } = await params;
-  if (!previewEnabled() || !hasLocale(routing.locales, locale)) {
+  if (!hasLocale(routing.locales, locale)) {
     return { robots: { index: false, follow: false } };
   }
   const t = await getTranslations({ locale, namespace: "homepagePreview" });
@@ -46,8 +40,6 @@ export async function generateMetadata({
 export default async function HomePreview({
   params,
 }: PageProps<"/[locale]/home-preview">) {
-  if (!previewEnabled()) notFound();
-
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
