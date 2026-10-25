@@ -69,6 +69,14 @@ const nextConfig = {
         source: "/:path*",
         headers: securityHeaders,
       },
+      // The review page can be opened by a human but must not be indexed.
+      ...["/home-preview", "/:locale/home-preview"].map((source) => ({
+        source,
+        headers: [
+          { key: "X-Robots-Tag", value: "noindex, nofollow, nosnippet" },
+          { key: "Cache-Control", value: "private, no-store" },
+        ],
+      })),
     ];
   },
   async redirects() {
