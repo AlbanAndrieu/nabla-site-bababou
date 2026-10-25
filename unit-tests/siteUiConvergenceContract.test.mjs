@@ -33,6 +33,6 @@ test("the approved homepage remains on the static fallback", () => {
   const proxy = read("proxy.ts");
   const page = read("app/[locale]/home-preview/page.tsx");
   assert.match(proxy, /NextResponse\.rewrite\(new URL\("\/index\.html"/);
-  assert.match(page, /process\.env\.HOMEPAGE_PREVIEW_ENABLED === "true"/);
+  assert.doesNotMatch(page, /HOMEPAGE_PREVIEW_ENABLED/);
   assert.match(page, /robots: \{ index: false, follow: false \}/);
 });
