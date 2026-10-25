@@ -221,3 +221,23 @@ test("safe ten-card gallery and country timeline match the legacy structure", as
     expect(overflow, `gallery at width ${width}`).toBe(false);
   }
 });
+
+
+test("localized section navigation reaches the React landmarks", async ({ page }) => {
+  for (const { path } of locales) {
+    await page.goto(path);
+    const nav = page.locator("main nav[data-home-section-nav]");
+    await expect(nav).toHaveCount(1);
+    const targets = [
+      "preview-opening", "preview-journey", "preview-story-gallery",
+      "preview-contact", "preview-document-disclosure",
+    ];
+    await expect(nav.locator("a")).toHaveCount(targets.length);
+    for (const target of targets) {
+      await expect(nav.locator('a[href="#' + target + '"]')).toHaveCount(1);
+      await expect(page.locator("#" + target)).toHaveCount(1);
+    }
+    await nav.locator('a[href="#preview-story-gallery"]').click();
+    await expect(page).toHaveURL(/#preview-story-gallery$/);
+  }
+});
