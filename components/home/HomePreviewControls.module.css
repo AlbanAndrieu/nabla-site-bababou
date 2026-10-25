@@ -55,11 +55,9 @@
   outline-offset: 3px;
 }
 
-@media (prefers-color-scheme: dark) {
-  .button[aria-pressed="true"] {
-    background: var(--ui-surface-raised, #364152);
-    color: var(--ui-text-primary, #fff);
-  }
+:global(html[data-theme="dark"]) .button[aria-pressed="true"] {
+  background: var(--ui-surface-raised, #364152);
+  color: var(--ui-text-primary, #fff);
 }
 
 @media print {
