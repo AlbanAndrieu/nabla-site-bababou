@@ -85,54 +85,65 @@ export function assessLocalTests({ nodeVersion, npmVersion }) {
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const read = (path) => readFileSync(join(root, path), "utf8");
-  const npmVersion = (() => {
-    try {
-      return execFileSync("npm", ["--version"], {
-        encoding: "utf8",
-        timeout: 10000,
-      }).trim();
-    } catch {
-      return "missing";
-    }
-  })();
   const args = process.argv.slice(2);
   const testsOnly = args.length === 1 && args[0] === "--tests-only";
-  if (args.length !== 0 && !testsOnly) {
+  if (args.length > 0 && !testsOnly) {
     console.error("usage: node agent-local-build-preflight.mjs [--tests-only]");
     process.exitCode = 2;
   } else {
-  const blockers = testsOnly ? assessLocalTests({
-    nodeVersion: process.version,
-    npmVersion,
-  }) : assessLocalBuild({
-    nodeVersion: process.version,
-    npmVersion,
-    developmentNode: read(".nvmrc"),
-    productionNode: read(".nvmrc-production"),
-    miseConfig: read("mise.toml"),
-    engineRange: JSON.parse(read("package.json")).engines?.node,
-    dependenciesReady: ["next", "typescript", "tsx"].every((name) =>
-      existsSync(join(root, "node_modules", name, "package.json")),
-    ),
-  });
-  if (blockers.length) {
-    for (const blocker of blockers) {
-      console.error((testsOnly ? "LOCAL_TEST_BLOCKED " : "LOCAL_BUILD_BLOCKED ") + blocker);
+    const read = (path) => readFileSync(join(root, path), "utf8");
+    const npmVersion = (() => {
+      try {
+        return execFileSync("npm", ["--version"], {
+          encoding: "utf8",
+          timeout: 10000,
+        }).trim();
+      } catch {
+        return "missing";
+      }
+    })();
+    const blockers = testsOnly
+      ? assessLocalTests({
+          nodeVersion: process.version,
+          npmVersion,
+        })
+      : assessLocalBuild({
+          nodeVersion: process.version,
+          npmVersion,
+          developmentNode: read(".nvmrc"),
+          productionNode: read(".nvmrc-production"),
+          miseConfig: read("mise.toml"),
+          engineRange: JSON.parse(read("package.json")).engines?.node,
+          dependenciesReady: ["next", "typescript", "tsx"].every((name) =>
+            existsSync(join(root, "node_modules", name, "package.json")),
+          ),
+        });
+    if (blockers.length) {
+      for (const blocker of blockers) {
+        console.error(
+          (testsOnly ? "LOCAL_TEST_BLOCKED " : "LOCAL_BUILD_BLOCKED ") + blocker,
+        );
+      }
+      console.error(
+        "NOT_RUN: Next compilation, typecheck, full suite and privacy/security gates",
+      );
+      process.exitCode = 2;
+    } else if (testsOnly) {
+      console.log(
+        "LOCAL_TESTS_READY node=" +
+          process.version +
+          " npm=" +
+          npmVersion +
+          "; dependency-free Node tests only; build NOT_RUN",
+      );
+    } else {
+      console.log(
+        "LOCAL_BUILD_READY node=" +
+          process.version +
+          " npm=" +
+          npmVersion +
+          "; execute npm run check on this worktree",
+      );
     }
-    console.error("NOT_RUN: Next compilation, typecheck, full suite and privacy/security gates");
-    process.exitCode = 2;
-  } else if (testsOnly) {
-    console.log("LOCAL_TESTS_READY node=" + process.version + " npm=" + npmVersion +
-      "; dependency-free Node tests only; build NOT_RUN");
-  } else {
-    console.log(
-      "LOCAL_BUILD_READY node=" +
-        process.version +
-        " npm=" +
-        npmVersion +
-        "; execute npm run check on this worktree",
-    );
-  }
   }
 }
