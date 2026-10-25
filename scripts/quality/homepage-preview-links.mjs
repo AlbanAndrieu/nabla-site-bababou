@@ -9,6 +9,7 @@ const sections = [
   "LegacyContactSection",
   "LegacyMessageSection",
   "LegacyFoundWebsiteSection",
+  "LegacySiteAboutSection",
   "LegacyJourneySection",
   "LegacyLegalResourcesSection",
   "LegacyStoryGallerySection",

@@ -55,6 +55,7 @@
 Le HTML historique présente un bandeau d'informations, une chronologie par pays et **dix cartes illustrées**. La page de revue React intègre maintenant :
 
 - `LegacyFamilyFactsSection.tsx` : informations essentielles et contact, sans référence de passeport ni allégations sur des tiers.
+- `LegacySiteAboutSection.tsx` : ancien volet About, accès Calendly et Ko-fi sous forme de liens activés volontairement, sans widgets externes chargés à l'ouverture.
 - `LegacyJourneySection.tsx` : France → Norvège → Allemagne au niveau des pays, sans lieu précis, localisation actuelle présumée ni destination spéculative.
 - `LegacyStoryGallerySection.tsx` : **dix cartes**, images locales pertinentes, appels aux traducteurs, liens internes et grille de 3/2/1 colonnes ; pas d'intégration tierce.
 - `LegacyTranslatorHelpSection.tsx` est remplacé, pour éviter deux grilles de traducteurs superposées.

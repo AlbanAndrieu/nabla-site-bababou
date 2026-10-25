@@ -17,6 +17,11 @@ test("the safe React gallery retains the original ten-card layout", () => {
   assert.match(gallery, /Looking for German Translator/);
   assert.match(read("components/home/LegacyJourneySection.tsx"), /France, Norway and Germany/);
   assert.match(read("components/home/LegacyFamilyFactsSection.tsx"), /Important Information You Should Know/);
+  const about = read("components/home/LegacySiteAboutSection.tsx");
+  assert.match(about, /<details>/);
+  assert.match(about, /https:\/\/calendly\.com\/alban-andrieu/);
+  assert.match(about, /https:\/\/ko-fi\.com\/albandrieu/);
+  assert.match(about, /rel="noopener noreferrer"/);
 });
 
 test("all gallery images are existing public assets, excluding identity and location proof", () => {
