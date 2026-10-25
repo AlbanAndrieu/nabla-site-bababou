@@ -64,6 +64,13 @@ Ce travail **termine la parité des grandes structures publiques** (texte de pr�
 
 Pour les tests : `unit-tests/homepageGalleryParity.test.mjs`, `unit-tests/homepagePreviewLinks.test.mjs`, `tests/home-preview.spec.ts`. Les contrôles de source ne remplacent pas une recette Playwright réelle.
 
+## Évolution de la PR #249
+
+- Les **dix cartes** sont déclarées dans `lib/homeGalleryCatalog.mjs` et consommées par le composant React ; le même catalogue est vérifié par `homepage-preview-links.mjs`. Les ancres dynamiques, absentes des anciens contrôles statiques, sont maintenant auditées.
+- Une navigation interne accessible dessert cinq sections de la homepage (récit, pays, cartes, contact, documents). Ses libellés utilisent `messages/homepage-preview/{fr,en,de,no}.json`, avec tests de complétude des locales et scénario navigateur.
+- Le volet About conserve Calendly et Ko-fi **sous forme de liens explicites** sans widget chargé automatiquement.
+- **Statut :** implémenté dans la PR en cours ; build Next et recette navigateur à vérifier au HEAD exact. Aucune suppression de `public/index.html`.
+
 ## Contrats d'interface — preuves requises
 
 Références : le skill versionné `.agents/skills/web-design-guidelines/SKILL.md` et les [règles Vercel](https://github.com/vercel-labs/web-interface-guidelines/blob/main/command.md). Les états source (focus visible, survol, `text-wrap`, `scroll-margin`, cibles tactiles et `lang="en"`) disposent de contrôles dans `unit-tests/homepageMigrationContract.test.mjs`, `unit-tests/homepageAssociationsParity.test.mjs` et `unit-tests/mainContentRoute.test.mjs`.
