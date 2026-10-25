@@ -9,6 +9,7 @@ import LegacyMessageSection from "@/components/home/LegacyMessageSection";
 import LegacyFoundWebsiteSection from "@/components/home/LegacyFoundWebsiteSection";
 import LegacyLegalResourcesSection from "@/components/home/LegacyLegalResourcesSection";
 import LegacyFamilyFactsSection from "@/components/home/LegacyFamilyFactsSection";
+import LegacySiteAboutSection from "@/components/home/LegacySiteAboutSection";
 import LegacyJourneySection from "@/components/home/LegacyJourneySection";
 import LegacyStoryGallerySection from "@/components/home/LegacyStoryGallerySection";
 import LegacyPeopleSection from "@/components/home/LegacyPeopleSection";
@@ -69,6 +70,7 @@ export default async function HomePreview({
         <LegacyContactSection />
         <LegacyMessageSection />
         <LegacyFoundWebsiteSection />
+        <LegacySiteAboutSection />
         <LegacyJourneySection />
         <LegacyLegalResourcesSection />
         <LegacyStoryGallerySection />
