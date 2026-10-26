@@ -51,7 +51,8 @@
 
 .button:focus-visible,
 .print:focus-visible {
-  outline: 3px solid #e58c00;
+  /* Contrast follows the active theme on both buttons and raised surfaces. */
+  outline: 3px solid var(--ui-text-primary, #1e293b);
   outline-offset: 3px;
 }
 

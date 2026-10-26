@@ -62,6 +62,14 @@ test("preview remains out of the public sitemap and canonical page catalog", () 
   assert.match(catalog, /if \(slug === "index"\) return "\/"/);
 });
 
+test("theme and print controls use the same accessible focus color as React navigation", () => {
+  const controlsCss = read("components/SiteDisplayControls.module.css");
+  const previewCss = read("app/[locale]/home-preview/page.module.css");
+  assert.match(controlsCss, /\.button:focus-visible,[\s\S]*?\.print:focus-visible\s*\{[^}]*--ui-text-primary/);
+  assert.match(previewCss, /\.sectionNav a:focus-visible\s*\{[^}]*--ui-text-primary/);
+  assert.doesNotMatch(controlsCss, /outline:\s*3px solid #e58c00/);
+});
+
 test("homepage focus outline follows contrast-checked semantic theme tokens", () => {
   const css = read("app/[locale]/home-preview/page.module.css");
   assert.match(css, /\.main a:focus-visible\s*\{[^}]*--ui-text-primary/);

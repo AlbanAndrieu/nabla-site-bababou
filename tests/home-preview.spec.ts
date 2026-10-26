@@ -264,23 +264,28 @@ test("homepage keyboard focus has a contrasting outline in light and dark modes"
     await controls.getByRole("button", { name: theme, exact: true }).click();
     await expect(page.locator("html")).toHaveAttribute("data-theme", theme.toLowerCase());
     await page.keyboard.press("Tab");
-    await navLink.focus();
-    await expect(navLink).toBeFocused();
+    for (const target of [
+      navLink,
+      controls.getByRole("button", { name: "Print / Save as PDF" }),
+    ]) {
+      await target.focus();
+      await expect(target).toBeFocused();
 
-    const focus = await navLink.evaluate((element) => {
-      const styles = getComputedStyle(element);
-      const main = document.querySelector("main#main-content");
-      if (!main) throw new Error("Preview main landmark missing");
-      return {
-        outline: styles.outlineColor,
-        text: getComputedStyle(main).color,
-        width: Number.parseFloat(styles.outlineWidth),
-        visible: element.matches(":focus-visible"),
-      };
-    });
-    expect(focus.visible).toBe(true);
-    expect(focus.width).toBeGreaterThanOrEqual(3);
-    expect(focus.outline).toBe(focus.text);
+      const focus = await target.evaluate((element) => {
+        const styles = getComputedStyle(element);
+        const main = document.querySelector("main#main-content");
+        if (!main) throw new Error("Preview main landmark missing");
+        return {
+          outline: styles.outlineColor,
+          text: getComputedStyle(main).color,
+          width: Number.parseFloat(styles.outlineWidth),
+          visible: element.matches(":focus-visible"),
+        };
+      });
+      expect(focus.visible).toBe(true);
+      expect(focus.width).toBeGreaterThanOrEqual(3);
+      expect(focus.outline).toBe(focus.text);
+    }
   }
 });
 
