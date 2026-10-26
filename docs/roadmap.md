@@ -27,6 +27,7 @@ La route `/` sert toujours `public/index.html`. La homepage React est consultabl
 ## P2 — Accessibilité
 
 - [ ] Exécuter la suite Playwright sur **les quatre Preview** : axe WCAG 2.2 AA, clavier/focus et reflow 200 % (les scénarios sont déjà ajoutés à `tests/accessibility-*.spec.ts`). Corriger uniquement les échecs constatés.
+- [ ] **Contraste du focus** : le contour orange précédent était à ~2,6:1 sur fond blanc ; les liens de la Preview utilisent désormais le jeton de texte contrasté en thème clair/sombre. Contrats source et Playwright ajoutés ; recette navigateur complète NOT_RUN.
 - [ ] Compléter par une revue lecteur d'écran et contraste clair/sombre, tailles tactiles et images de secours ; valider sur Chromium, Firefox, WebKit et mobile.
 
 ## P3 — Traductions et pages

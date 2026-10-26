@@ -255,6 +255,35 @@ test("localized section navigation reaches the React landmarks", async ({ page }
 });
 
 
+test("homepage keyboard focus has a contrasting outline in light and dark modes", async ({ page }) => {
+  await page.goto("/home-preview");
+  const controls = page.getByRole("region", { name: "Page controls" });
+  const navLink = page.locator("main nav[data-home-section-nav] a").first();
+
+  for (const theme of ["Light", "Dark"] as const) {
+    await controls.getByRole("button", { name: theme, exact: true }).click();
+    await expect(page.locator("html")).toHaveAttribute("data-theme", theme.toLowerCase());
+    await page.keyboard.press("Tab");
+    await navLink.focus();
+    await expect(navLink).toBeFocused();
+
+    const focus = await navLink.evaluate((element) => {
+      const styles = getComputedStyle(element);
+      const main = document.querySelector("main#main-content");
+      if (!main) throw new Error("Preview main landmark missing");
+      return {
+        outline: styles.outlineColor,
+        text: getComputedStyle(main).color,
+        width: Number.parseFloat(styles.outlineWidth),
+        visible: element.matches(":focus-visible"),
+      };
+    });
+    expect(focus.visible).toBe(true);
+    expect(focus.width).toBeGreaterThanOrEqual(3);
+    expect(focus.outline).toBe(focus.text);
+  }
+});
+
 test("localized back-to-top link supports keyboard activation", async ({ page }) => {
   for (const { path } of locales) {
     await page.goto(path);

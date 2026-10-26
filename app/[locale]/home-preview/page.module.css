@@ -83,7 +83,8 @@
 }
 
 .main a:focus-visible {
-  outline: 3px solid #e58c00;
+  /* Match accessible theme text contrast on the surrounding page surface. */
+  outline: 3px solid var(--ui-text-primary, #1e293b);
   outline-offset: 4px;
 }
 
@@ -157,6 +158,6 @@
 }
 
 .sectionNav a:focus-visible {
-  outline: 3px solid var(--ui-focus-ring, #e58c00);
+  outline: 3px solid var(--ui-text-primary, #1e293b);
   outline-offset: 3px;
 }
