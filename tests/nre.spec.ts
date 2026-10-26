@@ -32,7 +32,7 @@ test.describe("NRE React migration", () => {
   });
   test("theme selector remains at upper-right without covering NRE locale navigation", async ({ page }) => {
     for (const path of ["/en/nre", "/home-preview"]) {
-      for (const width of [375, 768, 1280]) {
+      for (const width of [320, 375, 768, 1280]) {
         await page.setViewportSize({ width, height: 800 });
         await page.goto(path);
         const theme = page.getByRole("group", { name: "Display theme" });
@@ -75,7 +75,7 @@ test.describe("NRE React migration", () => {
 
   test("rounded theme segments visually match the historic homepage", async ({ page }) => {
     for (const { path } of localeCases) {
-      for (const width of [375, 1280]) {
+      for (const width of [320, 375, 1280]) {
         await page.setViewportSize({ width, height: 800 });
         await page.goto(path);
         const theme = page.getByRole("group", { name: "Display theme" });
@@ -101,7 +101,7 @@ test.describe("NRE React migration", () => {
           });
           expect(geometry.width).toBeGreaterThanOrEqual(40);
           expect(geometry.height).toBeGreaterThanOrEqual(40);
-          if (width === 375) {
+          if (width <= 375) {
             expect(Math.abs(geometry.width - geometry.height)).toBeLessThanOrEqual(1);
             expect(geometry.borderRadius).toBe("50%");
           } else {
