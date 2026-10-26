@@ -7,6 +7,9 @@ type ThemePreference = "light" | "dark" | "auto";
 
 const STORAGE_KEY = "site-theme-preference";
 const PREFERENCE_EVENT = "bababou-theme-preference";
+// A private-session fallback is needed when browser storage is disabled.
+// It never transmits or persists a new identifier.
+let volatilePreference: ThemePreference | null = null;
 const THEMES = [
   { value: "light", label: "Light", icon: "☀️" },
   { value: "dark", label: "Dark", icon: "🌙" },
@@ -14,6 +17,7 @@ const THEMES = [
 ] as const;
 
 function readPreference(): ThemePreference {
+  if (volatilePreference !== null) return volatilePreference;
   try {
     const value = window.localStorage.getItem(STORAGE_KEY);
     if (value === "light" || value === "dark") return value;
@@ -83,8 +87,10 @@ export default function SiteDisplayControls() {
   function selectTheme(value: ThemePreference) {
     try {
       window.localStorage.setItem(STORAGE_KEY, value);
+      volatilePreference = null;
     } catch {
-      // The current tab still applies the chosen theme without persistence.
+      // Keep the active choice and aria-pressed consistent in this tab only.
+      volatilePreference = value;
     }
     applyTheme(value);
     window.dispatchEvent(new Event(PREFERENCE_EVENT));

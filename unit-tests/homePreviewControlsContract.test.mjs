@@ -83,3 +83,13 @@ test("Next theme selector matches the legacy homepage rounded segmented control"
   assert.match(component, /title=\{label\}/);
   assert.match(component, /aria-pressed=\{preference === value\}/);
 });
+
+test("storage failures use tab-only memory to keep selected theme and aria in sync", () => {
+  const control = read("components/SiteDisplayControls.tsx");
+  assert.match(control, /let volatilePreference: ThemePreference \| null = null;/);
+  assert.match(control, /if \(volatilePreference !== null\) return volatilePreference;/);
+  assert.match(control, /volatilePreference = null;/);
+  assert.match(control, /volatilePreference = value;/);
+  assert.match(control, /window\.dispatchEvent\(new Event\(PREFERENCE_EVENT\)\)/);
+  assert.match(control, /aria-pressed=\{preference === value\}/);
+});

@@ -83,7 +83,12 @@ test.describe("NRE React migration", () => {
         const dark = theme.getByRole("button", { name: "Dark", exact: true });
         const automatic = theme.getByRole("button", { name: "Auto (system)", exact: true });
 
-        await expect(theme).toHaveCSS("border-top-left-radius", "800px");
+        const trackGeometry = await theme.evaluate((element) => ({
+          height: element.getBoundingClientRect().height,
+          radius: Number.parseFloat(getComputedStyle(element).borderTopLeftRadius),
+        }));
+        // Root font size and browser zoom change rem->px conversion.
+        expect(trackGeometry.radius).toBeGreaterThanOrEqual(trackGeometry.height / 2);
         for (const button of [light, dark, automatic]) {
           await expect(button).toHaveAttribute("title", /^(Light|Dark|Auto \(system\))$/);
           const geometry = await button.evaluate((element) => {
@@ -114,6 +119,42 @@ test.describe("NRE React migration", () => {
         await expect(automatic).toHaveAttribute("aria-pressed", "true");
       }
     }
+  });
+
+  test("theme selection remains accessible when localStorage is unavailable", async ({ page }) => {
+    await page.emulateMedia({ colorScheme: "dark" });
+    await page.addInitScript(() => {
+      const storageUnavailable = () => {
+        throw new DOMException("Storage unavailable", "SecurityError");
+      };
+      Object.defineProperty(Storage.prototype, "getItem", {
+        configurable: true,
+        value: storageUnavailable,
+      });
+      Object.defineProperty(Storage.prototype, "setItem", {
+        configurable: true,
+        value: storageUnavailable,
+      });
+    });
+
+    await page.goto("/en/nre");
+    const group = page.getByRole("group", { name: "Display theme" });
+    const light = group.getByRole("button", { name: "Light", exact: true });
+    const dark = group.getByRole("button", { name: "Dark", exact: true });
+    const auto = group.getByRole("button", { name: "Auto (system)", exact: true });
+
+    await expect(auto).toHaveAttribute("aria-pressed", "true");
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+    await light.click();
+    await expect(light).toHaveAttribute("aria-pressed", "true");
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+    await dark.click();
+    await expect(dark).toHaveAttribute("aria-pressed", "true");
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+    await auto.click();
+    await expect(auto).toHaveAttribute("aria-pressed", "true");
+    await page.emulateMedia({ colorScheme: "light" });
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
   });
 
   test("theme labels stay accessible and controls printable on localized NRE routes", async ({ page }) => {

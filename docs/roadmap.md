@@ -1,6 +1,6 @@
 # Roadmap active — Site Bababou
 
-**Mise à jour : 26 octobre 2026 · PR [#249](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/249) · Draft.**
+**Mise à jour : 26 octobre 2026 · PR [#250](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/250) en Draft ; PR [#249](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/249) fusionnée.**
 
 ## Situation et périmètre
 
@@ -27,7 +27,7 @@ Le footer Next partagé fournit maintenant **l’unique** bouton « retour en ha
 
 ## P2 — Accessibilité
 
-- [ ] **Sélecteur de thème en haut à droite** : le contrôle Light/Dark/Auto commun à NRE et aux autres pages Next.js est fixé dans le coin supérieur droit et reprend les **segments arrondis** de la homepage historique (track/segments en pilule, état actif et tokens de couleur existants). Sur mobile, les trois segments deviennent des cercles de 44 px et restent accessibles. Le header réserve de la place au sélecteur de langue. L'impression reste dans le footer. Tests de géométrie/arrondi/interaction Playwright rédigés : **NOT_RUN**.
+- [ ] **Sélecteur de thème en haut à droite** : le contrôle Light/Dark/Auto commun à NRE et aux autres pages Next.js est fixé dans le coin supérieur droit et reprend les **segments arrondis** de la homepage historique (track/segments en pilule, état actif et tokens de couleur existants). Sur mobile, les trois segments deviennent des cercles de 44 px et restent accessibles. Le header réserve de la place au sélecteur de langue. L'impression reste dans le footer. Tests Playwright de géométrie/arrondi/interaction rédigés : **NOT_RUN**. Le changement de thème conserve maintenant un état mémoire temporaire si `localStorage` est bloqué, afin de synchroniser l'apparence et `aria-pressed`. Le test de rayon du rail accepte les variations de zoom/rem.
 
 - [ ] Exécuter la suite Playwright sur **les quatre Preview** : axe WCAG 2.2 AA, clavier/focus et reflow 200 % (les scénarios sont déjà ajoutés à `tests/accessibility-*.spec.ts`). Corriger uniquement les échecs constatés.
 - [ ] **Contraste du focus** : les contours de focus de la navigation, des liens, des boutons de thème et d’impression utilisent les jetons du thème (ancien orange : ~2,6:1 sur blanc). Contrat source et scénario clavier clair/sombre étendus ; **recette navigateur NOT_RUN**.
