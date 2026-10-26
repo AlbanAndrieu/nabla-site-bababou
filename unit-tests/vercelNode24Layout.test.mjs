@@ -46,3 +46,14 @@ test("production is on Vercel-supported Node 24; local Node 26 remains separate"
   assert.match(pkg.engines.node, /24/);
   assert.match(pkg.engines.node, /27/);
 });
+
+test("Vercel installs the same pinned npm 12 as mise before npm ci", () => {
+  const vercel = JSON.parse(read("vercel.json"));
+  const pinnedNpm = read("mise.toml").match(/^npm = "([0-9.]+)"$/m)?.[1];
+  assert.ok(pinnedNpm, "mise npm version required");
+  assert.equal(
+    vercel.installCommand,
+    `npm install --global npm@${pinnedNpm} --no-audit --no-fund && npm --version && npm ci --no-audit --no-fund`,
+  );
+  assert.match(JSON.parse(read("package.json")).engines.npm, /^>=12\.2\.0 <13$/);
+});

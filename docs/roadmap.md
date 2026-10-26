@@ -36,11 +36,11 @@ La route `/` sert toujours `public/index.html`. La homepage React est consultabl
 ## P4 — SEO et confidentialité d'indexation
 
 - [ ] Vérifier sur une Preview autorisée les canoniques, hreflang et `x-default`, métadonnées sociales, `robots.txt`, `sitemap.xml`, RSS, 404 et redirections historiques.
-- [ ] Contrôler l'exclusion de toutes les variantes `home-preview` du sitemap, y compris lors d'un import XML legacy. Un garde-fou source et des tests de régression ont été ajoutés ; **la vérification HTTP reste ouverte**.
+- [ ] Contrôler l'exclusion de toutes les variantes `home-preview` du sitemap, y compris lors d'un import XML legacy. Un garde-fou source prend maintenant en compte les alias percent-encodés ; **la vérification HTTP reste ouverte**.
 
 ## P5 — Qualité et simplification
 
-- [ ] Résoudre les warnings Vercel : Node 24.22.1 lance actuellement npm 11.19.1 malgré `engines.npm >=12.2.0 <13` ; avertissement `cache-dir`. Rechercher un mode compatible Vercel **sans abaisser silencieusement les contraintes ni modifier le lockfile à l'aveugle**.
+- [ ] **Valider npm 12 sur Vercel** : une commande d’installation épinglée sur npm 12.2.1 (mise.toml) précède désormais `npm ci` ; vérifier dans les logs du prochain build exact-SHA l’absence d’`EBADENGINE`. Le warning `cache-dir` reste un diagnostic séparé. Aucun assouplissement de `engines.npm` ni changement du lockfile.
 - [ ] Refactorer uniquement les scripts legacy encore utilisés (`site-widgets.js`, `theme-toggle.js`, `site-analytics.js`) ; préserver consentement et télémétrie existants.
 - [ ] Préférer des tests comportementaux aux regex de source lorsqu'un vrai navigateur est disponible. Garder `justfile` canonique et `Makefile` compatible.
 - [ ] Demander à l'opérateur d'installer lui-même les skills tiers `web-design-guidelines`, `frontend-design` et `security-audit-skill`. Évaluer Dagger/Context7 seulement avec des sources non privées et sans chantier d'agent disproportionné.

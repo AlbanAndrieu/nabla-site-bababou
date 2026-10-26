@@ -41,12 +41,15 @@ test("review-only locale routes and aliases are excluded from legacy sitemap imp
     "/home-preview", "/home-preview/", "/fr/home-preview",
     "/en/home-preview", "/de/home-preview", "/no/home-preview",
     "/no/home-preview/",
+    "/%68ome-preview", "/en/%68ome-preview", "/en%2Fhome-preview",
+    "/de/home-preview%2F",
   ]) {
     assert.equal(isHomePreviewPath(path), true, path);
   }
   for (const path of [
     "/", "/contact", "/fr/contact", "/home-preview-old",
     "/preview/home-preview", "/en/home-preview/other", "/home-preview.jpg",
+    "/%ZZome-preview", "/en%2Fcontact",
   ]) {
     assert.equal(isHomePreviewPath(path), false, path);
   }
