@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
+import { isHomePreviewPath } from "../lib/homePreviewSeoPolicy.mjs";
 
 const read = (path) => readFileSync(new URL("../" + path, import.meta.url), "utf8");
 
@@ -33,4 +34,22 @@ test("the ten-card gallery preserves translator calls without republishing sensi
   assert.match(cards, /href: "#preview-contact"/);
   assert.doesNotMatch(cards, /14CV|Francfort|passport|Norwegian authorities|German authorities/i);
   assert.doesNotMatch(cards, /fetch\(|sendBeacon\(|<Script|<iframe/i);
+});
+
+test("review-only locale routes and aliases are excluded from legacy sitemap import", () => {
+  for (const path of [
+    "/home-preview", "/home-preview/", "/fr/home-preview",
+    "/en/home-preview", "/de/home-preview", "/no/home-preview",
+    "/no/home-preview/",
+  ]) {
+    assert.equal(isHomePreviewPath(path), true, path);
+  }
+  for (const path of [
+    "/", "/contact", "/fr/contact", "/home-preview-old",
+    "/preview/home-preview", "/en/home-preview/other", "/home-preview.jpg",
+  ]) {
+    assert.equal(isHomePreviewPath(path), false, path);
+  }
+  const sitemap = read("app/sitemap.ts");
+  assert.match(sitemap, /isHomePreviewPath\(url\.pathname\)/);
 });

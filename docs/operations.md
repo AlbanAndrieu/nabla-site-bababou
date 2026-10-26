@@ -7,7 +7,7 @@
 - `.github/workflows/` définit la CI. La **Git integration Vercel** déploie le projet Next.js racine ; aucun Vercel CLI local ni sous-projet `app/` supplémentaire.
 - `vercel.json`, `package.json`, `proxy.ts`, `next.config.mjs` et `scripts/vercel-ignore-build.sh` définissent le contrat de build et de routage.
 - `justfile` est l'interface locale canonique ; conserver `Makefile` pour compatibilité. Les versions sont verrouillées par `mise.toml`, `mise.lock`, `package.json` et `package-lock.json`.
-- La homepage `/` continue de servir le HTML legacy approuvé. La Preview React `/[locale]/home-preview` requiert un opt-in serveur et reste `noindex`. Ne pas la publier ni activer la collecte additionnelle sans revue.
+- La homepage `/` continue de servir le HTML legacy approuvé. La Preview React `/home-preview` et ses variantes EN/DE/NO sont **publiques pour revue sans opt-in serveur**, mais restent `noindex, nofollow, no-store`. `/fr/home-preview` redirige vers `/home-preview`. Ne pas la promouvoir sur `/`, ajouter de données sensibles ou activer une collecte supplémentaire sans revue.
 - Une PR d'agent reste **Draft**. Les workflows qui filtrent les Draft peuvent être `skipped`, mais **Draft ne garantit pas zéro workflow**. Ne pas ajouter `[skip ci]`, ne pas court-circuiter les gates et ne pas relancer les Actions payantes pour déboguer un formatage local.
 - Aucun acteur ne fusionne, ne promeut ou ne modifie des protections sans demande explicite.
 

@@ -3,6 +3,7 @@ import path from "node:path";
 import type { MetadataRoute } from "next";
 
 import { routing } from "@/i18n/routing";
+import { isHomePreviewPath } from "@/lib/homePreviewSeoPolicy.mjs";
 import { localizedPolicyIndexPath, localizedPolicyPath } from "@/lib/policyRoutePaths";
 import {
   isPolicyPageSlug,
@@ -54,6 +55,8 @@ export function normalizeLegacyLocation(location: string) {
     return null;
   }
   if (url.origin !== SITE_URL || url.username || url.password) return null;
+  // Legacy sitemap input is not trusted to define indexable review routes.
+  if (isHomePreviewPath(url.pathname)) return null;
 
   // Canonical URLs represent pages, not tracking queries or fragments.
   url.search = "";

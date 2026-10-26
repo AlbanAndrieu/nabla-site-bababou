@@ -15,6 +15,13 @@ test("homepage review is available on all four locale paths", async ({ request }
   }
 });
 
+test("sitemap does not publish any React review URLs", async ({ request }) => {
+  const response = await request.get("/sitemap.xml");
+  expect(response.status()).toBe(200);
+  const xml = await response.text();
+  expect(xml).not.toMatch(/<loc>[^<]*\/(?:fr\/|en\/|de\/|no\/)?home-preview\/?<\/loc>/i);
+});
+
 test("explicit French /fr/home-preview redirects to the canonical /home-preview", async ({ request }) => {
   const response = await request.get("/fr/home-preview", { maxRedirects: 0 });
   expect(response.status()).toBe(307);
