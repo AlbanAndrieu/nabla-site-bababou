@@ -18,6 +18,7 @@ La route `/` sert toujours `public/index.html`. La homepage React est consultabl
 
 ## P1 — Homepage React
 
+- [ ] **Navigation longue page** : lien de retour en haut (FR/EN/DE/NO) et focus du landmark `main` implémentés dans la PR ; tests source ajoutés et test clavier Playwright rédigé. Exécuter les scénarios navigateur au SHA exact avant de conclure sur WCAG.
 - [ ] Comparer visuellement `/` et les quatre Preview : ordre des 13 sections, navigation, 10 cartes/6 images, fallbacks, ancres, responsive, liens, RSS, thème, impression et volet About (liens Calendly/Ko-fi à activation volontaire). Les contrats source sont ajoutés ; **ce ne sont pas des preuves navigateur**.
 - [ ] Vérifier les comportements non migrés des 15 scripts historiques avec `just homepage-runtime-parity`. Conserver D3/ARF, Turnstile et Google Translate sur les pages legacy ; n'ajouter aucune collecte ni script tiers automatique à React.
 - [ ] Faire la **revue éditoriale et de confidentialité** selon [publication-redaction.md](publication-redaction.md) : identifier les données officielles de mineure, localisations précises et assertions nominatives à ne pas republier. Valider les substitutions neutres avant de remplacer `/`.

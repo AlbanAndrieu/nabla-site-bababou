@@ -102,6 +102,15 @@
   padding-inline-start: 1.5rem;
 }
 
+/* A keyboard-accessible return after the long React review; no JavaScript. */
+.backToTop {
+  margin-top: 1rem;
+  padding: 0.5rem 0.875rem;
+  border: 1px solid var(--ui-border, #d1d5db);
+  border-radius: 0.5rem;
+  font-weight: 600;
+}
+
 .note {
   margin-top: 1.5rem;
   font-size: .95rem;

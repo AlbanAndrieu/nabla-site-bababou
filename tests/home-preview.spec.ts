@@ -255,6 +255,21 @@ test("localized section navigation reaches the React landmarks", async ({ page }
 });
 
 
+test("localized back-to-top link supports keyboard activation", async ({ page }) => {
+  for (const { path } of locales) {
+    await page.goto(path);
+    const returnLink = page.locator('a[data-home-back-to-top][href="#main-content"]');
+    await expect(returnLink).toHaveCount(1);
+    await expect(returnLink).toBeVisible();
+    await expect(returnLink).toHaveAccessibleName(/\S+/);
+    await returnLink.focus();
+    await expect(returnLink).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(/#main-content$/);
+    await expect(page.locator("main#main-content")).toHaveAttribute("tabindex", "-1");
+  }
+});
+
 test("React gallery recovers from missing image without third-party fallback", async ({ page }) => {
   await page.route(/alone-1\.jpg/, (route) =>
     route.fulfill({ status: 404, contentType: "text/plain", body: "" }),

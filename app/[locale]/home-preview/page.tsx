@@ -51,7 +51,7 @@ export default async function HomePreview({
 
   return (
     <>
-      <main id="main-content" className={styles.main}>
+      <main id="main-content" tabIndex={-1} className={styles.main}>
         <section className={styles.hero} aria-labelledby="preview-title">
           <p className={styles.eyebrow}>{t("eyebrow")}</p>
           <h1 id="preview-title">{t("heading")}</h1>
@@ -91,6 +91,9 @@ export default async function HomePreview({
             <li><a href="/eleonore-feed.xml">{t("rss")} — Éléonore</a></li>
           </ul>
           <p className={styles.note}>{t("note")}</p>
+          <a className={styles.backToTop} data-home-back-to-top href="#main-content">
+            {t("backToTop")}
+          </a>
         </section>
         <LegacyFooterSection />
       </main>

@@ -62,6 +62,16 @@ test("preview remains out of the public sitemap and canonical page catalog", () 
   assert.match(catalog, /if \(slug === "index"\) return "\/"/);
 });
 
+test("long React preview has a keyboard-accessible return to the start in every language", () => {
+  const page = read("app/[locale]/home-preview/page.tsx");
+  assert.match(page, /<main id="main-content" tabIndex=\{-1\}/);
+  assert.match(page, /data-home-back-to-top href="#main-content"/);
+  assert.match(page, /t\("backToTop"\)/);
+  const labels = supported.map((locale) => JSON.parse(read(`messages/homepage-preview/${locale}.json`)).homepagePreview.backToTop);
+  assert.ok(labels.every((label) => typeof label === "string" && label.trim().length > 0));
+  assert.equal(new Set(labels).size, supported.length);
+});
+
 test("homepage preview translations use the existing next-intl catalog", () => {
   const loader = read("i18n/messages.ts");
   assert.match(loader, /HOMEPAGE_PREVIEW_LOADERS/);
