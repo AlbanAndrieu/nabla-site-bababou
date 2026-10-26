@@ -94,6 +94,8 @@ test.describe("public nonindexed homepage review", () => {
         "Legal and accessibility links",
       );
       await expect(page.locator("main footer")).toHaveCount(0);
+      await expect(page.locator("#preview-about")).not.toContainText("INDEX for albandrieu.com");
+      await expect(page.locator("#preview-about")).toContainText("Bababou — public messages and resources.");
       for (const href of [
         "/policy/service_terms",
         "/policy/privacy_policy",
@@ -289,18 +291,23 @@ test("homepage keyboard focus has a contrasting outline in light and dark modes"
   }
 });
 
-test("localized back-to-top link supports keyboard activation", async ({ page }) => {
-  for (const { path } of locales) {
+test("shared footer keeps one translated keyboard back-to-top action", async ({ page }) => {
+  const labels = {
+    fr: "Retour en haut de la page",
+    en: "Back to top of page",
+    de: "Zurück zum Seitenanfang",
+    no: "Tilbake til toppen av siden",
+  };
+  for (const { code, path } of locales) {
     await page.goto(path);
-    const returnLink = page.locator('a[data-home-back-to-top][href="#main-content"]');
-    await expect(returnLink).toHaveCount(1);
-    await expect(returnLink).toBeVisible();
-    await expect(returnLink).toHaveAccessibleName(/\S+/);
-    await returnLink.focus();
-    await expect(returnLink).toBeFocused();
+    const control = page.locator('footer[role="contentinfo"] nav button[type="button"]');
+    await expect(control).toHaveCount(1);
+    await expect(control).toHaveAttribute("aria-label", labels[code]);
+    await expect(page.locator('main a[href="#main-content"]')).toHaveCount(0);
+    await control.focus();
+    await expect(control).toBeFocused();
     await page.keyboard.press("Enter");
-    await expect(page).toHaveURL(/#main-content$/);
-    await expect(page.locator("main#main-content")).toHaveAttribute("tabindex", "-1");
+    await expect(page).toHaveURL(/#top$/);
   }
 });
 

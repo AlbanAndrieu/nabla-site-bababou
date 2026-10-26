@@ -44,4 +44,6 @@ test("Next's shared footer retains one back-to-top control; avoid duplicate widg
   assert.match(layout, /<ThemeBootstrap\s*\/>/);
   assert.match(footer, /<BackToTopButton/);
   assert.match(footer, /<SiteDisplayControls/);
+  assert.doesNotMatch(page, /data-home-back-to-top/);
+  assert.doesNotMatch(read("components/home/LegacyFooterSection.tsx"), /href="#main-content"/);
 });

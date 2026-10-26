@@ -91,9 +91,6 @@ export default async function HomePreview({
             <li><a href="/eleonore-feed.xml">{t("rss")} — Éléonore</a></li>
           </ul>
           <p className={styles.note}>{t("note")}</p>
-          <a className={styles.backToTop} data-home-back-to-top href="#main-content">
-            {t("backToTop")}
-          </a>
         </section>
         <LegacyFooterSection />
       </main>

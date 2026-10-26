@@ -10,7 +10,7 @@ export default function LegacySiteAboutSection() {
       <details>
         <summary>About this site</summary>
         <div className={styles.content}>
-          <p>INDEX for albandrieu.com</p>
+          <p>Bababou — public messages and resources.</p>
           <p>
             This website brings together messages, contact information and
             links to public resources.

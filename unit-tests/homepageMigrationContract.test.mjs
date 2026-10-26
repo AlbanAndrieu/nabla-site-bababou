@@ -77,14 +77,28 @@ test("homepage focus outline follows contrast-checked semantic theme tokens", ()
   assert.doesNotMatch(css, /outline: 3px solid #e58c00/);
 });
 
-test("long React preview has a keyboard-accessible return to the start in every language", () => {
+test("long React preview reuses the single translated shared footer back-to-top control", () => {
   const page = read("app/[locale]/home-preview/page.tsx");
+  const localFooter = read("components/home/LegacyFooterSection.tsx");
+  const sharedFooter = read("app/components/Footer.tsx");
+  const layout = read("app/[locale]/layout.tsx");
   assert.match(page, /<main id="main-content" tabIndex=\{-1\}/);
-  assert.match(page, /data-home-back-to-top href="#main-content"/);
-  assert.match(page, /t\("backToTop"\)/);
-  const labels = supported.map((locale) => JSON.parse(read(`messages/homepage-preview/${locale}.json`)).homepagePreview.backToTop);
-  assert.ok(labels.every((label) => typeof label === "string" && label.trim().length > 0));
-  assert.equal(new Set(labels).size, supported.length);
+  assert.doesNotMatch(page, /data-home-back-to-top|t\("backToTop"\)/);
+  assert.doesNotMatch(localFooter, /href="#main-content"|Back to top/);
+  assert.match(sharedFooter, /<BackToTopButton/);
+  assert.match(layout, /backToTop=\{site\.backToTop\}/);
+  assert.match(layout, /backToTopAria=\{site\.backToTopAria\}/);
+  for (const locale of supported) {
+    const site = JSON.parse(read("messages/site/" + locale + ".json")).site;
+    assert.ok(site.backToTop && site.backToTopAria, locale);
+  }
+});
+
+test("React About copy identifies Bababou instead of the legacy index", () => {
+  const about = read("components/home/LegacySiteAboutSection.tsx");
+  assert.match(about, /Bababou — public messages and resources\./);
+  assert.doesNotMatch(about, /INDEX for albandrieu\.com/);
+  assert.match(about, /<details>/);
 });
 
 test("homepage preview translations use the existing next-intl catalog", () => {

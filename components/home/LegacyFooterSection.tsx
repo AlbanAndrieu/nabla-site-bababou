@@ -32,9 +32,6 @@ export default function LegacyFooterSection() {
           ))}
         </ul>
       </nav>
-      <p className={styles.returnLink}>
-        <a href="#main-content">Back to top</a>
-      </p>
     </section>
   );
 }
