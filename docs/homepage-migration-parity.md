@@ -55,6 +55,7 @@
 Le HTML historique présente un bandeau d'informations, une chronologie par pays et **dix cartes illustrées**. La page de revue React intègre maintenant :
 
 - `LegacyFamilyFactsSection.tsx` : informations essentielles et contact, sans référence de passeport ni allégations sur des tiers.
+- `LegacySiteAboutSection.tsx` : ancien volet About, accès Calendly et Ko-fi sous forme de liens activés volontairement, sans widgets externes chargés à l'ouverture.
 - `LegacyJourneySection.tsx` : France → Norvège → Allemagne au niveau des pays, sans lieu précis, localisation actuelle présumée ni destination spéculative.
 - `LegacyStoryGallerySection.tsx` : **dix cartes**, images locales pertinentes, appels aux traducteurs, liens internes et grille de 3/2/1 colonnes ; pas d'intégration tierce.
 - `LegacyTranslatorHelpSection.tsx` est remplacé, pour éviter deux grilles de traducteurs superposées.
@@ -62,6 +63,13 @@ Le HTML historique présente un bandeau d'informations, une chronologie par pays
 Ce travail **termine la parité des grandes structures publiques** (texte de présentation, contact, lettre, chronologie, grille, associations, documents, navigation et footer), **mais pas l'identité textuelle du corpus sensible**. La galerie précédente contenait un identifiant officiel de mineure, des références de localisation et des imputations sur des tiers ; ces contenus ne sont pas recopiés dans une nouvelle route publique. `public/index.html` reste consultable tant qu'une revue de publication n'autorise pas sa substitution. Ne pas décrire cette substitution rédactionnelle comme une copie littérale complète.
 
 Pour les tests : `unit-tests/homepageGalleryParity.test.mjs`, `unit-tests/homepagePreviewLinks.test.mjs`, `tests/home-preview.spec.ts`. Les contrôles de source ne remplacent pas une recette Playwright réelle.
+
+## Évolution de la PR #249
+
+- Les **dix cartes** sont déclarées dans `lib/homeGalleryCatalog.mjs` et consommées par le composant React ; le même catalogue est vérifié par `homepage-preview-links.mjs`. Les ancres dynamiques, absentes des anciens contrôles statiques, sont maintenant auditées. `GalleryCardMedia.tsx` garantit un repli local sur erreur de chargement, sans nouvel appel réseau.
+- Une navigation interne accessible dessert cinq sections de la homepage (récit, pays, cartes, contact, documents). Ses libellés utilisent `messages/homepage-preview/{fr,en,de,no}.json`, avec tests de complétude des locales et scénario navigateur.
+- Le volet About conserve Calendly et Ko-fi **sous forme de liens explicites** sans widget chargé automatiquement.
+- **Statut :** implémenté dans la PR en cours ; build Next et recette navigateur à vérifier au HEAD exact. Aucune suppression de `public/index.html`.
 
 ## Contrats d'interface — preuves requises
 

@@ -42,10 +42,7 @@
 }
 
 .section a:focus-visible {
-  outline: 3px solid var(--ui-focus-ring, #e58c00);
+  outline: 3px solid var(--ui-text-primary, #1e293b);
   outline-offset: 4px;
 }
 
-.returnLink {
-  margin-block: 1rem 0;
-}

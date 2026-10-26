@@ -10,6 +10,12 @@
     "history": "Kontaktierte Personen",
     "fathers": "Informationen für Väter",
     "rss": "Neuigkeiten lesen",
-    "note": "Dies ist eine Vorschau. Sie ersetzt nicht die bisherige Startseite."
+    "note": "Dies ist eine Vorschau. Sie ersetzt nicht die bisherige Startseite.",
+    "sectionNavigation": "Auf dieser Seite",
+    "navStory": "Geschichte",
+    "navJourney": "Länder",
+    "navGallery": "Nachrichten und Ressourcen",
+    "navContact": "Kontakt",
+    "navDocuments": "Dokumente"
   }
 }

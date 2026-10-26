@@ -10,6 +10,12 @@
     "history": "Personnes contactées",
     "fathers": "Informations pour les pères",
     "rss": "Lire les nouvelles du site",
-    "note": "Cette version est une prévisualisation. Elle ne remplace pas la page actuelle."
+    "note": "Cette version est une prévisualisation. Elle ne remplace pas la page actuelle.",
+    "sectionNavigation": "Sur cette page",
+    "navStory": "Récit",
+    "navJourney": "Parcours",
+    "navGallery": "Messages et ressources",
+    "navContact": "Contact",
+    "navDocuments": "Documents"
   }
 }

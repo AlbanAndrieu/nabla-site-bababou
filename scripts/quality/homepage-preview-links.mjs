@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { HOME_GALLERY_CARDS } from "../../lib/homeGalleryCatalog.mjs";
 
 const root = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 const sections = [
@@ -9,6 +10,7 @@ const sections = [
   "LegacyContactSection",
   "LegacyMessageSection",
   "LegacyFoundWebsiteSection",
+  "LegacySiteAboutSection",
   "LegacyJourneySection",
   "LegacyLegalResourcesSection",
   "LegacyStoryGallerySection",
@@ -23,11 +25,12 @@ const sections = [
  * Dynamic association/policy links have their own route contracts.
  * Browser, third-party scripts and private/publication safety are NOT attested.
  */
-export function auditPreviewLinks({ page, sectionSources, publicExists }) {
+export function auditPreviewLinks({ page, sectionSources, publicExists, dynamicHrefs = [] }) {
   const issues = [];
   const source = [page, ...sectionSources].join("\n");
+  // Match actual JSX/HTML attributes, not data-id/data-href/data-aria-labelledby decoys.
   const readAttributes = (attribute) =>
-    [...source.matchAll(new RegExp("\\b" + attribute + '="([^"]+)"', "g"))]
+    [...source.matchAll(new RegExp("(?:^|[\\s<])" + attribute + '="([^"]+)"', "g"))]
       .map((match) => match[1]);
   const ids = readAttributes("id");
   const counts = new Map();
@@ -37,7 +40,7 @@ export function auditPreviewLinks({ page, sectionSources, publicExists }) {
   for (const [id, count] of counts) {
     if (count !== 1) issues.push("DUPLICATE_ID: " + id);
   }
-  const hrefs = readAttributes("href");
+  const hrefs = [...readAttributes("href"), ...dynamicHrefs];
   const anchors = hrefs.filter((href) => href.startsWith("#"));
   for (const ref of [...anchors.map((href) => href.slice(1)), ...readAttributes("aria-labelledby")]) {
     for (const id of ref.split(/\s+/)) {
@@ -75,6 +78,7 @@ export function auditRepositoryPreview() {
     page,
     sectionSources: sections.map((section) => read("components/home/" + section + ".tsx")),
     publicExists: (href) => existsSync(join(root, "public", href.slice(1))),
+    dynamicHrefs: HOME_GALLERY_CARDS.map(({href}) => href),
   });
 }
 

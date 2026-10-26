@@ -9,6 +9,7 @@ import LegacyMessageSection from "@/components/home/LegacyMessageSection";
 import LegacyFoundWebsiteSection from "@/components/home/LegacyFoundWebsiteSection";
 import LegacyLegalResourcesSection from "@/components/home/LegacyLegalResourcesSection";
 import LegacyFamilyFactsSection from "@/components/home/LegacyFamilyFactsSection";
+import LegacySiteAboutSection from "@/components/home/LegacySiteAboutSection";
 import LegacyJourneySection from "@/components/home/LegacyJourneySection";
 import LegacyStoryGallerySection from "@/components/home/LegacyStoryGallerySection";
 import LegacyPeopleSection from "@/components/home/LegacyPeopleSection";
@@ -50,7 +51,7 @@ export default async function HomePreview({
 
   return (
     <>
-      <main id="main-content" className={styles.main}>
+      <main id="main-content" tabIndex={-1} className={styles.main}>
         <section className={styles.hero} aria-labelledby="preview-title">
           <p className={styles.eyebrow}>{t("eyebrow")}</p>
           <h1 id="preview-title">{t("heading")}</h1>
@@ -64,11 +65,19 @@ export default async function HomePreview({
             </a>
           </div>
         </section>
+        <nav className={styles.sectionNav} data-home-section-nav aria-label={t("sectionNavigation")}>
+          <a href="#preview-opening">{t("navStory")}</a>
+          <a href="#preview-journey">{t("navJourney")}</a>
+          <a href="#preview-story-gallery">{t("navGallery")}</a>
+          <a href="#preview-contact">{t("navContact")}</a>
+          <a href="#preview-document-disclosure">{t("navDocuments")}</a>
+        </nav>
         <LegacyOpeningSection />
         <LegacyFamilyFactsSection />
         <LegacyContactSection />
         <LegacyMessageSection />
         <LegacyFoundWebsiteSection />
+        <LegacySiteAboutSection />
         <LegacyJourneySection />
         <LegacyLegalResourcesSection />
         <LegacyStoryGallerySection />

@@ -45,12 +45,14 @@ test("roadmap remains active-only and points to canonical runbooks", () => {
   assert.match(roadmap, /## P3 —/);
   assert.match(roadmap, /## P4 —/);
   assert.match(roadmap, /## P5 —/);
-  assert.match(roadmap, /## Contrôles transversaux conservés/);
-  assert.match(roadmap, /## En dernier — Revues différées/);
+  assert.match(roadmap, /## Barrières de publication/);
   assert.ok(
-    roadmap.indexOf("## En dernier") > roadmap.indexOf("## P5 —"),
-    "privacy review and Vercel HTTP diagnostics follow the active roadmap",
+    roadmap.indexOf("## Barrières de publication") > roadmap.indexOf("## P5 —"),
+    "publication gates follow the five active roadmap priorities",
   );
+  assert.match(roadmap, /publication-redaction\.md/);
+  assert.match(roadmap, /Playwright\/axe/);
+  assert.match(roadmap, /BetterLeaks/);
   assert.match(roadmap, /\[operations\.md\]\(operations\.md\)/);
   assert.match(read("README.md"), /\[Roadmap\]\(docs\/roadmap\.md\)/);
   assert.match(read("README.md"), /\[Opérations\]\(docs\/operations\.md\)/);

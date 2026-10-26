@@ -3,6 +3,7 @@
   "version": 2,
   "regions": ["fra1"],
   "framework": "nextjs",
+  "installCommand": "npm install --global npm@12.2.1 --no-audit --no-fund && npm --version && npm ci --no-audit --no-fund",
   "ignoreCommand": "bash scripts/vercel-ignore-build.sh",
   "github": {
     "silent": true,

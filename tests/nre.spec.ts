@@ -30,4 +30,59 @@ test.describe("NRE React migration", () => {
     await page.goto("/nre-en.html");
     expect(new URL(page.url()).pathname).toBe("/en/nre");
   });
+  test("theme selector remains at upper-right without covering NRE locale navigation", async ({ page }) => {
+    for (const path of ["/en/nre", "/home-preview"]) {
+      for (const width of [375, 768, 1280]) {
+        await page.setViewportSize({ width, height: 800 });
+        await page.goto(path);
+        const theme = page.getByRole("group", { name: "Display theme" });
+        const locale = page.locator("#route-header-locale");
+        await expect(theme).toBeVisible();
+        await expect(locale).toBeVisible();
+        const positions = await page.evaluate(() => {
+          const group = document.querySelector('[role="group"][aria-label="Display theme"]');
+          const switcher = document.getElementById("route-header-locale");
+          if (!group || !switcher) throw new Error("Theme or locale control missing");
+          const themeRect = group.getBoundingClientRect();
+          const localeRect = switcher.getBoundingClientRect();
+          return {
+            cssPosition: getComputedStyle(group).position,
+            top: themeRect.top,
+            right: window.innerWidth - themeRect.right,
+            left: themeRect.left,
+            overlapsLocale: !(themeRect.right <= localeRect.left ||
+              themeRect.left >= localeRect.right ||
+              themeRect.bottom <= localeRect.top ||
+              themeRect.top >= localeRect.bottom),
+          };
+        });
+        expect(positions.cssPosition).toBe("fixed");
+        expect(positions.top).toBeGreaterThanOrEqual(0);
+        expect(positions.top).toBeLessThan(50);
+        expect(positions.right).toBeGreaterThanOrEqual(0);
+        expect(positions.right).toBeLessThan(50);
+        expect(positions.left).toBeGreaterThanOrEqual(0);
+        expect(positions.overlapsLocale).toBe(false);
+        await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+        await expect(theme).toBeInViewport();
+        const dark = theme.getByRole("button", { name: "Dark", exact: true });
+        await dark.click();
+        await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+        await expect(dark).toHaveAttribute("aria-pressed", "true");
+      }
+    }
+  });
+
+  test("theme labels stay accessible and controls printable on localized NRE routes", async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 667 });
+    for (const { path } of localeCases) {
+      await page.goto(path);
+      const group = page.getByRole("group", { name: "Display theme" });
+      for (const label of ["Light", "Dark", "Auto (system)"]) {
+        await expect(group.getByRole("button", { name: label, exact: true })).toBeVisible();
+      }
+      await expect(group).toHaveCSS("position", "fixed");
+    }
+  });
+
 });

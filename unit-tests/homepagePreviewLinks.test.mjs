@@ -18,7 +18,7 @@ function fixture() {
 test("approved homepage preview has one target for local anchors and aria references", () => {
   const result = auditRepositoryPreview();
   assert.deepEqual(result.issues, []);
-  assert.equal(result.auditedSections, 12);
+  assert.equal(result.auditedSections, 13);
   assert.ok(result.anchorCount > 0);
   assert.ok(result.labelReferences > 0);
 });
@@ -55,4 +55,30 @@ test("missing main landmark and broken aria-labelledby are errors", () => {
   const result = auditPreviewLinks(input);
   assert.ok(result.issues.includes("MISSING_MAIN_LANDMARK"));
   assert.ok(result.issues.includes("MISSING_TARGET: missing"));
+});
+
+
+test("data-id cannot hide a missing main landmark or a broken anchor", () => {
+  const input = fixture();
+  input.page = '<main data-id="main-content"><a href="#phantom">Jump</a><span data-id="phantom"></span></main>';
+  input.sectionSources = [];
+  const result = auditPreviewLinks(input);
+  assert.ok(result.issues.includes("MISSING_MAIN_LANDMARK"));
+  assert.ok(result.issues.includes("MISSING_TARGET: phantom"));
+});
+
+test("data-href and data-aria-labelledby are not real links or ID references", () => {
+  const input = fixture();
+  input.page += '<span data-href="#fake" data-aria-labelledby="fake"></span>';
+  const result = auditPreviewLinks(input);
+  assert.deepEqual(result.issues, []);
+  assert.equal(result.anchorCount, 1);
+  assert.equal(result.labelReferences, 1);
+});
+
+test("a card destination without a page target fails the real audit", () => {
+  const input = fixture();
+  input.dynamicHrefs = ["#missing-gallery-target"];
+  const result = auditPreviewLinks(input);
+  assert.ok(result.issues.includes("MISSING_TARGET: missing-gallery-target"));
 });

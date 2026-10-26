@@ -13,6 +13,8 @@
   min-width: 0;
   min-height: 3.75rem;
   padding-block: 0.65rem;
+  /* Keep the locale selector clear of the upper-right theme toolbar. */
+  padding-inline-end: clamp(20rem, 31vw, 23rem);
 }
 
 .root .inner {
@@ -97,9 +99,15 @@
 }
 
 @media (max-width: 900px) {
+  .header {
+    /* Stacked navigation begins below the upper-right floating toolbar. */
+    padding-block-start: calc(4.5rem + env(safe-area-inset-top, 0px));
+  }
+
   .inner {
     align-items: stretch;
     gap: var(--ui-space-sm);
+    padding-inline-end: var(--ui-space-md);
   }
 
   .nav {

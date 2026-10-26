@@ -62,6 +62,45 @@ test("preview remains out of the public sitemap and canonical page catalog", () 
   assert.match(catalog, /if \(slug === "index"\) return "\/"/);
 });
 
+test("theme and print controls use the same accessible focus color as React navigation", () => {
+  const controlsCss = read("components/SiteDisplayControls.module.css");
+  const previewCss = read("app/[locale]/home-preview/page.module.css");
+  assert.match(controlsCss, /\.button:focus-visible,[\s\S]*?\.print:focus-visible\s*\{[^}]*--ui-text-primary/);
+  assert.match(previewCss, /\.sectionNav a:focus-visible\s*\{[^}]*--ui-text-primary/);
+  assert.doesNotMatch(controlsCss, /outline:\s*3px solid #e58c00/);
+});
+
+test("homepage focus outline follows contrast-checked semantic theme tokens", () => {
+  const css = read("app/[locale]/home-preview/page.module.css");
+  assert.match(css, /\.main a:focus-visible\s*\{[^}]*--ui-text-primary/);
+  assert.match(css, /\.sectionNav a:focus-visible\s*\{[^}]*--ui-text-primary/);
+  assert.doesNotMatch(css, /outline: 3px solid #e58c00/);
+});
+
+test("long React preview reuses the single translated shared footer back-to-top control", () => {
+  const page = read("app/[locale]/home-preview/page.tsx");
+  const localFooter = read("components/home/LegacyFooterSection.tsx");
+  const sharedFooter = read("app/components/Footer.tsx");
+  const layout = read("app/[locale]/layout.tsx");
+  assert.match(page, /<main id="main-content" tabIndex=\{-1\}/);
+  assert.doesNotMatch(page, /data-home-back-to-top|t\("backToTop"\)/);
+  assert.doesNotMatch(localFooter, /href="#main-content"|Back to top/);
+  assert.match(sharedFooter, /<BackToTopButton/);
+  assert.match(layout, /backToTop=\{site\.backToTop\}/);
+  assert.match(layout, /backToTopAria=\{site\.backToTopAria\}/);
+  for (const locale of supported) {
+    const site = JSON.parse(read("messages/site/" + locale + ".json")).site;
+    assert.ok(site.backToTop && site.backToTopAria, locale);
+  }
+});
+
+test("React About copy identifies Bababou instead of the legacy index", () => {
+  const about = read("components/home/LegacySiteAboutSection.tsx");
+  assert.match(about, /Bababou — public messages and resources\./);
+  assert.doesNotMatch(about, /INDEX for albandrieu\.com/);
+  assert.match(about, /<details>/);
+});
+
 test("homepage preview translations use the existing next-intl catalog", () => {
   const loader = read("i18n/messages.ts");
   assert.match(loader, /HOMEPAGE_PREVIEW_LOADERS/);
@@ -293,4 +332,29 @@ test("document disclosure keeps the exact approved public text", () => {
   assert.equal(paragraphs(original[2]).length, 2);
   assert.match(component, /<details className=\{styles\.details\}>/);
   assert.match(component, /<summary className=\{styles\.summary\}>/);
+});
+
+
+test("localized in-page review navigation resolves five safe sections", () => {
+  const page = read("app/[locale]/home-preview/page.tsx");
+  const css = read("app/[locale]/home-preview/page.module.css");
+  const targets = [
+    "preview-opening", "preview-journey", "preview-story-gallery",
+    "preview-contact", "preview-document-disclosure",
+  ];
+  assert.match(page, /data-home-section-nav/);
+  assert.match(page, /aria-label=\{t\("sectionNavigation"\)\}/);
+  for (const target of targets) {
+    assert.ok(page.includes('href="#' + target + '"'), target);
+  }
+  const labels = ["sectionNavigation", "navStory", "navJourney", "navGallery", "navContact", "navDocuments"];
+  for (const locale of supported) {
+    const catalog = JSON.parse(read('messages/homepage-preview/' + locale + '.json')).homepagePreview;
+    for (const label of labels) {
+      assert.ok(typeof catalog[label] === "string" && catalog[label].trim(), locale + ":" + label);
+    }
+  }
+  assert.match(css, /\.sectionNav a:focus-visible/);
+  assert.match(css, /min-height: 2\.75rem/);
+  assert.match(css, /flex-wrap: wrap/);
 });

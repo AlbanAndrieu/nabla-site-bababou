@@ -10,6 +10,12 @@
     "history": "People contacted",
     "fathers": "Information for fathers",
     "rss": "Read site updates",
-    "note": "This is a preview. It does not replace the current homepage."
+    "note": "This is a preview. It does not replace the current homepage.",
+    "sectionNavigation": "On this page",
+    "navStory": "Story",
+    "navJourney": "Countries",
+    "navGallery": "Messages and resources",
+    "navContact": "Contact",
+    "navDocuments": "Documents"
   }
 }

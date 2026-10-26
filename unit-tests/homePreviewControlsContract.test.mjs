@@ -44,4 +44,23 @@ test("Next's shared footer retains one back-to-top control; avoid duplicate widg
   assert.match(layout, /<ThemeBootstrap\s*\/>/);
   assert.match(footer, /<BackToTopButton/);
   assert.match(footer, /<SiteDisplayControls/);
+  assert.doesNotMatch(page, /data-home-back-to-top/);
+  assert.doesNotMatch(read("components/home/LegacyFooterSection.tsx"), /href="#main-content"/);
+});
+
+test("native theme chooser floats in the upper-right and header clears it", () => {
+  const css = read("components/SiteDisplayControls.module.css");
+  const header = read("components/RouteHeader.module.css");
+  const nre = read("app/[locale]/nre/page.tsx");
+  const layout = read("app/[locale]/layout.tsx");
+  assert.match(css, /\.theme\s*\{[^}]*position:\s*fixed/);
+  assert.match(css, /\.theme\s*\{[^}]*top:\s*calc\(1rem \+ env\(safe-area-inset-top/);
+  assert.match(css, /\.theme\s*\{[^}]*right:\s*calc\(1rem \+ env\(safe-area-inset-right/);
+  assert.match(css, /\.theme\s*\{[^}]*z-index:\s*1050/);
+  assert.match(css, /\.theme \.button span:last-child/);
+  assert.match(css, /@media print[\s\S]*\.controls\s*\{[\s\S]*display:\s*none/);
+  assert.match(header, /padding-inline-end:\s*clamp\(20rem/);
+  assert.match(header, /@media \(max-width: 900px\)[\s\S]*padding-block-start:\s*calc\(4\.5rem/);
+  assert.match(layout, /<Footer/);
+  assert.doesNotMatch(nre, /<SiteDisplayControls/);
 });

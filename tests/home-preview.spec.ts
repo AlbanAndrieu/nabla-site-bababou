@@ -11,8 +11,20 @@ test("homepage review is available on all four locale paths", async ({ request }
   for (const { path } of locales) {
     const response = await request.get(path);
     expect(response.status(), path).toBe(200);
-    expect(response.headers()["x-robots-tag"] ?? "").toMatch(/noindex/);
+    const headers = response.headers();
+    expect(headers["x-robots-tag"] ?? "").toMatch(/\bnoindex\b/i);
+    expect(headers["x-robots-tag"] ?? "").toMatch(/\bnofollow\b/i);
+    expect(headers["x-robots-tag"] ?? "").toMatch(/\bnosnippet\b/i);
+    expect(headers["cache-control"] ?? "").toMatch(/\bprivate\b/i);
+    expect(headers["cache-control"] ?? "").toMatch(/\bno-store\b/i);
   }
+});
+
+test("sitemap does not publish any React review URLs", async ({ request }) => {
+  const response = await request.get("/sitemap.xml");
+  expect(response.status()).toBe(200);
+  const xml = await response.text();
+  expect(xml).not.toMatch(/<loc>[^<]*\/(?:fr\/|en\/|de\/|no\/)?home-preview\/?<\/loc>/i);
 });
 
 test("explicit French /fr/home-preview redirects to the canonical /home-preview", async ({ request }) => {
@@ -82,6 +94,8 @@ test.describe("public nonindexed homepage review", () => {
         "Legal and accessibility links",
       );
       await expect(page.locator("main footer")).toHaveCount(0);
+      await expect(page.locator("#preview-about")).not.toContainText("INDEX for albandrieu.com");
+      await expect(page.locator("#preview-about")).toContainText("Bababou — public messages and resources.");
       for (const href of [
         "/policy/service_terms",
         "/policy/privacy_policy",
@@ -220,4 +234,88 @@ test("safe ten-card gallery and country timeline match the legacy structure", as
     );
     expect(overflow, `gallery at width ${width}`).toBe(false);
   }
+});
+
+
+test("localized section navigation reaches the React landmarks", async ({ page }) => {
+  for (const { path } of locales) {
+    await page.goto(path);
+    const nav = page.locator("main nav[data-home-section-nav]");
+    await expect(nav).toHaveCount(1);
+    const targets = [
+      "preview-opening", "preview-journey", "preview-story-gallery",
+      "preview-contact", "preview-document-disclosure",
+    ];
+    await expect(nav.locator("a")).toHaveCount(targets.length);
+    for (const target of targets) {
+      await expect(nav.locator('a[href="#' + target + '"]')).toHaveCount(1);
+      await expect(page.locator("#" + target)).toHaveCount(1);
+    }
+    await nav.locator('a[href="#preview-story-gallery"]').click();
+    await expect(page).toHaveURL(/#preview-story-gallery$/);
+  }
+});
+
+
+test("homepage keyboard focus has a contrasting outline in light and dark modes", async ({ page }) => {
+  await page.goto("/home-preview");
+  const controls = page.getByRole("region", { name: "Page controls" });
+  const navLink = page.locator("main nav[data-home-section-nav] a").first();
+
+  for (const theme of ["Light", "Dark"] as const) {
+    await controls.getByRole("button", { name: theme, exact: true }).click();
+    await expect(page.locator("html")).toHaveAttribute("data-theme", theme.toLowerCase());
+    await page.keyboard.press("Tab");
+    for (const target of [
+      navLink,
+      controls.getByRole("button", { name: "Print / Save as PDF" }),
+    ]) {
+      await target.focus();
+      await expect(target).toBeFocused();
+
+      const focus = await target.evaluate((element) => {
+        const styles = getComputedStyle(element);
+        const main = document.querySelector("main#main-content");
+        if (!main) throw new Error("Preview main landmark missing");
+        return {
+          outline: styles.outlineColor,
+          text: getComputedStyle(main).color,
+          width: Number.parseFloat(styles.outlineWidth),
+          visible: element.matches(":focus-visible"),
+        };
+      });
+      expect(focus.visible).toBe(true);
+      expect(focus.width).toBeGreaterThanOrEqual(3);
+      expect(focus.outline).toBe(focus.text);
+    }
+  }
+});
+
+test("shared footer keeps one translated keyboard back-to-top action", async ({ page }) => {
+  const labels = {
+    fr: "Retour en haut de la page",
+    en: "Back to top of page",
+    de: "Zurück zum Seitenanfang",
+    no: "Tilbake til toppen av siden",
+  };
+  for (const { code, path } of locales) {
+    await page.goto(path);
+    const control = page.locator('footer[role="contentinfo"] nav button[type="button"]');
+    await expect(control).toHaveCount(1);
+    await expect(control).toHaveAttribute("aria-label", labels[code]);
+    await expect(page.locator('main a[href="#main-content"]')).toHaveCount(0);
+    await control.focus();
+    await expect(control).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(/#top$/);
+  }
+});
+
+test("React gallery recovers from missing image without third-party fallback", async ({ page }) => {
+  await page.route(/alone-1\.jpg/, (route) =>
+    route.fulfill({ status: 404, contentType: "text/plain", body: "" }),
+  );
+  await page.goto("/home-preview");
+  await expect(page.locator('#preview-story-gallery [data-gallery-media-fallback="error"]')).toBeVisible();
+  await expect(page.locator("#preview-story-gallery li")).toHaveCount(10);
 });
