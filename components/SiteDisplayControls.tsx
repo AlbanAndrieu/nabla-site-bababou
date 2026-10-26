@@ -98,6 +98,7 @@ export default function SiteDisplayControls() {
             key={value}
             type="button"
             aria-label={label}
+            title={label}
             aria-pressed={preference === value}
             onClick={() => selectTheme(value)}
             className={styles.button}

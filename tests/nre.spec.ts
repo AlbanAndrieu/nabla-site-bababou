@@ -73,6 +73,49 @@ test.describe("NRE React migration", () => {
     }
   });
 
+  test("rounded theme segments visually match the historic homepage", async ({ page }) => {
+    for (const { path } of localeCases) {
+      for (const width of [375, 1280]) {
+        await page.setViewportSize({ width, height: 800 });
+        await page.goto(path);
+        const theme = page.getByRole("group", { name: "Display theme" });
+        const light = theme.getByRole("button", { name: "Light", exact: true });
+        const dark = theme.getByRole("button", { name: "Dark", exact: true });
+        const automatic = theme.getByRole("button", { name: "Auto (system)", exact: true });
+
+        await expect(theme).toHaveCSS("border-top-left-radius", "800px");
+        for (const button of [light, dark, automatic]) {
+          await expect(button).toHaveAttribute("title", /^(Light|Dark|Auto \(system\))$/);
+          const geometry = await button.evaluate((element) => {
+            const rect = element.getBoundingClientRect();
+            return {
+              width: rect.width,
+              height: rect.height,
+              borderRadius: getComputedStyle(element).borderTopLeftRadius,
+            };
+          });
+          expect(geometry.width).toBeGreaterThanOrEqual(40);
+          expect(geometry.height).toBeGreaterThanOrEqual(40);
+          if (width === 375) {
+            expect(Math.abs(geometry.width - geometry.height)).toBeLessThanOrEqual(1);
+            expect(geometry.borderRadius).toBe("50%");
+          } else {
+            expect(Number.parseFloat(geometry.borderRadius)).toBeGreaterThanOrEqual(40);
+          }
+        }
+
+        await light.click();
+        await expect(light).toHaveAttribute("aria-pressed", "true");
+        await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+        await dark.click();
+        await expect(dark).toHaveAttribute("aria-pressed", "true");
+        await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+        await automatic.click();
+        await expect(automatic).toHaveAttribute("aria-pressed", "true");
+      }
+    }
+  });
+
   test("theme labels stay accessible and controls printable on localized NRE routes", async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
     for (const { path } of localeCases) {
