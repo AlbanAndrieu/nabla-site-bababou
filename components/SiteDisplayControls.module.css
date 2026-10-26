@@ -10,9 +10,22 @@
 }
 
 .theme {
+  /* Match the historic homepage: fixed in the upper-right viewport corner.
+   * The shared route header reserves a clear region for this toolbar. */
+  position: fixed;
+  top: calc(1rem + env(safe-area-inset-top, 0px));
+  right: calc(1rem + env(safe-area-inset-right, 0px));
+  z-index: 1050;
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+  flex-wrap: nowrap;
+  gap: 0.25rem;
+  max-width: calc(100vw - 2rem);
+  padding: 0.25rem;
+  border: 1px solid var(--ui-border, #dee2e6);
+  border-radius: 0.75rem;
+  background: var(--ui-surface-card, #fff);
+  color: var(--ui-text-primary, #1e293b);
+  box-shadow: var(--ui-shadow-sm, 0 4px 12px rgb(0 0 0 / 15%));
 }
 
 .button,
@@ -59,6 +72,30 @@
 html[data-theme="dark"] .button[aria-pressed="true"] {
   background: var(--ui-surface-raised, #364152);
   color: var(--ui-text-primary, #fff);
+}
+
+@media (max-width: 575.98px) {
+  .theme {
+    gap: 0.125rem;
+  }
+
+  .theme .button {
+    min-width: var(--ui-control-min-height, 2.75rem);
+    padding: 0.5rem;
+  }
+
+  /* Preserve the button accessible name while showing only its icon. */
+  .theme .button span:last-child {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
 }
 
 @media print {

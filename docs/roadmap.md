@@ -27,6 +27,8 @@ Le footer Next partagé fournit maintenant **l’unique** bouton « retour en ha
 
 ## P2 — Accessibilité
 
+- [ ] **Sélecteur de thème en haut à droite** : le contrôle Light/Dark/Auto commun à NRE et aux autres pages Next.js est fixé dans le coin supérieur droit, avec espace réservé au sélecteur de langue et affichage compact sur mobile. L'impression reste dans le footer. Tests de géométrie Playwright rédigés : **NOT_RUN**.
+
 - [ ] Exécuter la suite Playwright sur **les quatre Preview** : axe WCAG 2.2 AA, clavier/focus et reflow 200 % (les scénarios sont déjà ajoutés à `tests/accessibility-*.spec.ts`). Corriger uniquement les échecs constatés.
 - [ ] **Contraste du focus** : les contours de focus de la navigation, des liens, des boutons de thème et d’impression utilisent les jetons du thème (ancien orange : ~2,6:1 sur blanc). Contrat source et scénario clavier clair/sombre étendus ; **recette navigateur NOT_RUN**.
 - [ ] Compléter par une revue lecteur d'écran et contraste clair/sombre, tailles tactiles et images de secours ; valider sur Chromium, Firefox, WebKit et mobile.
