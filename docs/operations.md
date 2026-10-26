@@ -89,6 +89,7 @@ Une égalité de listes et de traductions vérifiée dans les sources est une **
 | Statut Vercel `success` avec `Canceled by Ignored Build Step` | Build volontairement ignoré, pas un déploiement `READY` | Vérifier les fichiers du scope et le SHA d'un véritable build |
 | `PROD_BASE_UNHEALTHY` | La référence de production n'a pas de preuves Vercel/Smoke/DAST suffisantes | `scripts/verify-production-baseline.sh` et preuves externes ; ne pas assouplir la garde |
 | `HTTP 429` + `x-vercel-mitigated: challenge` | Vercel Security Checkpoint | Distinguer challenge de panne applicative ; vérifier identité et environnement autorisés |
+| npm 12 `Unknown env config "cache-dir"` | Paramètre npm non reconnu, éventuellement injecté par Vercel ou l’environnement | Examiner le nom de la variable `npm_config_cache_dir` et les configurations sans afficher de secret ; ne pas modifier `engines.npm` |
 | Preview `READY`, Playwright/ZAP rouge | SHA, bypass, routing, accès ou défaillance réelle | Vérifier SHA → URL → trace/alerte → configuration → code |
 | Ref `vercel-preview-*` sans deployment | Ref Git non consommée par Vercel | Examiner événement Git et association au deployment réel |
 | Legacy HTML absente / 404 routée vers `/[locale]` | Next intercepte la route avant le fallback | Vérifier `next.config.mjs`, `handle: miss`, `check: true`, `x-matched-path` et le test 404 |

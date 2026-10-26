@@ -36,11 +36,11 @@ La route `/` sert toujours `public/index.html`. La homepage React est consultabl
 ## P4 — SEO et confidentialité d'indexation
 
 - [ ] Vérifier sur une Preview autorisée les canoniques, hreflang et `x-default`, métadonnées sociales, `robots.txt`, `sitemap.xml`, RSS, 404 et redirections historiques.
-- [ ] Contrôler l'exclusion de toutes les variantes `home-preview` du sitemap, y compris lors d'un import XML legacy. Un garde-fou source prend maintenant en compte les alias percent-encodés ; **la vérification HTTP reste ouverte**.
+- [ ] Contrôler l'exclusion de toutes les variantes `home-preview` du sitemap, y compris lors d'un import XML legacy. Un garde-fou source prend maintenant en compte les alias percent-encodés ; **les contrôles HTTP `noindex/nofollow/nosnippet` et `private/no-store` sont ajoutés à Playwright, mais restent NOT_RUN**.
 
 ## P5 — Qualité et simplification
 
-- [ ] **Valider npm 12 sur Vercel** : une commande d’installation épinglée sur npm 12.2.1 (mise.toml) précède désormais `npm ci` ; vérifier dans les logs du prochain build exact-SHA l’absence d’`EBADENGINE`. Le warning `cache-dir` reste un diagnostic séparé. Aucun assouplissement de `engines.npm` ni changement du lockfile.
+- [ ] **Supprimer le warning `cache-dir` restant** : l’installation de npm 12.2.1 est confirmée par la Preview exacte-SHA (`READY`, 81/81 pages) et `EBADENGINE` a disparu. L’avertissement npm `Unknown env config "cache-dir"` persiste. Identifier sa source Vercel sans désactiver les autres contrôles.
 - [ ] Refactorer uniquement les scripts legacy encore utilisés (`site-widgets.js`, `theme-toggle.js`, `site-analytics.js`) ; préserver consentement et télémétrie existants.
 - [ ] Préférer des tests comportementaux aux regex de source lorsqu'un vrai navigateur est disponible. Garder `justfile` canonique et `Makefile` compatible.
 - [ ] Demander à l'opérateur d'installer lui-même les skills tiers `web-design-guidelines`, `frontend-design` et `security-audit-skill`. Évaluer Dagger/Context7 seulement avec des sources non privées et sans chantier d'agent disproportionné.

@@ -11,7 +11,12 @@ test("homepage review is available on all four locale paths", async ({ request }
   for (const { path } of locales) {
     const response = await request.get(path);
     expect(response.status(), path).toBe(200);
-    expect(response.headers()["x-robots-tag"] ?? "").toMatch(/noindex/);
+    const headers = response.headers();
+    expect(headers["x-robots-tag"] ?? "").toMatch(/\bnoindex\b/i);
+    expect(headers["x-robots-tag"] ?? "").toMatch(/\bnofollow\b/i);
+    expect(headers["x-robots-tag"] ?? "").toMatch(/\bnosnippet\b/i);
+    expect(headers["cache-control"] ?? "").toMatch(/\bprivate\b/i);
+    expect(headers["cache-control"] ?? "").toMatch(/\bno-store\b/i);
   }
 });
 
