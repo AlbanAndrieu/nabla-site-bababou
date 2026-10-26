@@ -94,6 +94,52 @@ test.describe("Page chrome structure regression coverage", () => {
       .getByRole("button", { name: "Auto (system)" }).click();
   });
 
+
+  test("native print-to-PDF control matches legacy floating button geometry", async ({ page }) => {
+    for (const width of [375, 1280]) {
+      await page.setViewportSize({ width, height: 800 });
+      await page.goto("/en/central-authorities");
+      const print = page.locator("button[data-site-print-control]");
+      await expect(print).toHaveCount(1);
+      await expect(print).toHaveAccessibleName("Print / Save as PDF");
+      await expect(print.locator('svg[aria-hidden="true"]')).toHaveCount(1);
+
+      const geometry = await print.evaluate((element) => {
+        const styles = getComputedStyle(element);
+        const rect = element.getBoundingClientRect();
+        return {
+          position: styles.position,
+          right: window.innerWidth - rect.right,
+          bottom: window.innerHeight - rect.bottom,
+          radius: styles.borderRadius,
+          background: styles.backgroundColor,
+          width: rect.width,
+          height: rect.height,
+        };
+      });
+      expect(geometry.position).toBe("fixed");
+      expect(geometry.right).toBeGreaterThanOrEqual(0);
+      expect(geometry.right).toBeLessThanOrEqual(48);
+      expect(geometry.bottom).toBeGreaterThanOrEqual(0);
+      expect(geometry.bottom).toBeLessThanOrEqual(48);
+      if (width === 375) {
+        expect(Math.abs(geometry.width - geometry.height)).toBeLessThanOrEqual(1);
+        expect(geometry.width).toBeGreaterThanOrEqual(44);
+        expect(geometry.radius).toBe("50%");
+      } else {
+        expect(geometry.width).toBeGreaterThan(150);
+        expect(geometry.radius).toBe("8px");
+      }
+
+      await page.evaluate(() => { window.print = () => window.dispatchEvent(new Event("print-requested")); });
+      const printed = page.evaluate(() => new Promise((resolve) => {
+        window.addEventListener("print-requested", () => resolve(true), { once: true });
+      }));
+      await print.click();
+      expect(await printed).toBe(true);
+    }
+  });
+
   test("404 stays in minimal chrome mode", async ({ request }) => {
     const response = await request.get("/missing-next-route-for-page-chrome");
     expect(response.status()).toBe(404);

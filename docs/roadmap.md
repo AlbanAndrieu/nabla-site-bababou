@@ -36,6 +36,8 @@ Le footer Next partagé fournit maintenant **l’unique** bouton « retour en ha
 
 ## P3 — Traductions et pages
 
+- [ ] **Parité du chrome HTML/Next** : le bouton Print / Save as PDF utilise maintenant le rendu flottant imprimante (en bas à droite, circulaire sur mobile) de `public/print.css`. Les actions Back to Home et Back to Top de `people-contacted.html` utilisent les formes et couleurs primaire/secondaire du footer Next. Tests source et Playwright écrits ; exécution navigateur **NOT_RUN**. Étendre après validation aux autres pages HTML historiques.
+
 - [ ] Vérifier la navigation FR/EN/DE/NO, les ressources juridiques et les métadonnées des pages migrées. Les extraits familiaux anglais conservent `lang="en"` ; ne jamais les traduire automatiquement pour publication.
 - [ ] Planifier la migration des pages encore servies en HTML, après inventaire de leurs fonctionnalités et consentements. Conserver `people-contacted.html` (D3/ARF), `for-fathers.html` et `test.html` jusqu'à parité prouvée.
 

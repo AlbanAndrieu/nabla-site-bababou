@@ -1297,3 +1297,73 @@ html[data-theme="light"] .social-link:hover {
     text-decoration: underline;
   }
 }
+
+/* Shared action geometry for the remaining HTML footer (matches Next Action.module.css).
+ * Scope to opt-in legacy pages; do not restyle Bootstrap's general .btn class. */
+.footer .legacy-footer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem 1rem;
+  margin-top: 1.5rem;
+}
+
+.footer .legacy-footer-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-width: 13.75rem;
+  max-width: 100%;
+  min-height: 2.75rem;
+  padding: 0.625rem 1rem;
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color 120ms ease, color 120ms ease, transform 120ms ease;
+}
+
+.footer .legacy-footer-action--primary {
+  background: var(--button-bg, #0b5ed7);
+  color: var(--button-text, #fff);
+}
+
+.footer .legacy-footer-action--primary:hover {
+  background: var(--button-hover, #0056b3);
+  color: var(--button-text, #fff);
+}
+
+.footer .legacy-footer-action--secondary {
+  background: #6c757d;
+  color: #fff;
+}
+
+.footer .legacy-footer-action--secondary:hover {
+  background: #5c636a;
+  color: #fff;
+}
+
+.footer .legacy-footer-action:hover {
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.footer .legacy-footer-action:focus-visible {
+  outline: 3px solid var(--text-primary, #1e293b);
+  outline-offset: 3px;
+}
+
+@media (max-width: 575.98px) {
+  .footer .legacy-footer-actions {
+    flex-direction: column;
+  }
+
+  .footer .legacy-footer-action {
+    width: min(100%, 22rem);
+    min-width: 0;
+  }
+}

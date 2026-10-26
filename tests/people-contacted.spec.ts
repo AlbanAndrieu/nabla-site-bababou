@@ -108,4 +108,51 @@ test.describe("People Contacted Cards", () => {
 			{ timeout: 30_000 },
 		);
 	});
+  test("legacy footer matches primary and secondary actions from native Next pages", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto("/en/central-authorities");
+    const native = await page.locator('footer[role="contentinfo"] nav').first().locator("a, button").evaluateAll((els) =>
+      els.slice(0, 2).map((el) => {
+        const styles = getComputedStyle(el);
+        return {
+          background: styles.backgroundColor,
+          foreground: styles.color,
+          radius: styles.borderRadius,
+          minHeight: styles.minHeight,
+        };
+      }),
+    );
+    expect(native).toHaveLength(2);
+
+    await page.goto("/people-contacted.html");
+    const nav = page.locator("footer.footer nav.legacy-footer-actions");
+    await expect(nav).toHaveCount(1);
+    const home = nav.getByRole("link", { name: "Back to Home" });
+    const top = nav.getByRole("link", { name: "Back to top of page" });
+    await expect(home).toHaveAttribute("href", "index.html");
+    await expect(top).toHaveAttribute("href", "#top");
+    const legacy = await nav.locator("a").evaluateAll((els) =>
+      els.map((el) => {
+        const styles = getComputedStyle(el);
+        return {
+          background: styles.backgroundColor,
+          foreground: styles.color,
+          radius: styles.borderRadius,
+          minHeight: styles.minHeight,
+        };
+      }),
+    );
+    expect(legacy).toEqual(native);
+    await top.click();
+    await expect(page).toHaveURL(/#top$/);
+
+    await page.setViewportSize({ width: 320, height: 640 });
+    for (const link of [home, top]) {
+      const box = await link.boundingBox();
+      expect(box).not.toBeNull();
+      expect(box!.width).toBeLessThanOrEqual(320);
+      expect(box!.height).toBeGreaterThanOrEqual(44);
+    }
+  });
+
 });

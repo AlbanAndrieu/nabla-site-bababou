@@ -73,8 +73,31 @@
 }
 
 .print {
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
+  /* Match public/print.css .print-button, without loading the legacy widget. */
+  position: fixed;
+  right: calc(20px + env(safe-area-inset-right, 0px));
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  z-index: 1000;
+  min-width: 0;
+  padding: 12px 24px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--site-fab-bg, var(--button-bg, #2563eb));
+  color: var(--site-fab-fg, var(--button-text, #fff));
+  box-shadow: var(--site-fab-shadow, 0 4px 12px rgb(37 99 235 / 30%));
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.2;
+  transition: background-color 150ms ease, color 150ms ease, transform 150ms ease;
+}
+
+.printIcon {
+  display: block;
+  flex: 0 0 auto;
+}
+
+.printLabel {
+  white-space: nowrap;
 }
 
 .theme .button:hover:not([aria-pressed="true"]) {
@@ -87,8 +110,9 @@ html[data-theme="dark"] .theme .button:hover:not([aria-pressed="true"]) {
 }
 
 .print:hover {
-  text-decoration: underline;
-  text-decoration-thickness: 0.15em;
+  background: var(--site-fab-hover-bg, var(--button-hover, #1d4ed8));
+  color: var(--site-fab-hover-fg, var(--site-fab-fg, #fff));
+  transform: translateY(-2px);
 }
 
 .button:focus-visible,
@@ -99,6 +123,25 @@ html[data-theme="dark"] .theme .button:hover:not([aria-pressed="true"]) {
 }
 
 @media (max-width: 575.98px) {
+  .print {
+    right: calc(12px + env(safe-area-inset-right, 0px));
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    width: 2.75rem;
+    height: 2.75rem;
+    min-width: 2.75rem;
+    padding: 0;
+    border-radius: 50%;
+  }
+
+  .printIcon {
+    width: 22px;
+    height: 22px;
+  }
+
+  .printLabel {
+    display: none;
+  }
+
   .theme .button {
     /* At narrow widths the three legacy pill segments become 44px circles. */
     width: var(--ui-control-min-height, 2.75rem);
