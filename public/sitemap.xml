@@ -308,12 +308,7 @@
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
-  <url>
-    <loc>https://bababou.com/ca/demande-explications-autorites-competentes.html</loc>
-    <lastmod>2026-03-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
+
   <!--
   <url>
     <loc>https://bababou.com/abduction-norway-lawyers.html</loc>
@@ -364,8 +359,5 @@
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
-  <url>
-    <loc>https://status.albandrieu.com/</loc>
-    <changefreq>monthly</changefreq>
-  </url>
+
 </urlset>

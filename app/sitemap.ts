@@ -1,3 +1,4 @@
+import { realpathSync, statSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import type { MetadataRoute } from "next";
@@ -72,6 +73,31 @@ export function normalizeLegacyLocation(location: string) {
   return url.href;
 }
 
+/**
+ * Imported XML is an archive, not proof that a document was reviewed or
+ * published. Never advertise a legacy file that is absent from public/.
+ * Validate the path before resolving it to avoid percent-encoded traversal.
+ */
+export function shippedLegacyPublicFile(location: string): boolean {
+  try {
+    const url = new URL(location);
+    if (url.origin !== SITE_URL || url.username || url.password) return false;
+    const pathname = decodeURIComponent(url.pathname);
+    if (pathname.includes("\0") || pathname.split("/").includes("..")) {
+      return false;
+    }
+    const publicRoot = realpathSync(path.resolve(process.cwd(), "public"));
+    const relativePath = pathname === "/" ? "index.html" : pathname.replace(/^\/+/, "");
+    const absolutePath = path.resolve(publicRoot, relativePath);
+    if (!absolutePath.startsWith(publicRoot + path.sep)) return false;
+    const realFile = realpathSync(absolutePath);
+    return realFile.startsWith(publicRoot + path.sep) && statSync(realFile).isFile();
+  } catch {
+    // Missing, malformed, or unpublished legacy documents are not indexable.
+    return false;
+  }
+}
+
 function parseLegacySitemap(xml: string): MetadataRoute.Sitemap {
   const activeXml = xml.replace(/<!--[\s\S]*?-->/g, "");
   const entries: MetadataRoute.Sitemap = [];
@@ -82,7 +108,7 @@ function parseLegacySitemap(xml: string): MetadataRoute.Sitemap {
     if (!location) continue;
 
     const url = normalizeLegacyLocation(location);
-    if (!url) continue;
+    if (!url || !shippedLegacyPublicFile(location)) continue;
 
     const lastModified = textTag(block, "lastmod");
     const rawChangeFrequency = textTag(block, "changefreq");

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import test from "node:test";
 
 const read = (path) => readFileSync(new URL("../" + path, import.meta.url), "utf8");
@@ -134,4 +134,29 @@ test("shared keyboard focus ring follows the active theme instead of low-contras
   for (const label of [":root", 'html[data-theme="light"]', 'html[data-theme="dark"]']) {
     assert.ok(base.includes(label), label + ": missing theme tokens");
   }
+});
+
+
+test("new HTML files cannot silently add divergent footer buttons", () => {
+  const visit = (relative) => {
+    const root = new URL("../" + relative + "/", import.meta.url);
+    return readdirSync(root, { withFileTypes: true }).flatMap((entry) => {
+      const location = relative + "/" + entry.name;
+      if (entry.isDirectory()) return visit(location);
+      return entry.isFile() && entry.name.endsWith(".html") ? [location] : [];
+    });
+  };
+  const pages = visit("public");
+  assert.ok(pages.length >= 20, "The existing HTML inventory unexpectedly shrank");
+  let styled = 0;
+  for (const path of pages) {
+    const body = read(path);
+    const footer = body.match(/<footer\b[^>]*>[\s\S]*?<\/footer>/i)?.[0];
+    if (!footer) continue;
+    styled++;
+    assert.match(footer, /<nav class="legacy-footer-actions" aria-label="[^"]+">/, path);
+    assert.doesNotMatch(footer, /btn btn-sm btn-outline-secondary/, path);
+    assert.match(body, /href="(?:\.\.\/|\/)?theme\.css"/, path);
+  }
+  assert.ok(styled >= 16, "Legacy footer coverage unexpectedly shrank");
 });

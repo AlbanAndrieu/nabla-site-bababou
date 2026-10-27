@@ -1,6 +1,8 @@
 # Roadmap active — Site Bababou
 
-**Mise à jour : 27 octobre 2026 · PR #250 fusionnée ; audit de cohérence HTML/Next en cours.**
+**Mise à jour : 27 octobre 2026 · [PR #250](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/250) fusionnée · [PR #251](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/251) Draft.**
+
+**État de clôture :** P2/P3 — styles et contrôles de source livrés ; P4 — sitemap statique nettoyé et import Next durci ; P1 — structure React disponible mais revue éditoriale et décision de publication en attente ; P2–P4 — validations navigateur HTTP 429 non réalisées ; P5 — warning npm `cache-dir` non résolu. Ne pas confondre compilation Vercel READY et validation d'une page servie.
 
 ## Situation et périmètre
 
@@ -36,15 +38,17 @@ Le footer Next partagé fournit maintenant **l’unique** bouton « retour en ha
 
 ## P3 — Traductions et pages
 
-- [ ] **Parité du chrome HTML/Next** : le sélecteur Light/Dark/Auto et l'impression partagent leurs tokens entre pages Next ; les actions Retour accueil / Retour haut sont alignées sur `components/ui/Action.module.css` dans les **16 pages HTML avec footer** (dont homepage `/`, pages D3 et anciennes URL conservées). Le troisième lien « Central Authorities » utilise le style `outline`. Contrats source et Playwright ajoutés, **NOT_RUN**. La page HTML de test charge désormais le thème, les styles et l'impression communs ; les actions « Retour en haut » sont traduites sur les pages FR. Aucun remplacement de la homepage historique.
+- [ ] **Parité du chrome HTML/Next** : le sélecteur Light/Dark/Auto et l'impression partagent leurs tokens entre pages Next ; les actions Retour accueil / Retour haut sont alignées sur `components/ui/Action.module.css` dans les **16 pages HTML avec footer** (dont homepage `/`, pages D3 et anciennes URL conservées). Le troisième lien « Central Authorities » utilise le style `outline`. Contrats source, inventaire HTML récursif et Playwright ajoutés, **NOT_RUN**. La page HTML de test charge désormais le thème, les styles et l'impression communs ; les actions « Retour en haut » sont traduites sur les pages FR. Aucun remplacement de la homepage historique.
 
 - [ ] Vérifier la navigation FR/EN/DE/NO, les ressources juridiques et les métadonnées des pages migrées. Les extraits familiaux anglais conservent `lang="en"` ; ne jamais les traduire automatiquement pour publication.
 - [ ] Planifier la migration des pages encore servies en HTML, après inventaire de leurs fonctionnalités et consentements. Conserver `people-contacted.html` (D3/ARF), `for-fathers.html` et `test.html` jusqu'à parité prouvée.
 
 ## P4 — SEO et confidentialité d'indexation
 
-- [ ] Vérifier sur une Preview autorisée les canoniques, hreflang et `x-default`, métadonnées sociales, `robots.txt`, `sitemap.xml`, RSS, 404 et redirections historiques.
+- [ ] Vérifier sur une Preview autorisée les canoniques, hreflang et `x-default`, métadonnées sociales, `robots.txt`, `sitemap.xml`, RSS, 404 et redirections historiques. 
 - [ ] Contrôler l'exclusion de toutes les variantes `home-preview` du sitemap, y compris lors d'un import XML legacy. Un garde-fou source prend maintenant en compte les alias percent-encodés ; **les contrôles HTTP `noindex/nofollow/nosnippet` et `private/no-store` sont ajoutés à Playwright, mais restent NOT_RUN**.
+
+- [x] **Nettoyer le sitemap hérité au niveau de la source** : sur 16 entrées XML actives, 14 désignaient des fichiers effectivement présents, une annonçait un document absent et une pointait vers un autre domaine. Le XML source ne conserve désormais que les 14 entrées actives valides. L'import Next refuse aussi les fichiers absents, chemins hors `public/` et symlinks sortants. Tests P4 ajoutés (exécution complète **NOT_RUN**). Les URL Next sont ajoutées à part depuis leur registre.
 
 ## P5 — Qualité et simplification
 
