@@ -93,9 +93,24 @@ Le header Next gère l'unique lien d'évitement avant la navigation. Les trois S
 
 Ne pas retirer `public/index.html` et ses ressources avant l'approbation. Ne pas supprimer Google Translate comme fallback.
 
+## Décisions sur les neuf scripts historiques absents de React
+
+La présence d'un script dans `public/index.html` ne signifie pas qu'il faut le copier dans React. Le contrat `scripts/quality/homepage-runtime-parity.mjs` contrôle les quinze scripts d'origine et classe les neuf scripts jusque-là marqués « pending » :
+
+| Décision | Scripts | Fonction garantie ou limite |
+|---|---|---|
+| **Conservé sur HTML historique** | `d3.v3.min.js`, `arf.js` | Le lien vers `/people-contacted.html` reste dans React ; le graphe et ses données ne sont pas dupliqués |
+| **Conservé sur HTML historique** | `site-google-translate.js` | Texte source anglais déclaré avec `lang="en"` ; traductions humaines à relire avant publication |
+| **Conservé sur HTML historique** | Widget BetterStack | Ne pas charger un tiers par défaut sur la Preview sans revue de consentement |
+| **Non requis dans React** | `obs-connection.js` | Le fichier actuel est un placeholder sans effet (`void 0`) |
+| **Non requis dans React** | Turnstile | Contact React par `mailto:` sans formulaire ni soumission serveur |
+| **Non requis dans React** | jQuery, Popper et Bootstrap 4 | Navigation, disclosure et mise en page utilisent React, CSS et `details/summary` natifs |
+
+**Important :** le nombre de scripts à décider passe à zéro, mais cela **ne valide pas** les textes sensibles, les parcours multilingues ni l'ergonomie des pages React. Les quatre dépendances conservées continuent de servir les routes historiques. La bascule de `/` requiert une validation de publication distincte.
+
 ## Inventaire et limites de parité
 
-Exécuter `just homepage-runtime-parity` pour contrôler les 15 inclusions de scripts de `public/index.html`. Le contrat échoue en cas d'ajout, suppression, doublon ou modification des gardes `/`, `HOMEPAGE_PREVIEW_ENABLED`, `noindex` et de l'analytics partagé. Les états `partial` et `pending` décrivent **des comportements non validés**, pas des lots migrés.
+Exécuter `just homepage-runtime-parity` pour contrôler les 15 inclusions de scripts de `public/index.html`. Le contrat échoue en cas d'ajout, suppression, doublon ou modification des gardes `/`, `HOMEPAGE_PREVIEW_ENABLED`, `noindex` et de l'analytics partagé. Les états `partial`, `legacy-retained` et `not-required` documentent les limites de parité, les fonctionnalités conservées dans les anciennes pages et les scripts réellement dispensables. Ils ne constituent pas une validation de la migration des contenus.
 
 D3/ARF, Turnstile, Google Translate, widgets, thème, analytics et médias tiers doivent faire l'objet de tests fonctionnels explicites avant bascule. Les cartes avec données personnelles, localisations ou affirmations sur des tiers restent exclues de la Preview jusqu'à [revue de publication](publication-redaction.md). Conserver le corpus public approuvé sans duplication.
 

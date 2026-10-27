@@ -2,7 +2,7 @@
 
 **Mise à jour : 27 octobre 2026 · [PR #250](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/250) fusionnée · [PR #251](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/251) Draft.**
 
-**État de clôture :** P2/P3 — 8/8 contrats Node et 28/28 vérifications Chrome HTML locales PASS ; P4 — 9/9 tests Node de sitemap PASS ; P1 — 5/5 contrats Node des scripts PASS, 9 fonctionnalités historiques restent non migrées ; build Vercel exact SHA READY avec 81/81 pages. Restent la recette des routes Next/Preview à travers le checkpoint Vercel HTTP 429, les scans sécurité, la revue humaine de confidentialité et la décision de bascule `/`. L'avertissement npm `cache-dir` est non bloquant.
+**État de clôture :** P2/P3 — 8/8 contrats Node et 28/28 vérifications Chrome HTML locales PASS ; P4 — 9/9 tests Node de sitemap PASS ; P1 — 7/7 tests Node des scripts PASS, 9 dépendances documentées (4 conservées sur HTML historique, 5 non requises en Preview), aucune dépendance script sans décision ; la parité éditoriale et la revue de publication restent ouvertes ; build Vercel exact SHA READY avec 81/81 pages. Restent la recette des routes Next/Preview à travers le checkpoint Vercel HTTP 429, les scans sécurité, la revue humaine de confidentialité et la décision de bascule `/`. L'avertissement npm `cache-dir` est non bloquant.
 
 ## Situation et périmètre
 
@@ -23,7 +23,7 @@ La route `/` sert toujours `public/index.html`. La homepage React est consultabl
 Le footer Next partagé fournit maintenant **l’unique** bouton « retour en haut » (FR/EN/DE/NO). Les deux liens redondants de la Preview ont été supprimés. La copie « About » identifie Bababou sans reprendre l'ancien index d'un autre domaine. Les contrats de documentation ont été remis en cohérence avec les rubriques actuelles.
 
 - [ ] Comparer visuellement `/` et les quatre Preview : ordre des 13 sections, navigation, 10 cartes/6 images, fallbacks, ancres, responsive, liens, RSS, thème, impression et volet About (liens Calendly/Ko-fi à activation volontaire). Les contrats source sont ajoutés ; **ce ne sont pas des preuves navigateur**.
-- [ ] Vérifier les comportements non migrés des 15 scripts historiques avec `just homepage-runtime-parity`. Conserver D3/ARF, Turnstile et Google Translate sur les pages legacy ; n'ajouter aucune collecte ni script tiers automatique à React.
+- [x] **Statuer sur les 15 scripts historiques** avec `just homepage-runtime-parity` : six scripts ont déjà un équivalent partiel sur Next (icônes, thème, analytics, widgets), quatre sont maintenus sur HTML historique (traduction, D3, ARF, BetterStack), cinq n'ont pas d'utilité sur la Preview React (`obs-connection.js` est vide ; Turnstile sans formulaire serveur ; jQuery, Popper et Bootstrap remplacés par React/CSS). Aucun script tiers supplémentaire ni formulaire non protégé n'est ajouté à la Preview. Ce classement ne dispense pas de la recette navigateur ni de la revue de confidentialité.
 - [ ] Faire la **revue éditoriale et de confidentialité** selon [publication-redaction.md](publication-redaction.md) : identifier les données officielles de mineure, localisations précises et assertions nominatives à ne pas republier. Valider les substitutions neutres avant de remplacer `/`.
 - [ ] Après les validations P1–P4 et les gates de publication, obtenir une approbation explicite pour la bascule. **Ne pas supprimer `public/index.html`** ni les anciens documents avant cette décision.
 
