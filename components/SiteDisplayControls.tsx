@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
+import { useEffect, useSyncExternalStore } from "react";
 import styles from "./SiteDisplayControls.module.css";
 
 type ThemePreference = "light" | "dark" | "auto";
@@ -100,22 +100,23 @@ export default function SiteDisplayControls() {
 
   return (
     <section className={styles.controls} aria-label={t("section")}>
+      {/* biome-ignore lint/a11y/useSemanticElements: The segmented theme buttons are not form inputs; fieldset defaults break the fixed pill toolbar. */}
       <div className={styles.theme} role="group" aria-label={t("theme")}>
         {THEMES.map(({ value, icon }) => {
           const label = t(value);
           return (
-          <button
-            key={value}
-            type="button"
-            aria-label={label}
-            title={label}
-            aria-pressed={preference === value}
-            onClick={() => selectTheme(value)}
-            className={styles.button}
-          >
-            <span aria-hidden="true">{icon}</span>
-            <span>{label}</span>
-          </button>
+            <button
+              key={value}
+              type="button"
+              aria-label={label}
+              title={label}
+              aria-pressed={preference === value}
+              onClick={() => selectTheme(value)}
+              className={styles.button}
+            >
+              <span aria-hidden="true">{icon}</span>
+              <span>{label}</span>
+            </button>
           );
         })}
       </div>
