@@ -1310,6 +1310,8 @@ html[data-theme="light"] .social-link:hover {
 }
 
 .footer .legacy-footer-action {
+  /* Keep mobile width/height inside the footer even when Bootstrap fails to load. */
+  box-sizing: border-box;
   display: inline-flex;
   align-items: center;
   justify-content: center;

@@ -142,24 +142,37 @@ test.describe("Page chrome structure regression coverage", () => {
 
   test("remaining historic HTML pages share native footer buttons", async ({ page }) => {
     for (const path of ["/", "/abduction-germany.html", "/abduction-norway.html", "/for-fathers.html", "/test.html"]) {
-      await page.setViewportSize({ width: 375, height: 800 });
-      await page.goto(path);
-      const nav = page.locator("footer.footer nav.legacy-footer-actions");
-      await expect(nav).toHaveCount(1);
-      const buttons = nav.locator("a.legacy-footer-action");
-      const expected = path === "/" ? 1 : path.includes("abduction-") ? 3 : 2;
-      await expect(buttons).toHaveCount(expected);
-      for (const action of await buttons.all()) {
-        await expect(action).toBeVisible();
-        const box = await action.boundingBox();
-        expect(box).not.toBeNull();
-        expect(box!.width).toBeLessThanOrEqual(375);
-        expect(box!.height).toBeGreaterThanOrEqual(44);
+      for (const width of [320, 375, 1280]) {
+        await page.setViewportSize({ width, height: 800 });
+        await page.goto(path);
+        const nav = page.locator("footer.footer nav.legacy-footer-actions");
+        await expect(nav).toHaveCount(1);
+        const buttons = nav.locator("a.legacy-footer-action");
+        const expected = path === "/" ? 1 : path.includes("abduction-") ? 3 : 2;
+        await expect(buttons).toHaveCount(expected);
+
+        for (const theme of ["light", "dark"] as const) {
+          await page.locator("html").evaluate((element, value) => {
+            element.dataset.theme = value;
+          }, theme);
+          const overflow = await nav.evaluate((element) => element.scrollWidth - element.clientWidth);
+          expect(overflow, path + " at " + width + "px in " + theme).toBeLessThanOrEqual(1);
+          for (const action of await buttons.all()) {
+            await expect(action).toBeVisible();
+            await expect(action).toHaveCSS("box-sizing", "border-box");
+            const box = await action.boundingBox();
+            expect(box).not.toBeNull();
+            expect(box!.width).toBeLessThanOrEqual(width);
+            expect(box!.height).toBeGreaterThanOrEqual(44);
+            expect(box!.x).toBeGreaterThanOrEqual(0);
+            expect(box!.x + box!.width).toBeLessThanOrEqual(width + 1);
+          }
+        }
+        const top = nav.getByRole("link", { name: /Back to top/i });
+        await expect(top).toHaveAttribute("href", "#top");
+        await top.click();
+        await expect(page).toHaveURL(/#top$/);
       }
-      const top = nav.getByRole("link", { name: /Back to top/i });
-      await expect(top).toHaveAttribute("href", "#top");
-      await top.click();
-      await expect(page).toHaveURL(/#top$/);
     }
   });
 

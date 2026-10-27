@@ -2,7 +2,7 @@
 
 **Mise à jour : 27 octobre 2026 · [PR #250](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/250) fusionnée · [PR #251](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/251) Draft.**
 
-**État de clôture :** P2/P3 — styles et contrôles de source livrés ; P4 — sitemap statique nettoyé et import Next durci ; P1 — structure React disponible mais revue éditoriale et décision de publication en attente ; P2–P4 — validations navigateur HTTP 429 non réalisées ; P5 — warning npm `cache-dir` non résolu. Ne pas confondre compilation Vercel READY et validation d'une page servie.
+**État de clôture :** P2/P3 — 8/8 contrats Node et 28/28 vérifications Chrome HTML locales PASS ; P4 — 9/9 tests Node de sitemap PASS ; P1 — 5/5 contrats Node des scripts PASS, 9 fonctionnalités historiques restent non migrées ; build Vercel exact SHA READY avec 81/81 pages. Restent la recette des routes Next/Preview à travers le checkpoint Vercel HTTP 429, les scans sécurité, la revue humaine de confidentialité et la décision de bascule `/`. L'avertissement npm `cache-dir` est non bloquant.
 
 ## Situation et périmètre
 
@@ -38,7 +38,7 @@ Le footer Next partagé fournit maintenant **l’unique** bouton « retour en ha
 
 ## P3 — Traductions et pages
 
-- [ ] **Parité du chrome HTML/Next** : le sélecteur Light/Dark/Auto et l'impression partagent leurs tokens entre pages Next ; les actions Retour accueil / Retour haut sont alignées sur `components/ui/Action.module.css` dans les **16 pages HTML avec footer** (dont homepage `/`, pages D3 et anciennes URL conservées). Le troisième lien « Central Authorities » utilise le style `outline`. Contrats source, inventaire HTML récursif et Playwright ajoutés, **NOT_RUN**. La page HTML de test charge désormais le thème, les styles et l'impression communs ; les actions « Retour en haut » sont traduites sur les pages FR. Aucun remplacement de la homepage historique.
+- [ ] **Parité du chrome HTML/Next** : 16 footers HTML harmonisés avec les actions Next (primaire/secondaire/outline), styles indépendants du chargement de Bootstrap grâce à `box-sizing: border-box`. **8/8 contrats Node PASS** et **28/28 vérifications Chrome locales PASS** sur sept pages HTML en clair/sombre à 320/1280 px. Les tests Playwright réutilisables couvrent aussi 375 px mais leur exécution complète contre les routes Next reste **NOT_RUN**. Le troisième lien « Central Authorities » conserve le style contour. La page de test charge les styles communs, les boutons FR sont traduits ; pas de remplacement de `/`.
 
 - [ ] Vérifier la navigation FR/EN/DE/NO, les ressources juridiques et les métadonnées des pages migrées. Les extraits familiaux anglais conservent `lang="en"` ; ne jamais les traduire automatiquement pour publication.
 - [ ] Planifier la migration des pages encore servies en HTML, après inventaire de leurs fonctionnalités et consentements. Conserver `people-contacted.html` (D3/ARF), `for-fathers.html` et `test.html` jusqu'à parité prouvée.

@@ -49,6 +49,7 @@ test("legacy people footer and native Next print share button hierarchy and geom
   assert.match(people, /legacy-footer-action--secondary/);
   assert.doesNotMatch(people, /btn btn-sm btn-outline-secondary/);
   assert.match(legacyCSS, /\.footer \.legacy-footer-action\s*\{/);
+  assert.match(legacyCSS, /\.footer \.legacy-footer-action\s*\{[^}]*box-sizing:\s*border-box/);
   assert.match(legacyCSS, /min-width:\s*13\.75rem/);
   assert.match(legacyCSS, /min-height:\s*2\.75rem/);
   assert.match(nativeCSS, /min-width:\s*var\(--ui-action-min-width\)/);
