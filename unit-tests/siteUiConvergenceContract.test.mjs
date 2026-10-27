@@ -100,5 +100,14 @@ test("every HTML footer uses the shared action hierarchy without legacy Bootstra
       assert.equal(actions.filter((item) => item[1] === "primary").length, 1, path);
     }
     assert.match(footer, /href="#top"/, path);
+    assert.match(html, /href="(?:\.\.\/|\/)?theme\.css"/, path + ": theme CSS missing");
+    if (path === "public/nre-fr.html" || path.includes("demande-explications-autorites-competentes-fr")) {
+      assert.match(footer, /aria-label="Retour en haut de la page"/, path);
+      assert.match(footer, /<span>Retour en haut<\/span>/, path);
+    }
+    if (path === "public/test.html") {
+      assert.match(html, /href="style\.css"/);
+      assert.match(html, /href="print\.css"/);
+    }
   }
 });

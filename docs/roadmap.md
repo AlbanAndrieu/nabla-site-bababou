@@ -36,7 +36,7 @@ Le footer Next partagé fournit maintenant **l’unique** bouton « retour en ha
 
 ## P3 — Traductions et pages
 
-- [ ] **Parité du chrome HTML/Next** : le sélecteur Light/Dark/Auto et l'impression partagent leurs tokens entre pages Next ; les actions Retour accueil / Retour haut sont alignées sur `components/ui/Action.module.css` dans les **13 pages HTML avec footer** (dont homepage `/`, pages D3 et anciennes URL conservées). Le troisième lien « Central Authorities » utilise le style `outline`. Contrats source et Playwright ajoutés, **NOT_RUN**. Aucun remplacement de la homepage historique.
+- [ ] **Parité du chrome HTML/Next** : le sélecteur Light/Dark/Auto et l'impression partagent leurs tokens entre pages Next ; les actions Retour accueil / Retour haut sont alignées sur `components/ui/Action.module.css` dans les **13 pages HTML avec footer** (dont homepage `/`, pages D3 et anciennes URL conservées). Le troisième lien « Central Authorities » utilise le style `outline`. Contrats source et Playwright ajoutés, **NOT_RUN**. La page HTML de test charge désormais le thème, les styles et l'impression communs ; les actions « Retour en haut » sont traduites sur les pages FR. Aucun remplacement de la homepage historique.
 
 - [ ] Vérifier la navigation FR/EN/DE/NO, les ressources juridiques et les métadonnées des pages migrées. Les extraits familiaux anglais conservent `lang="en"` ; ne jamais les traduire automatiquement pour publication.
 - [ ] Planifier la migration des pages encore servies en HTML, après inventaire de leurs fonctionnalités et consentements. Conserver `people-contacted.html` (D3/ARF), `for-fathers.html` et `test.html` jusqu'à parité prouvée.
