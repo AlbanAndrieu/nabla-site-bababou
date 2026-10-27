@@ -15,6 +15,14 @@
       "no": "Norsk"
     },
     "switchLanguage": "Bytt språk",
+    "displayControls": {
+        "section": "Sidekontroller",
+        "theme": "Visningstema",
+        "light": "Lyst",
+        "dark": "Mørkt",
+        "auto": "Automatisk (system)",
+        "print": "Skriv ut / Lagre som PDF"
+    },
     "rssFeedAria": "RSS-feed for dette nettstedet",
     "eleonoreRssFeedAria": "Offentlig RSS-feed for en egen kontaktmelding",
     "copyright": "© {year} Bababou.",

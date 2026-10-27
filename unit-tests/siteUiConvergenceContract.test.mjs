@@ -55,7 +55,7 @@ test("legacy people footer and native Next print share button hierarchy and geom
   assert.match(nativeCSS, /min-width:\s*var\(--ui-action-min-width\)/);
   assert.match(nativeCSS, /min-height:\s*var\(--ui-control-min-height\)/);
   assert.match(controls, /data-site-print-control/);
-  assert.match(controls, /aria-label="Print \/ Save as PDF"/);
+  assert.match(controls, /aria-label=\{t\("print"\)\}/);
   assert.match(controls, /<svg[\s\S]*?aria-hidden="true"/);
   assert.match(controlsCSS, /\.print\s*\{[^}]*position:\s*fixed/);
   assert.match(controlsCSS, /\.print\s*\{[^}]*bottom:\s*calc\(20px/);
