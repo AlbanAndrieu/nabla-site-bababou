@@ -78,6 +78,9 @@ test("every HTML footer uses the shared action hierarchy without legacy Bootstra
     "public/nre-en.html",
     "public/nre-fr.html",
     "public/people-contacted.html",
+    "public/policy/accessibility_statement.html",
+    "public/policy/cookie_policy.html",
+    "public/policy/impressum.html",
     "public/test.html",
   ];
   const style = read("public/theme.css");
