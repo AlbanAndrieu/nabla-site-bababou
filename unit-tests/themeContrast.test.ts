@@ -81,6 +81,7 @@ function assertThemeTextContrast(variables: ThemeVars, label: string) {
     "toggle-track-bg",
     label + " inactive theme segment",
   );
+  requireAa(variables, "toggle-text", "toggle-bg", label + " active theme segment");
   requireAa(variables, "alert-info-text", "alert-info-bg", label + " info alert");
   requireAa(
     variables,

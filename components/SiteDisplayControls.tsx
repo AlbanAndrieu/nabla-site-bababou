@@ -7,6 +7,9 @@ type ThemePreference = "light" | "dark" | "auto";
 
 const STORAGE_KEY = "site-theme-preference";
 const PREFERENCE_EVENT = "bababou-theme-preference";
+// A private-session fallback is needed when browser storage is disabled.
+// It never transmits or persists a new identifier.
+let volatilePreference: ThemePreference | null = null;
 const THEMES = [
   { value: "light", label: "Light", icon: "☀️" },
   { value: "dark", label: "Dark", icon: "🌙" },
@@ -14,6 +17,7 @@ const THEMES = [
 ] as const;
 
 function readPreference(): ThemePreference {
+  if (volatilePreference !== null) return volatilePreference;
   try {
     const value = window.localStorage.getItem(STORAGE_KEY);
     if (value === "light" || value === "dark") return value;
@@ -83,8 +87,10 @@ export default function SiteDisplayControls() {
   function selectTheme(value: ThemePreference) {
     try {
       window.localStorage.setItem(STORAGE_KEY, value);
+      volatilePreference = null;
     } catch {
-      // The current tab still applies the chosen theme without persistence.
+      // Keep the active choice and aria-pressed consistent in this tab only.
+      volatilePreference = value;
     }
     applyTheme(value);
     window.dispatchEvent(new Event(PREFERENCE_EVENT));
@@ -98,6 +104,7 @@ export default function SiteDisplayControls() {
             key={value}
             type="button"
             aria-label={label}
+            title={label}
             aria-pressed={preference === value}
             onClick={() => selectTheme(value)}
             className={styles.button}
@@ -110,9 +117,23 @@ export default function SiteDisplayControls() {
       <button
         type="button"
         className={styles.print}
+        data-site-print-control
+        aria-label="Print / Save as PDF"
+        title="Print / Save as PDF"
         onClick={() => window.print()}
       >
-        Print / Save as PDF
+        <svg
+          className={styles.printIcon}
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path d="M19 8h-1V3H6v5H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zM8 5h8v3H8V5zm8 14H8v-4h8v4zm3-6v-2H5v2H3v-4c0-.55.45-1 1-1h16c.55 0 1 .45 1 1v4h-2z" />
+        </svg>
+        <span className={styles.printLabel}>Print / Save as PDF</span>
       </button>
     </section>
   );

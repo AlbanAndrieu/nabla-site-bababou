@@ -36,3 +36,29 @@ test("the approved homepage remains on the static fallback", () => {
   assert.doesNotMatch(page, /HOMEPAGE_PREVIEW_ENABLED/);
   assert.match(page, /robots: \{ index: false, follow: false \}/);
 });
+
+
+test("legacy people footer and native Next print share button hierarchy and geometry", () => {
+  const people = read("public/people-contacted.html");
+  const legacyCSS = read("public/theme.css");
+  const nativeCSS = read("components/ui/Action.module.css");
+  const controlsCSS = read("components/SiteDisplayControls.module.css");
+  const controls = read("components/SiteDisplayControls.tsx");
+  assert.match(people, /<nav class="legacy-footer-actions" aria-label="Footer navigation">/);
+  assert.match(people, /legacy-footer-action--primary/);
+  assert.match(people, /legacy-footer-action--secondary/);
+  assert.doesNotMatch(people, /btn btn-sm btn-outline-secondary/);
+  assert.match(legacyCSS, /\.footer \.legacy-footer-action\s*\{/);
+  assert.match(legacyCSS, /min-width:\s*13\.75rem/);
+  assert.match(legacyCSS, /min-height:\s*2\.75rem/);
+  assert.match(nativeCSS, /min-width:\s*var\(--ui-action-min-width\)/);
+  assert.match(nativeCSS, /min-height:\s*var\(--ui-control-min-height\)/);
+  assert.match(controls, /data-site-print-control/);
+  assert.match(controls, /aria-label="Print \/ Save as PDF"/);
+  assert.match(controls, /<svg[\s\S]*?aria-hidden="true"/);
+  assert.match(controlsCSS, /\.print\s*\{[^}]*position:\s*fixed/);
+  assert.match(controlsCSS, /\.print\s*\{[^}]*bottom:\s*calc\(20px/);
+  assert.match(controlsCSS, /\.print\s*\{[^}]*right:\s*calc\(20px/);
+  assert.match(controlsCSS, /@media \(max-width: 575\.98px\)[\s\S]*?\.print\s*\{[^}]*border-radius:\s*50%/);
+  assert.match(controlsCSS, /@media print[\s\S]*?\.controls\s*\{[^}]*display:\s*none/);
+});

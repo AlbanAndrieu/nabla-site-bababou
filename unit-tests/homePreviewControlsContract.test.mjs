@@ -64,3 +64,32 @@ test("native theme chooser floats in the upper-right and header clears it", () =
   assert.match(layout, /<Footer/);
   assert.doesNotMatch(nre, /<SiteDisplayControls/);
 });
+
+test("Next theme selector matches the legacy homepage rounded segmented control", () => {
+  const native = read("components/SiteDisplayControls.module.css");
+  const legacy = read("public/theme.css");
+  const component = read("components/SiteDisplayControls.tsx");
+  assert.match(legacy, /\.theme-toggle__track\s*\{[\s\S]*?border-radius:\s*50rem/);
+  assert.match(legacy, /\.theme-toggle__btn\s*\{[\s\S]*?border-radius:\s*50rem/);
+  assert.match(native, /\.theme\s*\{[\s\S]*?border-radius:\s*50rem/);
+  assert.match(native, /\.theme\s+\.button\s*\{[\s\S]*?border-radius:\s*50rem/);
+  for (const token of ["--toggle-track-bg", "--toggle-border", "--toggle-bg", "--toggle-text", "--toggle-segment-muted"]) {
+    assert.ok(native.includes(token), token);
+  }
+  assert.match(native, /\.theme\s+\.button\[aria-pressed="true"\]/);
+  assert.match(native, /@media \(max-width: 575\.98px\)[\s\S]*?border-radius:\s*50%/);
+  assert.match(native, /width:\s*var\(--ui-control-min-height/);
+  assert.match(native, /height:\s*var\(--ui-control-min-height/);
+  assert.match(component, /title=\{label\}/);
+  assert.match(component, /aria-pressed=\{preference === value\}/);
+});
+
+test("storage failures use tab-only memory to keep selected theme and aria in sync", () => {
+  const control = read("components/SiteDisplayControls.tsx");
+  assert.match(control, /let volatilePreference: ThemePreference \| null = null;/);
+  assert.match(control, /if \(volatilePreference !== null\) return volatilePreference;/);
+  assert.match(control, /volatilePreference = null;/);
+  assert.match(control, /volatilePreference = value;/);
+  assert.match(control, /window\.dispatchEvent\(new Event\(PREFERENCE_EVENT\)\)/);
+  assert.match(control, /aria-pressed=\{preference === value\}/);
+});
