@@ -48,7 +48,7 @@ Le footer Next partagé fournit maintenant **l’unique** bouton « retour en ha
 - [ ] Vérifier sur une Preview autorisée les canoniques, hreflang et `x-default`, métadonnées sociales, `robots.txt`, `sitemap.xml`, RSS, 404 et redirections historiques. 
 - [ ] Contrôler l'exclusion de toutes les variantes `home-preview` du sitemap, y compris lors d'un import XML legacy. Un garde-fou source prend maintenant en compte les alias percent-encodés ; **les contrôles HTTP `noindex/nofollow/nosnippet` et `private/no-store` sont ajoutés à Playwright, mais restent NOT_RUN**.
 
-- [x] **Nettoyer le sitemap hérité au niveau de la source** : sur 16 entrées XML actives, 14 désignaient des fichiers effectivement présents, une annonçait un document absent et une pointait vers un autre domaine. Le XML source ne conserve désormais que les 14 entrées actives valides. L'import Next refuse aussi les fichiers absents, chemins hors `public/` et symlinks sortants. Tests P4 ajoutés (exécution complète **NOT_RUN**). Les URL Next sont ajoutées à part depuis leur registre.
+- [x] **Nettoyer le sitemap hérité au niveau de la source** : sur 16 entrées XML actives, 14 désignaient des fichiers effectivement présents, une annonçait un document absent et une pointait vers un autre domaine. Le fichier public conserve uniquement les 14 URL publiables ; les commentaires qui révélaient des chemins de documents non publiés ont été retirés (historique Git conservé). L'import Next refuse aussi les fichiers absents, chemins hors `public/` et symlinks sortants. Tests P4 ajoutés (exécution complète **NOT_RUN**). Les URL Next sont ajoutées à part depuis leur registre.
 
 ## P5 — Qualité et simplification
 

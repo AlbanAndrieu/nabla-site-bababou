@@ -187,7 +187,6 @@ test("legacy sitemap does not publish files absent from the public artifact tree
   const source = readFileSync(resolve(root, "sitemap.xml"), "utf8");
   const imported = [...source.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
   const published = new Set((await sitemap()).map((entry) => entry.url));
-  let missingFromPublic = 0;
 
   for (const location of imported) {
     let url: URL;
@@ -208,11 +207,9 @@ test("legacy sitemap does not publish files absent from the public artifact tree
       // A source XML entry can reference a document not yet approved/published.
     }
     if (!shipped) {
-      missingFromPublic++;
       assert.equal(published.has(location), false, "Unpublished legacy URL leaked into sitemap");
     }
   }
-  assert.ok(missingFromPublic >= 0);
   assert.equal(shippedLegacyPublicFile("https://bababou.com/index.html"), true);
   assert.equal(shippedLegacyPublicFile("https://bababou.com/__not-yet-published-file__.html"), false);
   assert.equal(shippedLegacyPublicFile("https://example.com/index.html"), false);
@@ -224,6 +221,7 @@ test("static legacy XML contains only already-shipped same-origin documents", as
   const { readFileSync } = await import("node:fs");
   const { resolve } = await import("node:path");
   const input = readFileSync(resolve(process.cwd(), "public/sitemap.xml"), "utf8");
+  assert.doesNotMatch(input, /<!--[\s\S]*?<loc>/, "Sitemap comments must not expose unpublished document paths");
   const active = input.replace(/<!--[\s\S]*?-->/g, "");
   const locations = [...active.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
   assert.ok(locations.length > 0, "Legacy sitemap source must not be empty");
