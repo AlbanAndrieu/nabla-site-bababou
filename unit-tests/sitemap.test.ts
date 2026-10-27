@@ -221,7 +221,9 @@ test("static legacy XML contains only already-shipped same-origin documents", as
   const { readFileSync } = await import("node:fs");
   const { resolve } = await import("node:path");
   const input = readFileSync(resolve(process.cwd(), "public/sitemap.xml"), "utf8");
-  assert.doesNotMatch(input, /<!--[\s\S]*?<loc>/, "Sitemap comments must not expose unpublished document paths");
+  for (const comment of input.match(/<!--[\\s\\S]*?-->/g) ?? []) {
+    assert.doesNotMatch(comment, /<loc>/, "Sitemap comments must not expose unpublished document paths");
+  }
   const active = input.replace(/<!--[\s\S]*?-->/g, "");
   const locations = [...active.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
   assert.ok(locations.length > 0, "Legacy sitemap source must not be empty");
