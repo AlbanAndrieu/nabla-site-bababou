@@ -62,3 +62,43 @@ test("legacy people footer and native Next print share button hierarchy and geom
   assert.match(controlsCSS, /@media \(max-width: 575\.98px\)[\s\S]*?\.print\s*\{[^}]*border-radius:\s*50%/);
   assert.match(controlsCSS, /@media print[\s\S]*?\.controls\s*\{[^}]*display:\s*none/);
 });
+
+
+test("every HTML footer uses the shared action hierarchy without legacy Bootstrap buttons", () => {
+  const pages = [
+    "public/abduction-germany.html",
+    "public/abduction-norway.html",
+    "public/ca/demande-explications-autorites-competentes-fr.html",
+    "public/ca/index.html",
+    "public/central-authorities-failures.html",
+    "public/central-authorities.html",
+    "public/contact.html",
+    "public/for-fathers.html",
+    "public/index.html",
+    "public/nre-en.html",
+    "public/nre-fr.html",
+    "public/people-contacted.html",
+    "public/test.html",
+  ];
+  const style = read("public/theme.css");
+  assert.match(style, /\.footer \.legacy-footer-action--primary\s*\{/);
+  assert.match(style, /\.footer \.legacy-footer-action--secondary\s*\{/);
+  assert.match(style, /\.footer \.legacy-footer-action--outline\s*\{/);
+  assert.match(style, /\.footer \.legacy-footer-action:focus-visible\s*\{/);
+
+  for (const path of pages) {
+    const html = read(path);
+    const footer = html.match(/<footer\b[^>]*>[\s\S]*?<\/footer>/i)?.[0];
+    assert.ok(footer, path + ": footer missing");
+    assert.match(footer, /<nav class="legacy-footer-actions" aria-label="[^"]+">/, path);
+    assert.doesNotMatch(footer, /btn btn-sm btn-outline-secondary/, path);
+    const actions = [...footer.matchAll(/class="legacy-footer-action legacy-footer-action--(primary|secondary|outline)"/g)];
+    const expected = path === "public/index.html" ? 1 : path.includes("abduction-") ? 3 : 2;
+    assert.equal(actions.length, expected, path + ": link count drift");
+    assert.equal(actions.filter((item) => item[1] === "secondary").length, 1, path);
+    if (path !== "public/index.html") {
+      assert.equal(actions.filter((item) => item[1] === "primary").length, 1, path);
+    }
+    assert.match(footer, /href="#top"/, path);
+  }
+});

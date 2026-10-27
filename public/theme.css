@@ -1347,6 +1347,18 @@ html[data-theme="light"] .social-link:hover {
   color: #fff;
 }
 
+.footer .legacy-footer-action--outline {
+  border-color: var(--button-bg, #0d6efd);
+  background: transparent;
+  color: var(--link-color, #0b5ed7);
+}
+
+.footer .legacy-footer-action--outline:hover {
+  border-color: var(--button-hover, #0b5ed7);
+  background: var(--button-bg, #0d6efd);
+  color: var(--button-text, #fff);
+}
+
 .footer .legacy-footer-action:hover {
   text-decoration: none;
   transform: translateY(-1px);
