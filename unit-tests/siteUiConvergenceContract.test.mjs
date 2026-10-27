@@ -114,3 +114,24 @@ test("every HTML footer uses the shared action hierarchy without legacy Bootstra
     }
   }
 });
+
+
+test("shared keyboard focus ring follows the active theme instead of low-contrast blue", () => {
+  const tokens = read("app/design-tokens.css");
+  const action = read("components/ui/Action.module.css");
+  const header = read("components/RouteHeader.module.css");
+  const footer = read("app/components/Footer.module.css");
+  assert.match(tokens, /--ui-focus-ring:\s*var\(--ui-text-primary,\s*#1e293b\);/);
+  assert.doesNotMatch(tokens, /--ui-focus-ring:\s*#9ec5fe/i);
+  for (const [name, stylesheet] of [
+    ["actions", action],
+    ["header", header],
+    ["footer", footer],
+  ]) {
+    assert.match(stylesheet, /outline:\s*3px solid var\(--ui-focus-ring\)/, name);
+  }
+  const base = read("public/theme.css");
+  for (const label of [":root", 'html[data-theme="light"]', 'html[data-theme="dark"]']) {
+    assert.ok(base.includes(label), label + ": missing theme tokens");
+  }
+});
