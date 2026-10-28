@@ -18,6 +18,29 @@
  * After load: window.NABLA_SITE_ANALYTICS.initGtm(id?), initGtag(id?) — no-op if already injected.
  */
 (() => {
+	/*
+	 * The review-only homepage is deliberately non-indexable and must not
+	 * initialize telemetry, even in a full/marketing analytics environment.
+	 * Check before reading document.currentScript or creating remote scripts.
+	 * Do not use a query parameter as an opt-in override on these pages.
+	 */
+	function isHomePreviewReview() {
+		try {
+			var pathname = String(location.pathname || "");
+			for (var i = 0; i < 3; i++) {
+				if (/^\/(?:fr\/|en\/|de\/|no\/)?home-preview\/?$/i.test(pathname)) return true;
+				var decoded = decodeURIComponent(pathname);
+				if (decoded === pathname) break;
+				pathname = decoded;
+			}
+			return false;
+		} catch (_error) {
+			// Invalid review aliases cannot opt into tracking accidentally.
+			return true;
+		}
+	}
+	if (isHomePreviewReview()) return;
+
 	var root = document.currentScript;
 	var mode = root
 		? root.getAttribute("data-analytics-mode") || "vercel"

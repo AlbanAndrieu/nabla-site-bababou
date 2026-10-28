@@ -51,6 +51,8 @@ Le footer Next partagé fournit maintenant **l’unique** bouton « retour en ha
 
 - [x] **Nettoyer le sitemap hérité au niveau de la source** : sur 16 entrées XML actives, 14 désignaient des fichiers effectivement présents, une annonçait un document absent et une pointait vers un autre domaine. Le fichier public conserve uniquement les 14 URL publiables ; les commentaires qui révélaient des chemins de documents non publiés ont été retirés (historique Git conservé). L'import Next refuse aussi les fichiers absents, chemins hors `public/` et symlinks sortants. Tests P4 ajoutés (exécution complète **NOT_RUN**). Les URL Next sont ajoutées à part depuis leur registre.
 
+- [x] **Désactiver l'analytics lors du chargement direct des pages de revue React** : `public/site-analytics.js` quitte immédiatement sur `/home-preview` et les variantes FR/EN/DE/NO, y compris avec `NEXT_PUBLIC_ANALYTICS_MODE=full` et le paramètre local de test. **6/6 tests Node PASS** (VM exécutant le vrai script, y compris URL doublement encodée, mode `full` et override local). Les autres pages gardent leurs statistiques. Ce contrôle d'initialisation n'atteste pas à lui seul les transitions SPA ni l'absence de requête réseau dans un navigateur réel.
+
 ## P5 — Qualité et simplification
 
 - [ ] **Supprimer le warning `cache-dir` restant** : l’installation de npm 12.2.1 est confirmée par la Preview exacte-SHA (`READY`, 81/81 pages) et `EBADENGINE` a disparu. L’avertissement npm `Unknown env config "cache-dir"` persiste. Identifier sa source Vercel sans désactiver les autres contrôles.
