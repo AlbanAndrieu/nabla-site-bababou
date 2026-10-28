@@ -40,3 +40,15 @@ test("reject first-party analytics endpoints and malformed URLs", () => {
     assert.equal(isUnexpectedReviewRequest(candidate, site), true, candidate);
   }
 });
+
+test("block first-party POST/beacon traffic while allowing safe asset GETs", () => {
+  const endpoint = "https://bababou.com/api/new-tracker";
+  assert.equal(isUnexpectedReviewRequest(endpoint, site, "POST"), true);
+  assert.equal(isUnexpectedReviewRequest(endpoint, site, "post"), true);
+  assert.equal(isUnexpectedReviewRequest(endpoint, site, "PUT"), true);
+  assert.equal(isUnexpectedReviewRequest(endpoint, site, "GET"), false);
+  assert.equal(
+    isUnexpectedReviewRequest("https://bababou.com/_next/static/app.js", site, "HEAD"),
+    false,
+  );
+});
