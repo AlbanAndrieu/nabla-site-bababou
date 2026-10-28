@@ -1,6 +1,6 @@
 # Roadmap active — Site Bababou
 
-**Mise à jour : 27 octobre 2026 · [PR #250](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/250) fusionnée · [PR #251](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/251) Draft.**
+**Mise à jour : 28 octobre 2026 · [PR #250](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/250) et [PR #251](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/251) fusionnées · [PR #252](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/252) Draft, contrôles navigateur.**
 
 **État de clôture :** P2/P3 — 8/8 contrats Node et 28/28 vérifications Chrome HTML locales PASS ; P4 — 9/9 tests Node de sitemap PASS ; P1 — 7/7 tests Node des scripts PASS, 9 dépendances documentées (4 conservées sur HTML historique, 5 non requises en Preview), aucune dépendance script sans décision ; la parité éditoriale et la revue de publication restent ouvertes ; build Vercel exact SHA READY avec 81/81 pages. Restent la recette des routes Next/Preview à travers le checkpoint Vercel HTTP 429, les scans sécurité, la revue humaine de confidentialité et la décision de bascule `/`. L'avertissement npm `cache-dir` est non bloquant.
 
@@ -67,3 +67,24 @@ Le footer Next partagé fournit maintenant **l’unique** bouton « retour en ha
 **Accès Vercel :** un statut `READY` confirme la compilation, pas les réponses HTTP ni WCAG. Le checkpoint Vercel 429 a historiquement bloqué les sondes : utiliser un accès de test autorisé, sans désactiver WAF/Deployment Protection.
 
 **Gouvernance :** PR en Draft, pas de merge ou de promotion automatique ; ne pas qualifier de PASS un contrôle `NOT_RUN`. Les procédures sont dans [operations.md](operations.md), l'inventaire de parité dans [homepage-migration-parity.md](homepage-migration-parity.md) et les règles de confidentialité dans [publication-redaction.md](publication-redaction.md).
+
+## Reprise après la fusion de #251 — 28 octobre 2026
+
+La PR #251 a été fusionnée le 28 octobre 2026 à **07:57 UTC**. Le dernier commit de sa branche est `8538b4a790bc58544b906e21207337e7770f3fc4` (filtre `beforeSend` pour Vercel Analytics/Speed Insights) ; le merge sur `master` est `16982977d7d786d1612b1ec6c689d9faa34ce40f`. Le SHA `0826d5eb` de la synthèse précédente n'est plus le dernier état. **Ne pas réouvrir #251 ni annoncer sa version Draft.**
+
+La [PR #252](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/252) est un suivi **Draft** limité aux preuves manquantes. Elle introduit `tests/home-preview-analytics-network.spec.ts` : quatre tests navigateur observent les requêtes vers Vercel Insights/Speed Insights et les domaines analytics sur les quatre Preview, y compris avec `?nablaEnableThirdParty=1`. Ils confirment aussi que le document Next et le script partagé se chargent, afin de ne pas considérer une page vide comme une preuve d'absence de tracking.
+
+**Preuves :** analyse syntaxique TypeScript du nouveau scénario **PASS** ; exécution Playwright, inspection des requêtes réelles, transition SPA complète, axe, Firefox/WebKit, revue humaine et BetterLeaks/SAST/SCA/ZAP **NOT_RUN**. L'impossibilité de cloner le dépôt et l'absence d'un navigateur Playwright opérationnel dans cet environnement empêchent de présenter les contrôles comme exécutés. La Preview Vercel a précédemment répondu HTTP 429 ; ne jamais contourner WAF/Deployment Protection.
+
+Reprise locale, sans Actions GitHub :
+
+```bash
+just agent-local-tests
+npx playwright test tests/home-preview-analytics-network.spec.ts --project=chromium
+npx playwright test tests/home-preview-analytics-network.spec.ts --project=firefox --project=webkit
+npx playwright test tests/home-preview.spec.ts tests/accessibility-axe.spec.ts tests/next-seo.spec.ts
+just p0
+just quality
+```
+
+En cas d'échec, corriger le code ou le scénario démontré, conserver **NOT_RUN** pour les autres gates. Ne pas remplacer `/`, publier de nouvelles données familiales ni fusionner sans approbation explicite.
