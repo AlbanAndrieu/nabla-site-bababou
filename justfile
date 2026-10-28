@@ -30,6 +30,15 @@ unit:
 a11y:
     npm run test:a11y
 
+# Local-only homepage gate. --no prevents npm from downloading missing tools.
+# Browser binaries and node_modules must already exist in the checkout.
+homepage-validation:
+    npm exec --no -- playwright test tests/home-preview.spec.ts tests/home-preview-analytics-network.spec.ts tests/accessibility-axe.spec.ts tests/accessibility-keyboard.spec.ts tests/accessibility-responsive.spec.ts --project=chromium --project=firefox --project=webkit
+
+# Enumerate the selected tests without starting Next or a browser.
+homepage-validation-list:
+    npm exec --no -- playwright test --list tests/home-preview.spec.ts tests/home-preview-analytics-network.spec.ts tests/accessibility-axe.spec.ts tests/accessibility-keyboard.spec.ts tests/accessibility-responsive.spec.ts
+
 dev:
     npm run dev
 
