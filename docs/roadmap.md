@@ -88,3 +88,22 @@ just quality
 ```
 
 En cas d'échec, corriger le code ou le scénario démontré, conserver **NOT_RUN** pour les autres gates. Ne pas remplacer `/`, publier de nouvelles données familiales ni fusionner sans approbation explicite.
+
+## Reprise des validations — 28 octobre 2026 (après fusion #251)
+
+- **Base de référence :** PR #251 fusionnée, commit de fusion `16982977d7d786d1612b1ec6c689d9faa34ce40f`. Production Vercel `dpl_BBeytuULchKitzZodQoKWq7eSmay` READY. La PR #252 reste Draft : aucun remplacement de `/`.
+- **Vérification HTTP réelle : BLOQUÉE.** Trois sondes Vercel authentifiées sur la production (`/home-preview`, `/en/home-preview`, `/robots.txt`) ont reçu **429 Vercel Security Checkpoint**, sans réponse applicative exploitable. Il ne s'agit ni d'un PASS SEO ni d'un échec confirmé du serveur Next. Le WAF et les protections ne sont pas modifiés.
+- **Exécution navigateur Next : NOT_RUN.** Le dépôt est privé et son clonage sans identifiants dans un sandbox Vercel a échoué ; un navigateur Chromium est disponible dans l'environnement isolé, mais aucun checkout complet avec ses dépendances n'est accessible. Les scénarios de confidentialité réseau de `tests/home-preview-analytics-network.spec.ts`, axe et Firefox/WebKit restent à exécuter sur le SHA final.
+- **Anomalie SEO corrigée dans #252 :** `lib/homePreviewSeoPolicy.mjs` refusait les URL de revue encodées une seule fois, contrairement au garde analytics qui gère jusqu'à trois niveaux. Harmonisation du filtre et ajout de `unit-tests/homePreviewSeoPolicyEncoding.test.mjs` aux commandes locales `test:unit` et `test:agent-local`. **3/3 tests Node PASS** sur la copie isolée exacte des deux nouveaux fichiers, avec `node --check` sur les deux ; **suite intégrale NOT_RUN**. Aucun nouveau contenu n'est publié.
+
+### Décision de bascule `/` — NO-GO
+
+| Barrière | Preuve nécessaire | État |
+| --- | --- | --- |
+| Parité fonctionnelle React | Rendu et interactions des quatre Preview, comparaison à `/`, liens, galerie, impression, thème | NOT_RUN en navigateur Next |
+| Accessibilité | axe WCAG 2.2 AA, clavier, zoom 200 %, Chromium/Firefox/WebKit et revue lecteur d'écran | NOT_RUN |
+| SEO / indexation | HTTP 200/307/404 réels, canonical, hreflang, X-Robots-Tag, no-store, RSS et sitemap | BLOCKED 429 |
+| Qualité et sécurité | `just p0`, `just quality`, BetterLeaks, SAST/SCA, ZAP au SHA final | NOT_RUN |
+| Publication / vie privée | Revue éditoriale explicite des textes et images relatifs à une mineure | EN ATTENTE |
+
+**Décision :** ne pas basculer `/`, ne pas supprimer `public/index.html`, ne pas contourner le WAF, ne pas fusionner automatiquement. Les tests automatisés présents ne constituent pas une attestation de conformité ou de confidentialité effective tant qu'ils ne sont pas exécutés contre un environnement rendu et autorisé.
