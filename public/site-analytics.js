@@ -33,7 +33,9 @@
 				if (decoded === pathname) break;
 				pathname = decoded;
 			}
-			return false;
+			// Check the last decoded value as well. Otherwise triple-encoded
+			// review paths can be mistaken for normal pages.
+			return /^\/(?:fr\/|en\/|de\/|no\/)?home-preview\/?$/i.test(pathname);
 		} catch (_error) {
 			// Invalid review aliases cannot opt into tracking accidentally.
 			return true;
