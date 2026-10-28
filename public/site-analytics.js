@@ -24,9 +24,9 @@
 	 * Check before reading document.currentScript or creating remote scripts.
 	 * Do not use a query parameter as an opt-in override on these pages.
 	 */
-	function isHomePreviewReview() {
+	function isHomePreviewReview(explicitPathname) {
 		try {
-			var pathname = String(location.pathname || "");
+			var pathname = String(typeof explicitPathname === "string" ? explicitPathname : location.pathname || "");
 			for (var i = 0; i < 3; i++) {
 				if (/^\/(?:fr\/|en\/|de\/|no\/)?home-preview\/?$/i.test(pathname)) return true;
 				var decoded = decodeURIComponent(pathname);
@@ -264,6 +264,22 @@
 			function () {
 				(window.siq = window.siq || []).push(arguments);
 			};
+
+		// A script loaded on a different Next route can survive a client-side
+		// navigation to home-preview. Drop both pageviews and performance events.
+		function reviewEventFilter(event) {
+			try {
+				var pathname = event && typeof event.url === "string"
+					? new URL(event.url, location.href).pathname
+					: location.pathname;
+				return isHomePreviewReview(pathname) ? null : event;
+			} catch (_error) {
+				return null;
+			}
+		}
+		window.va("beforeSend", reviewEventFilter);
+		window.si("beforeSend", reviewEventFilter);
+
 		if (!skipRemoteAnalyticsOnLocalDev()) {
 			loadDefer("/_vercel/insights/script.js");
 			loadDefer("/_vercel/speed-insights/script.js");

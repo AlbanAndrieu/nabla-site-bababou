@@ -71,6 +71,12 @@ Pour les tests : `unit-tests/homepageGalleryParity.test.mjs`, `unit-tests/homepa
 - Le volet About conserve Calendly et Ko-fi **sous forme de liens explicites** sans widget chargé automatiquement.
 - **Statut :** implémenté dans la PR en cours ; build Next et recette navigateur à vérifier au HEAD exact. Aucune suppression de `public/index.html`.
 
+## Analytics et confidentialité de la revue
+
+La Preview React est ouverte uniquement pour relire le contenu déjà approuvé. Les variantes `/home-preview`, `/en/home-preview`, `/de/home-preview` et `/no/home-preview` ne doivent pas initialiser Vercel Analytics, Speed Insights ou les traceurs externes. `public/site-analytics.js` vérifie le chemin avant de lire le DOM et enregistre `beforeSend` sur les deux files Vercel pour bloquer aussi les événements après transition SPA depuis une page normale. Les routes publiques hors Preview ne changent pas de mode analytics.
+
+Le test `unit-tests/analyticsLocalHost.test.mjs` exécute le vrai script dans une VM et contrôle les deux hooks Vercel, dont les URL encodées. **7/7 PASS au moment de l'implémentation** ; les preuves réseau réelles ne sont pas disponibles à cause du Vercel Security Checkpoint HTTP 429. Aucun tiers n'est réactivé pour contourner le filtrage.
+
 ## Contrats d'interface — preuves requises
 
 Références : le skill versionné `.agents/skills/web-design-guidelines/SKILL.md` et les [règles Vercel](https://github.com/vercel-labs/web-interface-guidelines/blob/main/command.md). Les états source (focus visible, survol, `text-wrap`, `scroll-margin`, cibles tactiles et `lang="en"`) disposent de contrôles dans `unit-tests/homepageMigrationContract.test.mjs`, `unit-tests/homepageAssociationsParity.test.mjs` et `unit-tests/mainContentRoute.test.mjs`.

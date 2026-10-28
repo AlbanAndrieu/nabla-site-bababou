@@ -113,7 +113,9 @@ test("public review pages never initialize tracking, even with full mode and loc
 });
 
 test("the private-review analytics guard is restricted to the four locale variants", () => {
-  const start = script.indexOf("\tfunction isHomePreviewReview() {");
+  const start = script.indexOf(
+    "\tfunction isHomePreviewReview(explicitPathname) {",
+  );
   const end = script.indexOf("\n\tif (isHomePreviewReview()) return;", start);
   assert.ok(start !== -1 && end > start);
   const guard = script.slice(start, end);
@@ -138,5 +140,92 @@ test("the private-review analytics guard is restricted to the four locale varian
     "/en/home-preview",
   ]) {
     assert.equal(check(pathname), true, pathname);
+  }
+});
+
+test("Vercel Analytics and Speed Insights suppress SPA review events before sending", () => {
+  const inserted = [];
+  const browserWindow = {};
+  const browserLocation = {
+    hostname: "bababou.com",
+    pathname: "/en/nre",
+    search: "",
+    href: "https://bababou.com/en/nre",
+    origin: "https://bababou.com",
+  };
+  const browserDocument = {
+    currentScript: {
+      getAttribute() {
+        return null;
+      },
+    },
+    querySelector() {
+      return null;
+    },
+    createElement() {
+      return { src: "", defer: false };
+    },
+    head: {
+      appendChild(element) {
+        inserted.push(element.src);
+      },
+    },
+  };
+  runInNewContext(
+    script,
+    {
+      window: browserWindow,
+      location: browserLocation,
+      document: browserDocument,
+      URL,
+    },
+    { timeout: 1000 },
+  );
+  assert.ok(inserted.includes("/_vercel/insights/script.js"));
+  assert.ok(inserted.includes("/_vercel/speed-insights/script.js"));
+
+  const analyticsFilter = browserWindow.vaq.find(
+    (entry) => entry[0] === "beforeSend",
+  )?.[1];
+  const speedFilter = browserWindow.siq.find(
+    (entry) => entry[0] === "beforeSend",
+  )?.[1];
+  assert.equal(typeof analyticsFilter, "function");
+  assert.equal(typeof speedFilter, "function");
+
+  for (const filter of [analyticsFilter, speedFilter]) {
+    for (const pathname of [
+      "/home-preview",
+      "/fr/home-preview",
+      "/en/home-preview",
+      "/de/home-preview",
+      "/no/home-preview",
+      "/en/%2568ome-preview",
+    ]) {
+      assert.equal(
+        filter({ url: `https://bababou.com${pathname}` }),
+        null,
+        pathname,
+      );
+    }
+    const normalEvent = { url: "https://bababou.com/en/nre" };
+    assert.equal(
+      filter(normalEvent),
+      normalEvent,
+      "ordinary Next routes keep telemetry",
+    );
+    const currentPathEvent = { url: null };
+    assert.equal(
+      filter(currentPathEvent),
+      currentPathEvent,
+      "current non-review route is allowed",
+    );
+    browserLocation.pathname = "/home-preview";
+    assert.equal(
+      filter(currentPathEvent),
+      null,
+      "events without URLs cannot escape review filter",
+    );
+    browserLocation.pathname = "/en/nre";
   }
 });
