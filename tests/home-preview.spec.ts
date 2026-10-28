@@ -174,10 +174,10 @@ test("association artwork has a local fallback when a bundled SVG fails", async 
 test("React preview theme and print controls work without legacy widget scripts", async ({ page }) => {
 
   await page.goto("/home-preview");
-  const controls = page.getByRole("region", { name: "Page controls" });
-  const themes = controls.getByRole("group", { name: "Display theme" });
-  const dark = themes.getByRole("button", { name: "Dark", exact: true });
-  const auto = themes.getByRole("button", { name: "Auto (system)" });
+  const controls = page.getByRole("region", { name: "Contrôles de la page" });
+  const themes = controls.getByRole("group", { name: "Thème d’affichage" });
+  const dark = themes.getByRole("button", { name: "Sombre", exact: true });
+  const auto = themes.getByRole("button", { name: "Auto (système)" });
 
   await dark.click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
@@ -187,7 +187,7 @@ test("React preview theme and print controls work without legacy widget scripts"
 
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
-  await expect(themes.getByRole("button", { name: "Dark", exact: true })).toHaveAttribute(
+  await expect(themes.getByRole("button", { name: "Sombre", exact: true })).toHaveAttribute(
     "aria-pressed",
     "true",
   );
@@ -202,7 +202,7 @@ test("React preview theme and print controls work without legacy widget scripts"
       state.__printCalls = (state.__printCalls ?? 0) + 1;
     };
   });
-  await controls.getByRole("button", { name: "Print / Save as PDF" }).click();
+  await controls.getByRole("button", { name: "Imprimer / Enregistrer en PDF" }).click();
   await expect
     .poll(() => page.evaluate(() => (window as Window & { __printCalls?: number }).__printCalls))
     .toBe(1);
@@ -259,16 +259,16 @@ test("localized section navigation reaches the React landmarks", async ({ page }
 
 test("homepage keyboard focus has a contrasting outline in light and dark modes", async ({ page }) => {
   await page.goto("/home-preview");
-  const controls = page.getByRole("region", { name: "Page controls" });
+  const controls = page.getByRole("region", { name: "Contrôles de la page" });
   const navLink = page.locator("main nav[data-home-section-nav] a").first();
 
-  for (const theme of ["Light", "Dark"] as const) {
+  for (const theme of ["Clair", "Sombre"] as const) {
     await controls.getByRole("button", { name: theme, exact: true }).click();
-    await expect(page.locator("html")).toHaveAttribute("data-theme", theme.toLowerCase());
+    await expect(page.locator("html")).toHaveAttribute("data-theme", theme === "Clair" ? "light" : "dark");
     await page.keyboard.press("Tab");
     for (const target of [
       navLink,
-      controls.getByRole("button", { name: "Print / Save as PDF" }),
+      controls.getByRole("button", { name: "Imprimer / Enregistrer en PDF" }),
     ]) {
       await target.focus();
       await expect(target).toBeFocused();

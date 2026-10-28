@@ -1,6 +1,8 @@
 # Roadmap active — Site Bababou
 
-**Mise à jour : 26 octobre 2026 · PR [#250](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/250) en Draft ; PR [#249](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/249) fusionnée.**
+**Mise à jour : 27 octobre 2026 · [PR #250](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/250) fusionnée · [PR #251](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/251) Draft.**
+
+**État de clôture :** P2/P3 — 8/8 contrats Node et 28/28 vérifications Chrome HTML locales PASS ; P4 — 9/9 tests Node de sitemap PASS ; P1 — 7/7 tests Node des scripts PASS, 9 dépendances documentées (4 conservées sur HTML historique, 5 non requises en Preview), aucune dépendance script sans décision ; la parité éditoriale et la revue de publication restent ouvertes ; build Vercel exact SHA READY avec 81/81 pages. Restent la recette des routes Next/Preview à travers le checkpoint Vercel HTTP 429, les scans sécurité, la revue humaine de confidentialité et la décision de bascule `/`. L'avertissement npm `cache-dir` est non bloquant.
 
 ## Situation et périmètre
 
@@ -21,7 +23,7 @@ La route `/` sert toujours `public/index.html`. La homepage React est consultabl
 Le footer Next partagé fournit maintenant **l’unique** bouton « retour en haut » (FR/EN/DE/NO). Les deux liens redondants de la Preview ont été supprimés. La copie « About » identifie Bababou sans reprendre l'ancien index d'un autre domaine. Les contrats de documentation ont été remis en cohérence avec les rubriques actuelles.
 
 - [ ] Comparer visuellement `/` et les quatre Preview : ordre des 13 sections, navigation, 10 cartes/6 images, fallbacks, ancres, responsive, liens, RSS, thème, impression et volet About (liens Calendly/Ko-fi à activation volontaire). Les contrats source sont ajoutés ; **ce ne sont pas des preuves navigateur**.
-- [ ] Vérifier les comportements non migrés des 15 scripts historiques avec `just homepage-runtime-parity`. Conserver D3/ARF, Turnstile et Google Translate sur les pages legacy ; n'ajouter aucune collecte ni script tiers automatique à React.
+- [x] **Statuer sur les 15 scripts historiques** avec `just homepage-runtime-parity` : six scripts ont déjà un équivalent partiel sur Next (icônes, thème, analytics, widgets), quatre sont maintenus sur HTML historique (traduction, D3, ARF, BetterStack), cinq n'ont pas d'utilité sur la Preview React (`obs-connection.js` est vide ; Turnstile sans formulaire serveur ; jQuery, Popper et Bootstrap remplacés par React/CSS). Aucun script tiers supplémentaire ni formulaire non protégé n'est ajouté à la Preview. Ce classement ne dispense pas de la recette navigateur ni de la revue de confidentialité.
 - [ ] Faire la **revue éditoriale et de confidentialité** selon [publication-redaction.md](publication-redaction.md) : identifier les données officielles de mineure, localisations précises et assertions nominatives à ne pas republier. Valider les substitutions neutres avant de remplacer `/`.
 - [ ] Après les validations P1–P4 et les gates de publication, obtenir une approbation explicite pour la bascule. **Ne pas supprimer `public/index.html`** ni les anciens documents avant cette décision.
 
@@ -30,21 +32,26 @@ Le footer Next partagé fournit maintenant **l’unique** bouton « retour en ha
 - [ ] **Sélecteur de thème en haut à droite** : le contrôle Light/Dark/Auto commun à NRE et aux autres pages Next.js est fixé dans le coin supérieur droit et reprend les **segments arrondis** de la homepage historique (track/segments en pilule, état actif et tokens de couleur existants). Sur mobile, les trois segments deviennent des cercles de 44 px et restent accessibles. Le header réserve de la place au sélecteur de langue. L'impression reste dans le footer. Tests Playwright de géométrie/arrondi/interaction rédigés : **NOT_RUN**. Le changement de thème conserve maintenant un état mémoire temporaire si `localStorage` est bloqué, afin de synchroniser l'apparence et `aria-pressed`. Le test de rayon du rail accepte les variations de zoom/rem.
 
 - [ ] Exécuter la suite Playwright sur **les quatre Preview** : axe WCAG 2.2 AA, clavier/focus et reflow 200 % (les scénarios sont déjà ajoutés à `tests/accessibility-*.spec.ts`). Corriger uniquement les échecs constatés.
-- [ ] **Contraste du focus** : les contours de focus de la navigation, des liens, des boutons de thème et d’impression utilisent les jetons du thème (ancien orange : ~2,6:1 sur blanc). Contrat source et scénario clavier clair/sombre étendus ; **recette navigateur NOT_RUN**.
+- [ ] **Contraste du focus** : le contour partagé `--ui-focus-ring` utilise maintenant `--ui-text-primary` au lieu du bleu pâle `#9ec5fe` (faible contraste sur fond clair), en modes clair et sombre. Les contrôles de thème/impression utilisent déjà cette couleur. Contrat source ajouté ; **recette navigateur NOT_RUN**.
 - [ ] **Contraste des segments actifs** : la vérification de tokens WCAG couvre maintenant le texte et le fond du segment sélectionné (en plus du segment inactif). Les scénarios de non-chevauchement et de forme vérifient aussi **320 px**, 375 px, 768 px et 1280 px. Playwright **NOT_RUN**.
 - [ ] Compléter par une revue lecteur d'écran et contraste clair/sombre, tailles tactiles et images de secours ; valider sur Chromium, Firefox, WebKit et mobile.
 
 ## P3 — Traductions et pages
 
-- [ ] **Parité du chrome HTML/Next** : le bouton Print / Save as PDF utilise maintenant le rendu flottant imprimante (en bas à droite, circulaire sur mobile) de `public/print.css`. Les actions Back to Home et Back to Top de `people-contacted.html` utilisent les formes et couleurs primaire/secondaire du footer Next. Tests source et Playwright écrits ; exécution navigateur **NOT_RUN**. Étendre après validation aux autres pages HTML historiques.
+- [ ] **Parité du chrome HTML/Next** : 16 footers HTML harmonisés avec les actions Next (primaire/secondaire/outline), styles indépendants du chargement de Bootstrap grâce à `box-sizing: border-box`. **8/8 contrats Node PASS** et **28/28 vérifications Chrome locales PASS** sur sept pages HTML en clair/sombre à 320/1280 px. Les tests Playwright réutilisables couvrent aussi 375 px mais leur exécution complète contre les routes Next reste **NOT_RUN**. Le troisième lien « Central Authorities » conserve le style contour. La page de test charge les styles communs, les boutons FR sont traduits ; pas de remplacement de `/`.
 
+- [x] **Contrôles communs localisés** : les libellés, noms accessibles et infobulles du sélecteur Light/Dark/Auto et du bouton Print/PDF utilisent maintenant les catalogues `site.displayControls` FR/EN/DE/NO. Aucun `lang="en"` imposé sur les pages non anglophones. **2/2 contrats Node PASS** dans un sandbox Node 24 et build Vercel exact-SHA READY ; tests navigateur Next et multilingues **NOT_RUN**.
 - [ ] Vérifier la navigation FR/EN/DE/NO, les ressources juridiques et les métadonnées des pages migrées. Les extraits familiaux anglais conservent `lang="en"` ; ne jamais les traduire automatiquement pour publication.
 - [ ] Planifier la migration des pages encore servies en HTML, après inventaire de leurs fonctionnalités et consentements. Conserver `people-contacted.html` (D3/ARF), `for-fathers.html` et `test.html` jusqu'à parité prouvée.
 
 ## P4 — SEO et confidentialité d'indexation
 
-- [ ] Vérifier sur une Preview autorisée les canoniques, hreflang et `x-default`, métadonnées sociales, `robots.txt`, `sitemap.xml`, RSS, 404 et redirections historiques.
+- [ ] Vérifier sur une Preview autorisée les canoniques, hreflang et `x-default`, métadonnées sociales, `robots.txt`, `sitemap.xml`, RSS, 404 et redirections historiques. 
 - [ ] Contrôler l'exclusion de toutes les variantes `home-preview` du sitemap, y compris lors d'un import XML legacy. Un garde-fou source prend maintenant en compte les alias percent-encodés ; **les contrôles HTTP `noindex/nofollow/nosnippet` et `private/no-store` sont ajoutés à Playwright, mais restent NOT_RUN**.
+
+- [x] **Nettoyer le sitemap hérité au niveau de la source** : sur 16 entrées XML actives, 14 désignaient des fichiers effectivement présents, une annonçait un document absent et une pointait vers un autre domaine. Le fichier public conserve uniquement les 14 URL publiables ; les commentaires qui révélaient des chemins de documents non publiés ont été retirés (historique Git conservé). L'import Next refuse aussi les fichiers absents, chemins hors `public/` et symlinks sortants. Tests P4 ajoutés (exécution complète **NOT_RUN**). Les URL Next sont ajoutées à part depuis leur registre.
+
+- [x] **Bloquer l'analytics des pages de revue React** : `public/site-analytics.js` cesse toute initialisation directe sur `/home-preview` et ses variantes FR/EN/DE/NO, même avec le mode `full` ou une URL doublement encodée. Les files Vercel Web Analytics (`va`) et Speed Insights (`si`) reçoivent en outre un filtre `beforeSend` qui refuse les événements de la Preview lors des transitions SPA. **7/7 tests Node PASS** : script réellement exécuté dans une VM et événements Vercel simulés, sans émission réseau. Les autres pages gardent leurs statistiques. Audit réseau en navigateur réel **NOT_RUN**.
 
 ## P5 — Qualité et simplification
 

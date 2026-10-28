@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useSyncExternalStore } from "react";
 import styles from "./SiteDisplayControls.module.css";
 
@@ -11,9 +12,9 @@ const PREFERENCE_EVENT = "bababou-theme-preference";
 // It never transmits or persists a new identifier.
 let volatilePreference: ThemePreference | null = null;
 const THEMES = [
-  { value: "light", label: "Light", icon: "☀️" },
-  { value: "dark", label: "Dark", icon: "🌙" },
-  { value: "auto", label: "Auto (system)", icon: "🌓" },
+  { value: "light", icon: "☀️" },
+  { value: "dark", icon: "🌙" },
+  { value: "auto", icon: "🌓" },
 ] as const;
 
 function readPreference(): ThemePreference {
@@ -64,6 +65,7 @@ function applyTheme(preference: ThemePreference) {
  * The shared ThemeBootstrap applies the persisted preference before paint.
  */
 export default function SiteDisplayControls() {
+  const t = useTranslations("site.displayControls");
   const preference = useSyncExternalStore(
     subscribePreference,
     readPreference,
@@ -97,29 +99,33 @@ export default function SiteDisplayControls() {
   }
 
   return (
-    <section className={styles.controls} lang="en" aria-label="Page controls">
-      <div className={styles.theme} role="group" aria-label="Display theme">
-        {THEMES.map(({ value, label, icon }) => (
-          <button
-            key={value}
-            type="button"
-            aria-label={label}
-            title={label}
-            aria-pressed={preference === value}
-            onClick={() => selectTheme(value)}
-            className={styles.button}
-          >
-            <span aria-hidden="true">{icon}</span>
-            <span>{label}</span>
-          </button>
-        ))}
+    <section className={styles.controls} aria-label={t("section")}>
+      {/* biome-ignore lint/a11y/useSemanticElements: The segmented theme buttons are not form inputs; fieldset defaults break the fixed pill toolbar. */}
+      <div className={styles.theme} role="group" aria-label={t("theme")}>
+        {THEMES.map(({ value, icon }) => {
+          const label = t(value);
+          return (
+            <button
+              key={value}
+              type="button"
+              aria-label={label}
+              title={label}
+              aria-pressed={preference === value}
+              onClick={() => selectTheme(value)}
+              className={styles.button}
+            >
+              <span aria-hidden="true">{icon}</span>
+              <span>{label}</span>
+            </button>
+          );
+        })}
       </div>
       <button
         type="button"
         className={styles.print}
         data-site-print-control
-        aria-label="Print / Save as PDF"
-        title="Print / Save as PDF"
+        aria-label={t("print")}
+        title={t("print")}
         onClick={() => window.print()}
       >
         <svg
@@ -133,7 +139,7 @@ export default function SiteDisplayControls() {
         >
           <path d="M19 8h-1V3H6v5H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zM8 5h8v3H8V5zm8 14H8v-4h8v4zm3-6v-2H5v2H3v-4c0-.55.45-1 1-1h16c.55 0 1 .45 1 1v4h-2z" />
         </svg>
-        <span className={styles.printLabel}>Print / Save as PDF</span>
+        <span className={styles.printLabel}>{t("print")}</span>
       </button>
     </section>
   );

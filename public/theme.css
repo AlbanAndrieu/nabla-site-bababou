@@ -1310,6 +1310,8 @@ html[data-theme="light"] .social-link:hover {
 }
 
 .footer .legacy-footer-action {
+  /* Keep mobile width/height inside the footer even when Bootstrap fails to load. */
+  box-sizing: border-box;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1345,6 +1347,18 @@ html[data-theme="light"] .social-link:hover {
 .footer .legacy-footer-action--secondary:hover {
   background: #5c636a;
   color: #fff;
+}
+
+.footer .legacy-footer-action--outline {
+  border-color: var(--button-bg, #0d6efd);
+  background: transparent;
+  color: var(--link-color, #0b5ed7);
+}
+
+.footer .legacy-footer-action--outline:hover {
+  border-color: var(--button-hover, #0b5ed7);
+  background: var(--button-bg, #0d6efd);
+  color: var(--button-text, #fff);
 }
 
 .footer .legacy-footer-action:hover {

@@ -15,6 +15,14 @@
       "no": "Norwegisch"
     },
     "switchLanguage": "Sprache wechseln",
+    "displayControls": {
+        "section": "Seitensteuerung",
+        "theme": "Darstellung",
+        "light": "Hell",
+        "dark": "Dunkel",
+        "auto": "Automatisch (System)",
+        "print": "Drucken / Als PDF speichern"
+    },
     "rssFeedAria": "RSS-Feed dieser Website",
     "eleonoreRssFeedAria": "Öffentlicher RSS-Feed für eine eigene Kontaktnachricht",
     "copyright": "© {year} Bababou.",

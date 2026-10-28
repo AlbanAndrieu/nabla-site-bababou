@@ -7,6 +7,37 @@ const localeCases = [
   { path: "/no/nre", lang: "no" },
 ] as const;
 
+const themeLabels = {
+  "fr": {
+    "theme": "Thème d’affichage",
+    "light": "Clair",
+    "dark": "Sombre",
+    "auto": "Auto (système)",
+    "print": "Imprimer / Enregistrer en PDF"
+  },
+  "en": {
+    "theme": "Display theme",
+    "light": "Light",
+    "dark": "Dark",
+    "auto": "Auto (system)",
+    "print": "Print / Save as PDF"
+  },
+  "de": {
+    "theme": "Darstellung",
+    "light": "Hell",
+    "dark": "Dunkel",
+    "auto": "Automatisch (System)",
+    "print": "Drucken / Als PDF speichern"
+  },
+  "no": {
+    "theme": "Visningstema",
+    "light": "Lyst",
+    "dark": "Mørkt",
+    "auto": "Automatisk (system)",
+    "print": "Skriv ut / Lagre som PDF"
+  }
+} as const;
+
 test.describe("NRE React migration", () => {
   for (const localeCase of localeCases) {
     test(`renders native ${localeCase.lang} content`, async ({ page }) => {
@@ -32,15 +63,16 @@ test.describe("NRE React migration", () => {
   });
   test("theme selector remains at upper-right without covering NRE locale navigation", async ({ page }) => {
     for (const path of ["/en/nre", "/home-preview"]) {
+      const labels = path === "/home-preview" ? themeLabels.fr : themeLabels.en;
       for (const width of [320, 375, 768, 1280]) {
         await page.setViewportSize({ width, height: 800 });
         await page.goto(path);
-        const theme = page.getByRole("group", { name: "Display theme" });
+        const theme = page.getByRole("group", { name: labels.theme });
         const locale = page.locator("#route-header-locale");
         await expect(theme).toBeVisible();
         await expect(locale).toBeVisible();
         const positions = await page.evaluate(() => {
-          const group = document.querySelector('[role="group"][aria-label="Display theme"]');
+          const group = document.querySelector('[role="group"][aria-label]');
           const switcher = document.getElementById("route-header-locale");
           if (!group || !switcher) throw new Error("Theme or locale control missing");
           const themeRect = group.getBoundingClientRect();
@@ -65,7 +97,7 @@ test.describe("NRE React migration", () => {
         expect(positions.overlapsLocale).toBe(false);
         await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
         await expect(theme).toBeInViewport();
-        const dark = theme.getByRole("button", { name: "Dark", exact: true });
+        const dark = theme.getByRole("button", { name: labels.dark, exact: true });
         await dark.click();
         await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
         await expect(dark).toHaveAttribute("aria-pressed", "true");
@@ -74,14 +106,15 @@ test.describe("NRE React migration", () => {
   });
 
   test("rounded theme segments visually match the historic homepage", async ({ page }) => {
-    for (const { path } of localeCases) {
+    for (const { path, lang } of localeCases) {
+      const labels = themeLabels[lang];
       for (const width of [320, 375, 1280]) {
         await page.setViewportSize({ width, height: 800 });
         await page.goto(path);
-        const theme = page.getByRole("group", { name: "Display theme" });
-        const light = theme.getByRole("button", { name: "Light", exact: true });
-        const dark = theme.getByRole("button", { name: "Dark", exact: true });
-        const automatic = theme.getByRole("button", { name: "Auto (system)", exact: true });
+        const theme = page.getByRole("group", { name: labels.theme });
+        const light = theme.getByRole("button", { name: labels.light, exact: true });
+        const dark = theme.getByRole("button", { name: labels.dark, exact: true });
+        const automatic = theme.getByRole("button", { name: labels.auto, exact: true });
 
         const trackGeometry = await theme.evaluate((element) => ({
           height: element.getBoundingClientRect().height,
@@ -89,8 +122,8 @@ test.describe("NRE React migration", () => {
         }));
         // Root font size and browser zoom change rem->px conversion.
         expect(trackGeometry.radius).toBeGreaterThanOrEqual(trackGeometry.height / 2);
-        for (const button of [light, dark, automatic]) {
-          await expect(button).toHaveAttribute("title", /^(Light|Dark|Auto \(system\))$/);
+        for (const [button, label] of [[light, labels.light], [dark, labels.dark], [automatic, labels.auto]] as const) {
+          await expect(button).toHaveAttribute("title", label);
           const geometry = await button.evaluate((element) => {
             const rect = element.getBoundingClientRect();
             return {
@@ -159,10 +192,11 @@ test.describe("NRE React migration", () => {
 
   test("theme labels stay accessible and controls printable on localized NRE routes", async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
-    for (const { path } of localeCases) {
+    for (const { path, lang } of localeCases) {
+      const labels = themeLabels[lang];
       await page.goto(path);
-      const group = page.getByRole("group", { name: "Display theme" });
-      for (const label of ["Light", "Dark", "Auto (system)"]) {
+      const group = page.getByRole("group", { name: labels.theme });
+      for (const label of [labels.light, labels.dark, labels.auto]) {
         await expect(group.getByRole("button", { name: label, exact: true })).toBeVisible();
       }
       await expect(group).toHaveCSS("position", "fixed");

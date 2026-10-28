@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import sitemap, { normalizeLegacyLocation } from "../app/sitemap.ts";
+import sitemap, { normalizeLegacyLocation, shippedLegacyPublicFile } from "../app/sitemap.ts";
 import { POLICY_PAGE_SLUGS } from "../lib/policyPages.ts";
 
 test("sitemap preserves active legacy URLs and adds native Next surfaces", async () => {
@@ -176,5 +176,59 @@ test("SEO pages have unique canonical URLs and complete same-origin hreflang", a
       assert.equal(parsed.search, "");
       assert.equal(parsed.hash, "");
     }
+  }
+});
+
+
+test("legacy sitemap does not publish files absent from the public artifact tree", async () => {
+  const { readFileSync, statSync } = await import("node:fs");
+  const { resolve, sep } = await import("node:path");
+  const root = resolve(process.cwd(), "public");
+  const source = readFileSync(resolve(root, "sitemap.xml"), "utf8");
+  const imported = [...source.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
+  const published = new Set((await sitemap()).map((entry) => entry.url));
+
+  for (const location of imported) {
+    let url: URL;
+    try {
+      url = new URL(location);
+    } catch {
+      continue;
+    }
+    if (url.origin !== "https://bababou.com") continue;
+    const pathname = decodeURIComponent(url.pathname);
+    if (pathname.split("/").includes("..")) continue;
+    const filename = resolve(root, (pathname === "/" ? "/index.html" : pathname).replace(/^\/+/, ""));
+    if (!filename.startsWith(root + sep)) continue;
+    let shipped = false;
+    try {
+      shipped = statSync(filename).isFile();
+    } catch {
+      // A source XML entry can reference a document not yet approved/published.
+    }
+    if (!shipped) {
+      assert.equal(published.has(location), false, "Unpublished legacy URL leaked into sitemap");
+    }
+  }
+  assert.equal(shippedLegacyPublicFile("https://bababou.com/index.html"), true);
+  assert.equal(shippedLegacyPublicFile("https://bababou.com/__not-yet-published-file__.html"), false);
+  assert.equal(shippedLegacyPublicFile("https://example.com/index.html"), false);
+  assert.equal(shippedLegacyPublicFile("https://bababou.com/%2e%2e/__private-file__.html"), false);
+});
+
+
+test("static legacy XML contains only already-shipped same-origin documents", async () => {
+  const { readFileSync } = await import("node:fs");
+  const { resolve } = await import("node:path");
+  const input = readFileSync(resolve(process.cwd(), "public/sitemap.xml"), "utf8");
+  for (const comment of input.match(/<!--[\\s\\S]*?-->/g) ?? []) {
+    assert.doesNotMatch(comment, /<loc>/, "Sitemap comments must not expose unpublished document paths");
+  }
+  const active = input.replace(/<!--[\s\S]*?-->/g, "");
+  const locations = [...active.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
+  assert.ok(locations.length > 0, "Legacy sitemap source must not be empty");
+  for (const location of locations) {
+    assert.equal(new URL(location).origin, "https://bababou.com");
+    assert.equal(shippedLegacyPublicFile(location), true, "Legacy XML must not advertise unpublished documents");
   }
 });
