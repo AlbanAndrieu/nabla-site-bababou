@@ -15,24 +15,29 @@ const previewPaths = [
   "/no/home-preview",
 ] as const;
 
-function captureRequests(page: Page): string[] {
-  const requests: string[] = [];
+type CapturedRequest = { url: string; method: string };
+
+function captureRequests(page: Page): CapturedRequest[] {
+  const requests: CapturedRequest[] = [];
   page.on("request", (request) => {
+    const method = request.method();
     try {
       const url = new URL(request.url());
-      // Record protocol, hostname and path only, never query or body.
-      requests.push(url.origin + url.pathname);
+      // Record only method, origin and path: never query or request payload.
+      requests.push({ method, url: url.origin + url.pathname });
     } catch {
-      requests.push("invalid-request-url");
+      requests.push({ method, url: "invalid-request-url" });
     }
   });
   return requests;
 }
 
-function unexpectedRequests(requests: string[], applicationUrl: string) {
-  return requests.filter((url) =>
-    isUnexpectedReviewRequest(url, applicationUrl),
-  );
+function unexpectedRequests(requests: CapturedRequest[], applicationUrl: string) {
+  return requests
+    .filter(({ url, method }) =>
+      isUnexpectedReviewRequest(url, applicationUrl, method),
+    )
+    .map(({ method, url }) => `${method} ${url}`);
 }
 
 test.describe("React homepage review — browser network privacy", () => {
