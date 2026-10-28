@@ -76,16 +76,19 @@ Le footer Next partagé fournit maintenant **l’unique** bouton « retour en ha
 
 - **Confidentialité :** `public/site-analytics.js` avait une erreur de borne : les routes `/en/%252568ome-preview` (encodage répété) n'étaient pas détectées par le dernier tour de décodage. Le test Node reproduit le défaut ancien ; le garde corrigé vérifie aussi le dernier chemin décodé. `unit-tests/analyticsLocalHost.test.mjs` couvre le chargement direct et le filtre `beforeSend` des événements Vercel.
 - **SEO :** `lib/homePreviewSeoPolicy.mjs` exclut maintenant les alias répétés `home-preview` du sitemap ; `unit-tests/homePreviewSeoPolicyEncoding.test.mjs` documente les quatre locales, les encodages et les autres routes. Ce contrôle n'est pas une preuve HTTP de l'indexation réelle.
+- **Audit réseau navigateur :** `lib/homePreviewNetworkAudit.mjs` refuse les domaines HTTP(S) extérieurs à l'origine de l'application, les endpoints `/_vercel/insights` / `/_vercel/speed-insights` / `/cdn-cgi/rum` et les requêtes non idempotentes (POST/beacons), y compris sur des endpoints locaux inconnus. `unit-tests/homePreviewNetworkAudit.test.mjs` vérifie les cas positifs/négatifs ; le scénario Playwright `tests/home-preview-analytics-network.spec.ts` examine 4 chargements directs et le changement de langue FR → EN via `RouteHeader`/Next `router.replace`. Aucune donnée de requête, query string ou secret n'est conservé dans les diagnostics.
+- **SEO HTTP :** `tests/home-preview.spec.ts` vérifie maintenant toutes les balises `<loc>` du sitemap rendu à l'aide de `isHomePreviewPath`, et plus seulement une regex sur les chemins lisibles ; le test reste **NOT_RUN** sur Next.
 - **Accessibilité :** `tests/accessibility-responsive.spec.ts` remplace le CDP Chromium `Emulation.setEmulatedOSTextScale` (sans effet sur la taille calculée du texte en Chromium desktop vérifié) par une mise à l'échelle explicite à 200 % de la police racine. Le test devient exécutable aussi sur Firefox et WebKit. Cette méthode simule **le redimensionnement du texte**, pas le zoom natif du navigateur, qui reste à contrôler manuellement.
 - **Local-first :** `just homepage-validation` sélectionne Playwright pour la Preview React, la confidentialité réseau et l'accessibilité sur Chromium/Firefox/WebKit ; `just homepage-validation-list` affiche les scénarios sans lancer Next. Les deux cibles utilisent `npm exec --no` pour éviter toute installation implicite.
 
 | Preuve | État constaté |
 | --- | --- |
-| Tests ciblés Node, quatre fichiers GitHub exacts copiés dans un sandbox isolé sans accès réseau | **10/10 PASS** sur Node **24.22.1** |
-| Vérification syntaxique Node sur ces quatre fichiers | **4/4 PASS** |
+| Tests ciblés Node, six fichiers GitHub exacts copiés dans un sandbox isolé sans accès réseau | **14/14 PASS** sur Node **24.22.1** |
+| Vérification syntaxique Node sur ces six fichiers | **6/6 PASS** |
+| Parsing TypeScript isolé des scénarios Playwright Preview / audit réseau (sans exécution navigateur) | **2/2 PASS** |
 | Test de méthode Chromium 144 sur une page de contrôle isolée | CDP : 16 → 16 px (sans effet) ; redimensionnement explicite : 16 → 32 px (PASS) |
 | HTTP production `/home-preview`, `/en/home-preview`, `/robots.txt` | **BLOCKED 429** (Vercel Security Checkpoint) |
-| Navigateur Next.js réel au SHA #252, requêtes réseau, transitions SPA | **NOT_RUN** (checkout complet indisponible) |
+| Navigateur Next.js réel au SHA #252, requêtes réseau, transitions Next FR → EN et SPA depuis une page normale | **NOT_RUN** (checkout complet indisponible) |
 | Playwright/axe, Firefox/WebKit, zoom natif et lecteur d'écran | **NOT_RUN** |
 | `just p0`, `just quality`, BetterLeaks, SAST/SCA, ZAP | **NOT_RUN** |
 | Publication de données familiales concernant une mineure | **APPROBATION EN ATTENTE** |
