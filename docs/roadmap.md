@@ -68,42 +68,42 @@ Le footer Next partagé fournit maintenant **l’unique** bouton « retour en ha
 
 **Gouvernance :** PR en Draft, pas de merge ou de promotion automatique ; ne pas qualifier de PASS un contrôle `NOT_RUN`. Les procédures sont dans [operations.md](operations.md), l'inventaire de parité dans [homepage-migration-parity.md](homepage-migration-parity.md) et les règles de confidentialité dans [publication-redaction.md](publication-redaction.md).
 
-## Reprise après la fusion de #251 — 28 octobre 2026
+## Reprise des validations après fusion #251 — 28 octobre 2026
 
-La PR #251 a été fusionnée le 28 octobre 2026 à **07:57 UTC**. Le dernier commit de sa branche est `8538b4a790bc58544b906e21207337e7770f3fc4` (filtre `beforeSend` pour Vercel Analytics/Speed Insights) ; le merge sur `master` est `16982977d7d786d1612b1ec6c689d9faa34ce40f`. Le SHA `0826d5eb` de la synthèse précédente n'est plus le dernier état. **Ne pas réouvrir #251 ni annoncer sa version Draft.**
+**Référence :** la [PR #251](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/251) est **fusionnée** (merge `16982977d7d786d1612b1ec6c689d9faa34ce40f`). La [PR #252](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/252) est **Draft** sur `test/home-preview-browser-privacy-20261028`. Le déploiement Vercel de production du merge #251 (`dpl_BBeytuULchKitzZodQoKWq7eSmay`) est READY, mais il n'atteste pas les réponses HTTP ni WCAG.
 
-La [PR #252](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/252) est un suivi **Draft** limité aux preuves manquantes. Elle introduit `tests/home-preview-analytics-network.spec.ts` : quatre tests navigateur observent les requêtes vers Vercel Insights/Speed Insights et les domaines analytics sur les quatre Preview, y compris avec `?nablaEnableThirdParty=1`. Ils confirment aussi que le document Next et le script partagé se chargent, afin de ne pas considérer une page vide comme une preuve d'absence de tracking.
+### Correctifs et preuves nouvelles de la PR #252
 
-**Preuves :** analyse syntaxique TypeScript du nouveau scénario **PASS** ; exécution Playwright, inspection des requêtes réelles, transition SPA complète, axe, Firefox/WebKit, revue humaine et BetterLeaks/SAST/SCA/ZAP **NOT_RUN**. L'impossibilité de cloner le dépôt et l'absence d'un navigateur Playwright opérationnel dans cet environnement empêchent de présenter les contrôles comme exécutés. La Preview Vercel a précédemment répondu HTTP 429 ; ne jamais contourner WAF/Deployment Protection.
+- **Confidentialité :** `public/site-analytics.js` avait une erreur de borne : les routes `/en/%252568ome-preview` (encodage répété) n'étaient pas détectées par le dernier tour de décodage. Le test Node reproduit le défaut ancien ; le garde corrigé vérifie aussi le dernier chemin décodé. `unit-tests/analyticsLocalHost.test.mjs` couvre le chargement direct et le filtre `beforeSend` des événements Vercel.
+- **SEO :** `lib/homePreviewSeoPolicy.mjs` exclut maintenant les alias répétés `home-preview` du sitemap ; `unit-tests/homePreviewSeoPolicyEncoding.test.mjs` documente les quatre locales, les encodages et les autres routes. Ce contrôle n'est pas une preuve HTTP de l'indexation réelle.
+- **Accessibilité :** `tests/accessibility-responsive.spec.ts` remplace le CDP Chromium `Emulation.setEmulatedOSTextScale` (sans effet sur la taille calculée du texte en Chromium desktop vérifié) par une mise à l'échelle explicite à 200 % de la police racine. Le test devient exécutable aussi sur Firefox et WebKit. Cette méthode simule **le redimensionnement du texte**, pas le zoom natif du navigateur, qui reste à contrôler manuellement.
+- **Local-first :** `just homepage-validation` sélectionne Playwright pour la Preview React, la confidentialité réseau et l'accessibilité sur Chromium/Firefox/WebKit ; `just homepage-validation-list` affiche les scénarios sans lancer Next. Les deux cibles utilisent `npm exec --no` pour éviter toute installation implicite.
 
-Reprise locale, sans Actions GitHub :
+| Preuve | État constaté |
+| --- | --- |
+| Tests ciblés Node, quatre fichiers GitHub exacts copiés dans un sandbox isolé sans accès réseau | **10/10 PASS** sur Node **24.22.1** |
+| Vérification syntaxique Node sur ces quatre fichiers | **4/4 PASS** |
+| Test de méthode Chromium 144 sur une page de contrôle isolée | CDP : 16 → 16 px (sans effet) ; redimensionnement explicite : 16 → 32 px (PASS) |
+| HTTP production `/home-preview`, `/en/home-preview`, `/robots.txt` | **BLOCKED 429** (Vercel Security Checkpoint) |
+| Navigateur Next.js réel au SHA #252, requêtes réseau, transitions SPA | **NOT_RUN** (checkout complet indisponible) |
+| Playwright/axe, Firefox/WebKit, zoom natif et lecteur d'écran | **NOT_RUN** |
+| `just p0`, `just quality`, BetterLeaks, SAST/SCA, ZAP | **NOT_RUN** |
+| Publication de données familiales concernant une mineure | **APPROBATION EN ATTENTE** |
+
+Ces tests ciblés utilisent des fichiers récupérés par l'accès GitHub connecté ; ils ne remplacent pas une exécution sur un checkout complet. Les pages Vercel interrogées ont renvoyé un checkpoint HTTP 429, qui doit être distingué d'une erreur applicative. Ne pas affaiblir le WAF.
+
+### Commandes locales de validation, sans GitHub Actions
 
 ```bash
 just agent-local-tests
-npx playwright test tests/home-preview-analytics-network.spec.ts --project=chromium
-npx playwright test tests/home-preview-analytics-network.spec.ts --project=firefox --project=webkit
-npx playwright test tests/home-preview.spec.ts tests/accessibility-axe.spec.ts tests/next-seo.spec.ts
+just homepage-validation-list
+just homepage-validation
 just p0
 just quality
 ```
 
-En cas d'échec, corriger le code ou le scénario démontré, conserver **NOT_RUN** pour les autres gates. Ne pas remplacer `/`, publier de nouvelles données familiales ni fusionner sans approbation explicite.
-
-## Reprise des validations — 28 octobre 2026 (après fusion #251)
-
-- **Base de référence :** PR #251 fusionnée, commit de fusion `16982977d7d786d1612b1ec6c689d9faa34ce40f`. Production Vercel `dpl_BBeytuULchKitzZodQoKWq7eSmay` READY. La PR #252 reste Draft : aucun remplacement de `/`.
-- **Vérification HTTP réelle : BLOQUÉE.** Trois sondes Vercel authentifiées sur la production (`/home-preview`, `/en/home-preview`, `/robots.txt`) ont reçu **429 Vercel Security Checkpoint**, sans réponse applicative exploitable. Il ne s'agit ni d'un PASS SEO ni d'un échec confirmé du serveur Next. Le WAF et les protections ne sont pas modifiés.
-- **Exécution navigateur Next : NOT_RUN.** Le dépôt est privé et son clonage sans identifiants dans un sandbox Vercel a échoué ; un navigateur Chromium est disponible dans l'environnement isolé, mais aucun checkout complet avec ses dépendances n'est accessible. Les scénarios de confidentialité réseau de `tests/home-preview-analytics-network.spec.ts`, axe et Firefox/WebKit restent à exécuter sur le SHA final.
-- **Anomalie SEO corrigée dans #252 :** `lib/homePreviewSeoPolicy.mjs` ne détectait pas les alias doublement encodés, contrairement au garde analytics qui gère jusqu'à trois niveaux. Harmonisation du filtre et ajout de `unit-tests/homePreviewSeoPolicyEncoding.test.mjs` aux commandes locales `test:unit` et `test:agent-local`. **3/3 tests Node PASS** sur la copie isolée exacte des deux nouveaux fichiers, avec `node --check` sur les deux ; **suite intégrale NOT_RUN**. Aucun nouveau contenu n'est publié.
+Installer au préalable les dépendances et les navigateurs via les procédures déjà approuvées du projet. Ne pas utiliser `npx` avec installation automatique pour masquer un outil absent.
 
 ### Décision de bascule `/` — NO-GO
 
-| Barrière | Preuve nécessaire | État |
-| --- | --- | --- |
-| Parité fonctionnelle React | Rendu et interactions des quatre Preview, comparaison à `/`, liens, galerie, impression, thème | NOT_RUN en navigateur Next |
-| Accessibilité | axe WCAG 2.2 AA, clavier, zoom 200 %, Chromium/Firefox/WebKit et revue lecteur d'écran | NOT_RUN |
-| SEO / indexation | HTTP 200/307/404 réels, canonical, hreflang, X-Robots-Tag, no-store, RSS et sitemap | BLOCKED 429 |
-| Qualité et sécurité | `just p0`, `just quality`, BetterLeaks, SAST/SCA, ZAP au SHA final | NOT_RUN |
-| Publication / vie privée | Revue éditoriale explicite des textes et images relatifs à une mineure | EN ATTENTE |
-
-**Décision :** ne pas basculer `/`, ne pas supprimer `public/index.html`, ne pas contourner le WAF, ne pas fusionner automatiquement. Les tests automatisés présents ne constituent pas une attestation de conformité ou de confidentialité effective tant qu'ils ne sont pas exécutés contre un environnement rendu et autorisé.
+La parité visuelle et fonctionnelle des quatre Preview, l'accessibilité WCAG, la sécurité de publication et l'absence de fuites réseau ne sont pas encore attestées. La revue humaine des informations familiales est obligatoire. **Conserver `public/index.html`, ne pas changer `/`, ne pas fusionner automatiquement #252 et ne pas republier de données sensibles sans approbation explicite.**
