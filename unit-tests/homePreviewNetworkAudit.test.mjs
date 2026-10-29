@@ -52,3 +52,24 @@ test("block first-party POST/beacon traffic while allowing safe asset GETs", () 
     false,
   );
 });
+
+
+test("fail closed for WebSocket connections and unknown external schemes", () => {
+  for (const url of [
+    "wss://bababou.com/live",
+    "ws://bababou.com/socket",
+    "wss://analytics.example/collect",
+    "ftp://remote.example/resource",
+  ]) {
+    assert.equal(isUnexpectedReviewRequest(url, site), true, url);
+  }
+});
+
+test("keep inline data and blob assets from producing false network failures", () => {
+  for (const url of [
+    "data:image/svg+xml;base64,PHN2Zy8+",
+    "blob:https://bababou.com/01234567-89ab-cdef-0123-456789abcdef",
+  ]) {
+    assert.equal(isUnexpectedReviewRequest(url, site), false, url);
+  }
+});
