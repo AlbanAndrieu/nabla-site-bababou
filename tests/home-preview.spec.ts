@@ -243,6 +243,31 @@ test("safe ten-card gallery and country timeline match the legacy structure", as
 });
 
 
+test("all ten gallery illustrations load without a missing-media placeholder", async ({ page }) => {
+  const response = await page.goto("/home-preview", { waitUntil: "domcontentloaded" });
+  expect(response?.status()).toBe(200);
+  const gallery = page.locator("#preview-story-gallery");
+  const images = gallery.locator("img");
+  await expect(images).toHaveCount(10);
+  await expect(gallery.locator('[data-gallery-media-fallback="placeholder"]')).toHaveCount(0);
+  for (const image of await images.all()) {
+    await image.scrollIntoViewIfNeeded();
+    await expect.poll(() => image.evaluate((node) =>
+      node instanceof HTMLImageElement && node.complete && node.naturalWidth > 0
+    )).toBe(true);
+  }
+  await expect(gallery.locator('[data-gallery-media-fallback="error"]')).toHaveCount(0);
+});
+
+test("public People resources retain their existing links and explanations", async ({ page }) => {
+  await page.goto("/home-preview");
+  const resources = page.locator("#preview-people");
+  for (const href of ["/people-contacted.html", "/central-authorities.html"]) {
+    await expect(resources.locator(`a[href="${href}"]`)).toHaveCount(1);
+  }
+  await expect(resources.locator("li")).toHaveCount(2);
+});
+
 test("localized section navigation reaches the React landmarks", async ({ page }) => {
   for (const { path } of locales) {
     await page.goto(path);
