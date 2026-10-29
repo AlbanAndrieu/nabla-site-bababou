@@ -25,10 +25,10 @@ test("the safe React gallery retains the original ten-card layout", () => {
   assert.match(about, /rel="noopener noreferrer"/);
 });
 
-test("all gallery images are existing public assets, excluding identity and location proof", () => {
+test("all ten gallery cards use existing local artwork, excluding identity and location proof", () => {
   const gallery = read("components/home/LegacyStoryGallerySection.tsx");
   const images = HOME_GALLERY_CARDS.map(({ image }) => image).filter(Boolean);
-  assert.equal(images.length, 6);
+  assert.equal(images.length, 10);
   for (const image of images) {
     assert.ok(existsSync(new URL("../public" + image, import.meta.url)), image);
     assert.doesNotMatch(image, /passport|location|identity|child-abuse/i);
