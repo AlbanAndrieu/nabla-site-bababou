@@ -82,6 +82,7 @@ test("public review pages never initialize tracking, even with full mode and loc
     "/home-preview/",
     "/en/%68ome-preview",
     "/en/%2568ome-preview",
+    "/en/%252568ome-preview",
   ]) {
     let accessed = false;
     const forbidden = new Proxy(
@@ -201,6 +202,7 @@ test("Vercel Analytics and Speed Insights suppress SPA review events before send
       "/de/home-preview",
       "/no/home-preview",
       "/en/%2568ome-preview",
+    "/en/%252568ome-preview",
     ]) {
       assert.equal(
         filter({ url: `https://bababou.com${pathname}` }),

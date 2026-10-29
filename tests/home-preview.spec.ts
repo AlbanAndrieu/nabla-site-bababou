@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { isHomePreviewPath } from "../lib/homePreviewSeoPolicy.mjs";
 
 const locales = [
   { code: "fr", path: "/home-preview" },
@@ -24,7 +25,12 @@ test("sitemap does not publish any React review URLs", async ({ request }) => {
   const response = await request.get("/sitemap.xml");
   expect(response.status()).toBe(200);
   const xml = await response.text();
-  expect(xml).not.toMatch(/<loc>[^<]*\/(?:fr\/|en\/|de\/|no\/)?home-preview\/?<\/loc>/i);
+  const locations = [...xml.matchAll(/<loc>([^<]+)<\/loc>/gi)]
+    .map((match) => match[1].trim());
+  expect(locations.length, "sitemap should contain published pages").toBeGreaterThan(0);
+  for (const location of locations) {
+    expect(isHomePreviewPath(new URL(location).pathname), location).toBe(false);
+  }
 });
 
 test("explicit French /fr/home-preview redirects to the canonical /home-preview", async ({ request }) => {

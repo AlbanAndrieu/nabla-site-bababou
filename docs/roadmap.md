@@ -1,6 +1,6 @@
 # Roadmap active — Site Bababou
 
-**Mise à jour : 27 octobre 2026 · [PR #250](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/250) fusionnée · [PR #251](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/251) Draft.**
+**Mise à jour : 28 octobre 2026 · [PR #250](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/250) et [PR #251](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/251) fusionnées · [PR #252](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/252) Draft, contrôles navigateur.**
 
 **État de clôture :** P2/P3 — 8/8 contrats Node et 28/28 vérifications Chrome HTML locales PASS ; P4 — 9/9 tests Node de sitemap PASS ; P1 — 7/7 tests Node des scripts PASS, 9 dépendances documentées (4 conservées sur HTML historique, 5 non requises en Preview), aucune dépendance script sans décision ; la parité éditoriale et la revue de publication restent ouvertes ; build Vercel exact SHA READY avec 81/81 pages. Restent la recette des routes Next/Preview à travers le checkpoint Vercel HTTP 429, les scans sécurité, la revue humaine de confidentialité et la décision de bascule `/`. L'avertissement npm `cache-dir` est non bloquant.
 
@@ -67,3 +67,46 @@ Le footer Next partagé fournit maintenant **l’unique** bouton « retour en ha
 **Accès Vercel :** un statut `READY` confirme la compilation, pas les réponses HTTP ni WCAG. Le checkpoint Vercel 429 a historiquement bloqué les sondes : utiliser un accès de test autorisé, sans désactiver WAF/Deployment Protection.
 
 **Gouvernance :** PR en Draft, pas de merge ou de promotion automatique ; ne pas qualifier de PASS un contrôle `NOT_RUN`. Les procédures sont dans [operations.md](operations.md), l'inventaire de parité dans [homepage-migration-parity.md](homepage-migration-parity.md) et les règles de confidentialité dans [publication-redaction.md](publication-redaction.md).
+
+## Reprise des validations après fusion #251 — 28 octobre 2026
+
+**Référence :** la [PR #251](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/251) est **fusionnée** (merge `16982977d7d786d1612b1ec6c689d9faa34ce40f`). La [PR #252](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/252) est **Draft** sur `test/home-preview-browser-privacy-20261028`. Le déploiement Vercel de production du merge #251 (`dpl_BBeytuULchKitzZodQoKWq7eSmay`) est READY, mais il n'atteste pas les réponses HTTP ni WCAG.
+
+### Correctifs et preuves nouvelles de la PR #252
+
+- **Confidentialité :** `public/site-analytics.js` avait une erreur de borne : les routes `/en/%252568ome-preview` (encodage répété) n'étaient pas détectées par le dernier tour de décodage. Le test Node reproduit le défaut ancien ; le garde corrigé vérifie aussi le dernier chemin décodé. `unit-tests/analyticsLocalHost.test.mjs` couvre le chargement direct et le filtre `beforeSend` des événements Vercel.
+- **SEO :** `lib/homePreviewSeoPolicy.mjs` exclut maintenant les alias répétés `home-preview` du sitemap ; `unit-tests/homePreviewSeoPolicyEncoding.test.mjs` documente les quatre locales, les encodages et les autres routes. Ce contrôle n'est pas une preuve HTTP de l'indexation réelle.
+- **Audit réseau navigateur :** `lib/homePreviewNetworkAudit.mjs` refuse les domaines HTTP(S) extérieurs à l'origine de l'application, les endpoints `/_vercel/insights` / `/_vercel/speed-insights` / `/cdn-cgi/rum` et les requêtes non idempotentes (POST/beacons), y compris sur des endpoints locaux inconnus. `unit-tests/homePreviewNetworkAudit.test.mjs` vérifie les cas positifs/négatifs ; le scénario Playwright `tests/home-preview-analytics-network.spec.ts` examine 4 chargements directs et le changement de langue FR → EN via `RouteHeader`/Next `router.replace`. Aucune donnée de requête, query string ou secret n'est conservé dans les diagnostics.
+- **SEO HTTP :** `tests/home-preview.spec.ts` vérifie maintenant toutes les balises `<loc>` du sitemap rendu à l'aide de `isHomePreviewPath`, et plus seulement une regex sur les chemins lisibles ; le test reste **NOT_RUN** sur Next.
+- **Accessibilité :** `tests/accessibility-responsive.spec.ts` remplace le CDP Chromium `Emulation.setEmulatedOSTextScale` (sans effet sur la taille calculée du texte en Chromium desktop vérifié) par une mise à l'échelle explicite à 200 % de la police racine. Le test devient exécutable aussi sur Firefox et WebKit. Cette méthode simule **le redimensionnement du texte**, pas le zoom natif du navigateur, qui reste à contrôler manuellement.
+- **Local-first :** `just homepage-validation` sélectionne Playwright pour la Preview React, la confidentialité réseau, le SEO canonical/hreflang/redirections et l'accessibilité sur Chromium/Firefox/WebKit ; `just homepage-validation-list` affiche les scénarios sans lancer Next. Les deux cibles utilisent `npm exec --no` pour éviter toute installation implicite.
+
+| Preuve | État constaté |
+| --- | --- |
+| Tests ciblés Node, six fichiers GitHub exacts copiés dans un sandbox isolé sans accès réseau | **14/14 PASS** sur Node **24.22.1** |
+| Vérification syntaxique Node sur ces six fichiers | **6/6 PASS** |
+| Parsing TypeScript isolé des scénarios Playwright Preview / audit réseau (sans exécution navigateur) | **2/2 PASS** |
+| Test de méthode Chromium 144 sur une page de contrôle isolée | CDP : 16 → 16 px (sans effet) ; redimensionnement explicite : 16 → 32 px (PASS) |
+| HTTP production `/home-preview`, `/en/home-preview`, `/robots.txt` | **BLOCKED 429** (Vercel Security Checkpoint) |
+| Navigateur Next.js réel au SHA #252, requêtes réseau, transitions Next FR → EN et SPA depuis une page normale | **NOT_RUN** (checkout complet indisponible) |
+| Playwright/axe, Firefox/WebKit, zoom natif et lecteur d'écran | **NOT_RUN** |
+| `just p0`, `just quality`, BetterLeaks, SAST/SCA, ZAP | **NOT_RUN** |
+| Publication de données familiales concernant une mineure | **APPROBATION EN ATTENTE** |
+
+Ces tests ciblés utilisent des fichiers récupérés par l'accès GitHub connecté ; ils ne remplacent pas une exécution sur un checkout complet. Les pages Vercel interrogées ont renvoyé un checkpoint HTTP 429, qui doit être distingué d'une erreur applicative. Ne pas affaiblir le WAF.
+
+### Commandes locales de validation, sans GitHub Actions
+
+```bash
+just agent-local-tests
+just homepage-validation-list
+just homepage-validation
+just p0
+just quality
+```
+
+Installer au préalable les dépendances et les navigateurs via les procédures déjà approuvées du projet. Ne pas utiliser `npx` avec installation automatique pour masquer un outil absent.
+
+### Décision de bascule `/` — NO-GO
+
+La parité visuelle et fonctionnelle des quatre Preview, l'accessibilité WCAG, la sécurité de publication et l'absence de fuites réseau ne sont pas encore attestées. La revue humaine des informations familiales est obligatoire. **Conserver `public/index.html`, ne pas changer `/`, ne pas fusionner automatiquement #252 et ne pas republier de données sensibles sans approbation explicite.**
