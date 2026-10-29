@@ -81,3 +81,19 @@ test("gallery images have an accessible, network-free rendering fallback", () =>
   assert.match(media, /aria-hidden="true"/);
   assert.doesNotMatch(media, /fetch\(|sendBeacon\(|setTimeout\(/);
 });
+
+test("new gallery illustrations are local, static and free of remote references", () => {
+  const expected = [
+    "/assets/home-card-contact.svg",
+    "/assets/home-card-documents.svg",
+    "/assets/home-card-people.svg",
+    "/assets/home-card-message.svg",
+  ];
+  for (const filename of expected) {
+    assert.ok(HOME_GALLERY_CARDS.some(({ image }) => image === filename), filename);
+    const svg = read("public" + filename);
+    assert.match(svg, /^<svg xmlns="http:\/\/www\\.w3\\.org\/2000\/svg"/);
+    assert.doesNotMatch(svg, /<script\b|<foreignObject\b|<image\b|\b(?:xlink:)?href=/i);
+    assert.doesNotMatch(svg, /(?:<text\b|<metadata\b)/i);
+  }
+});
