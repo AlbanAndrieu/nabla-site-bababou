@@ -221,7 +221,7 @@ test("safe ten-card gallery and country timeline match the legacy structure", as
   await expect(gallery).toContainText("Looking for Norwegian Translator");
   await expect(gallery).toContainText("Looking for German Translator");
   await expect(gallery.getByRole("img")).toHaveCount(0);
-  await expect(gallery.locator("img")).toHaveCount(6);
+  await expect(gallery.locator("img")).toHaveCount(10);
 
   const timeline = page.locator("#preview-journey");
   await expect(timeline.locator("li")).toHaveCount(3);
