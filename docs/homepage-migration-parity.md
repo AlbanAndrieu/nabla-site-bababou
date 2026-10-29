@@ -57,7 +57,7 @@ Le HTML historique présente un bandeau d'informations, une chronologie par pays
 - `LegacyFamilyFactsSection.tsx` : informations essentielles et contact, sans référence de passeport ni allégations sur des tiers.
 - `LegacySiteAboutSection.tsx` : ancien volet About, accès Calendly et Ko-fi sous forme de liens activés volontairement, sans widgets externes chargés à l'ouverture.
 - `LegacyJourneySection.tsx` : France → Norvège → Allemagne au niveau des pays, sans lieu précis, localisation actuelle présumée ni destination spéculative.
-- `LegacyStoryGallerySection.tsx` : **dix cartes**, images locales pertinentes, appels aux traducteurs, liens internes et grille de 3/2/1 colonnes ; pas d'intégration tierce.
+- `LegacyStoryGallerySection.tsx` : **dix cartes et dix illustrations locales** (six illustrations historiques retenues et quatre SVG neutres pour contact, documents, ressources et message), appels aux traducteurs, liens internes et grille de 3/2/1 colonnes ; pas d'intégration tierce.
 - `LegacyTranslatorHelpSection.tsx` est remplacé, pour éviter deux grilles de traducteurs superposées.
 
 Ce travail **termine la parité des grandes structures publiques** (texte de présentation, contact, lettre, chronologie, grille, associations, documents, navigation et footer), **mais pas l'identité textuelle du corpus sensible**. La galerie précédente contenait un identifiant officiel de mineure, des références de localisation et des imputations sur des tiers ; ces contenus ne sont pas recopiés dans une nouvelle route publique. `public/index.html` reste consultable tant qu'une revue de publication n'autorise pas sa substitution. Ne pas décrire cette substitution rédactionnelle comme une copie littérale complète.
@@ -70,6 +70,14 @@ Pour les tests : `unit-tests/homepageGalleryParity.test.mjs`, `unit-tests/homepa
 - Une navigation interne accessible dessert cinq sections de la homepage (récit, pays, cartes, contact, documents). Ses libellés utilisent `messages/homepage-preview/{fr,en,de,no}.json`, avec tests de complétude des locales et scénario navigateur.
 - Le volet About conserve Calendly et Ko-fi **sous forme de liens explicites** sans widget chargé automatiquement.
 - **Statut :** implémenté dans la PR en cours ; build Next et recette navigateur à vérifier au HEAD exact. Aucune suppression de `public/index.html`.
+
+## Delta de parité de contenu et d'images — 29 octobre 2026
+
+Le catalogue `lib/homeGalleryCatalog.mjs` référence désormais **10 images pour 10 cartes** : les six assets publics non sensibles réutilisés restent inchangés, et quatre illustrations SVG locales de remplacement portent exclusivement des pictogrammes neutres. Leurs chemins existent dans `public/assets/` (listing GitHub vérifié) et chaque SVG est statique : aucune référence réseau, balise script ou métadonnée personnelle. La carte d'échec image conserve son fallback.
+
+La section `LegacyPeopleSection` explicite la destination et la fonction des pages publiques déjà existantes (personnes contactées et autorités centrales) sans recopier les noms ou informations personnelles de leurs contenus. Quatre descriptions de cartes ont été étoffées avec des indications de navigation et de traitement documentaire déjà publiées.
+
+**Parité restante, non approuvée :** les cartes/images historiques contenant des identifiants officiels, coordonnées fines ou imputations envers des tiers ne sont **pas** réintroduites ; les textes confidentiels et documents originaux restent réservés à la revue de publication. Conserver les routes HTML d'origine et `public/index.html`. Les contrats de structure n'attestent pas la qualité du rendu Next ni la bonne charge des images en navigateur réel.
 
 ## Analytics et confidentialité de la revue
 
