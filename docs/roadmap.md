@@ -12,9 +12,9 @@ La route `/` sert **toujours `public/index.html`**. Les quatre versions Next.js 
 
 | Priorité | Acquis versionnés / observés | Travail encore ouvert | Condition de clôture |
 | --- | --- | --- | --- |
-| **P1 — Homepage React** | 13 sections, 10 cartes, 6 médias ; inventaire des 15 scripts (6 équivalents partiels, 4 conservés sur HTML, 5 non nécessaires à la Preview) | Recette de parité visuelle/fonctionnelle sur les quatre locales ; ancres, liens, thème, impression, fallback média, parcours legacy ; revue éditoriale | Navigateur réel sur SHA final et autorisation explicite avant remplacement de `/` |
+| **P1 — Homepage React** | 13 sections, 10 cartes **toutes illustrées** (6 ressources historiques sans identifiant + 4 SVG neutres locaux) ; inventaire des 15 scripts (6 équivalents partiels, 4 conservés sur HTML, 5 non nécessaires à la Preview) | Recette de parité visuelle/fonctionnelle sur les quatre locales ; ancres, liens, thème, impression, fallback média, parcours legacy ; revue éditoriale | Navigateur réel sur SHA final et autorisation explicite avant remplacement de `/` |
 | **P2 — WCAG 2.2 AA** | Contrôles thème/impression FR/EN/DE/NO, focus contrasté, boutons ≥44 px et scénarios Playwright ; test de redimensionnement du texte 200 % | Exécuter axe/Playwright sur Chromium/Firefox/WebKit, reflow, clavier, focus, contrastes, reduced-motion ; zoom natif 200 % et lecteur d'écran manuels | Aucune violation bloquante ; parcours clavier/lecteur d'écran validés |
-| **P3 — i18n/pages** | 16 footers HTML harmonisés ; 28 contrôles Chrome HTML locaux historiques PASS ; extraits anglais conservés avec `lang=en` | Vérifier traductions humaines, sélecteur de langue React, liens et anciennes routes HTML, rendu print/PDF | FR/EN/DE/NO et anciennes URLs vérifiés en navigateur |
+| **P3 — i18n/pages** | 16 footers HTML harmonisés ; 28 contrôles Chrome HTML locaux historiques PASS ; le bloc People donne maintenant des descriptions des deux pages publiques existantes sans recopier de données nominatives ; extraits anglais conservés avec `lang=en` | Vérifier traductions humaines, sélecteur de langue React, liens et anciennes routes HTML, rendu print/PDF | FR/EN/DE/NO et anciennes URLs vérifiés en navigateur |
 | **P4 — SEO/confidentialité** | Sitemap XML legacy nettoyé (14 URLs), filtrage des alias `home-preview` encodés, garde analytics direct/SPA, tests d'audit réseau | Vérifier HTTP 200/307/404, canonical, hreflang/`x-default`, OG/Twitter, RSS, robots et sitemap ; réseau réel, y compris WebSockets/Service Workers et navigation Next | Preuves de réponses HTTP et de non-émission réseau sur SHA final, avec accès Vercel autorisé |
 | **P5 — Qualité/maintenance** | `justfile` canonique ; `just homepage-validation[-list]`, contrats locaux ; documentation consolidée | Exécuter `just p0`, `just quality`, BetterLeaks, SAST/SCA, ZAP ; identifier provenance npm `cache-dir` ; limiter la dette de tests/legacy | Gates complètes PASS ou dérogations documentées et approuvées, sans contournement |
 
@@ -34,6 +34,13 @@ Le périmètre des contenus HTML nominatifs, de D3/ARF, de Google Translate et d
 | Warning npm `Unknown env config "cache-dir"` | **CONFIRMÉ** dans les logs de build #252 | Non présent dans `.npmrc` ni `vercel.json` examinés ; inspecter la configuration d’environnement Vercel sans afficher les secrets. Ne pas supprimer ce warning sans avoir identifié sa source |
 
 La PR #253 couvre désormais les requêtes **HTTP contextuelles** (Service Workers) et les **connexions WebSocket**. Elle ne déclare pas que ces risques ont été éliminés en production : le test navigateur est non exécuté.
+
+## Avancée de parité visuelle et de contenu — PR #253
+
+- **Galerie :** 10 cartes / 10 images locales. Les six images historiques sans identifiant conservées ont été complétées par quatre SVG originaux et neutres (contact, documents, personnes contactées, message). Les quatre anciennes illustrations exclues ne sont **pas** republiées : elles peuvent contenir des pièces d'identité, des informations sur une mineure, des localisations ou des allégations.
+- **Informations :** les quatre descriptions associées à ces cartes ont été enrichies uniquement à partir du contenu déjà publié et des fonctionnalités existantes. Le bloc `LegacyPeopleSection` décrit désormais les deux ressources publiques `/people-contacted.html` et `/central-authorities.html` (fichiers présents dans le dépôt), sans importer leurs données.
+- **Contrôles :** six tests Node ciblés de structure/visuel/SVG `PASS`, plus quatre SVG XML valides. Le test local `existsSync` des six images historiques est **NOT_RUN dans le sandbox** car leurs fichiers binaires n'y ont pas été copiés ; vérification indépendante des 10 noms et tailles de fichiers dans le listing GitHub **10/10 PASS**. La validation Playwright de l'affichage des images et du réseau demeure `NOT_RUN`.
+- **Publication :** aucun document familial ou juridique nouveau n'est ajouté ; l'approbation éditoriale pour les informations omises reste ouverte. Ne pas qualifier de parité éditoriale complète cette restauration des illustrations.
 
 ## Prochaine étape de validation (local-first)
 
