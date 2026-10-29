@@ -92,7 +92,7 @@ test("new gallery illustrations are local, static and free of remote references"
   for (const filename of expected) {
     assert.ok(HOME_GALLERY_CARDS.some(({ image }) => image === filename), filename);
     const svg = read("public" + filename);
-    assert.match(svg, /^<svg xmlns="http:\/\/www\\.w3\\.org\/2000\/svg"/);
+    assert.ok(svg.startsWith('<svg xmlns="http://www.w3.org/2000/svg"'), filename);
     assert.doesNotMatch(svg, /<script\b|<foreignObject\b|<image\b|\b(?:xlink:)?href=/i);
     assert.doesNotMatch(svg, /(?:<text\b|<metadata\b)/i);
   }
