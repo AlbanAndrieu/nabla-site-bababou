@@ -37,6 +37,8 @@ test("P3: the restored journey and private notice have native FR EN DE NO copy",
   assert.match(home,/id="preview-journey"/);
   assert.doesNotMatch(home,/id="preview-identity"/);
   assert.match(parents,/id="identity-notice"/);
+  assert.match(parents,/childAudiencePath\(locale, !isHomeCutoverEnabled\(\)\)/);
+  assert.match(read("app/[locale]/abduction/page.tsx"),/childAudiencePath\(locale, !isHomeCutoverEnabled\(\)\)/);
   for(const locale of locales){
     const {child,fathers}=homeAudienceCopy(locale);
     assert.ok(child.journeyTitle.length>8,locale);
