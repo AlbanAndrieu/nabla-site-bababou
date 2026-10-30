@@ -1,3 +1,6 @@
+import type { AppLocale } from "@/i18n/routing";
+import { canonicalPagePath } from "@/lib/sitePageCatalog";
+
 import styles from "./LegacyLegalResourcesSection.module.css";
 
 /**
@@ -5,25 +8,26 @@ import styles from "./LegacyLegalResourcesSection.module.css";
  * Only descriptions and links are rendered here: never import the
  * underlying case records or personal information into the review.
  */
-const resources = [
+const resourcesFor = (locale: AppLocale) => [
   {
     href: "/for-fathers.html",
     title: "Information for fathers",
     detail: "European legal framework and existing public resources.",
   },
   {
-    href: "/en/nre",
+    href: canonicalPagePath("nre", locale),
     title: "NRE — France",
-    detail: "Open the existing English-language NRE page in Next.js.",
+    detail: "Read the published NRE page in your selected language.",
   },
   {
-    href: "/en/central-authorities",
+    href: canonicalPagePath("central-authorities", locale),
     title: "Central Authorities",
     detail: "Consult the published central-authority resource page.",
   },
 ] as const;
 
-export default function LegacyLegalResourcesSection() {
+export default function LegacyLegalResourcesSection({ locale }: { locale: AppLocale }) {
+  const resources = resourcesFor(locale);
   return (
     <section
       id="preview-legal-resources"
