@@ -58,6 +58,20 @@ test("fathers cards retain wiki reference, contact, translation and document not
   }
 });
 
+test("the full original Dear Daughter introduction is preserved in English and translated in FR DE NO", () => {
+  const english=homeAudienceCopy("en").child;
+  assert.match(english.openingTitle,/If you are reading this, your Papa is looking for you/);
+  assert.match(english.opening,/Every single day since June 6, 2015/);
+  assert.match(english.openingSecond,/YOU ARE NOT ALONE/);
+  for(const locale of locales) {
+    const child=homeAudienceCopy(locale).child;
+    for(const field of ["openingTitle","opening","openingSecond"]) {
+      assert.ok(child[field].length > 30, locale + ":" + field);
+    }
+  }
+  assert.match(read("components/home/ChildHomeSections.tsx"), /<p>\{c\.openingSecond\}<\/p>/);
+});
+
 test("minor's personal identifier and location are not republished into native copy", () => {
   const data = read("lib/homeAudienceCopy.mjs");
   const child = read("components/home/ChildHomeSections.tsx");
