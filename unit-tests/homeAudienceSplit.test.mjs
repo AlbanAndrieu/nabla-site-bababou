@@ -28,12 +28,12 @@ test("both pages have native, complete content in four languages", () => {
     }
     assert.equal(child.letter.length, 3);
     assert.equal(child.cards.length, 5);
-    assert.equal(fathers.cards.length, 6);
+    assert.equal(fathers.cards.length, 7);
   }
 });
 
 test("child-facing cards preserve exactly five reviewed media and safe anchors", () => {
-  const expected = ["#preview-opening", "#preview-hope", "#preview-identity", "#preview-letter", "#preview-people"];
+  const expected = ["#preview-opening", "#preview-hope", "#preview-journey", "#preview-letter", "#preview-people"];
   for (const locale of locales) {
     const cards = homeAudienceCards(locale, "child");
     assert.deepEqual(cards.map((c) => c.href), expected);
@@ -48,11 +48,11 @@ test("child-facing cards preserve exactly five reviewed media and safe anchors",
 test("fathers cards retain wiki reference, contact, translation and document notice", () => {
   for (const locale of locales) {
     const cards = homeAudienceCards(locale, "fathers");
-    assert.equal(cards.length, 6);
+    assert.equal(cards.length, 7);
     assert.deepEqual(cards.map((c) => c.href), [
       "https://en.wikipedia.org/wiki/Child_abduction",
       "mailto:aa@bababou.com", "/for-fathers.html",
-      "#translators", "#translators", "#documents-notice",
+      "#translators", "#translators", "#documents-notice", "#identity-notice",
     ]);
     assert.ok(cards.every((card) => card.title && card.link));
   }
