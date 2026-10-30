@@ -5,6 +5,7 @@ import type { MetadataRoute } from "next";
 
 import { routing } from "@/i18n/routing";
 import { isHomePreviewPath } from "@/lib/homePreviewSeoPolicy.mjs";
+import { isHomeCutoverEnabled } from "@/lib/homeCutoverPolicy.mjs";
 import { localizedPolicyIndexPath, localizedPolicyPath } from "@/lib/policyRoutePaths";
 import {
   isPolicyPageSlug,
@@ -200,6 +201,27 @@ function nextSitemapEntries(): MetadataRoute.Sitemap {
   });
 }
 
+/**
+ * Only advertise localized homepage alternates after the exact-SHA cutover.
+ * Until then the approved legacy home remains the sole canonical root.
+ */
+function releasedHomepageSitemapEntry(): SitemapEntry {
+  const url = new URL("/", SITE_URL).href;
+  const languages = Object.fromEntries([
+    ...routing.locales.map((locale) => [
+      locale,
+      new URL(canonicalPagePath("index", locale), SITE_URL).href,
+    ]),
+    ["x-default", url],
+  ]);
+  return {
+    url,
+    priority: 1,
+    changeFrequency: "monthly",
+    alternates: { languages },
+  };
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const legacyXml = await readFile(
     path.join(process.cwd(), "public", "sitemap.xml"),
@@ -211,6 +233,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     policyIndexSitemapEntry(),
     ...policySitemapEntries(legacyEntries),
     ...nextSitemapEntries(),
+    ...(isHomeCutoverEnabled() ? [releasedHomepageSitemapEntry()] : []),
   ];
   const unique = new Map(combined.map((entry) => [entry.url, entry]));
 
