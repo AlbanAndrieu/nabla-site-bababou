@@ -1,5 +1,6 @@
 import { type AppLocale, routing } from "@/i18n/routing";
 import { NEXT_CANONICAL_SLUGS } from "@/lib/mainContentRoute.mjs";
+import { isHomeCutoverEnabled } from "@/lib/homeCutoverPolicy.mjs";
 
 export type PageCategory =
   | "primaryVisibility"
@@ -123,7 +124,9 @@ function nextLocalePrefix(locale: AppLocale) {
  *   after their public URL redirects to a validated native route.
  */
 export function canonicalPagePath(slug: SitePageSlug, locale: AppLocale) {
-  if (slug === "index") return "/";
+  if (slug === "index") {
+    return isHomeCutoverEnabled() && locale !== routing.defaultLocale ? `/${locale}` : "/";
+  }
 
   if (isNextCanonicalSlug(slug)) {
     const prefix = nextLocalePrefix(locale);
