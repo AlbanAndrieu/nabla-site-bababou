@@ -14,6 +14,7 @@ import {
 } from "@/lib/policyPages";
 import {
   canonicalPagePath,
+  releasedHomepagePath,
   SEO_PAGE_SLUGS,
   seoSettings,
 } from "@/lib/sitePageCatalog";
@@ -210,7 +211,7 @@ function releasedHomepageSitemapEntry(): SitemapEntry {
   const languages = Object.fromEntries([
     ...routing.locales.map((locale) => [
       locale,
-      new URL(canonicalPagePath("index", locale), SITE_URL).href,
+      new URL(releasedHomepagePath(locale), SITE_URL).href,
     ]),
     ["x-default", url],
   ]);
