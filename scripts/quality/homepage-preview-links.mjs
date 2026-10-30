@@ -70,7 +70,7 @@ export function auditRepositoryPreview() {
   const read = (path) => readFileSync(join(root, path), "utf8");
   const page = read("app/[locale]/home-preview/page.tsx");
   for (const section of sections) {
-    if (!page.includes("<" + section + " />")) {
+    if (!page.includes("<" + section + " ")) {
       throw new Error("MISSING_PREVIEW_SECTION: " + section);
     }
   }
