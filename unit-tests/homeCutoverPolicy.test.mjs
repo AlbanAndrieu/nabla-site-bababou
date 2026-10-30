@@ -43,8 +43,8 @@ test("legacy root is preserved until the cutover gate is true", () => {
   assert.match(proxy, /NextResponse\.rewrite\(new URL\("\/index\.html"/);
   assert.match(proxy, /localeRootRedirects\.has\(request\.nextUrl\.pathname\) && !isHomeCutoverEnabled\(\)/);
   assert.match(home, /if \(!isHomeCutoverEnabled\(\)\) redirect\("\/"\)/);
-  assert.match(home, /return localizedSiteMetadata\(locale\)/);
-  assert.match(home, /\{t\("publicIntro"\)\}/);
+  assert.match(home, /localizedSiteMetadata\(locale\)/);
+  assert.match(home, /\{c\.intro\}/);
   assert.doesNotMatch(home, /\{t\("note"\)\}/);
   assert.doesNotMatch(home, /href="\/"[\s\S]*?\{t\("legacy"\)\}/);
   assert.match(preview, /robots: \{ index: false, follow: false \}/);
@@ -59,8 +59,8 @@ test("public homepage copy is complete for all locales without third-party widge
   }
   const root = read("app/[locale]/page.tsx");
   assert.doesNotMatch(root, /<iframe|<Script\b|fetch\(|sendBeacon\(/);
-  assert.match(root, /<LegacyStoryGallerySection \/>/);
-  assert.match(root, /<LegacyDisclosureSection \/>/);
+  assert.match(root, /<ChildHomeSections locale=\{locale\} \/>/);
+  assert.match(read("app/[locale]/abduction/page.tsx"), /<AbductionResources locale=\{locale\} \/>/);
   assert.match(read("components/RouteHeader.tsx"), /hasMainContentRoute\(parts\) \|\| parts\.length === 0/);
   assert.match(read("components/RouteHeader.tsx"), /!showNavigation && !showLanguageSwitcher && !hasMainContent/);
 });
