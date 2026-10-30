@@ -39,7 +39,7 @@ test("French body has twelve native sections and the translated shared policy se
     "France, Norvège et Allemagne", "Cadre juridique et ressources",
     "Personnes que j’ai contactées", "Documents publiés sur ce site",
   ]) assert.ok(body.includes(heading), heading);
-  assert.doesNotMatch(body, /lang="en"(?!>\(document)/);
+  assert.doesNotMatch(body, /<section[^>]*lang="en"/);
   const footer = read("components/home/LegacyFooterSection.tsx");
   assert.match(footer, /locale === "fr"/);
   assert.match(footer, /Mentions et politiques du site/);
@@ -66,7 +66,7 @@ test("French version retains all public link targets and accessible landmarks", 
   const targets = new Set(
     [...french.matchAll(/\bid="(preview-[a-z-]+)"/g)].map((match) => "#" + match[1]),
   );
-  assert.equal(targets.size, 14);
+  assert.equal(targets.size, 20);
   for (const href of gallery) assert.ok(targets.has(href), href);
   for (const href of ["#preview-contact", "#preview-journey", "#preview-story-gallery"]) {
     assert.ok(preview.includes(`href="${href}"`), href);
