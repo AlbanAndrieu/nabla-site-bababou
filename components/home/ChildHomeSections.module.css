@@ -1,0 +1,60 @@
+/* Preserve the letter-like presentation of the original home section.
+ * Semantic colors adapt to the selected theme without hard-coded light-only text. */
+.opening {
+  position: relative;
+  isolation: isolate;
+  margin-block: clamp(1rem, 3vw, 2rem);
+  border: 1px solid var(--ui-border, #cbd5e1);
+  border-inline-start: 5px solid #2563eb;
+  border-radius: 0.8rem;
+  background: var(--ui-surface-card, #fff);
+  box-shadow: var(--ui-shadow-sm, 0 4px 20px rgb(15 23 42 / 8%));
+}
+
+.opening h2 {
+  color: var(--ui-text-primary, #1e293b);
+  font-size: clamp(1.3rem, 2.7vw, 2rem);
+  line-height: 1.35;
+  margin-block-end: 1.4rem;
+}
+
+.opening h3 {
+  color: var(--ui-text-primary, #1e293b);
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: clamp(1.25rem, 3vw, 1.7rem);
+}
+
+.opening h3::before {
+  content: "♥";
+  display: inline-grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex: none;
+  border-radius: 50%;
+  background: #173b7a;
+  color: #fff;
+  font-size: 1.4rem;
+}
+
+.opening p {
+  line-height: 1.8;
+  font-size: clamp(1rem, 1.4vw, 1.1rem);
+}
+
+.opening p:last-child {
+  font-weight: 650;
+  border-block-start: 1px solid var(--ui-border, #cbd5e1);
+  padding-block-start: 1rem;
+}
+
+@media (max-width: 40rem) {
+  .opening { border-inline-start-width: 4px; border-radius: 0.5rem; }
+}
+
+@media (forced-colors: active) {
+  .opening { border: 2px solid CanvasText; }
+  .opening h3::before { background: Highlight; color: HighlightText; }
+}
