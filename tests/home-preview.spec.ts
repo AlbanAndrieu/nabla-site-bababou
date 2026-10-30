@@ -61,47 +61,47 @@ test.describe("public nonindexed homepage review", () => {
         "https://bababou.com/",
       );
       await expect(page.locator('main a[href="#preview-contact"]').first()).toBeVisible();
-      await expect(page.locator('#preview-opening[lang="en"]')).toHaveCount(1);
+      await expect(page.locator(`#preview-opening[lang="${code === "fr" ? "fr" : "en"}"]`)).toHaveCount(1);
       await expect(page.locator("#preview-opening-heading")).toContainText(
-        "your Papa is looking for you",
+        code === "fr" ? "ton papa te cherche" : "your Papa is looking for you",
       );
-      await expect(page.locator("#preview-opening h3")).toHaveText("My Dear Daughter,");
+      await expect(page.locator("#preview-opening h3")).toHaveText(code === "fr" ? "Ma chère fille," : "My Dear Daughter,");
       await expect(page.locator("#preview-opening p")).toHaveCount(2);
-      await expect(page.locator('#preview-contact[lang="en"]')).toHaveCount(1);
-      await expect(page.locator('#preview-contact-heading')).toHaveText("How to contact me");
+      await expect(page.locator(`#preview-contact[lang="${code === "fr" ? "fr" : "en"}"]`)).toHaveCount(1);
+      await expect(page.locator('#preview-contact-heading')).toHaveText(code === "fr" ? "Comment me contacter" : "How to contact me");
       await expect(page.locator('#preview-contact a[href="mailto:aa@bababou.com"]')).toHaveText(
         "aa@bababou.com",
       );
       await expect(page.locator("#preview-contact")).toContainText(
-        "I promise I will respond immediately.",
+        code === "fr" ? "Je te promets" : "I promise I will respond immediately.",
       );
-      await expect(page.locator('#preview-letter[lang="en"]')).toHaveCount(1);
+      await expect(page.locator(`#preview-letter[lang="${code === "fr" ? "fr" : "en"}"]`)).toHaveCount(1);
       await expect(page.locator('#preview-letter-heading')).toHaveText(
-        "A Message from Your Papa:",
+        code === "fr" ? "Un message de ton papa :" : "A Message from Your Papa:",
       );
       await expect(page.locator("#preview-letter blockquote p")).toHaveCount(3);
       await expect(page.locator("#preview-letter blockquote")).toContainText(
-        "I will always be here for you.",
+        code === "fr" ? "Je serai toujours là pour toi." : "I will always be here for you.",
       );
-      await expect(page.locator('#preview-found-website[lang="en"]')).toHaveCount(1);
+      await expect(page.locator(`#preview-found-website[lang="${code === "fr" ? "fr" : "en"}"]`)).toHaveCount(1);
       await expect(page.locator("#preview-found-website-heading")).toHaveText(
-        "If you are Éléonore (Bababou) and you found this website:",
+        code === "fr" ? "Si tu es Éléonore (Bababou) et que tu as trouvé ce site :" : "If you are Éléonore (Bababou) and you found this website:",
       );
       await expect(page.locator("#preview-found-website")).toContainText(
-        "I am here waiting for you with open arms.",
+        code === "fr" ? "Je t’attends ici, les bras ouverts." : "I am here waiting for you with open arms.",
       );
       await expect(page.locator("#preview-found-website")).toContainText(
-        "He has been searching for you since 2015.",
+        code === "fr" ? "Il te cherche depuis 2015." : "He has been searching for you since 2015.",
       );
       // The preview shares the layout footer. Its legal links form a
       // separate named section, not a second document footer.
       await expect(page.locator("#preview-footer nav")).toHaveAttribute(
         "aria-label",
-        "Legal and accessibility links",
+        code === "fr" ? "Liens juridiques et accessibilité" : "Legal and accessibility links",
       );
       await expect(page.locator("main footer")).toHaveCount(0);
       await expect(page.locator("#preview-about")).not.toContainText("INDEX for albandrieu.com");
-      await expect(page.locator("#preview-about")).toContainText("Bababou — public messages and resources.");
+      await expect(page.locator("#preview-about")).toContainText(code === "fr" ? "Bababou — messages et ressources publiques." : "Bababou — public messages and resources.");
       for (const href of [
         "/policy/service_terms",
         "/policy/privacy_policy",
@@ -214,18 +214,45 @@ test("React preview theme and print controls work without legacy widget scripts"
     .toBe(1);
 });
 
+
+test("French homepage has native translations throughout the full React body", async ({ page }) => {
+  const response = await page.goto("/home-preview");
+  expect(response?.status()).toBe(200);
+  const sections = page.locator("main section[lang='fr']");
+  await expect(sections).toHaveCount(11);
+  const main = page.locator("main");
+  for (const phrase of [
+    "Ma chère fille",
+    "Quelques informations importantes",
+    "Comment me contacter",
+    "Un message de ton papa",
+    "France, Norvège et Allemagne",
+    "Cadre juridique et ressources",
+    "Recherche de traduction en norvégien",
+    "Personnes que j’ai contactées",
+    "Associations que je soutiens",
+    "Documents publiés sur ce site",
+    "Mentions et politiques du site",
+  ]) {
+    await expect(main).toContainText(phrase);
+  }
+  await expect(page.locator("#preview-opening[lang='en']")).toHaveCount(0);
+  await expect(page.locator("#preview-story-gallery img")).toHaveCount(10);
+  await expect(page.locator("main#main-content")).not.toContainText("My Dear Daughter");
+});
+
 test("safe ten-card gallery and country timeline match the legacy structure", async ({ page }) => {
   await page.goto("/home-preview");
   const gallery = page.locator("#preview-story-gallery");
   await expect(gallery.getByRole("listitem")).toHaveCount(10);
-  await expect(gallery).toContainText("Looking for Norwegian Translator");
-  await expect(gallery).toContainText("Looking for German Translator");
+  await expect(gallery).toContainText("Recherche de traduction en norvégien");
+  await expect(gallery).toContainText("Recherche de traduction en allemand");
   await expect(gallery.getByRole("img")).toHaveCount(0);
   await expect(gallery.locator("img")).toHaveCount(10);
 
   const timeline = page.locator("#preview-journey");
   await expect(timeline.locator("li")).toHaveCount(3);
-  for (const country of ["France", "Norway", "Germany"]) {
+  for (const country of ["France", "Norvège", "Allemagne"]) {
     await expect(timeline).toContainText(country);
   }
   await expect(page.locator("#preview-important-information")).toBeVisible();
