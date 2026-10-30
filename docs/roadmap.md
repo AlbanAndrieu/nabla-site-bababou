@@ -8,6 +8,18 @@ La route `/` sert **toujours `public/index.html`**. Les quatre versions Next.js 
 
 **NO-GO** pour basculer `/` : absence de recette navigateur Next complète, de gates sécurité complètes et d'approbation éditoriale/privacy. Ne pas copier ou publier automatiquement de données identifiant une mineure, de positions précises ou d'allégations nominatives. Ne pas désactiver le WAF, ni fusionner automatiquement une PR.
 
+## Refonte en deux publics — 30 octobre 2026, PR #253
+
+**Nouvelle architecture versionnée, sans bascule automatique de `/` :**
+
+- **Home pour Éléonore** : `/home-preview`, `/en/home-preview`, `/de/home-preview`, `/no/home-preview`. Les cartes se concentrent sur « My Dear Daughter », « Patience and hope », l'identité tenue privée, « Daddy loves you more than yesterday and less than tomorrow » et « People I contacted ». Le texte intégral d'ouverture de la page historique est conservé, traduit nativement.
+- **Page parents / abduction** : `/abduction`, `/en/abduction`, `/de/abduction`, `/no/abduction`. Six cartes répartissent l'enlèvement d'enfant, « In my position? Contact me », les pères privés de contact, les deux appels aux traducteurs et la notice « Documents on this website — processing notice ». Les trois associations, NRE et autorités centrales restent accessibles.
+- Les deux parcours ont des textes **natifs FR/EN/DE/NO** dans `lib/homeAudienceCopy.mjs`. Les labels juridiques et des associations sont également localisés. Les références externes ou les fichiers HTML historiques peuvent rester en anglais.
+- **Protection du mineur :** le numéro individuel d'identité présent sur le site historique n'est **pas recopié** dans les nouvelles cartes. Une carte explique son retrait. Aucun nouveau document d'identité, de localisation précise ou d'allégation nominative n'est publié.
+- La page `abduction` est en **revue non indexable** (`robots.noindex`, `X-Robots-Tag`, `private, no-store`). La route Home React de production reste **désactivée** par `isHomeCutoverEnabled`.
+- **Validation :** 39/39 tests Node ciblés PASS (sept suites, Node 24.22.1, sandbox isolé) ; l'assertion binaire d'existence des images n'a pas été exécutée dans ce sandbox, mais les neuf fichiers média existants ont été contrôlés séparément dans GitHub avec tailles non nulles. Nouveaux tests Playwright pour les deux pages en quatre langues ajoutés, **NOT_RUN** ; build Next.js/TypeScript sur SHA final à vérifier.
+- **Restant P1–P5 :** revue éditoriale de messages personnels et traductions, navigation mobile et illustrations sous Chromium/Firefox/WebKit, WCAG 2.2 AA, vérification HTTP/SEO réelle et gates locales qualité/sécurité complètes. Ne jamais fusionner automatiquement ni activer les variables de bascule.
+
 ## Priorités ouvertes (P1 → P5)
 
 | Priorité | Acquis versionnés / observés | Travail encore ouvert | Condition de clôture |
