@@ -14,20 +14,20 @@ const policyLinks = [
  * This section sits inside the preview's main element.
  * The shared Next layout already renders the document's single site footer.
  */
-export default function LegacyFooterSection() {
+export default function LegacyFooterSection({ locale = "en" }: { locale?: "fr" | "en" | "de" | "no" }) {
   return (
     <section
       id="preview-footer"
       className={styles.section}
-      lang="en"
+      lang={locale === "fr" ? "fr" : "en"}
       aria-labelledby="preview-policies-heading"
     >
-      <h2 id="preview-policies-heading">Site Policies</h2>
-      <nav aria-label="Legal and accessibility links">
+      <h2 id="preview-policies-heading">{locale === "fr" ? "Mentions et politiques du site" : "Site Policies"}</h2>
+      <nav aria-label={locale === "fr" ? "Liens juridiques et accessibilité" : "Legal and accessibility links"}>
         <ul className={styles.links}>
           {policyLinks.map(({ label, href }) => (
             <li key={href}>
-              <a href={href}>{label}</a>
+              <a href={href}>{locale === "fr" ? ({ "Terms of Use": "Conditions d’utilisation", "Privacy Policy": "Politique de confidentialité", Impressum: "Mentions légales", Accessibility: "Accessibilité", "Cookie Policy": "Politique des cookies" } as Record<string, string>)[label] ?? label : label}</a>
             </li>
           ))}
         </ul>
