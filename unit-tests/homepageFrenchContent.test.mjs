@@ -28,12 +28,13 @@ test("German, Norwegian and English audiences have native headings and letters",
   }
 });
 
-test("French child page retains private identity messaging without publishing the ID", () => {
+test("French child page keeps the journey and parents page carries private identity notice", () => {
   const child = homeAudienceCopy("fr").child;
-  assert.match(child.identityText, /vie privée/);
+  assert.match(homeAudienceCopy("fr").fathers.identityText, /vie privée/);
+  assert.match(child.journeyTitle, /longue recherche/);
   assert.match(child.letter[2], /plus qu’hier et moins que demain/);
   assert.deepEqual(homeAudienceCards("fr", "child").map(c => c.href),[
-    "#preview-opening","#preview-hope","#preview-identity","#preview-letter","#preview-people"
+    "#preview-opening","#preview-hope","#preview-journey","#preview-letter","#preview-people"
   ]);
   assert.doesNotMatch(JSON.stringify(child), /14CV[0-9]+/);
 });
