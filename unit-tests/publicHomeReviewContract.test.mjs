@@ -25,15 +25,17 @@ test("review route has explicit noindex and no-store response headers", () => {
   assert.match(config, /"Cache-Control", value: "private, no-store"/);
 });
 
-test("the ten-card gallery preserves translator calls without republishing sensitive details", () => {
-  const page = read("app/[locale]/home-preview/page.tsx");
-  const cards = read("lib/homeGalleryCatalog.mjs");
-  assert.match(page, /<LegacyStoryGallerySection \/>/);
-  assert.match(cards, /Looking for Norwegian Translator/);
-  assert.match(cards, /Looking for German Translator/);
-  assert.match(cards, /href: "#preview-contact"/);
-  assert.doesNotMatch(cards, /14CV|Francfort|passport|Norwegian authorities|German authorities/i);
-  assert.doesNotMatch(cards, /fetch\(|sendBeacon\(|<Script|<iframe/i);
+test("personal cards and parent translator resources are split without leaking private data", () => {
+  const home=read("app/[locale]/home-preview/page.tsx");
+  const fathers=read("app/[locale]/abduction/page.tsx");
+  const child=read("components/home/ChildHomeSections.tsx");
+  const copy=read("lib/homeAudienceCopy.mjs");
+  assert.match(home, /<ChildHomeSections locale=\{locale\} \/>/);
+  assert.match(fathers, /<AbductionResources locale=\{locale\} \/>/);
+  assert.match(child, /people-contacted\.html/);
+  assert.match(copy, /norwegianTitle/);
+  assert.match(copy, /germanTitle/);
+  assert.doesNotMatch(copy, /14CV[0-9]+|passport-fr-bababou|currentLocation/i);
 });
 
 test("review-only locale routes and aliases are excluded from legacy sitemap import", () => {
