@@ -42,7 +42,7 @@ export default async function PublicHomepage({ params }: PageProps<"/[locale]">)
       <nav className={styles.sectionNav} data-home-section-nav aria-label={t("sectionNavigation")}>
         <a href="#preview-opening">{c.letterTitle}</a>
         <a href="#preview-hope">{c.hopeTitle}</a>
-        <a href="#preview-identity">{c.identityTitle}</a>
+        <a href="#preview-journey">{c.journeyTitle}</a>
         <a href="#preview-people">{c.peopleTitle}</a>
         <a href="#preview-contact">{c.contactTitle}</a>
       </nav>
