@@ -71,6 +71,12 @@ Pour les tests : `unit-tests/homepageGalleryParity.test.mjs`, `unit-tests/homepa
 - Le volet About conserve Calendly et Ko-fi **sous forme de liens explicites** sans widget chargé automatiquement.
 - **Statut :** implémenté dans la PR en cours ; build Next et recette navigateur à vérifier au HEAD exact. Aucune suppression de `public/index.html`.
 
+## Navigation locale des ressources juridiques — 30 octobre 2026
+
+Le bloc `LegacyLegalResourcesSection` utilise maintenant la langue de la route de revue, transmise depuis `HomePreview`, pour produire ses liens canoniques NRE et Central Authorities via `canonicalPagePath`. Pour la Preview FR, il utilise `/nre` et `/central-authorities` ; EN/DE/NO utilisent leur préfixe local. Le document historique `/for-fathers.html` reste inchangé.
+
+Les titres et textes narratifs de la section demeurent en anglais avec `lang="en"` tant qu'aucune traduction relue n'est approuvée. Tests Node ciblés `homepageLegalResourcesParity` et `homepageLinkOwnership` : **6/6 PASS**, sans prétention de recette navigateur. Le test Playwright `home-preview.spec.ts` vérifie désormais les trois destinations dans chacune des quatre locales (**NOT_RUN** sur navigateur complet).
+
 ## Ressources et chargement des médias — 30 octobre 2026
 
 Le lien `nre-en.html` de `public/index.html` est rétabli dans la navigation React vers son canonical Next `/en/nre`. Les trois ressources juridiques sont affichées sous forme de cartes responsives ; les contenus nominativement sensibles restent uniquement sur leurs pages publiques historiques ou migrées, sans duplication en Preview. `unit-tests/homepageLegalResourcesParity.test.mjs` : 3/3 PASS en Node 24.22.1.
