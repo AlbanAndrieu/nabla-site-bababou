@@ -210,7 +210,7 @@ export default function FrenchHomeSections() {
           <a href="/for-fathers.html">
             En savoir plus sur le cadre juridique international et les ressources disponibles
           </a>
-          {" "}<span lang="en">(document disponible en anglais)</span>
+          {" "}<span>(document disponible en anglais)</span>
         </p>
       </section>
 
