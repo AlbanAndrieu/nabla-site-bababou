@@ -27,8 +27,11 @@ test("legal navigation is a named section inside main, not a second footer", () 
   const source = read("components/home/LegacyFooterSection.tsx");
   assert.match(source, /<section\s/);
   assert.match(source, /aria-labelledby="preview-policies-heading"/);
-  assert.match(source, /<h2 id="preview-policies-heading">Site Policies<\/h2>/);
-  assert.match(source, /<nav aria-label="Legal and accessibility links">/);
+  assert.match(source, /id="preview-policies-heading"/);
+  assert.match(source, /Mentions et politiques du site/);
+  assert.match(source, /Site Policies/);
+  assert.match(source, /Legal and accessibility links/);
+  assert.match(source, /Liens juridiques et accessibilité/);
   assert.match(source, /<ul className=\{styles\.links\}>/);
   assert.match(source, /<li key=\{href\}>/);
   assert.doesNotMatch(source, /<footer\b/);
@@ -39,8 +42,11 @@ test("policy links preserve legacy English labels and back-to-top navigation", (
   for (const label of ["Terms of Use", "Privacy Policy", "Impressum", "Accessibility", "Cookie Policy"]) {
     assert.ok(source.includes(`label: "${label}"`), label);
   }
-  assert.match(source, /href="#main-content"/);
-  assert.match(source, /lang="en"/);
+  assert.match(source, /lang=\{locale === "fr" \? "fr" : "en"\}/);
+  assert.match(source, /Conditions d’utilisation/);
+  assert.match(source, /Politique de confidentialité/);
+  assert.doesNotMatch(source, /href="#main-content"/);
+  assert.match(read("app/components/Footer.tsx"), /<BackToTopButton/);
 });
 
 test("policy links have keyboard focus, hover and responsive touch targets", () => {
