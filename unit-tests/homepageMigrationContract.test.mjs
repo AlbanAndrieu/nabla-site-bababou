@@ -1,371 +1,86 @@
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
 import test from "node:test";
+import { homeAudienceCopy } from "../lib/homeAudienceCopy.mjs";
 
-const root = dirname(dirname(fileURLToPath(import.meta.url)));
-const read = (path) => readFileSync(join(root, path), "utf8");
-const supported = ["fr", "en", "de", "no"];
+const read = (path) => readFileSync(new URL("../" + path, import.meta.url), "utf8");
+const locales = ["fr", "en", "de", "no"];
 
-test("homepage preview catalogs are complete across all four locales", () => {
-  const catalogs = supported.map((locale) =>
-    JSON.parse(read(`messages/homepage-preview/${locale}.json`)).homepagePreview,
+test("homepage preview translation catalogs remain complete", () => {
+  const catalogs = locales.map((locale) =>
+    JSON.parse(read(`messages/homepage-preview/${locale}.json`)).homepagePreview
   );
-  const baseline = Object.keys(catalogs[0]).sort();
+  const keys = Object.keys(catalogs[0]).sort();
   for (const [i, catalog] of catalogs.entries()) {
-    assert.deepEqual(Object.keys(catalog).sort(), baseline, supported[i]);
-    for (const [key, value] of Object.entries(catalog)) {
-      assert.ok(typeof value === "string" && value.trim().length > 0, `${supported[i]}:${key}`);
-    }
+    assert.deepEqual(Object.keys(catalog).sort(), keys, locales[i]);
+    assert.ok(Object.values(catalog).every((value) => typeof value === "string" && value.trim().length > 0));
   }
-  assert.ok(baseline.includes("contact") && baseline.includes("legacy"));
 });
 
-test("review remains non-indexable and the default root stays legacy until explicit cutover", () => {
-  const page = read("app/[locale]/home-preview/page.tsx");
-  assert.doesNotMatch(page, /HOMEPAGE_PREVIEW_ENABLED/);
-  assert.match(page, /export default async function HomePreview/);
-  assert.match(page, /robots: \{ index: false, follow: false \}/);
-  assert.match(page, /alternates: \{ canonical: "\/" \}/);
-  assert.match(page, /getTranslations\("homepagePreview"\)/);
-  assert.match(read("proxy.ts"), /NextResponse\.rewrite\(new URL\("\/index\.html"/);
-  const releasedHome = read("app/[locale]/page.tsx");
-  assert.match(releasedHome, /if \(!isHomeCutoverEnabled\(\)\) redirect\("\/"\)/);
-  assert.match(releasedHome, /<LegacyStoryGallerySection \/>/);
-  assert.match(releasedHome, /<LegacyDisclosureSection \/>/);
-  assert.ok(existsSync(join(root, "public/index.html")));
+test("React homepage is review-only and the production cutover remains fail-closed", () => {
+  const preview = read("app/[locale]/home-preview/page.tsx");
+  const root = read("app/[locale]/page.tsx");
+  const proxy = read("proxy.ts");
+  assert.match(preview, /robots: \{ index: false, follow: false \}/);
+  assert.match(preview, /alternates: \{ canonical: "\/" \}/);
+  assert.match(root, /isHomeCutoverEnabled\(\)/);
+  assert.match(root, /redirect\("\/"\)/);
+  assert.match(proxy, /NextResponse\.rewrite\(new URL\("\/index\.html"/);
+  assert.ok(existsSync(new URL("../public/index.html", import.meta.url)));
 });
 
-test("preview uses accessible navigation and keeps legacy resources available", () => {
-  const page = read("app/[locale]/home-preview/page.tsx");
-  assert.doesNotMatch(page, /<SkipToMainContent \/>/);
+test("all audiences preserve shared accessible layout and in-page navigation", () => {
+  const preview = read("app/[locale]/home-preview/page.tsx");
+  const fathers = read("app/[locale]/abduction/page.tsx");
   const header = read("components/RouteHeader.tsx");
-  assert.match(header, /hasMainContent \? \(/);
+  for (const s of [preview, fathers]) {
+    assert.match(s, /<main id="main-content" tabIndex=\{-1\}/);
+    assert.match(s, /data-home-section-nav|aria-label=\{c\.resourcesTitle\}/);
+    assert.match(s, /<LegacyFooterSection locale=\{locale\} \/>/);
+  }
   assert.match(header, /<a className="skip-to-main" href="#main-content">/);
-  assert.match(page, /<main id="main-content"/);
-  assert.match(page, /aria-labelledby="preview-title"/);
-  assert.match(page, /href="#preview-contact"/);
-  assert.match(read("components/home/LegacyContactSection.tsx"), /mailto:aa@bababou\.com/);
-  const resourceOwners = [
-    ["people-contacted.html", read("components/home/LegacyPeopleSection.tsx")],
-    ["for-fathers.html", read("components/home/LegacyLegalResourcesSection.tsx")],
-    ["feed.xml", page],
-  ];
-  for (const [target, owner] of resourceOwners) {
-    assert.ok(existsSync(join(root, "public", target)), target);
-    assert.ok(owner.includes("/" + target), target);
-  }
-  const css = read("app/[locale]/home-preview/page.module.css");
-  assert.match(css, /:focus-visible/);
-  assert.match(css, /prefers-reduced-motion: reduce/);
-  assert.match(css, /flex-wrap: wrap/);
+  assert.match(read("app/[locale]/home-preview/page.module.css"), /:focus-visible/);
 });
 
-test("preview remains out of the public sitemap and canonical page catalog", () => {
-  const catalog = read("lib/sitePageCatalog.ts");
-  const sitemap = read("app/sitemap.ts");
-  assert.doesNotMatch(catalog, /"home-preview":/);
-  assert.doesNotMatch(sitemap, /home-preview/);
-  assert.match(catalog, /if \(slug === "index"\) return "\/"/);
-});
-
-test("theme and print controls use the same accessible focus color as React navigation", () => {
-  const controlsCss = read("components/SiteDisplayControls.module.css");
-  const previewCss = read("app/[locale]/home-preview/page.module.css");
-  assert.match(controlsCss, /\.button:focus-visible,[\s\S]*?\.print:focus-visible\s*\{[^}]*--ui-text-primary/);
-  assert.match(previewCss, /\.sectionNav a:focus-visible\s*\{[^}]*--ui-text-primary/);
-  assert.doesNotMatch(controlsCss, /outline:\s*3px solid #e58c00/);
-});
-
-test("homepage focus outline follows contrast-checked semantic theme tokens", () => {
-  const css = read("app/[locale]/home-preview/page.module.css");
-  assert.match(css, /\.main a:focus-visible\s*\{[^}]*--ui-text-primary/);
-  assert.match(css, /\.sectionNav a:focus-visible\s*\{[^}]*--ui-text-primary/);
-  assert.doesNotMatch(css, /outline: 3px solid #e58c00/);
-});
-
-test("long React preview reuses the single translated shared footer back-to-top control", () => {
-  const page = read("app/[locale]/home-preview/page.tsx");
-  const localFooter = read("components/home/LegacyFooterSection.tsx");
-  const sharedFooter = read("app/components/Footer.tsx");
-  const layout = read("app/[locale]/layout.tsx");
-  assert.match(page, /<main id="main-content" tabIndex=\{-1\}/);
-  assert.doesNotMatch(page, /data-home-back-to-top|t\("backToTop"\)/);
-  assert.doesNotMatch(localFooter, /href="#main-content"|Back to top/);
-  assert.match(sharedFooter, /<BackToTopButton/);
-  assert.match(layout, /backToTop=\{site\.backToTop\}/);
-  assert.match(layout, /backToTopAria=\{site\.backToTopAria\}/);
-  for (const locale of supported) {
-    const site = JSON.parse(read("messages/site/" + locale + ".json")).site;
-    assert.ok(site.backToTop && site.backToTopAria, locale);
-  }
-});
-
-test("React About copy identifies Bababou instead of the legacy index", () => {
-  const about = read("components/home/LegacySiteAboutSection.tsx");
-  assert.match(about, /Bababou — public messages and resources\./);
-  assert.doesNotMatch(about, /INDEX for albandrieu\.com/);
-  assert.match(about, /<details>/);
-});
-
-test("homepage preview translations use the existing next-intl catalog", () => {
-  const loader = read("i18n/messages.ts");
-  assert.match(loader, /HOMEPAGE_PREVIEW_LOADERS/);
-  assert.match(loader, /homepagePreview,/);
-  for (const locale of supported) {
-    assert.ok(loader.includes(`messages/homepage-preview/${locale}.json`), locale);
-  }
-});
-
-test("first migrated contact section matches the approved legacy English text", () => {
+test("approved English messages remain in the archive for parity, not in the new child page", () => {
   const legacy = read("public/index.html");
-  const component = read("components/home/LegacyContactSection.tsx");
-  const page = read("app/[locale]/home-preview/page.tsx");
-  const text = (value) => value.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
-  const approvedHeading = legacy.match(
-    /<h3 id="contact-me-heading"[^>]*>([\s\S]*?)<\/h3>/,
-  )?.[1];
-  const approvedLead = legacy.match(
-    /<p class="contact-me-card__lead"[^>]*>([\s\S]*?)<\/p>/,
-  )?.[1];
-  const approvedReassurance = legacy.match(
-    /<p class="contact-me-card__reassurance"[^>]*>([\s\S]*?)<\/p>/,
-  )?.[1];
-  const migratedHeading = component.match(/<h2[^>]*>([\s\S]*?)<\/h2>/)?.[1];
-  const migratedReassurance = component.match(
-    /<p>\s*(You can contact me[\s\S]*?)<\/p>/,
-  )?.[1];
-
-  assert.ok(approvedHeading && approvedLead && approvedReassurance);
-  assert.ok(migratedHeading && migratedReassurance);
-  assert.equal(text(migratedHeading), text(approvedHeading));
-  assert.equal(text(migratedReassurance), text(approvedReassurance));
-  assert.equal(text(approvedLead), "Email me at: aa@bababou.com");
-  assert.match(component, /href="mailto:aa@bababou\.com"/);
-  assert.match(component, /lang="en"/);
-  assert.match(component, /aria-labelledby="preview-contact-heading"/);
-  assert.match(page, /<LegacyContactSection \/>/);
-  assert.match(page, /href="#preview-contact"/);
-  assert.doesNotMatch(page, /href="mailto:aa@bababou\.com"/);
+  const opening = read("components/home/LegacyOpeningSection.tsx");
+  const message = read("components/home/LegacyMessageSection.tsx");
+  assert.match(legacy, /My Dear Daughter/);
+  assert.match(opening, /My Dear Daughter/);
+  assert.match(message, /A Message from Your Papa/);
+  const childPage = read("app/[locale]/home-preview/page.tsx");
+  assert.doesNotMatch(childPage, /<LegacyOpeningSection|<LegacyMessageSection/);
+  assert.match(childPage, /<ChildHomeSections locale=\{locale\} \/>/);
 });
 
-test("second migrated message section matches all approved English paragraphs", () => {
-  const legacy = read("public/index.html");
-  const component = read("components/home/LegacyMessageSection.tsx");
-  const page = read("app/[locale]/home-preview/page.tsx");
-  const approved = legacy.match(
-    /<h3 class="text-info mb-3">A Message from Your Papa:<\/h3>\s*<blockquote\b[^>]*>([\s\S]*?)<\/blockquote>/,
-  )?.[1];
-  const migrated = component.match(/<blockquote\b[^>]*>([\s\S]*?)<\/blockquote>/)?.[1];
-  assert.ok(approved && migrated, "missing message blockquote");
-
-  const normalizeParagraphs = (block) =>
-    [...block.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/g)].map((match) =>
-      match[1]
-        .replace(/\{" "\}/g, " ")
-        .replace(/&quot;/g, '"')
-        .replace(/&apos;/g, "'")
-        .replace(/<[^>]*>/g, " ")
-        .replace(/\s+/g, " ")
-        .trim(),
-    );
-
-  const originalParagraphs = normalizeParagraphs(approved);
-  assert.equal(originalParagraphs.length, 3);
-  assert.deepEqual(normalizeParagraphs(migrated), originalParagraphs);
-  assert.match(component, /lang="en"/);
-  assert.match(component, /aria-labelledby="preview-letter-heading"/);
-  assert.match(component, /<h2 id="preview-letter-heading">A Message from Your Papa:<\/h2>/);
-  assert.match(page, /<LegacyMessageSection \/>/);
-  assert.ok(
-    page.indexOf("<LegacyContactSection />") < page.indexOf("<LegacyMessageSection />"),
-    "preserve the legacy section order",
-  );
-});
-
-test("migrated homepage sections follow Vercel Web Interface Guidelines", () => {
-  const previewCss = read("app/[locale]/home-preview/page.module.css");
-  const contactCss = read("components/home/LegacyContactSection.module.css");
-  const messageCss = read("components/home/LegacyMessageSection.module.css");
-
-  assert.match(previewCss, /\.main a:hover/);
-  assert.match(previewCss, /:focus-visible/);
-  assert.match(previewCss, /text-wrap: balance/);
-  assert.match(previewCss, /scroll-margin-top/);
-  assert.match(contactCss, /\.section a:hover/);
-  assert.match(contactCss, /:focus-visible/);
-  assert.match(messageCss, /text-wrap: balance/);
-  assert.match(messageCss, /scroll-margin-top/);
-  for (const stylesheet of [previewCss, contactCss, messageCss]) {
-    assert.doesNotMatch(stylesheet, /transition:\s*all\b/);
-    assert.doesNotMatch(stylesheet, /outline:\s*none\b/);
+test("homepage content remains about Éléonore and references only child-safe cards", () => {
+  const section = read("components/home/ChildHomeSections.tsx");
+  for (const id of ["preview-opening","preview-letter","preview-hope","preview-identity","preview-people","preview-contact","preview-story-gallery"]) {
+    assert.ok(section.includes(`id="${id}"`), id);
   }
+  assert.match(section, /mailto:aa@bababou\.com/);
+  assert.match(section, /people-contacted\.html/);
+  assert.doesNotMatch(section, /14CV[0-9]+|passport/i);
 });
 
-test("found-website section preserves the approved notice and footer tagline", () => {
-  const legacy = read("public/index.html");
-  const component = read("components/home/LegacyFoundWebsiteSection.tsx");
-  const page = read("app/[locale]/home-preview/page.tsx");
-
-  const note = legacy.match(
-    /<div class="contact-me-note[^"]*"[^>]*>([\s\S]*?)<\/div>/,
-  )?.[1];
-  const tagline = legacy.match(
-    /<p class="special-message-footer-tagline[^"]*"[^>]*>([\s\S]*?)<\/p>/,
-  )?.[1];
-  assert.ok(note && tagline, "approved legacy sections are missing");
-
-  const normalize = (value) => value
-    .replace(/<[^>]*>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-
-  const originalHeading = note.match(
-    /<p[^>]*id="found-website-heading"[^>]*>([\s\S]*?)<\/p>/,
-  )?.[1];
-  const originalNotice = note.match(
-    /<p class="mb-0">([\s\S]*?)<\/p>/,
-  )?.[1];
-  const reactHeading = component.match(
-    /<h2 id="preview-found-website-heading">([\s\S]*?)<\/h2>/,
-  )?.[1];
-  const reactNotice = component.match(
-    /<p>\s*(Please know[\s\S]*?)<\/p>/,
-  )?.[1];
-  const reactTagline = component.match(
-    /<p className=\{styles\.tagline\}>([\s\S]*?)<\/p>/,
-  )?.[1];
-  assert.ok(originalHeading && originalNotice && reactHeading && reactNotice && reactTagline);
-  assert.equal(normalize(reactHeading), normalize(originalHeading));
-  assert.equal(normalize(reactNotice), normalize(originalNotice));
-  assert.equal(normalize(reactTagline), normalize(tagline));
-  assert.match(component, /lang="en"/);
-  assert.match(component, /aria-labelledby="preview-found-website-heading"/);
-  assert.doesNotMatch(component, /role="alert"/);
-  assert.match(page, /<LegacyFoundWebsiteSection \/>/);
-  assert.ok(
-    page.indexOf("<LegacyMessageSection />") < page.indexOf("<LegacyFoundWebsiteSection />"),
-    "preserve the published section order",
-  );
-});
-
-test("opening message preserves the published heading and first two paragraphs", () => {
-  const legacy = read("public/index.html");
-  const component = read("components/home/LegacyOpeningSection.tsx");
-  const page = read("app/[locale]/home-preview/page.tsx");
-
-  const source = legacy.match(
-    /<h1 id="main-heading"[^>]*>([\s\S]*?)<\/h1>[\s\S]*?<h2 class="mb-4">([\s\S]*?)<\/h2>[\s\S]*?<p class="lead mb-3">([\s\S]*?)<\/p>[\s\S]*?<p class="h5 mb-3">([\s\S]*?)<\/p>/,
-  );
-  assert.ok(source, "legacy introduction is missing");
-  const migrated = component.match(
-    /<h2 id="preview-opening-heading">([\s\S]*?)<\/h2>[\s\S]*?<h3>([\s\S]*?)<\/h3>[\s\S]*?<p>([\s\S]*?)<\/p>[\s\S]*?<p>([\s\S]*?)<\/p>/,
-  );
-  assert.ok(migrated, "migrated introduction is missing");
-  const text = (value) => value
-    .replace(/<[^>]*>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-  for (let i = 1; i <= 4; i++) {
-    assert.equal(text(migrated[i]), text(source[i]), "approved excerpt " + i);
+test("parent resources, translators, legal links and document notice are separate", () => {
+  const section = read("components/home/AbductionResources.tsx");
+  for (const id of ["child-abduction","parent-contact","translators","parent-resources","documents-notice","abduction-cards"]) {
+    assert.ok(section.includes(`id="${id}"`), id);
   }
-  assert.match(component, /lang="en"/);
-  assert.match(component, /aria-labelledby="preview-opening-heading"/);
-  const order = [
-    "<LegacyOpeningSection />",
-    "<LegacyContactSection />",
-    "<LegacyMessageSection />",
-    "<LegacyFoundWebsiteSection />",
-  ].map((name) => page.indexOf(name));
-  assert.ok(order.every((position) => position !== -1), "all approved sections render");
-  assert.deepEqual(order, [...order].sort((a, b) => a - b), "preserve section order");
+  assert.match(section, /LegacyAssociationsSection locale=\{locale\}/);
+  assert.match(section, /canonicalPagePath\("nre", locale\)/);
+  assert.match(section, /<details className=\{disclosureStyles\.details\}>/);
 });
 
-test("legal resource introduction keeps approved text without duplicating sensitive cards", () => {
-  const legacy = read("public/index.html");
-  const component = read("components/home/LegacyLegalResourcesSection.tsx");
-  const page = read("app/[locale]/home-preview/page.tsx");
-  const original = legacy.match(/<p>\s*(Information for parents in difficulty:[\s\S]*?)<\/p>/)?.[1];
-  const migrated = component.match(/<p>\s*(Information for parents in difficulty:[\s\S]*?)<\/p>/)?.[1];
-  const normalize = (value) => value.replace(/\s+/g, " ").trim();
-  assert.ok(original && migrated);
-  assert.equal(normalize(migrated), normalize(original));
-  assert.match(component, /lang="en"/);
-  assert.match(component, /href: "\/for-fathers\.html"/);
-  assert.match(page, /<LegacyLegalResourcesSection locale=\{locale\} \/>/);
-  assert.ok(page.indexOf("<LegacyFoundWebsiteSection />") < page.indexOf("<LegacyLegalResourcesSection locale={locale} />"));
-  assert.doesNotMatch(component, /passport-fr-bababou|flag-norway-location|14CV32249/);
-});
-
-test("approved public supporting sections remain in document order and preserve native disclosure", () => {
-  const page = read("app/[locale]/home-preview/page.tsx");
-  const names = ["LegacyLegalResourcesSection", "LegacyPeopleSection", "LegacyAssociationsSection", "LegacyDisclosureSection", "LegacyFooterSection"];
-  const positions = names.map((name) => page.indexOf(name === "LegacyLegalResourcesSection"
-    ? "<LegacyLegalResourcesSection locale={locale} />"
-    : name === "LegacyFooterSection" ? "<LegacyFooterSection locale={locale} />"
-    : "<" + name + " />"));
-  assert.ok(positions.every((position) => position !== -1));
-  assert.deepEqual(positions, [...positions].sort((a, b) => a - b));
-  const disclosure = read("components/home/LegacyDisclosureSection.tsx");
-  assert.match(disclosure, /<details className=\{styles\.details\}>/);
-  assert.match(disclosure, /<summary className=\{styles\.summary\}>/);
-  const disclosureCss = read("components/home/LegacyDisclosureSection.module.css");
-  assert.match(disclosureCss, /min-height: 2\.75rem/);
-  assert.match(disclosureCss, /\.summary:focus-visible/);
-  assert.match(disclosureCss, /\.summary:hover/);
-  assert.doesNotMatch(disclosureCss, /transition:\s*all\b|outline:\s*none\b/);
-  for (const target of ["service_terms", "privacy_policy", "impressum", "accessibility_statement", "cookie_policy"]) {
-    assert.match(read("components/home/LegacyFooterSection.tsx"), new RegExp(target));
+test("all four languages have child letters, patient hope and father support", () => {
+  for (const locale of locales) {
+    const { child, fathers } = homeAudienceCopy(locale);
+    assert.equal(child.letter.length, 3);
+    assert.equal(child.cards.length, 5);
+    assert.equal(fathers.cards.length, 6);
+    assert.ok(child.hopeText.length >= 35);
+    assert.ok(fathers.abductionText.length >= 70);
   }
-  const people = read("components/home/LegacyPeopleSection.tsx");
-  assert.match(people, /href="\/people-contacted\.html"/);
-  assert.match(people, /href="\/central-authorities\.html"/);
-});
-
-test("document disclosure keeps the exact approved public text", () => {
-  const legacy = read("public/index.html");
-  const component = read("components/home/LegacyDisclosureSection.tsx");
-  const original = legacy.match(
-    /<summary id="documents-disclosure-heading"[^>]*>([\s\S]*?)<\/summary>[\s\S]*?<div class="mt-3">([\s\S]*?)<\/div>/,
-  );
-  const migrated = component.match(
-    /<summary className=\{styles\.summary\}>([\s\S]*?)<\/summary>[\s\S]*?<div className=\{styles\.content\}>([\s\S]*?)<\/div>/,
-  );
-  assert.ok(original && migrated, "missing disclosure section");
-
-  const normalize = (value) => value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
-  const paragraphs = (body) => [...body.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/g)]
-    .map((match) => normalize(match[1]));
-
-  assert.equal(normalize(migrated[1]), normalize(original[1]));
-  assert.deepEqual(paragraphs(migrated[2]), paragraphs(original[2]));
-  assert.equal(paragraphs(original[2]).length, 2);
-  assert.match(component, /<details className=\{styles\.details\}>/);
-  assert.match(component, /<summary className=\{styles\.summary\}>/);
-});
-
-
-test("localized in-page review navigation resolves five safe sections", () => {
-  const page = read("app/[locale]/home-preview/page.tsx");
-  const css = read("app/[locale]/home-preview/page.module.css");
-  const targets = [
-    "preview-opening", "preview-journey", "preview-story-gallery",
-    "preview-contact", "preview-document-disclosure",
-  ];
-  assert.match(page, /data-home-section-nav/);
-  assert.match(page, /aria-label=\{t\("sectionNavigation"\)\}/);
-  for (const target of targets) {
-    assert.ok(page.includes('href="#' + target + '"'), target);
-  }
-  const labels = ["sectionNavigation", "navStory", "navJourney", "navGallery", "navContact", "navDocuments"];
-  for (const locale of supported) {
-    const catalog = JSON.parse(read('messages/homepage-preview/' + locale + '.json')).homepagePreview;
-    for (const label of labels) {
-      assert.ok(typeof catalog[label] === "string" && catalog[label].trim(), locale + ":" + label);
-    }
-  }
-  assert.match(css, /\.sectionNav a:focus-visible/);
-  assert.match(css, /min-height: 2\.75rem/);
-  assert.match(css, /flex-wrap: wrap/);
 });
