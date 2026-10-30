@@ -296,7 +296,8 @@ test("legal resource introduction keeps approved text without duplicating sensit
 test("approved public supporting sections remain in document order and preserve native disclosure", () => {
   const page = read("app/[locale]/home-preview/page.tsx");
   const names = ["LegacyLegalResourcesSection", "LegacyPeopleSection", "LegacyAssociationsSection", "LegacyDisclosureSection", "LegacyFooterSection"];
-  const positions = names.map((name) => page.indexOf("<" + name + " />"));
+  const positions = names.map((name) => page.indexOf(name === "LegacyLegalResourcesSection"
+    ? "<LegacyLegalResourcesSection locale={locale} />" : "<" + name + " />"));
   assert.ok(positions.every((position) => position !== -1));
   assert.deepEqual(positions, [...positions].sort((a, b) => a - b));
   const disclosure = read("components/home/LegacyDisclosureSection.tsx");
