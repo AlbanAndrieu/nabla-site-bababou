@@ -18,6 +18,7 @@ import LegacyPeopleSection from "@/components/home/LegacyPeopleSection";
 import LegacyAssociationsSection from "@/components/home/LegacyAssociationsSection";
 import LegacyDisclosureSection from "@/components/home/LegacyDisclosureSection";
 import LegacyFooterSection from "@/components/home/LegacyFooterSection";
+import FrenchHomeSections from "@/components/home/FrenchHomeSections";
 import { routing } from "@/i18n/routing";
 import styles from "./home-preview/page.module.css";
 
@@ -67,18 +68,24 @@ export default async function PublicHomepage({
           <a href="#preview-contact">{t("navContact")}</a>
           <a href="#preview-document-disclosure">{t("navDocuments")}</a>
         </nav>
-        <LegacyOpeningSection />
-        <LegacyFamilyFactsSection />
-        <LegacyContactSection />
-        <LegacyMessageSection />
-        <LegacyFoundWebsiteSection />
-        <LegacySiteAboutSection />
-        <LegacyJourneySection />
-        <LegacyLegalResourcesSection locale={locale} />
-        <LegacyStoryGallerySection />
-        <LegacyPeopleSection />
-        <LegacyAssociationsSection />
-        <LegacyDisclosureSection />
+        {locale === "fr" ? (
+          <FrenchHomeSections />
+        ) : (
+          <>
+            <LegacyOpeningSection />
+            <LegacyFamilyFactsSection />
+            <LegacyContactSection />
+            <LegacyMessageSection />
+            <LegacyFoundWebsiteSection />
+            <LegacySiteAboutSection />
+            <LegacyJourneySection />
+            <LegacyLegalResourcesSection locale={locale} />
+            <LegacyStoryGallerySection />
+            <LegacyPeopleSection />
+            <LegacyAssociationsSection />
+            <LegacyDisclosureSection />
+          </>
+        )}
         <section className={styles.resources} aria-labelledby="preview-resources">
           <h2 id="preview-resources">{t("linksTitle")}</h2>
           <ul>
@@ -86,7 +93,7 @@ export default async function PublicHomepage({
             <li><a href="/eleonore-feed.xml">{t("rss")} — Éléonore</a></li>
           </ul>
         </section>
-        <LegacyFooterSection />
+        <LegacyFooterSection locale={locale} />
       </main>
     </>
   );
