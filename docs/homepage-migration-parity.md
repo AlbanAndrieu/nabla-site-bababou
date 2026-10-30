@@ -16,6 +16,18 @@ La correction utilise `FrenchHomeSections.tsx`, une composition locale français
 
 La version française comprend notamment la lettre et la note de traitement des documents. **Traduction proposée, pas une approbation de publication** : revue éditoriale requise avant remplacement de la homepage historique. Tests locaux 26/26 PASS sur trois suites ciblées, mais vérification navigateur de la nouvelle Preview encore à faire.
 
+## Parité éditoriale après séparation par public — 30 octobre 2026
+
+La galerie de dix cartes de la première Preview réunissait messages familiaux, demandes de traduction et ressources pour pères. La nouvelle structure approuvée pour revue les sépare en **cinq cartes sur Home pour Éléonore** et **six cartes sur une page `abduction` dédiée aux parents**. Les illustrations historiques retenues continuent à être servies directement via `/assets/` sans optimisation réseau ni nouvelle collecte.
+
+**Home / `home-preview`** : « My Dear Daughter » avec les deux paragraphes de l'ancienne page, patience et espoir, carte d'identité personnelle avec référence masquée, message « Daddy loves you more than yesterday and less than tomorrow », « People I contacted » et lien vers la page publique d'archives. Le formulaire de contact n'est pas simulé : `mailto:aa@bababou.com` est conservé.
+
+**`abduction`** : carte d'information « Abduction is Child Abuse » renvoyant à l'article encyclopédique, carte « In my position? Contact me », « For fathers who cannot see their child », traduction norvégienne/suédoise, traduction allemande, notice sur le traitement des documents, associations et liens NRE / autorités centrales. L'explication juridique est générale et **ne prétend pas statuer sur un dossier individuel**.
+
+**Internationalisation :** le catalogue `lib/homeAudienceCopy.mjs` couvre intégralement les textes principaux FR/EN/DE/NO des deux pages ; les intitulés de politiques et d'associations sont aussi localisés. Les routes de revue restent non indexables ; la version Home prévue pour `/` garde son verrou exact-SHA.
+
+**Confidentialité :** le numéro d'identité d'une mineure, même présent sur l'ancienne page publiée, n'est pas copié dans le nouveau catalogue public. Pour le retrouver, s'en remettre aux originaux déjà détenus hors de la nouvelle page. Revue éditoriale exigée pour les versions traduites.
+
 ## Page de revue publique et non indexable
 
 - Route accessible : `/home-preview` (fr, locale par défaut), `/en/home-preview`, `/de/home-preview`, `/no/home-preview`. `/fr/home-preview` redirige en 307 vers `/home-preview`.
