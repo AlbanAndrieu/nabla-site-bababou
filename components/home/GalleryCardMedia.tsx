@@ -13,8 +13,12 @@ import styles from "./LegacyStoryGallerySection.module.css";
  */
 export default function GalleryCardMedia({ image }: { image: string | null }) {
   const [failed, setFailed] = useState(false);
+  // Preserve the original quote proportions and the complete translator flags.
+  const variant = image?.includes("miss-and-love-you-quote") ? "quote"
+    : image?.includes("flag-french-") ? "translator"
+    : "standard";
   return (
-    <div className={styles.media}>
+    <div className={styles.media} data-gallery-variant={variant}>
       {image && !failed ? (
         <Image
           src={image}
