@@ -26,7 +26,7 @@
 | Message « A Message from Your Papa » | `public/index.html` → `components/home/LegacyMessageSection.tsx` | 3 paragraphes anglais migrés, sans réécriture ; contrôle de parité sur les textes ; traduction approuvée en attente |
 | Avis « If you are Éléonore » et texte de bas de message | `public/index.html` → `components/home/LegacyFoundWebsiteSection.tsx` | Texte anglais existant migré sans modification ; ordre du document conservé ; section statique sans `role="alert"` pour éviter une annonce non sollicitée |
 | Contact et lien mailto | `public/index.html` → `components/home/LegacyContactSection.tsx` | Première section reprise à l'identique (titre, adresse et message) avec test de parité ; traduction validée encore à faire |
-| Introduction aux ressources juridiques | `public/index.html` → `components/home/LegacyLegalResourcesSection.tsx` | Paragraphe public et lien `/for-fathers.html` migrés ; les cartes contenant des identifiants, des lieux et des assertions sur des tiers restent hors de la prévisualisation | 
+| Introduction aux ressources juridiques | `public/index.html` → `components/home/LegacyLegalResourcesSection.tsx` | Paragraphe public conservé ; trois cartes de navigation vers `/for-fathers.html`, `/en/nre` (lien NRE historique restauré) et `/en/central-authorities`. Les informations nominatives et documents du dossier ne sont pas dupliqués | 
 | Navigation « People I contacted » et « Central Authorities » | `public/index.html` → `LegacyPeopleSection.tsx` | Titres, description et liens migrés ; page D3/ARF historique conservée | 
 | Associations soutenues | `public/index.html` → `LegacyAssociationsSection.tsx` | Trois liens et trois SVG locaux restaurés en React ; texte accessible permanent et fallback monogramme en cas de 404 (navigateur NOT_RUN) | 
 | Notice documentaire | `public/index.html` → `LegacyDisclosureSection.tsx` | Titre et deux paragraphes vérifiés à l'identique ; interaction native `details/summary`, cible tactile de 44 px, focus et survol ; navigateur NOT_RUN | 
@@ -70,6 +70,12 @@ Pour les tests : `unit-tests/homepageGalleryParity.test.mjs`, `unit-tests/homepa
 - Une navigation interne accessible dessert cinq sections de la homepage (récit, pays, cartes, contact, documents). Ses libellés utilisent `messages/homepage-preview/{fr,en,de,no}.json`, avec tests de complétude des locales et scénario navigateur.
 - Le volet About conserve Calendly et Ko-fi **sous forme de liens explicites** sans widget chargé automatiquement.
 - **Statut :** implémenté dans la PR en cours ; build Next et recette navigateur à vérifier au HEAD exact. Aucune suppression de `public/index.html`.
+
+## Ressources et chargement des médias — 30 octobre 2026
+
+Le lien `nre-en.html` de `public/index.html` est rétabli dans la navigation React vers son canonical Next `/en/nre`. Les trois ressources juridiques sont affichées sous forme de cartes responsives ; les contenus nominativement sensibles restent uniquement sur leurs pages publiques historiques ou migrées, sans duplication en Preview. `unit-tests/homepageLegalResourcesParity.test.mjs` : 3/3 PASS en Node 24.22.1.
+
+Les dix images de `lib/homeGalleryCatalog.mjs` sont servies directement depuis les ressources statiques `public/assets` (`unoptimized`), avec fallback visuel en cas d'erreur. Cela retire l'optimiseur `/_next/image` du chemin critique. L'essai de chargement effectif via Playwright reste à faire ; l'existence de fichiers ne garantit pas leur bon rendu.
 
 ## Delta de parité de contenu et d'images — 29 octobre 2026
 
