@@ -251,6 +251,8 @@ test("all ten gallery illustrations load without a missing-media placeholder", a
   await expect(images).toHaveCount(10);
   await expect(gallery.locator('[data-gallery-media-fallback="placeholder"]')).toHaveCount(0);
   for (const image of await images.all()) {
+    // Direct same-origin assets must not depend on the Next image optimizer.
+    await expect(image).toHaveAttribute("src", /^\/assets\/[a-z0-9._-]+\.(?:svg|png|jpe?g|webp)$/i);
     await image.scrollIntoViewIfNeeded();
     await expect.poll(() => image.evaluate((node) =>
       node instanceof HTMLImageElement && node.complete && node.naturalWidth > 0
@@ -266,6 +268,15 @@ test("public People resources retain their existing links and explanations", asy
     await expect(resources.locator(`a[href="${href}"]`)).toHaveCount(1);
   }
   await expect(resources.locator("li")).toHaveCount(2);
+});
+
+test("legacy NRE and published legal-resource navigation is retained", async ({ page }) => {
+  await page.goto("/home-preview");
+  const resources = page.locator("#preview-legal-resources");
+  await expect(resources.locator("li")).toHaveCount(3);
+  for (const path of ["/for-fathers.html", "/en/nre", "/en/central-authorities"]) {
+    await expect(resources.locator(`a[href="${path}"]`)).toHaveCount(1);
+  }
 });
 
 test("localized section navigation reaches the React landmarks", async ({ page }) => {
