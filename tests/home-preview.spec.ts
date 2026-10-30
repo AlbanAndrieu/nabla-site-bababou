@@ -219,7 +219,7 @@ test("French homepage has native translations throughout the full React body", a
   const response = await page.goto("/home-preview");
   expect(response?.status()).toBe(200);
   const sections = page.locator("main section[lang='fr']");
-  await expect(sections).toHaveCount(11);
+  await expect(sections).toHaveCount(13);
   const main = page.locator("main");
   for (const phrase of [
     "Ma chère fille",
