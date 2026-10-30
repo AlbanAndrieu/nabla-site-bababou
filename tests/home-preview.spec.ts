@@ -46,7 +46,7 @@ for(const {code,home,fathers} of locales){
     await expect(page.locator("main#main-content h1")).toHaveText(c.title);
     await expect(page.locator("#preview-opening h3")).toHaveText(c.greeting);
     await expect(page.locator("#preview-hope")).toContainText(c.hopeText);
-    await expect(page.locator("#preview-identity")).toContainText(c.identityText);
+    await expect(page.locator("#preview-journey")).toContainText(c.journeyText);
     await expect(page.locator("#preview-story-gallery li")).toHaveCount(5);
     await expect(page.locator("#preview-story-gallery img")).toHaveCount(5);
     await expect(page.locator(`a[href="${fathers}"]`).first()).toBeVisible();
@@ -70,12 +70,13 @@ for(const {code,home,fathers} of locales){
     await expect(page.locator("#child-abduction")).toContainText(c.abductionTitle);
     await expect(page.locator("#translators")).toContainText(c.norwegianTitle);
     await expect(page.locator("#translators")).toContainText(c.germanTitle);
-    await expect(page.locator("#abduction-cards li")).toHaveCount(6);
-    await expect(page.locator("#abduction-cards img")).toHaveCount(6);
+    await expect(page.locator("#abduction-cards li")).toHaveCount(7);
+    await expect(page.locator("#abduction-cards img")).toHaveCount(7);
     await expect(page.locator("#preview-associations li")).toHaveCount(3);
     await expect(page.locator('a[href="https://en.wikipedia.org/wiki/Child_abduction"]').first()).toBeVisible();
     await expect(page.locator('a[href="mailto:aa@bababou.com"]').first()).toBeVisible();
     await expect(page.locator('a[href="/for-fathers.html"]').first()).toBeVisible();
+    await expect(page.locator("#identity-notice")).toContainText(c.identityTitle);
     const notice=page.locator("#documents-notice details");
     await notice.locator("summary").click();
     await expect(notice).toHaveAttribute("open","");
@@ -83,8 +84,8 @@ for(const {code,home,fathers} of locales){
   });
 }
 
-test("five child illustrations and six parent illustrations load from local assets",async({page})=>{
-  for(const [url,container,count] of [["/home-preview","#preview-story-gallery",5],["/abduction","#abduction-cards",6]] as const){
+test("five child illustrations and seven parent illustrations load from local assets",async({page})=>{
+  for(const [url,container,count] of [["/home-preview","#preview-story-gallery",5],["/abduction","#abduction-cards",7]] as const){
     await page.goto(url);
     const images=page.locator(container+" img");
     await expect(images).toHaveCount(count);
