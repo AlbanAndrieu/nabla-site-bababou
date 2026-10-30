@@ -46,12 +46,12 @@ test("gallery images are direct local assets and retain a no-network fallback", 
 test("legal resource links use the canonical locale-aware route registry", () => {
   const sitePages = read("lib/sitePageCatalog.ts");
   const routing = read("i18n/routing.ts");
-  const page = read("app/[locale]/home-preview/page.tsx");
-  const legal = read("components/home/LegacyLegalResourcesSection.tsx");
+  const page = read("app/[locale]/abduction/page.tsx");
+  const legal = read("components/home/AbductionResources.tsx");
   assert.match(routing, /locales: \["fr", "en", "de", "no"\]/);
   assert.match(sitePages, /locale === routing\.defaultLocale \? "" : `\/\$\{locale\}`/);
   assert.match(sitePages, /return `\$\{prefix\}\/\$\{slug\}`/);
-  assert.match(page, /<LegacyLegalResourcesSection locale=\{locale\} \/>/);
+  assert.match(page, /<AbductionResources locale=\{locale\} \/>/);
   assert.match(legal, /canonicalPagePath\("nre", locale\)/);
   assert.match(legal, /canonicalPagePath\("central-authorities", locale\)/);
   assert.doesNotMatch(legal, /href: "\/en\/(?:nre|central-authorities)"/);
