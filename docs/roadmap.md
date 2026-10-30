@@ -73,6 +73,14 @@ Voir [procédure de GO/NO-GO et retour arrière](homepage-react-cutover.md). **N
 - **Preuve locale : 30/30 PASS**, Node 24.22.1, quatre suites ciblées (`homeCutoverPolicy`, `homepageMigrationContract`, `publicHomeReviewContract`, `homePreviewSeoPolicyEncoding`) sur les fichiers exacts de la branche dans un sandbox isolé. Les tests E2E, WCAG, SAST/SCA, BetterLeaks et ZAP sont toujours **NOT_RUN** ; ce rapport ne les remplace pas.
 - **GO/NO-GO :** React sur `/` reste désactivé en l'absence des quatre variables d'approbation et du SHA vérifié. Le retour utilisateur sur les images est consigné, sans déduire un accord de publication.
 
+## P3 — correction de la Preview française (30 octobre 2026)
+
+Le propriétaire a constaté que la route `/home-preview` affichait encore les **treize sections en anglais** malgré la locale FR et qu'un clic sur Google Translate revenait à la même URL. Cause identifiée : seules les chaînes de navigation étaient localisées ; les extraits React conservaient `lang="en"` et la Preview n'incluait pas le widget de traduction historique.
+
+**Correction en source :** `FrenchHomeSections.tsx` rend maintenant les onze sections de contenu en français, plus les associations et les liens légaux localisés. `home-preview/page.tsx` et la route publique préparée sélectionnent cette composition lorsque `locale === "fr"` ; les versions EN/DE/NO préservent leurs extraits anglais antérieurs (sans prétendre être entièrement traduites). Les dix illustrations, les liens et les fragments de navigation proviennent toujours du catalogue public approuvé. Aucun script Google Translate ni nouvelle donnée sensible n'a été ajouté.
+
+**Contrôles :** `homepageFrenchContent.test.mjs` (4/4 PASS) et suites `homepageMigrationContract` + `homepagePolicyNavigation` : **26/26 PASS** en sandbox Node 24.22.1 sur sources du dernier lot. Les assertions Playwright FR ont été adaptées à la nouvelle langue du DOM ; tests navigateur **NOT_RUN** tant que la Preview n'est pas accessible au runner. La traduction française de la lettre et des déclarations personnelles demande une **revue éditoriale** avant publication en `/`.
+
 ## Prochaine étape de validation (local-first)
 
 ```bash
