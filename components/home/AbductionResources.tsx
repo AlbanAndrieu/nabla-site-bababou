@@ -1,5 +1,6 @@
 import type { AppLocale } from "@/i18n/routing";
 import { homeAudienceCards, homeAudienceCopy, childAudiencePath } from "@/lib/homeAudienceCopy.mjs";
+import { isHomeCutoverEnabled } from "@/lib/homeCutoverPolicy.mjs";
 import { canonicalPagePath } from "@/lib/sitePageCatalog";
 import GalleryCardMedia from "./GalleryCardMedia";
 import LegacyAssociationsSection from "./LegacyAssociationsSection";
@@ -80,7 +81,7 @@ export default function AbductionResources({ locale }: { locale: AppLocale }) {
         </ul>
       </section>
       <section className={sectionStyles.section}>
-        <p><a href={childAudiencePath(locale)}>{c.homeLink}</a></p>
+        <p><a href={childAudiencePath(locale, !isHomeCutoverEnabled())}>{c.homeLink}</a></p>
       </section>
     </>
   );
