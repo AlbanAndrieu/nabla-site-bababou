@@ -284,9 +284,9 @@ test("legal resource introduction keeps approved text without duplicating sensit
   assert.ok(original && migrated);
   assert.equal(normalize(migrated), normalize(original));
   assert.match(component, /lang="en"/);
-  assert.match(component, /href="\/for-fathers\.html"/);
-  assert.match(page, /<LegacyLegalResourcesSection \/>/);
-  assert.ok(page.indexOf("<LegacyFoundWebsiteSection />") < page.indexOf("<LegacyLegalResourcesSection />"));
+  assert.match(component, /href: "\/for-fathers\.html"/);
+  assert.match(page, /<LegacyLegalResourcesSection locale=\{locale\} \/>/);
+  assert.ok(page.indexOf("<LegacyFoundWebsiteSection />") < page.indexOf("<LegacyLegalResourcesSection locale={locale} />"));
   assert.doesNotMatch(component, /passport-fr-bababou|flag-norway-location|14CV32249/);
 });
 
