@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { type AppLocale, routing } from "@/i18n/routing";
+import { isHomeCutoverEnabled } from "@/lib/homeCutoverPolicy.mjs";
 import {
   canonicalPagePath,
   pageAlternates,
@@ -109,7 +110,9 @@ export function localizedSiteMetadata(locale: AppLocale): Metadata {
     creator: "Alban Andrieu",
     publisher: "Alban Andrieu",
     referrer: "origin-when-cross-origin",
-    alternates: { canonical },
+    alternates: isHomeCutoverEnabled()
+      ? pageAlternates("index", locale)
+      : { canonical },
     ...socialMetadata(locale, copy.title, copy.description, canonical),
   };
 }
