@@ -44,14 +44,18 @@ export default function RouteHeader() {
   const router = useRouter();
   const parts = routeParts(pathname);
   const showNavigation = parts.length > 0;
-  const hasMainContent = hasMainContentRoute(parts);
+  // The localized public homepage also has a main landmark when cutover is active.
+  // Before cutover, locale roots redirect to the legacy HTML page.
+  const hasMainContent = hasMainContentRoute(parts) || parts.length === 0;
   const showLanguageSwitcher = ROUTE_HEADER_LANGUAGE_SWITCHER_ENABLED;
 
   if (!showNavigation && !showLanguageSwitcher) return null;
 
   const parentParts = parts.slice(0, -1);
   const parentSegment = parentParts.at(-1);
-  const homeHref = canonicalPagePath("index", locale);
+  const homeHref = locale === routing.defaultLocale
+    ? canonicalPagePath("index", locale)
+    : localizedPath(locale, []);
   const parentHref = parentParts.length
     ? localizedPath(locale, parentParts)
     : null;
