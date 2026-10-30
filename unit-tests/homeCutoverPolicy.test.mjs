@@ -63,3 +63,17 @@ test("public homepage copy is complete for all locales without third-party widge
   assert.match(root, /<LegacyDisclosureSection \/>/);
   assert.match(read("components/RouteHeader.tsx"), /hasMainContentRoute\(parts\) \|\| parts\.length === 0/);
 });
+
+test("released SEO URLs stay separate from the legacy and browser route catalog", () => {
+  const catalog = read("lib/sitePageCatalog.ts");
+  const meta = read("lib/siteSocialMetadata.ts");
+  const sitemap = read("app/sitemap.ts");
+  assert.match(catalog, /if \(slug === "index"\) return "\/"/);
+  assert.match(catalog, /export function releasedHomepagePath\(locale: AppLocale\)/);
+  assert.match(catalog, /return locale === routing\.defaultLocale \? "\/" : `\/\$\{locale\}`/);
+  assert.doesNotMatch(catalog, /import \{ isHomeCutoverEnabled \}/);
+  assert.match(meta, /releasedHomepagePath\(locale\)/);
+  assert.match(meta, /releasedHomepageAlternates\(locale\)/);
+  assert.match(sitemap, /releasedHomepagePath\(locale\)/);
+  assert.match(sitemap, /isHomeCutoverEnabled\(\) \? \[releasedHomepageSitemapEntry\(\)\]/);
+});
