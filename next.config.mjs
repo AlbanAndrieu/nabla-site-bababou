@@ -70,7 +70,7 @@ const nextConfig = {
         headers: securityHeaders,
       },
       // The review page can be opened by a human but must not be indexed.
-      ...["/home-preview", "/:locale/home-preview"].map((source) => ({
+      ...["/home-preview", "/:locale/home-preview", "/abduction", "/:locale/abduction"].map((source) => ({
         source,
         headers: [
           { key: "X-Robots-Tag", value: "noindex, nofollow, nosnippet" },
