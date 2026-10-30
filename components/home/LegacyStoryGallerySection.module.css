@@ -123,3 +123,39 @@
     transition: none;
   }
 }
+
+/* The historic quote is a small portrait-ish picture, not a wide hero crop. */
+.media[data-gallery-variant="quote"] {
+  padding: 0.9rem;
+  background: var(--ui-surface-card, #fff);
+}
+.media[data-gallery-variant="quote"] .image {
+  width: min(100%, 15.5625rem);
+  height: auto;
+  max-height: 100%;
+  aspect-ratio: 249 / 203;
+  object-fit: contain;
+  border: 1px solid var(--ui-border, #d1d5db);
+  border-radius: 0.5rem;
+  background: #fff;
+  padding: 0.25rem;
+  box-shadow: 0 0.2rem 0.65rem rgb(15 23 42 / 13%);
+}
+
+/* Reuse the neutral flag stage used by the original translator cards. */
+.media[data-gallery-variant="translator"] {
+  padding: 0.85rem 1rem;
+  background: linear-gradient(165deg, #f1f5f9, #e2e8f0);
+}
+.media[data-gallery-variant="translator"] .image {
+  width: min(100%, 16rem);
+  height: auto;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 3px rgb(0 0 0 / 15%));
+}
+
+@media (forced-colors: active) {
+  .card { border: 1px solid CanvasText; box-shadow: none; }
+  .media[data-gallery-variant="translator"] { background: Canvas; }
+}
