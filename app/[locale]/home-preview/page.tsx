@@ -79,7 +79,7 @@ export default async function HomePreview({
         <LegacyFoundWebsiteSection />
         <LegacySiteAboutSection />
         <LegacyJourneySection />
-        <LegacyLegalResourcesSection />
+        <LegacyLegalResourcesSection locale={locale} />
         <LegacyStoryGallerySection />
         <LegacyPeopleSection />
         <LegacyAssociationsSection />
