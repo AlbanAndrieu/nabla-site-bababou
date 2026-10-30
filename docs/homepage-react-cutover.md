@@ -1,5 +1,8 @@
 # Bascule React de la homepage — procédure réversible
 
+> **Architecture actuelle (PR #253)** : bascule prévue vers une page Home de **cinq cartes centrées sur Éléonore**, avec versions natives FR/EN/DE/NO. Les ressources pour les parents, traducteurs, associations et notice documentaire résident séparément sur `/abduction` (+ préfixes locale). Tester impérativement les liens aller/retour entre ces deux pages, la politique `noindex` de la page abduction et l'absence de nouvelle publication d'identifiant d'enfant. **Le GO requiert une nouvelle revue éditoriale après cette séparation**, indépendamment de la validation antérieure des dix cartes mixtes.
+
+
 État au 30 octobre 2026 : **préparée, NON AUTORISÉE**. La route `/` reste servie par `public/index.html` et les racines `/en`, `/de`, `/no` redirigent vers `/` tant que les cinq vérifications du verrou serveur ne sont pas simultanément réunies.
 
 ## Conditions de GO
