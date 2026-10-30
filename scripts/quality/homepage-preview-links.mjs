@@ -1,24 +1,10 @@
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { HOME_GALLERY_CARDS } from "../../lib/homeGalleryCatalog.mjs";
+import { homeAudienceCards } from "../../lib/homeAudienceCopy.mjs";
 
 const root = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
-const sections = [
-  "LegacyOpeningSection",
-  "LegacyFamilyFactsSection",
-  "LegacyContactSection",
-  "LegacyMessageSection",
-  "LegacyFoundWebsiteSection",
-  "LegacySiteAboutSection",
-  "LegacyJourneySection",
-  "LegacyLegalResourcesSection",
-  "LegacyStoryGallerySection",
-  "LegacyPeopleSection",
-  "LegacyAssociationsSection",
-  "LegacyDisclosureSection",
-  "LegacyFooterSection",
-];
+const sections = ["ChildHomeSections"];
 
 /**
  * A source-only guard for safe, approved preview sections.
@@ -78,7 +64,7 @@ export function auditRepositoryPreview() {
     page,
     sectionSources: sections.map((section) => read("components/home/" + section + ".tsx")),
     publicExists: (href) => existsSync(join(root, "public", href.slice(1))),
-    dynamicHrefs: HOME_GALLERY_CARDS.map(({href}) => href),
+    dynamicHrefs: homeAudienceCards("fr", "child").map(({href}) => href),
   });
 }
 
