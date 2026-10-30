@@ -57,6 +57,14 @@ La PR #253 couvre désormais les requêtes **HTTP contextuelles** (Service Worke
 - **Preuve ciblée :** 6/6 PASS sous Node 24.22.1 sur les sources exactes récupérées via GitHub, dans un sandbox isolé sans accès réseau. La suite complète de tests, TypeScript/Next et Playwright ont des validations séparées ; aucun statut READY de build ne prouve le comportement du navigateur.
 - Le contenu narratif déjà approuvé reste en anglais avec `lang="en"` tant que les traductions humaines ne sont pas relues. La correction ne réintroduit ni données sensibles ni images d'identité.
 
+## Préparation de la bascule réversible — 30 octobre 2026
+
+La **route publique React est désormais codée mais inactive** : `app/[locale]/page.tsx` et `proxy.ts` exigent une approbation éditoriale, une approbation des gates navigateur et un SHA Vercel exact via `lib/homeCutoverPolicy.mjs`. Sans ces valeurs, `/` reste le HTML historique et `/en`, `/de`, `/no` redirigent vers `/`. Un nouveau SHA invalide le GO précédent. Les canonicals et les langues du sitemap basculeront uniquement avec ce verrou. Aucun marqueur d'approbation n'a été ajouté aux variables Vercel.
+
+**Confiance et limites :** le propriétaire confirme que les images apparaissent sur la Preview précédente (**validation utilisateur des images**, pas recette WCAG). Tests Node ciblés du verrou **4/4 PASS** sous Node 24.22.1 sur sources exactes. Le build complet de ce dernier lot, les tests navigateur/a11y/sécurité et la revue éditoriale restent à confirmer. La duplication temporaire de structure de JSX entre `home-preview` et la nouvelle route publique pourra être factorisée **après** preuve de parité, sans modifier les textes approuvés.
+
+Voir [procédure de GO/NO-GO et retour arrière](homepage-react-cutover.md). **NO-GO** maintenu : ne pas définir les variables d'activation, ne pas merger automatiquement, ne pas supprimer les fichiers historiques.
+
 ## Prochaine étape de validation (local-first)
 
 ```bash
