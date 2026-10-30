@@ -47,9 +47,14 @@ test("preview uses accessible navigation and keeps legacy resources available", 
   assert.match(page, /aria-labelledby="preview-title"/);
   assert.match(page, /href="#preview-contact"/);
   assert.match(read("components/home/LegacyContactSection.tsx"), /mailto:aa@bababou\.com/);
-  for (const target of ["people-contacted.html", "for-fathers.html", "feed.xml"]) {
+  const resourceOwners = [
+    ["people-contacted.html", read("components/home/LegacyPeopleSection.tsx")],
+    ["for-fathers.html", read("components/home/LegacyLegalResourcesSection.tsx")],
+    ["feed.xml", page],
+  ];
+  for (const [target, owner] of resourceOwners) {
     assert.ok(existsSync(join(root, "public", target)), target);
-    assert.ok(page.includes('/' + target), target);
+    assert.ok(owner.includes("/" + target), target);
   }
   const css = read("app/[locale]/home-preview/page.module.css");
   assert.match(css, /:focus-visible/);
