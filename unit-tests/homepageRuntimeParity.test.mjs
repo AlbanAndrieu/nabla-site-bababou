@@ -98,7 +98,8 @@ test("retained D3/ARF visualization stays reachable via the legacy route", () =>
   const preview = read("app/[locale]/home-preview/page.tsx");
   const links = read("components/home/LegacyPeopleSection.tsx");
   const legacy = read("public/people-contacted.html");
-  assert.match(preview, /<LegacyPeopleSection\s*\/>/);
+  assert.match(preview, /<ChildHomeSections locale=\{locale\} \/>/);
+  assert.match(read("components/home/ChildHomeSections.tsx"), /people-contacted\.html/);
   assert.match(links, /href="\/people-contacted\.html"/);
   assert.match(legacy, /id="arf-viz-body"/);
   assert.match(legacy, /src="d3\.v3\.min\.js"/);
