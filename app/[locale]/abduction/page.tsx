@@ -6,6 +6,7 @@ import AbductionResources from "@/components/home/AbductionResources";
 import LegacyFooterSection from "@/components/home/LegacyFooterSection";
 import { routing } from "@/i18n/routing";
 import { homeAudienceCopy, childAudiencePath } from "@/lib/homeAudienceCopy.mjs";
+import { isHomeCutoverEnabled } from "@/lib/homeCutoverPolicy.mjs";
 import styles from "../home-preview/page.module.css";
 
 /** A safe, public review surface for parents and volunteer translators. */
@@ -34,7 +35,7 @@ export default async function AbductionPage({ params }: PageProps<"/[locale]/abd
         <p className={styles.intro}>{c.intro}</p>
         <div className={styles.actions}>
           <a className={styles.primary} href="#parent-contact">{c.contactLink}</a>
-          <a className={styles.secondary} href={childAudiencePath(locale)}>{c.homeLink}</a>
+          <a className={styles.secondary} href={childAudiencePath(locale, !isHomeCutoverEnabled())}>{c.homeLink}</a>
         </div>
       </section>
       <nav className={styles.sectionNav} aria-label={c.resourcesTitle}>
