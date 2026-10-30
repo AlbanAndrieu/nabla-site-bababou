@@ -49,7 +49,9 @@ export default function RouteHeader() {
   const hasMainContent = hasMainContentRoute(parts) || parts.length === 0;
   const showLanguageSwitcher = ROUTE_HEADER_LANGUAGE_SWITCHER_ENABLED;
 
-  if (!showNavigation && !showLanguageSwitcher) return null;
+  // The root page still needs a keyboard skip link when the optional
+  // language selector is disabled. In legacy mode "/" bypasses this component.
+  if (!showNavigation && !showLanguageSwitcher && !hasMainContent) return null;
 
   const parentParts = parts.slice(0, -1);
   const parentSegment = parentParts.at(-1);
