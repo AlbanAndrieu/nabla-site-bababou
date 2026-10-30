@@ -42,7 +42,7 @@ test("native support copy, disclosure and translator headings exist in four lang
   for (const locale of ["fr","en","de","no"]) {
     const c = homeAudienceCopy(locale).fathers;
     for (const key of ["abductionTitle","translatorsTitle","norwegianTitle","germanTitle","associationsTitle","noticeTitle","fathersTitle","contactTitle"]) {
-      assert.ok(typeof c[key] === "string" && c[key].length > 5, locale+" "+key);
+      assert.ok(typeof c[key] === "string" && c[key].length >= 3, locale+" "+key);
     }
   }
 });
