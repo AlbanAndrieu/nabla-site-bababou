@@ -8,6 +8,14 @@
 - Le contenu, les disclosures et l'identité de la page publique restent sous contrôle du propriétaire.
 - La migration n'autorise pas la publication de nouveaux documents familiaux ou juridiques.
 
+## Localisation native FR — 30 octobre 2026
+
+Le lien `/home-preview` est correctement dirigé vers la locale française, **mais les anciens composants Legacy affichent des passages anglais** même sur cette route. Le script Google Translate historique ne fait pas partie de la Preview React ; son lien ou sa navigation ne constitue pas une stratégie de traduction.
+
+La correction utilise `FrenchHomeSections.tsx`, une composition locale française des onze sections de contenu. Les associations et le pied de section juridique affichent aussi leurs libellés français ; l'ensemble garde les mêmes ancrages, dix illustrations et ressources publiques existantes. Les deux pages `app/[locale]/home-preview/page.tsx` et `app/[locale]/page.tsx` choisissent la version française lorsque `locale === "fr"`. Les autres locales gardent pour le moment les textes anglais approuvés, marqués `lang="en"` ; les traductions DE/NO doivent encore être réalisées ou relues.
+
+La version française comprend notamment la lettre et la note de traitement des documents. **Traduction proposée, pas une approbation de publication** : revue éditoriale requise avant remplacement de la homepage historique. Tests locaux 26/26 PASS sur trois suites ciblées, mais vérification navigateur de la nouvelle Preview encore à faire.
+
 ## Page de revue publique et non indexable
 
 - Route accessible : `/home-preview` (fr, locale par défaut), `/en/home-preview`, `/de/home-preview`, `/no/home-preview`. `/fr/home-preview` redirige en 307 vers `/home-preview`.
