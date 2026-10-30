@@ -62,6 +62,7 @@ test("public homepage copy is complete for all locales without third-party widge
   assert.match(root, /<LegacyStoryGallerySection \/>/);
   assert.match(root, /<LegacyDisclosureSection \/>/);
   assert.match(read("components/RouteHeader.tsx"), /hasMainContentRoute\(parts\) \|\| parts\.length === 0/);
+  assert.match(read("components/RouteHeader.tsx"), /!showNavigation && !showLanguageSwitcher && !hasMainContent/);
 });
 
 test("released SEO URLs stay separate from the legacy and browser route catalog", () => {
