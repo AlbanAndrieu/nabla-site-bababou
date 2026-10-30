@@ -270,12 +270,20 @@ test("public People resources retain their existing links and explanations", asy
   await expect(resources.locator("li")).toHaveCount(2);
 });
 
-test("legacy NRE and published legal-resource navigation is retained", async ({ page }) => {
-  await page.goto("/home-preview");
-  const resources = page.locator("#preview-legal-resources");
-  await expect(resources.locator("li")).toHaveCount(3);
-  for (const path of ["/for-fathers.html", "/en/nre", "/en/central-authorities"]) {
-    await expect(resources.locator(`a[href="${path}"]`)).toHaveCount(1);
+test("legal resource links follow the chosen preview language", async ({ page }) => {
+  for (const { code, path } of locales) {
+    const response = await page.goto(path);
+    expect(response?.status(), path).toBe(200);
+    const prefix = code === "fr" ? "" : `/${code}`;
+    const resources = page.locator("#preview-legal-resources");
+    await expect(resources.locator("li")).toHaveCount(3);
+    for (const href of [
+      "/for-fathers.html",
+      `${prefix}/nre`,
+      `${prefix}/central-authorities`,
+    ]) {
+      await expect(resources.locator(`a[href="${href}"]`)).toHaveCount(1);
+    }
   }
 });
 
