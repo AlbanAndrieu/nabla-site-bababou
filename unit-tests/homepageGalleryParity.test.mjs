@@ -8,7 +8,7 @@ const read = (path) => readFileSync(new URL("../" + path, import.meta.url), "utf
 test("the safe React gallery retains the original ten-card layout", () => {
   const page = read("app/[locale]/home-preview/page.tsx");
   const gallery = read("components/home/LegacyStoryGallerySection.tsx");
-  assert.match(page, /<LegacyStoryGallerySection \/>/);
+  assert.match(page, /<ChildHomeSections locale=\{locale\} \/>/);
   const titles = HOME_GALLERY_CARDS.map(({ title }) => title);
   assert.equal(titles.length, 10);
   assert.equal(new Set(titles).size, 10);
