@@ -20,6 +20,10 @@ export default function GalleryCardMedia({ image }: { image: string | null }) {
           width={800}
           height={460}
           sizes="(max-width: 40rem) 100vw, (max-width: 64rem) 50vw, 33vw"
+          // All ten assets are already approved public files. Serve the
+          // originals directly instead of routing through /_next/image,
+          // which adds an unnecessary proxy and can obscure image failures.
+          unoptimized
           className={styles.image}
           onError={() => setFailed(true)}
         />
