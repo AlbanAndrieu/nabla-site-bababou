@@ -17,9 +17,10 @@ export default function ChildHomeSections({ locale }: { locale: AppLocale }) {
   return (
     <>
       <section className={sectionStyles.section} id="preview-opening" aria-labelledby="preview-opening-heading">
-        <h2 id="preview-opening-heading">{c.letterTitle}</h2>
+        <h2 id="preview-opening-heading">{c.openingTitle}</h2>
         <h3>{c.greeting}</h3>
         <p>{c.opening}</p>
+        <p>{c.openingSecond}</p>
       </section>
       <section className={messageStyles.section} id="preview-letter" aria-labelledby="preview-letter-heading">
         <h2 id="preview-letter-heading">{c.letterTitle}</h2>
