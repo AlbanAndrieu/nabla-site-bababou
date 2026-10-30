@@ -20,6 +20,15 @@ La route `/` sert **toujours `public/index.html`**. Les quatre versions Next.js 
 - **Validation :** 39/39 tests Node ciblés PASS (sept suites, Node 24.22.1, sandbox isolé) ; l'assertion binaire d'existence des images n'a pas été exécutée dans ce sandbox, mais les neuf fichiers média existants ont été contrôlés séparément dans GitHub avec tailles non nulles. Nouveaux tests Playwright pour les deux pages en quatre langues ajoutés, **NOT_RUN** ; build Next.js/TypeScript sur SHA final à vérifier.
 - **Restant P1–P5 :** revue éditoriale de messages personnels et traductions, navigation mobile et illustrations sous Chromium/Firefox/WebKit, WCAG 2.2 AA, vérification HTTP/SEO réelle et gates locales qualité/sécurité complètes. Ne jamais fusionner automatiquement ni activer les variables de bascule.
 
+## Itération P1 → P4 — restauration de la parité visuelle
+
+- **P1 — Page Home :** retour de la carte *A long search* et de son illustration historique `hide-and-sick-quote.jpg`. Les cinq cartes Home restent centrées sur les messages, l’espoir, le parcours historique, l’amour parental et les personnes contactées. La notice « identité privée » est désormais dans la page `abduction`, qui présente sept cartes.
+- **P1 — Visuels :** réutilisation du ratio et de la mise en page de `miss-and-love-you-quote.jpeg` (pas de rognage `object-fit: cover`) et des drapeaux des deux cartes de traduction (`object-fit: contain`, fond sobre). Le bloc « My Dear Daughter » reprend un style de lettre avec accent bleu, pictogramme cœur et hiérarchie de texte.
+- **P2 — A11y :** états focus conservés, cibles tactiles existantes, réactivité mobile, règles `forced-colors` ajoutées aux visuels et à la lettre. Recette navigateur/axe **non encore exécutée**.
+- **P3 — i18n :** les nouveaux messages *long search* et la notice de confidentialité sont natifs en FR/EN/DE/NO, avec les mêmes ancres et liens. Les sélecteurs de langue ne dépendent pas de Google Translate.
+- **P4 — Confidentialité :** le numéro d’identité et les liens cartographiques susceptibles d’indiquer des positions précises ne sont pas incorporés dans la nouvelle version publique. Le récit géographique reste au niveau des pays et est présenté comme historique. `/home-preview` et `/abduction` restent en **revue non indexable**.
+- **Qualité :** tests de contrats de contenu/médias/a11y ajoutés dans `unit-tests/homeAudienceUx.test.mjs` ; vérification build et browser à consigner pour le SHA final. Ne pas confondre ces contrôles statiques avec une recette WCAG 2.2 AA réelle.
+
 ## Priorités ouvertes (P1 → P5)
 
 | Priorité | Acquis versionnés / observés | Travail encore ouvert | Condition de clôture |
