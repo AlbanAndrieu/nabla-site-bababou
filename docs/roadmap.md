@@ -1,103 +1,111 @@
 # Roadmap active — Site Bababou
 
-**Mise à jour : 28 octobre 2026 · [PR #250](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/250) et [PR #251](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/251) fusionnées · [PR #252](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/252) Draft, contrôles navigateur.**
+**Mise à jour : 30 octobre 2026.** [PR #251](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/251) et [PR #252](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/252) **fusionnées**. [PR #253](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/253) **Draft**, validations réseau complémentaires. La base de production après #252 est `ccb688c3d5ac613b5e2029839fc4fa59f6c22d65` ; déploiement Vercel `dpl_GhoM19dbmTW3k67AUa248u5YHqY1` **READY**.
 
-**État de clôture :** P2/P3 — 8/8 contrats Node et 28/28 vérifications Chrome HTML locales PASS ; P4 — 9/9 tests Node de sitemap PASS ; P1 — 7/7 tests Node des scripts PASS, 9 dépendances documentées (4 conservées sur HTML historique, 5 non requises en Preview), aucune dépendance script sans décision ; la parité éditoriale et la revue de publication restent ouvertes ; build Vercel exact SHA READY avec 81/81 pages. Restent la recette des routes Next/Preview à travers le checkpoint Vercel HTTP 429, les scans sécurité, la revue humaine de confidentialité et la décision de bascule `/`. L'avertissement npm `cache-dir` est non bloquant.
+## Politique de publication et état cible
 
-## Situation et périmètre
+La route `/` sert **toujours `public/index.html`**. Les quatre versions Next.js restent des pages publiques de **revue non indexable** : `/home-preview` (FR), `/en/home-preview`, `/de/home-preview`, `/no/home-preview`. L'alias `/fr/home-preview` redirige vers la route FR. Les protections `noindex, nofollow, nosnippet` et `private, no-store` sont configurées en source ; **leurs en-têtes HTTP ne sont pas encore attestés sur le nouveau SHA**.
 
-La route `/` sert toujours `public/index.html`. La homepage React est consultable sur `/home-preview`, `/en/home-preview`, `/de/home-preview` et `/no/home-preview` ; `/fr/home-preview` redirige vers la version française non préfixée. Ces routes sont publiques pour revue, mais **noindex, nofollow, no-store**. Aucun feu vert de bascule ni de publication de nouvelles données personnelles n'est implicite.
+**NO-GO** pour basculer `/` : absence de recette navigateur Next complète, de gates sécurité complètes et d'approbation éditoriale/privacy. Ne pas copier ou publier automatiquement de données identifiant une mineure, de positions précises ou d'allégations nominatives. Ne pas désactiver le WAF, ni fusionner automatiquement une PR.
 
-**Une seule file de travaux ouverts : P1 → P2 → P3 → P4 → P5.** Ne pas rouvrir ici les migrations de catalogues/routes déjà fusionnées, ni les déploiements TrueNAS/Kubernetes qui relèvent de `nabla-compose`.
+## Refonte en deux publics — 30 octobre 2026, PR #253
 
-| Priorité | Objectif restant | Condition de fin |
+**Nouvelle architecture versionnée, sans bascule automatique de `/` :**
+
+- **Home pour Éléonore** : `/home-preview`, `/en/home-preview`, `/de/home-preview`, `/no/home-preview`. Les cartes se concentrent sur « My Dear Daughter », « Patience and hope », l'identité tenue privée, « Daddy loves you more than yesterday and less than tomorrow » et « People I contacted ». Le texte intégral d'ouverture de la page historique est conservé, traduit nativement.
+- **Page parents / abduction** : `/abduction`, `/en/abduction`, `/de/abduction`, `/no/abduction`. Six cartes répartissent l'enlèvement d'enfant, « In my position? Contact me », les pères privés de contact, les deux appels aux traducteurs et la notice « Documents on this website — processing notice ». Les trois associations, NRE et autorités centrales restent accessibles.
+- Les deux parcours ont des textes **natifs FR/EN/DE/NO** dans `lib/homeAudienceCopy.mjs`. Les labels juridiques et des associations sont également localisés. Les références externes ou les fichiers HTML historiques peuvent rester en anglais.
+- **Protection du mineur :** le numéro individuel d'identité présent sur le site historique n'est **pas recopié** dans les nouvelles cartes. Une carte explique son retrait. Aucun nouveau document d'identité, de localisation précise ou d'allégation nominative n'est publié.
+- La page `abduction` est en **revue non indexable** (`robots.noindex`, `X-Robots-Tag`, `private, no-store`). La route Home React de production reste **désactivée** par `isHomeCutoverEnabled`.
+- **Validation :** 39/39 tests Node ciblés PASS (sept suites, Node 24.22.1, sandbox isolé) ; l'assertion binaire d'existence des images n'a pas été exécutée dans ce sandbox, mais les neuf fichiers média existants ont été contrôlés séparément dans GitHub avec tailles non nulles. Nouveaux tests Playwright pour les deux pages en quatre langues ajoutés, **NOT_RUN** ; build Next.js/TypeScript sur SHA final à vérifier.
+- **Restant P1–P5 :** revue éditoriale de messages personnels et traductions, navigation mobile et illustrations sous Chromium/Firefox/WebKit, WCAG 2.2 AA, vérification HTTP/SEO réelle et gates locales qualité/sécurité complètes. Ne jamais fusionner automatiquement ni activer les variables de bascule.
+
+## Itération P1 → P4 — restauration de la parité visuelle
+
+- **P1 — Page Home :** retour de la carte *A long search* et de son illustration historique `hide-and-sick-quote.jpg`. Les cinq cartes Home restent centrées sur les messages, l’espoir, le parcours historique, l’amour parental et les personnes contactées. La notice « identité privée » est désormais dans la page `abduction`, qui présente sept cartes.
+- **P1 — Visuels :** réutilisation du ratio et de la mise en page de `miss-and-love-you-quote.jpeg` (pas de rognage `object-fit: cover`) et des drapeaux des deux cartes de traduction (`object-fit: contain`, fond sobre). Le bloc « My Dear Daughter » reprend un style de lettre avec accent bleu, pictogramme cœur et hiérarchie de texte.
+- **P2 — A11y :** états focus conservés, cibles tactiles existantes, réactivité mobile, règles `forced-colors` ajoutées aux visuels et à la lettre. Recette navigateur/axe **non encore exécutée**.
+- **P3 — i18n :** les nouveaux messages *long search* et la notice de confidentialité sont natifs en FR/EN/DE/NO, avec les mêmes ancres et liens. Les sélecteurs de langue ne dépendent pas de Google Translate.
+- **P4 — Confidentialité :** le numéro d’identité et les liens cartographiques susceptibles d’indiquer des positions précises ne sont pas incorporés dans la nouvelle version publique. Le récit géographique reste au niveau des pays et est présenté comme historique. `/home-preview` et `/abduction` restent en **revue non indexable**.
+- **Qualité :** tests de contrats de contenu/médias/a11y ajoutés dans `unit-tests/homeAudienceUx.test.mjs` ; vérification build et browser à consigner pour le SHA final. Ne pas confondre ces contrôles statiques avec une recette WCAG 2.2 AA réelle.
+
+## Priorités ouvertes (P1 → P5)
+
+| Priorité | Acquis versionnés / observés | Travail encore ouvert | Condition de clôture |
+| --- | --- | --- | --- |
+| **P1 — Homepage React** | Deux parcours FR/EN/DE/NO : **5 cartes Home et 7 cartes Abduction**, plus la lettre historique, le parcours transfrontalier, les associations et la notice documentaire ; médias locaux réutilisés ; inventaire des 15 scripts (6 équivalents partiels, 4 conservés sur HTML, 5 non nécessaires à la Preview) | Recette de parité visuelle/fonctionnelle sur les quatre locales ; NRE et liens historiques restaurés en source ; vérifier images, thème, impression et parcours sur navigateur ; revue éditoriale | Navigateur réel sur SHA final et autorisation explicite avant remplacement de `/` |
+| **P2 — WCAG 2.2 AA** | Contrôles thème/impression FR/EN/DE/NO, focus contrasté, boutons ≥44 px et scénarios Playwright ; test de redimensionnement du texte 200 % | Exécuter axe/Playwright sur Chromium/Firefox/WebKit, reflow, clavier, focus, contrastes, reduced-motion ; zoom natif 200 % et lecteur d'écran manuels | Aucune violation bloquante ; parcours clavier/lecteur d'écran validés |
+| **P3 — i18n/pages** | Contenu principal natif FR/EN/DE/NO sur les deux pages ; liens aller/retour qui suivent le verrou de bascule ; 16 footers HTML historiques harmonisés | Contrôler en navigateur les liens juridiques désormais localisés, les traductions humaines, le sélecteur de langue React, les anciennes routes HTML et le rendu print/PDF | FR/EN/DE/NO et anciennes URLs vérifiés en navigateur |
+| **P4 — SEO/confidentialité** | Sitemap XML legacy nettoyé (14 URLs), filtrage des alias `home-preview` encodés, garde analytics direct/SPA, tests d'audit réseau | Vérifier HTTP 200/307/404, canonical, hreflang/`x-default`, OG/Twitter, RSS, robots et sitemap ; réseau réel, y compris WebSockets/Service Workers et navigation Next | Preuves de réponses HTTP et de non-émission réseau sur SHA final, avec accès Vercel autorisé |
+| **P5 — Qualité/maintenance** | `justfile` canonique ; `just homepage-validation[-list]`, contrats locaux ; documentation consolidée | Exécuter `just p0`, `just quality`, BetterLeaks, SAST/SCA, ZAP ; identifier provenance npm `cache-dir` ; limiter la dette de tests/legacy | Gates complètes PASS ou dérogations documentées et approuvées, sans contournement |
+
+Le périmètre des contenus HTML nominatifs, de D3/ARF, de Google Translate et de BetterStack reste **legacy**, sauf migration approuvée. Ne pas assimiler l'inventaire des scripts à une parité de contenu. Voir [homepage-migration-parity.md](homepage-migration-parity.md), [publication-redaction.md](publication-redaction.md) et [operations.md](operations.md).
+
+## Preuves récentes et limites
+
+| Contrôle | Résultat | Portée exacte |
 | --- | --- | --- |
-| **P1 — Homepage** | Recette de parité React et décision de publication | 13 sections, 10 cartes et ressources validées sur navigateur au SHA exact ; revue de confidentialité approuvée |
-| **P2 — WCAG 2.2 AA** | Exécuter les tests automatisés et la revue manuelle | axe, clavier, focus, contraste, zoom 200 %, reduced-motion et responsive validés sur Chromium/Firefox/WebKit |
-| **P3 — i18n/pages** | Vérifier FR/EN/DE/NO et les pages publiques non migrées | Traductions humaines relues ; liens, anciennes URL et interactions conservés |
-| **P4 — SEO** | Contrôler les réponses réelles et la découvrabilité | Canonical, hreflang, OG/Twitter, robots, sitemap, RSS, redirections et 404 validés |
-| **P5 — Maintenance** | Supprimer les dettes démontrées, réduire les contrats fragiles | Build et tests reproductibles ; documentation sans doublon ; pas de régression legacy |
+| Vercel production après #252 | **READY** (`ccb688c3`) | Compilation / déploiement uniquement ; aucune attestation fonctionnelle |
+| Contrats Node analytics + SEO + audit réseau #253 | **16/16 PASS**, Node 24.22.1 | Six fichiers exacts récupérés via GitHub et exécutés dans un sandbox sans réseau, **pas** checkout complet |
+| Syntaxe JS et analyse syntaxique du scénario Playwright #253 | **6/6 JS + 1/1 TS PASS** | Analyse syntaxique, **pas** exécution browser |
+| Audit navigateur Next/axe réel, transition SPA, Firefox/WebKit, zoom natif | **NOT_RUN** | Sans checkout complet local ni navigateur autorisé sur le nouveau SHA |
+| Réponses HTTP publiques | **BLOCKED/NOT_VERIFIED** | Un précédent contrôle Vercel avait obtenu 429 Security Checkpoint ; pas de preuve HTTP au SHA #253 |
+| Security gates BetterLeaks/SAST/SCA/ZAP, `just p0`, `just quality` | **NOT_RUN** | Aucun PASS déduit du build Vercel |
+| Approbation éditoriale / vie privée | **PENDING** | Bloquante pour remplacer `/` |
+| Warning npm `Unknown env config "cache-dir"` | **CONFIRMÉ** dans les logs de build #252 | Non présent dans `.npmrc` ni `vercel.json` examinés ; inspecter la configuration d’environnement Vercel sans afficher les secrets. Ne pas supprimer ce warning sans avoir identifié sa source |
 
-## P1 — Homepage React
+La PR #253 couvre désormais les requêtes **HTTP contextuelles** (Service Workers) et les **connexions WebSocket**. Elle ne déclare pas que ces risques ont été éliminés en production : le test navigateur est non exécuté.
 
-Le footer Next partagé fournit maintenant **l’unique** bouton « retour en haut » (FR/EN/DE/NO). Les deux liens redondants de la Preview ont été supprimés. La copie « About » identifie Bababou sans reprendre l'ancien index d'un autre domaine. Les contrats de documentation ont été remis en cohérence avec les rubriques actuelles.
+## Avancée de parité visuelle et de contenu — PR #253
 
-- [ ] Comparer visuellement `/` et les quatre Preview : ordre des 13 sections, navigation, 10 cartes/6 images, fallbacks, ancres, responsive, liens, RSS, thème, impression et volet About (liens Calendly/Ko-fi à activation volontaire). Les contrats source sont ajoutés ; **ce ne sont pas des preuves navigateur**.
-- [x] **Statuer sur les 15 scripts historiques** avec `just homepage-runtime-parity` : six scripts ont déjà un équivalent partiel sur Next (icônes, thème, analytics, widgets), quatre sont maintenus sur HTML historique (traduction, D3, ARF, BetterStack), cinq n'ont pas d'utilité sur la Preview React (`obs-connection.js` est vide ; Turnstile sans formulaire serveur ; jQuery, Popper et Bootstrap remplacés par React/CSS). Aucun script tiers supplémentaire ni formulaire non protégé n'est ajouté à la Preview. Ce classement ne dispense pas de la recette navigateur ni de la revue de confidentialité.
-- [ ] Faire la **revue éditoriale et de confidentialité** selon [publication-redaction.md](publication-redaction.md) : identifier les données officielles de mineure, localisations précises et assertions nominatives à ne pas republier. Valider les substitutions neutres avant de remplacer `/`.
-- [ ] Après les validations P1–P4 et les gates de publication, obtenir une approbation explicite pour la bascule. **Ne pas supprimer `public/index.html`** ni les anciens documents avant cette décision.
+- **Galerie :** 10 cartes / 10 images locales. Les six images historiques sans identifiant conservées ont été complétées par quatre SVG originaux et neutres (contact, documents, personnes contactées, message). Les quatre anciennes illustrations exclues ne sont **pas** republiées : elles peuvent contenir des pièces d'identité, des informations sur une mineure, des localisations ou des allégations.
+- **Informations :** les quatre descriptions associées à ces cartes ont été enrichies uniquement à partir du contenu déjà publié et des fonctionnalités existantes. Le bloc `LegacyPeopleSection` décrit désormais les deux ressources publiques `/people-contacted.html` et `/central-authorities.html` (fichiers présents dans le dépôt), sans importer leurs données.
+- **Contrôles :** six tests Node ciblés de structure/visuel/SVG `PASS`, plus quatre SVG XML valides. Le test local `existsSync` des six images historiques est **NOT_RUN dans le sandbox** car leurs fichiers binaires n'y ont pas été copiés ; vérification indépendante des 10 noms et tailles de fichiers dans le listing GitHub **10/10 PASS**. La validation Playwright de l'affichage des images et du réseau demeure `NOT_RUN`.
+- **Publication :** aucun document familial ou juridique nouveau n'est ajouté ; l'approbation éditoriale pour les informations omises reste ouverte. Ne pas qualifier de parité éditoriale complète cette restauration des illustrations.
 
-## P2 — Accessibilité
+## Suite P1 — liens publics et fiabilité des images (30 octobre 2026)
 
-- [ ] **Sélecteur de thème en haut à droite** : le contrôle Light/Dark/Auto commun à NRE et aux autres pages Next.js est fixé dans le coin supérieur droit et reprend les **segments arrondis** de la homepage historique (track/segments en pilule, état actif et tokens de couleur existants). Sur mobile, les trois segments deviennent des cercles de 44 px et restent accessibles. Le header réserve de la place au sélecteur de langue. L'impression reste dans le footer. Tests Playwright de géométrie/arrondi/interaction rédigés : **NOT_RUN**. Le changement de thème conserve maintenant un état mémoire temporaire si `localStorage` est bloqué, afin de synchroniser l'apparence et `aria-pressed`. Le test de rayon du rail accepte les variations de zoom/rem.
+- **Parité des données publiques :** le lien `nre-en.html` présent dans la homepage historique était absent de la Preview. La section juridique React dessert maintenant `/for-fathers.html`, `/en/nre` et `/en/central-authorities`, avec trois cartes responsives. La route Next `/en/nre` et la redirection historique sont déjà présentes ; aucune donnée nominative NRE n'est copiée dans la Preview.
+- **Images :** `GalleryCardMedia.tsx` sert les 10 images locales d'origine directement (`unoptimized`) en conservant l'affichage de remplacement `onError`. Le test Playwright exige un `src` local et l'absence d'image cassée ; **NOT_RUN** sur le rendu réel.
+- **Tests ciblés :** `unit-tests/homepageLegalResourcesParity.test.mjs` couvre les routes publiques, la mise en page et la source des 10 images ; **3/3 PASS** sous Node 24.22.1 dans un sandbox sans réseau. La syntaxe TSX n'a pas pu être contrôlée par le lecteur TypeScript natif Node (JSX non pris en charge) : un build Next.js exact-SHA est requis.
+- **Confidentialité :** la Preview reste non indexée et la homepage `/` inchangée. Les documents, positions précises et informations sensibles non approuvées restent exclus.
 
-- [ ] Exécuter la suite Playwright sur **les quatre Preview** : axe WCAG 2.2 AA, clavier/focus et reflow 200 % (les scénarios sont déjà ajoutés à `tests/accessibility-*.spec.ts`). Corriger uniquement les échecs constatés.
-- [ ] **Contraste du focus** : le contour partagé `--ui-focus-ring` utilise maintenant `--ui-text-primary` au lieu du bleu pâle `#9ec5fe` (faible contraste sur fond clair), en modes clair et sombre. Les contrôles de thème/impression utilisent déjà cette couleur. Contrat source ajouté ; **recette navigateur NOT_RUN**.
-- [ ] **Contraste des segments actifs** : la vérification de tokens WCAG couvre maintenant le texte et le fond du segment sélectionné (en plus du segment inactif). Les scénarios de non-chevauchement et de forme vérifient aussi **320 px**, 375 px, 768 px et 1280 px. Playwright **NOT_RUN**.
-- [ ] Compléter par une revue lecteur d'écran et contraste clair/sombre, tailles tactiles et images de secours ; valider sur Chromium, Firefox, WebKit et mobile.
+## Correction P3 — navigation locale des ressources (30 octobre 2026)
 
-## P3 — Traductions et pages
+- Le bloc juridique reçoit maintenant `locale` depuis la route `home-preview` après validation par `hasLocale`.
+- Les liens NRE et Central Authorities utilisent `canonicalPagePath(..., locale)` et suivent le registre Next existant. FR : `/nre`, `/central-authorities` ; EN/DE/NO : les mêmes routes préfixées dans la langue de la Preview. `/for-fathers.html` reste un document historique en anglais.
+- Les contrats `homepageLegalResourcesParity` et `homepageLinkOwnership` ont été mis à jour pour les objets de données `href:` et pour détecter toute route anglaise codée en dur.
+- **Preuve ciblée :** 6/6 PASS sous Node 24.22.1 sur les sources exactes récupérées via GitHub, dans un sandbox isolé sans accès réseau. La suite complète de tests, TypeScript/Next et Playwright ont des validations séparées ; aucun statut READY de build ne prouve le comportement du navigateur.
+- Le contenu narratif déjà approuvé reste en anglais avec `lang="en"` tant que les traductions humaines ne sont pas relues. La correction ne réintroduit ni données sensibles ni images d'identité.
 
-- [ ] **Parité du chrome HTML/Next** : 16 footers HTML harmonisés avec les actions Next (primaire/secondaire/outline), styles indépendants du chargement de Bootstrap grâce à `box-sizing: border-box`. **8/8 contrats Node PASS** et **28/28 vérifications Chrome locales PASS** sur sept pages HTML en clair/sombre à 320/1280 px. Les tests Playwright réutilisables couvrent aussi 375 px mais leur exécution complète contre les routes Next reste **NOT_RUN**. Le troisième lien « Central Authorities » conserve le style contour. La page de test charge les styles communs, les boutons FR sont traduits ; pas de remplacement de `/`.
+## Préparation de la bascule réversible — 30 octobre 2026
 
-- [x] **Contrôles communs localisés** : les libellés, noms accessibles et infobulles du sélecteur Light/Dark/Auto et du bouton Print/PDF utilisent maintenant les catalogues `site.displayControls` FR/EN/DE/NO. Aucun `lang="en"` imposé sur les pages non anglophones. **2/2 contrats Node PASS** dans un sandbox Node 24 et build Vercel exact-SHA READY ; tests navigateur Next et multilingues **NOT_RUN**.
-- [ ] Vérifier la navigation FR/EN/DE/NO, les ressources juridiques et les métadonnées des pages migrées. Les extraits familiaux anglais conservent `lang="en"` ; ne jamais les traduire automatiquement pour publication.
-- [ ] Planifier la migration des pages encore servies en HTML, après inventaire de leurs fonctionnalités et consentements. Conserver `people-contacted.html` (D3/ARF), `for-fathers.html` et `test.html` jusqu'à parité prouvée.
+La **route publique React est désormais codée mais inactive** : `app/[locale]/page.tsx` et `proxy.ts` exigent une approbation éditoriale, une approbation des gates navigateur et un SHA Vercel exact via `lib/homeCutoverPolicy.mjs`. Sans ces valeurs, `/` reste le HTML historique et `/en`, `/de`, `/no` redirigent vers `/`. Un nouveau SHA invalide le GO précédent. Les canonicals et les langues du sitemap basculeront uniquement avec ce verrou. Aucun marqueur d'approbation n'a été ajouté aux variables Vercel.
 
-## P4 — SEO et confidentialité d'indexation
+**Confiance et limites :** le propriétaire confirme que les images apparaissent sur la Preview précédente (**validation utilisateur des images**, pas recette WCAG). Tests Node ciblés du verrou **4/4 PASS** sous Node 24.22.1 sur sources exactes. Le build complet de ce dernier lot, les tests navigateur/a11y/sécurité et la revue éditoriale restent à confirmer. La duplication temporaire de structure de JSX entre `home-preview` et la nouvelle route publique pourra être factorisée **après** preuve de parité, sans modifier les textes approuvés.
 
-- [ ] Vérifier sur une Preview autorisée les canoniques, hreflang et `x-default`, métadonnées sociales, `robots.txt`, `sitemap.xml`, RSS, 404 et redirections historiques. 
-- [ ] Contrôler l'exclusion de toutes les variantes `home-preview` du sitemap, y compris lors d'un import XML legacy. Un garde-fou source prend maintenant en compte les alias percent-encodés ; **les contrôles HTTP `noindex/nofollow/nosnippet` et `private/no-store` sont ajoutés à Playwright, mais restent NOT_RUN**.
+Voir [procédure de GO/NO-GO et retour arrière](homepage-react-cutover.md). **NO-GO** maintenu : ne pas définir les variables d'activation, ne pas merger automatiquement, ne pas supprimer les fichiers historiques.
 
-- [x] **Nettoyer le sitemap hérité au niveau de la source** : sur 16 entrées XML actives, 14 désignaient des fichiers effectivement présents, une annonçait un document absent et une pointait vers un autre domaine. Le fichier public conserve uniquement les 14 URL publiables ; les commentaires qui révélaient des chemins de documents non publiés ont été retirés (historique Git conservé). L'import Next refuse aussi les fichiers absents, chemins hors `public/` et symlinks sortants. Tests P4 ajoutés (exécution complète **NOT_RUN**). Les URL Next sont ajoutées à part depuis leur registre.
+## Durcissement P1/P5 — PR #253, 30 octobre 2026
 
-- [x] **Bloquer l'analytics des pages de revue React** : `public/site-analytics.js` cesse toute initialisation directe sur `/home-preview` et ses variantes FR/EN/DE/NO, même avec le mode `full` ou une URL doublement encodée. Les files Vercel Web Analytics (`va`) et Speed Insights (`si`) reçoivent en outre un filtre `beforeSend` qui refuse les événements de la Preview lors des transitions SPA. **7/7 tests Node PASS** : script réellement exécuté dans une VM et événements Vercel simulés, sans émission réseau. Les autres pages gardent leurs statistiques. Audit réseau en navigateur réel **NOT_RUN**.
+- **Régression réparée :** les contrats de migration vérifient maintenant la route Next publique *inactivée par défaut*, les liens dans leurs véritables sections React, et le composant juridique avec `locale`. Le test du verrou interdit de publier sur un SHA différent ou sans approbation.
+- **SEO client/serveur :** `lib/sitePageCatalog.ts`, importé par les composants client, ne lit plus le verrou serveur `isHomeCutoverEnabled()`. Les URLs de publication FR/EN/DE/NO sont générées par les fonctions pures `releasedHomepagePath` et `releasedHomepageAlternates`, consommées uniquement quand le verrou est actif côté métadonnées et sitemap.
+- **Clavier :** le lien d'évitement du header reste disponible sur la homepage React même si le sélecteur de langue est masqué.
+- **Preuve locale : 30/30 PASS**, Node 24.22.1, quatre suites ciblées (`homeCutoverPolicy`, `homepageMigrationContract`, `publicHomeReviewContract`, `homePreviewSeoPolicyEncoding`) sur les fichiers exacts de la branche dans un sandbox isolé. Les tests E2E, WCAG, SAST/SCA, BetterLeaks et ZAP sont toujours **NOT_RUN** ; ce rapport ne les remplace pas.
+- **GO/NO-GO :** React sur `/` reste désactivé en l'absence des quatre variables d'approbation et du SHA vérifié. Le retour utilisateur sur les images est consigné, sans déduire un accord de publication.
 
-## P5 — Qualité et simplification
+## P3 — correction de la Preview française (30 octobre 2026)
 
-- [ ] **Supprimer le warning `cache-dir` restant** : l’installation de npm 12.2.1 est confirmée par la Preview exacte-SHA (`READY`, 81/81 pages) et `EBADENGINE` a disparu. L’avertissement npm `Unknown env config "cache-dir"` persiste. Identifier sa source Vercel sans désactiver les autres contrôles.
-- [ ] Refactorer uniquement les scripts legacy encore utilisés (`site-widgets.js`, `theme-toggle.js`, `site-analytics.js`) ; préserver consentement et télémétrie existants.
-- [ ] Préférer des tests comportementaux aux regex de source lorsqu'un vrai navigateur est disponible. Garder `justfile` canonique et `Makefile` compatible.
-- [ ] Demander à l'opérateur d'installer lui-même les skills tiers `web-design-guidelines`, `frontend-design` et `security-audit-skill`. Évaluer Dagger/Context7 seulement avec des sources non privées et sans chantier d'agent disproportionné.
+Le propriétaire a constaté que la route `/home-preview` affichait encore les **treize sections en anglais** malgré la locale FR et qu'un clic sur Google Translate revenait à la même URL. Cause identifiée : seules les chaînes de navigation étaient localisées ; les extraits React conservaient `lang="en"` et la Preview n'incluait pas le widget de traduction historique.
 
-## Barrières de publication
+**Correction en source :** `FrenchHomeSections.tsx` rend maintenant les onze sections de contenu en français, plus les associations et les liens légaux localisés. `home-preview/page.tsx` et la route publique préparée sélectionnent cette composition lorsque `locale === "fr"` ; les versions EN/DE/NO préservent leurs extraits anglais antérieurs (sans prétendre être entièrement traduites). Les dix illustrations, les liens et les fragments de navigation proviennent toujours du catalogue public approuvé. Aucun script Google Translate ni nouvelle donnée sensible n'a été ajouté.
 
-**Local-first :** `just agent-local-tests` fonctionne sous Node 22/npm 10 pour les contrats sans dépendances ; le build complet requiert la toolchain verrouillée (Node 24/npm 12). Avant toute fusion/bascule, exécuter `just p0`, `just quality`, confidentialité/publication, BetterLeaks, SAST/SCA, Playwright/axe et ZAP sur le **SHA final**, sans désactiver les gates.
+**Contrôles :** `homepageFrenchContent.test.mjs` (4/4 PASS) et suites `homepageMigrationContract` + `homepagePolicyNavigation` : **26/26 PASS** en sandbox Node 24.22.1 sur sources du dernier lot. Les assertions Playwright FR ont été adaptées à la nouvelle langue du DOM ; tests navigateur **NOT_RUN** tant que la Preview n'est pas accessible au runner. La traduction française de la lettre et des déclarations personnelles demande une **revue éditoriale** avant publication en `/`.
 
-**Accès Vercel :** un statut `READY` confirme la compilation, pas les réponses HTTP ni WCAG. Le checkpoint Vercel 429 a historiquement bloqué les sondes : utiliser un accès de test autorisé, sans désactiver WAF/Deployment Protection.
-
-**Gouvernance :** PR en Draft, pas de merge ou de promotion automatique ; ne pas qualifier de PASS un contrôle `NOT_RUN`. Les procédures sont dans [operations.md](operations.md), l'inventaire de parité dans [homepage-migration-parity.md](homepage-migration-parity.md) et les règles de confidentialité dans [publication-redaction.md](publication-redaction.md).
-
-## Reprise des validations après fusion #251 — 28 octobre 2026
-
-**Référence :** la [PR #251](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/251) est **fusionnée** (merge `16982977d7d786d1612b1ec6c689d9faa34ce40f`). La [PR #252](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/252) est **Draft** sur `test/home-preview-browser-privacy-20261028`. Le déploiement Vercel de production du merge #251 (`dpl_BBeytuULchKitzZodQoKWq7eSmay`) est READY, mais il n'atteste pas les réponses HTTP ni WCAG.
-
-### Correctifs et preuves nouvelles de la PR #252
-
-- **Confidentialité :** `public/site-analytics.js` avait une erreur de borne : les routes `/en/%252568ome-preview` (encodage répété) n'étaient pas détectées par le dernier tour de décodage. Le test Node reproduit le défaut ancien ; le garde corrigé vérifie aussi le dernier chemin décodé. `unit-tests/analyticsLocalHost.test.mjs` couvre le chargement direct et le filtre `beforeSend` des événements Vercel.
-- **SEO :** `lib/homePreviewSeoPolicy.mjs` exclut maintenant les alias répétés `home-preview` du sitemap ; `unit-tests/homePreviewSeoPolicyEncoding.test.mjs` documente les quatre locales, les encodages et les autres routes. Ce contrôle n'est pas une preuve HTTP de l'indexation réelle.
-- **Audit réseau navigateur :** `lib/homePreviewNetworkAudit.mjs` refuse les domaines HTTP(S) extérieurs à l'origine de l'application, les endpoints `/_vercel/insights` / `/_vercel/speed-insights` / `/cdn-cgi/rum` et les requêtes non idempotentes (POST/beacons), y compris sur des endpoints locaux inconnus. `unit-tests/homePreviewNetworkAudit.test.mjs` vérifie les cas positifs/négatifs ; le scénario Playwright `tests/home-preview-analytics-network.spec.ts` examine 4 chargements directs et le changement de langue FR → EN via `RouteHeader`/Next `router.replace`. Aucune donnée de requête, query string ou secret n'est conservé dans les diagnostics.
-- **SEO HTTP :** `tests/home-preview.spec.ts` vérifie maintenant toutes les balises `<loc>` du sitemap rendu à l'aide de `isHomePreviewPath`, et plus seulement une regex sur les chemins lisibles ; le test reste **NOT_RUN** sur Next.
-- **Accessibilité :** `tests/accessibility-responsive.spec.ts` remplace le CDP Chromium `Emulation.setEmulatedOSTextScale` (sans effet sur la taille calculée du texte en Chromium desktop vérifié) par une mise à l'échelle explicite à 200 % de la police racine. Le test devient exécutable aussi sur Firefox et WebKit. Cette méthode simule **le redimensionnement du texte**, pas le zoom natif du navigateur, qui reste à contrôler manuellement.
-- **Local-first :** `just homepage-validation` sélectionne Playwright pour la Preview React, la confidentialité réseau, le SEO canonical/hreflang/redirections et l'accessibilité sur Chromium/Firefox/WebKit ; `just homepage-validation-list` affiche les scénarios sans lancer Next. Les deux cibles utilisent `npm exec --no` pour éviter toute installation implicite.
-
-| Preuve | État constaté |
-| --- | --- |
-| Tests ciblés Node, six fichiers GitHub exacts copiés dans un sandbox isolé sans accès réseau | **14/14 PASS** sur Node **24.22.1** |
-| Vérification syntaxique Node sur ces six fichiers | **6/6 PASS** |
-| Parsing TypeScript isolé des scénarios Playwright Preview / audit réseau (sans exécution navigateur) | **2/2 PASS** |
-| Test de méthode Chromium 144 sur une page de contrôle isolée | CDP : 16 → 16 px (sans effet) ; redimensionnement explicite : 16 → 32 px (PASS) |
-| HTTP production `/home-preview`, `/en/home-preview`, `/robots.txt` | **BLOCKED 429** (Vercel Security Checkpoint) |
-| Navigateur Next.js réel au SHA #252, requêtes réseau, transitions Next FR → EN et SPA depuis une page normale | **NOT_RUN** (checkout complet indisponible) |
-| Playwright/axe, Firefox/WebKit, zoom natif et lecteur d'écran | **NOT_RUN** |
-| `just p0`, `just quality`, BetterLeaks, SAST/SCA, ZAP | **NOT_RUN** |
-| Publication de données familiales concernant une mineure | **APPROBATION EN ATTENTE** |
-
-Ces tests ciblés utilisent des fichiers récupérés par l'accès GitHub connecté ; ils ne remplacent pas une exécution sur un checkout complet. Les pages Vercel interrogées ont renvoyé un checkpoint HTTP 429, qui doit être distingué d'une erreur applicative. Ne pas affaiblir le WAF.
-
-### Commandes locales de validation, sans GitHub Actions
+## Prochaine étape de validation (local-first)
 
 ```bash
+# Depuis un checkout complet de la PR #253, avec dépendances et navigateurs déjà installés :
 just agent-local-tests
 just homepage-validation-list
 just homepage-validation
@@ -105,8 +113,6 @@ just p0
 just quality
 ```
 
-Installer au préalable les dépendances et les navigateurs via les procédures déjà approuvées du projet. Ne pas utiliser `npx` avec installation automatique pour masquer un outil absent.
+Utiliser un accès autorisé à Vercel si les sondes sont exécutées sur un déploiement protégé. Ne jamais mettre de jeton dans les artefacts, rapports, captures ou logs. Ne pas relancer GitHub Actions pour ces recettes.
 
-### Décision de bascule `/` — NO-GO
-
-La parité visuelle et fonctionnelle des quatre Preview, l'accessibilité WCAG, la sécurité de publication et l'absence de fuites réseau ne sont pas encore attestées. La revue humaine des informations familiales est obligatoire. **Conserver `public/index.html`, ne pas changer `/`, ne pas fusionner automatiquement #252 et ne pas republier de données sensibles sans approbation explicite.**
+**À différer :** migration des pages legacy restantes, widgets tiers et nouvelles traductions non approuvées. Demander au propriétaire d'installer lui-même les skills tiers `web-design-guidelines`, `frontend-design` et `security-audit-skill` lorsque la migration reprendra ; Dagger/Context7 restent des évaluations sans priorité de publication.

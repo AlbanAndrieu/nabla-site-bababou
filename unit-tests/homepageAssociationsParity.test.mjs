@@ -23,7 +23,7 @@ test("associations keep the approved links and local art from public/index.html"
     assert.ok(existsSync(new URL("public/assets/" + icon, root)), id + " bundled asset");
   }
   assert.match(component, /id="preview-associations"/);
-  assert.match(component, /lang="en"/);
+  assert.match(component, /lang=\{locale\}/);
   assert.match(component, /aria-labelledby="preview-associations-heading"/);
 });
 

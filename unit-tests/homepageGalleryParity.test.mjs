@@ -8,7 +8,7 @@ const read = (path) => readFileSync(new URL("../" + path, import.meta.url), "utf
 test("the safe React gallery retains the original ten-card layout", () => {
   const page = read("app/[locale]/home-preview/page.tsx");
   const gallery = read("components/home/LegacyStoryGallerySection.tsx");
-  assert.match(page, /<LegacyStoryGallerySection \/>/);
+  assert.match(page, /<ChildHomeSections locale=\{locale\} \/>/);
   const titles = HOME_GALLERY_CARDS.map(({ title }) => title);
   assert.equal(titles.length, 10);
   assert.equal(new Set(titles).size, 10);
@@ -25,10 +25,10 @@ test("the safe React gallery retains the original ten-card layout", () => {
   assert.match(about, /rel="noopener noreferrer"/);
 });
 
-test("all gallery images are existing public assets, excluding identity and location proof", () => {
+test("all ten gallery cards use existing local artwork, excluding identity and location proof", () => {
   const gallery = read("components/home/LegacyStoryGallerySection.tsx");
   const images = HOME_GALLERY_CARDS.map(({ image }) => image).filter(Boolean);
-  assert.equal(images.length, 6);
+  assert.equal(images.length, 10);
   for (const image of images) {
     assert.ok(existsSync(new URL("../public" + image, import.meta.url)), image);
     assert.doesNotMatch(image, /passport|location|identity|child-abuse/i);
@@ -80,4 +80,20 @@ test("gallery images have an accessible, network-free rendering fallback", () =>
   assert.match(media, /data-gallery-media-fallback/);
   assert.match(media, /aria-hidden="true"/);
   assert.doesNotMatch(media, /fetch\(|sendBeacon\(|setTimeout\(/);
+});
+
+test("new gallery illustrations are local, static and free of remote references", () => {
+  const expected = [
+    "/assets/home-card-contact.svg",
+    "/assets/home-card-documents.svg",
+    "/assets/home-card-people.svg",
+    "/assets/home-card-message.svg",
+  ];
+  for (const filename of expected) {
+    assert.ok(HOME_GALLERY_CARDS.some(({ image }) => image === filename), filename);
+    const svg = read("public" + filename);
+    assert.ok(svg.startsWith('<svg xmlns="http://www.w3.org/2000/svg"'), filename);
+    assert.doesNotMatch(svg, /<script\b|<foreignObject\b|<image\b|\b(?:xlink:)?href=/i);
+    assert.doesNotMatch(svg, /(?:<text\b|<metadata\b)/i);
+  }
 });

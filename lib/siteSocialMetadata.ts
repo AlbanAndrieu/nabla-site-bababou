@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 
 import { type AppLocale, routing } from "@/i18n/routing";
+import { isHomeCutoverEnabled } from "@/lib/homeCutoverPolicy.mjs";
 import {
   canonicalPagePath,
   pageAlternates,
+  releasedHomepagePath,
+  releasedHomepageAlternates,
   type SitePageSlug,
 } from "@/lib/sitePageCatalog";
 
@@ -97,7 +100,10 @@ function socialMetadata(
 export function localizedSiteMetadata(locale: AppLocale): Metadata {
   const copy = siteCopy(locale);
   // Legacy homepage is `/` for every locale until its migration is audited.
-  const canonical = canonicalPagePath("index", locale);
+  const released = isHomeCutoverEnabled();
+  const canonical = released
+    ? releasedHomepagePath(locale)
+    : canonicalPagePath("index", locale);
 
   return {
     metadataBase: new URL(SITE_URL),
@@ -109,7 +115,9 @@ export function localizedSiteMetadata(locale: AppLocale): Metadata {
     creator: "Alban Andrieu",
     publisher: "Alban Andrieu",
     referrer: "origin-when-cross-origin",
-    alternates: { canonical },
+    alternates: released
+      ? releasedHomepageAlternates(locale)
+      : { canonical },
     ...socialMetadata(locale, copy.title, copy.description, canonical),
   };
 }

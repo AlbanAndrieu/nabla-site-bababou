@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type BrowserContext, type Page } from "@playwright/test";
 
 import { isUnexpectedReviewRequest } from "../lib/homePreviewNetworkAudit.mjs";
 
@@ -17,18 +17,22 @@ const previewPaths = [
 
 type CapturedRequest = { url: string; method: string };
 
-function captureRequests(page: Page): CapturedRequest[] {
+function captureRequests(context: BrowserContext, page: Page): CapturedRequest[] {
   const requests: CapturedRequest[] = [];
-  page.on("request", (request) => {
-    const method = request.method();
+  function capture(rawUrl: string, method: string) {
     try {
-      const url = new URL(request.url());
+      const url = new URL(rawUrl);
       // Record only method, origin and path: never query or request payload.
       requests.push({ method, url: url.origin + url.pathname });
     } catch {
       requests.push({ method, url: "invalid-request-url" });
     }
-  });
+  }
+  // Context-level events also observe service-worker-owned HTTP requests;
+  // page-only request events can miss them.
+  context.on("request", (request) => capture(request.url(), request.method()));
+  // Playwright emits WebSockets separately from regular request events.
+  page.on("websocket", (socket) => capture(socket.url(), "WEBSOCKET"));
   return requests;
 }
 
@@ -42,8 +46,8 @@ function unexpectedRequests(requests: CapturedRequest[], applicationUrl: string)
 
 test.describe("React homepage review — browser network privacy", () => {
   for (const path of previewPaths) {
-    test(`${path} loads no analytics or external resources, even with third-party override`, async ({ page }) => {
-      const requests = captureRequests(page);
+    test(`${path} loads no analytics or external resources, even with third-party override`, async ({ context, page }) => {
+      const requests = captureRequests(context, page);
       const response = await page.goto(
         path + "?nablaEnableThirdParty=1",
         { waitUntil: "domcontentloaded" },
@@ -66,8 +70,8 @@ test.describe("React homepage review — browser network privacy", () => {
     });
   }
 
-  test("switching preview locale through Next navigation does not initialize tracking", async ({ page }) => {
-    const requests = captureRequests(page);
+  test("switching preview locale through Next navigation does not initialize tracking", async ({ context, page }) => {
+    const requests = captureRequests(context, page);
     const initial = await page.goto(
       "/home-preview?nablaEnableThirdParty=1",
       { waitUntil: "domcontentloaded" },

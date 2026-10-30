@@ -7,7 +7,7 @@ import test from "node:test";
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const read = (path) => readFileSync(join(root, path), "utf8");
 const hrefCount = (source, href) =>
-  [...source.matchAll(/\bhref="([^"]+)"/g)].filter((match) => match[1] === href).length;
+  [...source.matchAll(/\bhref\s*(?:=|:)\s*"([^"]+)"/g)].filter((match) => match[1] === href).length;
 
 test("preview keeps one owner for each legacy navigation link", () => {
   const preview = read("app/[locale]/home-preview/page.tsx");

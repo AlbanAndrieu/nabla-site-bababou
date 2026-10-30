@@ -4,6 +4,7 @@ import createMiddleware from "next-intl/middleware";
 
 import { routing } from "@/i18n/routing";
 import { isTrustedHomelabIpv4 } from "@/lib/homelabTrustedCidrs.mjs";
+import { isHomeCutoverEnabled } from "@/lib/homeCutoverPolicy.mjs";
 
 const intlMiddleware = createMiddleware(routing);
 const defaultLocalePrefix = `/${routing.defaultLocale}`;
@@ -56,7 +57,9 @@ export default function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/home-preview", request.url), 307);
   }
 
-  if (request.nextUrl.pathname === "/") {
+  // Default remains the reviewed legacy homepage. A cutover is never
+  // activated by a request parameter: only server-side SHA-bound approvals.
+  if (request.nextUrl.pathname === "/" && !isHomeCutoverEnabled()) {
     return NextResponse.rewrite(new URL("/index.html", request.url));
   }
 
@@ -65,7 +68,7 @@ export default function proxy(request: NextRequest) {
    * the approved legacy root, but emit the redirect directly instead of asking
    * next-intl to render a full response body before redirecting it.
    */
-  if (localeRootRedirects.has(request.nextUrl.pathname)) {
+  if (localeRootRedirects.has(request.nextUrl.pathname) && !isHomeCutoverEnabled()) {
     return NextResponse.redirect(new URL("/", request.url), 307);
   }
 

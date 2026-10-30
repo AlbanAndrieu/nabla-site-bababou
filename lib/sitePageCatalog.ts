@@ -133,6 +133,29 @@ export function canonicalPagePath(slug: SitePageSlug, locale: AppLocale) {
   return `${locale === "fr" ? "/fr" : ""}/${slug}.html`;
 }
 
+
+/**
+ * Pure canonical paths for an approved React homepage.
+ * Keep server-side approval OUT of the shared client catalog, because the
+ * browser must not depend on Vercel non-public environment variables.
+ */
+export function releasedHomepagePath(locale: AppLocale): string {
+  return locale === routing.defaultLocale ? "/" : `/${locale}`;
+}
+
+export function releasedHomepageAlternates(locale: AppLocale) {
+  const languages = Object.fromEntries(
+    routing.locales.map((supportedLocale) => [
+      supportedLocale,
+      releasedHomepagePath(supportedLocale),
+    ]),
+  );
+  return {
+    canonical: releasedHomepagePath(locale),
+    languages: { ...languages, "x-default": "/" },
+  };
+}
+
 export function pageAlternates(slug: SitePageSlug, locale: AppLocale) {
   const languages = Object.fromEntries(
     routing.locales.map((supportedLocale) => [
