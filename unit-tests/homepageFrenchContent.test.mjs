@@ -1,80 +1,48 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { HOME_GALLERY_CARDS } from "../lib/homeGalleryCatalog.mjs";
+import { homeAudienceCopy, homeAudienceCards } from "../lib/homeAudienceCopy.mjs";
+const read = (p) => readFileSync(new URL("../" + p, import.meta.url), "utf8");
 
-const read = (name) => readFileSync(new URL("../" + name, import.meta.url), "utf8");
-
-test("French is the native homepage rendering, not a Google Translate redirect", () => {
-  for (const pagePath of [
-    "app/[locale]/home-preview/page.tsx",
-    "app/[locale]/page.tsx",
-  ]) {
-    const page = read(pagePath);
-    assert.match(page, /locale === "fr" \? \(/);
-    assert.match(page, /<FrenchHomeSections \/>/);
-    assert.match(page, /import FrenchHomeSections from "@\/components\/home\/FrenchHomeSections"/);
-    assert.match(page, /<LegacyOpeningSection \/>/);
-    assert.match(page, /<LegacyFooterSection locale=\{locale\} \/>/);
-    assert.doesNotMatch(page, /<Script[^>]*google|translate\.google/i);
+test("French is now native in both child and father pages, without browser translation", () => {
+  const { child, fathers } = homeAudienceCopy("fr");
+  assert.match(child.title, /Ma chère fille/);
+  assert.match(child.hopeTitle, /Patience et espoir/);
+  assert.match(fathers.title, /papas/);
+  assert.match(fathers.noticeTitle, /Documents sur ce site/);
+  for (const src of ["app/[locale]/home-preview/page.tsx","app/[locale]/abduction/page.tsx"]) {
+    assert.doesNotMatch(read(src), /translate\.google|<Script|googleTranslateElementInit/i);
   }
-  const layout = read("app/[locale]/layout.tsx");
-  assert.match(layout, /<html lang=\{locale\}/);
 });
 
-test("French body has twelve native sections and the translated shared policy section", () => {
-  const body = read("components/home/FrenchHomeSections.tsx");
-  const explicitIds = [...body.matchAll(/<section id="(preview-[a-z-]+)"/g)].map((match) => match[1]);
-  assert.equal(explicitIds.length, 11);
-  assert.equal(new Set(explicitIds).size, explicitIds.length);
-  assert.match(body, /<LegacyAssociationsSection locale="fr" \/>/);
-  for (const id of [
-    "preview-opening", "preview-important-information", "preview-contact",
-    "preview-letter", "preview-found-website", "preview-about",
-    "preview-journey", "preview-legal-resources", "preview-story-gallery",
-    "preview-people", "preview-document-disclosure",
-  ]) assert.ok(explicitIds.includes(id), id);
-  for (const heading of [
-    "Ma chère fille,", "Comment me contacter", "Un message de ton papa",
-    "France, Norvège et Allemagne", "Cadre juridique et ressources",
-    "Personnes que j’ai contactées", "Documents publiés sur ce site",
-  ]) assert.ok(body.includes(heading), heading);
-  assert.doesNotMatch(body, /<section[^>]*lang="en"/);
-  const footer = read("components/home/LegacyFooterSection.tsx");
-  assert.match(footer, /locale === "fr"/);
-  assert.match(footer, /Mentions et politiques du site/);
-});
-
-test("French gallery preserves the exact ten reviewed images and destinations", () => {
-  const body = read("components/home/FrenchHomeSections.tsx");
-  assert.equal((body.match(/\btitle: "/g) ?? []).length, 10);
-  assert.equal((body.match(/\bdescription: "/g) ?? []).length, 10);
-  assert.equal((body.match(/\blink: "/g) ?? []).length, 10);
-  assert.equal(HOME_GALLERY_CARDS.length, 10);
-  assert.match(body, /HOME_GALLERY_CARDS\.map\(\(card, index\) =>/);
-  assert.match(body, /<GalleryCardMedia image=\{card\.image\} \/>/);
-  assert.match(body, /href=\{card\.href\}/);
-  assert.match(body, /Recherche de traduction en norvégien/);
-  assert.match(body, /Recherche de traduction en allemand/);
-  assert.doesNotMatch(body, /passport-fr-bababou|child-abuse\.jpg|goo\.gl\/maps|14CV[0-9]+/i);
-});
-
-test("French version retains all public link targets and accessible landmarks", () => {
-  const french = read("components/home/FrenchHomeSections.tsx");
-  const preview = read("app/[locale]/home-preview/page.tsx");
-  const gallery = HOME_GALLERY_CARDS.map(({ href }) => href);
-  const targets = new Set(
-    [...french.matchAll(/\bid="(preview-[a-z-]+)"/g)].map((match) => "#" + match[1]),
-  );
-  assert.equal(targets.size, 20);
-  for (const href of gallery) assert.ok(targets.has(href), href);
-  for (const href of ["#preview-contact", "#preview-journey", "#preview-story-gallery"]) {
-    assert.ok(preview.includes(`href="${href}"`), href);
+test("German, Norwegian and English audiences have native headings and letters", () => {
+  const titles = {
+    en: ["My dear daughter","For fathers"],
+    de: ["Meine liebe Tochter","Für Väter"],
+    no: ["Min kjære datter","For fedre"],
+  };
+  for (const [locale, [child, fathers]] of Object.entries(titles)) {
+    assert.ok(homeAudienceCopy(locale).child.title.startsWith(child), locale);
+    assert.ok(homeAudienceCopy(locale).fathers.title.startsWith(fathers), locale);
+    assert.equal(homeAudienceCopy(locale).child.letter.length, 3);
   }
-  for (const href of [
-    "mailto:aa@bababou.com", "/people-contacted.html",
-    "/for-fathers.html", "/central-authorities.html",
-  ]) assert.ok(french.includes(href), href);
-  assert.match(french, /<details className=\{disclosureStyles\.details\}>/);
-  assert.match(french, /lang="fr"/);
+});
+
+test("French child page retains private identity messaging without publishing the ID", () => {
+  const child = homeAudienceCopy("fr").child;
+  assert.match(child.identityText, /vie privée/);
+  assert.match(child.letter[2], /plus qu’hier et moins que demain/);
+  assert.deepEqual(homeAudienceCards("fr", "child").map(c => c.href),[
+    "#preview-opening","#preview-hope","#preview-identity","#preview-letter","#preview-people"
+  ]);
+  assert.doesNotMatch(JSON.stringify(child), /14CV[0-9]+/);
+});
+
+test("native support copy, disclosure and translator headings exist in four languages", () => {
+  for (const locale of ["fr","en","de","no"]) {
+    const c = homeAudienceCopy(locale).fathers;
+    for (const key of ["abductionTitle","translatorsTitle","norwegianTitle","germanTitle","associationsTitle","noticeTitle","fathersTitle","contactTitle"]) {
+      assert.ok(typeof c[key] === "string" && c[key].length > 5, locale+" "+key);
+    }
+  }
 });
