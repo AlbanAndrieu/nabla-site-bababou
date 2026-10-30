@@ -1,6 +1,6 @@
 # Roadmap active — Site Bababou
 
-**Mise à jour : 29 octobre 2026.** [PR #251](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/251) et [PR #252](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/252) **fusionnées**. [PR #253](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/253) **Draft**, validations réseau complémentaires. La base de production après #252 est `ccb688c3d5ac613b5e2029839fc4fa59f6c22d65` ; déploiement Vercel `dpl_GhoM19dbmTW3k67AUa248u5YHqY1` **READY**.
+**Mise à jour : 30 octobre 2026.** [PR #251](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/251) et [PR #252](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/252) **fusionnées**. [PR #253](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/253) **Draft**, validations réseau complémentaires. La base de production après #252 est `ccb688c3d5ac613b5e2029839fc4fa59f6c22d65` ; déploiement Vercel `dpl_GhoM19dbmTW3k67AUa248u5YHqY1` **READY**.
 
 ## Politique de publication et état cible
 
@@ -64,6 +64,14 @@ La **route publique React est désormais codée mais inactive** : `app/[locale]/
 **Confiance et limites :** le propriétaire confirme que les images apparaissent sur la Preview précédente (**validation utilisateur des images**, pas recette WCAG). Tests Node ciblés du verrou **4/4 PASS** sous Node 24.22.1 sur sources exactes. Le build complet de ce dernier lot, les tests navigateur/a11y/sécurité et la revue éditoriale restent à confirmer. La duplication temporaire de structure de JSX entre `home-preview` et la nouvelle route publique pourra être factorisée **après** preuve de parité, sans modifier les textes approuvés.
 
 Voir [procédure de GO/NO-GO et retour arrière](homepage-react-cutover.md). **NO-GO** maintenu : ne pas définir les variables d'activation, ne pas merger automatiquement, ne pas supprimer les fichiers historiques.
+
+## Durcissement P1/P5 — PR #253, 30 octobre 2026
+
+- **Régression réparée :** les contrats de migration vérifient maintenant la route Next publique *inactivée par défaut*, les liens dans leurs véritables sections React, et le composant juridique avec `locale`. Le test du verrou interdit de publier sur un SHA différent ou sans approbation.
+- **SEO client/serveur :** `lib/sitePageCatalog.ts`, importé par les composants client, ne lit plus le verrou serveur `isHomeCutoverEnabled()`. Les URLs de publication FR/EN/DE/NO sont générées par les fonctions pures `releasedHomepagePath` et `releasedHomepageAlternates`, consommées uniquement quand le verrou est actif côté métadonnées et sitemap.
+- **Clavier :** le lien d'évitement du header reste disponible sur la homepage React même si le sélecteur de langue est masqué.
+- **Preuve locale : 30/30 PASS**, Node 24.22.1, quatre suites ciblées (`homeCutoverPolicy`, `homepageMigrationContract`, `publicHomeReviewContract`, `homePreviewSeoPolicyEncoding`) sur les fichiers exacts de la branche dans un sandbox isolé. Les tests E2E, WCAG, SAST/SCA, BetterLeaks et ZAP sont toujours **NOT_RUN** ; ce rapport ne les remplace pas.
+- **GO/NO-GO :** React sur `/` reste désactivé en l'absence des quatre variables d'approbation et du SHA vérifié. Le retour utilisateur sur les images est consigné, sans déduire un accord de publication.
 
 ## Prochaine étape de validation (local-first)
 
