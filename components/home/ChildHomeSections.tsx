@@ -4,6 +4,7 @@ import GalleryCardMedia from "./GalleryCardMedia";
 import styles from "./LegacyStoryGallerySection.module.css";
 import sectionStyles from "./LegacyOpeningSection.module.css";
 import messageStyles from "./LegacyMessageSection.module.css";
+import homeStyles from "./ChildHomeSections.module.css";
 import peopleStyles from "./LegacyPeopleSection.module.css";
 
 /**
@@ -16,7 +17,7 @@ export default function ChildHomeSections({ locale }: { locale: AppLocale }) {
   const cards = homeAudienceCards(locale, "child");
   return (
     <>
-      <section className={sectionStyles.section} id="preview-opening" aria-labelledby="preview-opening-heading">
+      <section className={`${sectionStyles.section} ${homeStyles.opening}`} id="preview-opening" aria-labelledby="preview-opening-heading">
         <h2 id="preview-opening-heading">{c.openingTitle}</h2>
         <h3>{c.greeting}</h3>
         <p>{c.opening}</p>
@@ -32,9 +33,9 @@ export default function ChildHomeSections({ locale }: { locale: AppLocale }) {
         <h2 id="preview-hope-heading">{c.hopeTitle}</h2>
         <p>{c.hopeText}</p>
       </section>
-      <section className={sectionStyles.section} id="preview-identity" aria-labelledby="preview-identity-heading">
-        <h2 id="preview-identity-heading">{c.identityTitle}</h2>
-        <p>{c.identityText}</p>
+      <section className={sectionStyles.section} id="preview-journey" aria-labelledby="preview-journey-heading">
+        <h2 id="preview-journey-heading">{c.journeyTitle}</h2>
+        <p>{c.journeyText}</p>
       </section>
       <section className={peopleStyles.section} id="preview-people" aria-labelledby="preview-people-heading">
         <h2 id="preview-people-heading">{c.peopleTitle}</h2>
