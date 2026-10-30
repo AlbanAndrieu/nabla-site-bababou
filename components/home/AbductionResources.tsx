@@ -51,6 +51,10 @@ export default function AbductionResources({ locale }: { locale: AppLocale }) {
         </ul>
       </section>
       <LegacyAssociationsSection locale={locale} />
+      <section className={sectionStyles.section} id="identity-notice" aria-labelledby="identity-notice-heading">
+        <h2 id="identity-notice-heading">{c.identityTitle}</h2>
+        <p>{c.identityText}</p>
+      </section>
       <section className={disclosureStyles.section} id="documents-notice" aria-label={c.noticeTitle}>
         <details className={disclosureStyles.details}>
           <summary className={disclosureStyles.summary}>{c.noticeTitle}</summary>
@@ -69,7 +73,7 @@ export default function AbductionResources({ locale }: { locale: AppLocale }) {
               <div className={galleryStyles.body}>
                 <h3>{card.title}</h3>
                 <p>{card.description}</p>
-                <a href={card.href}>{card.link}</a>
+                <a href={card.href} target={card.href.startsWith("https://") ? "_blank" : undefined} rel={card.href.startsWith("https://") ? "noopener noreferrer" : undefined}>{card.link}</a>
               </div>
             </li>
           ))}
