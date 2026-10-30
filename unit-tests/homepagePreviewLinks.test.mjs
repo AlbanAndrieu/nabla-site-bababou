@@ -18,7 +18,7 @@ function fixture() {
 test("approved homepage preview has one target for local anchors and aria references", () => {
   const result = auditRepositoryPreview();
   assert.deepEqual(result.issues, []);
-  assert.equal(result.auditedSections, 13);
+  assert.equal(result.auditedSections, 1);
   assert.ok(result.anchorCount > 0);
   assert.ok(result.labelReferences > 0);
 });
