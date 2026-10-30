@@ -32,7 +32,7 @@ const ASSOCIATIONS = [
   },
 ] as const;
 
-export default function LegacyAssociationsSection() {
+export default function LegacyAssociationsSection({ locale = "en" }: { locale?: "fr" | "en" | "de" | "no" }) {
   const [failedIcons, setFailedIcons] = useState<ReadonlySet<string>>(
     () => new Set<string>(),
   );
@@ -41,10 +41,10 @@ export default function LegacyAssociationsSection() {
     <section
       id="preview-associations"
       className={styles.section}
-      lang="en"
+      lang={locale === "fr" ? "fr" : "en"}
       aria-labelledby="preview-associations-heading"
     >
-      <h2 id="preview-associations-heading">Association I support</h2>
+      <h2 id="preview-associations-heading">{locale === "fr" ? "Associations que je soutiens" : "Association I support"}</h2>
       <ul className={styles.list}>
         {ASSOCIATIONS.map(({ id, name, initials, href, iconSrc, iconWidth }) => (
           <li key={id}>
