@@ -22,7 +22,7 @@ test("homepage preview catalogs are complete across all four locales", () => {
   assert.ok(baseline.includes("contact") && baseline.includes("legacy"));
 });
 
-test("review page is accessible, non-indexable and cannot replace the approved homepage", () => {
+test("review remains non-indexable and the default root stays legacy until explicit cutover", () => {
   const page = read("app/[locale]/home-preview/page.tsx");
   assert.doesNotMatch(page, /HOMEPAGE_PREVIEW_ENABLED/);
   assert.match(page, /export default async function HomePreview/);
@@ -30,7 +30,10 @@ test("review page is accessible, non-indexable and cannot replace the approved h
   assert.match(page, /alternates: \{ canonical: "\/" \}/);
   assert.match(page, /getTranslations\("homepagePreview"\)/);
   assert.match(read("proxy.ts"), /NextResponse\.rewrite\(new URL\("\/index\.html"/);
-  assert.match(read("app/[locale]/page.tsx"), /redirect\("\/"\)/);
+  const releasedHome = read("app/[locale]/page.tsx");
+  assert.match(releasedHome, /if \(!isHomeCutoverEnabled\(\)\) redirect\("\/"\)/);
+  assert.match(releasedHome, /<LegacyStoryGallerySection \/>/);
+  assert.match(releasedHome, /<LegacyDisclosureSection \/>/);
   assert.ok(existsSync(join(root, "public/index.html")));
 });
 
