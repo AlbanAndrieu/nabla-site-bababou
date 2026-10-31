@@ -19,9 +19,9 @@ export default function NreHistory({copy,legacyRows,locale,buildDate}:{
   const [visibleYear,setVisibleYear]=useState("all");
   useEffect(()=>{
     const refresh=()=>setAsOf(new Date().toISOString());
-    refresh();
+    const initial=window.requestAnimationFrame(refresh);
     const interval=window.setInterval(refresh,60_000);
-    return ()=>window.clearInterval(interval);
+    return ()=>{window.cancelAnimationFrame(initial);window.clearInterval(interval);};
   },[]);
   const rows=useMemo(()=>completeNreInventory(legacyRows,new Date(asOf)),[legacyRows,asOf]);
   const years=useMemo(()=>[...new Set(rows.map(row=>row.year))].reverse(),[rows]);
