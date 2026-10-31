@@ -49,15 +49,15 @@ test("roadmap tracks only active P1–P5 work and links each canonical runbook",
     assert.ok(roadmap.includes("**" + priority + " —"), priority);
   }
   assert.match(roadmap, /NO-GO/);
-  assert.match(roadmap, /publication-redaction\\.md/);
-  assert.match(roadmap, /Playwright \\+ axe|Playwright\\/axe/);
+  assert.match(roadmap, /publication-redaction\.md/);
+  assert.match(roadmap, /Playwright \+ axe|Playwright\/axe/);
   assert.match(roadmap, /BetterLeaks/);
-  assert.match(roadmap, /\\[opérations et incidents\\]\\(operations\\.md\\)/);
-  assert.match(readme, /\\[Roadmap active\\]\\(docs\\/roadmap\\.md\\)/);
-  assert.match(readme, /\\[Runbook opérationnel\\]\\(docs\\/operations\\.md\\)/);
-  assert.match(readme, /\\[Procédure de bascule\\]\\(docs\\/homepage-react-cutover\\.md\\)/);
-  assert.doesNotMatch(roadmap, /\\*\\*PR #253\\*\\* Draft|10 cartes \\*\\*toutes illustrées\\*\\*/);
-  assert.doesNotMatch(roadmap, /- \\[x\\] /);
+  assert.match(roadmap, /\[opérations et incidents\]\(operations\.md\)/);
+  assert.match(readme, /\[Roadmap active\]\(docs\/roadmap\.md\)/);
+  assert.match(readme, /\[Runbook opérationnel\]\(docs\/operations\.md\)/);
+  assert.match(readme, /\[Procédure de bascule\]\(docs\/homepage-react-cutover\.md\)/);
+  assert.doesNotMatch(roadmap, /\*\*PR #253\*\* Draft|10 cartes \*\*toutes illustrées\*\*/);
+  assert.doesNotMatch(roadmap, /- \[x\] /);
 });
 
 test("cutover and parity reflect five child cards and seven parent cards", () => {
@@ -72,5 +72,5 @@ test("cutover and parity reflect five child cards and seven parent cards", () =>
   assert.match(cutover, /VERCEL_GIT_COMMIT_SHA/);
   assert.match(cutover, /BABABOU_HOME_CUTOVER_SHA/);
   assert.match(cutover, /Retour arrière/);
-  assert.doesNotMatch(cutover, /10\\/10 images|dix cartes/);
+  assert.doesNotMatch(cutover, /10\/10 images|dix cartes/);
 });
