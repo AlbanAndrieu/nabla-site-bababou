@@ -9,7 +9,7 @@ export type NreRow = {
   month: number;
   startDay: number;
   endDay: number;
-  status: "nre" | "exception";
+  status: "nre" | "exception" | "review" | "beforeOrder";
   statusDetail: string;
 };
 
