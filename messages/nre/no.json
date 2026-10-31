@@ -49,7 +49,9 @@
       "nre": "Rapportert NRE (opprinnelig oversikt)",
       "exception": "Gjennomført eller delvis samvær",
       "review": "Må undersøkes — avgjørelse/kontakt ukjent",
-      "beforeOrder": "Før avgjørelsen 31. mars 2017 — må undersøkes"
+      "beforeOrder": "Før avgjørelsen 31. mars 2017 — må undersøkes",
+      "filterYear": "Filtrer etter år",
+      "filterAll": "Alle år"
     },
     "exceptions": {
       "heading": "Rapporterte gjennomførte eller delvise samvær",
