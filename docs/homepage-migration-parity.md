@@ -2,6 +2,8 @@
 
 **Périmètre actuel (31 octobre 2026)** : code fusionné par la [PR #253](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/253). Ce document décrit les fonctions à préserver et les écarts de recette, non l'historique détaillé de chaque PR. La [roadmap](roadmap.md) donne les priorités ouvertes ; la [procédure de bascule](homepage-react-cutover.md) est la seule source des étapes d'activation et de retour arrière.
 
+**Politique SEO de revue :** les deux parcours React sont configurés avec `noindex` et `private, no-store` avant toute bascule ; les en-têtes effectifs restent à contrôler sur le déploiement candidat.
+
 ## Sources de vérité
 
 | Fonction | Source |
