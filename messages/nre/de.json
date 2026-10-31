@@ -1,20 +1,20 @@
 {
   "nrePage": {
     "meta": {
-      "title": "NRE — Nichtgewährung des Umgangs | Umgangsrecht",
-      "description": "Liste der vorgesehenen Umgangswochenenden und dokumentierten Fälle der Nichtgewährung des Umgangs. Bezug: Beschwerde vom 4. September 2023 und vollstreckbares Urteil vom 31. März 2017."
+      "title": "Umgangschronologie — erfasste NRE und noch zu prüfende Termine",
+      "description": "Historische Monatswochenenden seit 2017, zu prüfende Termine ab 2026 und ein Echtzeitzähler, der keine Kontaktstunden erfindet."
     },
     "hero": {
-      "eyebrow": "Umgangsrecht · 2017–2026",
+      "eyebrow": "Umgangsrecht · 2017 bis heute",
       "title": "Nichtgewährung des Umgangs (NRE)",
-      "lead": "Umgangsrecht: erstes Wochenende jedes Monats. Vollständige Liste der vorgesehenen Wochenenden und dokumentierten NRE-Fälle."
+      "lead": "Erste Wochenenden jedes Monats mit gemeldeten ausgefallenen, durchgeführten oder teilweisen Kontakten und noch ungeklärten Zeiträumen. Neu erzeugte Termine sind keine strafrechtlichen Feststellungen."
     },
     "stats": {
       "heading": "Zusammenfassung",
-      "total": "Vorgesehene Wochenenden (gesamt)",
-      "nre": "NRE (Umgang verweigert)",
-      "exceptions": "Ausnahmen (Umgang gewährt)",
-      "days": "Tage mit Bababou (letzte 12 Jahre)"
+      "total": "Erfasste Wochenende",
+      "nre": "Gemeldete NRE (historisch)",
+      "exceptions": "Gewährter oder teilweiser Umgang",
+      "review": "Ungeklärt / vor der Entscheidung"
     },
     "reference": {
       "heading": "Beschwerdebezug",
@@ -32,7 +32,7 @@
     },
     "timeline": {
       "heading": "Zeitleiste nach Jahr",
-      "lead": "Vorgesehene Wochenenden und Status nach Kalenderjahr. Die Karten werden aus der beibehaltenen statischen NRE-Tabelle erzeugt, die als geprüfte Datenquelle erhalten bleibt.",
+      "lead": "Jedes Jahr zeigt die ersten Monatswochenenden. ✗ = historische NRE-Angabe, ✓ = gewährt oder teilweise, ? = ungeprüft. Spätere Termine werden nicht automatisch als Straftat eingeordnet.",
       "norway": "Norwegen, Oslo",
       "germany": "Deutschland, Frankfurt"
     },
@@ -41,18 +41,35 @@
       "body": "2015 Frankreich; seit 2017 Norwegen, Oslo; seit 2022 Deutschland, Frankfurt."
     },
     "table": {
-      "heading": "Erstes Wochenende jedes Monats",
-      "lead": "Umgang gemäß dem vollstreckbaren Urteil vom 31. März 2017 (erstes Wochenende jedes Monats).",
+      "heading": "Erste Wochenenden jedes Monats",
+      "lead": "Der historische Nachweis reicht bis Februar 2026. Ab März 2026 werden Daten automatisch ergänzt; der Status hängt von der noch zu prüfenden deutschen Gerichtsentscheidung ab.",
       "month": "Monat",
       "weekend": "Wochenende (Sa – So)",
       "status": "Status",
-      "nre": "NRE",
-      "exception": "Ausnahme (Umgang gewährt oder teilweise)"
+      "nre": "Gemeldete NRE (ursprüngliche Liste)",
+      "exception": "Umgang gewährt oder teilweise",
+      "review": "Zu prüfen — Entscheidung/Kontakt ungeklärt",
+      "beforeOrder": "Vor der Entscheidung vom 31. März 2017 — zu prüfen"
     },
     "exceptions": {
-      "heading": "Ausnahmen (Umgang gewährt)",
-      "lead": "Die sechs unten aufgeführten Wochenenden sind die einzigen in der Beschwerde dokumentierten Ausnahmen (gewährter oder teilweiser Umgang).",
+      "heading": "Gemeldeter gewährter oder teilweiser Umgang",
+      "lead": "Die historische Seite nennt sechs Ausnahmen; die dort genannten Tage erlauben keine genaue Berechnung der tatsächlich miteinander verbrachten Stunden.",
       "genericDetail": "Dokumentierte Ausnahme (gewährter oder teilweiser Umgang)."
+    },
+    "hours": {
+      "heading": "Vergangene Zeit und Umgangsstunden — zwei verschiedene Größen",
+      "gross": "Vergangene Zeit seit dem 6. Juni 2015 (historischer Bezug)",
+      "nominal": "Rechnerische Stunden für historische NRE-Einträge (10 h / Wochenende)",
+      "net": "Vergangene Zeit abzüglich eingegebener tatsächlicher Kontaktstunden",
+      "actual": "Tatsächlich gemeinsam verbrachte Stunden (freiwillige lokale Eingabe)",
+      "actualHint": "Nur belegbare Stunden des persönlichen Kontakts eingeben. Die Eingabe wird nicht gespeichert, gesendet oder beim Neuladen erhalten. Die 61 Tage der alten Seite entsprechen nicht automatisch 1.464 Kontaktstunden.",
+      "scope": "Dieser Echtzeitzähler misst Kalenderzeit ab einem ungefähren Datum (UTC-Tagesbeginn; genaue Uhrzeit unbekannt). Er ist weder ein gerichtlich bestätigter NRE-Nachweis noch ein Nachweis ausgefallener Umgangsstunden.",
+      "source": "Die rechnerischen Stunden beruhen auf einer angegebenen Regelung von zehn Stunden am ersten Monatswochenende und nur auf historischen NRE-Einträgen nach der Entscheidung vom 31. März 2017. Tatsächliche Kontaktzeiten sind nicht bekannt.",
+      "unknown": "Noch nicht angegeben",
+      "review": "Zu prüfen",
+      "refresh": "Die Uhr aktualisiert sich jede Sekunde; die Terminliste folgt dem aktuellen Pariser Datum.",
+      "suspension": "Eine Aussetzung des Umgangs in Deutschland vom 26. Februar 2026 bis 25. Februar 2027 wurde berichtet; der genaue Beschluss ist hier nicht geprüft. Spätere Termine gelten nicht automatisch als NRE.",
+      "beforeOrder": "Der Eintrag März 2017 liegt vor der Entscheidung vom 31. März 2017 und muss geprüft werden."
     }
   }
 }
