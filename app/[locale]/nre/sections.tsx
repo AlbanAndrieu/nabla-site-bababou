@@ -168,7 +168,7 @@ export function NreTimeline({ copy, rows, locale }: LocalizedDataProps) {
                 {year >= 2022 ? "🇩🇪" : "🇳🇴"}
               </span>
             </h3>
-            <details className={styles.yearDetails} defaultOpen={year === rows.at(-1)?.year}>
+            <details className={styles.yearDetails} open={year === rows.at(-1)?.year}>
               <summary>{yearRows.length} {copy.table.weekend} · {yearRows.filter(row=>row.status==="nre").length} {copy.table.nre}</summary>
               <div className={styles.yearItems}>
               {yearRows.map((row) => (
