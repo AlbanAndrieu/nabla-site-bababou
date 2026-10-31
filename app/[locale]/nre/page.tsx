@@ -8,17 +8,8 @@ import Container from "@/components/ui/Container";
 import { type AppLocale, routing } from "@/i18n/routing";
 import { loadNreLegacyRows } from "@/lib/nreLegacyData";
 import { localizedPageMetadata } from "@/lib/siteSocialMetadata";
-import {
-  NreExceptions,
-  NreHero,
-  NreLocation,
-  NreNote,
-  NreReference,
-  NreStats,
-  NreTable,
-  NreTimeline,
-  type NrePageCopy,
-} from "./sections";
+import { NreHero, type NrePageCopy } from "./sections";
+import NreHistory from "./NreHistory";
 import styles from "./page.module.css";
 
 export const dynamicParams = false;
@@ -53,13 +44,7 @@ export default async function NrePage({ params }: PageProps<"/[locale]/nre">) {
       <main id="main-content" className={styles.page}>
         <Container>
           <NreHero copy={copy} />
-          <NreStats copy={copy} rows={rows} />
-          <NreReference copy={copy} />
-          <NreNote copy={copy} />
-          <NreTimeline copy={copy} rows={rows} locale={locale as AppLocale} />
-          <NreLocation copy={copy} />
-          <NreTable copy={copy} rows={rows} locale={locale as AppLocale} />
-          <NreExceptions copy={copy} rows={rows} locale={locale as AppLocale} />
+          <NreHistory copy={copy} legacyRows={rows} locale={locale as AppLocale} buildDate={new Date().toISOString()} />
         </Container>
       </main>
     </>
