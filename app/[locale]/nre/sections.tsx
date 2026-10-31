@@ -152,6 +152,11 @@ export function NreTimeline({ copy, rows, locale }: LocalizedDataProps) {
     <section className={styles.section} aria-labelledby="timeline-heading">
       <h2 id="timeline-heading">{copy.timeline.heading}</h2>
       <p>{copy.timeline.lead}</p>
+      <div className={styles.legend} aria-label={copy.timeline.lead}>
+        <span className={styles.nreChip}>✗ {copy.table.nre}</span>
+        <span className={styles.exceptionChip}>✓ {copy.table.exception}</span>
+        <span className={styles.reviewChip}>? {copy.table.review}</span>
+      </div>
       <div className={styles.timeline}>
         {[...byYear.entries()].map(([year, yearRows]) => (
           <article key={year} className={styles.yearBlock}>
@@ -161,7 +166,9 @@ export function NreTimeline({ copy, rows, locale }: LocalizedDataProps) {
                 {year >= 2022 ? "🇩🇪" : "🇳🇴"}
               </span>
             </h3>
-            <div className={styles.yearItems}>
+            <details className={styles.yearDetails} open={year === rows.at(-1)?.year}>
+              <summary>{yearRows.length} {copy.table.weekend} · {yearRows.filter(row=>row.status==="nre").length} {copy.table.nre}</summary>
+              <div className={styles.yearItems}>
               {yearRows.map((row) => (
                 <span
                   key={`${row.year}-${row.month}`}
@@ -172,7 +179,8 @@ export function NreTimeline({ copy, rows, locale }: LocalizedDataProps) {
                   {row.status === "exception" ? "✓" : row.status === "nre" ? "✗" : "?"}
                 </span>
               ))}
-            </div>
+              </div>
+            </details>
           </article>
         ))}
       </div>
@@ -205,7 +213,7 @@ export function NreTable({ copy, rows, locale }: LocalizedDataProps) {
           </thead>
           <tbody>
             {rows.map((row) => (
-              <tr key={`${row.year}-${row.month}`} data-nre={row.status === "nre" ? "true" : undefined} data-exception={row.status === "exception" ? "true" : undefined}>
+              <tr key={`${row.year}-${row.month}`} data-nre={row.status === "nre" ? "true" : undefined} data-exception={row.status === "exception" ? "true" : undefined} data-review={row.status === "review" || row.status === "beforeOrder" ? "true" : undefined}>
                 <td>{monthYear(row, locale)}</td>
                 <td>{weekend(row, locale)}</td>
                 <td className={row.status === "exception" ? styles.exceptionStatus : row.status === "nre" ? styles.nreStatus : styles.reviewStatus}>
