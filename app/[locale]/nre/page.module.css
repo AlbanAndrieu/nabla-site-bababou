@@ -192,3 +192,37 @@
     padding: var(--ui-space-md);
   }
 }
+
+/* Historical assertions and unverified months have distinct, accessible states. */
+.reviewChip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.5rem;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius-pill);
+  background: var(--ui-surface-muted);
+  color: var(--ui-text-primary);
+}
+.reviewStatus { color: var(--ui-text-primary); font-weight: 650; }
+.legend { display: flex; flex-wrap: wrap; gap: 0.6rem 1.25rem; margin-bottom: 1.25rem; }
+.legend span { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; }
+.hoursPanel {
+  padding: clamp(1.2rem, 3vw, 2rem);
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius-card);
+  background: var(--ui-surface-muted);
+}
+.hoursNumbers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.hoursItem { display: grid; gap: 0.45rem; padding: 0.85rem; border-radius: 0.7rem; background: var(--ui-surface); }
+.hoursFigure { font-size: clamp(1.3rem, 3vw, 2.3rem); line-height: 1.3; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.hoursHint { color: var(--ui-text-secondary); font-size: 0.94rem; line-height: 1.55; }
+.hoursInput { display: grid; gap: 0.45rem; max-width: 26rem; margin: 1.4rem 0 0.6rem; }
+.hoursInput input { width: 100%; max-width: 20rem; min-height: 2.75rem; padding: 0.6rem; border: 1px solid var(--ui-border); border-radius: 0.45rem; color: var(--ui-text-primary); background: var(--ui-surface); }
+.hoursInput input:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
+.timelineHeader { display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.table tr[data-review="true"] { background: var(--ui-surface-muted); }
+.table td { overflow-wrap: anywhere; }
+@media (max-width: 800px) { .hoursNumbers { grid-template-columns: 1fr; } }
+@media (max-width: 540px) { .table { min-width: 38rem; } }
+@media (forced-colors: active) { .reviewChip, .hoursPanel, .hoursItem, .hoursInput input { border: 1px solid CanvasText; } }
