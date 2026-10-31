@@ -56,6 +56,8 @@ export default function NreLiveHours({copy,rows,locale}:{copy:NrePageCopy;rows:N
         <p id="contact-hours-note" className={styles.hoursHint}>{copy.hours.actualHint}</p>
         <p className={styles.hoursHint}>{copy.hours.scope}</p>
         <p className={styles.hoursHint}>{copy.hours.source}</p>
+        <p className={styles.hoursHint}>{copy.hours.suspension}</p>
+        <p className={styles.hoursHint}>{copy.hours.beforeOrder}</p>
         <p className={styles.hoursHint}>{copy.hours.refresh}</p>
       </div>
     </section>
