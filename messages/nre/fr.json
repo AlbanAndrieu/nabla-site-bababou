@@ -1,20 +1,20 @@
 {
   "nrePage": {
     "meta": {
-      "title": "NRE — Non-représentation d'enfant | Droit de visite",
-      "description": "Liste des week-ends de droit de visite (premier week-end de chaque mois) et des non-représentations d'enfant (NRE). Référence : plainte TGI Valence 4 septembre 2023. Jugement exécutoire 31 mars 2017."
+      "title": "Historique des droits de visite — NRE et périodes à vérifier",
+      "description": "Inventaire historique des premiers week-ends mensuels depuis 2017, avec périodes 2026 à vérifier et compteur de séparation distinguant les heures effectives de contact."
     },
     "hero": {
-      "eyebrow": "Droit de visite · 2017–2026",
+      "eyebrow": "Droit de visite · 2017 à aujourd’hui",
       "title": "Non-représentation d'enfant (NRE)",
-      "lead": "Droit de visite : premier week-end de chaque mois. Liste exhaustive des week-ends prévus et des NRE."
+      "lead": "Chronologie des premiers week-ends du mois, des visites signalées comme manquées, des visites partielles et des périodes qui nécessitent une vérification. Les dates ajoutées ne constituent pas une qualification pénale."
     },
     "stats": {
       "heading": "Synthèse chiffrée",
-      "total": "Week-ends prévus (total)",
-      "nre": "NRE (visites non honorées)",
-      "exceptions": "Exceptions (visites honorées)",
-      "days": "Jours avec Bababou (12 dernières années)"
+      "total": "Dates inventoriées",
+      "nre": "NRE signalées (historique)",
+      "exceptions": "Visites honorées ou partielles",
+      "review": "Dates à vérifier / avant décision"
     },
     "reference": {
       "heading": "Référence plainte",
@@ -32,7 +32,7 @@
     },
     "timeline": {
       "heading": "Chronologie par année",
-      "lead": "Week-ends prévus et statut par année civile. Les cartes sont générées depuis la table NRE statique conservée, qui reste la source de vérité relue.",
+      "lead": "Chaque année présente les premiers week-ends mensuels. ✗ = NRE déclarée dans les archives, ✓ = visite honorée ou partielle, ? = date sans statut vérifié. Les mois nouveaux ne sont pas automatiquement qualifiés de NRE.",
       "norway": "Norvège, Oslo",
       "germany": "Allemagne, Frankfurt"
     },
@@ -41,18 +41,35 @@
       "body": "2015 France ; depuis 2017 Norvège, Oslo ; depuis 2022 Allemagne, Frankfurt."
     },
     "table": {
-      "heading": "Liste des premiers week-ends du mois",
-      "lead": "Droit de visite à compter du jugement exécutoire du 31 mars 2017 (premier week-end de chaque mois).",
+      "heading": "Calendrier des premiers week-ends du mois",
+      "lead": "Source historique : inventaire publié jusqu’en février 2026. À compter de mars 2026, dates calculées automatiquement et statut à vérifier au regard de la décision allemande signalée.",
       "month": "Mois",
       "weekend": "Week-end (samedi – dimanche)",
       "status": "Statut",
-      "nre": "NRE",
-      "exception": "Exception (visite honorée ou partielle)"
+      "nre": "NRE signalée (inventaire d’origine)",
+      "exception": "Visite effectuée ou partielle",
+      "review": "À vérifier — décision / rencontre non confirmée",
+      "beforeOrder": "Avant la décision du 31 mars 2017 — à vérifier"
     },
     "exceptions": {
-      "heading": "Exceptions (visites effectuées)",
-      "lead": "Les six week-ends ci-dessous sont les seules exceptions documentées dans la plainte (visite effectuée ou partielle).",
+      "heading": "Visites honorées ou partielles déclarées",
+      "lead": "Six exceptions répertoriées sur la page historique ; ni les journées mentionnées ni la durée exacte de présence ne permettent de déduire automatiquement les heures effectivement passées ensemble.",
       "genericDetail": "Exception documentée (visite effectuée ou partielle)."
+    },
+    "hours": {
+      "heading": "Le temps et les heures de contact — deux mesures différentes",
+      "gross": "Temps écoulé depuis le 6 juin 2015 (repère historique)",
+      "nominal": "Heures théoriques associées aux NRE historiques (10 h / week-end)",
+      "net": "Temps écoulé moins les heures effectives renseignées",
+      "actual": "Heures effectivement passées ensemble (saisie locale facultative)",
+      "actualHint": "Inscrire uniquement des heures de présence réelle attestées. Valeur non enregistrée, non transmise et réinitialisée au rechargement. Les 61 jours déclarés dans l’ancienne page ne peuvent pas être convertis automatiquement en 1 464 heures de contact.",
+      "scope": "Ce compteur en direct mesure le temps civil écoulé depuis une date repère (début de journée UTC, heure réelle inconnue). Il n’est ni un décompte judiciaire de NRE, ni une preuve des heures effectivement manquées au titre du droit de visite.",
+      "source": "Les heures théoriques reposent sur le rythme annoncé de 10 h le premier week-end du mois, uniquement pour les lignes historiques marquées NRE après la décision du 31 mars 2017 ; les heures réelles ne sont pas reconstituées à partir des exceptions.",
+      "unknown": "À renseigner",
+      "review": "Dates à vérifier",
+      "refresh": "Le compteur se met à jour chaque seconde ; le calendrier est recalculé automatiquement selon la date locale de Paris.",
+      "suspension": "Suspension des visites en Allemagne signalée à partir du 26 février 2026 jusqu’au 25 février 2027 ; dispositif judiciaire original non vérifié ici. Les dates ultérieures ne sont pas classées NRE.",
+      "beforeOrder": "La ligne de mars 2017 précède la décision citée du 31 mars 2017 et est classée à vérifier."
     }
   }
 }
