@@ -2,6 +2,7 @@ import Badge from "@/components/ui/Badge";
 import Card, { CardBody } from "@/components/ui/Card";
 import type { AppLocale } from "@/i18n/routing";
 import type { NreRow } from "@/lib/nreLegacyData";
+import { nreInventoryStats } from "@/lib/nreVisitLedger.mjs";
 import styles from "./page.module.css";
 
 export type NrePageCopy = {
@@ -12,7 +13,7 @@ export type NrePageCopy = {
     total: string;
     nre: string;
     exceptions: string;
-    days: string;
+    review: string;
   };
   reference: {
     heading: string;
@@ -33,8 +34,11 @@ export type NrePageCopy = {
     status: string;
     nre: string;
     exception: string;
+    review: string;
+    beforeOrder: string;
   };
   exceptions: { heading: string; lead: string; genericDetail: string };
+  hours: { heading: string; gross: string; net: string; actual: string; actualHint: string; nominal: string; scope: string; source: string; unknown: string; review: string; refresh: string; suspension: string; beforeOrder: string };
 };
 
 type CopyProps = { copy: NrePageCopy };
@@ -66,6 +70,8 @@ function weekend(row: NreRow, locale: AppLocale) {
 
 function displayStatus(row: NreRow, copy: NrePageCopy, locale: AppLocale) {
   if (row.status === "nre") return copy.table.nre;
+  if (row.status === "review") return copy.table.review;
+  if (row.status === "beforeOrder") return copy.table.beforeOrder;
   if (locale === "fr" || locale === "en") return row.statusDetail;
   return copy.table.exception;
 }
@@ -81,20 +87,18 @@ export function NreHero({ copy }: CopyProps) {
 }
 
 export function NreStats({ copy, rows }: DataProps) {
-  const nreCount = rows.filter((row) => row.status === "nre").length;
-  const exceptions = rows.length - nreCount;
+  const {total,recordedMissed,partialOrHonored,unverified,beforeOrder}=nreInventoryStats(rows);
   const stats = [
-    [rows.length, copy.stats.total],
-    [nreCount, copy.stats.nre],
-    [exceptions, copy.stats.exceptions],
-    [61, copy.stats.days],
+    [total, copy.stats.total],
+    [recordedMissed, copy.stats.nre],
+    [partialOrHonored, copy.stats.exceptions],
+    [unverified+beforeOrder, copy.stats.review],
   ] as const;
-
   return (
     <section className={styles.section} aria-labelledby="nre-stats-heading">
-      <h2 id="nre-stats-heading" className={styles.visuallyHidden}>{copy.stats.heading}</h2>
+      <h2 id="nre-stats-heading">{copy.stats.heading}</h2>
       <div className={styles.stats}>
-        {stats.map(([value, label]) => (
+        {stats.map(([value,label]) => (
           <Card key={label} elevated className={styles.statCard}>
             <CardBody>
               <strong className={styles.statValue}>{value}</strong>
@@ -161,11 +165,11 @@ export function NreTimeline({ copy, rows, locale }: LocalizedDataProps) {
               {yearRows.map((row) => (
                 <span
                   key={`${row.year}-${row.month}`}
-                  className={row.status === "exception" ? styles.exceptionChip : styles.nreChip}
+                  className={row.status === "exception" ? styles.exceptionChip : row.status === "nre" ? styles.nreChip : styles.reviewChip}
                   title={displayStatus(row, copy, locale)}
                 >
                   {monthYear(row, locale)} {row.startDay}–{row.endDay}{" "}
-                  {row.status === "exception" ? "✓" : "✗"}
+                  {row.status === "exception" ? "✓" : row.status === "nre" ? "✗" : "?"}
                 </span>
               ))}
             </div>
@@ -204,7 +208,7 @@ export function NreTable({ copy, rows, locale }: LocalizedDataProps) {
               <tr key={`${row.year}-${row.month}`} data-nre={row.status === "nre" ? "true" : undefined} data-exception={row.status === "exception" ? "true" : undefined}>
                 <td>{monthYear(row, locale)}</td>
                 <td>{weekend(row, locale)}</td>
-                <td className={row.status === "exception" ? styles.exceptionStatus : styles.nreStatus}>
+                <td className={row.status === "exception" ? styles.exceptionStatus : row.status === "nre" ? styles.nreStatus : styles.reviewStatus}>
                   {displayStatus(row, copy, locale)}
                 </td>
               </tr>
