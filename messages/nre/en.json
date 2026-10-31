@@ -49,7 +49,9 @@
       "nre": "Recorded NRE (original inventory)",
       "exception": "Honored or partial contact",
       "review": "Review required — order/contact unverified",
-      "beforeOrder": "Before cited 31 March 2017 decision — review"
+      "beforeOrder": "Before cited 31 March 2017 decision — review",
+      "filterYear": "Filter by year",
+      "filterAll": "All years"
     },
     "exceptions": {
       "heading": "Reported honored or partial visits",
