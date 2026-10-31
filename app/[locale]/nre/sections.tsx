@@ -36,6 +36,8 @@ export type NrePageCopy = {
     exception: string;
     review: string;
     beforeOrder: string;
+    filterYear: string;
+    filterAll: string;
   };
   exceptions: { heading: string; lead: string; genericDetail: string };
   hours: { heading: string; gross: string; net: string; actual: string; actualHint: string; nominal: string; scope: string; source: string; unknown: string; review: string; refresh: string; suspension: string; beforeOrder: string };
