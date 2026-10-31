@@ -49,7 +49,9 @@
       "nre": "NRE signalée (inventaire d’origine)",
       "exception": "Visite effectuée ou partielle",
       "review": "À vérifier — décision / rencontre non confirmée",
-      "beforeOrder": "Avant la décision du 31 mars 2017 — à vérifier"
+      "beforeOrder": "Avant la décision du 31 mars 2017 — à vérifier",
+      "filterYear": "Filtrer par année",
+      "filterAll": "Toutes les années"
     },
     "exceptions": {
       "heading": "Visites honorées ou partielles déclarées",
