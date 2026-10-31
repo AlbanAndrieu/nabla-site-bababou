@@ -24,9 +24,9 @@ export default function NreLiveHours({copy,rows,locale}:{copy:NrePageCopy;rows:N
   const [now,setNow]=useState<number|null>(null);
   const [contactHours,setContactHours]=useState("");
   useEffect(()=>{
-    setNow(Date.now());
+    const initial=window.requestAnimationFrame(()=>setNow(Date.now()));
     const interval=window.setInterval(()=>setNow(Date.now()),1000);
-    return ()=>window.clearInterval(interval);
+    return ()=>{window.cancelAnimationFrame(initial);window.clearInterval(interval);};
   },[]);
   const reported=nreInventoryStats(rows);
   const time=now===null?null:elapsedSeparationSeconds(now,contactHours);
