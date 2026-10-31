@@ -1,20 +1,20 @@
 {
   "nrePage": {
     "meta": {
-      "title": "NRE — Manglende overlevering av barn | Samværsrett",
-      "description": "Liste over planlagte samværshelger og dokumenterte tilfeller der barnet ikke ble overlevert. Referanse: klage 4. september 2023 og tvangskraftig dom 31. mars 2017."
+      "title": "Samværskronologi — registrerte NRE og datoer som må undersøkes",
+      "description": "Historiske første helger i måneden fra 2017, uavklarte datoer i 2026 og en sanntidsklokke uten antatte kontaktimer."
     },
     "hero": {
-      "eyebrow": "Samværsrett · 2017–2026",
+      "eyebrow": "Samværsrett · 2017 til i dag",
       "title": "Manglende overlevering av barn (NRE)",
-      "lead": "Samværsrett: første helg i hver måned. Full liste over planlagte helger og dokumenterte NRE-tilfeller."
+      "lead": "Første helg hver måned med rapporterte uteblitte, gjennomførte eller delvise samvær og perioder som fortsatt må avklares. Nye datoer regnes ikke automatisk som straffbare forhold."
     },
     "stats": {
       "heading": "Nøkkeltall",
-      "total": "Planlagte helger (totalt)",
-      "nre": "NRE (samvær nektet)",
-      "exceptions": "Unntak (samvær gjennomført)",
-      "days": "Dager med Bababou (siste 12 år)"
+      "total": "Registrerte helgedatoer",
+      "nre": "Rapporterte NRE (historisk)",
+      "exceptions": "Gjennomført eller delvis samvær",
+      "review": "Til kontroll / før kjennelsen"
     },
     "reference": {
       "heading": "Referanse til klage",
@@ -32,7 +32,7 @@
     },
     "timeline": {
       "heading": "Tidslinje etter år",
-      "lead": "Planlagte helger og status per kalenderår. Kortene genereres fra den bevarte statiske NRE-tabellen, som fortsatt er den gjennomgåtte datakilden.",
+      "lead": "Hvert år viser første helg i måneden. ✗ = historisk NRE-oppføring, ✓ = gjennomført eller delvis samvær, ? = ikke bekreftet. Nye datoer klassifiseres ikke automatisk som lovbrudd.",
       "norway": "Norge, Oslo",
       "germany": "Tyskland, Frankfurt"
     },
@@ -42,17 +42,34 @@
     },
     "table": {
       "heading": "Første helg i hver måned",
-      "lead": "Samvær fra den tvangskraftige dommen 31. mars 2017 (første helg i hver måned).",
+      "lead": "Den historiske oversikten går til februar 2026. Fra mars 2026 opprettes datoene automatisk, men status må vurderes mot den rapporterte tyske avgjørelsen.",
       "month": "Måned",
       "weekend": "Helg (lør – søn)",
       "status": "Status",
-      "nre": "NRE",
-      "exception": "Unntak (samvær gjennomført eller delvis)"
+      "nre": "Rapportert NRE (opprinnelig oversikt)",
+      "exception": "Gjennomført eller delvis samvær",
+      "review": "Må undersøkes — avgjørelse/kontakt ukjent",
+      "beforeOrder": "Før avgjørelsen 31. mars 2017 — må undersøkes"
     },
     "exceptions": {
-      "heading": "Unntak (samvær gjennomført)",
-      "lead": "De seks helgene nedenfor er de eneste unntakene dokumentert i klagen (gjennomført eller delvis samvær).",
+      "heading": "Rapporterte gjennomførte eller delvise samvær",
+      "lead": "Den historiske siden omtaler seks unntak, men antall dager gir ikke presise timer for faktisk samvær.",
       "genericDetail": "Dokumentert unntak (gjennomført eller delvis samvær)."
+    },
+    "hours": {
+      "heading": "Tid som har gått og samværstimer — to ulike mål",
+      "gross": "Tid siden 6. juni 2015 (historisk referanse)",
+      "nominal": "Beregnet tid for historiske NRE-oppføringer (10 t / helg)",
+      "net": "Tid som har gått minus manuelt registrerte faktiske samværstimer",
+      "actual": "Timer faktisk tilbrakt sammen (valgfri lokal inntasting)",
+      "actualHint": "Oppgi bare dokumenterte timer med faktisk samvær. Verdien lagres eller sendes ikke og forsvinner ved ny lasting. De 61 dagene fra den gamle siden kan ikke automatisk regnes som 1 464 samværstimer.",
+      "scope": "Denne klokken viser kalenderført tid siden en omtrentlig dato (starten av dagen UTC; faktisk klokkeslett ukjent). Den er ikke et rettslig bekreftet NRE-regnskap eller bevis på tapte samværstimer.",
+      "source": "Beregnet tid bruker den oppgitte ordningen med ti timer den første helgen i måneden og bare eldre NRE-oppføringer etter avgjørelsen 31. mars 2017. Faktiske samværstimer er ikke kjent.",
+      "unknown": "Ikke oppgitt",
+      "review": "Må undersøkes",
+      "refresh": "Klokken oppdateres hvert sekund. Terminoversikten følger gjeldende dato i Paris.",
+      "suspension": "En tysk avgjørelse om stans i samvær fra 26. februar 2026 til 25. februar 2027 er omtalt, men selve avgjørelsen er ikke kontrollert her. Senere datoer merkes ikke NRE.",
+      "beforeOrder": "Oppføringen for mars 2017 er før avgjørelsen 31. mars 2017 og må undersøkes."
     }
   }
 }
