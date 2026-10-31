@@ -23,8 +23,8 @@ export default function NreHistory({copy,legacyRows,locale,buildDate}:{
     const interval=window.setInterval(refresh,60_000);
     return ()=>{window.cancelAnimationFrame(initial);window.clearInterval(interval);};
   },[]);
-  const rows=useMemo(()=>completeNreInventory(legacyRows,new Date(asOf)),[legacyRows,asOf]);
-  const years=useMemo(()=>[...new Set(rows.map(row=>row.year))].reverse(),[rows]);
+  const rows=useMemo<NreRow[]>(()=>completeNreInventory(legacyRows,new Date(asOf)) as NreRow[],[legacyRows,asOf]);
+  const years=useMemo<number[]>(()=>[...new Set<number>(rows.map((row:NreRow)=>row.year))].reverse(),[rows]);
   const filteredRows=visibleYear==="all"?rows:rows.filter(row=>String(row.year)===visibleYear);
   return (
     <>
