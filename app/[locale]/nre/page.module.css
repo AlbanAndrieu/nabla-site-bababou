@@ -226,3 +226,15 @@
 @media (max-width: 800px) { .hoursNumbers { grid-template-columns: 1fr; } }
 @media (max-width: 540px) { .table { min-width: 38rem; } }
 @media (forced-colors: active) { .reviewChip, .hoursPanel, .hoursItem, .hoursInput input { border: 1px solid CanvasText; } }
+
+.yearDetails > summary { cursor:pointer; min-height:2.75rem; padding:0.45rem 0.75rem; border:1px solid var(--ui-border); border-radius:0.45rem; color:var(--ui-text-primary); background:var(--ui-surface-muted); font-weight:650; }
+.yearDetails > summary:focus-visible { outline:3px solid currentColor; outline-offset:3px; }
+.yearDetails[open] > summary { margin-bottom:0.8rem; }
+.tableFilter { display:flex; align-items:center; flex-wrap:wrap; gap:0.65rem; margin-bottom:1rem; }
+.tableFilter select { min-height:2.75rem; padding:0.5rem 0.8rem; border:1px solid var(--ui-border); border-radius:0.5rem; color:var(--ui-text-primary); background:var(--ui-surface); }
+.tableFilter select:focus-visible { outline:3px solid currentColor; outline-offset:3px; }
+@media print {
+ .yearDetails:not([open]) > .yearItems { display:flex !important; }
+ .hoursInput { display:none; }
+ .tableFilter { display:none; }
+}
