@@ -49,7 +49,9 @@
       "nre": "Gemeldete NRE (ursprüngliche Liste)",
       "exception": "Umgang gewährt oder teilweise",
       "review": "Zu prüfen — Entscheidung/Kontakt ungeklärt",
-      "beforeOrder": "Vor der Entscheidung vom 31. März 2017 — zu prüfen"
+      "beforeOrder": "Vor der Entscheidung vom 31. März 2017 — zu prüfen",
+      "filterYear": "Nach Jahr filtern",
+      "filterAll": "Alle Jahre"
     },
     "exceptions": {
       "heading": "Gemeldeter gewährter oder teilweiser Umgang",
