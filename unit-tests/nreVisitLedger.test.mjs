@@ -96,7 +96,7 @@ test("the public page uses live client recomputation and retains legal source",(
 test("unverified days are never presented as a verified total or inferred hours",()=>{
  for(const locale of ["fr","en","de","no"]){
   const content=read("messages/nre/"+locale+".json");
-  assert.doesNotMatch(content,/61\\s*(?:days|jours|Tage|dagene)|1[., ]?464/i);
+  assert.doesNotMatch(content,/61\s*(?:days|jours|Tage|dagene)|1[., ]?464/i);
   const c=JSON.parse(content).nrePage;
   for(const name of ["jumpHours","jumpTimeline","jumpTable"])assert.ok(c.hero[name]?.length>5);
   for(const name of ["nominalHint","elapsedHint","netHint","methodology","live"])
@@ -109,9 +109,9 @@ test("unverified days are never presented as a verified total or inferred hours"
   assert.match(html,/id="stat-days-eleonore">—</);
  }
  const hours=read("app/[locale]/nre/NreLiveHours.tsx");
- assert.match(hours,/styles\\.hoursPrimary/);
- assert.match(hours,/styles\\.methodology/);
+ assert.match(hours,/styles\.hoursPrimary/);
+ assert.match(hours,/styles\.methodology/);
  const timeline=read("app/[locale]/nre/sections.tsx");
- assert.match(timeline,/styles\\.weekendCard/);
- assert.doesNotMatch(timeline,/row\\.statusDetail/);
+ assert.match(timeline,/styles\.weekendCard/);
+ assert.doesNotMatch(timeline,/row\.statusDetail/);
 });
