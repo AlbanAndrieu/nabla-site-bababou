@@ -238,3 +238,164 @@
  .hoursInput { display:none; }
  .tableFilter { display:none; }
 }
+
+/* NRE page visual hierarchy; semantic colors follow the current theme. */
+.page { overflow-wrap: anywhere; }
+.page [id] { scroll-margin-top: 5rem; }
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  max-width: 72rem;
+  margin-bottom: clamp(1rem, 3vw, 2rem);
+  padding: clamp(2rem, 5vw, 4.5rem) clamp(1.2rem, 4vw, 3rem);
+  border: 1px solid var(--ui-border);
+  border-radius: clamp(1rem, 2.5vw, 1.7rem);
+  background: var(--ui-surface-muted);
+  box-shadow: 0 14px 42px rgb(15 23 42 / 7%);
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  inline-size: min(23rem, 60vw);
+  block-size: min(23rem, 60vw);
+  inset-block-start: -11rem;
+  inset-inline-end: -8rem;
+  border: clamp(2rem, 7vw, 5rem) solid var(--ui-info-border);
+  border-radius: 50%;
+  opacity: 0.24;
+  z-index: -1;
+  pointer-events: none;
+}
+.hero h1 { max-width: 22ch; margin-inline: auto; letter-spacing: -0.035em; }
+.hero > p { max-width: 64ch; line-height: 1.7; }
+.quickNav { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.65rem; margin-top: 1.7rem; }
+.quickNav a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding: 0.65rem 1rem;
+  border: 1px solid var(--ui-border);
+  border-radius: 999px;
+  background: var(--ui-surface);
+  color: var(--ui-text-primary);
+  font-weight: 650;
+  text-decoration: none;
+}
+.quickNav a:hover { border-color: var(--ui-info-border); text-decoration: underline; text-underline-offset: 3px; }
+.quickNav a:focus-visible, .methodology > summary:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
+.statCard { height: 100%; border-inline-start: 4px solid var(--ui-info-border); }
+.statCard > div { justify-content: center; padding: clamp(1rem, 2vw, 1.5rem); }
+.statCard span { color: var(--ui-text-secondary); line-height: 1.45; }
+.statTotal { border-inline-start-color: var(--ui-info-border); }
+.statMissed { border-inline-start-color: var(--ui-danger-text); }
+.statContact { border-inline-start-color: var(--ui-success-text); }
+.statReview { border-inline-start-color: var(--ui-warning-text); }
+.hoursPanel {
+  overflow: hidden;
+  padding: clamp(1.25rem, 3vw, 2.3rem);
+  border-radius: clamp(0.85rem, 2vw, 1.4rem);
+  background: var(--ui-surface-muted);
+}
+.hoursHeader { display: flex; align-items: flex-start; justify-content: space-between; gap: 1.2rem; }
+.hoursHeader h2 { margin-bottom: 0.55rem; }
+.hoursIntro { margin: 0; max-width: 67ch; color: var(--ui-text-secondary); line-height: 1.6; }
+.liveIndicator {
+  display: inline-flex; align-items: center; gap: 0.5rem; flex: none;
+  padding: 0.4rem 0.8rem; border: 1px solid var(--ui-border);
+  border-radius: 999px; background: var(--ui-surface);
+  font-size: 0.82rem; font-weight: 700;
+}
+.liveIndicator span { inline-size: 0.55rem; block-size: 0.55rem; border-radius: 50%; background: var(--ui-success-text); }
+.hoursNumbers { grid-template-columns: 1.2fr 1fr 1fr; margin-top: 1.5rem; }
+.hoursItem {
+  align-content: start;
+  min-width: 0;
+  padding: clamp(1rem, 2vw, 1.55rem);
+  border: 1px solid var(--ui-border);
+  border-radius: 0.9rem;
+  box-shadow: 0 3px 15px rgb(15 23 42 / 4%);
+}
+.hoursPrimary { border-block-start: 4px solid var(--ui-info-border); }
+.hoursLabel { color: var(--ui-text-secondary); font-weight: 650; font-size: 0.93rem; line-height: 1.45; }
+.hoursFigure { display: block; margin-top: 0.65rem; font-size: clamp(1.35rem, 2.7vw, 2.4rem); letter-spacing: -0.025em; }
+.hoursPrimary .hoursFigure { font-size: clamp(2.15rem, 4vw, 3.4rem); }
+.hoursFigure small { font-size: 0.47em; }
+.hoursDetail { color: var(--ui-text-secondary); font-size: 0.85rem; line-height: 1.5; margin-top: 0.4rem; }
+.hoursForm {
+  display: grid;
+  grid-template-columns: minmax(12rem, 19rem) minmax(0, 1fr);
+  align-items: center; gap: 0.7rem 1.5rem;
+  margin: 1.5rem 0; padding: 1.1rem;
+  border-radius: 0.75rem;
+  background: var(--ui-surface);
+  border: 1px solid var(--ui-border);
+}
+.hoursInput { margin: 0; }
+.hoursHint { margin: 0; }
+.methodology { border: 1px solid var(--ui-border); border-radius: 0.65rem; background: var(--ui-surface); }
+.methodology > summary { cursor: pointer; min-height: 2.75rem; padding: 0.85rem 1rem; font-weight: 700; }
+.methodologyBody { padding: 0 1rem 1.2rem; color: var(--ui-text-secondary); font-size: 0.91rem; line-height: 1.65; }
+.methodologyBody p { margin: 0.55rem 0; }
+.yearBlock {
+  display: grid;
+  grid-template-columns: 6.8rem minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(0.75rem, 2vw, 1.4rem);
+  padding: 1.1rem;
+  border: 1px solid var(--ui-border);
+  border-radius: 0.9rem;
+  background: var(--ui-surface);
+}
+.yearHeading { margin: 0 !important; display: flex; flex-direction: column; gap: 0.3rem; }
+.yearNumber { font-size: clamp(1.35rem, 3vw, 1.85rem); font-variant-numeric: tabular-nums; }
+.yearCountry { font-size: 1.45rem; }
+.yearDetails { min-width: 0; }
+.yearDetails > summary { display: flex; align-items: center; flex-wrap: wrap; gap: 0.4rem 1rem; padding: 0.7rem 0.9rem; }
+.yearSummaryCount { margin-inline-start: auto; color: var(--ui-text-secondary); font-size: 0.83rem; font-weight: 550; }
+.yearItems {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+  gap: 0.7rem;
+  padding: 0;
+  margin: 0;
+}
+.weekendCard {
+  display: flex; flex-direction: column; gap: 0.3rem; min-width: 0;
+  padding: 0.85rem;
+  border: 1px solid var(--ui-border);
+  border-inline-start: 3px solid var(--ui-border);
+  border-radius: 0.55rem;
+  background: var(--ui-surface-muted);
+}
+.weekendMissed { border-inline-start-color: var(--ui-danger-text); }
+.weekendContact { border-inline-start-color: var(--ui-success-text); }
+.weekendReview { border-inline-start-color: var(--ui-info-border); }
+.weekendMonth { color: var(--ui-text-secondary); font-size: 0.83rem; }
+.weekendDates { font-size: 1.4rem; font-variant-numeric: tabular-nums; }
+.weekendStatus { display: inline-flex; align-items: flex-start; gap: 0.4rem; line-height: 1.4; font-size: 0.79rem; overflow-wrap: anywhere; }
+.weekendStatus span { font-size: 1.05rem; }
+@media (max-width: 850px) {
+  .hoursNumbers { grid-template-columns: 1fr 1fr; }
+  .hoursPrimary { grid-column: 1 / -1; }
+  .hoursForm { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .hero { padding: 2rem 1.15rem; }
+  .hoursHeader { flex-direction: column; }
+  .hoursNumbers { grid-template-columns: 1fr; }
+  .hoursPrimary { grid-column: auto; }
+  .yearBlock { grid-template-columns: 1fr; }
+  .yearHeading { flex-direction: row; align-items: center; }
+  .yearSummaryCount { margin-inline-start: 0; }
+}
+@media print {
+  .hero, .yearBlock, .hoursPanel, .weekendCard { break-inside: avoid; box-shadow: none; }
+  .quickNav, .hoursForm, .methodology { display: none !important; }
+  .yearDetails:not([open]) > .yearItems { display: grid !important; }
+}
+@media (forced-colors: active) {
+  .hero, .yearBlock, .hoursPanel, .weekendCard, .hoursItem { border: 1px solid CanvasText; }
+}
