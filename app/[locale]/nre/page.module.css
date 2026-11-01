@@ -308,7 +308,7 @@
   font-size: 0.82rem; font-weight: 700;
 }
 .liveIndicator span { inline-size: 0.55rem; block-size: 0.55rem; border-radius: 50%; background: var(--ui-success-text); }
-.hoursNumbers { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 1.5rem; }
+.hoursNumbers { grid-template-columns: 1.2fr 1fr 1fr; margin-top: 1.5rem; }
 .hoursItem {
   align-content: start;
   min-width: 0;

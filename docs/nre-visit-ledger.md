@@ -10,21 +10,39 @@ La page Next.js `/nre` et ses variantes `/en/nre`, `/de/nre` et `/no/nre` utilis
 - **Contexte judiciaire déclaré** : suspension des visites en Allemagne signalée du 26/02/2026 au 25/02/2027, **texte intégral/dispositif non vérifié** ici. Ne pas présenter les mois suivants comme des refus illicites ni comme des visites judiciairement exigibles sans examen du titre applicable.
 - **Résultat à date** : 116 dates visibles, **101 NRE déclarées après le 31/03/2017**, six exceptions historiques, **une date antérieure** et **huit dates récentes à vérifier**.
 
-## Repère indicatif des week-ends de rencontre — novembre 2026
+## Plaintes déclarées depuis 2017
 
-Six périodes de rencontre ont été signalées dans les archives. Cinq ne portent pas de mention d'interruption (janvier 2020, août et octobre 2021, janvier et novembre 2022) et celle de mars 2022 est interrompue, sans durée fiable. La page affiche **5 × 10 h = 50 h indicatives**, calculées selon le rythme mensuel annoncé. Ce repère n'est **pas** une mesure des heures réellement passées ensemble, ni une estimation des journées complètes évoquées dans certains anciens libellés. Le total effectif demeure inconnu et ne peut être soustrait du compteur sans preuve horaire.
+La page indique désormais en première personne que des plaintes ont été déposées en **France, en Norvège et en Allemagne depuis le jugement du 31 mars 2017**. Le document français déjà présent reste lié ; il n'est pas présenté comme preuve d'une condamnation ou d'un résultat définitif.
 
-Les textes introductifs demandés, la quatrième carte « dates à vérifier / avant décision » et la légende sous le compteur civil ont été retirés de l'interface dans les quatre langues ; les statuts incertains restent consultables dans le calendrier.
+## Reconstitution indicative des périodes passées ensemble
 
-## Deux modèles horaires — à ne pas confondre
+Ce calcul est fondé sur les dernières durées déclarées par le propriétaire, et non sur les **10 h mensuelles de visites prévues**, qui n'ont pas été effectivement respectées selon son récit.
 
-1. **Heures théoriques des visites signalées manquées** : `101 × 10 h = 1 010 h`, en supposant applicable le rythme annoncé de 10 h le premier week-end mensuel. C'est un **indicateur d'inventaire**, sans reconstitution des horaires samedi/dimanche, et pas un montant d'heures juridiquement établi. Les six exceptions et les mois 2026 non vérifiés ne sont pas inclus dans les 101.
-2. **Durée civile écoulée** : compteur temps réel à partir du **6 juin 2015**, date utilisée dans le message historique. L'heure exacte du point de départ n'est pas connue ; le code utilise la convention `2015-06-06T00:00:00Z`, approximation à la journée. Ce temps **n'est pas une durée de droit de visite non exécuté**.
-3. **Déduction des heures effectives** : aucun total d'heures réellement passées ensemble n'est établi. L'ancienne valeur globale de jours ensemble a été contestée par le propriétaire et retirée des deux pages HTML NRE historiques. Les six exceptions ne démontrent pas de durée réelle. Le compteur net affiche donc « à renseigner » tant que les heures précises ne sont pas fournies ; une saisie locale temporaire les soustrait sans les enregistrer ou les transmettre. Ne pas ajouter de données nominatives dans le dépôt.
+| Période | Hypothèse de calcul | Contribution au sous-total |
+| --- | --- | --- |
+| Vacances en France | Deux séjours d'une semaine + un séjour de quatre semaines = 42 jours ; convention de **24 h calendaires de présence par jour de séjour** | **1 008 h** |
+| Allemagne | Retrouvailles d'environ **1 h**, puis **un week-end ultérieur de 24 h** | **25 h** |
+| Norvège | Rencontres parfois très brèves, **environ 1 h par week-end effectivement rencontré** ; aucune date de ces rencontres ne peut être isolée avec certitude des périodes de vacances dans les archives | **non inclus**, nombre de rencontres inconnu |
+| **Sous-total partiel** | 1 008 h + 25 h, sans supposer d'autres rencontres | **1 033 h** |
+
+**Ce sous-total n'est pas un nombre d'heures actives vérifiées** : 24 h par journée de vacances signifie *présence/garde sur une journée civile*, y compris nuits et temps non partagés directement. Les trois séjours français n'ont pas encore de dates vérifiées ; les anciennes exceptions mentionnent des séjours de 14 jours, de quatre semaines, de 7 jours et de 10 jours, incompatibles avec une attribution automatique des deux semaines et des quatre semaines nouvelles. Il est donc interdit de les additionner séparément ou de prétendre qu'une ligne précise correspond nécessairement à un séjour français.
+
+Le calendrier historique contient six exceptions ; elles ne prouvent ni une heure de rencontre chacune, ni que tous les week-ends inventoriés ont donné lieu à une heure de contact. La visite de mars 2022 est mentionnée comme interrompue ; une visite honorée apparaît en novembre 2022, mais les dates des 1 h + 24 h allemandes ne sont pas confirmées en correspondance avec ces lignes.
+
+Le champ de saisie local a été supprimé. Le compteur en temps réel déduit **1 033 h indicatives** de la durée civile depuis le 6 juin 2015 ; il affiche explicitement une **estimation partielle**, pas le temps de visite légalement perdu. Les contacts norvégiens non datés ne sont pas ajoutés ; les périodes de vacances ne sont comptées qu'une seule fois.
+
+## Contrôles et publications
+
+- Garder les libellés FR/EN/DE/NO alignés ; afficher les plaintes dans les trois pays sans leur attribuer un résultat judiciaire.
+- Conserver l'article 227-5 du Code pénal pour le seul contexte français.
+- Afficher environ **une heure** pour la rencontre ponctuelle ; distinguer les séjours longs, afin de ne pas leur attribuer fictivement une durée d'une heure.
+- Aucune liste de dates de contacts ponctuels norvégiens n'est vérifiée ; le moteur possède une liste explicite vide à compléter seulement lorsque des éléments concordants existent.
+- Ne pas présenter la somme de 1 033 heures comme une durée effectivement mesurée.
+- Pour établir le temps de présence réel, recouper dates de début/fin, pays et éventuels chevauchements avec des preuves privées sans reproduire d'identifiants protégés dans le site public.
 
 ## Validation
 
-- Moteur pur : `lib/nreVisitLedger.mjs` ; test `unit-tests/nreVisitLedger.test.mjs` (calendrier, dates 2026, statut juridique non automatique, calcul horaire, présence réellement renseignée, catalogues FR/EN/DE/NO).
+- Moteur pur : `lib/nreVisitLedger.mjs` ; test `unit-tests/nreVisitLedger.test.mjs` (calendrier, dates 2026, statuts non automatiques, hypothèses France/Allemagne, absence de dates Norvège, calcul sans saisie, catalogues FR/EN/DE/NO).
 - Interface : `app/[locale]/nre/NreHistory.tsx`, `NreLiveHours.tsx`, `sections.tsx`, `page.module.css` ; filtre annuel, chronologie dépliable et tableau imprimable.
 - Recette navigateur : `tests/nre.spec.ts` et contrôles axe/Playwright déjà disponibles, à exécuter sur le **SHA candidat**. Ne pas confondre tests de modèle, build Next et recette navigateur.
 

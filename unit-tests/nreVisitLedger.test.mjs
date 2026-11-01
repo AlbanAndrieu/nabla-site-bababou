@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import {
  firstWeekend,completeNreInventory,nreInventoryStats,
- elapsedSeparationSeconds,estimateContactWeekendHours,NRE_REPORTED_ORDER,NRE_REPORTED_SUSPENSION,
+ elapsedSeparationSeconds,estimateReportedContactHours,NRE_REPORTED_CONTACT,NRE_REPORTED_ORDER,NRE_REPORTED_SUSPENSION,
 } from "../lib/nreVisitLedger.mjs";
 
 const locales=["fr","en","de","no"];
@@ -64,15 +64,22 @@ test("Sunday is not complete until Monday in Europe/Paris (winter and summer tim
  assert.equal(completeNreInventory(base,new Date("2026-04-05T22:00:01Z")).length,110);
 });
 
-test("contact weekend estimate never becomes an unverified actual-hours claim", () => {
+test("reported contact subtotal excludes unknown Norwegian weekends and missed contact", () => {
  const rows = legacyFixture();
- assert.deepEqual(estimateContactWeekendHours(rows), {
-  reportedVisits:6,countedVisits:5,interruptedVisits:1,
-  indicativeHours:50,actualHours:null,
- });
- const extended=completeNreInventory(rows,new Date("2026-11-09T12:00:00Z"));
- assert.deepEqual(estimateContactWeekendHours(extended),estimateContactWeekendHours(rows));
+ const expected={
+  franceVacationDays:42,franceCalendarHours:1008,germanyHours:25,
+  norwayIncludedWeekends:0,norwayIncludedHours:0,norwayCountUnverified:true,
+  subtotalHours:1033,measuredContactHours:null,
+ };
+ assert.deepEqual(estimateReportedContactHours(rows),expected);
+ assert.equal(NRE_REPORTED_CONTACT.norwegianBriefContactHours,1);
+ assert.deepEqual(estimateReportedContactHours(
+   completeNreInventory(rows,new Date("2026-11-09T12:00:00Z"))),expected);
+ // A weekend marked NRE cannot be treated as an actual one-hour encounter.
+ assert.deepEqual(estimateReportedContactHours(rows.filter(r=>r.status==="nre")),expected);
+ assert.throws(()=>estimateReportedContactHours(null),TypeError);
 });
+
 test("realtime clock never invents actual-contact hours",()=>{
  const time=Date.parse("2015-06-06T00:00:00.000Z")+3600_000*100;
  assert.deepEqual(elapsedSeparationSeconds(time),{elapsed:360000,net:null});
@@ -91,7 +98,7 @@ test("realtime clock never invents actual-contact hours",()=>{
 });
 
 test("all four native languages have complete dashboard/status/filter copy",()=>{
- const names=["meta","hero","stats","timeline","table","exceptions","hours"];
+ const names=["meta","hero","stats","reference","timeline","table","exceptions","hours"];
  const objects=locales.map(locale=>JSON.parse(read("messages/nre/"+locale+".json")).nrePage);
  for(const name of names){
   const expected=Object.keys(objects[0][name]).sort();
@@ -107,7 +114,11 @@ test("all four native languages have complete dashboard/status/filter copy",()=>
  assert.equal(objects[0].hero.lead,undefined);
  assert.equal(objects[0].hours.elapsedHint,undefined);
  assert.ok(objects.every(c=>c.hours.contactEstimate&&c.hours.contactEstimateHint));
- assert.ok(objects.every(c=>c.table.filterYear&&c.table.review&&c.hours.actualHint));
+ assert.ok(objects.every(c=>c.table.filterYear&&c.table.review&&c.hours.contactEstimateHint));
+ assert.ok(objects.every(c=>c.reference.prefix.includes("2017")&&c.exceptions.extendedStay));
+ assert.ok(objects.every(c=>c.reference.heading&&c.reference.prefix&&c.reference.judgment));
+ assert.ok(objects.every(c=>c.exceptions.genericDetail&&c.exceptions.otherWeekend));
+ assert.ok(objects.every(c=>c.hours.actual===undefined&&c.hours.nominal===undefined));
 });
 
 test("the public page uses live client recomputation and retains legal source",()=>{
@@ -118,7 +129,9 @@ test("the public page uses live client recomputation and retains legal source",(
  assert.match(history,/completeNreInventory/);
  assert.match(history,/60_000/);
  assert.match(hours,/1000/);
- assert.match(hours,/type="number"/);
+ assert.doesNotMatch(hours,/type="number"|setContactHours|hoursForm/);
+ assert.match(hours,/estimateReportedContactHours/);
+ assert.match(hours,/report.subtotalHours/);
  assert.match(hours,/elapsedSeparationSeconds/);
  assert.match(read("app/[locale]/nre/sections.tsx"),/legifrance\.gouv\.fr/);
 });
@@ -129,7 +142,7 @@ test("unverified days are never presented as a verified total or inferred hours"
   assert.doesNotMatch(content,/61\s*(?:days|jours|Tage|dagene)|1[., ]?464/i);
   const c=JSON.parse(content).nrePage;
   for(const name of ["jumpHours","jumpTimeline","jumpTable"])assert.ok(c.hero[name]?.length>5);
-  for(const name of ["nominalHint","elapsedHint","netHint","methodology","live"])
+  for(const name of ["contactEstimateHint","netHint","methodology","live","scope","source"])
     assert.ok(c.hours[name]?.length>4);
   assert.ok(c.exceptions.genericDetail.length>20);
  }
@@ -140,7 +153,7 @@ test("unverified days are never presented as a verified total or inferred hours"
  }
  const hours=read("app/[locale]/nre/NreLiveHours.tsx");
  assert.match(hours,/styles\.hoursPrimary/);
- assert.match(hours,/estimateContactWeekendHours/);
+ assert.match(hours,/estimateReportedContactHours/);
  assert.match(hours,/styles\.methodology/);
  const timeline=read("app/[locale]/nre/sections.tsx");
  assert.match(timeline,/styles\.weekendCard/);

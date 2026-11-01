@@ -38,8 +38,8 @@ export type NrePageCopy = {
     filterYear: string;
     filterAll: string;
   };
-  exceptions: { heading: string; lead: string; genericDetail: string };
-  hours: { heading: string; intro: string; live: string; nominal: string; nominalHint: string; gross: string; contactEstimate: string; contactEstimateHint: string; net: string; netHint: string; actual: string; actualHint: string; methodology: string; scope: string; source: string; unknown: string; review: string; refresh: string; suspension: string; beforeOrder: string };
+  exceptions: { heading: string; lead: string; genericDetail: string; extendedStay: string; otherWeekend: string };
+  hours: { heading: string; intro: string; live: string; gross: string; contactEstimate: string; contactEstimateHint: string; net: string; netHint: string; methodology: string; scope: string; source: string; refresh: string; suspension: string; beforeOrder: string };
 };
 
 type CopyProps = { copy: NrePageCopy };
@@ -120,10 +120,12 @@ export function NreReference({ copy }: CopyProps) {
       <Card elevated borderless>
         <CardBody>
           <h2 id="reference-heading">{copy.reference.heading}</h2>
+          <p>{copy.reference.prefix}</p>
           <p>
-            {copy.reference.prefix}{" "}
-            <a href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006418025" target="_blank" rel="noopener noreferrer">{copy.reference.article}</a>. {copy.reference.filed} {copy.reference.judgment}
+            {copy.reference.judgment}{" "}
+            <a href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006418025" target="_blank" rel="noopener noreferrer">{copy.reference.article}</a>.
           </p>
+          <p>{copy.reference.filed}</p>
           <p>
             <a href="/assets/plainte-procureur-tgi-valence-04-08-2023-1.pdf">{copy.reference.document}</a>
           </p>
@@ -249,6 +251,7 @@ export function NreTable({ copy, rows, locale }: LocalizedDataProps) {
 
 export function NreExceptions({ copy, rows, locale }: LocalizedDataProps) {
   const exceptions = rows.filter((row) => row.status === "exception");
+  const extended = new Set(["2020-1", "2021-8", "2021-10", "2022-1"]);
   return (
     <section className={styles.section} aria-labelledby="exceptions-heading">
       <h2 id="exceptions-heading">{copy.exceptions.heading}</h2>
@@ -258,7 +261,11 @@ export function NreExceptions({ copy, rows, locale }: LocalizedDataProps) {
           <li key={`${row.year}-${row.month}`}>
             <strong>{monthYear(row, locale)} ({row.startDay}–{row.endDay})</strong>
             {" — "}
-            {copy.exceptions.genericDetail}
+            {extended.has(`${row.year}-${row.month}`)
+              ? copy.exceptions.extendedStay
+              : row.year === 2022 && row.month === 11
+                ? copy.exceptions.otherWeekend
+                : copy.exceptions.genericDetail}
           </li>
         ))}
       </ul>

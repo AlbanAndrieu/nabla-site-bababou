@@ -19,12 +19,12 @@
       "exceptions": "Gewährter oder teilweiser Umgang"
     },
     "reference": {
-      "heading": "Beschwerdebezug",
-      "prefix": "Beschwerde wegen Nichtgewährung der Herausgabe eines Kindes nach dem französischen Strafgesetzbuch",
-      "article": "Artikel 227-5",
-      "filed": "Am 4. September 2023 in Nanterre bei der Staatsanwaltschaft, Gericht Valence (TGI Valence), eingereicht.",
-      "judgment": "Die Liste beginnt mit dem vollstreckbaren Urteil vom 31. März 2017. Der Sachverhalt wird hier nicht wiedergegeben; das amtliche Dokument bleibt die Quelle.",
-      "document": "Beschwerde TGI Valence, 4. September 2023 (PDF)"
+      "heading": "Anzeigen seit 2017 — Frankreich, Norwegen, Deutschland",
+      "prefix": "Seit dem Urteil vom 31. März 2017 habe ich in Frankreich, Norwegen und Deutschland Anzeigen im Zusammenhang mit Schwierigkeiten bei der Ausübung meines Umgangsrechts erstattet.",
+      "article": "Französisches Strafgesetzbuch, Artikel 227-5",
+      "filed": "Ein französisches Anzeigedokument ist unten verfügbar. Eine Anzeige bedeutet nicht, dass der Vorwurf gerichtlich bestätigt wurde.",
+      "judgment": "Zum französischen Strafrecht siehe",
+      "document": "Anzeigedokument aus Frankreich (PDF)"
     },
     "note": {
       "heading": "Hinweis",
@@ -57,30 +57,26 @@
     },
     "exceptions": {
       "heading": "Gemeldeter gewährter oder teilweiser Umgang",
-      "lead": "Sechs historische Einträge nennen gewährten oder teilweisen Umgang. Die tatsächlich gemeinsam verbrachte Zeit ist nicht nachgewiesen.",
-      "genericDetail": "Umgang als gewährt oder teilweise gemeldet — tatsächliche Dauer ungeprüft."
+      "lead": "Sechs Kontaktzeiträume sind im Archiv aufgeführt: teils längere Aufenthalte, teils kurze Treffen. Die Urlaubsdaten müssen noch mit den Belegen abgeglichen werden.",
+      "genericDetail": "Gemeldetes kurzes Treffen: ungefähr eine Stunde.",
+      "extendedStay": "Längerer Aufenthalt gemeldet; ohne Abgleich der Überschneidungen keine zusätzliche Stunde zum Urlaub addieren.",
+      "otherWeekend": "Gemeldeter Besuch: Datum noch nicht dem separat berichteten 24-Stunden-Wochenende zugeordnet."
     },
     "hours": {
-      "heading": "Umgangsstunden: Bekanntes und Unbekanntes",
+      "heading": "Gemeinsame Zeit — Schätzung aus gemeldeten Zeiträumen",
       "gross": "Vergangene Zeit seit dem 6. Juni 2015 (historischer Bezug)",
-      "nominal": "Rechnerische Stunden für historische NRE-Einträge (10 h / Wochenende)",
-      "net": "Vergangene Zeit abzüglich eingegebener tatsächlicher Kontaktstunden",
-      "actual": "Tatsächlich gemeinsam verbrachte Stunden (freiwillige lokale Eingabe)",
-      "actualHint": "Nur belegbare tatsächlich gemeinsam verbrachte Stunden eingeben. Nichts wird angenommen, gespeichert oder übertragen; beim Neuladen wird der Wert gelöscht.",
-      "scope": "Dieser Echtzeitzähler misst Kalenderzeit ab einem ungefähren Datum (UTC-Tagesbeginn; genaue Uhrzeit unbekannt). Er ist weder ein gerichtlich bestätigter NRE-Nachweis noch ein Nachweis ausgefallener Umgangsstunden.",
-      "source": "Die rechnerischen Stunden beruhen auf einer angegebenen Regelung von zehn Stunden am ersten Monatswochenende und nur auf historischen NRE-Einträgen nach der Entscheidung vom 31. März 2017. Tatsächliche Kontaktzeiten sind nicht bekannt.",
-      "unknown": "Noch nicht angegeben",
-      "review": "Zu prüfen",
+      "net": "Vergangene Zeit abzüglich der geschätzten Aufenthaltsdauer",
+      "scope": "In Frankreich werden zwei Aufenthalte von je sieben Tagen und einer von 28 Tagen mit 24 Stunden pro Anwesenheitstag angesetzt. Genaue Daten fehlen noch.",
+      "source": "In Deutschland wurden ein Wiedersehen von etwa einer Stunde und ein späteres Wochenende von etwa 24 Stunden gemeldet. Für Norwegen wird nur bei eindeutig zuordenbaren kurzen Treffen eine Stunde gerechnet; solche Daten fehlen derzeit. Als ausgefallen markierte Wochenenden zählen nicht als Kontakte.",
       "refresh": "Die Uhr aktualisiert sich jede Sekunde; die Terminliste folgt dem aktuellen Pariser Datum.",
       "suspension": "Eine Aussetzung des Umgangs in Deutschland vom 26. Februar 2026 bis 25. Februar 2027 wurde berichtet; der genaue Beschluss ist hier nicht geprüft. Spätere Termine gelten nicht automatisch als NRE.",
       "beforeOrder": "Der Eintrag März 2017 liegt vor der Entscheidung vom 31. März 2017 und muss geprüft werden.",
-      "intro": "Rechnerisch ausgefallene Umgangsstunden sind nicht mit der Trennungszeit gleichzusetzen.",
+      "intro": "Nach meiner Darstellung wurden die vorgesehenen zehn Stunden pro Wochenende nie eingehalten; seltene Treffen dauerten etwa eine Stunde.",
       "live": "Live-Aktualisierung",
-      "nominalHint": "Schätzung anhand älterer NRE-Einträge, kein gerichtlicher Nachweis tatsächlicher Umgangsstunden.",
-      "netHint": "Ohne verlässliche tatsächliche Kontaktzeiten nicht feststellbar.",
-      "methodology": "Berechnung und Grenzen",
-      "contactEstimate": "Geschätzte Stunden nach gemeldeten Umgangswochenenden",
-      "contactEstimateHint": "Rechnerischer Vergleichswert: fünf Zeiträume ohne berichtete Unterbrechung zu je 10 Std. Keine belegten tatsächlichen gemeinsamen Stunden."
+      "netHint": "Unvollständige Schätzung: Urlaubszeiten sind kalendarische Anwesenheit, keine gemessene aktive Kontaktzeit. Undatierte Treffen in Norwegen sind nicht enthalten.",
+      "methodology": "Berechnungsmethode und Überschneidungen prüfen",
+      "contactEstimate": "Zwischensumme der gemeldeten Anwesenheit (ungefähr)",
+      "contactEstimateHint": "Frankreich: zwei Aufenthalte zu je einer Woche und einer zu vier Wochen, mit 24 Std. pro Tag gerechnet (1.008 Std.). Deutschland: Wiedersehen 1 Std. und späteres Wochenende 24 Std. (25 Std.). Norwegen: 1 Std. je gemeldetem kurzen Treffen, aber keine zuordenbaren Daten und daher nicht addiert."
     }
   }
 }

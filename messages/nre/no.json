@@ -19,12 +19,12 @@
       "exceptions": "Gjennomført eller delvis samvær"
     },
     "reference": {
-      "heading": "Referanse til klage",
-      "prefix": "Klage om manglende overlevering av barn etter fransk straffelov",
-      "article": "artikkel 227-5",
-      "filed": "Innlevert 4. september 2023 i Nanterre til påtalemyndigheten, Court of Valence (TGI Valence).",
-      "judgment": "Listen starter med den tvangskraftige dommen 31. mars 2017. Faktum gjengis ikke her; det offisielle dokumentet er fortsatt kilden.",
-      "document": "Klage TGI Valence, 4. september 2023 (PDF)"
+      "heading": "Anmeldelser siden 2017 — Frankrike, Norge, Tyskland",
+      "prefix": "Siden dommen 31. mars 2017 har jeg anmeldt forhold knyttet til vanskeligheter med å utøve samværsretten i Frankrike, Norge og Tyskland.",
+      "article": "Fransk straffelov, artikkel 227-5",
+      "filed": "Et fransk anmeldelsesdokument er lenket nedenfor. En anmeldelse betyr ikke at forholdet er rettslig fastslått.",
+      "judgment": "Etter fransk strafferett, se",
+      "document": "Anmeldelsesdokument fra Frankrike (PDF)"
     },
     "note": {
       "heading": "Merknad",
@@ -57,30 +57,26 @@
     },
     "exceptions": {
       "heading": "Rapporterte gjennomførte eller delvise samvær",
-      "lead": "Seks historiske oppføringer viser helt eller delvis gjennomført samvær. Faktisk tid sammen er ikke bekreftet.",
-      "genericDetail": "Samvær rapportert som gjennomført eller delvis — faktisk varighet ikke verifisert."
+      "lead": "Seks kontaktperioder er nevnt i arkivet: noen var lengre opphold, andre korte møter. Feriedatoene må fortsatt sammenholdes med dokumentasjonen.",
+      "genericDetail": "Rapportert kort møte: omtrent én time.",
+      "extendedStay": "Lengre opphold rapportert; ikke legg til en ekstra time på toppen av ferietid uten å kontrollere overlapp.",
+      "otherWeekend": "Rapportert besøk: datoen er ennå ikke knyttet til den særskilt oppgitte helgen på 24 timer."
     },
     "hours": {
-      "heading": "Samværstimer: kjente og ukjente forhold",
+      "heading": "Tid sammen — anslag ut fra rapporterte perioder",
       "gross": "Tid siden 6. juni 2015 (historisk referanse)",
-      "nominal": "Beregnet tid for historiske NRE-oppføringer (10 t / helg)",
-      "net": "Tid som har gått minus manuelt registrerte faktiske samværstimer",
-      "actual": "Timer faktisk tilbrakt sammen (valgfri lokal inntasting)",
-      "actualHint": "Oppgi bare dokumenterte timer som faktisk ble tilbrakt sammen. Ingen tid antas, lagres eller sendes; verdien forsvinner ved ny lasting.",
-      "scope": "Denne klokken viser kalenderført tid siden en omtrentlig dato (starten av dagen UTC; faktisk klokkeslett ukjent). Den er ikke et rettslig bekreftet NRE-regnskap eller bevis på tapte samværstimer.",
-      "source": "Beregnet tid bruker den oppgitte ordningen med ti timer den første helgen i måneden og bare eldre NRE-oppføringer etter avgjørelsen 31. mars 2017. Faktiske samværstimer er ikke kjent.",
-      "unknown": "Ikke oppgitt",
-      "review": "Må undersøkes",
+      "net": "Tid som har gått minus beregnet delsum for opphold",
+      "scope": "I Frankrike regnes to opphold på sju dager og ett på 28 dager med 24 timer per oppholdsdag. Nøyaktige datoer er ikke knyttet til kalenderen ennå.",
+      "source": "I Tyskland oppgis et møte på omtrent én time og en senere helg på omtrent 24 timer. For Norge telles én time bare for klart identifiserte korte møter; slike datoer mangler foreløpig. Helger registrert som uteblitt samvær telles ikke som kontakt.",
       "refresh": "Klokken oppdateres hvert sekund. Terminoversikten følger gjeldende dato i Paris.",
       "suspension": "En tysk avgjørelse om stans i samvær fra 26. februar 2026 til 25. februar 2027 er omtalt, men selve avgjørelsen er ikke kontrollert her. Senere datoer merkes ikke NRE.",
       "beforeOrder": "Oppføringen for mars 2017 er før avgjørelsen 31. mars 2017 og må undersøkes.",
-      "intro": "Beregnete tapte samværstimer er ikke det samme som hele adskillelsestiden.",
+      "intro": "Ifølge min beskrivelse ble de planlagte ti timene per helg aldri overholdt; sjeldne møter varte omtrent én time.",
       "live": "Oppdateres fortløpende",
-      "nominalHint": "Anslag fra eldre NRE-oppføringer, ikke en rettslig konklusjon om faktisk samværstid.",
-      "netHint": "Kan ikke fastslås uten pålitelig dokumentasjon av faktisk samværstid.",
-      "methodology": "Beregning og begrensninger",
-      "contactEstimate": "Antatte timer ut fra rapporterte samværshelger",
-      "contactEstimateHint": "Teoretisk sammenligningsverdi: fem perioder uten rapportert avbrudd, med 10 timer hver. Ikke dokumentert faktisk samværstid."
+      "netHint": "Ufullstendig anslag: ferier er kalenderbasert tid sammen, ikke målt aktiv kontakt. Udokumenterte norske møter er ikke tatt med.",
+      "methodology": "Beregningsmetode og overlapp må kontrolleres",
+      "contactEstimate": "Delsum for rapportert samværstid (omtrentlig)",
+      "contactEstimateHint": "Frankrike: to opphold på én uke og ett på fire uker, beregnet til 24 t per dag (1 008 t). Tyskland: gjenforening 1 t og en senere helg på 24 t (25 t). Norge: 1 t per rapportert kort møte, men datoene kan ikke identifiseres og er ikke lagt til."
     }
   }
 }

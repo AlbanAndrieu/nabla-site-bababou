@@ -19,12 +19,12 @@
       "exceptions": "Visites honorées ou partielles"
     },
     "reference": {
-      "heading": "Référence plainte",
-      "prefix": "Plainte pour non-représentation d'enfant au titre du Code pénal français",
-      "article": "article 227-5",
-      "filed": "Déposée le 4 septembre 2023 à Nanterre auprès du procureur de la République, TGI Valence.",
-      "judgment": "La liste court à compter du jugement exécutoire du 31 mars 2017. Les faits ne sont pas reproduits ici ; le document officiel reste la source.",
-      "document": "Plainte TGI Valence, 4 septembre 2023 (PDF)"
+      "heading": "Plaintes déposées depuis 2017 — France, Norvège, Allemagne",
+      "prefix": "Depuis le jugement du 31 mars 2017, j’ai déposé plainte en France, en Norvège et en Allemagne au sujet des difficultés rencontrées pour exercer mon droit de visite.",
+      "article": "Code pénal, article 227-5",
+      "filed": "Un document de plainte française figure ci-dessous. Le dépôt d’une plainte ne préjuge pas des suites données par les autorités.",
+      "judgment": "En droit pénal français, voir notamment",
+      "document": "Document de plainte en France (PDF)"
     },
     "note": {
       "heading": "Note",
@@ -57,30 +57,26 @@
     },
     "exceptions": {
       "heading": "Visites honorées ou partielles déclarées",
-      "lead": "Six événements historiques sont signalés comme effectués ou partiels. Leur durée de présence réelle n’est pas vérifiée.",
-      "genericDetail": "Contact signalé effectué ou partiel — durée réelle non vérifiée."
+      "lead": "Six périodes de contact apparaissent dans les archives : certaines correspondent à des séjours prolongés, d’autres à des rencontres brèves. Les dates exactes des vacances restent à rapprocher des pièces.",
+      "genericDetail": "Rencontre ponctuelle signalée : durée approximative d’une heure.",
+      "extendedStay": "Séjour prolongé signalé ; ne pas ajouter une heure en plus des vacances sans vérifier les chevauchements.",
+      "otherWeekend": "Visite déclarée : date à rapprocher du week-end de 24 h rapporté, sans durée attribuée automatiquement."
     },
     "hours": {
-      "heading": "Les heures : ce que l’on sait et ce qui reste inconnu",
+      "heading": "Temps passé ensemble — estimation fondée sur les périodes déclarées",
       "gross": "Temps écoulé depuis le 6 juin 2015 (repère historique)",
-      "nominal": "Heures théoriques associées aux NRE historiques (10 h / week-end)",
-      "net": "Temps écoulé moins les heures effectives renseignées",
-      "actual": "Heures effectivement passées ensemble (saisie locale facultative)",
-      "actualHint": "Saisir seulement les heures de présence réelle que tu peux justifier. Rien n’est présumé, enregistré ou transmis. Le champ est effacé au rechargement.",
-      "scope": "Ce compteur en direct mesure le temps civil écoulé depuis une date repère (début de journée UTC, heure réelle inconnue). Il n’est ni un décompte judiciaire de NRE, ni une preuve des heures effectivement manquées au titre du droit de visite.",
-      "source": "Les heures théoriques reposent sur le rythme annoncé de 10 h le premier week-end du mois, uniquement pour les lignes historiques marquées NRE après la décision du 31 mars 2017 ; les heures réelles ne sont pas reconstituées à partir des exceptions.",
-      "unknown": "À renseigner",
-      "review": "Dates à vérifier",
+      "net": "Temps écoulé moins le sous-total estimé des séjours",
+      "scope": "Pour la France, deux séjours de 7 jours et un séjour de 28 jours sont convertis à 24 h par jour de présence ; les dates exactes ne sont pas encore identifiées dans le calendrier.",
+      "source": "En Allemagne, une rencontre d’environ une heure et un week-end ultérieur d’environ 24 h sont déclarés. En Norvège, compter une heure seulement pour les rencontres brèves identifiables ; aucune date sûre n’est actuellement ajoutée. Les week-ends NRE ne sont pas comptés comme des visites.",
       "refresh": "Le compteur se met à jour chaque seconde ; le calendrier est recalculé automatiquement selon la date locale de Paris.",
       "suspension": "Suspension des visites en Allemagne signalée à partir du 26 février 2026 jusqu’au 25 février 2027 ; dispositif judiciaire original non vérifié ici. Les dates ultérieures ne sont pas classées NRE.",
       "beforeOrder": "La ligne de mars 2017 précède la décision citée du 31 mars 2017 et est classée à vérifier.",
-      "intro": "Les heures théoriques signalées manquées ne sont pas le temps total de séparation.",
+      "intro": "Les 10 heures de visite prévues par week-end n’ont jamais été respectées selon mon récit ; de rares rencontres ont duré environ une heure.",
       "live": "Actualisation en direct",
-      "nominalHint": "Estimation issue des seules anciennes lignes NRE ; ni constat judiciaire ni durée de présence effective.",
-      "netHint": "Impossible à établir sans heures de présence effective fiables.",
-      "methodology": "Méthode et limites du calcul",
-      "contactEstimate": "Heures de rencontre estimées à partir des week-ends déclarés",
-      "contactEstimateHint": "Repère théorique : cinq périodes sans interruption connue, à 10 h chacune. Ce n'est pas un relevé des heures réellement passées ensemble."
+      "netHint": "Estimation incomplète : les vacances correspondent à des heures calendaires de présence, pas à des heures d’interaction mesurées. Les rencontres norvégiennes non datées restent exclues.",
+      "methodology": "Méthode de calcul et chevauchements à vérifier",
+      "contactEstimate": "Sous-total des périodes de présence rapportées (approximatif)",
+      "contactEstimateHint": "France : deux séjours d’une semaine et un de quatre semaines, comptés à 24 h par jour (1 008 h). Allemagne : retrouvailles 1 h + un week-end 24 h (25 h). Norvège : 1 h par rencontre brève signalée, mais dates non identifiées et donc non ajoutées."
     }
   }
 }

@@ -19,12 +19,12 @@
       "exceptions": "Honored or partial visits"
     },
     "reference": {
-      "heading": "Complaint reference",
-      "prefix": "Complaint for failure to present a child under French Criminal Code",
-      "article": "Article 227-5",
-      "filed": "Filed on 4 September 2023 in Nanterre with the Prosecutor, Court of Valence (TGI Valence).",
-      "judgment": "The list starts from the enforceable judgment of 31 March 2017. Facts are not reproduced here; the official document remains the source.",
-      "document": "Complaint TGI Valence, 4 September 2023 (PDF)"
+      "heading": "Complaints filed since 2017 — France, Norway, Germany",
+      "prefix": "Since the judgment of 31 March 2017, I have filed complaints in France, Norway and Germany concerning difficulties exercising my contact rights.",
+      "article": "French Criminal Code, Article 227-5",
+      "filed": "A French complaint document appears below. Filing a complaint does not establish an outcome in any jurisdiction.",
+      "judgment": "For French criminal law, see",
+      "document": "Complaint document filed in France (PDF)"
     },
     "note": {
       "heading": "Note",
@@ -57,30 +57,26 @@
     },
     "exceptions": {
       "heading": "Reported honored or partial visits",
-      "lead": "Six historic entries indicate honored or partial visits. The actual duration together is not verified.",
-      "genericDetail": "Contact reported as honored or partial — actual duration unverified."
+      "lead": "Six contact periods are listed in the archives: some involve longer stays, others brief meetings. Holiday dates still need reconciling with the documents.",
+      "genericDetail": "Reported brief meeting: approximately one hour.",
+      "extendedStay": "Longer stay reported; do not add an extra hour on top of holiday time without checking overlaps.",
+      "otherWeekend": "Reported visit: date not yet matched to the separately reported 24-hour weekend."
     },
     "hours": {
-      "heading": "Contact hours: known and unknown",
+      "heading": "Time together — estimate from reported periods",
       "gross": "Elapsed time since 6 June 2015 (historical reference)",
-      "nominal": "Nominal hours for archived NRE entries (10 h / weekend)",
-      "net": "Elapsed time less manually recorded actual contact hours",
-      "actual": "Hours actually spent together (optional local input)",
-      "actualHint": "Enter only substantiated hours actually spent together. Nothing is presumed, stored or transmitted. The value clears on reload.",
-      "scope": "This live clock measures calendar time from an approximate date-only reference (UTC start of day; actual start time unknown). It is neither a court-verified NRE total nor proof of missed legal contact hours.",
-      "source": "Nominal hours apply an owner-reported 10 h first-weekend schedule only to historical rows marked NRE after the 31 March 2017 decision. Actual contact hours cannot be recovered from exception labels.",
-      "unknown": "Not yet entered",
-      "review": "Requires review",
+      "net": "Elapsed time minus the estimated subtotal of stays",
+      "scope": "In France, two stays of 7 days and one of 28 days are converted to 24 hours per day of presence; exact dates are not yet matched to the calendar.",
+      "source": "In Germany, a roughly one-hour reunion and a later roughly 24-hour weekend are reported. In Norway, count one hour only for identifiable brief visits; none have reliable dates yet. Weekends recorded as missed are never counted as contact.",
       "refresh": "The timer updates each second. The month inventory is recalculated from the local Paris date.",
       "suspension": "A German contact suspension was reported from 26 February 2026 through 25 February 2027; the operative court order has not been verified here. Later dates are not labeled NRE.",
       "beforeOrder": "The March 2017 row predates the cited 31 March 2017 decision and needs review.",
-      "intro": "Nominal missed visiting hours must not be confused with elapsed separation time.",
+      "intro": "According to my account, the scheduled 10 hours per weekend were never respected; rare meetings lasted around one hour.",
       "live": "Updating live",
-      "nominalHint": "Estimate based on archived NRE entries only; not a judicial finding or verified time together.",
-      "netHint": "Cannot be established without reliable actual contact hours.",
-      "methodology": "Calculation and limitations",
-      "contactEstimate": "Indicative hours based on reported contact weekends",
-      "contactEstimateHint": "Nominal reference: five periods with no reported interruption, at 10 h each. These are not verified hours spent together."
+      "netHint": "Incomplete estimate: holiday time is calendar co-presence, not measured active contact. Undated Norwegian meetings are excluded.",
+      "methodology": "Calculation method and overlaps to review",
+      "contactEstimate": "Reported presence subtotal (approximate)",
+      "contactEstimateHint": "France: two one-week stays and one four-week stay, counted at 24 h per day (1,008 h). Germany: a 1 h reunion and a later 24 h weekend (25 h). Norway: 1 h per reported brief meeting, but dates cannot yet be identified and are not added."
     }
   }
 }

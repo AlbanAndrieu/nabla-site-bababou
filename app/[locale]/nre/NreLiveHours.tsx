@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { AppLocale } from "@/i18n/routing";
-import { elapsedSeparationSeconds, estimateContactWeekendHours, nreInventoryStats } from "@/lib/nreVisitLedger.mjs";
+import { elapsedSeparationSeconds, estimateReportedContactHours } from "@/lib/nreVisitLedger.mjs";
 import type { NreRow } from "@/lib/nreLegacyData";
 import type { NrePageCopy } from "./sections";
 import styles from "./page.module.css";
@@ -18,15 +18,14 @@ function clockString(value: number, locale: AppLocale) {
   return `${hours}:${minutes}:${seconds}`;
 }
 
-/** The historical nominal visit total is separate from the civil separation
- * clock. Actual hours are unknown unless manually entered on this device.
- * Nothing from the form is persisted or transmitted.
+/** A non-editable, owner-reported approximation of presence periods.
+ * Vacation days count as calendar co-presence, not waking contact hours.
+ * Undated Norwegian meetings are not silently counted.
  */
 export default function NreLiveHours({
   copy, rows, locale,
 }: { copy: NrePageCopy; rows: NreRow[]; locale: AppLocale }) {
   const [now, setNow] = useState<number | null>(null);
-  const [contactHours, setContactHours] = useState("");
 
   useEffect(() => {
     const initial = window.requestAnimationFrame(() => setNow(Date.now()));
@@ -37,11 +36,9 @@ export default function NreLiveHours({
     };
   }, []);
 
-  const nominal = new Intl.NumberFormat(NUMBER_LOCALE[locale]).format(
-    nreInventoryStats(rows).theoreticalScheduledHours,
-  );
-  const visits = estimateContactWeekendHours(rows);
-  const elapsed = now === null ? null : elapsedSeparationSeconds(now, contactHours);
+  const report = estimateReportedContactHours(rows);
+  const subtotal = new Intl.NumberFormat(NUMBER_LOCALE[locale]).format(report.subtotalHours);
+  const elapsed = now === null ? null : elapsedSeparationSeconds(now, report.subtotalHours);
 
   return (
     <section className={styles.section} aria-labelledby="nre-hours-heading">
@@ -55,16 +52,9 @@ export default function NreLiveHours({
         </div>
         <div className={styles.hoursNumbers}>
           <div className={`${styles.hoursItem} ${styles.hoursPrimary}`}>
-            <span className={styles.hoursLabel}>{copy.hours.nominal}</span>
-            <strong className={styles.hoursFigure}>{nominal} <small>h</small></strong>
-            <p className={styles.hoursDetail}>{copy.hours.nominalHint}</p>
-          </div>
-          <div className={styles.hoursItem}>
             <span className={styles.hoursLabel}>{copy.hours.contactEstimate}</span>
-            <strong className={styles.hoursFigure}>{visits.indicativeHours} <small>h</small></strong>
-            <p className={styles.hoursDetail}>
-              {visits.countedVisits} × 10 h — {copy.hours.contactEstimateHint}
-            </p>
+            <strong className={styles.hoursFigure}>{subtotal} <small>h</small></strong>
+            <p className={styles.hoursDetail}>{copy.hours.contactEstimateHint}</p>
           </div>
           <div className={styles.hoursItem}>
             <span className={styles.hoursLabel}>{copy.hours.gross}</span>
@@ -75,26 +65,10 @@ export default function NreLiveHours({
           <div className={styles.hoursItem}>
             <span className={styles.hoursLabel}>{copy.hours.net}</span>
             <strong className={styles.hoursFigure} aria-live="off">
-              {elapsed?.net == null ? copy.hours.unknown : clockString(elapsed.net, locale)}
+              {elapsed?.net == null ? "—" : clockString(elapsed.net, locale)}
             </strong>
             <p className={styles.hoursDetail}>{copy.hours.netHint}</p>
           </div>
-        </div>
-        <div className={styles.hoursForm}>
-          <label className={styles.hoursInput}>
-            <span>{copy.hours.actual}</span>
-            <input
-              type="number"
-              min="0"
-              step="0.25"
-              inputMode="decimal"
-              value={contactHours}
-              onChange={(event) => setContactHours(event.target.value)}
-              placeholder="0.00"
-              aria-describedby="contact-hours-note"
-            />
-          </label>
-          <p id="contact-hours-note" className={styles.hoursHint}>{copy.hours.actualHint}</p>
         </div>
         <details className={styles.methodology}>
           <summary>{copy.hours.methodology}</summary>

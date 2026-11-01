@@ -234,7 +234,7 @@ test.describe("NRE React migration", () => {
       const panel=main.locator('section[aria-labelledby="nre-hours-heading"]');
       await expect(main.locator('header[aria-labelledby="nre-heading"] p')).toHaveCount(0);
       await expect(main.locator('section[aria-labelledby="nre-stats-heading"]')).not.toContainText("Dates à vérifier / avant décision");
-      await expect(panel).toContainText(/50\s*h/);
+      await expect(panel).toContainText(/1[\s.,\u202f]033\s*h/);
       await expect(panel).not.toContainText("Temps civil depuis un repère approximatif");
       const methodology=panel.locator("details");
       await expect(methodology.locator("summary")).toBeVisible();
@@ -246,16 +246,15 @@ test.describe("NRE React migration", () => {
     }
   });
 
-  test("live separation clock only subtracts explicitly entered actual hours", async ({ page }) => {
+  test("reported hours are calculated without an editable input", async ({ page }) => {
     await page.goto("/en/nre");
-    const input=page.getByRole("spinbutton",{name:/Hours actually spent together/i});
-    const dashboard=page.locator('section[aria-labelledby="nre-hours-heading"]');
-    await expect(input).toHaveValue("");
-    await expect(dashboard).toContainText("Not yet entered");
-    await expect(dashboard).toContainText("1,010 h");
-    await input.fill("12.5");
-    await expect(dashboard).not.toContainText("Not yet entered");
-    await input.fill("");
-    await expect(dashboard).toContainText("Not yet entered");
+    const panel=page.locator('section[aria-labelledby="nre-hours-heading"]');
+    await expect(panel.getByRole("spinbutton")).toHaveCount(0);
+    await expect(panel).toContainText(/1[\s.,\u202f]033\s*h/);
+    await expect(panel).toContainText("France");
+    await expect(panel).toContainText("Norway");
+    await expect(panel).not.toContainText("1,010 h");
+    const reference=page.locator('section[aria-labelledby="reference-heading"]');
+    await expect(reference).toContainText("France, Norway and Germany");
   });
 });
