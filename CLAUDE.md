@@ -1,114 +1,47 @@
-# CLAUDE.md
+# Claude Code — Site Bababou
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+**Langue de communication : toujours le français.** Ce dépôt est un projet personnel : rédiger la documentation, les comptes rendus et les descriptions/titres de PR en **français**. Les identifiants de code, API et noms techniques peuvent rester en anglais selon les conventions du dépôt. Cette politique est distincte des dépôts professionnels Wakam, dont les livrables techniques et PR doivent être en anglais, tout en conservant la conversation en français.
 
-## Common Commands
+## Instructions prioritaires
 
-**Install dependencies:**
+- Lire `AGENTS.md` : politique Git/PR, sécurité, protection des crédits CI, preuves exact-SHA et autonomie d'exécution.
+- Consulter **uniquement la section active** de `docs/roadmap.md`. Les anciens SHA et PR fusionnées ne sont pas des tâches à reprendre.
+- Pour les contenus familiaux : appliquer `.agents/skills/protect-family-privacy/SKILL.md` ; les informations identifiantes de l'ancien index ne sont pas librement réutilisables.
+- Ne jamais modifier `master` directement, fusionner automatiquement, affaiblir les contrôles de sécurité ou prétendre qu'un test non exécuté est passé.
+
+## Architecture actuelle
+
+- `app/` : Next.js App Router et routes locales FR/EN/DE/NO.
+- `public/index.html` : homepage publique historique conservée pour la bascule et le rollback.
+- `app/[locale]/home-preview/page.tsx` : Home React de revue (5 cartes).
+- `app/[locale]/abduction/page.tsx` : parents, traducteurs et notice (7 cartes).
+- `lib/homeAudienceCopy.mjs` : textes natifs des deux parcours.
+- `proxy.ts` + `lib/homeCutoverPolicy.mjs` : verrou serveur de publication, désactivé par défaut.
+- `docs/homepage-migration-parity.md` : comportements attendus ; `docs/homepage-react-cutover.md` : seule procédure de GO/NO-GO.
+
+## Boucle locale
+
+```bash
+mise install
+just install
+just dev
+just offline-l1
+just offline-contracts
+just homepage-validation-list
+just homepage-validation
+just p0
+just quality
 ```
-npm ci
-```
 
-**Build and run the Next.js/Vercel project:**
-```
-npm run dev
-npm run build
-npm run start
-```
+Sélectionner les contrôles selon le périmètre de la modification. `offline-*` n'atteste pas le build ni les scanners ; `homepage-validation` suppose Playwright installé. Pour publier, utiliser la procédure canonique de `AGENTS.md`, sur un commit et un SHA exact. Aucune réexécution GitHub Actions inutile et aucune fusion automatique.
 
-**Playwright Testing (E2E):**
-```
-npm ci             # install dependencies, incl. Playwright
-npx playwright install  # install browsers (if first time)
-npm test                # run all tests
-npm run test:headed     # headed mode
-npm run test:ui         # interactive UI mode
-npm run test:debug      # debug mode
-npm run test:report     # view test report
-```
+## Qualité
 
-**Legacy static fallback audit:**
-```
-npm run start-python
-```
+- WCAG **2.2 AA** : clavier, focus, contrastes, zoom/reflow, lecteur d'écran, reduced-motion, responsive et impression.
+- Sécurité et vie privée : BetterLeaks, SAST/SCA, DAST/ZAP, audit réseau et revue des informations personnelles.
+- SEO : `lang`, canonical/hreflang, sitemap/robots, Open Graph et indexation contrôlée.
+- Conserver le rendu protégé de `public/404.html` selon la politique de confidentialité.
+- Résumé final court : **modifications ; tests réellement exécutés ; limites ; prochaine action**.
 
+**Sources de vérité** : [roadmap](docs/roadmap.md), [opérations](docs/operations.md), [bascule](docs/homepage-react-cutover.md), [confidentialité](.agents/skills/protect-family-privacy/SKILL.md).
 
-## High-Level Architecture
-
-- `app/`: Next.js App Router and localized native routes.
-- `public/`: legacy static pages and shared assets retained only while migration parity is being proven; `public/404.html` is the protected reviewed 404 source.
-- `api/`: Vercel serverless API routes.
-- `messages/` and `i18n/`: first-class FR/EN/DE/NO runtime catalogs and routing.
-
-- **Workflows:**
-  - GitHub Actions for Playwright tests, Docker CI, MegaLinter, PDF builds, Copilot setup
-  - Secrets only for versioned workflows that actively consume them
-
-## Testing & CI
-
-- **Playwright** for End-to-End Testing: Homepage, Accessibility, Responsive Design, Navigation.
-- Tests run automatically on GitHub Actions for PRs/pushes (see `.github/workflows/playwright.yml`)
-- Artifacts: Test reports and traces are uploaded.
-
-## Standards and Conventions
-
-### HTML/CSS/JS
-- **HTML:** Semantic elements, WCAG 2.1 Level AA accessibility, proper alt text, keyboard navigation, ARIA labels, mobile-first, print support, SEO meta tags, Open Graph and Twitter cards.
-- **CSS:** Theme support (light/dark), CSS custom properties, print styles, responsive images (`srcset`), grid/flex layouts, print.css.
-- **JavaScript:** ES6+, async/await, error handling, JSDoc for documentation, use constants and modern practices.
-
-### Internationalization (i18n)
-- All pages should set the `lang` attribute.
-- Structure content for translation and RTL support using logical properties.
-
-### PDF/Print
-- Maintain `public/print.css` (media query, optimization, proper page breaks).
-
-### SEO/Crawler
-- Keep `public/robots.txt` and the active sitemap generation/output up to date.
-- Include meta tags and canonical URLs.
-
-### Commit/Branching
-- Use conventional commit format.
-- Feature branches.
-- Update sitemap and robots.txt after deployment changes.
-
-### Asset Organization
-- Keep assets in `public/assets/`; optimize images.
-- Place styles/scripts in respective directories.
-
-## Copilot Guidance (Key Points)
-
-- All HTML changes must be WCAG AA compliant and semantic.
-- Mobile-first responsive design with required breakpoints.
-- Maintain or enhance light/dark mode in `public/theme.css`.
-- Print styles in `public/print.css`.
-- i18n readiness; never hardcode text in JS.
-- SEO: unique `<title>`, meta description/keywords, canonical URLs, structured data.
-- Crawler & Sitemap: Maintain robots.txt and sitemap; submit updates to search engines.
-- Open Graph & Twitter Cards: Always present on pages.
-- Code consistency: HTML5 DOCTYPE, 2-space indentation, kebab-case for CSS classes, descriptive filenames.
-- Documentation: Update README, comment complex logic, use JSDoc, CSS documentation.
-- Performance: Minify assets, lazy load images, CDN usage, critical CSS.
-- Testing: Validate HTML/CSS, accessibility checks, browser/device testing, performance.
-
-## Quick Checklist
-
-- Semantic HTML
-- WCAG AA Accessibility
-- Mobile-first, responsive
-- Theme (light/dark)
-- i18n
-- SEO & Open Graph meta
-- Print styles
-- Code convention/adherence
-- Sitemap and robots.txt maintenance
-- Minified, optimized assets
-- Comprehensive testing
-- README updated for architectural changes
-
----
-
-**Contact:** For questions or clarifications, contact: aa@bababou.com
-
----

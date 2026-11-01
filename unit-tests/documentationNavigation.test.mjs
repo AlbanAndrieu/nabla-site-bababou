@@ -7,10 +7,12 @@ import test from "node:test";
 const root = fileURLToPath(new URL("../", import.meta.url));
 const documents = [
   "README.md",
+  "CLAUDE.md",
   "CONTRIBUTING.md",
   "docs/roadmap.md",
   "docs/operations.md",
   "docs/homepage-migration-parity.md",
+  "docs/homepage-react-cutover.md",
   "tests/README.md",
 ];
 
@@ -37,24 +39,38 @@ test("canonical docs keep resolvable internal Markdown links", () => {
   }
 });
 
-test("roadmap remains active-only and points to canonical runbooks", () => {
+test("roadmap tracks only active P1–P5 work and links each canonical runbook", () => {
   const read = (name) => readFileSync(resolve(root, name), "utf8");
   const roadmap = read("docs/roadmap.md");
-  assert.match(roadmap, /## P1 —/);
-  assert.match(roadmap, /## P2 —/);
-  assert.match(roadmap, /## P3 —/);
-  assert.match(roadmap, /## P4 —/);
-  assert.match(roadmap, /## P5 —/);
-  assert.match(roadmap, /## Barrières de publication/);
-  assert.ok(
-    roadmap.indexOf("## Barrières de publication") > roadmap.indexOf("## P5 —"),
-    "publication gates follow the five active roadmap priorities",
-  );
+  const readme = read("README.md");
+
+  assert.match(roadmap, /## Travail restant — ordre P1 → P5/);
+  for (const priority of ["P1", "P2", "P3", "P4", "P5"]) {
+    assert.ok(roadmap.includes("**" + priority + " —"), priority);
+  }
+  assert.match(roadmap, /NO-GO/);
   assert.match(roadmap, /publication-redaction\.md/);
-  assert.match(roadmap, /Playwright\/axe/);
+  assert.match(roadmap, /Playwright \+ axe|Playwright\/axe/);
   assert.match(roadmap, /BetterLeaks/);
-  assert.match(roadmap, /\[operations\.md\]\(operations\.md\)/);
-  assert.match(read("README.md"), /\[Roadmap\]\(docs\/roadmap\.md\)/);
-  assert.match(read("README.md"), /\[Opérations\]\(docs\/operations\.md\)/);
+  assert.match(roadmap, /\[opérations et incidents\]\(operations\.md\)/);
+  assert.match(readme, /\[Roadmap active\]\(docs\/roadmap\.md\)/);
+  assert.match(readme, /\[Runbook opérationnel\]\(docs\/operations\.md\)/);
+  assert.match(readme, /\[Procédure de bascule\]\(docs\/homepage-react-cutover\.md\)/);
+  assert.doesNotMatch(roadmap, /\*\*PR #253\*\* Draft|10 cartes \*\*toutes illustrées\*\*/);
   assert.doesNotMatch(roadmap, /- \[x\] /);
+});
+
+test("cutover and parity reflect five child cards and seven parent cards", () => {
+  const read = (name) => readFileSync(resolve(root, name), "utf8");
+  const parity = read("docs/homepage-migration-parity.md");
+  const cutover = read("docs/homepage-react-cutover.md");
+  for (const source of [parity, cutover]) {
+    assert.match(source, /5 cartes/);
+    assert.match(source, /7 cartes/);
+    assert.match(source, /noindex|non indexable/);
+  }
+  assert.match(cutover, /VERCEL_GIT_COMMIT_SHA/);
+  assert.match(cutover, /BABABOU_HOME_CUTOVER_SHA/);
+  assert.match(cutover, /Retour arrière/);
+  assert.doesNotMatch(cutover, /10\/10 images|dix cartes/);
 });
