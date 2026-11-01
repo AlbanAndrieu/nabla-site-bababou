@@ -54,6 +54,16 @@ test("the ledger follows future Paris dates but never predicts offenses",()=>{
  assert.equal(completeNreInventory(afterNovember,new Date("2026-11-09T12:00:00Z")).length,117);
 });
 
+test("Sunday is not complete until Monday in Europe/Paris (winter and summer time)",()=> {
+ const base=legacyFixture();
+ // Winter: Monday begins at 23:00 UTC on Sunday.
+ assert.equal(completeNreInventory(base,new Date("2026-11-08T22:59:59Z")).length,116);
+ assert.equal(completeNreInventory(base,new Date("2026-11-08T23:00:01Z")).length,117);
+ // Summer: Monday begins at 22:00 UTC on Sunday.
+ assert.equal(completeNreInventory(base,new Date("2026-04-05T21:59:59Z")).length,109);
+ assert.equal(completeNreInventory(base,new Date("2026-04-05T22:00:01Z")).length,110);
+});
+
 test("realtime clock never invents actual-contact hours",()=>{
  const time=Date.parse("2015-06-06T00:00:00.000Z")+3600_000*100;
  assert.deepEqual(elapsedSeparationSeconds(time),{elapsed:360000,net:null});
@@ -62,6 +72,13 @@ test("realtime clock never invents actual-contact hours",()=>{
  assert.deepEqual(elapsedSeparationSeconds(time,101),{elapsed:360000,net:null});
  assert.deepEqual(elapsedSeparationSeconds(time,-1),{elapsed:360000,net:null});
  assert.equal(elapsedSeparationSeconds(time+1000,12.5).net,315001);
+ assert.deepEqual(elapsedSeparationSeconds(time,"12.5"),{elapsed:360000,net:315000});
+ assert.deepEqual(elapsedSeparationSeconds(time,"0"),{elapsed:360000,net:360000});
+ for(const invalid of [" ","1e1","0x10","NaN",true,[],{},-1,101,Infinity]){
+  assert.equal(elapsedSeparationSeconds(time,invalid).net,null,String(invalid));
+ }
+ assert.throws(()=>elapsedSeparationSeconds(NaN,0),TypeError);
+ assert.throws(()=>elapsedSeparationSeconds(Infinity,0),TypeError);
 });
 
 test("all four native languages have complete dashboard/status/filter copy",()=>{
