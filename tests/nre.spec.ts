@@ -225,6 +225,23 @@ test.describe("NRE React migration", () => {
     }
   });
 
+  test("four languages display verifiable dashboard and readable year cards", async ({ page }) => {
+    for (const {path} of localeCases) {
+      await page.goto(path);
+      const main=page.locator("main#main-content");
+      await expect(main).not.toContainText(/61\\s*(?:days|jours|Tage|dagene)/i);
+      await expect(main.locator('nav a[href="#timeline-heading"]')).toBeVisible();
+      const panel=main.locator('section[aria-labelledby="nre-hours-heading"]');
+      const methodology=panel.locator("details");
+      await expect(methodology.locator("summary")).toBeVisible();
+      await methodology.locator("summary").click();
+      await expect(methodology).toHaveAttribute("open","");
+      const currentYear=main.locator("article details[open]");
+      await expect(currentYear.first().locator("ol li").first()).toBeVisible();
+      await expect(main.locator("article details ol li").first()).toContainText(/\\d/);
+    }
+  });
+
   test("live separation clock only subtracts explicitly entered actual hours", async ({ page }) => {
     await page.goto("/en/nre");
     const input=page.getByRole("spinbutton",{name:/Hours actually spent together/i});
