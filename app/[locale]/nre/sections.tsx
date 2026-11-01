@@ -70,7 +70,7 @@ function weekend(row: NreRow, locale: AppLocale) {
   return `${row.startDay}–${row.endDay} ${month} ${row.year}`;
 }
 
-function displayStatus(row: NreRow, copy: NrePageCopy, locale: AppLocale) {
+function displayStatus(row: NreRow, copy: NrePageCopy) {
   if (row.status === "nre") return copy.table.nre;
   if (row.status === "review") return copy.table.review;
   if (row.status === "beforeOrder") return copy.table.beforeOrder;
@@ -196,7 +196,7 @@ export function NreTimeline({ copy, rows, locale }: LocalizedDataProps) {
                       <strong className={styles.weekendDates}>{row.startDay}–{row.endDay}</strong>
                       <span className={styles.weekendStatus}>
                         <span aria-hidden="true">{row.status === "exception" ? "✓" : row.status === "nre" ? "×" : "?"}</span>
-                        {displayStatus(row, copy, locale)}
+                        {displayStatus(row, copy)}
                       </span>
                     </li>
                   ))}
@@ -239,7 +239,7 @@ export function NreTable({ copy, rows, locale }: LocalizedDataProps) {
                 <td>{monthYear(row, locale)}</td>
                 <td>{weekend(row, locale)}</td>
                 <td className={row.status === "exception" ? styles.exceptionStatus : row.status === "nre" ? styles.nreStatus : styles.reviewStatus}>
-                  {displayStatus(row, copy, locale)}
+                  {displayStatus(row, copy)}
                 </td>
               </tr>
             ))}
