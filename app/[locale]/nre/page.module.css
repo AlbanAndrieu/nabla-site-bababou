@@ -399,3 +399,98 @@
 @media (forced-colors: active) {
   .hero, .yearBlock, .hoursPanel, .weekendCard, .hoursItem { border: 1px solid CanvasText; }
 }
+
+/* Compact Monday–Sunday calendars: the first Saturday/Sunday is visually
+ * highlighted, while status and complete date ranges remain readable text. */
+.yearItems {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: 0.9rem;
+}
+.weekendCard {
+  gap: 0.5rem;
+  padding: 1rem;
+  border-radius: 0.8rem;
+}
+.calendarStrip {
+  margin-block: 0.35rem;
+  padding: 0.65rem 0.35rem;
+  border: 1px solid var(--ui-border);
+  border-radius: 0.65rem;
+  background: var(--ui-surface);
+}
+.calendarWeekdays,
+.calendarDays {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.18rem;
+}
+.calendarWeekdays {
+  margin-bottom: 0.4rem;
+}
+.calendarWeekdays > span {
+  min-width: 0;
+  color: var(--ui-text-secondary);
+  font-size: 0.7rem;
+  font-weight: 650;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.calendarDay {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 1.75rem;
+  aspect-ratio: 1;
+  border-radius: 0.4rem;
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ui-text-secondary);
+}
+.calendarWeekend {
+  font-weight: 800;
+  border: 2px solid currentColor;
+}
+.weekendMissed .calendarWeekend {
+  background: var(--ui-danger-surface);
+  color: var(--ui-danger-text);
+}
+.weekendContact .calendarWeekend {
+  background: var(--ui-success-surface);
+  color: var(--ui-success-text);
+}
+.weekendReview .calendarWeekend {
+  background: var(--ui-surface-muted);
+  color: var(--ui-text-primary);
+  border-color: var(--ui-info-border);
+}
+@media (forced-colors: active) {
+  .calendarWeekend {
+    color: Highlight;
+    border: 2px solid Highlight;
+    forced-color-adjust: auto;
+  }
+}
+
+/* Country breakdown is legible even when the estimated Norway share is small. */
+.contactBreakdown {
+  display: grid;
+  gap: 0.45rem;
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0;
+}
+.contactBreakdown li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.8rem;
+  padding-block: 0.4rem;
+  border-bottom: 1px solid var(--ui-border);
+  font-size: 0.87rem;
+}
+.contactBreakdown strong {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}

@@ -2,7 +2,7 @@ import Badge from "@/components/ui/Badge";
 import Card, { CardBody } from "@/components/ui/Card";
 import type { AppLocale } from "@/i18n/routing";
 import type { NreRow } from "@/lib/nreLegacyData";
-import { nreInventoryStats } from "@/lib/nreVisitLedger.mjs";
+import { nreInventoryStats, nreWeekendStrip } from "@/lib/nreVisitLedger.mjs";
 import styles from "./page.module.css";
 
 export type NrePageCopy = {
@@ -39,7 +39,7 @@ export type NrePageCopy = {
     filterAll: string;
   };
   exceptions: { heading: string; lead: string; genericDetail: string; extendedStay: string; otherWeekend: string };
-  hours: { heading: string; intro: string; live: string; gross: string; contactEstimate: string; contactEstimateHint: string; net: string; netHint: string; methodology: string; scope: string; source: string; refresh: string; suspension: string; beforeOrder: string };
+  hours: { heading: string; intro: string; live: string; gross: string; contactEstimate: string; contactEstimateHint: string; countriesLabel: string; franceLabel: string; germanyLabel: string; norwayLabel: string; net: string; netHint: string; methodology: string; scope: string; source: string; refresh: string; suspension: string; beforeOrder: string };
 };
 
 type CopyProps = { copy: NrePageCopy };
@@ -150,7 +150,41 @@ export function NreNote({ copy }: CopyProps) {
   );
 }
 
+/** Decorative seven-day calendar strip; the range and status remain readable text. */
+function WeekendCalendar({ row, weekdays }: { row: NreRow; weekdays: string[] }) {
+  const days = nreWeekendStrip(row);
+  return (
+    <div data-testid="nre-week-strip" className={styles.calendarStrip} aria-hidden="true">
+      <div className={styles.calendarWeekdays}>
+        {weekdays.map((label, index) => (
+          <span key={index}>{label}</span>
+        ))}
+      </div>
+      <div className={styles.calendarDays}>
+        {days.map((day, index) => {
+          const weekend = day !== null && (day === row.startDay || day === row.endDay);
+          return (
+            <span
+              key={index}
+              data-weekend={weekend ? "true" : undefined}
+              className={`${styles.calendarDay} ${weekend ? styles.calendarWeekend : ""}`}
+            >
+              {day ?? ""}
+            </span>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export function NreTimeline({ copy, rows, locale }: LocalizedDataProps) {
+  const weekdays = Array.from({ length: 7 }, (_, index) =>
+    new Intl.DateTimeFormat(LOCALE_CODES[locale], {
+      weekday: "short",
+      timeZone: "UTC",
+    }).format(new Date(Date.UTC(2024, 0, index + 1))),
+  );
   const byYear = Map.groupBy(rows, (row) => row.year);
 
   return (
@@ -165,6 +199,7 @@ export function NreTimeline({ copy, rows, locale }: LocalizedDataProps) {
       <div className={styles.timeline}>
         {[...byYear.entries()].reverse().map(([year, yearRows]) => {
           const missed = yearRows.filter((row) => row.status === "nre").length;
+          const visited = yearRows.filter((row) => row.status === "exception").length;
           const review = yearRows.filter((row) => row.status === "review" || row.status === "beforeOrder").length;
           return (
             <article key={year} className={styles.yearBlock}>
@@ -179,6 +214,7 @@ export function NreTimeline({ copy, rows, locale }: LocalizedDataProps) {
                   <span>{yearRows.length} {copy.table.weekend}</span>
                   <span className={styles.yearSummaryCount}>
                     {missed} {copy.table.nre}
+                    {visited ? ` · ${visited} ${copy.table.exception}` : ""}
                     {review ? ` · ${review} ${copy.table.review}` : ""}
                   </span>
                 </summary>
@@ -192,6 +228,7 @@ export function NreTimeline({ copy, rows, locale }: LocalizedDataProps) {
                       }`}
                     >
                       <span className={styles.weekendMonth}>{monthYear(row, locale)}</span>
+                      <WeekendCalendar row={row} weekdays={weekdays} />
                       <strong className={styles.weekendDates}>{row.startDay}–{row.endDay}</strong>
                       <span className={styles.weekendStatus}>
                         <span aria-hidden="true">{row.status === "exception" ? "✓" : row.status === "nre" ? "×" : "?"}</span>

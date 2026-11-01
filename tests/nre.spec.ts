@@ -213,9 +213,12 @@ test.describe("NRE React migration", () => {
       const select=page.locator("main select").filter({has:page.locator("option[value='all']")});
       await expect(select).toHaveValue("all");
       await select.selectOption("2026");
+      await expect(page.locator('section[aria-labelledby="timeline-heading"] article')).toHaveCount(1);
+      await expect(page.locator('section[aria-labelledby="timeline-heading"] article details')).toHaveAttribute("open", "");
       await expect.poll(()=>rows.count()).toBeGreaterThanOrEqual(10);
       await expect.poll(()=>rows.count()).toBeLessThanOrEqual(12);
       await select.selectOption("all");
+      await expect.poll(() => page.locator('section[aria-labelledby="timeline-heading"] article').count()).toBeGreaterThanOrEqual(9);
       await expect.poll(()=>rows.count()).toBeGreaterThanOrEqual(116);
       // The actual class is CSS-module hashed; select semantic nested details.
       const yearDetails=page.locator("main article details").first();
@@ -234,7 +237,7 @@ test.describe("NRE React migration", () => {
       const panel=main.locator('section[aria-labelledby="nre-hours-heading"]');
       await expect(main.locator('header[aria-labelledby="nre-heading"] p')).toHaveCount(0);
       await expect(main.locator('section[aria-labelledby="nre-stats-heading"]')).not.toContainText("Dates à vérifier / avant décision");
-      await expect(panel).toContainText(/1[\s.,\u202f]033\s*h/);
+      await expect(panel).toContainText(/1[\s.,\u202f]036\s*h/);
       await expect(panel).not.toContainText("Temps civil depuis un repère approximatif");
       const methodology=panel.locator("details");
       await expect(methodology.locator("summary")).toBeVisible();
@@ -243,6 +246,23 @@ test.describe("NRE React migration", () => {
       const currentYear=main.locator("article details[open]");
       await expect(currentYear.first().locator("ol li").first()).toBeVisible();
       await expect(main.locator("article details ol li").first()).toContainText(/\\d/);
+      const firstStrip=main.getByTestId("nre-week-strip").first();
+      await expect(firstStrip).toBeVisible();
+      await expect(firstStrip.locator('[data-weekend="true"]')).toHaveCount(2);
+    }
+  });
+
+  test("monthly calendar strips remain readable on narrow screens", async ({ page }) => {
+    for (const width of [320, 375, 768]) {
+      await page.setViewportSize({ width, height: 850 });
+      await page.goto("/nre");
+      const strip=page.getByTestId("nre-week-strip").first();
+      await expect(strip).toBeVisible();
+      await expect(strip.locator('[data-weekend="true"]')).toHaveCount(2);
+      const bounds=await strip.boundingBox();
+      expect(bounds).not.toBeNull();
+      expect(bounds!.x).toBeGreaterThanOrEqual(0);
+      expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(width + 1);
     }
   });
 
@@ -250,9 +270,10 @@ test.describe("NRE React migration", () => {
     await page.goto("/en/nre");
     const panel=page.locator('section[aria-labelledby="nre-hours-heading"]');
     await expect(panel.getByRole("spinbutton")).toHaveCount(0);
-    await expect(panel).toContainText(/1[\s.,\u202f]033\s*h/);
+    await expect(panel).toContainText(/1[\s.,\u202f]036\s*h/);
     await expect(panel).toContainText("France");
     await expect(panel).toContainText("Norway");
+    await expect(panel).toContainText(/3\s*h/);
     await expect(panel).not.toContainText("1,010 h");
     const reference=page.locator('section[aria-labelledby="reference-heading"]');
     await expect(reference).toContainText("France, Norway and Germany");

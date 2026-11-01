@@ -67,16 +67,20 @@
       "gross": "Elapsed time since 6 June 2015 (historical reference)",
       "net": "Elapsed time minus the estimated subtotal of stays",
       "scope": "In France, two stays of 7 days and one of 28 days are converted to 24 hours per day of presence; exact dates are not yet matched to the calendar.",
-      "source": "In Germany, a roughly one-hour reunion and a later roughly 24-hour weekend are reported. In Norway, count one hour only for identifiable brief visits; none have reliable dates yet. Weekends recorded as missed are never counted as contact.",
+      "source": "In Germany, a meeting of around 1 h and a later weekend of about 24 h are reported. In Norway, about three one-hour meetings are reported; their dates remain unknown, so they are included only once in the overall estimate, not assigned to calendar cards.",
       "refresh": "The timer updates each second. The month inventory is recalculated from the local Paris date.",
       "suspension": "A German contact suspension was reported from 26 February 2026 through 25 February 2027; the operative court order has not been verified here. Later dates are not labeled NRE.",
       "beforeOrder": "The March 2017 row predates the cited 31 March 2017 decision and needs review.",
       "intro": "According to my account, the scheduled 10 hours per weekend were never respected; rare meetings lasted around one hour.",
       "live": "Updating live",
-      "netHint": "Incomplete estimate: holiday time is calendar co-presence, not measured active contact. Undated Norwegian meetings are excluded.",
+      "netHint": "Indicative and incomplete: the 42 French holiday days count calendar co-presence, not directly measured contact. Three undated Norwegian meetings are included.",
       "methodology": "Calculation method and overlaps to review",
       "contactEstimate": "Reported presence subtotal (approximate)",
-      "contactEstimateHint": "France: two one-week stays and one four-week stay, counted at 24 h per day (1,008 h). Germany: a 1 h reunion and a later 24 h weekend (25 h). Norway: 1 h per reported brief meeting, but dates cannot yet be identified and are not added."
+      "contactEstimateHint": "France: 42 holiday days counted as 24 h per calendar day (1,008 h). Germany: an approximately 1 h reunion and a 24 h weekend (25 h). Norway: approximately three one-hour meetings (3 h), with dates not yet identified.",
+      "countriesLabel": "Breakdown of reported hours",
+      "franceLabel": "Holidays in France",
+      "germanyLabel": "Germany",
+      "norwayLabel": "Norway (≈ 3 × 1 h)"
     }
   }
 }

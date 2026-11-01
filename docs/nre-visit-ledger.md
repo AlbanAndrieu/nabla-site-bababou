@@ -22,28 +22,35 @@ Ce calcul est fondé sur les dernières durées déclarées par le propriétaire
 | --- | --- | --- |
 | Vacances en France | Deux séjours d'une semaine + un séjour de quatre semaines = 42 jours ; convention de **24 h calendaires de présence par jour de séjour** | **1 008 h** |
 | Allemagne | Retrouvailles d'environ **1 h**, puis **un week-end ultérieur de 24 h** | **25 h** |
-| Norvège | Rencontres parfois très brèves, **environ 1 h par week-end effectivement rencontré** ; aucune date de ces rencontres ne peut être isolée avec certitude des périodes de vacances dans les archives | **non inclus**, nombre de rencontres inconnu |
-| **Sous-total partiel** | 1 008 h + 25 h, sans supposer d'autres rencontres | **1 033 h** |
+| Norvège | Selon les précisions communiquées : **environ 3 rencontres × 1 h** ; les week-ends exacts restent inconnus et ne sont pas attribués à des mois du calendrier | **≈ 3 h** |
+| **Sous-total indicatif** | 1 008 h + 25 h + environ 3 h ; sous réserve de vérifier les recoupements | **≈ 1 036 h** |
 
 **Ce sous-total n'est pas un nombre d'heures actives vérifiées** : 24 h par journée de vacances signifie *présence/garde sur une journée civile*, y compris nuits et temps non partagés directement. Les trois séjours français n'ont pas encore de dates vérifiées ; les anciennes exceptions mentionnent des séjours de 14 jours, de quatre semaines, de 7 jours et de 10 jours, incompatibles avec une attribution automatique des deux semaines et des quatre semaines nouvelles. Il est donc interdit de les additionner séparément ou de prétendre qu'une ligne précise correspond nécessairement à un séjour français.
 
 Le calendrier historique contient six exceptions ; elles ne prouvent ni une heure de rencontre chacune, ni que tous les week-ends inventoriés ont donné lieu à une heure de contact. La visite de mars 2022 est mentionnée comme interrompue ; une visite honorée apparaît en novembre 2022, mais les dates des 1 h + 24 h allemandes ne sont pas confirmées en correspondance avec ces lignes.
 
-Le champ de saisie local a été supprimé. Le compteur en temps réel déduit **1 033 h indicatives** de la durée civile depuis le 6 juin 2015 ; il affiche explicitement une **estimation partielle**, pas le temps de visite légalement perdu. Les contacts norvégiens non datés ne sont pas ajoutés ; les périodes de vacances ne sont comptées qu'une seule fois.
+Le champ de saisie local reste supprimé. Le compteur en temps réel déduit **environ 1 036 h indicatives** de la durée civile depuis le 6 juin 2015 ; il affiche explicitement une **estimation partielle**, pas le temps de visite légalement perdu. Les quelque trois rencontres norvégiennes sont comptées **une seule fois dans le total**, sans inventer leur mois ni leur date ; les périodes de vacances ne sont pas recomptées comme visites ponctuelles.
+
+## Calendrier graphique — lecture des dates
+
+- La chronologie conserve les années repliables et affiche les mois en cartes dans une grille fluide. Le filtre d'année s'applique simultanément à ces cartes, au tableau détaillé et à la liste des exceptions.
+- Chaque carte montre une semaine **lundi–dimanche**, avec les libellés locaux FR/EN/DE/NO et les deux jours du week-end colorés selon le **statut déjà enregistré** (NRE historique, rencontre/exception, ou date à vérifier).
+- Les dates hors du mois sont laissées vides. La plage de dates et le libellé de statut restent en texte, sans dépendre de la couleur. Les cartes ne transforment **aucune** rencontre norvégienne non datée en événement daté.
+- Préserver le focus clavier des panneaux, la lecture sur mobile et le rendu à l'impression. Aucun composant tiers, requête réseau ou source de données supplémentaire n'est nécessaire.
 
 ## Contrôles et publications
 
 - Garder les libellés FR/EN/DE/NO alignés ; afficher les plaintes dans les trois pays sans leur attribuer un résultat judiciaire.
 - Conserver l'article 227-5 du Code pénal pour le seul contexte français.
 - Afficher environ **une heure** pour la rencontre ponctuelle ; distinguer les séjours longs, afin de ne pas leur attribuer fictivement une durée d'une heure.
-- Aucune liste de dates de contacts ponctuels norvégiens n'est vérifiée ; le moteur possède une liste explicite vide à compléter seulement lorsque des éléments concordants existent.
-- Ne pas présenter la somme de 1 033 heures comme une durée effectivement mesurée.
+- Les dates des trois rencontres norvégiennes déclarées sont inconnues : le modèle conserve leur **nombre approximatif (3)** sans leur attribuer de dates ni modifier les statuts historiques.
+- Ne pas présenter la somme d'environ 1 036 heures comme une durée effectivement mesurée.
 - Pour établir le temps de présence réel, recouper dates de début/fin, pays et éventuels chevauchements avec des preuves privées sans reproduire d'identifiants protégés dans le site public.
 
 ## Validation
 
-- Moteur pur : `lib/nreVisitLedger.mjs` ; test `unit-tests/nreVisitLedger.test.mjs` (calendrier, dates 2026, statuts non automatiques, hypothèses France/Allemagne, absence de dates Norvège, calcul sans saisie, catalogues FR/EN/DE/NO).
-- Interface : `app/[locale]/nre/NreHistory.tsx`, `NreLiveHours.tsx`, `sections.tsx`, `page.module.css` ; filtre annuel, chronologie dépliable et tableau imprimable.
+- Moteur pur : `lib/nreVisitLedger.mjs` ; test `unit-tests/nreVisitLedger.test.mjs` (calendrier, dates 2026, bande lundi–dimanche avec deux jours de week-end mis en évidence, hypothèses France/Allemagne/Norvège, dates norvégiennes inconnues, calcul sans saisie, catalogues FR/EN/DE/NO).
+- Interface : `app/[locale]/nre/NreHistory.tsx`, `NreLiveHours.tsx`, `sections.tsx`, `page.module.css` ; filtre annuel, chronologie dépliable avec mini-calendriers localisés et tableau imprimable.
 - Recette navigateur : `tests/nre.spec.ts` et contrôles axe/Playwright déjà disponibles, à exécuter sur le **SHA candidat**. Ne pas confondre tests de modèle, build Next et recette navigateur.
 
 ## Points à vérifier avec les sources

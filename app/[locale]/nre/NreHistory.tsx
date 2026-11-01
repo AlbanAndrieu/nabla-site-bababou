@@ -32,8 +32,6 @@ export default function NreHistory({copy,legacyRows,locale,buildDate}:{
       <NreLiveHours copy={copy} rows={rows} locale={locale}/>
       <NreReference copy={copy}/>
       <NreNote copy={copy}/>
-      <NreTimeline copy={copy} rows={rows} locale={locale}/>
-      <NreLocation copy={copy}/>
       <div className={styles.section}>
         <label className={styles.tableFilter}>{copy.table.filterYear}
           <select value={visibleYear} onChange={event=>setVisibleYear(event.target.value)}>
@@ -42,8 +40,10 @@ export default function NreHistory({copy,legacyRows,locale,buildDate}:{
           </select>
         </label>
       </div>
+      <NreTimeline copy={copy} rows={filteredRows} locale={locale}/>
+      <NreLocation copy={copy}/>
       <NreTable copy={copy} rows={filteredRows} locale={locale}/>
-      <NreExceptions copy={copy} rows={rows} locale={locale}/>
+      <NreExceptions copy={copy} rows={filteredRows} locale={locale}/>
     </>
   );
 }

@@ -67,16 +67,20 @@
       "gross": "Temps écoulé depuis le 6 juin 2015 (repère historique)",
       "net": "Temps écoulé moins le sous-total estimé des séjours",
       "scope": "Pour la France, deux séjours de 7 jours et un séjour de 28 jours sont convertis à 24 h par jour de présence ; les dates exactes ne sont pas encore identifiées dans le calendrier.",
-      "source": "En Allemagne, une rencontre d’environ une heure et un week-end ultérieur d’environ 24 h sont déclarés. En Norvège, compter une heure seulement pour les rencontres brèves identifiables ; aucune date sûre n’est actuellement ajoutée. Les week-ends NRE ne sont pas comptés comme des visites.",
+      "source": "En Allemagne, une rencontre d'environ 1 h et un week-end ultérieur d'environ 24 h sont signalés. En Norvège, environ trois rencontres d'une heure sont déclarées ; leur mois exact reste inconnu, elles sont incluses une seule fois dans le total et non attribuées aux cartes du calendrier.",
       "refresh": "Le compteur se met à jour chaque seconde ; le calendrier est recalculé automatiquement selon la date locale de Paris.",
       "suspension": "Suspension des visites en Allemagne signalée à partir du 26 février 2026 jusqu’au 25 février 2027 ; dispositif judiciaire original non vérifié ici. Les dates ultérieures ne sont pas classées NRE.",
       "beforeOrder": "La ligne de mars 2017 précède la décision citée du 31 mars 2017 et est classée à vérifier.",
       "intro": "Les 10 heures de visite prévues par week-end n’ont jamais été respectées selon mon récit ; de rares rencontres ont duré environ une heure.",
       "live": "Actualisation en direct",
-      "netHint": "Estimation incomplète : les vacances correspondent à des heures calendaires de présence, pas à des heures d’interaction mesurées. Les rencontres norvégiennes non datées restent exclues.",
+      "netHint": "Estimation indicative et incomplète : les 42 jours français sont des heures calendaires de présence, pas des heures de contact direct mesurées. Les trois rencontres norvégiennes sont incluses, mais non datées.",
       "methodology": "Méthode de calcul et chevauchements à vérifier",
       "contactEstimate": "Sous-total des périodes de présence rapportées (approximatif)",
-      "contactEstimateHint": "France : deux séjours d’une semaine et un de quatre semaines, comptés à 24 h par jour (1 008 h). Allemagne : retrouvailles 1 h + un week-end 24 h (25 h). Norvège : 1 h par rencontre brève signalée, mais dates non identifiées et donc non ajoutées."
+      "contactEstimateHint": "France : 42 jours de vacances comptés à 24 h par jour (1 008 h). Allemagne : environ 1 h de retrouvailles et un week-end de 24 h (25 h). Norvège : environ trois rencontres d'une heure (3 h), sans dates précisément identifiées.",
+      "countriesLabel": "Répartition des heures déclarées",
+      "franceLabel": "Vacances en France",
+      "germanyLabel": "Allemagne",
+      "norwayLabel": "Norvège (≈ 3 × 1 h)"
     }
   }
 }

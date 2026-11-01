@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import {
- firstWeekend,completeNreInventory,nreInventoryStats,
+ firstWeekend,nreWeekendStrip,completeNreInventory,nreInventoryStats,
  elapsedSeparationSeconds,estimateReportedContactHours,NRE_REPORTED_CONTACT,NRE_REPORTED_ORDER,NRE_REPORTED_SUSPENSION,
 } from "../lib/nreVisitLedger.mjs";
 
@@ -68,16 +68,25 @@ test("reported contact subtotal excludes unknown Norwegian weekends and missed c
  const rows = legacyFixture();
  const expected={
   franceVacationDays:42,franceCalendarHours:1008,germanyHours:25,
-  norwayIncludedWeekends:0,norwayIncludedHours:0,norwayCountUnverified:true,
-  subtotalHours:1033,measuredContactHours:null,
+  norwayReportedMeetingsApprox:3,norwayApproxHours:3,norwayDatesUnverified:true,
+  subtotalHours:1036,measuredContactHours:null,
  };
  assert.deepEqual(estimateReportedContactHours(rows),expected);
  assert.equal(NRE_REPORTED_CONTACT.norwegianBriefContactHours,1);
+ assert.equal(NRE_REPORTED_CONTACT.norwegianBriefMeetingsApprox,3);
  assert.deepEqual(estimateReportedContactHours(
    completeNreInventory(rows,new Date("2026-11-09T12:00:00Z"))),expected);
  // A weekend marked NRE cannot be treated as an actual one-hour encounter.
  assert.deepEqual(estimateReportedContactHours(rows.filter(r=>r.status==="nre")),expected);
  assert.throws(()=>estimateReportedContactHours(null),TypeError);
+});
+
+test("calendar strips mark both weekend days without inventing other-month dates", () => {
+ assert.deepEqual(nreWeekendStrip(firstWeekend(2026,3)),[2,3,4,5,6,7,8]);
+ assert.deepEqual(nreWeekendStrip(firstWeekend(2026,8)),[null,null,null,null,null,1,2]);
+ assert.deepEqual(nreWeekendStrip(firstWeekend(2026,10)),[null,null,null,1,2,3,4]);
+ assert.equal(nreWeekendStrip(firstWeekend(2026,11)).length,7);
+ assert.throws(() => nreWeekendStrip({year:2026,month:11,startDay:2,endDay:3}),RangeError);
 });
 
 test("realtime clock never invents actual-contact hours",()=>{
@@ -114,6 +123,7 @@ test("all four native languages have complete dashboard/status/filter copy",()=>
  assert.equal(objects[0].hero.lead,undefined);
  assert.equal(objects[0].hours.elapsedHint,undefined);
  assert.ok(objects.every(c=>c.hours.contactEstimate&&c.hours.contactEstimateHint));
+ assert.ok(objects.every(c=>c.hours.countriesLabel&&c.hours.franceLabel&&c.hours.germanyLabel&&c.hours.norwayLabel));
  assert.ok(objects.every(c=>c.table.filterYear&&c.table.review&&c.hours.contactEstimateHint));
  assert.ok(objects.every(c=>c.reference.prefix.includes("2017")&&c.exceptions.extendedStay));
  assert.ok(objects.every(c=>c.reference.heading&&c.reference.prefix&&c.reference.judgment));
@@ -132,6 +142,10 @@ test("the public page uses live client recomputation and retains legal source",(
  assert.doesNotMatch(hours,/type="number"|setContactHours|hoursForm/);
  assert.match(hours,/estimateReportedContactHours/);
  assert.match(hours,/report.subtotalHours/);
+ assert.match(hours,/report.norwayApproxHours/);
+ const calendar=read("app/[locale]/nre/sections.tsx");
+ assert.match(calendar,/nreWeekendStrip/);
+ assert.match(calendar,/data-testid="nre-week-strip"/);
  assert.match(hours,/elapsedSeparationSeconds/);
  assert.match(read("app/[locale]/nre/sections.tsx"),/legifrance\.gouv\.fr/);
 });

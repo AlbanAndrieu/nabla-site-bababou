@@ -67,16 +67,20 @@
       "gross": "Vergangene Zeit seit dem 6. Juni 2015 (historischer Bezug)",
       "net": "Vergangene Zeit abzüglich der geschätzten Aufenthaltsdauer",
       "scope": "In Frankreich werden zwei Aufenthalte von je sieben Tagen und einer von 28 Tagen mit 24 Stunden pro Anwesenheitstag angesetzt. Genaue Daten fehlen noch.",
-      "source": "In Deutschland wurden ein Wiedersehen von etwa einer Stunde und ein späteres Wochenende von etwa 24 Stunden gemeldet. Für Norwegen wird nur bei eindeutig zuordenbaren kurzen Treffen eine Stunde gerechnet; solche Daten fehlen derzeit. Als ausgefallen markierte Wochenenden zählen nicht als Kontakte.",
+      "source": "In Deutschland wurden ein Wiedersehen von etwa einer Stunde und ein späteres Wochenende von etwa 24 Stunden gemeldet. In Norwegen werden ungefähr drei einstündige Treffen berichtet; ihre Daten sind unbekannt, daher werden sie nur einmal in der Gesamtschätzung und nicht einzelnen Kalenderkarten zugeordnet.",
       "refresh": "Die Uhr aktualisiert sich jede Sekunde; die Terminliste folgt dem aktuellen Pariser Datum.",
       "suspension": "Eine Aussetzung des Umgangs in Deutschland vom 26. Februar 2026 bis 25. Februar 2027 wurde berichtet; der genaue Beschluss ist hier nicht geprüft. Spätere Termine gelten nicht automatisch als NRE.",
       "beforeOrder": "Der Eintrag März 2017 liegt vor der Entscheidung vom 31. März 2017 und muss geprüft werden.",
       "intro": "Nach meiner Darstellung wurden die vorgesehenen zehn Stunden pro Wochenende nie eingehalten; seltene Treffen dauerten etwa eine Stunde.",
       "live": "Live-Aktualisierung",
-      "netHint": "Unvollständige Schätzung: Urlaubszeiten sind kalendarische Anwesenheit, keine gemessene aktive Kontaktzeit. Undatierte Treffen in Norwegen sind nicht enthalten.",
+      "netHint": "Unvollständige Schätzung: Die 42 französischen Urlaubstage sind kalendarische Anwesenheit, keine gemessene aktive Kontaktzeit. Drei undatierte norwegische Treffen sind enthalten.",
       "methodology": "Berechnungsmethode und Überschneidungen prüfen",
       "contactEstimate": "Zwischensumme der gemeldeten Anwesenheit (ungefähr)",
-      "contactEstimateHint": "Frankreich: zwei Aufenthalte zu je einer Woche und einer zu vier Wochen, mit 24 Std. pro Tag gerechnet (1.008 Std.). Deutschland: Wiedersehen 1 Std. und späteres Wochenende 24 Std. (25 Std.). Norwegen: 1 Std. je gemeldetem kurzen Treffen, aber keine zuordenbaren Daten und daher nicht addiert."
+      "contactEstimateHint": "Frankreich: 42 Urlaubstage mit je 24 Kalenderstunden (1.008 Std.). Deutschland: etwa 1 Std. Wiedersehen und ein Wochenende mit 24 Std. (25 Std.). Norwegen: ungefähr drei Treffen von je einer Stunde (3 Std.), genaue Daten unbekannt.",
+      "countriesLabel": "Aufteilung der gemeldeten Stunden",
+      "franceLabel": "Urlaub in Frankreich",
+      "germanyLabel": "Deutschland",
+      "norwayLabel": "Norwegen (≈ 3 × 1 Std.)"
     }
   }
 }

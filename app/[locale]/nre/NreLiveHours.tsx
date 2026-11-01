@@ -54,6 +54,11 @@ export default function NreLiveHours({
           <div className={`${styles.hoursItem} ${styles.hoursPrimary}`}>
             <span className={styles.hoursLabel}>{copy.hours.contactEstimate}</span>
             <strong className={styles.hoursFigure}>{subtotal} <small>h</small></strong>
+            <ul className={styles.contactBreakdown} aria-label={copy.hours.countriesLabel}>
+              <li><span>🇫🇷 {copy.hours.franceLabel}</span><strong>{new Intl.NumberFormat(NUMBER_LOCALE[locale]).format(report.franceCalendarHours)} h</strong></li>
+              <li><span>🇩🇪 {copy.hours.germanyLabel}</span><strong>{report.germanyHours} h</strong></li>
+              <li><span>🇳🇴 {copy.hours.norwayLabel}</span><strong>{report.norwayApproxHours} h</strong></li>
+            </ul>
             <p className={styles.hoursDetail}>{copy.hours.contactEstimateHint}</p>
           </div>
           <div className={styles.hoursItem}>
