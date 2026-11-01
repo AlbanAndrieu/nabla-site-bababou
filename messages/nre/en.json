@@ -1,20 +1,20 @@
 {
   "nrePage": {
     "meta": {
-      "title": "NRE — Failure to Present Child (France) | Visitation Rights",
-      "description": "List of scheduled visitation weekends (first weekend of each month) and failures to present child (NRE). Reference: complaint TGI Valence 4 September 2023. Enforceable judgment 31 March 2017."
+      "title": "Contact and visitation chronology — recorded NRE and dates to review",
+      "description": "First-weekend inventory since 2017, with 2026 dates requiring review and a live separation clock that does not fabricate actual contact hours."
     },
     "hero": {
-      "eyebrow": "Visitation rights · 2017–2026",
+      "eyebrow": "Contact rights · 2017 to today",
       "title": "Failure to present child (NRE)",
-      "lead": "Visitation rights: first weekend of each month. Full list of scheduled weekends and NRE (non-représentation d'enfant)."
+      "lead": "First weekends of each month, events recorded as missed, honored or partial contact, and periods still awaiting verification. Newly generated dates are not automatically classified as criminal offenses."
     },
     "stats": {
       "heading": "Summary statistics",
-      "total": "Scheduled weekends (total)",
-      "nre": "NRE (visitation denied)",
-      "exceptions": "Exceptions (visitation honored)",
-      "days": "Days with Bababou (past 12 years)"
+      "total": "Listed weekend dates",
+      "nre": "Recorded NRE (historical claims)",
+      "exceptions": "Honored or partial visits",
+      "review": "To verify / before order"
     },
     "reference": {
       "heading": "Complaint reference",
@@ -32,7 +32,7 @@
     },
     "timeline": {
       "heading": "Timeline by year",
-      "lead": "Scheduled weekends and status by calendar year. The cards are generated from the retained static NRE table, which remains the reviewed source of truth.",
+      "lead": "Each year shows first weekends of the month. ✗ = recorded historical NRE claim, ✓ = honored or partial, ? = unverified date. Later dates are not automatically criminal findings.",
       "norway": "Norway, Oslo",
       "germany": "Germany, Frankfurt"
     },
@@ -41,18 +41,37 @@
       "body": "2015 France; since 2017 Norway, Oslo; since 2022 Germany, Frankfurt."
     },
     "table": {
-      "heading": "First weekend of each month",
-      "lead": "Visitation as from the enforceable judgment of 31 March 2017 (first weekend of each month).",
+      "heading": "First weekends of each month",
+      "lead": "Historic inventory is published through February 2026. From March 2026, dates are generated automatically but their status requires checking the reported German court decision.",
       "month": "Month",
       "weekend": "Weekend (Sat – Sun)",
       "status": "Status",
-      "nre": "NRE",
-      "exception": "Exception (visitation honored or partial)"
+      "nre": "Recorded NRE (original inventory)",
+      "exception": "Honored or partial contact",
+      "review": "Review required — order/contact unverified",
+      "beforeOrder": "Before cited 31 March 2017 decision — review",
+      "filterYear": "Filter by year",
+      "filterAll": "All years"
     },
     "exceptions": {
-      "heading": "Exceptions (visitation honored)",
-      "lead": "The six weekends below are the only exceptions documented in the complaint (visitation honored or partial).",
+      "heading": "Reported honored or partial visits",
+      "lead": "Six exceptions are recorded in the historic page; neither the days shown nor their descriptions establish exact hours of effective contact.",
       "genericDetail": "Documented exception (visitation honored or partial)."
+    },
+    "hours": {
+      "heading": "Elapsed time and contact hours — two different measures",
+      "gross": "Elapsed time since 6 June 2015 (historical reference)",
+      "nominal": "Nominal hours for archived NRE entries (10 h / weekend)",
+      "net": "Elapsed time less manually recorded actual contact hours",
+      "actual": "Hours actually spent together (optional local input)",
+      "actualHint": "Enter only substantiated hours of physical contact. This value is not stored, transmitted or preserved on reload. The 61 days cited in the old page cannot automatically be treated as 1,464 hours of contact.",
+      "scope": "This live clock measures calendar time from an approximate date-only reference (UTC start of day; actual start time unknown). It is neither a court-verified NRE total nor proof of missed legal contact hours.",
+      "source": "Nominal hours apply an owner-reported 10 h first-weekend schedule only to historical rows marked NRE after the 31 March 2017 decision. Actual contact hours cannot be recovered from exception labels.",
+      "unknown": "Not yet entered",
+      "review": "Requires review",
+      "refresh": "The timer updates each second. The month inventory is recalculated from the local Paris date.",
+      "suspension": "A German contact suspension was reported from 26 February 2026 through 25 February 2027; the operative court order has not been verified here. Later dates are not labeled NRE.",
+      "beforeOrder": "The March 2017 row predates the cited 31 March 2017 decision and needs review."
     }
   }
 }

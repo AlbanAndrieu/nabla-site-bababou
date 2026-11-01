@@ -1,0 +1,94 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import test from "node:test";
+import {
+ firstWeekend,completeNreInventory,nreInventoryStats,
+ elapsedSeparationSeconds,NRE_REPORTED_ORDER,NRE_REPORTED_SUSPENSION,
+} from "../lib/nreVisitLedger.mjs";
+
+const locales=["fr","en","de","no"];
+const read=(file)=>readFileSync(new URL("../"+file,import.meta.url),"utf8");
+
+function legacyFixture(){
+ const rows=[];
+ for(let year=2017;year<=2026;year++) for(let month=1;month<=12;month++){
+  if(year===2017&&month<3 || year===2026&&month>2)continue;
+  const wk=firstWeekend(year,month);
+  const exception=[[2020,1],[2021,8],[2021,10],[2022,1],[2022,3],[2022,11]]
+    .some(([y,m])=>y===year&&m===month);
+  rows.push({year,month,startDay:wk.startDay,endDay:wk.endDay,status:exception?"exception":"nre",statusDetail:exception?"Partial/visit":"NRE"});
+ }
+ return rows;
+}
+
+test("first weekend obeys UTC calendar including leap years",()=>{
+ assert.deepEqual([firstWeekend(2017,4).startDay,firstWeekend(2017,4).endDay],[1,2]);
+ assert.deepEqual([firstWeekend(2026,3).startDay,firstWeekend(2026,3).endDay],[7,8]);
+ assert.deepEqual([firstWeekend(2026,10).startDay,firstWeekend(2026,10).endDay],[3,4]);
+ assert.deepEqual([firstWeekend(2026,11).startDay,firstWeekend(2026,11).endDay],[7,8]);
+ assert.throws(()=>firstWeekend(2026,13),RangeError);
+});
+
+test("as of 31 October 2026: 108 archive rows, 8 new review dates, never auto NRE",()=>{
+ const base=legacyFixture();assert.equal(base.length,108);
+ const rows=completeNreInventory(base,new Date("2026-10-31T12:00:00Z"));
+ assert.equal(rows.length,116);
+ const stats=nreInventoryStats(rows);
+ assert.deepEqual(stats,{total:116,recordedMissed:101,partialOrHonored:6,unverified:8,beforeOrder:1,theoreticalScheduledHours:1010});
+ assert.equal(rows[0].status,"beforeOrder");
+ assert.equal(rows.at(-1).status,"review");
+ assert.deepEqual([rows.at(-1).year,rows.at(-1).month,rows.at(-1).startDay,rows.at(-1).endDay],[2026,10,3,4]);
+ const newer=rows.filter(r=>r.year===2026&&r.month>=3);
+ assert.ok(newer.every(r=>r.status==="review"));
+ assert.equal(NRE_REPORTED_ORDER.monthlyWeekendHours,10);
+ assert.equal(NRE_REPORTED_SUSPENSION.verified,false);
+});
+
+test("the ledger follows future Paris dates but never predicts offenses",()=>{
+ const base=legacyFixture();
+ const beforeNovember=completeNreInventory(base,new Date("2026-11-07T10:00:00Z"));
+ assert.equal(beforeNovember.length,116); // November weekend has not ended
+ const afterNovember=completeNreInventory(base,new Date("2026-11-09T12:00:00Z"));
+ assert.equal(afterNovember.length,117);
+ assert.equal(afterNovember.at(-1).status,"review");
+ assert.equal(completeNreInventory(afterNovember,new Date("2026-11-09T12:00:00Z")).length,117);
+});
+
+test("realtime clock never invents actual-contact hours",()=>{
+ const time=Date.parse("2015-06-06T00:00:00.000Z")+3600_000*100;
+ assert.deepEqual(elapsedSeparationSeconds(time),{elapsed:360000,net:null});
+ assert.deepEqual(elapsedSeparationSeconds(time,12.5),{elapsed:360000,net:315000});
+ assert.deepEqual(elapsedSeparationSeconds(time,""),{elapsed:360000,net:null});
+ assert.deepEqual(elapsedSeparationSeconds(time,101),{elapsed:360000,net:null});
+ assert.deepEqual(elapsedSeparationSeconds(time,-1),{elapsed:360000,net:null});
+ assert.equal(elapsedSeparationSeconds(time+1000,12.5).net,315001);
+});
+
+test("all four native languages have complete dashboard/status/filter copy",()=>{
+ const names=["meta","hero","stats","timeline","table","exceptions","hours"];
+ const objects=locales.map(locale=>JSON.parse(read("messages/nre/"+locale+".json")).nrePage);
+ for(const name of names){
+  const expected=Object.keys(objects[0][name]).sort();
+  for(let i=0;i<locales.length;i++){
+   assert.deepEqual(Object.keys(objects[i][name]).sort(),expected,locales[i]+" "+name);
+   for(const [key,value] of Object.entries(objects[i][name])){
+    assert.ok(typeof value==="string"&&value.trim().length>=3,locales[i]+" "+name+"."+key);
+   }
+  }
+ }
+ assert.equal(objects[0].stats.days,undefined);
+ assert.ok(objects.every(c=>c.table.filterYear&&c.table.review&&c.hours.actualHint));
+});
+
+test("the public page uses live client recomputation and retains legal source",()=>{
+ const page=read("app/[locale]/nre/page.tsx");
+ const history=read("app/[locale]/nre/NreHistory.tsx");
+ const hours=read("app/[locale]/nre/NreLiveHours.tsx");
+ assert.match(page,/<NreHistory /);
+ assert.match(history,/completeNreInventory/);
+ assert.match(history,/60_000/);
+ assert.match(hours,/1000/);
+ assert.match(hours,/type="number"/);
+ assert.match(hours,/elapsedSeparationSeconds/);
+ assert.match(read("app/[locale]/nre/sections.tsx"),/legifrance\.gouv\.fr/);
+});

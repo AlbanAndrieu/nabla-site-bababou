@@ -203,4 +203,38 @@ test.describe("NRE React migration", () => {
     }
   });
 
+
+  test("all languages expose completed weekends, status evidence and year filter", async ({ page }) => {
+    for (const locale of localeCases) {
+      await page.goto(locale.path);
+      const rows=page.locator("main table tbody tr");
+      await expect.poll(()=>rows.count()).toBeGreaterThanOrEqual(116);
+      await expect(page.locator("main table tbody tr[data-review='true']").first()).toBeVisible();
+      const select=page.locator("main select").filter({has:page.locator("option[value='all']")});
+      await expect(select).toHaveValue("all");
+      await select.selectOption("2026");
+      await expect.poll(()=>rows.count()).toBeGreaterThanOrEqual(10);
+      await expect.poll(()=>rows.count()).toBeLessThanOrEqual(12);
+      await select.selectOption("all");
+      await expect.poll(()=>rows.count()).toBeGreaterThanOrEqual(116);
+      // The actual class is CSS-module hashed; select semantic nested details.
+      const yearDetails=page.locator("main article details").first();
+      await expect(yearDetails.locator("summary")).toBeVisible();
+      await yearDetails.locator("summary").click();
+      await expect(yearDetails).toHaveAttribute("open","");
+    }
+  });
+
+  test("live separation clock only subtracts explicitly entered actual hours", async ({ page }) => {
+    await page.goto("/en/nre");
+    const input=page.getByRole("spinbutton",{name:/Hours actually spent together/i});
+    const dashboard=page.locator('section[aria-labelledby="nre-hours-heading"]');
+    await expect(input).toHaveValue("");
+    await expect(dashboard).toContainText("Not yet entered");
+    await expect(dashboard).toContainText("1,010 h");
+    await input.fill("12.5");
+    await expect(dashboard).not.toContainText("Not yet entered");
+    await input.fill("");
+    await expect(dashboard).toContainText("Not yet entered");
+  });
 });
