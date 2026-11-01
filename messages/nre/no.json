@@ -7,7 +7,6 @@
     "hero": {
       "eyebrow": "Samværsrett · 2017 til i dag",
       "title": "Manglende overlevering av barn (NRE)",
-      "lead": "Første helg hver måned med rapporterte uteblitte, gjennomførte eller delvise samvær og perioder som fortsatt må avklares. Nye datoer regnes ikke automatisk som straffbare forhold.",
       "navigation": "Hurtignavigasjon",
       "jumpHours": "Timeoversikt",
       "jumpTimeline": "Årsoversikt",
@@ -17,8 +16,7 @@
       "heading": "Nøkkeltall",
       "total": "Registrerte helgedatoer",
       "nre": "Rapporterte NRE (historisk)",
-      "exceptions": "Gjennomført eller delvis samvær",
-      "review": "Til kontroll / før kjennelsen"
+      "exceptions": "Gjennomført eller delvis samvær"
     },
     "reference": {
       "heading": "Referanse til klage",
@@ -79,9 +77,10 @@
       "intro": "Beregnete tapte samværstimer er ikke det samme som hele adskillelsestiden.",
       "live": "Oppdateres fortløpende",
       "nominalHint": "Anslag fra eldre NRE-oppføringer, ikke en rettslig konklusjon om faktisk samværstid.",
-      "elapsedHint": "Kalendertid fra en omtrentlig referansedato, ikke tapte samværstimer.",
       "netHint": "Kan ikke fastslås uten pålitelig dokumentasjon av faktisk samværstid.",
-      "methodology": "Beregning og begrensninger"
+      "methodology": "Beregning og begrensninger",
+      "contactEstimate": "Antatte timer ut fra rapporterte samværshelger",
+      "contactEstimateHint": "Teoretisk sammenligningsverdi: fem perioder uten rapportert avbrudd, med 10 timer hver. Ikke dokumentert faktisk samværstid."
     }
   }
 }

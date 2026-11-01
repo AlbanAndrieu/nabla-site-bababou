@@ -7,7 +7,6 @@
     "hero": {
       "eyebrow": "Droit de visite · 2017 à aujourd’hui",
       "title": "Non-représentation d'enfant (NRE)",
-      "lead": "Chronologie des premiers week-ends du mois, des visites signalées comme manquées, des visites partielles et des périodes qui nécessitent une vérification. Les dates ajoutées ne constituent pas une qualification pénale.",
       "navigation": "Accès rapide",
       "jumpHours": "Compteur d’heures",
       "jumpTimeline": "Parcourir les années",
@@ -17,8 +16,7 @@
       "heading": "Synthèse chiffrée",
       "total": "Dates inventoriées",
       "nre": "NRE signalées (historique)",
-      "exceptions": "Visites honorées ou partielles",
-      "review": "Dates à vérifier / avant décision"
+      "exceptions": "Visites honorées ou partielles"
     },
     "reference": {
       "heading": "Référence plainte",
@@ -79,9 +77,10 @@
       "intro": "Les heures théoriques signalées manquées ne sont pas le temps total de séparation.",
       "live": "Actualisation en direct",
       "nominalHint": "Estimation issue des seules anciennes lignes NRE ; ni constat judiciaire ni durée de présence effective.",
-      "elapsedHint": "Temps civil depuis un repère approximatif, pas des heures de visite perdues.",
       "netHint": "Impossible à établir sans heures de présence effective fiables.",
-      "methodology": "Méthode et limites du calcul"
+      "methodology": "Méthode et limites du calcul",
+      "contactEstimate": "Heures de rencontre estimées à partir des week-ends déclarés",
+      "contactEstimateHint": "Repère théorique : cinq périodes sans interruption connue, à 10 h chacune. Ce n'est pas un relevé des heures réellement passées ensemble."
     }
   }
 }

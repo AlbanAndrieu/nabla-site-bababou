@@ -7,7 +7,6 @@
     "hero": {
       "eyebrow": "Contact rights · 2017 to today",
       "title": "Failure to present child (NRE)",
-      "lead": "First weekends of each month, events recorded as missed, honored or partial contact, and periods still awaiting verification. Newly generated dates are not automatically classified as criminal offenses.",
       "navigation": "Quick navigation",
       "jumpHours": "Hours overview",
       "jumpTimeline": "Browse years",
@@ -17,8 +16,7 @@
       "heading": "Summary statistics",
       "total": "Listed weekend dates",
       "nre": "Recorded NRE (historical claims)",
-      "exceptions": "Honored or partial visits",
-      "review": "To verify / before order"
+      "exceptions": "Honored or partial visits"
     },
     "reference": {
       "heading": "Complaint reference",
@@ -79,9 +77,10 @@
       "intro": "Nominal missed visiting hours must not be confused with elapsed separation time.",
       "live": "Updating live",
       "nominalHint": "Estimate based on archived NRE entries only; not a judicial finding or verified time together.",
-      "elapsedHint": "Civil time since an approximate reference date, not missed contact hours.",
       "netHint": "Cannot be established without reliable actual contact hours.",
-      "methodology": "Calculation and limitations"
+      "methodology": "Calculation and limitations",
+      "contactEstimate": "Indicative hours based on reported contact weekends",
+      "contactEstimateHint": "Nominal reference: five periods with no reported interruption, at 10 h each. These are not verified hours spent together."
     }
   }
 }

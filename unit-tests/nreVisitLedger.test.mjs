@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import {
  firstWeekend,completeNreInventory,nreInventoryStats,
- elapsedSeparationSeconds,NRE_REPORTED_ORDER,NRE_REPORTED_SUSPENSION,
+ elapsedSeparationSeconds,estimateContactWeekendHours,NRE_REPORTED_ORDER,NRE_REPORTED_SUSPENSION,
 } from "../lib/nreVisitLedger.mjs";
 
 const locales=["fr","en","de","no"];
@@ -64,6 +64,15 @@ test("Sunday is not complete until Monday in Europe/Paris (winter and summer tim
  assert.equal(completeNreInventory(base,new Date("2026-04-05T22:00:01Z")).length,110);
 });
 
+test("contact weekend estimate never becomes an unverified actual-hours claim", () => {
+ const rows = legacyFixture();
+ assert.deepEqual(estimateContactWeekendHours(rows), {
+  reportedVisits:6,countedVisits:5,interruptedVisits:1,
+  indicativeHours:50,actualHours:null,
+ });
+ const extended=completeNreInventory(rows,new Date("2026-11-09T12:00:00Z"));
+ assert.deepEqual(estimateContactWeekendHours(extended),estimateContactWeekendHours(rows));
+});
 test("realtime clock never invents actual-contact hours",()=>{
  const time=Date.parse("2015-06-06T00:00:00.000Z")+3600_000*100;
  assert.deepEqual(elapsedSeparationSeconds(time),{elapsed:360000,net:null});
@@ -94,6 +103,10 @@ test("all four native languages have complete dashboard/status/filter copy",()=>
   }
  }
  assert.equal(objects[0].stats.days,undefined);
+ assert.equal(objects[0].stats.review,undefined);
+ assert.equal(objects[0].hero.lead,undefined);
+ assert.equal(objects[0].hours.elapsedHint,undefined);
+ assert.ok(objects.every(c=>c.hours.contactEstimate&&c.hours.contactEstimateHint));
  assert.ok(objects.every(c=>c.table.filterYear&&c.table.review&&c.hours.actualHint));
 });
 
@@ -127,6 +140,7 @@ test("unverified days are never presented as a verified total or inferred hours"
  }
  const hours=read("app/[locale]/nre/NreLiveHours.tsx");
  assert.match(hours,/styles\.hoursPrimary/);
+ assert.match(hours,/estimateContactWeekendHours/);
  assert.match(hours,/styles\.methodology/);
  const timeline=read("app/[locale]/nre/sections.tsx");
  assert.match(timeline,/styles\.weekendCard/);

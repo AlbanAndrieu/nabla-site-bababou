@@ -10,6 +10,12 @@ La page Next.js `/nre` et ses variantes `/en/nre`, `/de/nre` et `/no/nre` utilis
 - **Contexte judiciaire déclaré** : suspension des visites en Allemagne signalée du 26/02/2026 au 25/02/2027, **texte intégral/dispositif non vérifié** ici. Ne pas présenter les mois suivants comme des refus illicites ni comme des visites judiciairement exigibles sans examen du titre applicable.
 - **Résultat à date** : 116 dates visibles, **101 NRE déclarées après le 31/03/2017**, six exceptions historiques, **une date antérieure** et **huit dates récentes à vérifier**.
 
+## Repère indicatif des week-ends de rencontre — novembre 2026
+
+Six périodes de rencontre ont été signalées dans les archives. Cinq ne portent pas de mention d'interruption (janvier 2020, août et octobre 2021, janvier et novembre 2022) et celle de mars 2022 est interrompue, sans durée fiable. La page affiche **5 × 10 h = 50 h indicatives**, calculées selon le rythme mensuel annoncé. Ce repère n'est **pas** une mesure des heures réellement passées ensemble, ni une estimation des journées complètes évoquées dans certains anciens libellés. Le total effectif demeure inconnu et ne peut être soustrait du compteur sans preuve horaire.
+
+Les textes introductifs demandés, la quatrième carte « dates à vérifier / avant décision » et la légende sous le compteur civil ont été retirés de l'interface dans les quatre langues ; les statuts incertains restent consultables dans le calendrier.
+
 ## Deux modèles horaires — à ne pas confondre
 
 1. **Heures théoriques des visites signalées manquées** : `101 × 10 h = 1 010 h`, en supposant applicable le rythme annoncé de 10 h le premier week-end mensuel. C'est un **indicateur d'inventaire**, sans reconstitution des horaires samedi/dimanche, et pas un montant d'heures juridiquement établi. Les six exceptions et les mois 2026 non vérifiés ne sont pas inclus dans les 101.

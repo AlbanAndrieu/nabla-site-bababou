@@ -7,13 +7,12 @@ import styles from "./page.module.css";
 
 export type NrePageCopy = {
   meta: { title: string; description: string };
-  hero: { eyebrow: string; title: string; lead: string; navigation: string; jumpHours: string; jumpTimeline: string; jumpTable: string };
+  hero: { eyebrow: string; title: string; navigation: string; jumpHours: string; jumpTimeline: string; jumpTable: string };
   stats: {
     heading: string;
     total: string;
     nre: string;
     exceptions: string;
-    review: string;
   };
   reference: {
     heading: string;
@@ -40,7 +39,7 @@ export type NrePageCopy = {
     filterAll: string;
   };
   exceptions: { heading: string; lead: string; genericDetail: string };
-  hours: { heading: string; intro: string; live: string; nominal: string; nominalHint: string; gross: string; elapsedHint: string; net: string; netHint: string; actual: string; actualHint: string; methodology: string; scope: string; source: string; unknown: string; review: string; refresh: string; suspension: string; beforeOrder: string };
+  hours: { heading: string; intro: string; live: string; nominal: string; nominalHint: string; gross: string; contactEstimate: string; contactEstimateHint: string; net: string; netHint: string; actual: string; actualHint: string; methodology: string; scope: string; source: string; unknown: string; review: string; refresh: string; suspension: string; beforeOrder: string };
 };
 
 type CopyProps = { copy: NrePageCopy };
@@ -82,7 +81,6 @@ export function NreHero({ copy }: CopyProps) {
     <header className={styles.hero} aria-labelledby="nre-heading">
       <Badge variant="info">{copy.hero.eyebrow}</Badge>
       <h1 id="nre-heading">{copy.hero.title}</h1>
-      <p>{copy.hero.lead}</p>
       <nav className={styles.quickNav} aria-label={copy.hero.navigation}>
         <a href="#nre-hours-heading">{copy.hero.jumpHours}</a>
         <a href="#timeline-heading">{copy.hero.jumpTimeline}</a>
@@ -93,12 +91,11 @@ export function NreHero({ copy }: CopyProps) {
 }
 
 export function NreStats({ copy, rows }: DataProps) {
-  const {total,recordedMissed,partialOrHonored,unverified,beforeOrder}=nreInventoryStats(rows);
+  const {total,recordedMissed,partialOrHonored}=nreInventoryStats(rows);
   const stats = [
     [total, copy.stats.total, styles.statTotal],
     [recordedMissed, copy.stats.nre, styles.statMissed],
     [partialOrHonored, copy.stats.exceptions, styles.statContact],
-    [unverified+beforeOrder, copy.stats.review, styles.statReview],
   ] as const;
   return (
     <section className={styles.section} aria-labelledby="nre-stats-heading">

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { AppLocale } from "@/i18n/routing";
-import { elapsedSeparationSeconds, nreInventoryStats } from "@/lib/nreVisitLedger.mjs";
+import { elapsedSeparationSeconds, estimateContactWeekendHours, nreInventoryStats } from "@/lib/nreVisitLedger.mjs";
 import type { NreRow } from "@/lib/nreLegacyData";
 import type { NrePageCopy } from "./sections";
 import styles from "./page.module.css";
@@ -40,6 +40,7 @@ export default function NreLiveHours({
   const nominal = new Intl.NumberFormat(NUMBER_LOCALE[locale]).format(
     nreInventoryStats(rows).theoreticalScheduledHours,
   );
+  const visits = estimateContactWeekendHours(rows);
   const elapsed = now === null ? null : elapsedSeparationSeconds(now, contactHours);
 
   return (
@@ -59,11 +60,17 @@ export default function NreLiveHours({
             <p className={styles.hoursDetail}>{copy.hours.nominalHint}</p>
           </div>
           <div className={styles.hoursItem}>
+            <span className={styles.hoursLabel}>{copy.hours.contactEstimate}</span>
+            <strong className={styles.hoursFigure}>{visits.indicativeHours} <small>h</small></strong>
+            <p className={styles.hoursDetail}>
+              {visits.countedVisits} × 10 h — {copy.hours.contactEstimateHint}
+            </p>
+          </div>
+          <div className={styles.hoursItem}>
             <span className={styles.hoursLabel}>{copy.hours.gross}</span>
             <strong className={styles.hoursFigure} aria-live="off">
               {elapsed ? clockString(elapsed.elapsed, locale) : "—"}
             </strong>
-            <p className={styles.hoursDetail}>{copy.hours.elapsedHint}</p>
           </div>
           <div className={styles.hoursItem}>
             <span className={styles.hoursLabel}>{copy.hours.net}</span>

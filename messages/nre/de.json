@@ -7,7 +7,6 @@
     "hero": {
       "eyebrow": "Umgangsrecht · 2017 bis heute",
       "title": "Nichtgewährung des Umgangs (NRE)",
-      "lead": "Erste Wochenenden jedes Monats mit gemeldeten ausgefallenen, durchgeführten oder teilweisen Kontakten und noch ungeklärten Zeiträumen. Neu erzeugte Termine sind keine strafrechtlichen Feststellungen.",
       "navigation": "Schnellnavigation",
       "jumpHours": "Stundenübersicht",
       "jumpTimeline": "Jahresübersicht",
@@ -17,8 +16,7 @@
       "heading": "Zusammenfassung",
       "total": "Erfasste Wochenende",
       "nre": "Gemeldete NRE (historisch)",
-      "exceptions": "Gewährter oder teilweiser Umgang",
-      "review": "Ungeklärt / vor der Entscheidung"
+      "exceptions": "Gewährter oder teilweiser Umgang"
     },
     "reference": {
       "heading": "Beschwerdebezug",
@@ -79,9 +77,10 @@
       "intro": "Rechnerisch ausgefallene Umgangsstunden sind nicht mit der Trennungszeit gleichzusetzen.",
       "live": "Live-Aktualisierung",
       "nominalHint": "Schätzung anhand älterer NRE-Einträge, kein gerichtlicher Nachweis tatsächlicher Umgangsstunden.",
-      "elapsedHint": "Kalenderzeit seit einem ungefähren Datum, keine ausgefallenen Umgangsstunden.",
       "netHint": "Ohne verlässliche tatsächliche Kontaktzeiten nicht feststellbar.",
-      "methodology": "Berechnung und Grenzen"
+      "methodology": "Berechnung und Grenzen",
+      "contactEstimate": "Geschätzte Stunden nach gemeldeten Umgangswochenenden",
+      "contactEstimateHint": "Rechnerischer Vergleichswert: fünf Zeiträume ohne berichtete Unterbrechung zu je 10 Std. Keine belegten tatsächlichen gemeinsamen Stunden."
     }
   }
 }

@@ -232,6 +232,10 @@ test.describe("NRE React migration", () => {
       await expect(main).not.toContainText(/61\\s*(?:days|jours|Tage|dagene)/i);
       await expect(main.locator('nav a[href="#timeline-heading"]')).toBeVisible();
       const panel=main.locator('section[aria-labelledby="nre-hours-heading"]');
+      await expect(main.locator('header[aria-labelledby="nre-heading"] p')).toHaveCount(0);
+      await expect(main.locator('section[aria-labelledby="nre-stats-heading"]')).not.toContainText("Dates à vérifier / avant décision");
+      await expect(panel).toContainText(/50\s*h/);
+      await expect(panel).not.toContainText("Temps civil depuis un repère approximatif");
       const methodology=panel.locator("details");
       await expect(methodology.locator("summary")).toBeVisible();
       await methodology.locator("summary").click();
