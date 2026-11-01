@@ -7,7 +7,7 @@ import styles from "./page.module.css";
 
 export type NrePageCopy = {
   meta: { title: string; description: string };
-  hero: { eyebrow: string; title: string; lead: string };
+  hero: { eyebrow: string; title: string; lead: string; navigation: string; jumpHours: string; jumpTimeline: string; jumpTable: string };
   stats: {
     heading: string;
     total: string;
@@ -40,7 +40,7 @@ export type NrePageCopy = {
     filterAll: string;
   };
   exceptions: { heading: string; lead: string; genericDetail: string };
-  hours: { heading: string; gross: string; net: string; actual: string; actualHint: string; nominal: string; scope: string; source: string; unknown: string; review: string; refresh: string; suspension: string; beforeOrder: string };
+  hours: { heading: string; intro: string; live: string; nominal: string; nominalHint: string; gross: string; elapsedHint: string; net: string; netHint: string; actual: string; actualHint: string; methodology: string; scope: string; source: string; unknown: string; review: string; refresh: string; suspension: string; beforeOrder: string };
 };
 
 type CopyProps = { copy: NrePageCopy };
@@ -74,7 +74,6 @@ function displayStatus(row: NreRow, copy: NrePageCopy, locale: AppLocale) {
   if (row.status === "nre") return copy.table.nre;
   if (row.status === "review") return copy.table.review;
   if (row.status === "beforeOrder") return copy.table.beforeOrder;
-  if (locale === "fr" || locale === "en") return row.statusDetail;
   return copy.table.exception;
 }
 
@@ -84,6 +83,11 @@ export function NreHero({ copy }: CopyProps) {
       <Badge variant="info">{copy.hero.eyebrow}</Badge>
       <h1 id="nre-heading">{copy.hero.title}</h1>
       <p>{copy.hero.lead}</p>
+      <nav className={styles.quickNav} aria-label={copy.hero.navigation}>
+        <a href="#nre-hours-heading">{copy.hero.jumpHours}</a>
+        <a href="#timeline-heading">{copy.hero.jumpTimeline}</a>
+        <a href="#table-heading">{copy.hero.jumpTable}</a>
+      </nav>
     </header>
   );
 }
@@ -91,17 +95,17 @@ export function NreHero({ copy }: CopyProps) {
 export function NreStats({ copy, rows }: DataProps) {
   const {total,recordedMissed,partialOrHonored,unverified,beforeOrder}=nreInventoryStats(rows);
   const stats = [
-    [total, copy.stats.total],
-    [recordedMissed, copy.stats.nre],
-    [partialOrHonored, copy.stats.exceptions],
-    [unverified+beforeOrder, copy.stats.review],
+    [total, copy.stats.total, styles.statTotal],
+    [recordedMissed, copy.stats.nre, styles.statMissed],
+    [partialOrHonored, copy.stats.exceptions, styles.statContact],
+    [unverified+beforeOrder, copy.stats.review, styles.statReview],
   ] as const;
   return (
     <section className={styles.section} aria-labelledby="nre-stats-heading">
       <h2 id="nre-stats-heading">{copy.stats.heading}</h2>
       <div className={styles.stats}>
-        {stats.map(([value,label]) => (
-          <Card key={label} elevated className={styles.statCard}>
+        {stats.map(([value,label,tone]) => (
+          <Card key={label} elevated className={`${styles.statCard} ${tone}`}>
             <CardBody>
               <strong className={styles.statValue}>{value}</strong>
               <span>{label}</span>
@@ -160,31 +164,47 @@ export function NreTimeline({ copy, rows, locale }: LocalizedDataProps) {
         <span className={styles.reviewChip}>? {copy.table.review}</span>
       </div>
       <div className={styles.timeline}>
-        {[...byYear.entries()].map(([year, yearRows]) => (
-          <article key={year} className={styles.yearBlock}>
-            <h3>
-              {year}{" "}
-              <span aria-label={year >= 2022 ? copy.timeline.germany : copy.timeline.norway}>
-                {year >= 2022 ? "🇩🇪" : "🇳🇴"}
-              </span>
-            </h3>
-            <details className={styles.yearDetails} open={year === rows.at(-1)?.year}>
-              <summary>{yearRows.length} {copy.table.weekend} · {yearRows.filter(row=>row.status==="nre").length} {copy.table.nre}</summary>
-              <div className={styles.yearItems}>
-              {yearRows.map((row) => (
-                <span
-                  key={`${row.year}-${row.month}`}
-                  className={row.status === "exception" ? styles.exceptionChip : row.status === "nre" ? styles.nreChip : styles.reviewChip}
-                  title={displayStatus(row, copy, locale)}
-                >
-                  {monthYear(row, locale)} {row.startDay}–{row.endDay}{" "}
-                  {row.status === "exception" ? "✓" : row.status === "nre" ? "✗" : "?"}
+        {[...byYear.entries()].reverse().map(([year, yearRows]) => {
+          const missed = yearRows.filter((row) => row.status === "nre").length;
+          const review = yearRows.filter((row) => row.status === "review" || row.status === "beforeOrder").length;
+          return (
+            <article key={year} className={styles.yearBlock}>
+              <h3 className={styles.yearHeading}>
+                <span className={styles.yearNumber}>{year}</span>
+                <span className={styles.yearCountry} aria-label={year >= 2022 ? copy.timeline.germany : copy.timeline.norway}>
+                  {year >= 2022 ? "🇩🇪" : "🇳🇴"}
                 </span>
-              ))}
-              </div>
-            </details>
-          </article>
-        ))}
+              </h3>
+              <details className={styles.yearDetails} open={year === rows.at(-1)?.year}>
+                <summary>
+                  <span>{yearRows.length} {copy.table.weekend}</span>
+                  <span className={styles.yearSummaryCount}>
+                    {missed} {copy.table.nre}
+                    {review ? ` · ${review} ${copy.table.review}` : ""}
+                  </span>
+                </summary>
+                <ol className={styles.yearItems}>
+                  {yearRows.map((row) => (
+                    <li
+                      key={`${row.year}-${row.month}`}
+                      className={`${styles.weekendCard} ${
+                        row.status === "exception" ? styles.weekendContact :
+                        row.status === "nre" ? styles.weekendMissed : styles.weekendReview
+                      }`}
+                    >
+                      <span className={styles.weekendMonth}>{monthYear(row, locale)}</span>
+                      <strong className={styles.weekendDates}>{row.startDay}–{row.endDay}</strong>
+                      <span className={styles.weekendStatus}>
+                        <span aria-hidden="true">{row.status === "exception" ? "✓" : row.status === "nre" ? "×" : "?"}</span>
+                        {displayStatus(row, copy, locale)}
+                      </span>
+                    </li>
+                  ))}
+                </ol>
+              </details>
+            </article>
+          );
+        })}
       </div>
     </section>
   );
@@ -241,7 +261,7 @@ export function NreExceptions({ copy, rows, locale }: LocalizedDataProps) {
           <li key={`${row.year}-${row.month}`}>
             <strong>{monthYear(row, locale)} ({row.startDay}–{row.endDay})</strong>
             {" — "}
-            {locale === "fr" || locale === "en" ? row.statusDetail : copy.exceptions.genericDetail}
+            {copy.exceptions.genericDetail}
           </li>
         ))}
       </ul>
