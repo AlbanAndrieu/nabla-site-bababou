@@ -7,7 +7,11 @@
     "hero": {
       "eyebrow": "Samværsrett · 2017 til i dag",
       "title": "Manglende overlevering av barn (NRE)",
-      "lead": "Første helg hver måned med rapporterte uteblitte, gjennomførte eller delvise samvær og perioder som fortsatt må avklares. Nye datoer regnes ikke automatisk som straffbare forhold."
+      "lead": "Første helg hver måned med rapporterte uteblitte, gjennomførte eller delvise samvær og perioder som fortsatt må avklares. Nye datoer regnes ikke automatisk som straffbare forhold.",
+      "navigation": "Hurtignavigasjon",
+      "jumpHours": "Timeoversikt",
+      "jumpTimeline": "Årsoversikt",
+      "jumpTable": "Alle datoer"
     },
     "stats": {
       "heading": "Nøkkeltall",
@@ -55,23 +59,29 @@
     },
     "exceptions": {
       "heading": "Rapporterte gjennomførte eller delvise samvær",
-      "lead": "Den historiske siden omtaler seks unntak, men antall dager gir ikke presise timer for faktisk samvær.",
-      "genericDetail": "Dokumentert unntak (gjennomført eller delvis samvær)."
+      "lead": "Seks historiske oppføringer viser helt eller delvis gjennomført samvær. Faktisk tid sammen er ikke bekreftet.",
+      "genericDetail": "Samvær rapportert som gjennomført eller delvis — faktisk varighet ikke verifisert."
     },
     "hours": {
-      "heading": "Tid som har gått og samværstimer — to ulike mål",
+      "heading": "Samværstimer: kjente og ukjente forhold",
       "gross": "Tid siden 6. juni 2015 (historisk referanse)",
       "nominal": "Beregnet tid for historiske NRE-oppføringer (10 t / helg)",
       "net": "Tid som har gått minus manuelt registrerte faktiske samværstimer",
       "actual": "Timer faktisk tilbrakt sammen (valgfri lokal inntasting)",
-      "actualHint": "Oppgi bare dokumenterte timer med faktisk samvær. Verdien lagres eller sendes ikke og forsvinner ved ny lasting. De 61 dagene fra den gamle siden kan ikke automatisk regnes som 1 464 samværstimer.",
+      "actualHint": "Oppgi bare dokumenterte timer som faktisk ble tilbrakt sammen. Ingen tid antas, lagres eller sendes; verdien forsvinner ved ny lasting.",
       "scope": "Denne klokken viser kalenderført tid siden en omtrentlig dato (starten av dagen UTC; faktisk klokkeslett ukjent). Den er ikke et rettslig bekreftet NRE-regnskap eller bevis på tapte samværstimer.",
       "source": "Beregnet tid bruker den oppgitte ordningen med ti timer den første helgen i måneden og bare eldre NRE-oppføringer etter avgjørelsen 31. mars 2017. Faktiske samværstimer er ikke kjent.",
       "unknown": "Ikke oppgitt",
       "review": "Må undersøkes",
       "refresh": "Klokken oppdateres hvert sekund. Terminoversikten følger gjeldende dato i Paris.",
       "suspension": "En tysk avgjørelse om stans i samvær fra 26. februar 2026 til 25. februar 2027 er omtalt, men selve avgjørelsen er ikke kontrollert her. Senere datoer merkes ikke NRE.",
-      "beforeOrder": "Oppføringen for mars 2017 er før avgjørelsen 31. mars 2017 og må undersøkes."
+      "beforeOrder": "Oppføringen for mars 2017 er før avgjørelsen 31. mars 2017 og må undersøkes.",
+      "intro": "Beregnete tapte samværstimer er ikke det samme som hele adskillelsestiden.",
+      "live": "Oppdateres fortløpende",
+      "nominalHint": "Anslag fra eldre NRE-oppføringer, ikke en rettslig konklusjon om faktisk samværstid.",
+      "elapsedHint": "Kalendertid fra en omtrentlig referansedato, ikke tapte samværstimer.",
+      "netHint": "Kan ikke fastslås uten pålitelig dokumentasjon av faktisk samværstid.",
+      "methodology": "Beregning og begrensninger"
     }
   }
 }
