@@ -36,7 +36,10 @@
       "heading": "Timeline by year",
       "lead": "Each year shows first weekends of the month. ✗ = recorded historical NRE claim, ✓ = honored or partial, ? = unverified date. Later dates are not automatically criminal findings.",
       "norway": "Norway, Oslo",
-      "germany": "Germany, Frankfurt"
+      "germany": "Germany, Frankfurt",
+      "viewDetails": "View date in the table",
+      "empty": "No weekend matches the selected filters.",
+      "filters": "Calendar filters"
     },
     "location": {
       "heading": "Location",
@@ -53,7 +56,9 @@
       "review": "Review required — order/contact unverified",
       "beforeOrder": "Before cited 31 March 2017 decision — review",
       "filterYear": "Filter by year",
-      "filterAll": "All years"
+      "filterAll": "All years",
+      "filterStatus": "Weekend status",
+      "filterAllStatuses": "All statuses"
     },
     "exceptions": {
       "heading": "Reported honored or partial visits",

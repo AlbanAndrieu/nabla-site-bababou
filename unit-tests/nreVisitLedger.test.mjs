@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import {
- firstWeekend,nreWeekendStrip,completeNreInventory,nreInventoryStats,
+ firstWeekend,nreWeekendStrip,nreMonthCalendar,completeNreInventory,nreInventoryStats,
  elapsedSeparationSeconds,estimateReportedContactHours,NRE_REPORTED_CONTACT,NRE_REPORTED_ORDER,NRE_REPORTED_SUSPENSION,
 } from "../lib/nreVisitLedger.mjs";
 
@@ -89,6 +89,24 @@ test("calendar strips mark both weekend days without inventing other-month dates
  assert.throws(() => nreWeekendStrip({year:2026,month:11,startDay:2,endDay:3}),RangeError);
 });
 
+test("month calendars have 28–42 days in complete Monday-first rows", () => {
+  const leap = firstWeekend(2024,2);
+  const leapDays = nreMonthCalendar(leap);
+  assert.equal(leapDays.length,35);
+  assert.deepEqual(leapDays.slice(0,7),[null,null,null,1,2,3,4]);
+  assert.equal(leapDays.filter(day=>day!==null).length,29);
+  assert.deepEqual(leapDays.slice(-6),[27,28,29,null,null,null]);
+  const august=firstWeekend(2026,8);
+  const augustDays=nreMonthCalendar(august);
+  assert.equal(augustDays.length,42);
+  assert.deepEqual(augustDays.slice(0,7),[null,null,null,null,null,1,2]);
+  assert.equal(augustDays.filter(day=>day!==null).length,31);
+  assert.equal(augustDays.filter(day=>day===august.startDay||day===august.endDay).length,2);
+  const november=firstWeekend(2026,11);
+  assert.equal(nreMonthCalendar(november).length,42);
+  assert.throws(()=>nreMonthCalendar({year:2026,month:11,startDay:2,endDay:3}),RangeError);
+});
+
 test("realtime clock never invents actual-contact hours",()=>{
  const time=Date.parse("2015-06-06T00:00:00.000Z")+3600_000*100;
  assert.deepEqual(elapsedSeparationSeconds(time),{elapsed:360000,net:null});
@@ -124,7 +142,7 @@ test("all four native languages have complete dashboard/status/filter copy",()=>
  assert.equal(objects[0].hours.elapsedHint,undefined);
  assert.ok(objects.every(c=>c.hours.contactEstimate&&c.hours.contactEstimateHint));
  assert.ok(objects.every(c=>c.hours.countriesLabel&&c.hours.franceLabel&&c.hours.germanyLabel&&c.hours.norwayLabel));
- assert.ok(objects.every(c=>c.table.filterYear&&c.table.review&&c.hours.contactEstimateHint));
+ assert.ok(objects.every(c=>c.table.filterYear&&c.table.review&&c.table.filterStatus&&c.table.filterAllStatuses&&c.timeline.viewDetails&&c.timeline.empty&&c.hours.contactEstimateHint));
  assert.ok(objects.every(c=>c.reference.prefix.includes("2017")&&c.exceptions.extendedStay));
  assert.ok(objects.every(c=>c.reference.heading&&c.reference.prefix&&c.reference.judgment));
  assert.ok(objects.every(c=>c.exceptions.genericDetail&&c.exceptions.otherWeekend));
@@ -138,14 +156,18 @@ test("the public page uses live client recomputation and retains legal source",(
  assert.match(page,/<NreHistory /);
  assert.match(history,/completeNreInventory/);
  assert.match(history,/60_000/);
+ assert.match(history,/visibleStatus/);
+ assert.match(history,/all-statuses/);
  assert.match(hours,/1000/);
  assert.doesNotMatch(hours,/type="number"|setContactHours|hoursForm/);
  assert.match(hours,/estimateReportedContactHours/);
  assert.match(hours,/report.subtotalHours/);
  assert.match(hours,/report.norwayApproxHours/);
  const calendar=read("app/[locale]/nre/sections.tsx");
- assert.match(calendar,/nreWeekendStrip/);
- assert.match(calendar,/data-testid="nre-week-strip"/);
+ assert.match(calendar,/nreMonthCalendar/);
+ assert.match(calendar,/data-testid="nre-month-calendar"/);
+ assert.match(calendar,/calendarDetailLink/);
+ assert.match(calendar,/id=\{\`nre-/);
  assert.match(hours,/elapsedSeparationSeconds/);
  assert.match(read("app/[locale]/nre/sections.tsx"),/legifrance\.gouv\.fr/);
 });

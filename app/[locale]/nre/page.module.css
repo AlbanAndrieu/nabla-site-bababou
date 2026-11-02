@@ -494,3 +494,58 @@
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
+
+/* Month overview: a complete, Monday-first calendar for every archived date. */
+.calendarFilters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 0.8rem 1.4rem;
+  padding: 1.1rem;
+  border: 1px solid var(--ui-border);
+  border-radius: 0.85rem;
+  background: var(--ui-surface-muted);
+}
+.calendarFilters .tableFilter { margin: 0; flex: 1 1 12rem; }
+.calendarFilters select { width: 100%; max-width: 100%; }
+.weekendCard { height: 100%; }
+.weekendMonth { color: var(--ui-text-primary); font-size: 1rem; font-weight: 720; text-transform: capitalize; }
+.weekendDates { font-size: 1.15rem; }
+.calendarStrip { margin-block: 0.45rem; }
+.calendarDays { row-gap: 0.28rem; }
+.calendarDay { min-height: 1.35rem; font-size: 0.78rem; }
+.calendarDetailLink {
+  display: inline-flex;
+  align-items: center;
+  align-self: start;
+  padding: 0.35rem 0;
+  min-height: 2.75rem;
+  margin-top: auto;
+  color: var(--ui-link, var(--ui-text-primary));
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  font-size: 0.86rem;
+  font-weight: 650;
+}
+.calendarDetailLink:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 3px;
+  border-radius: 0.2rem;
+}
+.calendarEmpty {
+  padding: 1.15rem;
+  border: 1px dashed var(--ui-border);
+  border-radius: 0.65rem;
+  color: var(--ui-text-secondary);
+  background: var(--ui-surface-muted);
+}
+.table tr:target td { outline: 2px solid var(--ui-info-border); outline-offset: -2px; }
+.table tr[id] { scroll-margin-block-start: 5rem; }
+@media (max-width: 600px) {
+  .calendarFilters { padding: 0.9rem; }
+  .calendarFilters .tableFilter { flex-basis: 100%; }
+}
+@media print {
+  .calendarFilters, .calendarDetailLink { display: none !important; }
+  .yearDetails .yearItems { display: grid !important; }
+}

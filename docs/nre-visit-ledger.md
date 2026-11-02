@@ -33,10 +33,12 @@ Le champ de saisie local reste supprimé. Le compteur en temps réel déduit **e
 
 ## Calendrier graphique — lecture des dates
 
-- La chronologie conserve les années repliables et affiche les mois en cartes dans une grille fluide. Le filtre d'année s'applique simultanément à ces cartes, au tableau détaillé et à la liste des exceptions.
-- Chaque carte montre une semaine **lundi–dimanche**, avec les libellés locaux FR/EN/DE/NO et les deux jours du week-end colorés selon le **statut déjà enregistré** (NRE historique, rencontre/exception, ou date à vérifier).
-- Les dates hors du mois sont laissées vides. La plage de dates et le libellé de statut restent en texte, sans dépendre de la couleur. Les cartes ne transforment **aucune** rencontre norvégienne non datée en événement daté.
-- Préserver le focus clavier des panneaux, la lecture sur mobile et le rendu à l'impression. Aucun composant tiers, requête réseau ou source de données supplémentaire n'est nécessaire.
+- La chronologie conserve ses années repliables et affiche pour chaque mois **le calendrier entier lundi–dimanche** : 28, 35 ou 42 cases selon le mois et son alignement, avec cases vides avant le premier et après le dernier jour.
+- Les **deux dates du premier samedi/dimanche** sont entourées et colorées selon le **statut historique** (NRE déclarée, rencontre signalée, ou situation à vérifier). Les libellés de mois, jours de semaine et états sont traduits en FR/EN/DE/NO.
+- Une **grille responsive** et deux filtres (« année » et « statut ») s'appliquent simultanément aux calendriers et au tableau de référence. L'absence de résultat est annoncée explicitement.
+- Chaque carte possède un **lien clavier « Voir la date détaillée »** qui cible la ligne exacte `#nre-AAAA-MM` dans le tableau imprimable. Les cartes conservent le statut en texte en plus de la couleur, l'indicateur graphique étant purement décoratif.
+- Aucun des trois contacts norvégiens de durée estimée à une heure n'est attribué à un mois sans date vérifiée ; les statuts judiciaires ne sont pas inférés du calendrier.
+- L'évolution du calendrier avec le temps et le filtrage ne doivent pas modifier le sous-total de **1 036 h indicatives**.
 
 ## Contrôles et publications
 
@@ -49,8 +51,8 @@ Le champ de saisie local reste supprimé. Le compteur en temps réel déduit **e
 
 ## Validation
 
-- Moteur pur : `lib/nreVisitLedger.mjs` ; test `unit-tests/nreVisitLedger.test.mjs` (calendrier, dates 2026, bande lundi–dimanche avec deux jours de week-end mis en évidence, hypothèses France/Allemagne/Norvège, dates norvégiennes inconnues, calcul sans saisie, catalogues FR/EN/DE/NO).
-- Interface : `app/[locale]/nre/NreHistory.tsx`, `NreLiveHours.tsx`, `sections.tsx`, `page.module.css` ; filtre annuel, chronologie dépliable avec mini-calendriers localisés et tableau imprimable.
+- Moteur pur : `lib/nreVisitLedger.mjs` ; test `unit-tests/nreVisitLedger.test.mjs` (calendrier, dates 2026, grille du mois entier lundi–dimanche, jours hors mois, deux jours de week-end mis en évidence, hypothèses France/Allemagne/Norvège, dates norvégiennes inconnues, calcul sans saisie, catalogues FR/EN/DE/NO).
+- Interface : `app/[locale]/nre/NreHistory.tsx`, `NreLiveHours.tsx`, `sections.tsx`, `page.module.css` ; filtres année/statut, chronologie dépliable avec calendriers mensuels localisés, liens vers le tableau imprimable.
 - Recette navigateur : `tests/nre.spec.ts` et contrôles axe/Playwright déjà disponibles, à exécuter sur le **SHA candidat**. Ne pas confondre tests de modèle, build Next et recette navigateur.
 
 ## Points à vérifier avec les sources

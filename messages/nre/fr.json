@@ -36,7 +36,10 @@
       "heading": "Chronologie par année",
       "lead": "Chaque année présente les premiers week-ends mensuels. ✗ = NRE déclarée dans les archives, ✓ = visite honorée ou partielle, ? = date sans statut vérifié. Les mois nouveaux ne sont pas automatiquement qualifiés de NRE.",
       "norway": "Norvège, Oslo",
-      "germany": "Allemagne, Frankfurt"
+      "germany": "Allemagne, Frankfurt",
+      "viewDetails": "Voir la date détaillée",
+      "empty": "Aucun week-end ne correspond aux filtres choisis.",
+      "filters": "Filtres du calendrier"
     },
     "location": {
       "heading": "Lieu",
@@ -53,7 +56,9 @@
       "review": "À vérifier — décision / rencontre non confirmée",
       "beforeOrder": "Avant la décision du 31 mars 2017 — à vérifier",
       "filterYear": "Filtrer par année",
-      "filterAll": "Toutes les années"
+      "filterAll": "Toutes les années",
+      "filterStatus": "Statut des week-ends",
+      "filterAllStatuses": "Tous les statuts"
     },
     "exceptions": {
       "heading": "Visites honorées ou partielles déclarées",

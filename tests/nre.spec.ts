@@ -221,7 +221,7 @@ test.describe("NRE React migration", () => {
       await expect.poll(() => page.locator('section[aria-labelledby="timeline-heading"] article').count()).toBeGreaterThanOrEqual(9);
       await expect.poll(()=>rows.count()).toBeGreaterThanOrEqual(116);
       // The actual class is CSS-module hashed; select semantic nested details.
-      const yearDetails=page.locator("main article details").first();
+      const yearDetails=page.locator("main article details").last();
       await expect(yearDetails.locator("summary")).toBeVisible();
       await yearDetails.locator("summary").click();
       await expect(yearDetails).toHaveAttribute("open","");
@@ -246,17 +246,20 @@ test.describe("NRE React migration", () => {
       const currentYear=main.locator("article details[open]");
       await expect(currentYear.first().locator("ol li").first()).toBeVisible();
       await expect(main.locator("article details ol li").first()).toContainText(/\\d/);
-      const firstStrip=main.getByTestId("nre-week-strip").first();
+      const firstStrip=main.getByTestId("nre-month-calendar").first();
       await expect(firstStrip).toBeVisible();
       await expect(firstStrip.locator('[data-weekend="true"]')).toHaveCount(2);
+      const cells=firstStrip.locator('[data-calendar-day="true"]');
+      await expect.poll(()=>cells.count()).toBeGreaterThanOrEqual(28);
+      await expect.poll(()=>cells.count()).toBeLessThanOrEqual(42);
     }
   });
 
-  test("monthly calendar strips remain readable on narrow screens", async ({ page }) => {
+  test("complete month calendars remain readable on narrow screens", async ({ page }) => {
     for (const width of [320, 375, 768]) {
       await page.setViewportSize({ width, height: 850 });
       await page.goto("/nre");
-      const strip=page.getByTestId("nre-week-strip").first();
+      const strip=page.getByTestId("nre-month-calendar").first();
       await expect(strip).toBeVisible();
       await expect(strip.locator('[data-weekend="true"]')).toHaveCount(2);
       const bounds=await strip.boundingBox();
@@ -278,4 +281,25 @@ test.describe("NRE React migration", () => {
     const reference=page.locator('section[aria-labelledby="reference-heading"]');
     await expect(reference).toContainText("France, Norway and Germany");
   });
+  test("filtering the month view by status links to exact calendar rows", async ({ page }) => {
+    await page.goto("/en/nre");
+    const year=page.getByRole("combobox",{name:"Filter by year"});
+    const status=page.getByRole("combobox",{name:"Weekend status"});
+    await year.selectOption("2022");
+    await status.selectOption("exception");
+    const months=page.getByTestId("nre-month-calendar");
+    await expect(months).toHaveCount(3);
+    await expect(page.locator("main table tbody tr")).toHaveCount(3);
+    await expect(months.first().locator('[data-weekend="true"]')).toHaveCount(2);
+    await page.locator('section[aria-labelledby="timeline-heading"] a[href="#nre-2022-01"]').click();
+    await expect(page).toHaveURL(/#nre-2022-01$/);
+    await expect(page.locator("tr#nre-2022-01")).toBeVisible();
+
+    await status.selectOption("review");
+    await expect(months).toHaveCount(0);
+    await expect(page.locator('section[aria-labelledby="timeline-heading"]')).toContainText("No weekend matches");
+    await status.selectOption("all-statuses");
+    await expect(months).toHaveCount(12);
+  });
+
 });

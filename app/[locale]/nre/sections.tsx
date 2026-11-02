@@ -2,7 +2,7 @@ import Badge from "@/components/ui/Badge";
 import Card, { CardBody } from "@/components/ui/Card";
 import type { AppLocale } from "@/i18n/routing";
 import type { NreRow } from "@/lib/nreLegacyData";
-import { nreInventoryStats, nreWeekendStrip } from "@/lib/nreVisitLedger.mjs";
+import { nreInventoryStats, nreMonthCalendar } from "@/lib/nreVisitLedger.mjs";
 import styles from "./page.module.css";
 
 export type NrePageCopy = {
@@ -23,7 +23,7 @@ export type NrePageCopy = {
     document: string;
   };
   note: { heading: string; p1: string; p2: string; p3: string };
-  timeline: { heading: string; lead: string; norway: string; germany: string };
+  timeline: { heading: string; lead: string; norway: string; germany: string; viewDetails: string; empty: string; filters: string };
   location: { heading: string; body: string };
   table: {
     heading: string;
@@ -36,7 +36,7 @@ export type NrePageCopy = {
     review: string;
     beforeOrder: string;
     filterYear: string;
-    filterAll: string;
+    filterAll: string; filterStatus: string; filterAllStatuses: string;
   };
   exceptions: { heading: string; lead: string; genericDetail: string; extendedStay: string; otherWeekend: string };
   hours: { heading: string; intro: string; live: string; gross: string; contactEstimate: string; contactEstimateHint: string; countriesLabel: string; franceLabel: string; germanyLabel: string; norwayLabel: string; net: string; netHint: string; methodology: string; scope: string; source: string; refresh: string; suspension: string; beforeOrder: string };
@@ -150,11 +150,11 @@ export function NreNote({ copy }: CopyProps) {
   );
 }
 
-/** Decorative seven-day calendar strip; the range and status remain readable text. */
-function WeekendCalendar({ row, weekdays }: { row: NreRow; weekdays: string[] }) {
-  const days = nreWeekendStrip(row);
+/** A complete month calendar; each two-day weekend is also available as readable text. */
+function MonthCalendar({ row, weekdays }: { row: NreRow; weekdays: string[] }) {
+  const days = nreMonthCalendar(row);
   return (
-    <div data-testid="nre-week-strip" className={styles.calendarStrip} aria-hidden="true">
+    <div data-testid="nre-month-calendar" className={styles.calendarStrip} aria-hidden="true">
       <div className={styles.calendarWeekdays}>
         {weekdays.map((label, index) => (
           <span key={index}>{label}</span>
@@ -166,6 +166,7 @@ function WeekendCalendar({ row, weekdays }: { row: NreRow; weekdays: string[] })
           return (
             <span
               key={index}
+              data-calendar-day="true"
               data-weekend={weekend ? "true" : undefined}
               className={`${styles.calendarDay} ${weekend ? styles.calendarWeekend : ""}`}
             >
@@ -196,6 +197,7 @@ export function NreTimeline({ copy, rows, locale }: LocalizedDataProps) {
         <span className={styles.exceptionChip}>✓ {copy.table.exception}</span>
         <span className={styles.reviewChip}>? {copy.table.review}</span>
       </div>
+      {rows.length === 0 ? <p className={styles.calendarEmpty}>{copy.timeline.empty}</p> : null}
       <div className={styles.timeline}>
         {[...byYear.entries()].reverse().map(([year, yearRows]) => {
           const missed = yearRows.filter((row) => row.status === "nre").length;
@@ -228,12 +230,18 @@ export function NreTimeline({ copy, rows, locale }: LocalizedDataProps) {
                       }`}
                     >
                       <span className={styles.weekendMonth}>{monthYear(row, locale)}</span>
-                      <WeekendCalendar row={row} weekdays={weekdays} />
+                      <MonthCalendar row={row} weekdays={weekdays} />
                       <strong className={styles.weekendDates}>{row.startDay}–{row.endDay}</strong>
                       <span className={styles.weekendStatus}>
                         <span aria-hidden="true">{row.status === "exception" ? "✓" : row.status === "nre" ? "×" : "?"}</span>
                         {displayStatus(row, copy)}
                       </span>
+                      <a
+                        className={styles.calendarDetailLink}
+                        href={`#nre-${row.year}-${String(row.month).padStart(2, "0")}`}
+                      >
+                        {copy.timeline.viewDetails}
+                      </a>
                     </li>
                   ))}
                 </ol>
@@ -271,7 +279,7 @@ export function NreTable({ copy, rows, locale }: LocalizedDataProps) {
           </thead>
           <tbody>
             {rows.map((row) => (
-              <tr key={`${row.year}-${row.month}`} data-nre={row.status === "nre" ? "true" : undefined} data-exception={row.status === "exception" ? "true" : undefined} data-review={row.status === "review" || row.status === "beforeOrder" ? "true" : undefined}>
+              <tr id={`nre-${row.year}-${String(row.month).padStart(2, "0")}`} key={`${row.year}-${row.month}`} data-nre={row.status === "nre" ? "true" : undefined} data-exception={row.status === "exception" ? "true" : undefined} data-review={row.status === "review" || row.status === "beforeOrder" ? "true" : undefined}>
                 <td>{monthYear(row, locale)}</td>
                 <td>{weekend(row, locale)}</td>
                 <td className={row.status === "exception" ? styles.exceptionStatus : row.status === "nre" ? styles.nreStatus : styles.reviewStatus}>

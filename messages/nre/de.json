@@ -36,7 +36,10 @@
       "heading": "Zeitleiste nach Jahr",
       "lead": "Jedes Jahr zeigt die ersten Monatswochenenden. ✗ = historische NRE-Angabe, ✓ = gewährt oder teilweise, ? = ungeprüft. Spätere Termine werden nicht automatisch als Straftat eingeordnet.",
       "norway": "Norwegen, Oslo",
-      "germany": "Deutschland, Frankfurt"
+      "germany": "Deutschland, Frankfurt",
+      "viewDetails": "Datum in der Tabelle ansehen",
+      "empty": "Kein Wochenende entspricht den gewählten Filtern.",
+      "filters": "Kalenderfilter"
     },
     "location": {
       "heading": "Ort",
@@ -53,7 +56,9 @@
       "review": "Zu prüfen — Entscheidung/Kontakt ungeklärt",
       "beforeOrder": "Vor der Entscheidung vom 31. März 2017 — zu prüfen",
       "filterYear": "Nach Jahr filtern",
-      "filterAll": "Alle Jahre"
+      "filterAll": "Alle Jahre",
+      "filterStatus": "Wochenendstatus",
+      "filterAllStatuses": "Alle Status"
     },
     "exceptions": {
       "heading": "Gemeldeter gewährter oder teilweiser Umgang",

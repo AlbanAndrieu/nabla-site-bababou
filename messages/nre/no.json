@@ -36,7 +36,10 @@
       "heading": "Tidslinje etter år",
       "lead": "Hvert år viser første helg i måneden. ✗ = historisk NRE-oppføring, ✓ = gjennomført eller delvis samvær, ? = ikke bekreftet. Nye datoer klassifiseres ikke automatisk som lovbrudd.",
       "norway": "Norge, Oslo",
-      "germany": "Tyskland, Frankfurt"
+      "germany": "Tyskland, Frankfurt",
+      "viewDetails": "Vis dato i tabellen",
+      "empty": "Ingen helger samsvarer med de valgte filtrene.",
+      "filters": "Kalenderfiltre"
     },
     "location": {
       "heading": "Sted",
@@ -53,7 +56,9 @@
       "review": "Må undersøkes — avgjørelse/kontakt ukjent",
       "beforeOrder": "Før avgjørelsen 31. mars 2017 — må undersøkes",
       "filterYear": "Filtrer etter år",
-      "filterAll": "Alle år"
+      "filterAll": "Alle år",
+      "filterStatus": "Helgestatus",
+      "filterAllStatuses": "Alle statuser"
     },
     "exceptions": {
       "heading": "Rapporterte gjennomførte eller delvise samvær",
