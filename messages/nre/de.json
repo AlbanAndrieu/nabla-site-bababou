@@ -2,7 +2,7 @@
   "nrePage": {
     "meta": {
       "title": "Umgangschronologie — erfasste NRE und noch zu prüfende Termine",
-      "description": "Historische Monatswochenenden seit 2017, zu prüfende Termine ab 2026 und ein Echtzeitzähler, der keine Kontaktstunden erfindet."
+      "description": "Seit dem Urteil von 2017: gemeldete Kontaktanträge und Anzeigen in Frankreich, Norwegen und Deutschland, persönlicher Bericht, Umgangskalender und Rechtsquellen."
     },
     "hero": {
       "eyebrow": "Umgangsrecht · 2017 bis heute",
@@ -20,17 +20,18 @@
     },
     "reference": {
       "heading": "Anzeigen seit 2017 — Frankreich, Norwegen, Deutschland",
-      "prefix": "Seit dem Urteil vom 31. März 2017 habe ich in Frankreich, Norwegen und Deutschland Anzeigen im Zusammenhang mit Schwierigkeiten bei der Ausübung meines Umgangsrechts erstattet.",
+      "prefix": "Seit dem Urteil vom 31. März 2017 habe ich in Frankreich, Norwegen und Deutschland Anzeigen erstattet. Diese Schritte sind Teil jahrelanger Versuche, den Kontakt zu meiner Tochter zu erhalten.",
       "article": "Französisches Strafgesetzbuch, Artikel 227-5",
       "filed": "Ein französisches Anzeigedokument ist unten verfügbar. Eine Anzeige bedeutet nicht, dass der Vorwurf gerichtlich bestätigt wurde.",
       "judgment": "Zum französischen Strafrecht siehe",
       "document": "Anzeigedokument aus Frankreich (PDF)"
     },
     "note": {
-      "heading": "Hinweis",
-      "p1": "Es heißt, wir würden gleich geboren, doch beim Gebären besteht diese Gleichheit aus Sicht des Autors nicht. Die Mutter könne den Geburtsort ohne Zustimmung des Vaters wählen.",
-      "p2": "Der Autor beschreibt seine Wahrnehmung, dass die Mutter alleinige elterliche Verantwortung und Betreuung erhalte und das Kind zur Erlangung von Rechten, Macht oder Geld einsetzen könne, ohne zur Rechenschaft gezogen zu werden.",
-      "p3": "Der Autor rät Vätern davon ab, Sozialdienste einzuschalten oder gegen eine gewalttätige und misshandelnde Mutter Anzeige zu erstatten, da er befürchtet, dass dies den Schutz und den Kontakt zum Kind weiter erschweren könne."
+      "heading": "Warum ich diese Bemühungen öffentlich mache",
+      "p1": "Ich veröffentliche diese Übersicht, um meine wiederholten Versuche, meine Tochter zu sehen, sichtbar zu machen. Nach meiner Darstellung beruht unsere Trennung weder auf Desinteresse noch auf dem Verzicht auf meine Verantwortung als Vater.",
+      "p2": "Ich habe über Jahre hinweg Anzeigen erstattet und Behörden in mehreren Ländern angerufen. Meiner Einschätzung nach haben die verfügbaren Mechanismen dennoch keinen regelmäßigen Kontakt sichergestellt und unsere familiäre Bindung nicht wirksam geschützt.",
+      "p3": "Ich möchte den Unterschied verdeutlichen zwischen dem Recht, Anträge zu stellen, einer Anzeige und der tatsächlichen Möglichkeit, am Leben des Kindes teilzuhaben. Dies sind meine persönlichen Ansichten; die rechtlichen Tatsachen müssen anhand der Entscheidungen und Akten geprüft werden.",
+      "expand": "Meinen Bericht weiterlesen"
     },
     "timeline": {
       "heading": "Zeitleiste nach Jahr",
@@ -92,6 +93,27 @@
       "franceLabel": "Urlaub in Frankreich",
       "germanyLabel": "Deutschland",
       "norwayLabel": "Norwegen (≈ 3 × 1 Std.)"
+    },
+    "advocacy": {
+      "eyebrow": "Persönlicher Bericht · Bemühungen seit 2017",
+      "heading": "Ich habe nie aufgehört, darum zu bitten, meine Tochter zu sehen.",
+      "lead": "Seit dem Urteil vom 31. März 2017 habe ich über Jahre hinweg weiter um Kontakt gebeten und rechtliche Schritte unternommen. Ich habe in Frankreich, Norwegen und Deutschland Anzeigen erstattet. Trotz dieser Bemühungen konnte ich keine regelmäßige Beziehung zu meiner Tochter aufbauen.",
+      "emphasis": "Eine Anzeige zu erstatten bedeutet nicht, ein Kind großziehen zu können. Meine Schritte zeigen, dass ich nie aufgehört habe, es zu versuchen.",
+      "countriesLabel": "Drei Länder mit gemeldeten Anzeigen",
+      "countries": "Frankreich · Norwegen · Deutschland",
+      "stepsLabel": "Jahrelange Bemühungen, den Familienkontakt zu erhalten",
+      "requestTitle": "Meine Tochter sehen wollen",
+      "requestBody": "Weiter um Treffen bitten und versuchen, das Umgangsrecht trotz der geschilderten Hindernisse wahrzunehmen.",
+      "complaintsTitle": "Behörden einschalten",
+      "complaintsBody": "Seit dem Urteil von 2017 Anzeigen in Frankreich, Norwegen und Deutschland erstatten, ohne ein einheitliches Verfahrensergebnis zu behaupten.",
+      "consequenceTitle": "Vom gemeinsamen Alltag ausgeschlossen bleiben",
+      "consequenceBody": "Nach meiner Darstellung blieben Treffen selten, und die eingelegten Rechtsbehelfe führten nicht zu einer regelmäßigen Eltern-Kind-Beziehung.",
+      "opinion": "Meiner Ansicht nach haben die von mir angerufenen Behörden unser Familienleben nicht wirksam geschützt. Diese Erfahrung lässt mich die Rechtsstaatlichkeit und den Schutz der Rechte von Vätern hinterfragen. Das ist meine persönliche Einschätzung, keine gerichtliche Feststellung gegen sämtliche Staaten.",
+      "evidenceNotice": "Dieser Bericht schildert angegebene Schritte und Kontakte. Eine Anzeige beweist weder die behauptete Straftat noch einen bestimmten Verfahrensausgang; Daten und Dokumente müssen anhand der Akten geprüft werden.",
+      "rightsIntro": "Das Recht auf Achtung des Familienlebens ist insbesondere geschützt durch",
+      "rightsLink": "Artikel 8 der Europäischen Menschenrechtskonvention",
+      "jumpReference": "Anzeigen und Quellen lesen",
+      "jumpTimeline": "Kalender ansehen"
     }
   }
 }

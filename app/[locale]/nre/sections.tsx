@@ -8,6 +8,27 @@ import styles from "./page.module.css";
 export type NrePageCopy = {
   meta: { title: string; description: string };
   hero: { eyebrow: string; title: string; navigation: string; jumpHours: string; jumpTimeline: string; jumpTable: string };
+  advocacy: {
+    eyebrow: string;
+    heading: string;
+    lead: string;
+    emphasis: string;
+    countriesLabel: string;
+    countries: string;
+    stepsLabel: string;
+    requestTitle: string;
+    requestBody: string;
+    complaintsTitle: string;
+    complaintsBody: string;
+    consequenceTitle: string;
+    consequenceBody: string;
+    opinion: string;
+    evidenceNotice: string;
+    rightsIntro: string;
+    rightsLink: string;
+    jumpReference: string;
+    jumpTimeline: string;
+  };
   stats: {
     heading: string;
     total: string;
@@ -22,7 +43,7 @@ export type NrePageCopy = {
     judgment: string;
     document: string;
   };
-  note: { heading: string; p1: string; p2: string; p3: string };
+  note: { heading: string; expand: string; p1: string; p2: string; p3: string };
   timeline: { heading: string; lead: string; norway: string; germany: string; viewDetails: string; empty: string; filters: string; datesShort: string; missedShort: string; visitsShort: string; reviewShort: string };
   location: { heading: string; body: string };
   table: {
@@ -90,6 +111,58 @@ export function NreHero({ copy }: CopyProps) {
   );
 }
 
+export function NreAdvocacy({ copy }: CopyProps) {
+  const effortSteps = [
+    { number: "01", title: copy.advocacy.requestTitle, body: copy.advocacy.requestBody },
+    { number: "02", title: copy.advocacy.complaintsTitle, body: copy.advocacy.complaintsBody },
+    { number: "03", title: copy.advocacy.consequenceTitle, body: copy.advocacy.consequenceBody },
+  ];
+  return (
+    <section className={styles.advocacy} aria-labelledby="nre-advocacy-heading">
+      <div className={styles.advocacyHeader}>
+        <div className={styles.advocacyCopy}>
+          <p className={styles.advocacyEyebrow}>{copy.advocacy.eyebrow}</p>
+          <h2 id="nre-advocacy-heading">{copy.advocacy.heading}</h2>
+          <p className={styles.advocacyLead}>{copy.advocacy.lead}</p>
+          <p className={styles.advocacyEmphasis}>{copy.advocacy.emphasis}</p>
+        </div>
+        <div className={styles.advocacyCountries}>
+          <strong>{copy.advocacy.countriesLabel}</strong>
+          <span>{copy.advocacy.countries}</span>
+          <div className={styles.advocacyCountryFlags} aria-hidden="true">
+            <span>🇫🇷</span><span>🇳🇴</span><span>🇩🇪</span>
+          </div>
+        </div>
+      </div>
+      <h3 className={styles.advocacyStepsHeading}>{copy.advocacy.stepsLabel}</h3>
+      <ol className={styles.advocacySteps}>
+        {effortSteps.map((step) => (
+          <li key={step.number}>
+            <span className={styles.advocacyStepNumber} aria-hidden="true">{step.number}</span>
+            <div>
+              <h4>{step.title}</h4>
+              <p>{step.body}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+      <div className={styles.advocacyContext}>
+        <p>{copy.advocacy.opinion}</p>
+        <p className={styles.advocacyRights}>
+          {copy.advocacy.rightsIntro}{" "}
+          <a href="https://www.echr.coe.int/fr/european-convention-on-human-rights"
+            target="_blank" rel="noopener noreferrer">{copy.advocacy.rightsLink}</a>.
+        </p>
+        <p className={styles.advocacyEvidence}>{copy.advocacy.evidenceNotice}</p>
+        <nav className={styles.advocacyLinks} aria-label={copy.advocacy.stepsLabel}>
+          <a href="#reference-heading">{copy.advocacy.jumpReference}</a>
+          <a href="#timeline-heading">{copy.advocacy.jumpTimeline}</a>
+        </nav>
+      </div>
+    </section>
+  );
+}
+
 export function NreStats({ copy, rows }: DataProps) {
   const {total,recordedMissed,partialOrHonored}=nreInventoryStats(rows);
   const stats = [
@@ -137,15 +210,16 @@ export function NreReference({ copy }: CopyProps) {
 
 export function NreNote({ copy }: CopyProps) {
   return (
-    <section className={styles.section} aria-labelledby="note-heading">
-      <Card elevated className={styles.noteCard}>
-        <CardBody>
-          <h2 id="note-heading">{copy.note.heading}</h2>
+    <section className={styles.section} aria-labelledby="nre-note-heading">
+      <h2 id="nre-note-heading">{copy.note.heading}</h2>
+      <details className={styles.testimonyDetails}>
+        <summary>{copy.note.expand}</summary>
+        <div className={styles.testimonyBody}>
           <p>{copy.note.p1}</p>
           <p>{copy.note.p2}</p>
           <p>{copy.note.p3}</p>
-        </CardBody>
-      </Card>
+        </div>
+      </details>
     </section>
   );
 }

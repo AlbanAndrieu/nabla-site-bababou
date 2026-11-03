@@ -2,7 +2,7 @@
   "nrePage": {
     "meta": {
       "title": "Historique des droits de visite — NRE et périodes à vérifier",
-      "description": "Inventaire historique des premiers week-ends mensuels depuis 2017, avec périodes 2026 à vérifier et compteur de séparation distinguant les heures effectives de contact."
+      "description": "Depuis le jugement de 2017, des demandes de contact et des plaintes déclarées en France, en Norvège et en Allemagne : témoignage, calendrier des visites signalées et sources."
     },
     "hero": {
       "eyebrow": "Droit de visite · 2017 à aujourd’hui",
@@ -20,17 +20,18 @@
     },
     "reference": {
       "heading": "Plaintes déposées depuis 2017 — France, Norvège, Allemagne",
-      "prefix": "Depuis le jugement du 31 mars 2017, j’ai déposé plainte en France, en Norvège et en Allemagne au sujet des difficultés rencontrées pour exercer mon droit de visite.",
+      "prefix": "Depuis le jugement du 31 mars 2017, j’ai déposé des plaintes en France, en Norvège et en Allemagne. Ces démarches s’inscrivent dans des années de demandes visant à maintenir le contact avec ma fille.",
       "article": "Code pénal, article 227-5",
       "filed": "Un document de plainte française figure ci-dessous. Le dépôt d’une plainte ne préjuge pas des suites données par les autorités.",
       "judgment": "En droit pénal français, voir notamment",
       "document": "Document de plainte en France (PDF)"
     },
     "note": {
-      "heading": "Note",
-      "p1": "Il paraîtrait que l’on naisse égaux, mais certainement on ne donne pas naissance également. La mère a tous les droits : choisir de donner naissance où elle veut, sans demander l’accord du père.",
-      "p2": "Elle sait que quoi qu’elle fasse, elle aura l’autorité parentale seule, la garde exclusive, la possibilité de manipuler l’enfant et de l’utiliser pour obtenir des droits, du pouvoir, de l’argent. Sans jamais rendre de comptes.",
-      "p3": "Je déconseille à tout père de saisir les services sociaux et de porter plainte contre une mère violente et maltraitante. Le résultat sera que jamais vous ne pourrez protéger votre enfant et il grandira sans vous."
+      "heading": "Pourquoi je raconte ces démarches",
+      "p1": "Si je publie cet historique, c’est pour rendre visibles mes tentatives répétées de voir ma fille. Notre éloignement ne résulte pas, selon mon récit, d’un désintérêt ou d’un renoncement à exercer mes responsabilités de père.",
+      "p2": "J’ai porté plainte et sollicité des autorités dans plusieurs pays pendant des années. Pourtant, je considère que les mécanismes disponibles n’ont pas garanti des contacts réguliers ni protégé efficacement notre lien familial.",
+      "p3": "Je souhaite que l’on mesure la différence entre avoir le droit de demander, déposer plainte et pouvoir effectivement participer à la vie de son enfant. Les opinions exprimées ici sont les miennes ; les faits judiciaires doivent être examinés au regard des décisions et des pièces.",
+      "expand": "Lire la suite de mon témoignage"
     },
     "timeline": {
       "heading": "Chronologie par année",
@@ -92,6 +93,27 @@
       "franceLabel": "Vacances en France",
       "germanyLabel": "Allemagne",
       "norwayLabel": "Norvège (≈ 3 × 1 h)"
+    },
+    "advocacy": {
+      "eyebrow": "Témoignage personnel · démarches depuis 2017",
+      "heading": "Je n’ai jamais cessé de demander à voir ma fille.",
+      "lead": "Depuis le jugement du 31 mars 2017, j’ai poursuivi mes demandes de contact et engagé des démarches pendant des années. J’ai déposé plainte en France, en Norvège et en Allemagne. Malgré ces démarches, je n’ai pas pu construire une relation régulière avec ma fille.",
+      "emphasis": "Déposer plainte n’est pas élever son enfant. Mes démarches montrent que je n’ai pas cessé d’essayer.",
+      "countriesLabel": "Trois pays où des plaintes sont déclarées",
+      "countries": "France · Norvège · Allemagne",
+      "stepsLabel": "Des années de démarches pour maintenir le lien",
+      "requestTitle": "Demander à voir ma fille",
+      "requestBody": "Continuer à solliciter des rencontres et à chercher à exercer le droit de visite, malgré les difficultés signalées.",
+      "complaintsTitle": "Saisir les autorités",
+      "complaintsBody": "Déposer plainte en France, en Norvège et en Allemagne depuis le jugement de 2017, sans prétendre que chaque plainte a reçu la même suite.",
+      "consequenceTitle": "Ne pas pouvoir partager le quotidien",
+      "consequenceBody": "Selon mon témoignage, les rencontres sont restées rares et les recours n’ont pas suffi à rendre possible une relation parent-enfant régulière.",
+      "opinion": "À mes yeux, les autorités que j’ai saisies n’ont pas apporté une protection effective à notre vie familiale. Cette expérience m’amène à interroger le respect de l’État de droit et la place accordée aux droits des pères. C’est mon appréciation personnelle, non une constatation judiciaire visant tous les États.",
+      "evidenceNotice": "Ce témoignage relate des démarches et des contacts déclarés. Le dépôt d’une plainte ne prouve ni l’infraction alléguée ni l’issue de la procédure ; les dates et pièces sont à rapprocher des documents disponibles.",
+      "rightsIntro": "Le droit au respect de la vie familiale est notamment protégé par",
+      "rightsLink": "l’article 8 de la Convention européenne des droits de l’homme",
+      "jumpReference": "Lire les plaintes et références",
+      "jumpTimeline": "Explorer les dates du calendrier"
     }
   }
 }

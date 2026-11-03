@@ -204,6 +204,24 @@ test.describe("NRE React migration", () => {
   });
 
 
+  test("the long-running effort to maintain contact is clearly presented in all languages", async ({ page }) => {
+    for (const { path } of localeCases) {
+      await page.goto(path);
+      const advocacy=page.locator('section[aria-labelledby="nre-advocacy-heading"]');
+      await expect(advocacy.getByRole("heading",{level:2})).toBeVisible();
+      await expect(advocacy.locator('ol > li')).toHaveCount(3);
+      await expect(advocacy).toContainText("2017");
+      await expect(advocacy.locator('a[href="https://www.echr.coe.int/fr/european-convention-on-human-rights"]')).toBeVisible();
+      await expect(advocacy.locator('a[href="#reference-heading"]')).toBeVisible();
+      await expect(advocacy.locator('a[href="#timeline-heading"]')).toBeVisible();
+      const testimony=page.locator('section[aria-labelledby="nre-note-heading"] details');
+      await expect(testimony.locator("summary")).toBeVisible();
+      await expect(testimony).not.toHaveAttribute("open","");
+      await testimony.locator("summary").click();
+      await expect(testimony).toHaveAttribute("open","");
+    }
+  });
+
   test("all languages expose completed weekends, status evidence and year filter", async ({ page }) => {
     for (const locale of localeCases) {
       await page.goto(locale.path);

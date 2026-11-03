@@ -613,3 +613,166 @@
   .yearMonthReview { border-style: dotted; }
 }
 @media print { .calendarReset { display: none !important; } }
+
+/* NRE advocacy: owner-attributed testimony is visually distinct from the
+ * evidentiary visit ledger; country badges do not imply case outcomes. */
+.advocacy {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: clamp(1.3rem, 3.2vw, 2.5rem);
+  border: 1px solid var(--ui-border);
+  border-radius: clamp(0.85rem, 2vw, 1.35rem);
+  background: var(--ui-surface-muted);
+}
+.advocacyHeader {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(13rem, 0.85fr);
+  align-items: start;
+  gap: clamp(1rem, 3vw, 2.3rem);
+}
+.advocacyEyebrow {
+  margin: 0 0 0.65rem;
+  font-size: 0.78rem;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  color: var(--ui-text-secondary);
+  text-transform: uppercase;
+}
+.advocacyCopy h2 {
+  max-width: 19ch;
+  font-size: clamp(1.65rem, 3.4vw, 2.8rem);
+  line-height: 1.14;
+  text-wrap: balance;
+  margin: 0 0 1rem;
+}
+.advocacyLead {
+  max-width: 68ch;
+  font-size: clamp(1rem, 1.6vw, 1.13rem);
+  line-height: 1.7;
+  margin: 0;
+}
+.advocacyEmphasis {
+  margin: 1.25rem 0 0;
+  border-inline-start: 0.25rem solid var(--ui-info-border);
+  padding: 0.75rem 1rem;
+  background: var(--ui-surface);
+  font-size: clamp(1rem, 1.8vw, 1.15rem);
+  font-weight: 750;
+  line-height: 1.5;
+}
+.advocacyCountries {
+  display: grid;
+  align-content: start;
+  gap: 0.7rem;
+  padding: 1.1rem;
+  border: 1px solid var(--ui-border);
+  border-radius: 0.85rem;
+  background: var(--ui-surface);
+}
+.advocacyCountries strong { font-size: 0.87rem; color: var(--ui-text-secondary); }
+.advocacyCountries > span { font-size: 1.15rem; line-height: 1.5; font-weight: 700; }
+.advocacyCountryFlags { display: flex; gap: 0.85rem; font-size: 1.75rem; }
+.advocacyStepsHeading {
+  font-size: clamp(1.05rem, 2vw, 1.3rem);
+  margin: 2.1rem 0 1rem;
+}
+.advocacySteps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.9rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.advocacySteps li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  min-width: 0;
+  padding: 1.15rem;
+  border: 1px solid var(--ui-border);
+  border-radius: 0.75rem;
+  background: var(--ui-surface);
+}
+.advocacyStepNumber {
+  flex: none;
+  font-size: 1.3rem;
+  line-height: 1.4;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.advocacySteps h4 { font-size: 1rem; line-height: 1.4; margin: 0 0 0.5rem; }
+.advocacySteps p { color: var(--ui-text-secondary); font-size: 0.9rem; line-height: 1.6; margin: 0; }
+.advocacyContext {
+  display: grid;
+  gap: 0.85rem;
+  margin-top: 1.35rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--ui-border);
+}
+.advocacyContext p { margin: 0; max-width: 95ch; line-height: 1.65; }
+.advocacyRights { font-size: 0.94rem; }
+.advocacyEvidence { color: var(--ui-text-secondary); font-size: 0.85rem; }
+.advocacyLinks { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1rem; }
+.advocacyLinks a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid var(--ui-border);
+  border-radius: 0.55rem;
+  background: var(--ui-surface);
+  color: var(--ui-text-primary);
+  text-underline-offset: 0.2em;
+  font-weight: 650;
+}
+.advocacyLinks a:hover { background: var(--ui-surface-muted); }
+.advocacyLinks a:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
+@media (max-width: 850px) {
+  .advocacyHeader { grid-template-columns: 1fr; }
+  .advocacyCountries { max-width: 32rem; }
+  .advocacySteps { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .advocacy { padding: 1.1rem; }
+  .advocacyCopy h2 { max-width: none; }
+  .advocacySteps li { padding: 0.9rem; }
+  .advocacyLinks a { width: 100%; }
+}
+@media print {
+  .advocacy, .advocacySteps li { break-inside: avoid; box-shadow: none; }
+  .advocacyLinks { display: none !important; }
+}
+@media (forced-colors: active) {
+  .advocacy, .advocacySteps li, .advocacyEmphasis, .advocacyCountries {
+    border: 1px solid CanvasText;
+  }
+}
+
+/* The longer personal note is optional: the core evidence remains visible. */
+.testimonyDetails {
+  border: 1px solid var(--ui-border);
+  border-radius: 0.7rem;
+  background: var(--ui-surface);
+}
+.testimonyDetails > summary {
+  display: list-item;
+  min-height: 2.75rem;
+  padding: 0.9rem 1rem;
+  cursor: pointer;
+  font-weight: 700;
+}
+.testimonyDetails > summary:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 3px;
+}
+.testimonyBody {
+  padding: 0 1rem 1.2rem;
+  border-top: 1px solid var(--ui-border);
+  line-height: 1.7;
+  max-width: 90ch;
+}
+.testimonyBody p { margin: 0.9rem 0; }
+@media print {
+  .testimonyDetails:not([open]) > .testimonyBody { display: block !important; }
+}

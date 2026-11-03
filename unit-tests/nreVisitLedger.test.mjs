@@ -125,7 +125,7 @@ test("realtime clock never invents actual-contact hours",()=>{
 });
 
 test("all four native languages have complete dashboard/status/filter copy",()=>{
- const names=["meta","hero","stats","reference","timeline","table","exceptions","hours"];
+ const names=["meta","hero","advocacy","stats","reference","note","timeline","table","exceptions","hours"];
  const objects=locales.map(locale=>JSON.parse(read("messages/nre/"+locale+".json")).nrePage);
  for(const name of names){
   const expected=Object.keys(objects[0][name]).sort();
@@ -145,6 +145,11 @@ test("all four native languages have complete dashboard/status/filter copy",()=>
  assert.ok(objects.every(c=>c.table.filterYear&&c.table.review&&c.table.filterStatus&&c.table.filterAllStatuses&&c.table.resultsCount&&c.table.resetFilters&&c.timeline.viewDetails&&c.timeline.empty&&c.hours.contactEstimateHint));
  assert.ok(objects.every(c=>c.reference.prefix.includes("2017")&&c.exceptions.extendedStay));
  assert.ok(objects.every(c=>c.reference.heading&&c.reference.prefix&&c.reference.judgment));
+ assert.ok(objects.every(c=>c.advocacy.heading&&c.advocacy.emphasis&&c.advocacy.evidenceNotice));
+ assert.ok(objects.every(c=>c.advocacy.countries.includes(" · ")&&c.advocacy.lead.includes("2017")));
+ assert.ok(objects.every(c=>c.note.expand&&c.note.p1&&c.note.p2&&c.note.p3));
+ assert.ok(objects.every(c=>c.advocacy.rightsLink&&c.advocacy.opinion));
+
  assert.ok(objects.every(c=>c.exceptions.genericDetail&&c.exceptions.otherWeekend));
  assert.ok(objects.every(c=>c.hours.actual===undefined&&c.hours.nominal===undefined));
 });
@@ -154,6 +159,8 @@ test("the public page uses live client recomputation and retains legal source",(
  const history=read("app/[locale]/nre/NreHistory.tsx");
  const hours=read("app/[locale]/nre/NreLiveHours.tsx");
  assert.match(page,/<NreHistory /);
+ assert.match(page,/<NreAdvocacy copy=\{copy\}/);
+
  assert.match(history,/completeNreInventory/);
  assert.match(history,/60_000/);
  assert.match(history,/visibleStatus/);
@@ -168,6 +175,11 @@ test("the public page uses live client recomputation and retains legal source",(
  assert.match(hours,/report.subtotalHours/);
  assert.match(hours,/report.norwayApproxHours/);
  const calendar=read("app/[locale]/nre/sections.tsx");
+ assert.match(calendar,/export function NreAdvocacy/);
+ assert.match(calendar,/https:\/\/www\.echr\.coe\.int\/fr\/european-convention-on-human-rights/);
+ assert.match(calendar,/styles\.advocacySteps/);
+ assert.match(calendar,/styles\.testimonyDetails/);
+
  assert.match(calendar,/nreMonthCalendar/);
  assert.match(calendar,/data-testid="nre-month-calendar"/);
  assert.match(calendar,/calendarDetailLink/);

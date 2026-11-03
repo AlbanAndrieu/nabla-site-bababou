@@ -14,6 +14,19 @@ La page Next.js `/nre` et ses variantes `/en/nre`, `/de/nre` et `/no/nre` utilis
 
 La page indique désormais en première personne que des plaintes ont été déposées en **France, en Norvège et en Allemagne depuis le jugement du 31 mars 2017**. Le document français déjà présent reste lié ; il n'est pas présenté comme preuve d'une condamnation ou d'un résultat définitif.
 
+## Mise en récit des démarches répétées — novembre 2026
+
+**Objectif éditorial :** montrer qu'en dépit d'années de demandes de contact et de plaintes signalées en **France, Norvège et Allemagne** depuis le jugement du 31 mars 2017, l'auteur n'a pas pu construire une relation parent-enfant régulière selon son récit. Il ne s'agit ni d'un abandon du lien parental ni d'un déficit de démarches.
+
+- Nouveau composant `NreAdvocacy` en haut de page, avant les chiffres : message personnel en première personne, trois étapes **« demander à voir l'enfant → saisir les autorités → constater l'absence d'une vie familiale régulière »**, bandeau des **trois pays nommés**, liens vers les plaintes et le calendrier.
+- Les dates individuelles des plaintes autres que la pièce française existante ne sont **pas** inventées ; aucune chronologie de plainte par année, aucun volume de plaintes, aucun pays supplémentaire n'est prétendu vérifié. Les preuves pourront être ajoutées à partir de documents contrôlés.
+- La critique de l'**État de droit**, de la protection effective de la vie familiale et des **droits des pères** est présentée comme une appréciation personnelle, pas comme une décision de justice condamnant des États. Le document officiel de la plainte française demeure accessible ; le droit français de non-représentation reste lié à l'article 227-5 du Code pénal. Le lien à l'article 8 CEDH pointe vers le site de la Cour européenne des droits de l'homme.
+- L'ancienne note généralisante sur les rôles parentaux a été remplacée par un **témoignage recentré sur les démarches et leur résultat déclaré**, accessible sur demande dans un panneau dépliable ; le sens central est lisible sans déplier le panneau.
+- La confidentialité du mineur est conservée : **« ma fille »** dans la narration, aucun nom légal, adresse ou identifiant importé. Les traductions FR/EN/DE/NO conservent les mêmes champs.
+- Les **1 036 heures** restent un sous-total de présence indicatif (42 jours de vacances en France convertis en heures calendaires + 25 h Allemagne + ~3 h Norvège), jamais présenté comme preuve des heures exactes ou conséquence pénale.
+
+**À compléter après vérification documentaire :** associer chaque plainte à son pays, son éventuel numéro public, sa date et son état de procédure. **Ne jamais** afficher un tableau de plaintes annuelles prétendument exhaustif lorsque seuls les pays et la continuité des démarches sont connus. Une pièce accessible sur le site ne prouve pas à elle seule le résultat de la plainte.
+
 ## Reconstitution indicative des périodes passées ensemble
 
 Ce calcul est fondé sur les dernières durées déclarées par le propriétaire, et non sur les **10 h mensuelles de visites prévues**, qui n'ont pas été effectivement respectées selon son récit.
