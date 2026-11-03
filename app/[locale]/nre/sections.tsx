@@ -23,7 +23,7 @@ export type NrePageCopy = {
     document: string;
   };
   note: { heading: string; p1: string; p2: string; p3: string };
-  timeline: { heading: string; lead: string; norway: string; germany: string; viewDetails: string; empty: string; filters: string };
+  timeline: { heading: string; lead: string; norway: string; germany: string; viewDetails: string; empty: string; filters: string; datesShort: string; missedShort: string; visitsShort: string; reviewShort: string };
   location: { heading: string; body: string };
   table: {
     heading: string;
@@ -36,7 +36,7 @@ export type NrePageCopy = {
     review: string;
     beforeOrder: string;
     filterYear: string;
-    filterAll: string; filterStatus: string; filterAllStatuses: string;
+    filterAll: string; filterStatus: string; filterAllStatuses: string; resultsCount: string; resetFilters: string;
   };
   exceptions: { heading: string; lead: string; genericDetail: string; extendedStay: string; otherWeekend: string };
   hours: { heading: string; intro: string; live: string; gross: string; contactEstimate: string; contactEstimateHint: string; countriesLabel: string; franceLabel: string; germanyLabel: string; norwayLabel: string; net: string; netHint: string; methodology: string; scope: string; source: string; refresh: string; suspension: string; beforeOrder: string };
@@ -207,17 +207,27 @@ export function NreTimeline({ copy, rows, locale }: LocalizedDataProps) {
             <article key={year} className={styles.yearBlock}>
               <h3 className={styles.yearHeading}>
                 <span className={styles.yearNumber}>{year}</span>
-                <span className={styles.yearCountry} aria-label={year >= 2022 ? copy.timeline.germany : copy.timeline.norway}>
-                  {year >= 2022 ? "🇩🇪" : "🇳🇴"}
-                </span>
               </h3>
               <details className={styles.yearDetails} open={year === rows.at(-1)?.year}>
                 <summary>
-                  <span>{yearRows.length} {copy.table.weekend}</span>
+                  <span>{yearRows.length} {copy.timeline.datesShort}</span>
                   <span className={styles.yearSummaryCount}>
-                    {missed} {copy.table.nre}
-                    {visited ? ` · ${visited} ${copy.table.exception}` : ""}
-                    {review ? ` · ${review} ${copy.table.review}` : ""}
+                    {missed ? `${missed} ${copy.timeline.missedShort}` : ""}
+                    {visited ? `${missed ? " · " : ""}${visited} ${copy.timeline.visitsShort}` : ""}
+                    {review ? `${missed || visited ? " · " : ""}${review} ${copy.timeline.reviewShort}` : ""}
+                  </span>
+                  <span className={styles.yearOverview} data-testid="nre-year-overview" aria-hidden="true">
+                    {Array.from({ length: 12 }, (_, month) => {
+                      const row = yearRows.find((entry) => entry.month === month + 1);
+                      const tone = !row ? styles.yearMonthEmpty :
+                        row.status === "nre" ? styles.yearMonthNre :
+                        row.status === "exception" ? styles.yearMonthContact : styles.yearMonthReview;
+                      return (
+                        <span key={month} data-month-status={row?.status ?? "none"} className={`${styles.yearMonth} ${tone}`}
+                          title={row ? `${monthYear(row, locale)} — ${displayStatus(row, copy)}` : undefined}
+                        />
+                      );
+                    })}
                   </span>
                 </summary>
                 <ol className={styles.yearItems}>

@@ -39,6 +39,11 @@ Le champ de saisie local reste supprimé. Le compteur en temps réel déduit **e
 - Chaque carte possède un **lien clavier « Voir la date détaillée »** qui cible la ligne exacte `#nre-AAAA-MM` dans le tableau imprimable. Les cartes conservent le statut en texte en plus de la couleur, l'indicateur graphique étant purement décoratif.
 - Aucun des trois contacts norvégiens de durée estimée à une heure n'est attribué à un mois sans date vérifiée ; les statuts judiciaires ne sont pas inférés du calendrier.
 - L'évolution du calendrier avec le temps et le filtrage ne doivent pas modifier le sous-total de **1 036 h indicatives**.
+- **3 novembre 2026 — UX ciblée :** chaque année repliée dispose d'un aperçu décoratif de **12 mois**, avec couleur/forme des statuts et dénombrements textuels courts, sans attribuer un pays entier à une année (les séjours français peuvent recouper des années dites « norvégiennes »).
+- Les filtres affichent désormais **le nombre exact de dates retenues**, avec annonce douce `aria-live="polite"` et bouton « Effacer les filtres » accessible au clavier, présent seulement lorsque nécessaire. Les mois hors inventaire restent visuellement neutres et ne doivent jamais être assimilés à un événement NRE.
+- Les trois cartes de synthèse utilisent trois colonnes sur grand écran (deux puis une sur écrans plus étroits), sans colonne visuellement vide. Les résumés d'années utilisent des libellés courts traduits FR/EN/DE/NO.
+- **Améliorations proposées, pas encore livrées :** test Playwright/axe sur mobile réel et en mode contraste forcé ; optimisation du rendu des 100+ mini-calendriers ; possibilité de distinguer les séjours de plusieurs jours des courts contacts lorsque les dates sont prouvées ; étude du repli du long tableau imprimable sans casser les ancres.
+
 
 ## Contrôles et publications
 

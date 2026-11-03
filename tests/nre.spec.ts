@@ -246,6 +246,8 @@ test.describe("NRE React migration", () => {
       const currentYear=main.locator("article details[open]");
       await expect(currentYear.first().locator("ol li").first()).toBeVisible();
       await expect(main.locator("article details ol li").first()).toContainText(/\\d/);
+      const overview=main.getByTestId("nre-year-overview").first();
+      await expect(overview.locator("[data-month-status]")).toHaveCount(12);
       const firstStrip=main.getByTestId("nre-month-calendar").first();
       await expect(firstStrip).toBeVisible();
       await expect(firstStrip.locator('[data-weekend="true"]')).toHaveCount(2);
@@ -287,6 +289,14 @@ test.describe("NRE React migration", () => {
     const status=page.getByRole("combobox",{name:"Weekend status"});
     await year.selectOption("2022");
     await status.selectOption("exception");
+    const results=page.locator('main output[aria-live="polite"]');
+    await expect(results).toHaveText("Dates shown: 3");
+    const overview=page.getByTestId("nre-year-overview");
+    await expect(overview).toHaveCount(1);
+    await expect(overview.locator("[data-month-status]")).toHaveCount(12);
+    await expect(overview.locator('[data-month-status="exception"]')).toHaveCount(3);
+    const reset=page.getByRole("button",{name:"Clear filters"});
+    await expect(reset).toBeVisible();
     const months=page.getByTestId("nre-month-calendar");
     await expect(months).toHaveCount(3);
     await expect(page.locator("main table tbody tr")).toHaveCount(3);
@@ -296,10 +306,16 @@ test.describe("NRE React migration", () => {
     await expect(page.locator("tr#nre-2022-01")).toBeVisible();
 
     await status.selectOption("review");
+    await expect(results).toHaveText("Dates shown: 0");
     await expect(months).toHaveCount(0);
     await expect(page.locator('section[aria-labelledby="timeline-heading"]')).toContainText("No weekend matches");
     await status.selectOption("all-statuses");
     await expect(months).toHaveCount(12);
+    await reset.click();
+    await expect(year).toHaveValue("all");
+    await expect(status).toHaveValue("all-statuses");
+    await expect(reset).toHaveCount(0);
+    await expect.poll(() => months.count()).toBeGreaterThanOrEqual(116);
   });
 
 });

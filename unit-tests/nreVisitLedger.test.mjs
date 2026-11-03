@@ -142,7 +142,7 @@ test("all four native languages have complete dashboard/status/filter copy",()=>
  assert.equal(objects[0].hours.elapsedHint,undefined);
  assert.ok(objects.every(c=>c.hours.contactEstimate&&c.hours.contactEstimateHint));
  assert.ok(objects.every(c=>c.hours.countriesLabel&&c.hours.franceLabel&&c.hours.germanyLabel&&c.hours.norwayLabel));
- assert.ok(objects.every(c=>c.table.filterYear&&c.table.review&&c.table.filterStatus&&c.table.filterAllStatuses&&c.timeline.viewDetails&&c.timeline.empty&&c.hours.contactEstimateHint));
+ assert.ok(objects.every(c=>c.table.filterYear&&c.table.review&&c.table.filterStatus&&c.table.filterAllStatuses&&c.table.resultsCount&&c.table.resetFilters&&c.timeline.viewDetails&&c.timeline.empty&&c.hours.contactEstimateHint));
  assert.ok(objects.every(c=>c.reference.prefix.includes("2017")&&c.exceptions.extendedStay));
  assert.ok(objects.every(c=>c.reference.heading&&c.reference.prefix&&c.reference.judgment));
  assert.ok(objects.every(c=>c.exceptions.genericDetail&&c.exceptions.otherWeekend));
@@ -158,6 +158,10 @@ test("the public page uses live client recomputation and retains legal source",(
  assert.match(history,/60_000/);
  assert.match(history,/visibleStatus/);
  assert.match(history,/all-statuses/);
+ assert.match(history,/calendarFilterFeedback/);
+ assert.match(history,/aria-live="polite"/);
+ assert.match(history,/setVisibleYear\("all"\)/);
+ assert.match(history,/setVisibleStatus\("all-statuses"\)/);
  assert.match(hours,/1000/);
  assert.doesNotMatch(hours,/type="number"|setContactHours|hoursForm/);
  assert.match(hours,/estimateReportedContactHours/);
@@ -167,6 +171,9 @@ test("the public page uses live client recomputation and retains legal source",(
  assert.match(calendar,/nreMonthCalendar/);
  assert.match(calendar,/data-testid="nre-month-calendar"/);
  assert.match(calendar,/calendarDetailLink/);
+ assert.match(calendar,/data-testid="nre-year-overview"/);
+ assert.match(calendar,/data-month-status/);
+ assert.doesNotMatch(calendar,/year >= 2022 \? "🇩🇪"/);
  assert.match(calendar,/id=\{\`nre-/);
  assert.match(hours,/elapsedSeparationSeconds/);
  assert.match(read("app/[locale]/nre/sections.tsx"),/legifrance\.gouv\.fr/);

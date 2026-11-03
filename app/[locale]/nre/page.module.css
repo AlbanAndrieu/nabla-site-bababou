@@ -36,7 +36,7 @@
 
 .stats {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--ui-space-md);
 }
 
@@ -549,3 +549,67 @@
   .calendarFilters, .calendarDetailLink { display: none !important; }
   .yearDetails .yearItems { display: grid !important; }
 }
+
+/* Filter feedback and a keyboard-accessible reset action. */
+.calendarFilterFeedback {
+  display: flex;
+  flex: 1 1 100%;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.65rem 1rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--ui-border);
+}
+.calendarResults {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  color: var(--ui-text-secondary);
+  font-size: 0.94rem;
+}
+.calendarResults strong { color: var(--ui-text-primary); font-variant-numeric: tabular-nums; }
+.calendarReset {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.85rem;
+  border: 1px solid var(--ui-border);
+  border-radius: 0.5rem;
+  background: var(--ui-surface);
+  color: var(--ui-text-primary);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+.calendarReset:hover { background: var(--ui-surface-muted); }
+.calendarReset:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
+
+/* Compact 12-month overview is decorative; the status counts stay textual. */
+.yearOverview {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  flex: 0 1 21rem;
+  width: 100%;
+  min-width: min(100%, 12rem);
+  gap: 0.2rem;
+  margin-top: 0.25rem;
+}
+.yearMonth {
+  display: block;
+  min-height: 0.9rem;
+  border: 1px solid var(--ui-border);
+  border-radius: 0.25rem;
+}
+.yearMonthEmpty { background: var(--ui-surface); }
+.yearMonthNre { background: var(--ui-danger-surface); border-color: var(--ui-danger-text); }
+.yearMonthContact { background: var(--ui-success-surface); border-color: var(--ui-success-text); }
+.yearMonthReview { background: var(--ui-surface-muted); border-color: var(--ui-info-border); }
+@media (forced-colors: active) {
+  .yearMonth { border-color: CanvasText; }
+  .yearMonthEmpty { border-style: dashed; }
+  .yearMonthContact { border-style: double; border-width: 2px; }
+  .yearMonthReview { border-style: dotted; }
+}
+@media print { .calendarReset { display: none !important; } }

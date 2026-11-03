@@ -39,7 +39,11 @@
       "germany": "Deutschland, Frankfurt",
       "viewDetails": "Datum in der Tabelle ansehen",
       "empty": "Kein Wochenende entspricht den gewählten Filtern.",
-      "filters": "Kalenderfilter"
+      "filters": "Kalenderfilter",
+      "datesShort": "Termine",
+      "missedShort": "als ausgefallen gemeldet",
+      "visitsShort": "Kontakte",
+      "reviewShort": "zu prüfen"
     },
     "location": {
       "heading": "Ort",
@@ -58,7 +62,9 @@
       "filterYear": "Nach Jahr filtern",
       "filterAll": "Alle Jahre",
       "filterStatus": "Wochenendstatus",
-      "filterAllStatuses": "Alle Status"
+      "filterAllStatuses": "Alle Status",
+      "resultsCount": "Angezeigte Termine",
+      "resetFilters": "Filter zurücksetzen"
     },
     "exceptions": {
       "heading": "Gemeldeter gewährter oder teilweiser Umgang",

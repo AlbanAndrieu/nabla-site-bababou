@@ -39,7 +39,11 @@
       "germany": "Tyskland, Frankfurt",
       "viewDetails": "Vis dato i tabellen",
       "empty": "Ingen helger samsvarer med de valgte filtrene.",
-      "filters": "Kalenderfiltre"
+      "filters": "Kalenderfiltre",
+      "datesShort": "datoer",
+      "missedShort": "meldt uteblitt",
+      "visitsShort": "samvær",
+      "reviewShort": "til kontroll"
     },
     "location": {
       "heading": "Sted",
@@ -58,7 +62,9 @@
       "filterYear": "Filtrer etter år",
       "filterAll": "Alle år",
       "filterStatus": "Helgestatus",
-      "filterAllStatuses": "Alle statuser"
+      "filterAllStatuses": "Alle statuser",
+      "resultsCount": "Viste datoer",
+      "resetFilters": "Nullstill filtre"
     },
     "exceptions": {
       "heading": "Rapporterte gjennomførte eller delvise samvær",

@@ -53,6 +53,19 @@ export default function NreHistory({copy,legacyRows,locale,buildDate}:{
             <option value="review">{copy.table.review}</option>
           </select>
         </label>
+        <div className={styles.calendarFilterFeedback}>
+          <output className={styles.calendarResults} aria-live="polite" aria-atomic="true">
+            {copy.table.resultsCount}: <strong>{filteredRows.length}</strong>
+          </output>
+          {(visibleYear !== "all" || visibleStatus !== "all-statuses") && (
+            <button type="button" className={styles.calendarReset} onClick={() => {
+              setVisibleYear("all");
+              setVisibleStatus("all-statuses");
+            }}>
+              {copy.table.resetFilters}
+            </button>
+          )}
+        </div>
       </div>
       <NreTimeline copy={copy} rows={filteredRows} locale={locale}/>
       <NreLocation copy={copy}/>

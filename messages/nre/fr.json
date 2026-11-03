@@ -39,7 +39,11 @@
       "germany": "Allemagne, Frankfurt",
       "viewDetails": "Voir la date détaillée",
       "empty": "Aucun week-end ne correspond aux filtres choisis.",
-      "filters": "Filtres du calendrier"
+      "filters": "Filtres du calendrier",
+      "datesShort": "dates",
+      "missedShort": "signalées manquées",
+      "visitsShort": "contacts",
+      "reviewShort": "à vérifier"
     },
     "location": {
       "heading": "Lieu",
@@ -58,7 +62,9 @@
       "filterYear": "Filtrer par année",
       "filterAll": "Toutes les années",
       "filterStatus": "Statut des week-ends",
-      "filterAllStatuses": "Tous les statuts"
+      "filterAllStatuses": "Tous les statuts",
+      "resultsCount": "Dates affichées",
+      "resetFilters": "Effacer les filtres"
     },
     "exceptions": {
       "heading": "Visites honorées ou partielles déclarées",

@@ -39,7 +39,11 @@
       "germany": "Germany, Frankfurt",
       "viewDetails": "View date in the table",
       "empty": "No weekend matches the selected filters.",
-      "filters": "Calendar filters"
+      "filters": "Calendar filters",
+      "datesShort": "dates",
+      "missedShort": "reported missed",
+      "visitsShort": "contacts",
+      "reviewShort": "to review"
     },
     "location": {
       "heading": "Location",
@@ -58,7 +62,9 @@
       "filterYear": "Filter by year",
       "filterAll": "All years",
       "filterStatus": "Weekend status",
-      "filterAllStatuses": "All statuses"
+      "filterAllStatuses": "All statuses",
+      "resultsCount": "Dates shown",
+      "resetFilters": "Clear filters"
     },
     "exceptions": {
       "heading": "Reported honored or partial visits",
