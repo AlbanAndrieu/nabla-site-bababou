@@ -17,6 +17,9 @@ import {
 } from "./sections";
 import styles from "./page.module.css";
 
+// Public editorial data is versioned with the deployment; no request-time SSR required.
+export const dynamic = "force-static";
+
 export async function generateMetadata({
   params,
 }: PageProps<"/[locale]/central-authorities-failures">): Promise<Metadata> {
