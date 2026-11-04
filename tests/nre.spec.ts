@@ -204,6 +204,24 @@ test.describe("NRE React migration", () => {
   });
 
 
+  test("the long-running effort to maintain contact is clearly presented in all languages", async ({ page }) => {
+    for (const { path } of localeCases) {
+      await page.goto(path);
+      const advocacy=page.locator('section[aria-labelledby="nre-advocacy-heading"]');
+      await expect(advocacy.getByRole("heading",{level:2})).toBeVisible();
+      await expect(advocacy.locator('ol > li')).toHaveCount(3);
+      await expect(advocacy).toContainText("2017");
+      await expect(advocacy.locator('a[href="https://www.echr.coe.int/fr/european-convention-on-human-rights"]')).toBeVisible();
+      await expect(advocacy.locator('a[href="#reference-heading"]')).toBeVisible();
+      await expect(advocacy.locator('a[href="#timeline-heading"]')).toBeVisible();
+      const testimony=page.locator('section[aria-labelledby="nre-note-heading"] details');
+      await expect(testimony.locator("summary")).toBeVisible();
+      await expect(testimony).not.toHaveAttribute("open","");
+      await testimony.locator("summary").click();
+      await expect(testimony).toHaveAttribute("open","");
+    }
+  });
+
   test("all languages expose completed weekends, status evidence and year filter", async ({ page }) => {
     for (const locale of localeCases) {
       await page.goto(locale.path);
@@ -213,28 +231,109 @@ test.describe("NRE React migration", () => {
       const select=page.locator("main select").filter({has:page.locator("option[value='all']")});
       await expect(select).toHaveValue("all");
       await select.selectOption("2026");
+      await expect(page.locator('section[aria-labelledby="timeline-heading"] article')).toHaveCount(1);
+      await expect(page.locator('section[aria-labelledby="timeline-heading"] article details')).toHaveAttribute("open", "");
       await expect.poll(()=>rows.count()).toBeGreaterThanOrEqual(10);
       await expect.poll(()=>rows.count()).toBeLessThanOrEqual(12);
       await select.selectOption("all");
+      await expect.poll(() => page.locator('section[aria-labelledby="timeline-heading"] article').count()).toBeGreaterThanOrEqual(9);
       await expect.poll(()=>rows.count()).toBeGreaterThanOrEqual(116);
       // The actual class is CSS-module hashed; select semantic nested details.
-      const yearDetails=page.locator("main article details").first();
+      const yearDetails=page.locator("main article details").last();
       await expect(yearDetails.locator("summary")).toBeVisible();
       await yearDetails.locator("summary").click();
       await expect(yearDetails).toHaveAttribute("open","");
     }
   });
 
-  test("live separation clock only subtracts explicitly entered actual hours", async ({ page }) => {
-    await page.goto("/en/nre");
-    const input=page.getByRole("spinbutton",{name:/Hours actually spent together/i});
-    const dashboard=page.locator('section[aria-labelledby="nre-hours-heading"]');
-    await expect(input).toHaveValue("");
-    await expect(dashboard).toContainText("Not yet entered");
-    await expect(dashboard).toContainText("1,010 h");
-    await input.fill("12.5");
-    await expect(dashboard).not.toContainText("Not yet entered");
-    await input.fill("");
-    await expect(dashboard).toContainText("Not yet entered");
+  test("four languages display verifiable dashboard and readable year cards", async ({ page }) => {
+    for (const {path} of localeCases) {
+      await page.goto(path);
+      const main=page.locator("main#main-content");
+      await expect(main).not.toContainText(/61\\s*(?:days|jours|Tage|dagene)/i);
+      await expect(main.locator('nav a[href="#timeline-heading"]')).toBeVisible();
+      const panel=main.locator('section[aria-labelledby="nre-hours-heading"]');
+      await expect(main.locator('header[aria-labelledby="nre-heading"] p')).toHaveCount(0);
+      await expect(main.locator('section[aria-labelledby="nre-stats-heading"]')).not.toContainText("Dates à vérifier / avant décision");
+      await expect(panel).toContainText(/1[\s.,\u202f]036\s*h/);
+      await expect(panel).not.toContainText("Temps civil depuis un repère approximatif");
+      const methodology=panel.locator("details");
+      await expect(methodology.locator("summary")).toBeVisible();
+      await methodology.locator("summary").click();
+      await expect(methodology).toHaveAttribute("open","");
+      const currentYear=main.locator("article details[open]");
+      await expect(currentYear.first().locator("ol li").first()).toBeVisible();
+      await expect(main.locator("article details ol li").first()).toContainText(/\\d/);
+      const overview=main.getByTestId("nre-year-overview").first();
+      await expect(overview.locator("[data-month-status]")).toHaveCount(12);
+      const firstStrip=main.getByTestId("nre-month-calendar").first();
+      await expect(firstStrip).toBeVisible();
+      await expect(firstStrip.locator('[data-weekend="true"]')).toHaveCount(2);
+      const cells=firstStrip.locator('[data-calendar-day="true"]');
+      await expect.poll(()=>cells.count()).toBeGreaterThanOrEqual(28);
+      await expect.poll(()=>cells.count()).toBeLessThanOrEqual(42);
+    }
   });
+
+  test("complete month calendars remain readable on narrow screens", async ({ page }) => {
+    for (const width of [320, 375, 768]) {
+      await page.setViewportSize({ width, height: 850 });
+      await page.goto("/nre");
+      const strip=page.getByTestId("nre-month-calendar").first();
+      await expect(strip).toBeVisible();
+      await expect(strip.locator('[data-weekend="true"]')).toHaveCount(2);
+      const bounds=await strip.boundingBox();
+      expect(bounds).not.toBeNull();
+      expect(bounds!.x).toBeGreaterThanOrEqual(0);
+      expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(width + 1);
+    }
+  });
+
+  test("reported hours are calculated without an editable input", async ({ page }) => {
+    await page.goto("/en/nre");
+    const panel=page.locator('section[aria-labelledby="nre-hours-heading"]');
+    await expect(panel.getByRole("spinbutton")).toHaveCount(0);
+    await expect(panel).toContainText(/1[\s.,\u202f]036\s*h/);
+    await expect(panel).toContainText("France");
+    await expect(panel).toContainText("Norway");
+    await expect(panel).toContainText(/3\s*h/);
+    await expect(panel).not.toContainText("1,010 h");
+    const reference=page.locator('section[aria-labelledby="reference-heading"]');
+    await expect(reference).toContainText("France, Norway and Germany");
+  });
+  test("filtering the month view by status links to exact calendar rows", async ({ page }) => {
+    await page.goto("/en/nre");
+    const year=page.getByRole("combobox",{name:"Filter by year"});
+    const status=page.getByRole("combobox",{name:"Weekend status"});
+    await year.selectOption("2022");
+    await status.selectOption("exception");
+    const results=page.locator('main output[aria-live="polite"]');
+    await expect(results).toHaveText("Dates shown: 3");
+    const overview=page.getByTestId("nre-year-overview");
+    await expect(overview).toHaveCount(1);
+    await expect(overview.locator("[data-month-status]")).toHaveCount(12);
+    await expect(overview.locator('[data-month-status="exception"]')).toHaveCount(3);
+    const reset=page.getByRole("button",{name:"Clear filters"});
+    await expect(reset).toBeVisible();
+    const months=page.getByTestId("nre-month-calendar");
+    await expect(months).toHaveCount(3);
+    await expect(page.locator("main table tbody tr")).toHaveCount(3);
+    await expect(months.first().locator('[data-weekend="true"]')).toHaveCount(2);
+    await page.locator('section[aria-labelledby="timeline-heading"] a[href="#nre-2022-01"]').click();
+    await expect(page).toHaveURL(/#nre-2022-01$/);
+    await expect(page.locator("tr#nre-2022-01")).toBeVisible();
+
+    await status.selectOption("review");
+    await expect(results).toHaveText("Dates shown: 0");
+    await expect(months).toHaveCount(0);
+    await expect(page.locator('section[aria-labelledby="timeline-heading"]')).toContainText("No weekend matches");
+    await status.selectOption("all-statuses");
+    await expect(months).toHaveCount(12);
+    await reset.click();
+    await expect(year).toHaveValue("all");
+    await expect(status).toHaveValue("all-statuses");
+    await expect(reset).toHaveCount(0);
+    await expect.poll(() => months.count()).toBeGreaterThanOrEqual(116);
+  });
+
 });

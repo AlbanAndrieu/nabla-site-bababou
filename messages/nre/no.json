@@ -2,39 +2,49 @@
   "nrePage": {
     "meta": {
       "title": "Samværskronologi — registrerte NRE og datoer som må undersøkes",
-      "description": "Historiske første helger i måneden fra 2017, uavklarte datoer i 2026 og en sanntidsklokke uten antatte kontaktimer."
+      "description": "Siden dommen i 2017: oppgitte samværshenvendelser og anmeldelser i Frankrike, Norge og Tyskland, personlig beretning, kalender og rettskilder."
     },
     "hero": {
       "eyebrow": "Samværsrett · 2017 til i dag",
       "title": "Manglende overlevering av barn (NRE)",
-      "lead": "Første helg hver måned med rapporterte uteblitte, gjennomførte eller delvise samvær og perioder som fortsatt må avklares. Nye datoer regnes ikke automatisk som straffbare forhold."
+      "navigation": "Hurtignavigasjon",
+      "jumpHours": "Timeoversikt",
+      "jumpTimeline": "Årsoversikt",
+      "jumpTable": "Alle datoer"
     },
     "stats": {
       "heading": "Nøkkeltall",
       "total": "Registrerte helgedatoer",
       "nre": "Rapporterte NRE (historisk)",
-      "exceptions": "Gjennomført eller delvis samvær",
-      "review": "Til kontroll / før kjennelsen"
+      "exceptions": "Gjennomført eller delvis samvær"
     },
     "reference": {
-      "heading": "Referanse til klage",
-      "prefix": "Klage om manglende overlevering av barn etter fransk straffelov",
-      "article": "artikkel 227-5",
-      "filed": "Innlevert 4. september 2023 i Nanterre til påtalemyndigheten, Court of Valence (TGI Valence).",
-      "judgment": "Listen starter med den tvangskraftige dommen 31. mars 2017. Faktum gjengis ikke her; det offisielle dokumentet er fortsatt kilden.",
-      "document": "Klage TGI Valence, 4. september 2023 (PDF)"
+      "heading": "Anmeldelser siden 2017 — Frankrike, Norge, Tyskland",
+      "prefix": "Siden dommen 31. mars 2017 har jeg levert anmeldelser i Frankrike, Norge og Tyskland. Disse tiltakene er en del av mange års forsøk på å opprettholde kontakten med datteren min.",
+      "article": "Fransk straffelov, artikkel 227-5",
+      "filed": "Et fransk anmeldelsesdokument er lenket nedenfor. En anmeldelse betyr ikke at forholdet er rettslig fastslått.",
+      "judgment": "Etter fransk strafferett, se",
+      "document": "Anmeldelsesdokument fra Frankrike (PDF)"
     },
     "note": {
-      "heading": "Merknad",
-      "p1": "Det sies at vi blir født like, men forfatteren opplever at likheten ikke gjelder på samme måte ved fødsel. Moren kan velge fødested uten farens samtykke.",
-      "p2": "Forfatteren beskriver sin opplevelse av at moren får foreldreansvar og omsorg alene og kan bruke barnet for å oppnå rettigheter, makt eller penger uten å bli holdt ansvarlig.",
-      "p3": "Forfatteren fraråder fedre å involvere sosiale tjenester eller anmelde en voldelig og mishandlende mor, fordi han frykter at dette kan gjøre det enda vanskeligere å beskytte barnet og opprettholde kontakt."
+      "heading": "Hvorfor jeg viser frem disse forsøkene",
+      "p1": "Jeg publiserer denne oversikten for å synliggjøre mine gjentatte forsøk på å se datteren min. Ifølge min beretning skyldes ikke avstanden mellom oss manglende interesse eller at jeg har gitt opp ansvaret som far.",
+      "p2": "Gjennom mange år har jeg levert anmeldelser og kontaktet myndigheter i flere land. Likevel mener jeg at ordningene som finnes, ikke har sikret regelmessig samvær eller gitt familiebåndet vårt et effektivt vern.",
+      "p3": "Jeg ønsker å vise forskjellen mellom å kunne fremme krav, levere anmeldelser og faktisk delta i barnets liv. Synspunktene er mine egne; rettslige forhold må vurderes ut fra vedtak og dokumentasjon.",
+      "expand": "Les mer av min beretning"
     },
     "timeline": {
       "heading": "Tidslinje etter år",
       "lead": "Hvert år viser første helg i måneden. ✗ = historisk NRE-oppføring, ✓ = gjennomført eller delvis samvær, ? = ikke bekreftet. Nye datoer klassifiseres ikke automatisk som lovbrudd.",
       "norway": "Norge, Oslo",
-      "germany": "Tyskland, Frankfurt"
+      "germany": "Tyskland, Frankfurt",
+      "viewDetails": "Vis dato i tabellen",
+      "empty": "Ingen helger samsvarer med de valgte filtrene.",
+      "filters": "Kalenderfiltre",
+      "datesShort": "datoer",
+      "missedShort": "meldt uteblitt",
+      "visitsShort": "samvær",
+      "reviewShort": "til kontroll"
     },
     "location": {
       "heading": "Sted",
@@ -51,27 +61,59 @@
       "review": "Må undersøkes — avgjørelse/kontakt ukjent",
       "beforeOrder": "Før avgjørelsen 31. mars 2017 — må undersøkes",
       "filterYear": "Filtrer etter år",
-      "filterAll": "Alle år"
+      "filterAll": "Alle år",
+      "filterStatus": "Helgestatus",
+      "filterAllStatuses": "Alle statuser",
+      "resultsCount": "Viste datoer",
+      "resetFilters": "Nullstill filtre"
     },
     "exceptions": {
       "heading": "Rapporterte gjennomførte eller delvise samvær",
-      "lead": "Den historiske siden omtaler seks unntak, men antall dager gir ikke presise timer for faktisk samvær.",
-      "genericDetail": "Dokumentert unntak (gjennomført eller delvis samvær)."
+      "lead": "Seks kontaktperioder er nevnt i arkivet: noen var lengre opphold, andre korte møter. Feriedatoene må fortsatt sammenholdes med dokumentasjonen.",
+      "genericDetail": "Rapportert kort møte: omtrent én time.",
+      "extendedStay": "Lengre opphold rapportert; ikke legg til en ekstra time på toppen av ferietid uten å kontrollere overlapp.",
+      "otherWeekend": "Rapportert besøk: datoen er ennå ikke knyttet til den særskilt oppgitte helgen på 24 timer."
     },
     "hours": {
-      "heading": "Tid som har gått og samværstimer — to ulike mål",
+      "heading": "Tid sammen — anslag ut fra rapporterte perioder",
       "gross": "Tid siden 6. juni 2015 (historisk referanse)",
-      "nominal": "Beregnet tid for historiske NRE-oppføringer (10 t / helg)",
-      "net": "Tid som har gått minus manuelt registrerte faktiske samværstimer",
-      "actual": "Timer faktisk tilbrakt sammen (valgfri lokal inntasting)",
-      "actualHint": "Oppgi bare dokumenterte timer med faktisk samvær. Verdien lagres eller sendes ikke og forsvinner ved ny lasting. De 61 dagene fra den gamle siden kan ikke automatisk regnes som 1 464 samværstimer.",
-      "scope": "Denne klokken viser kalenderført tid siden en omtrentlig dato (starten av dagen UTC; faktisk klokkeslett ukjent). Den er ikke et rettslig bekreftet NRE-regnskap eller bevis på tapte samværstimer.",
-      "source": "Beregnet tid bruker den oppgitte ordningen med ti timer den første helgen i måneden og bare eldre NRE-oppføringer etter avgjørelsen 31. mars 2017. Faktiske samværstimer er ikke kjent.",
-      "unknown": "Ikke oppgitt",
-      "review": "Må undersøkes",
+      "net": "Tid som har gått minus beregnet delsum for opphold",
+      "scope": "I Frankrike regnes to opphold på sju dager og ett på 28 dager med 24 timer per oppholdsdag. Nøyaktige datoer er ikke knyttet til kalenderen ennå.",
+      "source": "I Tyskland oppgis et møte på omtrent én time og en senere helg på omtrent 24 timer. I Norge er det rapportert om omtrent tre møter på én time hver; datoene er ukjente, så de tas med én gang i anslaget, men ikke knyttet til kalenderkort.",
       "refresh": "Klokken oppdateres hvert sekund. Terminoversikten følger gjeldende dato i Paris.",
       "suspension": "En tysk avgjørelse om stans i samvær fra 26. februar 2026 til 25. februar 2027 er omtalt, men selve avgjørelsen er ikke kontrollert her. Senere datoer merkes ikke NRE.",
-      "beforeOrder": "Oppføringen for mars 2017 er før avgjørelsen 31. mars 2017 og må undersøkes."
+      "beforeOrder": "Oppføringen for mars 2017 er før avgjørelsen 31. mars 2017 og må undersøkes.",
+      "intro": "Ifølge min beskrivelse ble de planlagte ti timene per helg aldri overholdt; sjeldne møter varte omtrent én time.",
+      "live": "Oppdateres fortløpende",
+      "netHint": "Ufullstendig anslag: 42 feriedager i Frankrike er kalendertid med samvær, ikke målt aktiv kontakt. Tre udaterte norske møter er inkludert.",
+      "methodology": "Beregningsmetode og overlapp må kontrolleres",
+      "contactEstimate": "Delsum for rapportert samværstid (omtrentlig)",
+      "contactEstimateHint": "Frankrike: 42 feriedager regnet som 24 kalendertimer hver (1 008 t). Tyskland: omtrent 1 t gjenforening og en helg på 24 t (25 t). Norge: omtrent tre møter på én time hver (3 t), uten bekreftede datoer.",
+      "countriesLabel": "Fordeling av oppgitte timer",
+      "franceLabel": "Ferier i Frankrike",
+      "germanyLabel": "Tyskland",
+      "norwayLabel": "Norge (≈ 3 × 1 t)"
+    },
+    "advocacy": {
+      "eyebrow": "Personlig beretning · innsats siden 2017",
+      "heading": "Jeg har aldri sluttet å be om å få se datteren min.",
+      "lead": "Siden dommen 31. mars 2017 har jeg i mange år fortsatt å be om samvær og forsøkt rettslige tiltak. Jeg har anmeldt forhold i Frankrike, Norge og Tyskland. Til tross for dette har jeg ikke kunnet bygge et regelmessig forhold til datteren min.",
+      "emphasis": "Å levere en anmeldelse er ikke det samme som å kunne oppdra et barn. Mine forsøk viser at jeg aldri sluttet å prøve.",
+      "countriesLabel": "Tre land der anmeldelser er oppgitt",
+      "countries": "Frankrike · Norge · Tyskland",
+      "stepsLabel": "Mange års forsøk på å bevare familiekontakten",
+      "requestTitle": "Be om å se datteren min",
+      "requestBody": "Fortsette å be om møter og forsøke å utøve samværsretten til tross for hindringene som er beskrevet.",
+      "complaintsTitle": "Henvende seg til myndighetene",
+      "complaintsBody": "Anmelde forhold i Frankrike, Norge og Tyskland siden dommen i 2017, uten å påstå at alle anmeldelsene fikk samme utfall.",
+      "consequenceTitle": "Ikke kunne dele hverdagen",
+      "consequenceBody": "Ifølge min beretning forble møtene sjeldne, og tiltakene førte ikke til regelmessig kontakt mellom forelder og barn.",
+      "opinion": "Etter min vurdering har myndighetene jeg henvendte meg til, ikke gitt et effektivt vern av familielivet vårt. Erfaringen får meg til å stille spørsmål ved rettsstaten og beskyttelsen av fedres rettigheter. Dette er min personlige vurdering, ikke en rettslig fastslått konklusjon om alle stater.",
+      "evidenceNotice": "Denne beretningen omtaler oppgitte tiltak og samvær. En anmeldelse beviser verken den påståtte lovovertredelsen eller utfallet av saken; datoer og dokumenter må vurderes opp mot tilgjengelige opplysninger.",
+      "rightsIntro": "Retten til respekt for familielivet er blant annet vernet av",
+      "rightsLink": "artikkel 8 i Den europeiske menneskerettskonvensjonen",
+      "jumpReference": "Les anmeldelser og kilder",
+      "jumpTimeline": "Se kalenderen"
     }
   }
 }

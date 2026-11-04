@@ -2,39 +2,49 @@
   "nrePage": {
     "meta": {
       "title": "Historique des droits de visite — NRE et périodes à vérifier",
-      "description": "Inventaire historique des premiers week-ends mensuels depuis 2017, avec périodes 2026 à vérifier et compteur de séparation distinguant les heures effectives de contact."
+      "description": "Depuis le jugement de 2017, des demandes de contact et des plaintes déclarées en France, en Norvège et en Allemagne : témoignage, calendrier des visites signalées et sources."
     },
     "hero": {
       "eyebrow": "Droit de visite · 2017 à aujourd’hui",
       "title": "Non-représentation d'enfant (NRE)",
-      "lead": "Chronologie des premiers week-ends du mois, des visites signalées comme manquées, des visites partielles et des périodes qui nécessitent une vérification. Les dates ajoutées ne constituent pas une qualification pénale."
+      "navigation": "Accès rapide",
+      "jumpHours": "Compteur d’heures",
+      "jumpTimeline": "Parcourir les années",
+      "jumpTable": "Calendrier complet"
     },
     "stats": {
       "heading": "Synthèse chiffrée",
       "total": "Dates inventoriées",
       "nre": "NRE signalées (historique)",
-      "exceptions": "Visites honorées ou partielles",
-      "review": "Dates à vérifier / avant décision"
+      "exceptions": "Visites honorées ou partielles"
     },
     "reference": {
-      "heading": "Référence plainte",
-      "prefix": "Plainte pour non-représentation d'enfant au titre du Code pénal français",
-      "article": "article 227-5",
-      "filed": "Déposée le 4 septembre 2023 à Nanterre auprès du procureur de la République, TGI Valence.",
-      "judgment": "La liste court à compter du jugement exécutoire du 31 mars 2017. Les faits ne sont pas reproduits ici ; le document officiel reste la source.",
-      "document": "Plainte TGI Valence, 4 septembre 2023 (PDF)"
+      "heading": "Plaintes déposées depuis 2017 — France, Norvège, Allemagne",
+      "prefix": "Depuis le jugement du 31 mars 2017, j’ai déposé des plaintes en France, en Norvège et en Allemagne. Ces démarches s’inscrivent dans des années de demandes visant à maintenir le contact avec ma fille.",
+      "article": "Code pénal, article 227-5",
+      "filed": "Un document de plainte française figure ci-dessous. Le dépôt d’une plainte ne préjuge pas des suites données par les autorités.",
+      "judgment": "En droit pénal français, voir notamment",
+      "document": "Document de plainte en France (PDF)"
     },
     "note": {
-      "heading": "Note",
-      "p1": "Il paraîtrait que l’on naisse égaux, mais certainement on ne donne pas naissance également. La mère a tous les droits : choisir de donner naissance où elle veut, sans demander l’accord du père.",
-      "p2": "Elle sait que quoi qu’elle fasse, elle aura l’autorité parentale seule, la garde exclusive, la possibilité de manipuler l’enfant et de l’utiliser pour obtenir des droits, du pouvoir, de l’argent. Sans jamais rendre de comptes.",
-      "p3": "Je déconseille à tout père de saisir les services sociaux et de porter plainte contre une mère violente et maltraitante. Le résultat sera que jamais vous ne pourrez protéger votre enfant et il grandira sans vous."
+      "heading": "Pourquoi je raconte ces démarches",
+      "p1": "Si je publie cet historique, c’est pour rendre visibles mes tentatives répétées de voir ma fille. Notre éloignement ne résulte pas, selon mon récit, d’un désintérêt ou d’un renoncement à exercer mes responsabilités de père.",
+      "p2": "J’ai porté plainte et sollicité des autorités dans plusieurs pays pendant des années. Pourtant, je considère que les mécanismes disponibles n’ont pas garanti des contacts réguliers ni protégé efficacement notre lien familial.",
+      "p3": "Je souhaite que l’on mesure la différence entre avoir le droit de demander, déposer plainte et pouvoir effectivement participer à la vie de son enfant. Les opinions exprimées ici sont les miennes ; les faits judiciaires doivent être examinés au regard des décisions et des pièces.",
+      "expand": "Lire la suite de mon témoignage"
     },
     "timeline": {
       "heading": "Chronologie par année",
       "lead": "Chaque année présente les premiers week-ends mensuels. ✗ = NRE déclarée dans les archives, ✓ = visite honorée ou partielle, ? = date sans statut vérifié. Les mois nouveaux ne sont pas automatiquement qualifiés de NRE.",
       "norway": "Norvège, Oslo",
-      "germany": "Allemagne, Frankfurt"
+      "germany": "Allemagne, Frankfurt",
+      "viewDetails": "Voir la date détaillée",
+      "empty": "Aucun week-end ne correspond aux filtres choisis.",
+      "filters": "Filtres du calendrier",
+      "datesShort": "dates",
+      "missedShort": "signalées manquées",
+      "visitsShort": "contacts",
+      "reviewShort": "à vérifier"
     },
     "location": {
       "heading": "Lieu",
@@ -51,27 +61,59 @@
       "review": "À vérifier — décision / rencontre non confirmée",
       "beforeOrder": "Avant la décision du 31 mars 2017 — à vérifier",
       "filterYear": "Filtrer par année",
-      "filterAll": "Toutes les années"
+      "filterAll": "Toutes les années",
+      "filterStatus": "Statut des week-ends",
+      "filterAllStatuses": "Tous les statuts",
+      "resultsCount": "Dates affichées",
+      "resetFilters": "Effacer les filtres"
     },
     "exceptions": {
       "heading": "Visites honorées ou partielles déclarées",
-      "lead": "Six exceptions répertoriées sur la page historique ; ni les journées mentionnées ni la durée exacte de présence ne permettent de déduire automatiquement les heures effectivement passées ensemble.",
-      "genericDetail": "Exception documentée (visite effectuée ou partielle)."
+      "lead": "Six périodes de contact apparaissent dans les archives : certaines correspondent à des séjours prolongés, d’autres à des rencontres brèves. Les dates exactes des vacances restent à rapprocher des pièces.",
+      "genericDetail": "Rencontre ponctuelle signalée : durée approximative d’une heure.",
+      "extendedStay": "Séjour prolongé signalé ; ne pas ajouter une heure en plus des vacances sans vérifier les chevauchements.",
+      "otherWeekend": "Visite déclarée : date à rapprocher du week-end de 24 h rapporté, sans durée attribuée automatiquement."
     },
     "hours": {
-      "heading": "Le temps et les heures de contact — deux mesures différentes",
+      "heading": "Temps passé ensemble — estimation fondée sur les périodes déclarées",
       "gross": "Temps écoulé depuis le 6 juin 2015 (repère historique)",
-      "nominal": "Heures théoriques associées aux NRE historiques (10 h / week-end)",
-      "net": "Temps écoulé moins les heures effectives renseignées",
-      "actual": "Heures effectivement passées ensemble (saisie locale facultative)",
-      "actualHint": "Inscrire uniquement des heures de présence réelle attestées. Valeur non enregistrée, non transmise et réinitialisée au rechargement. Les 61 jours déclarés dans l’ancienne page ne peuvent pas être convertis automatiquement en 1 464 heures de contact.",
-      "scope": "Ce compteur en direct mesure le temps civil écoulé depuis une date repère (début de journée UTC, heure réelle inconnue). Il n’est ni un décompte judiciaire de NRE, ni une preuve des heures effectivement manquées au titre du droit de visite.",
-      "source": "Les heures théoriques reposent sur le rythme annoncé de 10 h le premier week-end du mois, uniquement pour les lignes historiques marquées NRE après la décision du 31 mars 2017 ; les heures réelles ne sont pas reconstituées à partir des exceptions.",
-      "unknown": "À renseigner",
-      "review": "Dates à vérifier",
+      "net": "Temps écoulé moins le sous-total estimé des séjours",
+      "scope": "Pour la France, deux séjours de 7 jours et un séjour de 28 jours sont convertis à 24 h par jour de présence ; les dates exactes ne sont pas encore identifiées dans le calendrier.",
+      "source": "En Allemagne, une rencontre d'environ 1 h et un week-end ultérieur d'environ 24 h sont signalés. En Norvège, environ trois rencontres d'une heure sont déclarées ; leur mois exact reste inconnu, elles sont incluses une seule fois dans le total et non attribuées aux cartes du calendrier.",
       "refresh": "Le compteur se met à jour chaque seconde ; le calendrier est recalculé automatiquement selon la date locale de Paris.",
       "suspension": "Suspension des visites en Allemagne signalée à partir du 26 février 2026 jusqu’au 25 février 2027 ; dispositif judiciaire original non vérifié ici. Les dates ultérieures ne sont pas classées NRE.",
-      "beforeOrder": "La ligne de mars 2017 précède la décision citée du 31 mars 2017 et est classée à vérifier."
+      "beforeOrder": "La ligne de mars 2017 précède la décision citée du 31 mars 2017 et est classée à vérifier.",
+      "intro": "Les 10 heures de visite prévues par week-end n’ont jamais été respectées selon mon récit ; de rares rencontres ont duré environ une heure.",
+      "live": "Actualisation en direct",
+      "netHint": "Estimation indicative et incomplète : les 42 jours français sont des heures calendaires de présence, pas des heures de contact direct mesurées. Les trois rencontres norvégiennes sont incluses, mais non datées.",
+      "methodology": "Méthode de calcul et chevauchements à vérifier",
+      "contactEstimate": "Sous-total des périodes de présence rapportées (approximatif)",
+      "contactEstimateHint": "France : 42 jours de vacances comptés à 24 h par jour (1 008 h). Allemagne : environ 1 h de retrouvailles et un week-end de 24 h (25 h). Norvège : environ trois rencontres d'une heure (3 h), sans dates précisément identifiées.",
+      "countriesLabel": "Répartition des heures déclarées",
+      "franceLabel": "Vacances en France",
+      "germanyLabel": "Allemagne",
+      "norwayLabel": "Norvège (≈ 3 × 1 h)"
+    },
+    "advocacy": {
+      "eyebrow": "Témoignage personnel · démarches depuis 2017",
+      "heading": "Je n’ai jamais cessé de demander à voir ma fille.",
+      "lead": "Depuis le jugement du 31 mars 2017, j’ai poursuivi mes demandes de contact et engagé des démarches pendant des années. J’ai déposé plainte en France, en Norvège et en Allemagne. Malgré ces démarches, je n’ai pas pu construire une relation régulière avec ma fille.",
+      "emphasis": "Déposer plainte n’est pas élever son enfant. Mes démarches montrent que je n’ai pas cessé d’essayer.",
+      "countriesLabel": "Trois pays où des plaintes sont déclarées",
+      "countries": "France · Norvège · Allemagne",
+      "stepsLabel": "Des années de démarches pour maintenir le lien",
+      "requestTitle": "Demander à voir ma fille",
+      "requestBody": "Continuer à solliciter des rencontres et à chercher à exercer le droit de visite, malgré les difficultés signalées.",
+      "complaintsTitle": "Saisir les autorités",
+      "complaintsBody": "Déposer plainte en France, en Norvège et en Allemagne depuis le jugement de 2017, sans prétendre que chaque plainte a reçu la même suite.",
+      "consequenceTitle": "Ne pas pouvoir partager le quotidien",
+      "consequenceBody": "Selon mon témoignage, les rencontres sont restées rares et les recours n’ont pas suffi à rendre possible une relation parent-enfant régulière.",
+      "opinion": "À mes yeux, les autorités que j’ai saisies n’ont pas apporté une protection effective à notre vie familiale. Cette expérience m’amène à interroger le respect de l’État de droit et la place accordée aux droits des pères. C’est mon appréciation personnelle, non une constatation judiciaire visant tous les États.",
+      "evidenceNotice": "Ce témoignage relate des démarches et des contacts déclarés. Le dépôt d’une plainte ne prouve ni l’infraction alléguée ni l’issue de la procédure ; les dates et pièces sont à rapprocher des documents disponibles.",
+      "rightsIntro": "Le droit au respect de la vie familiale est notamment protégé par",
+      "rightsLink": "l’article 8 de la Convention européenne des droits de l’homme",
+      "jumpReference": "Lire les plaintes et références",
+      "jumpTimeline": "Explorer les dates du calendrier"
     }
   }
 }

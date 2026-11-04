@@ -6,20 +6,71 @@ La page Next.js `/nre` et ses variantes `/en/nre`, `/de/nre` et `/no/nre` utilis
 
 - **Historique** : 108 premiers week-ends mensuels, de mars 2017 à février 2026 (102 marqués « NRE » dans la table originelle et six exceptions). Il s'agit d'un inventaire publié par le propriétaire, **pas de 102 condamnations pénales ou constatations judiciaires**.
 - **Anomalie chronologique** : le week-end des 4–5 mars 2017 est antérieur à la décision du 31 mars 2017 invoquée comme base ; il est désormais affiché séparément « à vérifier » et exclu du calcul horaire.
-- **Extension** : génération déterministe des premiers week-ends complets jusqu'à la date actuelle de Paris. Au 31/10/2026 : huit nouveaux week-ends (mars–octobre 2026), classés **« à vérifier »**, jamais « NRE » par défaut. La date est réévaluée chaque minute côté navigateur pour éviter un calendrier figé lors d'un long intervalle sans déploiement.
+- **Extension** : génération déterministe des premiers week-ends complets jusqu'à la date actuelle de Paris (un dimanche n'est terminé qu'à partir du lundi 00 h 00, heure de Paris, y compris lors des changements d'heure). Au 31/10/2026 : huit nouveaux week-ends (mars–octobre 2026), classés **« à vérifier »**, jamais « NRE » par défaut. La date est réévaluée chaque minute côté navigateur pour éviter un calendrier figé lors d'un long intervalle sans déploiement.
 - **Contexte judiciaire déclaré** : suspension des visites en Allemagne signalée du 26/02/2026 au 25/02/2027, **texte intégral/dispositif non vérifié** ici. Ne pas présenter les mois suivants comme des refus illicites ni comme des visites judiciairement exigibles sans examen du titre applicable.
 - **Résultat à date** : 116 dates visibles, **101 NRE déclarées après le 31/03/2017**, six exceptions historiques, **une date antérieure** et **huit dates récentes à vérifier**.
 
-## Deux modèles horaires — à ne pas confondre
+## Plaintes déclarées depuis 2017
 
-1. **Heures théoriques des visites signalées manquées** : `101 × 10 h = 1 010 h`, en supposant applicable le rythme annoncé de 10 h le premier week-end mensuel. C'est un **indicateur d'inventaire**, sans reconstitution des horaires samedi/dimanche, et pas un montant d'heures juridiquement établi. Les six exceptions et les mois 2026 non vérifiés ne sont pas inclus dans les 101.
-2. **Durée civile écoulée** : compteur temps réel à partir du **6 juin 2015**, date utilisée dans le message historique. L'heure exacte du point de départ n'est pas connue ; le code utilise la convention `2015-06-06T00:00:00Z`, approximation à la journée. Ce temps **n'est pas une durée de droit de visite non exécuté**.
-3. **Déduction des heures effectives** : aucune durée exacte de présence n'est établie par les six exceptions ou par les « 61 jours ensemble » affichés dans l'ancien index. Convertir 61 jours en `61 × 24 h` serait arbitraire. Tant qu'aucune durée horaire n'est renseignée, le compteur net reste **« À renseigner »**. Le champ de saisie local calcule une estimation temporaire, en secondes, avec la durée effectivement indiquée ; il ne l'enregistre ni ne la transmet. Ne pas placer de données nominatives ou de calendrier privé dans le dépôt.
+La page indique désormais en première personne que des plaintes ont été déposées en **France, en Norvège et en Allemagne depuis le jugement du 31 mars 2017**. Le document français déjà présent reste lié ; il n'est pas présenté comme preuve d'une condamnation ou d'un résultat définitif.
+
+## Mise en récit des démarches répétées — novembre 2026
+
+**Objectif éditorial :** montrer qu'en dépit d'années de demandes de contact et de plaintes signalées en **France, Norvège et Allemagne** depuis le jugement du 31 mars 2017, l'auteur n'a pas pu construire une relation parent-enfant régulière selon son récit. Il ne s'agit ni d'un abandon du lien parental ni d'un déficit de démarches.
+
+- Nouveau composant `NreAdvocacy` en haut de page, avant les chiffres : message personnel en première personne, trois étapes **« demander à voir l'enfant → saisir les autorités → constater l'absence d'une vie familiale régulière »**, bandeau des **trois pays nommés**, liens vers les plaintes et le calendrier.
+- Les dates individuelles des plaintes autres que la pièce française existante ne sont **pas** inventées ; aucune chronologie de plainte par année, aucun volume de plaintes, aucun pays supplémentaire n'est prétendu vérifié. Les preuves pourront être ajoutées à partir de documents contrôlés.
+- La critique de l'**État de droit**, de la protection effective de la vie familiale et des **droits des pères** est présentée comme une appréciation personnelle, pas comme une décision de justice condamnant des États. Le document officiel de la plainte française demeure accessible ; le droit français de non-représentation reste lié à l'article 227-5 du Code pénal. Le lien à l'article 8 CEDH pointe vers le site de la Cour européenne des droits de l'homme.
+- L'ancienne note généralisante sur les rôles parentaux a été remplacée par un **témoignage recentré sur les démarches et leur résultat déclaré**, accessible sur demande dans un panneau dépliable ; le sens central est lisible sans déplier le panneau.
+- La confidentialité du mineur est conservée : **« ma fille »** dans la narration, aucun nom légal, adresse ou identifiant importé. Les traductions FR/EN/DE/NO conservent les mêmes champs.
+- Les **1 036 heures** restent un sous-total de présence indicatif (42 jours de vacances en France convertis en heures calendaires + 25 h Allemagne + ~3 h Norvège), jamais présenté comme preuve des heures exactes ou conséquence pénale.
+
+**À compléter après vérification documentaire :** associer chaque plainte à son pays, son éventuel numéro public, sa date et son état de procédure. **Ne jamais** afficher un tableau de plaintes annuelles prétendument exhaustif lorsque seuls les pays et la continuité des démarches sont connus. Une pièce accessible sur le site ne prouve pas à elle seule le résultat de la plainte.
+
+## Reconstitution indicative des périodes passées ensemble
+
+Ce calcul est fondé sur les dernières durées déclarées par le propriétaire, et non sur les **10 h mensuelles de visites prévues**, qui n'ont pas été effectivement respectées selon son récit.
+
+| Période | Hypothèse de calcul | Contribution au sous-total |
+| --- | --- | --- |
+| Vacances en France | Deux séjours d'une semaine + un séjour de quatre semaines = 42 jours ; convention de **24 h calendaires de présence par jour de séjour** | **1 008 h** |
+| Allemagne | Retrouvailles d'environ **1 h**, puis **un week-end ultérieur de 24 h** | **25 h** |
+| Norvège | Selon les précisions communiquées : **environ 3 rencontres × 1 h** ; les week-ends exacts restent inconnus et ne sont pas attribués à des mois du calendrier | **≈ 3 h** |
+| **Sous-total indicatif** | 1 008 h + 25 h + environ 3 h ; sous réserve de vérifier les recoupements | **≈ 1 036 h** |
+
+**Ce sous-total n'est pas un nombre d'heures actives vérifiées** : 24 h par journée de vacances signifie *présence/garde sur une journée civile*, y compris nuits et temps non partagés directement. Les trois séjours français n'ont pas encore de dates vérifiées ; les anciennes exceptions mentionnent des séjours de 14 jours, de quatre semaines, de 7 jours et de 10 jours, incompatibles avec une attribution automatique des deux semaines et des quatre semaines nouvelles. Il est donc interdit de les additionner séparément ou de prétendre qu'une ligne précise correspond nécessairement à un séjour français.
+
+Le calendrier historique contient six exceptions ; elles ne prouvent ni une heure de rencontre chacune, ni que tous les week-ends inventoriés ont donné lieu à une heure de contact. La visite de mars 2022 est mentionnée comme interrompue ; une visite honorée apparaît en novembre 2022, mais les dates des 1 h + 24 h allemandes ne sont pas confirmées en correspondance avec ces lignes.
+
+Le champ de saisie local reste supprimé. Le compteur en temps réel déduit **environ 1 036 h indicatives** de la durée civile depuis le 6 juin 2015 ; il affiche explicitement une **estimation partielle**, pas le temps de visite légalement perdu. Les quelque trois rencontres norvégiennes sont comptées **une seule fois dans le total**, sans inventer leur mois ni leur date ; les périodes de vacances ne sont pas recomptées comme visites ponctuelles.
+
+## Calendrier graphique — lecture des dates
+
+- La chronologie conserve ses années repliables et affiche pour chaque mois **le calendrier entier lundi–dimanche** : 28, 35 ou 42 cases selon le mois et son alignement, avec cases vides avant le premier et après le dernier jour.
+- Les **deux dates du premier samedi/dimanche** sont entourées et colorées selon le **statut historique** (NRE déclarée, rencontre signalée, ou situation à vérifier). Les libellés de mois, jours de semaine et états sont traduits en FR/EN/DE/NO.
+- Une **grille responsive** et deux filtres (« année » et « statut ») s'appliquent simultanément aux calendriers et au tableau de référence. L'absence de résultat est annoncée explicitement.
+- Chaque carte possède un **lien clavier « Voir la date détaillée »** qui cible la ligne exacte `#nre-AAAA-MM` dans le tableau imprimable. Les cartes conservent le statut en texte en plus de la couleur, l'indicateur graphique étant purement décoratif.
+- Aucun des trois contacts norvégiens de durée estimée à une heure n'est attribué à un mois sans date vérifiée ; les statuts judiciaires ne sont pas inférés du calendrier.
+- L'évolution du calendrier avec le temps et le filtrage ne doivent pas modifier le sous-total de **1 036 h indicatives**.
+- **3 novembre 2026 — UX ciblée :** chaque année repliée dispose d'un aperçu décoratif de **12 mois**, avec couleur/forme des statuts et dénombrements textuels courts, sans attribuer un pays entier à une année (les séjours français peuvent recouper des années dites « norvégiennes »).
+- Les filtres affichent désormais **le nombre exact de dates retenues**, avec annonce douce `aria-live="polite"` et bouton « Effacer les filtres » accessible au clavier, présent seulement lorsque nécessaire. Les mois hors inventaire restent visuellement neutres et ne doivent jamais être assimilés à un événement NRE.
+- Les trois cartes de synthèse utilisent trois colonnes sur grand écran (deux puis une sur écrans plus étroits), sans colonne visuellement vide. Les résumés d'années utilisent des libellés courts traduits FR/EN/DE/NO.
+- **Améliorations proposées, pas encore livrées :** test Playwright/axe sur mobile réel et en mode contraste forcé ; optimisation du rendu des 100+ mini-calendriers ; possibilité de distinguer les séjours de plusieurs jours des courts contacts lorsque les dates sont prouvées ; étude du repli du long tableau imprimable sans casser les ancres.
+
+
+## Contrôles et publications
+
+- Garder les libellés FR/EN/DE/NO alignés ; afficher les plaintes dans les trois pays sans leur attribuer un résultat judiciaire.
+- Conserver l'article 227-5 du Code pénal pour le seul contexte français.
+- Afficher environ **une heure** pour la rencontre ponctuelle ; distinguer les séjours longs, afin de ne pas leur attribuer fictivement une durée d'une heure.
+- Les dates des trois rencontres norvégiennes déclarées sont inconnues : le modèle conserve leur **nombre approximatif (3)** sans leur attribuer de dates ni modifier les statuts historiques.
+- Ne pas présenter la somme d'environ 1 036 heures comme une durée effectivement mesurée.
+- Pour établir le temps de présence réel, recouper dates de début/fin, pays et éventuels chevauchements avec des preuves privées sans reproduire d'identifiants protégés dans le site public.
 
 ## Validation
 
-- Moteur pur : `lib/nreVisitLedger.mjs` ; test `unit-tests/nreVisitLedger.test.mjs` (calendrier, dates 2026, statut juridique non automatique, calcul horaire, présence réellement renseignée, catalogues FR/EN/DE/NO).
-- Interface : `app/[locale]/nre/NreHistory.tsx`, `NreLiveHours.tsx`, `sections.tsx`, `page.module.css` ; filtre annuel, chronologie dépliable et tableau imprimable.
+- Moteur pur : `lib/nreVisitLedger.mjs` ; test `unit-tests/nreVisitLedger.test.mjs` (calendrier, dates 2026, grille du mois entier lundi–dimanche, jours hors mois, deux jours de week-end mis en évidence, hypothèses France/Allemagne/Norvège, dates norvégiennes inconnues, calcul sans saisie, catalogues FR/EN/DE/NO).
+- Interface : `app/[locale]/nre/NreHistory.tsx`, `NreLiveHours.tsx`, `sections.tsx`, `page.module.css` ; filtres année/statut, chronologie dépliable avec calendriers mensuels localisés, liens vers le tableau imprimable.
 - Recette navigateur : `tests/nre.spec.ts` et contrôles axe/Playwright déjà disponibles, à exécuter sur le **SHA candidat**. Ne pas confondre tests de modèle, build Next et recette navigateur.
 
 ## Points à vérifier avec les sources

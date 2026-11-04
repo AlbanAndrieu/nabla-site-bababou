@@ -36,7 +36,7 @@
 
 .stats {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--ui-space-md);
 }
 
@@ -237,4 +237,542 @@
  .yearDetails:not([open]) > .yearItems { display:flex !important; }
  .hoursInput { display:none; }
  .tableFilter { display:none; }
+}
+
+/* NRE page visual hierarchy; semantic colors follow the current theme. */
+.page { overflow-wrap: anywhere; }
+.page [id] { scroll-margin-top: 5rem; }
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  max-width: 72rem;
+  margin-bottom: clamp(1rem, 3vw, 2rem);
+  padding: clamp(2rem, 5vw, 4.5rem) clamp(1.2rem, 4vw, 3rem);
+  border: 1px solid var(--ui-border);
+  border-radius: clamp(1rem, 2.5vw, 1.7rem);
+  background: var(--ui-surface-muted);
+  box-shadow: 0 14px 42px rgb(15 23 42 / 7%);
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  inline-size: min(23rem, 60vw);
+  block-size: min(23rem, 60vw);
+  inset-block-start: -11rem;
+  inset-inline-end: -8rem;
+  border: clamp(2rem, 7vw, 5rem) solid var(--ui-info-border);
+  border-radius: 50%;
+  opacity: 0.24;
+  z-index: -1;
+  pointer-events: none;
+}
+.hero h1 { max-width: 22ch; margin-inline: auto; letter-spacing: -0.035em; }
+.hero > p { max-width: 64ch; line-height: 1.7; }
+.quickNav { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.65rem; margin-top: 1.7rem; }
+.quickNav a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding: 0.65rem 1rem;
+  border: 1px solid var(--ui-border);
+  border-radius: 999px;
+  background: var(--ui-surface);
+  color: var(--ui-text-primary);
+  font-weight: 650;
+  text-decoration: none;
+}
+.quickNav a:hover { border-color: var(--ui-info-border); text-decoration: underline; text-underline-offset: 3px; }
+.quickNav a:focus-visible, .methodology > summary:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
+.statCard { height: 100%; border-inline-start: 4px solid var(--ui-info-border); }
+.statCard > div { justify-content: center; padding: clamp(1rem, 2vw, 1.5rem); }
+.statCard span { color: var(--ui-text-secondary); line-height: 1.45; }
+.statTotal { border-inline-start-color: var(--ui-info-border); }
+.statMissed { border-inline-start-color: var(--ui-danger-text); }
+.statContact { border-inline-start-color: var(--ui-success-text); }
+.statReview { border-inline-start-color: var(--ui-warning-text); }
+.hoursPanel {
+  overflow: hidden;
+  padding: clamp(1.25rem, 3vw, 2.3rem);
+  border-radius: clamp(0.85rem, 2vw, 1.4rem);
+  background: var(--ui-surface-muted);
+}
+.hoursHeader { display: flex; align-items: flex-start; justify-content: space-between; gap: 1.2rem; }
+.hoursHeader h2 { margin-bottom: 0.55rem; }
+.hoursIntro { margin: 0; max-width: 67ch; color: var(--ui-text-secondary); line-height: 1.6; }
+.liveIndicator {
+  display: inline-flex; align-items: center; gap: 0.5rem; flex: none;
+  padding: 0.4rem 0.8rem; border: 1px solid var(--ui-border);
+  border-radius: 999px; background: var(--ui-surface);
+  font-size: 0.82rem; font-weight: 700;
+}
+.liveIndicator span { inline-size: 0.55rem; block-size: 0.55rem; border-radius: 50%; background: var(--ui-success-text); }
+.hoursNumbers { grid-template-columns: 1.2fr 1fr 1fr; margin-top: 1.5rem; }
+.hoursItem {
+  align-content: start;
+  min-width: 0;
+  padding: clamp(1rem, 2vw, 1.55rem);
+  border: 1px solid var(--ui-border);
+  border-radius: 0.9rem;
+  box-shadow: 0 3px 15px rgb(15 23 42 / 4%);
+}
+.hoursPrimary { border-block-start: 4px solid var(--ui-info-border); }
+.hoursLabel { color: var(--ui-text-secondary); font-weight: 650; font-size: 0.93rem; line-height: 1.45; }
+.hoursFigure { display: block; margin-top: 0.65rem; font-size: clamp(1.35rem, 2.7vw, 2.4rem); letter-spacing: -0.025em; }
+.hoursPrimary .hoursFigure { font-size: clamp(2.15rem, 4vw, 3.4rem); }
+.hoursFigure small { font-size: 0.47em; }
+.hoursDetail { color: var(--ui-text-secondary); font-size: 0.85rem; line-height: 1.5; margin-top: 0.4rem; }
+.hoursForm {
+  display: grid;
+  grid-template-columns: minmax(12rem, 19rem) minmax(0, 1fr);
+  align-items: center; gap: 0.7rem 1.5rem;
+  margin: 1.5rem 0; padding: 1.1rem;
+  border-radius: 0.75rem;
+  background: var(--ui-surface);
+  border: 1px solid var(--ui-border);
+}
+.hoursInput { margin: 0; }
+.hoursHint { margin: 0; }
+.methodology { border: 1px solid var(--ui-border); border-radius: 0.65rem; background: var(--ui-surface); }
+.methodology > summary { cursor: pointer; min-height: 2.75rem; padding: 0.85rem 1rem; font-weight: 700; }
+.methodologyBody { padding: 0 1rem 1.2rem; color: var(--ui-text-secondary); font-size: 0.91rem; line-height: 1.65; }
+.methodologyBody p { margin: 0.55rem 0; }
+.yearBlock {
+  display: grid;
+  grid-template-columns: 6.8rem minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(0.75rem, 2vw, 1.4rem);
+  padding: 1.1rem;
+  border: 1px solid var(--ui-border);
+  border-radius: 0.9rem;
+  background: var(--ui-surface);
+}
+.yearHeading { margin: 0 !important; display: flex; flex-direction: column; gap: 0.3rem; }
+.yearNumber { font-size: clamp(1.35rem, 3vw, 1.85rem); font-variant-numeric: tabular-nums; }
+.yearCountry { font-size: 1.45rem; }
+.yearDetails { min-width: 0; }
+.yearDetails > summary { display: flex; align-items: center; flex-wrap: wrap; gap: 0.4rem 1rem; padding: 0.7rem 0.9rem; }
+.yearSummaryCount { margin-inline-start: auto; color: var(--ui-text-secondary); font-size: 0.83rem; font-weight: 550; }
+.yearItems {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+  gap: 0.7rem;
+  padding: 0;
+  margin: 0;
+}
+.weekendCard {
+  display: flex; flex-direction: column; gap: 0.3rem; min-width: 0;
+  padding: 0.85rem;
+  border: 1px solid var(--ui-border);
+  border-inline-start: 3px solid var(--ui-border);
+  border-radius: 0.55rem;
+  background: var(--ui-surface-muted);
+}
+.weekendMissed { border-inline-start-color: var(--ui-danger-text); }
+.weekendContact { border-inline-start-color: var(--ui-success-text); }
+.weekendReview { border-inline-start-color: var(--ui-info-border); }
+.weekendMonth { color: var(--ui-text-secondary); font-size: 0.83rem; }
+.weekendDates { font-size: 1.4rem; font-variant-numeric: tabular-nums; }
+.weekendStatus { display: inline-flex; align-items: flex-start; gap: 0.4rem; line-height: 1.4; font-size: 0.79rem; overflow-wrap: anywhere; }
+.weekendStatus span { font-size: 1.05rem; }
+@media (max-width: 850px) {
+  .hoursNumbers { grid-template-columns: 1fr 1fr; }
+  .hoursPrimary { grid-column: 1 / -1; }
+  .hoursForm { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .hero { padding: 2rem 1.15rem; }
+  .hoursHeader { flex-direction: column; }
+  .hoursNumbers { grid-template-columns: 1fr; }
+  .hoursPrimary { grid-column: auto; }
+  .yearBlock { grid-template-columns: 1fr; }
+  .yearHeading { flex-direction: row; align-items: center; }
+  .yearSummaryCount { margin-inline-start: 0; }
+}
+@media print {
+  .hero, .yearBlock, .hoursPanel, .weekendCard { break-inside: avoid; box-shadow: none; }
+  .quickNav, .hoursForm, .methodology { display: none !important; }
+  .yearDetails:not([open]) > .yearItems { display: grid !important; }
+}
+@media (forced-colors: active) {
+  .hero, .yearBlock, .hoursPanel, .weekendCard, .hoursItem { border: 1px solid CanvasText; }
+}
+
+/* Compact Monday–Sunday calendars: the first Saturday/Sunday is visually
+ * highlighted, while status and complete date ranges remain readable text. */
+.yearItems {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: 0.9rem;
+}
+.weekendCard {
+  gap: 0.5rem;
+  padding: 1rem;
+  border-radius: 0.8rem;
+}
+.calendarStrip {
+  margin-block: 0.35rem;
+  padding: 0.65rem 0.35rem;
+  border: 1px solid var(--ui-border);
+  border-radius: 0.65rem;
+  background: var(--ui-surface);
+}
+.calendarWeekdays,
+.calendarDays {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.18rem;
+}
+.calendarWeekdays {
+  margin-bottom: 0.4rem;
+}
+.calendarWeekdays > span {
+  min-width: 0;
+  color: var(--ui-text-secondary);
+  font-size: 0.7rem;
+  font-weight: 650;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.calendarDay {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 1.75rem;
+  aspect-ratio: 1;
+  border-radius: 0.4rem;
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ui-text-secondary);
+}
+.calendarWeekend {
+  font-weight: 800;
+  border: 2px solid currentColor;
+}
+.weekendMissed .calendarWeekend {
+  background: var(--ui-danger-surface);
+  color: var(--ui-danger-text);
+}
+.weekendContact .calendarWeekend {
+  background: var(--ui-success-surface);
+  color: var(--ui-success-text);
+}
+.weekendReview .calendarWeekend {
+  background: var(--ui-surface-muted);
+  color: var(--ui-text-primary);
+  border-color: var(--ui-info-border);
+}
+@media (forced-colors: active) {
+  .calendarWeekend {
+    color: Highlight;
+    border: 2px solid Highlight;
+    forced-color-adjust: auto;
+  }
+}
+
+/* Country breakdown is legible even when the estimated Norway share is small. */
+.contactBreakdown {
+  display: grid;
+  gap: 0.45rem;
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0;
+}
+.contactBreakdown li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.8rem;
+  padding-block: 0.4rem;
+  border-bottom: 1px solid var(--ui-border);
+  font-size: 0.87rem;
+}
+.contactBreakdown strong {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Month overview: a complete, Monday-first calendar for every archived date. */
+.calendarFilters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 0.8rem 1.4rem;
+  padding: 1.1rem;
+  border: 1px solid var(--ui-border);
+  border-radius: 0.85rem;
+  background: var(--ui-surface-muted);
+}
+.calendarFilters .tableFilter { margin: 0; flex: 1 1 12rem; }
+.calendarFilters select { width: 100%; max-width: 100%; }
+.weekendCard { height: 100%; }
+.weekendMonth { color: var(--ui-text-primary); font-size: 1rem; font-weight: 720; text-transform: capitalize; }
+.weekendDates { font-size: 1.15rem; }
+.calendarStrip { margin-block: 0.45rem; }
+.calendarDays { row-gap: 0.28rem; }
+.calendarDay { min-height: 1.35rem; font-size: 0.78rem; }
+.calendarDetailLink {
+  display: inline-flex;
+  align-items: center;
+  align-self: start;
+  padding: 0.35rem 0;
+  min-height: 2.75rem;
+  margin-top: auto;
+  color: var(--ui-link, var(--ui-text-primary));
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  font-size: 0.86rem;
+  font-weight: 650;
+}
+.calendarDetailLink:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 3px;
+  border-radius: 0.2rem;
+}
+.calendarEmpty {
+  padding: 1.15rem;
+  border: 1px dashed var(--ui-border);
+  border-radius: 0.65rem;
+  color: var(--ui-text-secondary);
+  background: var(--ui-surface-muted);
+}
+.table tr:target td { outline: 2px solid var(--ui-info-border); outline-offset: -2px; }
+.table tr[id] { scroll-margin-block-start: 5rem; }
+@media (max-width: 600px) {
+  .calendarFilters { padding: 0.9rem; }
+  .calendarFilters .tableFilter { flex-basis: 100%; }
+}
+@media print {
+  .calendarFilters, .calendarDetailLink { display: none !important; }
+  .yearDetails .yearItems { display: grid !important; }
+}
+
+/* Filter feedback and a keyboard-accessible reset action. */
+.calendarFilterFeedback {
+  display: flex;
+  flex: 1 1 100%;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.65rem 1rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--ui-border);
+}
+.calendarResults {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  color: var(--ui-text-secondary);
+  font-size: 0.94rem;
+}
+.calendarResults strong { color: var(--ui-text-primary); font-variant-numeric: tabular-nums; }
+.calendarReset {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.85rem;
+  border: 1px solid var(--ui-border);
+  border-radius: 0.5rem;
+  background: var(--ui-surface);
+  color: var(--ui-text-primary);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+.calendarReset:hover { background: var(--ui-surface-muted); }
+.calendarReset:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
+
+/* Compact 12-month overview is decorative; the status counts stay textual. */
+.yearOverview {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  flex: 0 1 21rem;
+  width: 100%;
+  min-width: min(100%, 12rem);
+  gap: 0.2rem;
+  margin-top: 0.25rem;
+}
+.yearMonth {
+  display: block;
+  min-height: 0.9rem;
+  border: 1px solid var(--ui-border);
+  border-radius: 0.25rem;
+}
+.yearMonthEmpty { background: var(--ui-surface); }
+.yearMonthNre { background: var(--ui-danger-surface); border-color: var(--ui-danger-text); }
+.yearMonthContact { background: var(--ui-success-surface); border-color: var(--ui-success-text); }
+.yearMonthReview { background: var(--ui-surface-muted); border-color: var(--ui-info-border); }
+@media (forced-colors: active) {
+  .yearMonth { border-color: CanvasText; }
+  .yearMonthEmpty { border-style: dashed; }
+  .yearMonthContact { border-style: double; border-width: 2px; }
+  .yearMonthReview { border-style: dotted; }
+}
+@media print { .calendarReset { display: none !important; } }
+
+/* NRE advocacy: owner-attributed testimony is visually distinct from the
+ * evidentiary visit ledger; country badges do not imply case outcomes. */
+.advocacy {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: clamp(1.3rem, 3.2vw, 2.5rem);
+  border: 1px solid var(--ui-border);
+  border-radius: clamp(0.85rem, 2vw, 1.35rem);
+  background: var(--ui-surface-muted);
+}
+.advocacyHeader {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(13rem, 0.85fr);
+  align-items: start;
+  gap: clamp(1rem, 3vw, 2.3rem);
+}
+.advocacyEyebrow {
+  margin: 0 0 0.65rem;
+  font-size: 0.78rem;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  color: var(--ui-text-secondary);
+  text-transform: uppercase;
+}
+.advocacyCopy h2 {
+  max-width: 19ch;
+  font-size: clamp(1.65rem, 3.4vw, 2.8rem);
+  line-height: 1.14;
+  text-wrap: balance;
+  margin: 0 0 1rem;
+}
+.advocacyLead {
+  max-width: 68ch;
+  font-size: clamp(1rem, 1.6vw, 1.13rem);
+  line-height: 1.7;
+  margin: 0;
+}
+.advocacyEmphasis {
+  margin: 1.25rem 0 0;
+  border-inline-start: 0.25rem solid var(--ui-info-border);
+  padding: 0.75rem 1rem;
+  background: var(--ui-surface);
+  font-size: clamp(1rem, 1.8vw, 1.15rem);
+  font-weight: 750;
+  line-height: 1.5;
+}
+.advocacyCountries {
+  display: grid;
+  align-content: start;
+  gap: 0.7rem;
+  padding: 1.1rem;
+  border: 1px solid var(--ui-border);
+  border-radius: 0.85rem;
+  background: var(--ui-surface);
+}
+.advocacyCountries strong { font-size: 0.87rem; color: var(--ui-text-secondary); }
+.advocacyCountries > span { font-size: 1.15rem; line-height: 1.5; font-weight: 700; }
+.advocacyCountryFlags { display: flex; gap: 0.85rem; font-size: 1.75rem; }
+.advocacyStepsHeading {
+  font-size: clamp(1.05rem, 2vw, 1.3rem);
+  margin: 2.1rem 0 1rem;
+}
+.advocacySteps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.9rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.advocacySteps li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  min-width: 0;
+  padding: 1.15rem;
+  border: 1px solid var(--ui-border);
+  border-radius: 0.75rem;
+  background: var(--ui-surface);
+}
+.advocacyStepNumber {
+  flex: none;
+  font-size: 1.3rem;
+  line-height: 1.4;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.advocacySteps h4 { font-size: 1rem; line-height: 1.4; margin: 0 0 0.5rem; }
+.advocacySteps p { color: var(--ui-text-secondary); font-size: 0.9rem; line-height: 1.6; margin: 0; }
+.advocacyContext {
+  display: grid;
+  gap: 0.85rem;
+  margin-top: 1.35rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--ui-border);
+}
+.advocacyContext p { margin: 0; max-width: 95ch; line-height: 1.65; }
+.advocacyRights { font-size: 0.94rem; }
+.advocacyEvidence { color: var(--ui-text-secondary); font-size: 0.85rem; }
+.advocacyLinks { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1rem; }
+.advocacyLinks a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid var(--ui-border);
+  border-radius: 0.55rem;
+  background: var(--ui-surface);
+  color: var(--ui-text-primary);
+  text-underline-offset: 0.2em;
+  font-weight: 650;
+}
+.advocacyLinks a:hover { background: var(--ui-surface-muted); }
+.advocacyLinks a:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
+@media (max-width: 850px) {
+  .advocacyHeader { grid-template-columns: 1fr; }
+  .advocacyCountries { max-width: 32rem; }
+  .advocacySteps { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .advocacy { padding: 1.1rem; }
+  .advocacyCopy h2 { max-width: none; }
+  .advocacySteps li { padding: 0.9rem; }
+  .advocacyLinks a { width: 100%; }
+}
+@media print {
+  .advocacy, .advocacySteps li { break-inside: avoid; box-shadow: none; }
+  .advocacyLinks { display: none !important; }
+}
+@media (forced-colors: active) {
+  .advocacy, .advocacySteps li, .advocacyEmphasis, .advocacyCountries {
+    border: 1px solid CanvasText;
+  }
+}
+
+/* The longer personal note is optional: the core evidence remains visible. */
+.testimonyDetails {
+  border: 1px solid var(--ui-border);
+  border-radius: 0.7rem;
+  background: var(--ui-surface);
+}
+.testimonyDetails > summary {
+  display: list-item;
+  min-height: 2.75rem;
+  padding: 0.9rem 1rem;
+  cursor: pointer;
+  font-weight: 700;
+}
+.testimonyDetails > summary:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 3px;
+}
+.testimonyBody {
+  padding: 0 1rem 1.2rem;
+  border-top: 1px solid var(--ui-border);
+  line-height: 1.7;
+  max-width: 90ch;
+}
+.testimonyBody p { margin: 0.9rem 0; }
+@media print {
+  .testimonyDetails:not([open]) > .testimonyBody { display: block !important; }
 }

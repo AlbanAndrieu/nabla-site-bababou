@@ -2,39 +2,49 @@
   "nrePage": {
     "meta": {
       "title": "Umgangschronologie — erfasste NRE und noch zu prüfende Termine",
-      "description": "Historische Monatswochenenden seit 2017, zu prüfende Termine ab 2026 und ein Echtzeitzähler, der keine Kontaktstunden erfindet."
+      "description": "Seit dem Urteil von 2017: gemeldete Kontaktanträge und Anzeigen in Frankreich, Norwegen und Deutschland, persönlicher Bericht, Umgangskalender und Rechtsquellen."
     },
     "hero": {
       "eyebrow": "Umgangsrecht · 2017 bis heute",
       "title": "Nichtgewährung des Umgangs (NRE)",
-      "lead": "Erste Wochenenden jedes Monats mit gemeldeten ausgefallenen, durchgeführten oder teilweisen Kontakten und noch ungeklärten Zeiträumen. Neu erzeugte Termine sind keine strafrechtlichen Feststellungen."
+      "navigation": "Schnellnavigation",
+      "jumpHours": "Stundenübersicht",
+      "jumpTimeline": "Jahresübersicht",
+      "jumpTable": "Alle Termine"
     },
     "stats": {
       "heading": "Zusammenfassung",
       "total": "Erfasste Wochenende",
       "nre": "Gemeldete NRE (historisch)",
-      "exceptions": "Gewährter oder teilweiser Umgang",
-      "review": "Ungeklärt / vor der Entscheidung"
+      "exceptions": "Gewährter oder teilweiser Umgang"
     },
     "reference": {
-      "heading": "Beschwerdebezug",
-      "prefix": "Beschwerde wegen Nichtgewährung der Herausgabe eines Kindes nach dem französischen Strafgesetzbuch",
-      "article": "Artikel 227-5",
-      "filed": "Am 4. September 2023 in Nanterre bei der Staatsanwaltschaft, Gericht Valence (TGI Valence), eingereicht.",
-      "judgment": "Die Liste beginnt mit dem vollstreckbaren Urteil vom 31. März 2017. Der Sachverhalt wird hier nicht wiedergegeben; das amtliche Dokument bleibt die Quelle.",
-      "document": "Beschwerde TGI Valence, 4. September 2023 (PDF)"
+      "heading": "Anzeigen seit 2017 — Frankreich, Norwegen, Deutschland",
+      "prefix": "Seit dem Urteil vom 31. März 2017 habe ich in Frankreich, Norwegen und Deutschland Anzeigen erstattet. Diese Schritte sind Teil jahrelanger Versuche, den Kontakt zu meiner Tochter zu erhalten.",
+      "article": "Französisches Strafgesetzbuch, Artikel 227-5",
+      "filed": "Ein französisches Anzeigedokument ist unten verfügbar. Eine Anzeige bedeutet nicht, dass der Vorwurf gerichtlich bestätigt wurde.",
+      "judgment": "Zum französischen Strafrecht siehe",
+      "document": "Anzeigedokument aus Frankreich (PDF)"
     },
     "note": {
-      "heading": "Hinweis",
-      "p1": "Es heißt, wir würden gleich geboren, doch beim Gebären besteht diese Gleichheit aus Sicht des Autors nicht. Die Mutter könne den Geburtsort ohne Zustimmung des Vaters wählen.",
-      "p2": "Der Autor beschreibt seine Wahrnehmung, dass die Mutter alleinige elterliche Verantwortung und Betreuung erhalte und das Kind zur Erlangung von Rechten, Macht oder Geld einsetzen könne, ohne zur Rechenschaft gezogen zu werden.",
-      "p3": "Der Autor rät Vätern davon ab, Sozialdienste einzuschalten oder gegen eine gewalttätige und misshandelnde Mutter Anzeige zu erstatten, da er befürchtet, dass dies den Schutz und den Kontakt zum Kind weiter erschweren könne."
+      "heading": "Warum ich diese Bemühungen öffentlich mache",
+      "p1": "Ich veröffentliche diese Übersicht, um meine wiederholten Versuche, meine Tochter zu sehen, sichtbar zu machen. Nach meiner Darstellung beruht unsere Trennung weder auf Desinteresse noch auf dem Verzicht auf meine Verantwortung als Vater.",
+      "p2": "Ich habe über Jahre hinweg Anzeigen erstattet und Behörden in mehreren Ländern angerufen. Meiner Einschätzung nach haben die verfügbaren Mechanismen dennoch keinen regelmäßigen Kontakt sichergestellt und unsere familiäre Bindung nicht wirksam geschützt.",
+      "p3": "Ich möchte den Unterschied verdeutlichen zwischen dem Recht, Anträge zu stellen, einer Anzeige und der tatsächlichen Möglichkeit, am Leben des Kindes teilzuhaben. Dies sind meine persönlichen Ansichten; die rechtlichen Tatsachen müssen anhand der Entscheidungen und Akten geprüft werden.",
+      "expand": "Meinen Bericht weiterlesen"
     },
     "timeline": {
       "heading": "Zeitleiste nach Jahr",
       "lead": "Jedes Jahr zeigt die ersten Monatswochenenden. ✗ = historische NRE-Angabe, ✓ = gewährt oder teilweise, ? = ungeprüft. Spätere Termine werden nicht automatisch als Straftat eingeordnet.",
       "norway": "Norwegen, Oslo",
-      "germany": "Deutschland, Frankfurt"
+      "germany": "Deutschland, Frankfurt",
+      "viewDetails": "Datum in der Tabelle ansehen",
+      "empty": "Kein Wochenende entspricht den gewählten Filtern.",
+      "filters": "Kalenderfilter",
+      "datesShort": "Termine",
+      "missedShort": "als ausgefallen gemeldet",
+      "visitsShort": "Kontakte",
+      "reviewShort": "zu prüfen"
     },
     "location": {
       "heading": "Ort",
@@ -51,27 +61,59 @@
       "review": "Zu prüfen — Entscheidung/Kontakt ungeklärt",
       "beforeOrder": "Vor der Entscheidung vom 31. März 2017 — zu prüfen",
       "filterYear": "Nach Jahr filtern",
-      "filterAll": "Alle Jahre"
+      "filterAll": "Alle Jahre",
+      "filterStatus": "Wochenendstatus",
+      "filterAllStatuses": "Alle Status",
+      "resultsCount": "Angezeigte Termine",
+      "resetFilters": "Filter zurücksetzen"
     },
     "exceptions": {
       "heading": "Gemeldeter gewährter oder teilweiser Umgang",
-      "lead": "Die historische Seite nennt sechs Ausnahmen; die dort genannten Tage erlauben keine genaue Berechnung der tatsächlich miteinander verbrachten Stunden.",
-      "genericDetail": "Dokumentierte Ausnahme (gewährter oder teilweiser Umgang)."
+      "lead": "Sechs Kontaktzeiträume sind im Archiv aufgeführt: teils längere Aufenthalte, teils kurze Treffen. Die Urlaubsdaten müssen noch mit den Belegen abgeglichen werden.",
+      "genericDetail": "Gemeldetes kurzes Treffen: ungefähr eine Stunde.",
+      "extendedStay": "Längerer Aufenthalt gemeldet; ohne Abgleich der Überschneidungen keine zusätzliche Stunde zum Urlaub addieren.",
+      "otherWeekend": "Gemeldeter Besuch: Datum noch nicht dem separat berichteten 24-Stunden-Wochenende zugeordnet."
     },
     "hours": {
-      "heading": "Vergangene Zeit und Umgangsstunden — zwei verschiedene Größen",
+      "heading": "Gemeinsame Zeit — Schätzung aus gemeldeten Zeiträumen",
       "gross": "Vergangene Zeit seit dem 6. Juni 2015 (historischer Bezug)",
-      "nominal": "Rechnerische Stunden für historische NRE-Einträge (10 h / Wochenende)",
-      "net": "Vergangene Zeit abzüglich eingegebener tatsächlicher Kontaktstunden",
-      "actual": "Tatsächlich gemeinsam verbrachte Stunden (freiwillige lokale Eingabe)",
-      "actualHint": "Nur belegbare Stunden des persönlichen Kontakts eingeben. Die Eingabe wird nicht gespeichert, gesendet oder beim Neuladen erhalten. Die 61 Tage der alten Seite entsprechen nicht automatisch 1.464 Kontaktstunden.",
-      "scope": "Dieser Echtzeitzähler misst Kalenderzeit ab einem ungefähren Datum (UTC-Tagesbeginn; genaue Uhrzeit unbekannt). Er ist weder ein gerichtlich bestätigter NRE-Nachweis noch ein Nachweis ausgefallener Umgangsstunden.",
-      "source": "Die rechnerischen Stunden beruhen auf einer angegebenen Regelung von zehn Stunden am ersten Monatswochenende und nur auf historischen NRE-Einträgen nach der Entscheidung vom 31. März 2017. Tatsächliche Kontaktzeiten sind nicht bekannt.",
-      "unknown": "Noch nicht angegeben",
-      "review": "Zu prüfen",
+      "net": "Vergangene Zeit abzüglich der geschätzten Aufenthaltsdauer",
+      "scope": "In Frankreich werden zwei Aufenthalte von je sieben Tagen und einer von 28 Tagen mit 24 Stunden pro Anwesenheitstag angesetzt. Genaue Daten fehlen noch.",
+      "source": "In Deutschland wurden ein Wiedersehen von etwa einer Stunde und ein späteres Wochenende von etwa 24 Stunden gemeldet. In Norwegen werden ungefähr drei einstündige Treffen berichtet; ihre Daten sind unbekannt, daher werden sie nur einmal in der Gesamtschätzung und nicht einzelnen Kalenderkarten zugeordnet.",
       "refresh": "Die Uhr aktualisiert sich jede Sekunde; die Terminliste folgt dem aktuellen Pariser Datum.",
       "suspension": "Eine Aussetzung des Umgangs in Deutschland vom 26. Februar 2026 bis 25. Februar 2027 wurde berichtet; der genaue Beschluss ist hier nicht geprüft. Spätere Termine gelten nicht automatisch als NRE.",
-      "beforeOrder": "Der Eintrag März 2017 liegt vor der Entscheidung vom 31. März 2017 und muss geprüft werden."
+      "beforeOrder": "Der Eintrag März 2017 liegt vor der Entscheidung vom 31. März 2017 und muss geprüft werden.",
+      "intro": "Nach meiner Darstellung wurden die vorgesehenen zehn Stunden pro Wochenende nie eingehalten; seltene Treffen dauerten etwa eine Stunde.",
+      "live": "Live-Aktualisierung",
+      "netHint": "Unvollständige Schätzung: Die 42 französischen Urlaubstage sind kalendarische Anwesenheit, keine gemessene aktive Kontaktzeit. Drei undatierte norwegische Treffen sind enthalten.",
+      "methodology": "Berechnungsmethode und Überschneidungen prüfen",
+      "contactEstimate": "Zwischensumme der gemeldeten Anwesenheit (ungefähr)",
+      "contactEstimateHint": "Frankreich: 42 Urlaubstage mit je 24 Kalenderstunden (1.008 Std.). Deutschland: etwa 1 Std. Wiedersehen und ein Wochenende mit 24 Std. (25 Std.). Norwegen: ungefähr drei Treffen von je einer Stunde (3 Std.), genaue Daten unbekannt.",
+      "countriesLabel": "Aufteilung der gemeldeten Stunden",
+      "franceLabel": "Urlaub in Frankreich",
+      "germanyLabel": "Deutschland",
+      "norwayLabel": "Norwegen (≈ 3 × 1 Std.)"
+    },
+    "advocacy": {
+      "eyebrow": "Persönlicher Bericht · Bemühungen seit 2017",
+      "heading": "Ich habe nie aufgehört, darum zu bitten, meine Tochter zu sehen.",
+      "lead": "Seit dem Urteil vom 31. März 2017 habe ich über Jahre hinweg weiter um Kontakt gebeten und rechtliche Schritte unternommen. Ich habe in Frankreich, Norwegen und Deutschland Anzeigen erstattet. Trotz dieser Bemühungen konnte ich keine regelmäßige Beziehung zu meiner Tochter aufbauen.",
+      "emphasis": "Eine Anzeige zu erstatten bedeutet nicht, ein Kind großziehen zu können. Meine Schritte zeigen, dass ich nie aufgehört habe, es zu versuchen.",
+      "countriesLabel": "Drei Länder mit gemeldeten Anzeigen",
+      "countries": "Frankreich · Norwegen · Deutschland",
+      "stepsLabel": "Jahrelange Bemühungen, den Familienkontakt zu erhalten",
+      "requestTitle": "Meine Tochter sehen wollen",
+      "requestBody": "Weiter um Treffen bitten und versuchen, das Umgangsrecht trotz der geschilderten Hindernisse wahrzunehmen.",
+      "complaintsTitle": "Behörden einschalten",
+      "complaintsBody": "Seit dem Urteil von 2017 Anzeigen in Frankreich, Norwegen und Deutschland erstatten, ohne ein einheitliches Verfahrensergebnis zu behaupten.",
+      "consequenceTitle": "Vom gemeinsamen Alltag ausgeschlossen bleiben",
+      "consequenceBody": "Nach meiner Darstellung blieben Treffen selten, und die eingelegten Rechtsbehelfe führten nicht zu einer regelmäßigen Eltern-Kind-Beziehung.",
+      "opinion": "Meiner Ansicht nach haben die von mir angerufenen Behörden unser Familienleben nicht wirksam geschützt. Diese Erfahrung lässt mich die Rechtsstaatlichkeit und den Schutz der Rechte von Vätern hinterfragen. Das ist meine persönliche Einschätzung, keine gerichtliche Feststellung gegen sämtliche Staaten.",
+      "evidenceNotice": "Dieser Bericht schildert angegebene Schritte und Kontakte. Eine Anzeige beweist weder die behauptete Straftat noch einen bestimmten Verfahrensausgang; Daten und Dokumente müssen anhand der Akten geprüft werden.",
+      "rightsIntro": "Das Recht auf Achtung des Familienlebens ist insbesondere geschützt durch",
+      "rightsLink": "Artikel 8 der Europäischen Menschenrechtskonvention",
+      "jumpReference": "Anzeigen und Quellen lesen",
+      "jumpTimeline": "Kalender ansehen"
     }
   }
 }

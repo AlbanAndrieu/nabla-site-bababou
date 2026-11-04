@@ -2,39 +2,49 @@
   "nrePage": {
     "meta": {
       "title": "Contact and visitation chronology — recorded NRE and dates to review",
-      "description": "First-weekend inventory since 2017, with 2026 dates requiring review and a live separation clock that does not fabricate actual contact hours."
+      "description": "Since the 2017 judgment, reported contact requests and complaints in France, Norway and Germany: a personal account, contact calendar and legal sources."
     },
     "hero": {
       "eyebrow": "Contact rights · 2017 to today",
       "title": "Failure to present child (NRE)",
-      "lead": "First weekends of each month, events recorded as missed, honored or partial contact, and periods still awaiting verification. Newly generated dates are not automatically classified as criminal offenses."
+      "navigation": "Quick navigation",
+      "jumpHours": "Hours overview",
+      "jumpTimeline": "Browse years",
+      "jumpTable": "Full calendar"
     },
     "stats": {
       "heading": "Summary statistics",
       "total": "Listed weekend dates",
       "nre": "Recorded NRE (historical claims)",
-      "exceptions": "Honored or partial visits",
-      "review": "To verify / before order"
+      "exceptions": "Honored or partial visits"
     },
     "reference": {
-      "heading": "Complaint reference",
-      "prefix": "Complaint for failure to present a child under French Criminal Code",
-      "article": "Article 227-5",
-      "filed": "Filed on 4 September 2023 in Nanterre with the Prosecutor, Court of Valence (TGI Valence).",
-      "judgment": "The list starts from the enforceable judgment of 31 March 2017. Facts are not reproduced here; the official document remains the source.",
-      "document": "Complaint TGI Valence, 4 September 2023 (PDF)"
+      "heading": "Complaints filed since 2017 — France, Norway, Germany",
+      "prefix": "Since the judgment of 31 March 2017, I have filed complaints in France, Norway and Germany. These steps form part of years of attempts to maintain contact with my daughter.",
+      "article": "French Criminal Code, Article 227-5",
+      "filed": "A French complaint document appears below. Filing a complaint does not establish an outcome in any jurisdiction.",
+      "judgment": "For French criminal law, see",
+      "document": "Complaint document filed in France (PDF)"
     },
     "note": {
-      "heading": "Note",
-      "p1": "It is said that we are born equal, but we certainly do not give birth equally. The mother has every right to choose where to give birth, without the father’s consent.",
-      "p2": "She knows that whatever she does, she will have sole parental authority, exclusive custody, and the possibility to manipulate the child and use them to obtain rights, power, and money—without ever being held to account.",
-      "p3": "I advise any father against involving social services and filing a complaint against a violent and abusive mother. The result will be that you will never be able to protect your child and they will grow up without you."
+      "heading": "Why I am making these efforts visible",
+      "p1": "I am publishing this history to show my repeated attempts to see my daughter. In my account, our separation does not reflect a lack of interest or a decision to give up my responsibilities as a father.",
+      "p2": "I have filed complaints and approached authorities in several countries over many years. Yet I consider that the available mechanisms did not secure regular contact or effectively protect our family relationship.",
+      "p3": "I want to show the difference between having the right to make requests, filing a complaint, and actually being able to participate in a child’s life. These views are my own; judicial facts must be assessed against the decisions and records.",
+      "expand": "Read the rest of my account"
     },
     "timeline": {
       "heading": "Timeline by year",
       "lead": "Each year shows first weekends of the month. ✗ = recorded historical NRE claim, ✓ = honored or partial, ? = unverified date. Later dates are not automatically criminal findings.",
       "norway": "Norway, Oslo",
-      "germany": "Germany, Frankfurt"
+      "germany": "Germany, Frankfurt",
+      "viewDetails": "View date in the table",
+      "empty": "No weekend matches the selected filters.",
+      "filters": "Calendar filters",
+      "datesShort": "dates",
+      "missedShort": "reported missed",
+      "visitsShort": "contacts",
+      "reviewShort": "to review"
     },
     "location": {
       "heading": "Location",
@@ -51,27 +61,59 @@
       "review": "Review required — order/contact unverified",
       "beforeOrder": "Before cited 31 March 2017 decision — review",
       "filterYear": "Filter by year",
-      "filterAll": "All years"
+      "filterAll": "All years",
+      "filterStatus": "Weekend status",
+      "filterAllStatuses": "All statuses",
+      "resultsCount": "Dates shown",
+      "resetFilters": "Clear filters"
     },
     "exceptions": {
       "heading": "Reported honored or partial visits",
-      "lead": "Six exceptions are recorded in the historic page; neither the days shown nor their descriptions establish exact hours of effective contact.",
-      "genericDetail": "Documented exception (visitation honored or partial)."
+      "lead": "Six contact periods are listed in the archives: some involve longer stays, others brief meetings. Holiday dates still need reconciling with the documents.",
+      "genericDetail": "Reported brief meeting: approximately one hour.",
+      "extendedStay": "Longer stay reported; do not add an extra hour on top of holiday time without checking overlaps.",
+      "otherWeekend": "Reported visit: date not yet matched to the separately reported 24-hour weekend."
     },
     "hours": {
-      "heading": "Elapsed time and contact hours — two different measures",
+      "heading": "Time together — estimate from reported periods",
       "gross": "Elapsed time since 6 June 2015 (historical reference)",
-      "nominal": "Nominal hours for archived NRE entries (10 h / weekend)",
-      "net": "Elapsed time less manually recorded actual contact hours",
-      "actual": "Hours actually spent together (optional local input)",
-      "actualHint": "Enter only substantiated hours of physical contact. This value is not stored, transmitted or preserved on reload. The 61 days cited in the old page cannot automatically be treated as 1,464 hours of contact.",
-      "scope": "This live clock measures calendar time from an approximate date-only reference (UTC start of day; actual start time unknown). It is neither a court-verified NRE total nor proof of missed legal contact hours.",
-      "source": "Nominal hours apply an owner-reported 10 h first-weekend schedule only to historical rows marked NRE after the 31 March 2017 decision. Actual contact hours cannot be recovered from exception labels.",
-      "unknown": "Not yet entered",
-      "review": "Requires review",
+      "net": "Elapsed time minus the estimated subtotal of stays",
+      "scope": "In France, two stays of 7 days and one of 28 days are converted to 24 hours per day of presence; exact dates are not yet matched to the calendar.",
+      "source": "In Germany, a meeting of around 1 h and a later weekend of about 24 h are reported. In Norway, about three one-hour meetings are reported; their dates remain unknown, so they are included only once in the overall estimate, not assigned to calendar cards.",
       "refresh": "The timer updates each second. The month inventory is recalculated from the local Paris date.",
       "suspension": "A German contact suspension was reported from 26 February 2026 through 25 February 2027; the operative court order has not been verified here. Later dates are not labeled NRE.",
-      "beforeOrder": "The March 2017 row predates the cited 31 March 2017 decision and needs review."
+      "beforeOrder": "The March 2017 row predates the cited 31 March 2017 decision and needs review.",
+      "intro": "According to my account, the scheduled 10 hours per weekend were never respected; rare meetings lasted around one hour.",
+      "live": "Updating live",
+      "netHint": "Indicative and incomplete: the 42 French holiday days count calendar co-presence, not directly measured contact. Three undated Norwegian meetings are included.",
+      "methodology": "Calculation method and overlaps to review",
+      "contactEstimate": "Reported presence subtotal (approximate)",
+      "contactEstimateHint": "France: 42 holiday days counted as 24 h per calendar day (1,008 h). Germany: an approximately 1 h reunion and a 24 h weekend (25 h). Norway: approximately three one-hour meetings (3 h), with dates not yet identified.",
+      "countriesLabel": "Breakdown of reported hours",
+      "franceLabel": "Holidays in France",
+      "germanyLabel": "Germany",
+      "norwayLabel": "Norway (≈ 3 × 1 h)"
+    },
+    "advocacy": {
+      "eyebrow": "Personal account · efforts since 2017",
+      "heading": "I never stopped asking to see my daughter.",
+      "lead": "Since the judgment of 31 March 2017, I have continued requesting contact and pursuing remedies for years. I have filed complaints in France, Norway and Germany. Despite those efforts, I have not been able to build a regular relationship with my daughter.",
+      "emphasis": "Filing complaints is not the same as raising a child. My efforts show that I never stopped trying.",
+      "countriesLabel": "Three countries where complaints are reported",
+      "countries": "France · Norway · Germany",
+      "stepsLabel": "Years of efforts to preserve family contact",
+      "requestTitle": "Ask to see my daughter",
+      "requestBody": "Keep seeking meetings and attempting to exercise contact rights despite the reported obstacles.",
+      "complaintsTitle": "Contact the authorities",
+      "complaintsBody": "File complaints in France, Norway and Germany since the 2017 judgment, without assuming that each complaint led to the same outcome.",
+      "consequenceTitle": "Remain unable to share everyday life",
+      "consequenceBody": "According to my account, meetings remained rare and the remedies pursued did not secure a regular parent-child relationship.",
+      "opinion": "In my view, the authorities I contacted did not provide effective protection of our family life. This experience raises questions for me about the rule of law and the protection of fathers’ rights. This is my personal assessment, not a judicial finding against all states.",
+      "evidenceNotice": "This account describes reported actions and contact. Filing a complaint does not establish the alleged offence or the outcome of a case; dates and documents must be checked against available records.",
+      "rightsIntro": "The right to respect for family life is protected in particular by",
+      "rightsLink": "Article 8 of the European Convention on Human Rights",
+      "jumpReference": "Read complaints and references",
+      "jumpTimeline": "Explore the calendar"
     }
   }
 }
