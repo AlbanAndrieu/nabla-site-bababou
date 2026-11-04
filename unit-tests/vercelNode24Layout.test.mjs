@@ -39,6 +39,34 @@ test("unlisted locale segments never create dynamic SSR pages", () => {
   assert.match(proxy, /!isHomeCutoverEnabled\(\)/);
 });
 
+test("public legal and NRE pages prerender without disabling browser counters", () => {
+  const layout = read("app/[locale]/layout.tsx");
+  assert.match(layout, /export const dynamicParams = false/);
+  assert.match(layout, /generateStaticParams/);
+  for (const path of [
+    "app/[locale]/central-authorities/page.tsx",
+    "app/[locale]/central-authorities-documents/page.tsx",
+    "app/[locale]/central-authorities-failures/page.tsx",
+    "app/[locale]/nre/page.tsx",
+    "app/[locale]/policy/[policy]/page.tsx",
+    "app/[locale]/home-preview/page.tsx",
+  ]) {
+    const page = read(path);
+    assert.match(page, /export const dynamic = "force-static"/, path);
+    assert.match(page, /setRequestLocale/, path);
+  }
+  assert.match(read("app/[locale]/nre/NreLiveHours.tsx"), /window.setInterval/);
+  assert.match(read("app/[locale]/policy/[policy]/page.tsx"), /export const dynamicParams = false/);
+
+  // Protect review/cutover and private routes from being made static or public.
+  const root = read("app/[locale]/page.tsx");
+  const proxy = read("proxy.ts");
+  assert.doesNotMatch(root, /export const dynamic = "force-static"/);
+  assert.match(root, /isHomeCutoverEnabled/);
+  assert.match(proxy, /isTrustedHomelabIpv4/);
+  assert.match(proxy, /!isHomeCutoverEnabled/);
+});
+
 test("legacy homepage remains a proxy rewrite rather than an unreviewed Next page", () => {
   const proxy = read("proxy.ts");
   assert.match(proxy, /request\.nextUrl\.pathname === "\/"/);
