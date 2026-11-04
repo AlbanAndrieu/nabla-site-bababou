@@ -25,6 +25,20 @@ test("localized routes retain independent HTML root and Next global 404", () => 
   assert.match(read("next.config.mjs"), /globalNotFound: true/);
 });
 
+test("unlisted locale segments never create dynamic SSR pages", () => {
+  const layout = read("app/[locale]/layout.tsx");
+  const policy = read("app/[locale]/policy/[policy]/page.tsx");
+  const nre = read("app/[locale]/nre/page.tsx");
+  assert.match(layout, /export const dynamicParams = false/);
+  assert.match(layout, /return routing\\.locales\\.map\\(\\(locale\\) => \\(\\{ locale \\}\\)\\)/);
+  assert.match(policy, /export const dynamicParams = false/);
+  assert.match(nre, /export const dynamicParams = false/);
+  // The IP allowlist and the fail-closed editorial cutover stay in the proxy.
+  const proxy = read("proxy.ts");
+  assert.match(proxy, /isTrustedHomelabIpv4/);
+  assert.match(proxy, /!isHomeCutoverEnabled\\(\\)/);
+});
+
 test("legacy homepage remains a proxy rewrite rather than an unreviewed Next page", () => {
   const proxy = read("proxy.ts");
   assert.match(proxy, /request\.nextUrl\.pathname === "\/"/);
