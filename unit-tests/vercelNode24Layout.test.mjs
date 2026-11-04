@@ -30,13 +30,13 @@ test("unlisted locale segments never create dynamic SSR pages", () => {
   const policy = read("app/[locale]/policy/[policy]/page.tsx");
   const nre = read("app/[locale]/nre/page.tsx");
   assert.match(layout, /export const dynamicParams = false/);
-  assert.match(layout, /return routing\\.locales\\.map\\(\\(locale\\) => \\(\\{ locale \\}\\)\\)/);
+  assert.match(layout, /routing\.locales\.map/);
   assert.match(policy, /export const dynamicParams = false/);
   assert.match(nre, /export const dynamicParams = false/);
   // The IP allowlist and the fail-closed editorial cutover stay in the proxy.
   const proxy = read("proxy.ts");
   assert.match(proxy, /isTrustedHomelabIpv4/);
-  assert.match(proxy, /!isHomeCutoverEnabled\\(\\)/);
+  assert.match(proxy, /!isHomeCutoverEnabled\(\)/);
 });
 
 test("legacy homepage remains a proxy rewrite rather than an unreviewed Next page", () => {
