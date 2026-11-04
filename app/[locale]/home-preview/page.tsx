@@ -9,6 +9,8 @@ import { homeAudienceCopy, fathersAudiencePath } from "@/lib/homeAudienceCopy.mj
 import styles from "./page.module.css";
 
 /** Review-only homepage for Éléonore; never index until separately approved. */
+// Public, review-only content is generated at build time, never per request.
+export const dynamic = "force-static";
 export async function generateMetadata({ params }: PageProps<"/[locale]/home-preview">): Promise<Metadata> {
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) return { robots: { index: false, follow: false } };
