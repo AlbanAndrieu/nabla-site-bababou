@@ -19,6 +19,9 @@ import {
   type PolicyPageSlug,
 } from "@/lib/policyPages";
 
+// Public editorial data is versioned with the deployment; no request-time SSR required.
+export const dynamic = "force-static";
+
 export const dynamicParams = false;
 
 export function generateStaticParams() {
