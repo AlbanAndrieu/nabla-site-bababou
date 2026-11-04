@@ -11,6 +11,10 @@ import ThemeBootstrap from "@/components/ThemeBootstrap";
 import { routing } from "@/i18n/routing";
 import { localizedSiteMetadata } from "@/lib/siteSocialMetadata";
 
+// Every supported language is known at build time. Unknown locales must
+// fail closed rather than generating new SSR work for crawlers and probes.
+export const dynamicParams = false;
+
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
