@@ -78,6 +78,15 @@ Pour chaque **pièce**, conserver dans une base chiffrée accessible au seul pro
 4. Vérifier manuellement les résultats RAG contre l'original et ses pages. Le LLM ne peut ni attribuer une décision judiciaire, ni inventer une date, ni décider de publier. Considérer le contenu ingéré comme **non fiable** (prompt injection, instructions embarquées dans les PDF, HTML et courriels).
 5. Après caviardage **irréversible**, revue légale et approbation du propriétaire, exporter **uniquement** le sous-ensemble de métadonnées publiques conforme au schéma. Publication par PR/Draft, privacy gate, revue de diff et approbation du propriétaire. Jamais de synchronisation directe et automatique OpenRAG → site public.
 
+## Point d'attention sur l'existant public : plainte française en PDF
+
+**Blocage P0 avant de revendiquer une consultation sécurisée :** la page NRE actuelle conserve un lien direct vers une plainte française sous `/assets/plainte-procureur-tgi-valence-04-08-2023-1.pdf`. **Ce chemin est un asset public**, et une protection Access appliquée à une nouvelle passerelle privée **ne le protégerait pas**.
+
+- Auditer le fichier actuel, ses données de mineur, signatures, métadonnées PDF et éventuels identifiants ; vérifier également les versions historiques et les caches de diffusion.
+- Obtenir l'arbitrage éditorial et juridique du propriétaire avant de retirer ou caviarder une pièce probatoire déjà volontairement publiée. Ne pas supprimer silencieusement une preuve.
+- Si une diffusion restreinte est décidée : conserver l'original privé, produire une copie caviardée validée, retirer le fichier original du répertoire `public/`, supprimer les liens publics, purger les caches/CDN et vérifier le statut HTTP des anciennes URLs. `noindex` **ne protège pas le contenu**.
+- Tant que cet audit n'est pas clos, **le nouveau registre ne doit pas prétendre que toutes les preuves déjà publiées sont désormais privées**. Sa garantie concerne uniquement les nouveaux champs et l'absence de nouvelle pièce liée dans le registre.
+
 ## Demande d'accès : parcours recommandé
 
 - **Maintenant (statique, fermé)** : le visiteur indique la **référence publique** et sa qualité (avocat, autorité, association, autre) via le **Contact existant**. Ne pas demander d'envoi de pièces personnelles via un formulaire public. Aucune donnée documentaire privée n'est exposée.
