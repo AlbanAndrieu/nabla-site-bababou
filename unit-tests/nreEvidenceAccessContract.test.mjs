@@ -12,6 +12,7 @@ test("the explanatory route is native Next, localized, canonical and has one mai
   const catalog = read("lib/sitePageCatalog.ts");
   assert.match(page, /<main id="main-content"/);
   assert.match(page, /generateStaticParams/);
+  assert.match(page, /dynamic = "force-static"/);
   assert.match(page, /pageAlternates\("evidence-access"/);
   assert.match(page, /images: \[\]/);
   assert.match(page, /assertPublicEvidenceRegister\(publicRegister\)/);

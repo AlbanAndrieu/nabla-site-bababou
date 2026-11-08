@@ -12,6 +12,7 @@ import { pageAlternates } from "@/lib/sitePageCatalog";
 import type { NrePageCopy } from "../nre/sections";
 import styles from "../nre/page.module.css";
 
+export const dynamic = "force-static";
 export const dynamicParams = false;
 
 export function generateStaticParams() {
