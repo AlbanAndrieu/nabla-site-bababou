@@ -10,7 +10,8 @@
       "navigation": "Schnellnavigation",
       "jumpHours": "Stundenübersicht",
       "jumpTimeline": "Jahresübersicht",
-      "jumpTable": "Alle Termine"
+      "jumpTable": "Alle Termine",
+      "jumpRegister": "Belegregister"
     },
     "stats": {
       "heading": "Zusammenfassung",
@@ -114,6 +115,24 @@
       "rightsLink": "Artikel 8 der Europäischen Menschenrechtskonvention",
       "jumpReference": "Anzeigen und Quellen lesen",
       "jumpTimeline": "Kalender ansehen"
+    },
+    "register": {
+      "heading": "Register der Schritte und Belegverweise",
+      "intro": "Dieses Register trennt gemeldete Anzeigen und Kontaktanfragen von Unterlagen, die erst nach Prüfung zugeordnet werden. Weder Anzahlen von Anzeigen noch unbekannte Einzeldaten werden erfunden.",
+      "privateNotice": "Nur öffentliche Metadaten · Originale und OpenRAG-Index bleiben privat",
+      "france": "Frankreich — gemeldete Anzeigen",
+      "norway": "Norwegen — gemeldete Anzeigen",
+      "germany": "Deutschland — gemeldete Anzeigen",
+      "contactRequests": "Wiederholte Kontaktanfragen",
+      "complaintReported": "Anzeige seit dem Urteil von 2017 gemeldet; Datum, Behörde und Ergebnis sind noch zu belegen.",
+      "requestsReported": "Kontaktanfragen über mehrere Jahre gemeldet; genaue Daten und Empfänger sind noch zu belegen.",
+      "pendingProof": "Noch keine geprüfte öffentliche Belegreferenz verknüpft",
+      "reviewedProof": "Geprüfte Referenz; Zugang zum Dokument nur mit Genehmigung",
+      "requestOnly": "auf Anfrage",
+      "requestHeading": "Zugang zu einem Beleg beantragen",
+      "requestInstructions": "Auf der Kontaktseite öffentliche Referenz, Rolle und Zweck der Einsichtnahme mitteilen. Dokumente sind auf dieser Website nicht direkt abrufbar; jede Herausgabe wird einzeln geprüft.",
+      "requestLink": "Beleg über Kontakt anfragen",
+      "disclaimer": "Anzeigen und Kontaktprobleme beruhen auf Angaben des Autors; strafrechtliche Feststellungen oder Verfahrensausgänge werden nicht unterstellt."
     }
   }
 }

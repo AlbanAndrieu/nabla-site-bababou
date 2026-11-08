@@ -10,7 +10,8 @@
       "navigation": "Quick navigation",
       "jumpHours": "Hours overview",
       "jumpTimeline": "Browse years",
-      "jumpTable": "Full calendar"
+      "jumpTable": "Full calendar",
+      "jumpRegister": "Evidence register"
     },
     "stats": {
       "heading": "Summary statistics",
@@ -114,6 +115,24 @@
       "rightsLink": "Article 8 of the European Convention on Human Rights",
       "jumpReference": "Read complaints and references",
       "jumpTimeline": "Explore the calendar"
+    },
+    "register": {
+      "heading": "Record of steps taken and evidence references",
+      "intro": "This register separates reported complaints and contact requests from documents that may be linked after review. It invents no complaint counts or unknown individual dates.",
+      "privateNotice": "Public metadata only · originals and OpenRAG index remain private",
+      "france": "France — reported complaints",
+      "norway": "Norway — reported complaints",
+      "germany": "Germany — reported complaints",
+      "contactRequests": "Repeated requests for contact",
+      "complaintReported": "Complaint reported since the 2017 judgment; exact date, authority and outcome remain to be documented.",
+      "requestsReported": "Contact requests reported over several years; specific dates and recipients remain to be documented.",
+      "pendingProof": "No reviewed public evidence reference linked yet",
+      "reviewedProof": "Reviewed public reference; document access requires approval",
+      "requestOnly": "on request",
+      "requestHeading": "Request access to evidence",
+      "requestInstructions": "Use the Contact page to provide the public reference, your role and the purpose of access. Documents are not directly available on this site; every disclosure requires individual review.",
+      "requestLink": "Contact to request evidence",
+      "disclaimer": "Complaints and difficulties maintaining contact are reported by the author; no criminal finding or procedural outcome is presumed."
     }
   }
 }

@@ -204,6 +204,24 @@ test.describe("NRE React migration", () => {
   });
 
 
+  test("public evidence register contains only four declared steps, no private document access", async ({ page }) => {
+    for (const { path } of localeCases) {
+      await page.goto(path);
+      const register=page.getByTestId("nre-evidence-register");
+      await expect(register.locator(":scope > li")).toHaveCount(4);
+      for (const jurisdiction of ["FR","NO","DE","MULTI"]) {
+        await expect(register.locator(`li[data-country="${jurisdiction}"]`)).toHaveCount(1);
+      }
+      const section=page.locator("#nre-register");
+      await expect(section.getByRole("link")).toHaveCount(1);
+      const href=await section.getByRole("link").getAttribute("href");
+      expect(href?.endsWith("/contact#contact-details")).toBe(true);
+      await expect(section).not.toContainText(/OPENRAG_API_KEY|originalObjectKey|privatePath/);
+      await expect(section.locator('a[href*="openrag"], a[href$=".pdf"], a[href*="r2.cloudflarestorage.com"]')).toHaveCount(0);
+      await expect(section).toContainText("2017");
+    }
+  });
+
   test("the long-running effort to maintain contact is clearly presented in all languages", async ({ page }) => {
     for (const { path } of localeCases) {
       await page.goto(path);

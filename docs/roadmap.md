@@ -51,3 +51,17 @@ Ne lancer une recette navigateur que si les binaires et la cible autorisée sont
 
 **Documents pérennes** : [parité et écarts](homepage-migration-parity.md) · [GO/NO-GO et rollback](homepage-react-cutover.md) · [opérations et incidents](operations.md) · [confidentialité](publication-redaction.md) · [couverture sécurité](security-audit-coverage-ledger.md).
 
+
+## Architecture probatoire NRE / OpenRAG — préparation du 8 novembre 2026
+
+**Début de réalisation dans une PR Draft séparée après fusion de #258** : `data/nre-evidence.public.json` contient uniquement les déclarations publiques initiales (contacts répétés, plaintes signalées FR/NO/DE), sans fichier de preuve lié, et `docs/nre-evidence-openrag-access.md` décrit la chaîne de confiance et les contrôles nécessaires.
+
+| Priorité | Travail restant | Critère de réussite |
+| --- | --- | --- |
+| **P0 — registre public contrôlé** | Vérifier les 4 entrées initiales, leur schéma fail-closed, l'affichage multilingue et les tests de confidentialité. | Tests Node/Playwright et privacy gate exact-SHA ; aucune API OpenRAG ni preuve privée embarquée. |
+| **P1 — inventaire privé et ingestion** | Sur l'infrastructure personnelle, recenser les originaux, empreintes, types, dates, juridictions et pièces ; exécuter Docling en local, OCR et conserver la provenance page. | Original inchangé, copie caviardée distincte, chaîne de conservation et journaux vérifiables. |
+| **P2 — OpenRAG interne** | Vérifier le mode réel d'authentification OpenRAG/OpenSearch, la confidentialité des chunks, les ACL, l'isolation du corpus familial et les secrets. Interdire tout accès direct d'un tiers. | Accès croisé impossible ; clés et données privées jamais dans le navigateur ou le build public. |
+| **P3 — accès sur demande** | Déployer une passerelle privée derrière Cloudflare Tunnel + Access, IdP MFA, justification et approbation temporaire, avec autorisation par référence et version de document. | Démontrer `401` anonyme, `403` hors périmètre, révocation/expiration, audit, caviardage et refus par défaut. |
+| **P4 — synchronisation publique manuelle** | Produire à partir d'OpenRAG des références non sensibles, avec revue juridique et humaine avant PR ; ne jamais synchroniser automatiquement originaux/chunks. | Concordance des pièces/pagination, aucun identifiant protégé, contrôle éditorial et publication autorisée. |
+
+Ne pas mettre en production les endpoints privés ni activer de partage de documents sans validation explicite de la politique d'accès et tests du scénario de révocation. Les points P1–P4 sont **préparés uniquement**, pas exécutés sur TrueNAS/Cloudflare/OpenRAG.

@@ -10,7 +10,8 @@
       "navigation": "Hurtignavigasjon",
       "jumpHours": "Timeoversikt",
       "jumpTimeline": "Årsoversikt",
-      "jumpTable": "Alle datoer"
+      "jumpTable": "Alle datoer",
+      "jumpRegister": "Bevisregister"
     },
     "stats": {
       "heading": "Nøkkeltall",
@@ -114,6 +115,24 @@
       "rightsLink": "artikkel 8 i Den europeiske menneskerettskonvensjonen",
       "jumpReference": "Les anmeldelser og kilder",
       "jumpTimeline": "Se kalenderen"
+    },
+    "register": {
+      "heading": "Register over tiltak og bevisreferanser",
+      "intro": "Dette registeret skiller oppgitte anmeldelser og samværshenvendelser fra dokumenter som kan knyttes til dem etter kontroll. Antall anmeldelser og ukjente enkeltdatoer blir ikke funnet på.",
+      "privateNotice": "Bare offentlige metadata · originaler og OpenRAG-indeks forblir private",
+      "france": "Frankrike — oppgitte anmeldelser",
+      "norway": "Norge — oppgitte anmeldelser",
+      "germany": "Tyskland — oppgitte anmeldelser",
+      "contactRequests": "Gjentatte ønsker om samvær",
+      "complaintReported": "Anmeldelse oppgitt siden dommen i 2017; eksakt dato, myndighet og utfall må dokumenteres.",
+      "requestsReported": "Samværshenvendelser oppgitt over flere år; datoer og mottakere må dokumenteres.",
+      "pendingProof": "Ingen kontrollert offentlig bevisreferanse koblet til ennå",
+      "reviewedProof": "Kontrollert referanse; dokumentet krever godkjenning for innsyn",
+      "requestOnly": "på forespørsel",
+      "requestHeading": "Be om tilgang til dokumentasjon",
+      "requestInstructions": "Bruk Kontaktsiden og oppgi offentlig referanse, rolle og formålet med innsyn. Dokumenter er ikke direkte tilgjengelige på nettstedet; hver utlevering vurderes særskilt.",
+      "requestLink": "Kontakt for å be om dokumentasjon",
+      "disclaimer": "Anmeldelser og vansker med samvær er oppgitt av forfatteren; ingen strafferettslig avgjørelse eller prosessresultat forutsettes."
     }
   }
 }

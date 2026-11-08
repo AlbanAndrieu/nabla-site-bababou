@@ -10,6 +10,7 @@ import { loadNreLegacyRows } from "@/lib/nreLegacyData";
 import { localizedPageMetadata } from "@/lib/siteSocialMetadata";
 import { NreAdvocacy, NreHero, type NrePageCopy } from "./sections";
 import NreHistory from "./NreHistory";
+import NreEvidenceRegister from "./NreEvidenceRegister";
 import styles from "./page.module.css";
 
 export const dynamicParams = false;
@@ -45,6 +46,7 @@ export default async function NrePage({ params }: PageProps<"/[locale]/nre">) {
         <Container>
           <NreHero copy={copy} />
           <NreAdvocacy copy={copy} />
+          <NreEvidenceRegister copy={copy} locale={locale as AppLocale} />
           <NreHistory copy={copy} legacyRows={rows} locale={locale as AppLocale} buildDate={new Date().toISOString()} />
         </Container>
       </main>

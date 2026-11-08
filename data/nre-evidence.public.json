@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "visibility": "public-metadata-only",
+  "entries": [
+    {
+      "id": "NRE-CLAIM-CONTACT-001",
+      "kind": "contact-request",
+      "jurisdiction": "MULTI",
+      "reportedSince": "2017-03-31",
+      "eventDate": null,
+      "datePrecision": "unknown",
+      "assertionStatus": "owner-reported",
+      "evidenceStatus": "unlinked",
+      "publicProofRefs": []
+    },
+    {
+      "id": "NRE-CLAIM-FR-001",
+      "kind": "complaint",
+      "jurisdiction": "FR",
+      "reportedSince": "2017-03-31",
+      "eventDate": null,
+      "datePrecision": "unknown",
+      "assertionStatus": "owner-reported",
+      "evidenceStatus": "unlinked",
+      "publicProofRefs": []
+    },
+    {
+      "id": "NRE-CLAIM-NO-001",
+      "kind": "complaint",
+      "jurisdiction": "NO",
+      "reportedSince": "2017-03-31",
+      "eventDate": null,
+      "datePrecision": "unknown",
+      "assertionStatus": "owner-reported",
+      "evidenceStatus": "unlinked",
+      "publicProofRefs": []
+    },
+    {
+      "id": "NRE-CLAIM-DE-001",
+      "kind": "complaint",
+      "jurisdiction": "DE",
+      "reportedSince": "2017-03-31",
+      "eventDate": null,
+      "datePrecision": "unknown",
+      "assertionStatus": "owner-reported",
+      "evidenceStatus": "unlinked",
+      "publicProofRefs": []
+    }
+  ],
+  "proofs": []
+}
