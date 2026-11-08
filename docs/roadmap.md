@@ -11,6 +11,8 @@
 | [#262](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/262) — Registre NRE/OpenRAG | **Draft, non fusionnée** ; schéma public seulement, 0 pièce privée liée | Revue juridique/privacy + tests i18n, aucune connexion ou exposition OpenRAG directe |
 | Publication Vercel | **BLOCKED** par suspension Hobby (du 3 novembre, reprise annoncée le 3 décembre sauf intervention support) | Vérifier la réponse du support, SHA exact, absence de SSR public non nécessaire, CPU avant/après, sécurité HTTP réelle |
 
+**Ordre d'intégration :** finaliser le prérendu [#260](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/260), puis **rebaser #262** : les deux PR modifient `app/[locale]/nre/page.tsx`. Conserver simultanément `dynamic = "force-static"`, les contrôles de confidentialité et le registre public approuvé. #261 est indépendant et ne justifie pas un contournement DAST. Les contrôles locaux doivent être rejoués après rebase.
+
 **Décision :** ne pas assimiler la fusion d'une PR, un `READY` ancien ou un test structurel à une publication réussie. Ne pas activer automatiquement le remplacement de `/` ; le verrou éditorial exact-SHA demeure obligatoire. Ne pas dégrader les contrôles de confidentialité pour réduire les coûts.
 
 ## État réel et règles
