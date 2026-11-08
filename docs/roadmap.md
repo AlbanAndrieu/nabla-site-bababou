@@ -1,6 +1,17 @@
 # Roadmap active — Site Bababou
 
-**Consolidation : 31 octobre 2026.** Source de référence : `master@714adef448f398e270d4b0004a3214975b71ff8a`, inspectée dans GitHub. La [PR #253](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/253) est **fusionnée** ; la [PR #254](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/254) (dépendance `follow-redirects`) est ouverte et indépendante de cette roadmap. La compilation `READY` obtenue sur l'ancien SHA `624dc24f` n'est **pas** une recette de production du `master` courant.
+**Consolidation : 8 novembre 2026.** Référence vérifiée : `master@b24338ae5dd4e382618fe4ed95bba20a8c9121b9`. Les preuves anciennes (31 octobre, SHA `714adef` et Preview `624dc24f`) sont historiques et ne valident pas la production actuelle. L'équipe Vercel Hobby est suspendue : HTTP 402 confirmé sur la production ; demande de réactivation anticipée envoyée, issue inconnue.
+
+## P0 — Réduction CPU Vercel et suites de PR (blocage plateforme)
+
+| PR / composant | État au 8 novembre | Prochaine preuve exigée |
+| --- | --- | --- |
+| [#260](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/260) — SSG NRE, autorités centrales, politiques et prévisualisation | **Draft, non fusionnée** ; `force-static` dans le code, audit `scripts/verify-next-prerender.mjs` ajouté | `npm run build` puis audit du manifeste `.next/prerender-manifest.json`, test Node 24 exact-SHA ; aucune fuite NRE |
+| [#261](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/261) — DAST 402 | **Draft, non fusionnée** ; le [run #42208333773](https://github.com/AlbanAndrieu/nabla-site-bababou/actions/runs/42208333773) obtient HTTP 402 avant ZAP | Contrat, `actionlint` et DAST réel après restauration ; **pas de PASS sans rapport** |
+| [#262](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/262) — Registre NRE/OpenRAG | **Draft, non fusionnée** ; schéma public seulement, 0 pièce privée liée | Revue juridique/privacy + tests i18n, aucune connexion ou exposition OpenRAG directe |
+| Publication Vercel | **BLOCKED** par suspension Hobby (du 3 novembre, reprise annoncée le 3 décembre sauf intervention support) | Vérifier la réponse du support, SHA exact, absence de SSR public non nécessaire, CPU avant/après, sécurité HTTP réelle |
+
+**Décision :** ne pas assimiler la fusion d'une PR, un `READY` ancien ou un test structurel à une publication réussie. Ne pas activer automatiquement le remplacement de `/` ; le verrou éditorial exact-SHA demeure obligatoire. Ne pas dégrader les contrôles de confidentialité pour réduire les coûts.
 
 ## État réel et règles
 
