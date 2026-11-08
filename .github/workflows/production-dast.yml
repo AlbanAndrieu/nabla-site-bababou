@@ -99,6 +99,14 @@ jobs:
               "$BASE_URL/")"
             mitigated="$(awk 'BEGIN { IGNORECASE=1 } /^x-vercel-mitigated:/ { sub(/^[^:]+:[[:space:]]*/, ""); sub(/\r$/, ""); print; exit }' "$headers")"
 
+            # HTTP 402 is a platform/account gate, not a ZAP vulnerability.
+            # A second bypass token cannot resolve a suspended Vercel team.
+            if [[ "$status" == "402" ]]; then
+              echo "DAST_BLOCKER=vercel-http-402" >> "$GITHUB_ENV"
+              echo "::error::VERCEL_DAST_HTTP_402: Production returned HTTP 402 (team quota/account pause likely). OWASP ZAP did not execute; check Vercel team Usage."
+              rm -f "$headers"
+              exit 1
+            fi
             if [[ "$status" == "429" || "${mitigated,,}" == "challenge" ]]; then
               echo "::warning::$auth_name reached the Vercel Security Checkpoint (HTTP $status)."
               rm -f "$headers"
@@ -266,6 +274,7 @@ jobs:
             echo "- Target: $BASE_URL"
             echo "- Associated SHA: \`$DEPLOYED_SHA\`"
             echo "- Vercel auth: \`${ZAP_AUTH_MODE}\`"
+            echo "- Preflight blocker: ${DAST_BLOCKER:-none}"
             echo "- Policy: \`.zap/rules.tsv\`"
             echo "- Alerts: **H$high M$medium L$low I$informational**"
             echo "- Raw report: **runner-local only**; only minimized SARIF is uploaded"
@@ -292,6 +301,7 @@ jobs:
           STATUS_SHA: ${{ env.DEPLOYED_SHA }}
           PREFLIGHT_OUTCOME: ${{ steps.preflight.outcome }}
           ZAP_OUTCOME: ${{ steps.zap.outcome }}
+          DAST_BLOCKER: ${{ env.DAST_BLOCKER }}
           SCAN_EXIT_CODE: ${{ env.ZAP_SCAN_EXIT_CODE }}
           REPORT_AVAILABLE: ${{ steps.summary.outputs.report_available }}
           SAFE_REPORT_OUTCOME: ${{ steps.safe-report.outcome }}
@@ -305,7 +315,10 @@ jobs:
         run: |
           set -euo pipefail
           counts="H${HIGH:-?} M${MEDIUM:-?} L${LOW:-?} I${INFO:-?}"
-          if [[ "$PREFLIGHT_OUTCOME" != "success" ]]; then
+          if [[ "$DAST_BLOCKER" == "vercel-http-402" ]]; then
+            STATE=failure
+            DESCRIPTION="Production DAST blocked: Vercel HTTP 402"
+          elif [[ "$PREFLIGHT_OUTCOME" != "success" ]]; then
             STATE=failure
             DESCRIPTION="Production ZAP preflight failed"
           elif [[ "$ZAP_OUTCOME" == "success" && "$SAFE_REPORT_OUTCOME" == "success" && "$SAFE_UPLOAD_OUTCOME" == "success" ]]; then
