@@ -87,6 +87,22 @@ Pour chaque **pièce**, conserver dans une base chiffrée accessible au seul pro
 - Si une diffusion restreinte est décidée : conserver l'original privé, produire une copie caviardée validée, retirer le fichier original du répertoire `public/`, supprimer les liens publics, purger les caches/CDN et vérifier le statut HTTP des anciennes URLs. `noindex` **ne protège pas le contenu**.
 - Tant que cet audit n'est pas clos, **le nouveau registre ne doit pas prétendre que toutes les preuves déjà publiées sont désormais privées**. Sa garantie concerne uniquement les nouveaux champs et l'absence de nouvelle pièce liée dans le registre.
 
+## Page publique et configuration Cloudflare Access — 8 novembre 2026
+
+La migration Next.js ajoute **`/evidence-access`**, **`/en/evidence-access`**, **`/de/evidence-access`** et **`/no/evidence-access`**. Les quatre routes possèdent une copie native, une URL canonique et des hreflang via le catalogue `evidence-access` ; sitemap et navigation clavier partagent le registre de routes. Le parcours affiché est : **référence publique → authentification + MFA → justification et approbation temporaire → contrôle documentaire pièce par pièce**.
+
+**Liens préparés, sans origin privé :**
+- `/evidence-access#NRE-CLAIM-FR-001` pour les démarches ; les autres pays et les demandes de contact suivent les mêmes identifiants non nominatifs ;
+- après revue, `/evidence-access#NRE-PROOF-0001` pour une future notice caviardée, jamais pour le PDF brut ;
+- `/contact#contact-details` pour demander la consultation (variantes préfixées EN/DE/NO).
+- Le site **n'a aucun lien effectif vers une passerelle documentaire** et affiche honnêtement « accès en préparation ». Une référence ne devient pas automatiquement un document accessible.
+
+Le fichier **`infra/cloudflare/nre-evidence-access.tf`** est une configuration Terraform **désactivée par défaut** (`nre_access_enabled=false`) et documentée par **`infra/cloudflare/README.md`**. La politique est `Allow` **seulement pour des emails individuels pré-enregistrés**, avec MFA indépendant `security_key` ou `totp`, durée MFA `0m` (nouvelle demande à chaque connexion), justification et approbation temporaire, session d'application de **15 min**, sans règle Everyone, sans Bypass.
+
+La politique ne doit pas être appliquée tant que le hostname n'est pas un vrai service de consultation, que Cloudflare Tunnel `Protect with Access` et la passerelle ACL n'ont pas été validés. **Cloudflare Access ne garantit pas une autorisation par document** et l'approbation JIT doit être suivie du contrôle `subject → référence → version caviardée → expiration` côté passerelle.
+
+**Publication :** les routes Next peuvent être préparées et testées avant le portail, mais un lien brut vers OpenRAG, un bucket ou une URL signée est interdit. Le registre ne publie aucun nom légal de mineur, chemin privé, hash d'original ou contenu Docling.
+
 ## Demande d'accès : parcours recommandé
 
 - **Maintenant (statique, fermé)** : le visiteur indique la **référence publique** et sa qualité (avocat, autorité, association, autre) via le **Contact existant**. Ne pas demander d'envoi de pièces personnelles via un formulaire public. Aucune donnée documentaire privée n'est exposée.

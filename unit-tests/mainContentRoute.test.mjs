@@ -11,6 +11,7 @@ const pages = [
   ["central-authorities", ["central-authorities"]],
   ["contact", ["contact"]],
   ["email", ["email"]],
+  ["evidence-access", ["evidence-access"]],
   ["link", ["link"]],
   ["nre", ["nre"]],
   ["policy/[policy]", ["policy", "privacy_policy"]],

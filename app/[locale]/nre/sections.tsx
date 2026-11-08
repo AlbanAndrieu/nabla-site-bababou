@@ -29,6 +29,42 @@ export type NrePageCopy = {
     jumpReference: string;
     jumpTimeline: string;
   };
+  access: {
+    metaTitle: string;
+    metaDescription: string;
+    eyebrow: string;
+    heading: string;
+    intro: string;
+    pending: string;
+    navigation: string;
+    contact: string;
+    backToRegister: string;
+    processHeading: string;
+    step1Title: string;
+    step1Body: string;
+    step2Title: string;
+    step2Body: string;
+    step3Title: string;
+    step3Body: string;
+    step4Title: string;
+    step4Body: string;
+    catalogHeading: string;
+    catalogIntro: string;
+    france: string;
+    norway: string;
+    germany: string;
+    contactRequests: string;
+    entryDetails: string;
+    notYetLinked: string;
+    reviewedRef: string;
+    reviewedHeading: string;
+    noApprovedProofs: string;
+    requestOnly: string;
+    securityHeading: string;
+    securityBody: string;
+    existingPublicPdf: string;
+    noAutomaticApproval: string;
+  };
   register: {
     heading: string;
     intro: string;
@@ -45,6 +81,8 @@ export type NrePageCopy = {
     requestHeading: string;
     requestInstructions: string;
     requestLink: string;
+    openRecord: string;
+    accessGuide: string;
     disclaimer: string;
   };
   stats: {

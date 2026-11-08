@@ -125,7 +125,7 @@ test("realtime clock never invents actual-contact hours",()=>{
 });
 
 test("all four native languages have complete dashboard/status/filter copy",()=>{
- const names=["meta","hero","advocacy","stats","reference","note","timeline","table","exceptions","hours"];
+ const names=["meta","hero","advocacy","register","access","stats","reference","note","timeline","table","exceptions","hours"];
  const objects=locales.map(locale=>JSON.parse(read("messages/nre/"+locale+".json")).nrePage);
  for(const name of names){
   const expected=Object.keys(objects[0][name]).sort();

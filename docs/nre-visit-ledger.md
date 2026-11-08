@@ -81,3 +81,9 @@ Le champ de saisie local reste supprimé. Le compteur en temps réel déduit **e
 - La revue éditoriale et les mesures de confidentialité exigées par `.agents/skills/protect-family-privacy/SKILL.md`.
 
 **Référence normative française** : [Code pénal, art. 227-5](https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006418025) ; l'étiquette « NRE » dans un calendrier personnel ne suffit pas à établir à elle seule l'infraction.
+
+## Navigation probatoire sécurisée — préparation du 8 novembre 2026
+
+La page native NRE référence désormais le registre `/nre#nre-register`. Les quatre versions de la nouvelle page `/evidence-access` (FR/EN/DE/NO) expliquent la demande de consultation et préparent des **liens vers des fiches publiques de références**, et non des URLs de documents privés. Les références publiques `NRE-CLAIM-*` et `NRE-PROOF-*` ne sont pas des numéros de plainte. Aucune pièce OpenRAG n'est exposée, l'origine privée n'est pas joignable depuis le site, et l'activation Access requiert une décision distincte.
+
+**Protection cible** : politique Cloudflare Access à liste d'identités nominatives, MFA et approbation temporaire, puis autorisation granulaire sur chaque copie caviardée. **La plainte française historiquement publique reste à auditer** : la future politique n'en restreint pas l'accès a posteriori. Source de vérité : `docs/nre-evidence-openrag-access.md`.

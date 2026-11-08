@@ -1,0 +1,8 @@
+# Never commit Terraform state, identities, approval lists or local secrets.
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json
+crash.log
+crash.*.log

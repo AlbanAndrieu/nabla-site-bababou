@@ -30,7 +30,9 @@ export default function NreEvidenceRegister({
   copy, locale,
 }: { copy: NrePageCopy; locale: AppLocale }) {
   const t = copy.register;
-  const contactHref = `${locale === "fr" ? "" : `/${locale}`}/contact#contact-details`;
+  const prefix = locale === "fr" ? "" : `/${locale}`;
+  const contactHref = `${prefix}/contact#contact-details`;
+  const guideHref = `${prefix}/evidence-access`;
   const titles: Record<PublicClaim["jurisdiction"], string> = {
     FR: t.france, NO: t.norway, DE: t.germany, MULTI: t.contactRequests,
   };
@@ -52,6 +54,7 @@ export default function NreEvidenceRegister({
               <h3>{titles[entry.jurisdiction]}</h3>
             </div>
             <p className={styles.registerReference}>{entry.id}</p>
+            <a className={styles.registerGuideLink} href={`${guideHref}#${entry.id}`}>{t.openRecord}</a>
             <p>{entry.kind === "contact-request" ? t.requestsReported : t.complaintReported}</p>
             <p className={styles.registerStatus}>
               {entry.evidenceStatus === "unlinked" ? t.pendingProof : t.reviewedProof}
@@ -62,7 +65,7 @@ export default function NreEvidenceRegister({
                   const proof = proofs.find(item => item.id === ref);
                   return proof ? (
                     <li key={ref}>
-                      <strong>{ref}</strong> — {proof.title[locale]} · {t.requestOnly}
+                      <a href={`${guideHref}#${ref}`}>{ref}</a> — {proof.title[locale]} · {t.requestOnly}
                     </li>
                   ) : null;
                 })}
@@ -77,7 +80,10 @@ export default function NreEvidenceRegister({
           <p>{t.requestInstructions}</p>
           <p className={styles.registerFootnote}>{t.disclaimer}</p>
         </div>
-        <a className={styles.registerRequestLink} href={contactHref}>{t.requestLink}</a>
+        <nav className={styles.registerActions} aria-label={t.requestHeading}>
+          <a className={styles.registerRequestLink} href={guideHref}>{t.accessGuide}</a>
+          <a className={styles.registerRequestLink} href={contactHref}>{t.requestLink}</a>
+        </nav>
       </div>
     </section>
   );
