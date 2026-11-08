@@ -99,3 +99,28 @@ test("Vercel installs the same pinned npm 12 as mise before npm ci", () => {
   );
   assert.match(JSON.parse(read("package.json")).engines.npm, /^>=12\.2\.0 <13$/);
 });
+
+test("production prerender manifest audit detects missing or ISR legal routes", async () => {
+  const { auditPrerenderManifest, STATIC_LOCALES, STATIC_SLUGS } = await import(
+    "../scripts/verify-next-prerender.mjs"
+  );
+  const routes = {};
+  for (const locale of STATIC_LOCALES) {
+    for (const slug of STATIC_SLUGS) {
+      const route = locale === "fr" ? "/" + slug : "/" + locale + "/" + slug;
+      routes[route] = { initialRevalidateSeconds: false };
+    }
+  }
+  const manifest = { version: 4, routes };
+  assert.equal(auditPrerenderManifest(manifest).passed, true);
+  manifest.routes["/fr/nre"] = manifest.routes["/nre"];
+  delete manifest.routes["/nre"];
+  assert.equal(auditPrerenderManifest(manifest).passed, true);
+  delete manifest.routes["/en/nre"];
+  manifest.routes["/de/policy/privacy_policy"].initialRevalidateSeconds = 60;
+  const invalid = auditPrerenderManifest(manifest);
+  assert.equal(invalid.passed, false);
+  assert.deepEqual(invalid.missing, ["en:nre"]);
+  assert.deepEqual(invalid.notStatic, ["/de/policy/privacy_policy"]);
+  assert.throws(() => auditPrerenderManifest({}), /prerender-manifest/);
+});
