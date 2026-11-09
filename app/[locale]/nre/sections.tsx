@@ -64,6 +64,12 @@ export type NrePageCopy = {
     securityBody: string;
     existingPublicPdf: string;
     noAutomaticApproval: string;
+    sitewideHeading: string;
+    sitewideIntro: string;
+    sitewideReference: string;
+    sitewideInstructions: string;
+    sitewideWithoutReference: string;
+    sitewidePublicNotice: string;
   };
   register: {
     heading: string;

@@ -1,22 +1,23 @@
-# Roadmap active — Site Bababou (consolidée au 8 novembre 2026)
+# Roadmap active — Site Bababou (consolidée au 9 novembre 2026)
 
-> État audité à partir de `master@b24338a` et de la PR Draft **#262**, ouverte après fusion de **#258**. Ne pas confondre source GitHub, tests d'exécution, Preview et production ; l'état de validation est lié à un SHA.
+> État audité à partir de `master@4bfb32ac` : les PR **#258, #260, #261 et #262** sont fusionnées ; la demande documentaire site-wide est préparée dans une nouvelle PR Draft. Ne pas confondre source GitHub, tests d'exécution, Preview et production ; l'état de validation est lié à un SHA.
 
 ## P0 transversal — blocage Vercel et consommation CPU
 
 La dernière revue du dépôt signale **une suspension du projet Vercel Hobby avec réponses HTTP 402** depuis le 3 novembre 2026 ; la reprise annoncée au 3 décembre et la demande au support doivent être **revérifiées**, sans déduire d'un HTTP 402 une défaillance du code.
 
-- [PR #260](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/260) : **Draft ouverte** ; génération statique (SSG) NRE, autorités centrales et pages juridiques, `force-static` et audit `scripts/verify-next-prerender.mjs`. La clôture exige le manifeste Next `.next/prerender-manifest.json`, profil CPU et tests exact-SHA ; pas de preuve de bascule sans exécution.
-- [PR #261](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/261) : **Draft ouverte** ; qualification du HTTP 402 avant DAST/ZAP, sans transformer une absence de scan en succès de sécurité.
-- **PR #262** (présente branche) : page explicative d'accès, registre documentaire et politique Cloudflare Access à activation explicite ; **sans ouverture des pièces**.
-- Ne pas fusionner automatiquement les trois PR ni déclencher des CI coûteuses tant que la plateforme ne permet pas de produire une preuve exploitable. Préserver SAST/SCA/ZAP, la version Node 24 et le verrou de bascule exact-SHA.
+- [PR #260](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/260) : **fusionnée** ; génération statique (SSG) NRE, autorités centrales et pages juridiques, `force-static` et audit `scripts/verify-next-prerender.mjs`. La clôture exige le manifeste Next `.next/prerender-manifest.json`, profil CPU et tests exact-SHA ; pas de preuve de bascule sans exécution.
+- [PR #261](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/261) : **fusionnée** ; qualification du HTTP 402 avant DAST/ZAP, sans transformer une absence de scan en succès de sécurité.
+- **PR #262 fusionnée** : page explicative d'accès, registre documentaire et politique Cloudflare Access **désactivée** ; aucun accès aux pièces n'a été ouvert.
+- Ne pas déclencher de CI coûteuse sans preuve exploitable de disponibilité de la plateforme et ne fusionner aucune nouvelle PR automatiquement. Préserver SAST/SCA/ZAP, la version Node 24 et le verrou de bascule exact-SHA.
 
 ## État des migrations
 
 | Domaine | Situation vérifiée dans le code | Reste à faire pour clôturer |
 | --- | --- | --- |
 | **NRE React / i18n** | Page React Next FR/EN/DE/NO, calendrier mensuel, filtres, registre public déclaratif, approche des heures de contact et référence juridique ; **#258 fusionnée** | Exécuter tests navigateurs et revue éditoriale exacte des pièces |
-| **Page explicative preuves** | Dans la **PR Draft #262** : `/evidence-access` (FR) et `/en`, `/de`, `/no` ; liens par identifiant public, référencement SEO, guide Cloudflare Access ; aucun téléchargement privé | Tests exact-SHA, déploiement et validation avant annonce de mise en ligne |
+| **Page explicative preuves** | Sur **master après fusion #262** : `/evidence-access` (FR) et `/en`, `/de`, `/no` ; liens par identifiant public, référencement SEO, guide Cloudflare Access ; aucun téléchargement privé | Tests exact-SHA, déploiement et validation avant annonce de mise en ligne |
+| **Demandes sur tous les documents liés** | Nouvelle PR Draft : script commun Next + HTML historique, références `SITE-DOC-*`, guide public et résolveur local sans fuite de lien source | Tests Node/Playwright, revue a11y, inventaire des documents externes non reconnus et vérification de toutes les pages |
 | **Docling → OpenRAG** | Contrats, modèle probatoire, manuel et contrôles préparés uniquement ; aucun document privé connecté par cette PR | Inventaire privé et traitement sur TrueNAS, audit OpenRAG/OpenSearch, séparation des corpus |
 | **Cloudflare Access** | Terraform **désactivé par défaut**, application self-hosted, allowlist nominative, MFA et approbation temporaire préparés | Vérifier IdP, Tunnel, hostname, protection origine, appliquer avec autorisation, tests 401/403/révocation ; ne pas publier de lien privé avant GO |
 | **Homepage React** | Home/Abduction React et pages de revue existent ; la racine `/` reste intentionnellement sur `public/index.html` tant que `isHomeCutoverEnabled()` refuse la bascule | Parité visuelle/contenu et publication propriétaire approuvée : **pas de bascule automatique** |
@@ -38,15 +39,30 @@ La dernière revue du dépôt signale **une suspension du projet Vercel Hobby av
 
 ## Livrables conservés comme sources de vérité
 
+- `docs/sitewide-document-access.md` : comportement transversal de demande de copie et risques des assets publics.
 - `docs/nre-evidence-openrag-access.md` : architecture, objets publics/privés, provenance, processus d'autorisation, audit du PDF déjà public et critères GO/NO-GO.
 - `infra/cloudflare/README.md` et `infra/cloudflare/nre-evidence-access.tf` : activation future de Cloudflare Access, avec politique **désactivée par défaut**.
 - `data/nre-evidence.public.json` + `lib/nrePublicEvidence.mjs` : registre public à validation restrictive ; **aucun document lié** par défaut.
 - `docs/nre-visit-ledger.md` : calcul et limites des heures déclarées, calendriers et explications légales.
 - `docs/homepage-migration-parity.md` et `docs/homepage-react-cutover.md` : parité, décision et rollback de la homepage.
-- GitHub PR #258 (fusionnée) et #262 (Draft), commits et logs : détails historiques, sans recopier des diagnostics déjà retrouvables dans Git.
+- GitHub PR #258, #260, #261 et #262 (fusionnées), commits et logs : détails historiques, sans recopier des diagnostics déjà retrouvables dans Git.
 
 ## État de validation à la consolidation
 
 Le lot initial #262 a fait l'objet de contrôles **structurels** via GitHub, pas d'un build local ni d'une preuve d'exécution sécurisée sur TrueNAS. L'extension Access/page explicative doit encore obtenir ses propres validations au SHA final. Aucun changement de politique, de DNS, de Tunnel ou d'OpenRAG n'est effectué par l'ajout des seuls fichiers de code et d'infrastructure inerte.
 
 **GO/NO-GO :** publication de la nouvelle page publique possible uniquement après tests et revue ; **NO-GO** sur le partage privé et la bascule de la homepage tant que les préconditions propres à ces deux périmètres ne sont pas remplies.
+
+## Parcours documentaire global — 9 novembre 2026
+
+**Objectif :** permettre de demander une copie d'un **document lié depuis n'importe quelle page du site**, sans exposer les URL privées et sans altérer les documents volontairement publics. Spécification : [sitewide-document-access.md](sitewide-document-access.md).
+
+| Priorité | Statut préparé | Validation restante |
+| --- | --- | --- |
+| **P0 — audit de publication** | Liens d'archives et fichiers documentaires publics identifiés comme catégorie de risque, sans suppression. | Classification juridique, audit PDF/Office et métadonnées, éventuelle décision de retrait/caviardage, purge CDN. |
+| **P1 — CTA transversal** | Détection sélective des documents PDF/Office, archives HTML `/ca/` et liens de fournisseurs reconnus ; doublon « Demander une copie » ajouté sans remplacer l'original. | Vérifier les cas de documents sans extension et les exceptions explicitement marquées, en FR/EN/DE/NO. |
+| **P2 — guide et traçabilité** | Guide `/evidence-access?doc=SITE-DOC-*#request-documents`, référence opaque, recours au Contact et résolveur local. | Tester que la référence suffit à identifier le lien public sans divulguer URL, query secrets ou pièce privée ; revue RGPD. |
+| **P3 — sécurité réelle** | La configuration Cloudflare Access issue de #262 reste **désactivée**. | Installer puis tester Tunnel, MFA, approbation temporaire, passerelle ACL par document, copies caviardées et révocation ; ne pas annoncer portail actif avant GO. |
+| **P4 — qualité et migration** | Convergence des pages Next et HTML historiques par le même module JS, sans modifier la homepage 404 protégée. | Node 24/npm 12, typecheck, lint, privacy gates, Playwright/axe multi-navigateurs, qualité de pré-rendu et tests exact-SHA sur Preview accessible. |
+
+**Ne pas confondre** demande de copie et accès effectif à un document. La diffusion actuelle de fichiers sous `public/` reste indépendante de Cloudflare Access. La bascule complète de la homepage demeure un périmètre distinct soumis à la décision du propriétaire.

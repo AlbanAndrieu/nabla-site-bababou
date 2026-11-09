@@ -109,6 +109,12 @@ export default async function LocaleLayout({
           />
         </NextIntlClientProvider>
         <Script
+          src="/document-access-links.mjs"
+          type="module"
+          strategy="afterInteractive"
+          data-bababou-document-access=""
+        />
+        <Script
           src="/site-analytics.js"
           data-analytics-mode={analyticsMode}
           data-ahrefs-key={process.env.AHREFS_ANALYTICS_KEY}
