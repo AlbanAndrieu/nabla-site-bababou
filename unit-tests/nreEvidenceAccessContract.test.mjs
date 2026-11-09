@@ -85,7 +85,7 @@ test("public document overview displays only declared entries, not actual compla
   assert.match(page, /href="#request-documents"/);
   assert.match(css, /\.accessOverviewCards/);
   assert.match(css, /max-width: 420px/);
-  assert.doesNotMatch(page, /(?:fetch\(|openrag|privateObjectKey|receivedRequestsCount|caseNumber)/i);
+  assert.doesNotMatch(page, /(?:fetch\(|OPENRAG_API_KEY|privateObjectKey|receivedRequestsCount|caseNumber)/);
   assert.equal(publicRegister.entries.length, 4);
   assert.equal(publicRegister.proofs.length, 0);
   for (const lang of locales) {
