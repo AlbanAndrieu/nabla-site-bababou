@@ -63,6 +63,14 @@ export default async function EvidenceAccessPage({ params }: PageProps<"/[locale
     [t.step4Title, t.step4Body],
   ] as const;
   const regions = { FR: t.france, NO: t.norway, DE: t.germany, MULTI: t.contactRequests };
+  // Counts refer only to reviewed public registry metadata, not actual cases
+  // or incoming requests. No OpenRAG/private origin and no server-side polling.
+  const overview = [
+    { id: "entries", value: entries.length, label: t.overviewEntries },
+    { id: "pending", value: entries.filter(entry => entry.evidenceStatus === "unlinked").length, label: t.overviewPending },
+    { id: "proofs", value: proofs.length, label: t.overviewProofs },
+    { id: "contact", value: entries.filter(entry => entry.kind === "contact-request").length, label: t.overviewContact },
+  ];
 
   return (
     <>
@@ -79,6 +87,27 @@ export default async function EvidenceAccessPage({ params }: PageProps<"/[locale
               <a href={`${prefix}/nre#nre-register`}>{t.backToRegister}</a>
             </nav>
           </header>
+
+          <section
+            className={styles.section}
+            aria-labelledby="evidence-overview-heading"
+            data-testid="evidence-public-overview"
+          >
+            <h2 id="evidence-overview-heading">{t.overviewHeading}</h2>
+            <p className={styles.accessCaution}>{t.overviewIntro}</p>
+            <ul className={styles.accessOverviewCards}>
+              {overview.map(item => (
+                <li key={item.id} className={styles.accessOverviewCard}>
+                  <strong className={styles.accessOverviewValue}>{item.value}</strong>
+                  <span>{item.label}</span>
+                </li>
+              ))}
+            </ul>
+            <nav className={styles.accessLinks} aria-label={t.navigation}>
+              <a href="#request-documents">{t.sitewideHeading}</a>
+              <a href="#evidence-catalog-heading">{t.catalogHeading}</a>
+            </nav>
+          </section>
 
           <section className={styles.section} aria-labelledby="evidence-process-heading">
             <h2 id="evidence-process-heading">{t.processHeading}</h2>
