@@ -30,6 +30,7 @@ Les contrôles CI `skipped` n'établissent pas la qualité et des checks rouges 
   `scripts/finops/vercel-usage-budget.mjs`,
   `unit-tests/vercelUsageBudget.test.mjs`,
   `docs/vercel-finops.md`; aucun endpoint Next ni token Vercel.
+- [x] **Smoke de disponibilité public en lecture seule :** `scripts/finops/vercel-public-smoke.mjs` (cinq routes Alban, six routes Bababou, requêtes HEAD uniquement sur `--live`, HTTP 402 = `BLOCKED_PLATFORM`, aucun accès aux pièces privées). Quatre tests unitaires ciblés Node 22 ; les réponses HTTP réelles restent à collecter. Voir [runbook](vercel-finops.md).
 - [ ] **Validation :** appliquer le formateur local, lancer les nouveaux
   tests de contrat, les quatre tests navigateur NRE et `npm run check`
   sur Node 24/npm 12, privacy et AppSec ; conserver le PR en Draft avant
