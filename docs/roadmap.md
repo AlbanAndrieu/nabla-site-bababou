@@ -16,6 +16,29 @@ Les contrôles CI `skipped` n'établissent pas la qualité et des checks rouges 
 
 - [ ] **FinOps mesuré** : relever le quota d'équipe via Vercel Usage (Fluid Active CPU, mémoire, invocations) et le découpage par projet/Top Paths, sans déduire le CPU facturé de la durée HTTP. Le connecteur a obtenu `404 costs_not_found` et Observability `404 not_found` ; **CPU réel NOT_MEASURED**. La récupération CLI JSON et la validation prudente des fenêtres sont préparées dans [Site Alban #295](https://github.com/AlbanAndrieu/nabla-site-alban/pull/295), en **Draft**. Les autres projets de l'équipe consomment aussi le même quota.
 
+## Livraison préparée : consultation et suivi documentaire (9 novembre)
+
+- [x] **Visualiser les métadonnées publiques** sur les quatre variantes
+  de `/evidence-access` : résumé statique dérivé du registre NRE,
+  quatre indicateurs sans original ni nombre de demandes réellement reçues,
+  liens vers les entrées et le formulaire de contact. Traductions
+  FR/EN/DE/NO et CSS responsive/print/forced-colors inclus.
+- [x] **Conserver les demandes de copie** `SITE-DOC-*` issues du site
+  entier et le résolveur local strict ; ne pas les transformer en
+  autorisations ni en liste publique de demandeurs.
+- [x] **Importer les checks FinOps** de [Site Alban #295](https://github.com/AlbanAndrieu/nabla-site-alban/pull/295) :
+  `scripts/finops/vercel-usage-budget.mjs`,
+  `unit-tests/vercelUsageBudget.test.mjs`,
+  `docs/vercel-finops.md`; aucun endpoint Next ni token Vercel.
+- [ ] **Validation :** appliquer le formateur local, lancer les nouveaux
+  tests de contrat, les quatre tests navigateur NRE et `npm run check`
+  sur Node 24/npm 12, privacy et AppSec ; conserver le PR en Draft avant
+  preuve L3 exact-SHA. **CPU réel NOT_MEASURED**.
+- [ ] **Accès réellement protégé :** Cloudflare Access, MFA,
+  approbation et passerelle de copies caviardées après décision expresse ;
+  le registre des demandes effectivement reçues devra être privé,
+  authentifié, tracé et distinct du site statique.
+
 ## État des migrations
 
 | Domaine | Situation vérifiée dans le code | Reste à faire pour clôturer |
