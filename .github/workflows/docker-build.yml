@@ -16,6 +16,7 @@ on:
       - "public/**"
       - ".github/workflows/docker-build.yml"
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
     branches: [master]
     paths:
       - "Dockerfile"

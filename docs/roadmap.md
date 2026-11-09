@@ -1,15 +1,18 @@
 # Roadmap active — Site Bababou (consolidée au 9 novembre 2026)
 
-> État audité à partir de `master@4bfb32ac` : les PR **#258, #260, #261 et #262** sont fusionnées ; la demande documentaire site-wide est préparée dans une nouvelle PR Draft. Ne pas confondre source GitHub, tests d'exécution, Preview et production ; l'état de validation est lié à un SHA.
+> État audité à partir de `master@4bfb32ac` : les PR **#258, #260, #261 et #262** sont fusionnées ; la PR #263 de demande documentaire globale est fusionnée ; la PR #264 demeure Draft. Ne pas confondre source GitHub, tests d'exécution, Preview et production ; l'état de validation est lié à un SHA.
 
-## P0 transversal — blocage Vercel et consommation CPU
+## P0 transversal — exploitation Vercel et consommation CPU
 
-La dernière revue du dépôt signale **une suspension du projet Vercel Hobby avec réponses HTTP 402** depuis le 3 novembre 2026 ; la reprise annoncée au 3 décembre et la demande au support doivent être **revérifiées**, sans déduire d'un HTTP 402 une défaillance du code.
+**Production vérifiée (connecteur Vercel, 9 novembre) :** `dpl_8ncvNaSL4Yof7G77u1dTfpJcYEdM`, état **READY**, branche `master@4afd86e6b5ebdc3623335677a7dcc2731e8a374e` après fusion #263. La page d'accueil `www.bababou.com` est accessible. Vercel ne remonte **aucune erreur runtime agrégée sur 24 h**, mais les logs détaillés Hobby ne conservent qu'une courte période et aucune métrique CPU observability n'est disponible dans cette session. Les sous-pages doivent être éprouvées par navigateur avant d'affirmer une recette complète.
 
-- [PR #260](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/260) : **fusionnée** ; génération statique (SSG) NRE, autorités centrales et pages juridiques, `force-static` et audit `scripts/verify-next-prerender.mjs`. La clôture exige le manifeste Next `.next/prerender-manifest.json`, profil CPU et tests exact-SHA ; pas de preuve de bascule sans exécution.
-- [PR #261](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/261) : **fusionnée** ; qualification du HTTP 402 avant DAST/ZAP, sans transformer une absence de scan en succès de sécurité.
-- **PR #262 fusionnée** : page explicative d'accès, registre documentaire et politique Cloudflare Access **désactivée** ; aucun accès aux pièces n'a été ouvert.
-- Ne pas déclencher de CI coûteuse sans preuve exploitable de disponibilité de la plateforme et ne fusionner aucune nouvelle PR automatiquement. Préserver SAST/SCA/ZAP, la version Node 24 et le verrou de bascule exact-SHA.
+- [#260](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/260) **fusionnée** : rendu statique NRE et pages juridiques ; confirmer le manifeste de la production exacte.
+- [#261](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/261) **fusionnée** : distinguer HTTP 402 d'une vraie panne DAST ; aucun scanner contourné.
+- [#262](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/262) **fusionnée** : registre public, accès documentaire explicatif, Cloudflare Access défini mais **inactif**.
+- [#263](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/263) **fusionnée** : demander une copie depuis les liens documentaires de tout le site, sans rendre les archives publiées privées.
+- [#264](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/264) **Draft en cours** : retrait du SSR à chaque consultation de confirmation Stripe ; `/[locale]/success` rendu statiquement et `session_id` affiché par îlot client. Protection referrer et audit des quatre langues ajoutés. Le **manifeste exact-SHA** doit confirmer les 4 routes `success`, et les gains CPU restent **non mesurés**.
+
+Les contrôles CI `skipped` n'établissent pas la qualité. **Ne pas fusionner automatiquement** ; préserver Node 24/npm 12, SAST/SCA, Playwright/axe, BetterLeaks et DAST/ZAP.
 
 ## État des migrations
 
@@ -17,7 +20,7 @@ La dernière revue du dépôt signale **une suspension du projet Vercel Hobby av
 | --- | --- | --- |
 | **NRE React / i18n** | Page React Next FR/EN/DE/NO, calendrier mensuel, filtres, registre public déclaratif, approche des heures de contact et référence juridique ; **#258 fusionnée** | Exécuter tests navigateurs et revue éditoriale exacte des pièces |
 | **Page explicative preuves** | Sur **master après fusion #262** : `/evidence-access` (FR) et `/en`, `/de`, `/no` ; liens par identifiant public, référencement SEO, guide Cloudflare Access ; aucun téléchargement privé | Tests exact-SHA, déploiement et validation avant annonce de mise en ligne |
-| **Demandes sur tous les documents liés** | Nouvelle PR Draft : script commun Next + HTML historique, références `SITE-DOC-*`, guide public et résolveur local sans fuite de lien source | Tests Node/Playwright, revue a11y, inventaire des documents externes non reconnus et vérification de toutes les pages |
+| **Demandes sur tous les documents liés** | Fusion #263 : script commun Next + HTML historique, références `SITE-DOC-*`, guide public et résolveur local sans fuite de lien source | Tests Node/Playwright, revue a11y, inventaire des documents externes non reconnus et vérification de toutes les pages |
 | **Docling → OpenRAG** | Contrats, modèle probatoire, manuel et contrôles préparés uniquement ; aucun document privé connecté par cette PR | Inventaire privé et traitement sur TrueNAS, audit OpenRAG/OpenSearch, séparation des corpus |
 | **Cloudflare Access** | Terraform **désactivé par défaut**, application self-hosted, allowlist nominative, MFA et approbation temporaire préparés | Vérifier IdP, Tunnel, hostname, protection origine, appliquer avec autorisation, tests 401/403/révocation ; ne pas publier de lien privé avant GO |
 | **Homepage React** | Home/Abduction React et pages de revue existent ; la racine `/` reste intentionnellement sur `public/index.html` tant que `isHomeCutoverEnabled()` refuse la bascule | Parité visuelle/contenu et publication propriétaire approuvée : **pas de bascule automatique** |
@@ -45,7 +48,7 @@ La dernière revue du dépôt signale **une suspension du projet Vercel Hobby av
 - `data/nre-evidence.public.json` + `lib/nrePublicEvidence.mjs` : registre public à validation restrictive ; **aucun document lié** par défaut.
 - `docs/nre-visit-ledger.md` : calcul et limites des heures déclarées, calendriers et explications légales.
 - `docs/homepage-migration-parity.md` et `docs/homepage-react-cutover.md` : parité, décision et rollback de la homepage.
-- GitHub PR #258, #260, #261 et #262 (fusionnées), commits et logs : détails historiques, sans recopier des diagnostics déjà retrouvables dans Git.
+- GitHub PR #258, #260, #261, #262 et #263 (fusionnées), commits et logs : détails historiques, sans recopier des diagnostics déjà retrouvables dans Git.
 
 ## État de validation à la consolidation
 
@@ -66,3 +69,11 @@ Le lot initial #262 a fait l'objet de contrôles **structurels** via GitHub, pas
 | **P4 — qualité et migration** | Convergence des pages Next et HTML historiques par le même module JS, sans modifier la homepage 404 protégée. | Node 24/npm 12, typecheck, lint, privacy gates, Playwright/axe multi-navigateurs, qualité de pré-rendu et tests exact-SHA sur Preview accessible. |
 
 **Ne pas confondre** demande de copie et accès effectif à un document. La diffusion actuelle de fichiers sous `public/` reste indépendante de Cloudflare Access. La bascule complète de la homepage demeure un périmètre distinct soumis à la décision du propriétaire.
+
+## Bilan de la PR #264 — critères exact-SHA
+
+- La page de confirmation Stripe n'appelle plus `searchParams` côté serveur, utilise `Suspense` pour un îlot client et reste `noindex`. La nouvelle métadonnée `referrer: no-referrer` empêche l'envoi de `session_id` dans les en-têtes `Referer` de navigation. Elle **ne supprime pas** un éventuel accès à l'URL par les outils analytiques : conserver la politique de télémétrie minimale sur ces routes.
+- `scripts/verify-next-prerender.mjs` inclut désormais `success` pour FR/EN/DE/NO. Le contrat de test vérifie un manifeste synthétique valide et un cas de régression ISR. La preuve décisive reste un **vrai build Next exact-SHA**, pas le seul drapeau `force-static`.
+- Test navigateur multi-langue : référence masquée en absence du paramètre, affichée après hydratation et limitée à 200 caractères, balises `robots: noindex` et `referrer: no-referrer`. Ne pas inférer un paiement effectif de cette référence purement affichée.
+- **NO-GO** sur la fusion sans vérification des gates et la validation de la Preview exacte ; aucune modification de paiement Stripe, d'abonnement ou des certificats.
+- **Périmètre distinct** : bascule React de la homepage, audit des originaux familiaux dans `public/`, approbations Cloudflare et ACL OpenRAG ; tous restent ouverts et ne doivent pas être déclarés terminés par la seule #264.

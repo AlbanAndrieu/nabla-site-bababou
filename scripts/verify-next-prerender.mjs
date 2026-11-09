@@ -11,6 +11,7 @@ export const STATIC_SLUGS = Object.freeze([
   "central-authorities-documents",
   "central-authorities-failures",
   "home-preview",
+  "success",
   ...POLICY_ROUTE_SLUGS.map((policy) => "policy/" + policy),
 ]);
 
