@@ -394,3 +394,21 @@ test.describe("NRE React migration", () => {
   });
 
 });
+
+test.describe("Document requests and public evidence overview", () => {
+  for (const locale of ["fr", "en", "de", "no"] as const) {
+    test(`shows only public registry counts in ${locale}`, async ({ page }) => {
+      const prefix = locale === "fr" ? "" : `/${locale}`;
+      await page.goto(`${prefix}/evidence-access`);
+      const section = page.getByTestId("evidence-public-overview");
+      await expect(section).toBeVisible();
+      await expect(section.locator("li")).toHaveCount(4);
+      await expect(section.locator("li").nth(0)).toContainText("4");
+      await expect(section.locator("li").nth(1)).toContainText("4");
+      await expect(section.locator("li").nth(2)).toContainText("0");
+      await expect(section.locator("li").nth(3)).toContainText("1");
+      await expect(section.locator('a[href="#request-documents"]')).toHaveCount(1);
+      await expect(page.locator('a[href*="openrag"], a[href*="r2.cloudflarestorage.com"]')).toHaveCount(0);
+    });
+  }
+});
