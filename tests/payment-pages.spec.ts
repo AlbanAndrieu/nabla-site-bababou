@@ -2,6 +2,30 @@ import { expect, test } from "@playwright/test";
 
 const STRIPE_DIRECT_URL = "https://buy.stripe.com/9B65kF1Gd8hHcr2d69cV200";
 
+test.describe("Static localized checkout confirmation", () => {
+  const locales = [
+    ["fr", "/success"], ["en", "/en/success"],
+    ["de", "/de/success"], ["no", "/no/success"],
+  ] as const;
+  for (const [locale, route] of locales) {
+    test(`${locale}: request-free confirmation still displays bounded client reference`, async ({ page }) => {
+      await page.goto(route);
+      await expect(page.locator("html")).toHaveAttribute("lang", locale);
+      await expect(page.locator("#checkout-session-ref")).toBeHidden();
+      await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
+      await expect(page.locator('meta[name="referrer"]')).toHaveAttribute("content", "no-referrer");
+
+      const source = `cs_test_${"x".repeat(230)}`;
+      await page.goto(`${route}?session_id=${source}`);
+      const reference = page.locator("#checkout-session-ref");
+      await expect(reference).toBeVisible();
+      await expect(reference).toContainText(source.slice(0, 200));
+      await expect(reference).not.toContainText(source);
+      await expect(reference.locator("img, script")).toHaveCount(0);
+    });
+  }
+});
+
 test.describe("Payment result pages", () => {
   test("legacy success URL redirects to English Next route and safely renders the session id", async ({
     page,
