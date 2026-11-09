@@ -137,11 +137,11 @@
       "accessGuide": "Comprendre l'accès sécurisé aux preuves"
     },
     "access": {
-      "metaTitle": "Consulter les preuves — accès sur demande",
-      "metaDescription": "Comment demander l'accès à des pièces familiales vérifiées : contrôle d'identité, MFA, autorisation temporaire Cloudflare Access et consultation limitée aux documents approuvés.",
+      "metaTitle": "Accès aux documents et preuves — demande de copie",
+      "metaDescription": "Demander une copie de documents liés sur Bababou ou consulter les références probatoires NRE, sous réserve de vérification, caviardage et autorisation temporaire MFA.",
       "eyebrow": "Dossier documentaire · confidentialité",
-      "heading": "Demander l'accès à une preuve",
-      "intro": "Les démarches et plaintes mentionnées sur Bababou peuvent être rapprochées de pièces détenues à titre privé. La consultation d'un document nécessite un examen individuel de la demande et de la pièce communicable.",
+      "heading": "Demander l'accès à un document ou à une preuve",
+      "intro": "Ce guide concerne tous les documents référencés sur Bababou, y compris les archives des autorités centrales et les pièces mentionnées dans le registre NRE. Les copies privées font l'objet d'une décision de communication individuelle.",
       "pending": "Accès protégé en préparation : aucun portail privé ni téléchargement n'est ouvert ici.",
       "navigation": "Accès rapide aux démarches",
       "contact": "Contacter pour demander l'accès",
@@ -155,7 +155,7 @@
       "step3Body": "Cloudflare Access recueillera une justification et transmettra la demande à la personne habilitée à l'approuver ou à la refuser. Une session autorisée sera limitée dans le temps.",
       "step4Title": "Consulter seulement les pièces accordées",
       "step4Body": "La passerelle privée vérifiera les droits pour chaque référence et ne délivrera qu'une copie caviardée approuvée. L'accès pourra être révoqué et les consultations seront journalisées.",
-      "catalogHeading": "Références disponibles dans le registre public",
+      "catalogHeading": "Références du registre probatoire NRE",
       "catalogIntro": "Les identifiants ci-dessous servent à demander un rapprochement documentaire ; ils ne sont ni des numéros officiels de plainte ni des liens vers des originaux.",
       "france": "Plaintes déclarées en France",
       "norway": "Plaintes déclarées en Norvège",
@@ -170,7 +170,13 @@
       "securityHeading": "Confidentialité et protection des documents",
       "securityBody": "Les originaux, les textes extraits par Docling et les index OpenRAG restent hors du site public. Une authentification MFA ou une approbation temporaire ne donne pas accès à tout le dossier : chaque document exige une autorisation distincte.",
       "existingPublicPdf": "Une plainte française figure déjà parmi les anciens documents publics du site. Cette publication antérieure doit être auditée séparément ; la protection du futur portail ne la rend pas privée rétroactivement.",
-      "noAutomaticApproval": "Aucun accès ne peut être demandé automatiquement dans ce site tant que la passerelle et sa politique Cloudflare Access ne sont pas déployées, contrôlées et validées."
+      "noAutomaticApproval": "Aucun accès ne peut être demandé automatiquement dans ce site tant que la passerelle et sa politique Cloudflare Access ne sont pas déployées, contrôlées et validées.",
+      "sitewideHeading": "Demander une copie d’un document du site",
+      "sitewideIntro": "Ce parcours s’applique aux documents cités ou liés sur l’ensemble du site : PDF, fichiers bureautiques, archives documentaires et documents hébergés par des plateformes externes. Les ressources déjà publiques restent consultables à leur adresse d’origine.",
+      "sitewideReference": "Référence publique du document demandé",
+      "sitewideInstructions": "Indiquez cette référence, la page sur laquelle vous l’avez trouvée, votre qualité et l’objectif de votre demande lors de votre prise de contact. Cette référence n’est pas un numéro de dossier officiel et ne garantit pas qu’une copie privée soit disponible.",
+      "sitewideWithoutReference": "Aucune référence précise n’a été transmise. Lors de votre prise de contact, mentionnez le titre du document et la page où vous l’avez trouvé.",
+      "sitewidePublicNotice": "Une demande de copie ne crée aucun droit d’accès automatique. Les documents déjà accessibles publiquement restent publics tant qu’une décision distincte de restriction n’a pas été appliquée. Les originaux privés restent soumis à vérification, caviardage et approbation."
     }
   }
 }

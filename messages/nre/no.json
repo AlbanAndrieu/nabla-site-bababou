@@ -137,11 +137,11 @@
       "accessGuide": "Hvordan sikker tilgang til dokumentasjon fungerer"
     },
     "access": {
-      "metaTitle": "Be om tilgang til dokumentasjon",
-      "metaDescription": "Hvordan be om gjennomgåtte dokumenter i familiesaken: identitetskontroll, MFA, midlertidig godkjenning i Cloudflare Access og tilgang per dokument.",
+      "metaTitle": "Tilgang til dokumenter og bevis — be om kopi",
+      "metaDescription": "Be om kopier av dokumenter som er lenket fra Bababou eller NRE-referanser, etter kontroll, sladding og midlertidig MFA-godkjenning.",
       "eyebrow": "Dokumentasjon · personvern",
-      "heading": "Be om tilgang til dokumentasjon",
-      "intro": "Tiltak og anmeldelser omtalt på Bababou kan støttes av privat oppbevarte dokumenter. Hver utlevering krever individuell vurdering av forespørselen og kopien som eventuelt kan deles.",
+      "heading": "Be om tilgang til dokumenter eller bevis",
+      "intro": "Denne veiledningen gjelder dokumenter på hele Bababou-nettstedet, inkludert sentralmyndighetenes arkiver og bevisreferanser i NRE-registeret. Private kopier krever individuell utleveringsgodkjenning.",
       "pending": "Beskyttet tilgang er under forberedelse. Ingen privat portal eller nedlasting er tilgjengelig her.",
       "navigation": "Navigasjon for dokumentforespørsler",
       "contact": "Kontakt for å be om tilgang",
@@ -155,7 +155,7 @@
       "step3Body": "Cloudflare Access vil be om en begrunnelse og sende forespørselen til en autorisert godkjenner som kan godta eller avslå. En godkjent sesjon blir tidsbegrenset.",
       "step4Title": "Se bare godkjente dokumenter",
       "step4Body": "Den private tilgangsporten kontrollerer rettigheter for hver referanse og viser bare en kontrollert sladdet kopi. Tilgang kan trekkes tilbake, og innsyn loggføres.",
-      "catalogHeading": "Referanser i det offentlige registeret",
+      "catalogHeading": "Referanser i NRE-bevisregisteret",
       "catalogIntro": "Disse identifikatorene gjør det mulig å be om dokumentasjon. De er ikke offisielle saksnumre eller lenker til originalfiler.",
       "france": "Anmeldelser oppgitt i Frankrike",
       "norway": "Anmeldelser oppgitt i Norge",
@@ -170,7 +170,13 @@
       "securityHeading": "Konfidensialitet og dokumentvern",
       "securityBody": "Originaler, Docling-uttrekk og OpenRAG-indekser forblir utenfor det offentlige nettstedet. MFA eller midlertidig godkjenning gir ikke tilgang til hele saken; hvert dokument krever egen autorisasjon.",
       "existingPublicPdf": "En fransk anmeldelse finnes allerede blant nettstedets eldre offentlige filer. Denne publiseringen må vurderes separat; en fremtidig privat portal beskytter den ikke i ettertid.",
-      "noAutomaticApproval": "Nettstedet kan ikke automatisk godkjenne tilgang før portalen og Cloudflare Access-reglene er satt opp, testet og godkjent."
+      "noAutomaticApproval": "Nettstedet kan ikke automatisk godkjenne tilgang før portalen og Cloudflare Access-reglene er satt opp, testet og godkjent.",
+      "sitewideHeading": "Be om kopi av et dokument som er lenket fra nettstedet",
+      "sitewideIntro": "Ordningen gjelder dokumenter lenket fra hele nettstedet: PDF-er, kontorfiler, dokumentarkiv og filer hos eksterne dokumenttjenester. Allerede offentlige kilder er fortsatt tilgjengelige på sine opprinnelige adresser.",
+      "sitewideReference": "Offentlig referanse for dokumentet det bes om",
+      "sitewideInstructions": "Oppgi referansen, siden du fant dokumentet på, rollen din og formålet med forespørselen ved kontakt. Dette er ikke et offisielt saksnummer og garanterer ikke at en privat kopi finnes.",
+      "sitewideWithoutReference": "Ingen bestemt referanse ble oppgitt. Oppgi dokumenttittelen og siden der dokumentet ble funnet når du tar kontakt.",
+      "sitewidePublicNotice": "Å be om en kopi gir ikke automatisk tilgang. Filer som allerede er publisert, forblir offentlige inntil en særskilt tilgangsbegrensning er innført. Private originaler krever kontroll, sladding og godkjenning."
     }
   }
 }

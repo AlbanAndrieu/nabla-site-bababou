@@ -10,6 +10,7 @@ import { type AppLocale, routing } from "@/i18n/routing";
 import { assertPublicEvidenceRegister } from "@/lib/nrePublicEvidence.mjs";
 import { pageAlternates } from "@/lib/sitePageCatalog";
 import type { NrePageCopy } from "../nre/sections";
+import DocumentRequestSelection from "./DocumentRequestSelection";
 import styles from "../nre/page.module.css";
 
 export const dynamic = "force-static";
@@ -90,6 +91,8 @@ export default async function EvidenceAccessPage({ params }: PageProps<"/[locale
               ))}
             </ol>
           </section>
+
+          <DocumentRequestSelection locale={locale} copy={t} />
 
           <section className={styles.section} aria-labelledby="evidence-catalog-heading">
             <h2 id="evidence-catalog-heading">{t.catalogHeading}</h2>

@@ -1000,3 +1000,28 @@
 @media (forced-colors: active) {
   .accessHero, .accessStep, .accessEntry, .accessPending { border: 1px solid CanvasText; }
 }
+
+
+/* Selected site-wide document locator: never display or resolve a private URL. */
+.accessSelection {
+  display: grid;
+  gap: 0.55rem;
+  max-width: 58rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
+  border: 1px solid var(--ui-border);
+  border-radius: 0.75rem;
+  background: var(--ui-surface-muted);
+}
+.accessSelection code {
+  width: fit-content;
+  max-width: 100%;
+  padding: 0.4rem 0.7rem;
+  border-radius: 0.4rem;
+  border: 1px solid var(--ui-border);
+  background: var(--ui-surface);
+  font-size: 0.92rem;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+.accessSelection p { margin: 0.2rem 0; line-height: 1.6; }
+#request-documents { scroll-margin-block-start: 6rem; }

@@ -137,11 +137,11 @@
       "accessGuide": "How protected evidence access works"
     },
     "access": {
-      "metaTitle": "Request access to evidence",
-      "metaDescription": "How to request reviewed family-case evidence: identity verification, MFA, temporary Cloudflare Access approval and document-level authorization.",
+      "metaTitle": "Access to documents and evidence — request a copy",
+      "metaDescription": "Request a copy of linked Bababou documents or review NRE evidence references, subject to verification, redaction and temporary MFA authorization.",
       "eyebrow": "Documentary record · privacy",
-      "heading": "Request access to evidence",
-      "intro": "The steps and complaints described on Bababou may be supported by privately held documents. Each requested disclosure requires individual review of the request and the releasable copy.",
+      "heading": "Request access to a document or evidence",
+      "intro": "This guide covers documents linked throughout Bababou, including central authority archives and evidence referenced in the NRE register. Private copies require individual disclosure approval.",
       "pending": "Protected access is being prepared. No private portal or download is available here.",
       "navigation": "Evidence request navigation",
       "contact": "Contact to request access",
@@ -155,7 +155,7 @@
       "step3Body": "Cloudflare Access will ask for a justification and send the request to an authorized approver, who may accept or deny it. Any approved session will be time-limited.",
       "step4Title": "View only authorized documents",
       "step4Body": "The private gateway will check permissions for each reference and deliver only an approved redacted copy. Access can be revoked and consultations will be logged.",
-      "catalogHeading": "References in the public register",
+      "catalogHeading": "References in the NRE evidence register",
       "catalogIntro": "These IDs help identify documentation for a request. They are not official case numbers or links to original files.",
       "france": "Reported complaints in France",
       "norway": "Reported complaints in Norway",
@@ -170,7 +170,13 @@
       "securityHeading": "Document confidentiality and protection",
       "securityBody": "Originals, Docling extracts and OpenRAG indexes remain outside the public website. MFA or temporary approval does not authorize access to the entire file: each document needs a separate grant.",
       "existingPublicPdf": "A French complaint already exists among the website's older public files. That earlier publication must be audited separately; a future private gateway cannot retroactively protect it.",
-      "noAutomaticApproval": "This website cannot automatically approve access before the gateway and Cloudflare Access policy are deployed, tested and authorized."
+      "noAutomaticApproval": "This website cannot automatically approve access before the gateway and Cloudflare Access policy are deployed, tested and authorized.",
+      "sitewideHeading": "Request a copy of a document linked on this site",
+      "sitewideIntro": "This process covers documents cited or linked throughout the website: PDFs, office files, document archives and files hosted on third-party document services. Already public resources remain accessible at their existing addresses.",
+      "sitewideReference": "Public reference of the requested document",
+      "sitewideInstructions": "Include this reference, the page where you found it, your role and the purpose of the request when contacting us. This is not an official case reference and does not guarantee that a private copy exists.",
+      "sitewideWithoutReference": "No specific reference was provided. Please identify the document title and the page where you found it when making contact.",
+      "sitewidePublicNotice": "Requesting a copy does not grant automatic access. Files already published remain public unless a separate access restriction is implemented. Private originals require verification, redaction and approval."
     }
   }
 }

@@ -815,6 +815,15 @@
 		ensurePrintPdfButton();
 		ensureBackToTopFab();
 		initSiteCopyright();
+		// Enhance document links without replacing their existing destinations.
+		// Legacy pages load this once; native Next routes use next/script instead.
+		if (!document.querySelector('script[data-bababou-document-access]')) {
+			var accessScript = document.createElement("script");
+			accessScript.type = "module";
+			accessScript.src = "/document-access-links.mjs";
+			accessScript.setAttribute("data-bababou-document-access", "");
+			document.head.appendChild(accessScript);
+		}
 		initContactEmailLink();
 		initCookiePreferencesLinks();
 		initAxeptio();

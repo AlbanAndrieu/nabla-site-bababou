@@ -38,6 +38,30 @@ const themeLabels = {
   }
 } as const;
 
+test.describe("Site-wide document copy requests", () => {
+  test("keeps public PDF available and prepares a safe request reference", async ({ page }) => {
+    await page.goto("/nre");
+    const original = page.locator('section[aria-labelledby="reference-heading"] a[href$=".pdf"]');
+    await expect(original).toHaveCount(1);
+    const copy = page.locator('section[aria-labelledby="reference-heading"] a[href$=".pdf"] + a.document-access-request');
+    await expect(copy).toHaveCount(1);
+    await expect(copy).toHaveAttribute("href", /^\/evidence-access\?doc=SITE-DOC-[0-9a-f]{16}#request-documents$/);
+    const originalHref = await original.getAttribute("href");
+    expect(originalHref).toMatch(/\.pdf$/);
+    await copy.click();
+    await expect(page).toHaveURL(/\/evidence-access\?doc=SITE-DOC-[0-9a-f]{16}#request-documents$/);
+    await expect(page.getByTestId("site-document-reference")).toContainText(/SITE-DOC-[0-9a-f]{16}/);
+    await expect(page.locator('a[href*="openrag"], a[href*="r2.cloudflarestorage.com"]')).toHaveCount(0);
+  });
+
+  test("legacy archives also offer request-a-copy without removing their originals", async ({ page }) => {
+    await page.goto("/abduction-norway.html");
+    await expect.poll(() => page.locator("a.document-access-request").count()).toBeGreaterThan(0);
+    const link = page.locator("a.document-access-request").first();
+    await expect(link).toHaveAttribute("href", /\/evidence-access\?doc=SITE-DOC-[0-9a-f]{16}#request-documents$/);
+  });
+});
+
 test.describe("NRE React migration", () => {
   for (const localeCase of localeCases) {
     test(`renders native ${localeCase.lang} content`, async ({ page }) => {

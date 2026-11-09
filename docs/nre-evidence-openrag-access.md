@@ -157,3 +157,14 @@ POST /v1/grants/{grantId}/revoke
 - [Cloudflare R2 — avertissements sur les URL pré-signées](https://developers.cloudflare.com/r2/api/s3/presigned-urls/)
 
 **Les options et caractéristiques ci-dessus sont des exigences d'architecture proposées ; aucune configuration TrueNAS, Cloudflare, OpenRAG, Docling, Vault ou connexion distante n'a été modifiée.**
+
+## Extension site-wide des demandes — 9 novembre 2026
+
+Le guide `/[locale]/evidence-access` n'est plus limité aux seules déclarations NRE. Il peut recevoir une référence `SITE-DOC-<16hex>` dérivée **localement d'un lien de document public** et afficher la référence, le contexte de consultation sur demande et la précaution de confidentialité.
+
+Le module commun `public/document-access-links.mjs` ajoute une action « Demander une copie » sans remplacer les liens existants, sur les routes Next.js et les HTML historiques. Le code ne transmet **ni nom de fichier ni URL d'origine** dans la requête et n'interroge pas OpenRAG. La référence est un localisateur non cryptographique, distinct du registre des faits `NRE-CLAIM-*` et des futures pièces `NRE-PROOF-*`. Un identifiant non reconnu n'accorde jamais l'accès à une pièce.
+
+La recherche **hors ligne et réservée au propriétaire** `node scripts/resolve-site-document-ref.mjs SITE-DOC-…` permet de retrouver dans le dépôt une ressource publiquement référencée. Ne jamais utiliser cette opération comme réponse automatisée à un tiers ni comme preuve d'autorisation. Une copie publique accessible depuis `public/` doit être auditée individuellement avant tout classement « privé ».
+
+**Contrat documentaire et tests détaillés : `docs/sitewide-document-access.md`.** Tous les accès aux originaux privés restent soumis à approbation manuelle, Cloudflare Access (MFA et durée limitée), puis ACL par pièce et version de caviardage ; les liens augmentés ne font pas eux-mêmes partie du mécanisme d'authentification.
+

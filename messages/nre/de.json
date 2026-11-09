@@ -137,11 +137,11 @@
       "accessGuide": "Geschützten Zugang zu Belegen verstehen"
     },
     "access": {
-      "metaTitle": "Zugang zu Belegen beantragen",
-      "metaDescription": "So wird Zugang zu geprüften Unterlagen beantragt: Identitätsprüfung, MFA, vorübergehende Cloudflare-Access-Genehmigung und Autorisierung pro Dokument.",
+      "metaTitle": "Zugang zu Dokumenten und Belegen — Kopie anfordern",
+      "metaDescription": "Kopie von auf Bababou verlinkten Dokumenten oder NRE-Belegreferenzen anfragen, vorbehaltlich Prüfung, Schwärzung und vorübergehender MFA-Autorisierung.",
       "eyebrow": "Dokumentation · Datenschutz",
-      "heading": "Zugang zu Belegen beantragen",
-      "intro": "Die auf Bababou beschriebenen Schritte und Anzeigen können durch private Unterlagen belegt werden. Jede Herausgabe bedarf einer individuellen Prüfung des Antrags und der freigabefähigen Fassung.",
+      "heading": "Zugang zu Dokumenten oder Belegen beantragen",
+      "intro": "Dieser Leitfaden gilt für Dokumente auf der gesamten Bababou-Website, einschließlich der Archive der Zentralen Behörden und der NRE-Belegreferenzen. Private Kopien erfordern eine individuelle Freigabe.",
       "pending": "Der geschützte Zugang wird vorbereitet. Hier sind noch kein privates Portal und kein Download verfügbar.",
       "navigation": "Navigation zu Beleganfragen",
       "contact": "Kontakt zur Zugangsbeantragung",
@@ -155,7 +155,7 @@
       "step3Body": "Cloudflare Access fragt nach einer Begründung und übermittelt die Anfrage zur Annahme oder Ablehnung an eine berechtigte Person. Die Sitzung wird zeitlich begrenzt.",
       "step4Title": "Nur freigegebene Dokumente einsehen",
       "step4Body": "Das private Gateway prüft die Berechtigung pro Referenz und liefert nur geprüfte, geschwärzte Fassungen. Zugänge sind widerrufbar und Einsichten werden protokolliert.",
-      "catalogHeading": "Referenzen im öffentlichen Register",
+      "catalogHeading": "Referenzen im NRE-Belegregister",
       "catalogIntro": "Diese Kennungen erleichtern die Zuordnung einer Anfrage; sie sind keine amtlichen Aktenzeichen und führen nicht zu Originaldokumenten.",
       "france": "Gemeldete Anzeigen in Frankreich",
       "norway": "Gemeldete Anzeigen in Norwegen",
@@ -170,7 +170,13 @@
       "securityHeading": "Vertraulichkeit und Schutz der Unterlagen",
       "securityBody": "Originale, Docling-Extrakte und OpenRAG-Indizes bleiben außerhalb der öffentlichen Website. MFA und vorübergehende Genehmigung erlauben nicht den Zugriff auf sämtliche Akten; jedes Dokument benötigt eine eigene Berechtigung.",
       "existingPublicPdf": "Eine französische Anzeige befindet sich bereits unter den älteren öffentlichen Dokumenten dieser Website. Diese Veröffentlichung muss separat geprüft werden; der spätere Schutz des Portals wirkt nicht rückwirkend.",
-      "noAutomaticApproval": "Diese Website kann keinen Zugang automatisch genehmigen, solange Gateway und Cloudflare-Access-Richtlinie nicht eingerichtet, getestet und freigegeben sind."
+      "noAutomaticApproval": "Diese Website kann keinen Zugang automatisch genehmigen, solange Gateway und Cloudflare-Access-Richtlinie nicht eingerichtet, getestet und freigegeben sind.",
+      "sitewideHeading": "Kopie eines auf dieser Website verlinkten Dokuments anfordern",
+      "sitewideIntro": "Das Verfahren gilt für Dokumente auf der gesamten Website: PDF, Office-Dateien, Dokumentarchive und Dateien externer Dokumentdienste. Bereits öffentlich verfügbare Quellen bleiben über ihre bisherigen Adressen zugänglich.",
+      "sitewideReference": "Öffentliche Kennung des angefragten Dokuments",
+      "sitewideInstructions": "Bitte geben Sie bei der Kontaktaufnahme diese Kennung, die Fundseite, Ihre Rolle und den Zweck der Anfrage an. Die Kennung ist kein amtliches Aktenzeichen und garantiert nicht, dass eine private Kopie vorliegt.",
+      "sitewideWithoutReference": "Es wurde keine bestimmte Kennung übermittelt. Bitte nennen Sie den Dokumenttitel und die Fundseite bei Ihrer Kontaktaufnahme.",
+      "sitewidePublicNotice": "Eine Kopie anzufordern begründet kein automatisches Zugangsrecht. Bereits veröffentlichte Dateien bleiben öffentlich, bis gesonderte Zugriffsbeschränkungen umgesetzt werden. Private Originale erfordern Prüfung, Schwärzung und Genehmigung."
     }
   }
 }
