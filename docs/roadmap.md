@@ -1,18 +1,20 @@
 # Roadmap active — Site Bababou (consolidée au 9 novembre 2026)
 
-> État audité à partir de `master@4bfb32ac` : les PR **#258, #260, #261 et #262** sont fusionnées ; la PR #263 de demande documentaire globale est fusionnée ; la PR #264 demeure Draft. Ne pas confondre source GitHub, tests d'exécution, Preview et production ; l'état de validation est lié à un SHA.
+> État audité à partir de `master@4bfb32ac` : les PR **#258, #260, #261 et #262** sont fusionnées ; la PR #263 de demande documentaire globale est fusionnée ; la PR #264 est fusionnée, mais les vérifications post-fusion restent ouvertes. Ne pas confondre source GitHub, tests d'exécution, Preview et production ; l'état de validation est lié à un SHA.
 
 ## P0 transversal — exploitation Vercel et consommation CPU
 
-**Production vérifiée (connecteur Vercel, 9 novembre) :** `dpl_8ncvNaSL4Yof7G77u1dTfpJcYEdM`, état **READY**, branche `master@4afd86e6b5ebdc3623335677a7dcc2731e8a374e` après fusion #263. La page d'accueil `www.bababou.com` est accessible. Vercel ne remonte **aucune erreur runtime agrégée sur 24 h**, mais les logs détaillés Hobby ne conservent qu'une courte période et aucune métrique CPU observability n'est disponible dans cette session. Les sous-pages doivent être éprouvées par navigateur avant d'affirmer une recette complète.
+**Production vérifiée (connecteur Vercel, 9 novembre) :** `dpl_6LPdgycLzEXKLyCQXmzQk49Lxm2F`, état **READY**, branche `master@4e1a2b14538e2e4f5b3a2454690e12156c5ed5bc` après fusion #264. Le build Vercel affiche explicitement les quatre routes `/fr/success`, `/en/success`, `/de/success` et `/no/success` comme **SSG (●)** et non plus comme **SSR (ƒ)**. La page d'accueil `www.bababou.com` est accessible. Vercel ne remonte **aucune erreur runtime agrégée sur 24 h**, mais les logs détaillés Hobby ne conservent qu'une courte période et aucune métrique CPU observability n'est disponible dans cette session. Les sous-pages doivent être éprouvées par navigateur avant d'affirmer une recette complète.
 
 - [#260](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/260) **fusionnée** : rendu statique NRE et pages juridiques ; confirmer le manifeste de la production exacte.
 - [#261](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/261) **fusionnée** : distinguer HTTP 402 d'une vraie panne DAST ; aucun scanner contourné.
 - [#262](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/262) **fusionnée** : registre public, accès documentaire explicatif, Cloudflare Access défini mais **inactif**.
 - [#263](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/263) **fusionnée** : demander une copie depuis les liens documentaires de tout le site, sans rendre les archives publiées privées.
-- [#264](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/264) **Draft en cours** : retrait du SSR à chaque consultation de confirmation Stripe ; `/[locale]/success` rendu statiquement et `session_id` affiché par îlot client. Protection referrer et audit des quatre langues ajoutés. Le **manifeste exact-SHA** doit confirmer les 4 routes `success`, et les gains CPU restent **non mesurés**.
+- [#264](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/264) **fusionnée** : retrait du SSR de la confirmation Stripe ; 4 routes SSG attestées par le build de production. `session_id` reste un simple affichage client, non une preuve de paiement. **Les économies Fluid CPU restent non mesurées** et les gates Node24/qualité du dernier HEAD PR étaient rouges avant fusion.
 
-Les contrôles CI `skipped` n'établissent pas la qualité. **Ne pas fusionner automatiquement** ; préserver Node 24/npm 12, SAST/SCA, Playwright/axe, BetterLeaks et DAST/ZAP.
+Les contrôles CI `skipped` n'établissent pas la qualité et des checks rouges ne doivent pas être requalifiés en PASS parce que le build Vercel est READY. **P0 encore ouvert :** remédier au `QG_AUTOFIX_REQUIRED` et aux échecs de contrats Node24, vérifier les parcours navigateur post-fusion et préserver SAST/SCA, Playwright/axe, BetterLeaks et DAST/ZAP.
+
+- [ ] **FinOps mesuré** : relever le quota d'équipe via Vercel Usage (Fluid Active CPU, mémoire, invocations) et le découpage par projet/Top Paths, sans déduire le CPU facturé de la durée HTTP. Le connecteur a obtenu `404 costs_not_found` et Observability `404 not_found` ; **CPU réel NOT_MEASURED**. La récupération CLI JSON et la validation prudente des fenêtres sont préparées dans [Site Alban #295](https://github.com/AlbanAndrieu/nabla-site-alban/pull/295), en **Draft**. Les autres projets de l'équipe consomment aussi le même quota.
 
 ## État des migrations
 
@@ -75,5 +77,5 @@ Le lot initial #262 a fait l'objet de contrôles **structurels** via GitHub, pas
 - La page de confirmation Stripe n'appelle plus `searchParams` côté serveur, utilise `Suspense` pour un îlot client et reste `noindex`. La nouvelle métadonnée `referrer: no-referrer` empêche l'envoi de `session_id` dans les en-têtes `Referer` de navigation. Elle **ne supprime pas** un éventuel accès à l'URL par les outils analytiques : conserver la politique de télémétrie minimale sur ces routes.
 - `scripts/verify-next-prerender.mjs` inclut désormais `success` pour FR/EN/DE/NO. Le contrat de test vérifie un manifeste synthétique valide et un cas de régression ISR. La preuve décisive reste un **vrai build Next exact-SHA**, pas le seul drapeau `force-static`.
 - Test navigateur multi-langue : référence masquée en absence du paramètre, affichée après hydratation et limitée à 200 caractères, balises `robots: noindex` et `referrer: no-referrer`. Ne pas inférer un paiement effectif de cette référence purement affichée.
-- **NO-GO** sur la fusion sans vérification des gates et la validation de la Preview exacte ; aucune modification de paiement Stripe, d'abonnement ou des certificats.
+- **Fusion déjà réalisée** : les contrôles qualité Node24 et le post-merge exact-SHA restent à remédier et à exécuter ; ne pas déduire une validation de sécurité d'un build Vercel READY. Aucune modification de paiement Stripe, d'abonnement ou des certificats.
 - **Périmètre distinct** : bascule React de la homepage, audit des originaux familiaux dans `public/`, approbations Cloudflare et ACL OpenRAG ; tous restent ouverts et ne doivent pas être déclarés terminés par la seule #264.
