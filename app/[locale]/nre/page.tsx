@@ -12,6 +12,9 @@ import { NreAdvocacy, NreHero, type NrePageCopy } from "./sections";
 import NreHistory from "./NreHistory";
 import styles from "./page.module.css";
 
+// Public editorial data is versioned with the deployment; no request-time SSR required.
+export const dynamic = "force-static";
+
 export const dynamicParams = false;
 
 export function generateStaticParams() {
