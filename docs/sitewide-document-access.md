@@ -49,6 +49,35 @@ Les références `NRE-CLAIM-*` et `NRE-PROOF-*` du registre probatoire sont **di
 
 Les liens sont augmentés **côté client** sans changer leur destination. `MutationObserver` observe les nouveaux liens lors d'une navigation côté client. Le module vérifie les protocoles HTTP(S), ignore mailto/data/javascript et n'envoie aucune requête à OpenRAG. Le script est auto-idempotent et le CSS site utilise un focus clavier visible, des cibles tactiles d'au moins 44 px et masque l'action complémentaire à l'impression.
 
+## Visualisation des références sur /evidence-access (9 novembre 2026)
+
+La page publique FR/EN/DE/NO présente désormais **quatre cartes de synthèse**
+calculées exclusivement à partir de `data/nre-evidence.public.json` :
+
+1. le nombre d'**entrées déclaratives** dans le registre ;
+2. les entrées **sans pièce publique vérifiée liée** ;
+3. les **références de pièces contrôlées** et autorisées pour une notice publique ;
+4. les entrées **agrégeant des demandes de contact**.
+
+Les nombres proviennent du schéma public strict `assertPublicEvidenceRegister`.
+Ils **ne doivent jamais** être interprétés comme le nombre réel de plaintes
+déposées, de documents conservés, de visites ou de demandes de copie
+**effectivement reçues**. Les anciennes demandes de contact sont regroupées
+en une entrée déclarative ; **aucune base de requêtes personnelles n'est
+introduite dans Vercel**.
+
+Le bloc de synthèse possède un titre et une légende, des liens clavier vers
+`#request-documents` et le catalogue NRE, des cartes adaptées à 320 px et
+un rendu d'impression. Les libellés sont disponibles en français, anglais,
+allemand et norvégien. Tests de contrat :
+`unit-tests/nreEvidenceAccessContract.test.mjs`, et tests navigateur
+`tests/nre.spec.ts` sur les quatre langues. Ne pas annoncer ces tests PASS
+avant leur exécution sur le SHA de la PR.
+
+Aucune URL privée, origine OpenRAG, pièce brute, texte OCR ou donnée de
+demandeur n'est nécessaire au calcul. L'activation Cloudflare Access avec MFA
+et autorisation individuelle **reste une étape distincte**.
+
 ## Limites légales et de sécurité
 
 **Critique P0 : les documents déjà présents dans le dossier public sont encore directement téléchargeables.** L'inventaire Git contient des fichiers PDF et Word avec des intitulés judiciaires et administratifs, notamment dans `public/ca/`. La nouvelle action de demande de copie ne modifie ni leurs permissions HTTP, ni les caches/CDN, ni les moteurs d'indexation.

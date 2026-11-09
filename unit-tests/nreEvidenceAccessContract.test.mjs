@@ -70,3 +70,29 @@ test("no evidence gateway or private document origin is linked in public UI", ()
   assert.ok(page.includes("t.pending"));
   assert.ok(page.includes("t.noApprovedProofs"));
 });
+
+test("public document overview displays only declared entries, not actual complaints or received requests", () => {
+  const page = read("app/[locale]/evidence-access/page.tsx");
+  const css = read("app/[locale]/nre/page.module.css");
+  assert.match(page, /data-testid="evidence-public-overview"/);
+  for (const expr of [
+    /entries\.length/,
+    /entries\.filter\(entry => entry\.evidenceStatus === "unlinked"\)\.length/,
+    /proofs\.length/,
+    /entries\.filter\(entry => entry\.kind === "contact-request"\)\.length/,
+  ]) assert.match(page, expr);
+  assert.match(page, /t\.overviewIntro/);
+  assert.match(page, /href="#request-documents"/);
+  assert.match(css, /\.accessOverviewCards/);
+  assert.match(css, /max-width: 420px/);
+  assert.doesNotMatch(page, /(?:fetch\(|OPENRAG_API_KEY|privateObjectKey|receivedRequestsCount|caseNumber)/);
+  assert.equal(publicRegister.entries.length, 4);
+  assert.equal(publicRegister.proofs.length, 0);
+  for (const lang of locales) {
+    const words = JSON.parse(read("messages/nre/" + lang + ".json")).nrePage.access;
+    for (const field of ["overviewHeading", "overviewIntro", "overviewEntries",
+      "overviewPending", "overviewProofs", "overviewContact"]) {
+      assert.ok(typeof words[field] === "string" && words[field].trim().length >= 8);
+    }
+  }
+});
