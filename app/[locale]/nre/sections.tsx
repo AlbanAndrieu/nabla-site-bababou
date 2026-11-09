@@ -7,7 +7,7 @@ import styles from "./page.module.css";
 
 export type NrePageCopy = {
   meta: { title: string; description: string };
-  hero: { eyebrow: string; title: string; navigation: string; jumpHours: string; jumpTimeline: string; jumpTable: string };
+  hero: { eyebrow: string; title: string; navigation: string; jumpHours: string; jumpRegister: string; jumpTimeline: string; jumpTable: string };
   advocacy: {
     eyebrow: string;
     heading: string;
@@ -28,6 +28,62 @@ export type NrePageCopy = {
     rightsLink: string;
     jumpReference: string;
     jumpTimeline: string;
+  };
+  access: {
+    metaTitle: string;
+    metaDescription: string;
+    eyebrow: string;
+    heading: string;
+    intro: string;
+    pending: string;
+    navigation: string;
+    contact: string;
+    backToRegister: string;
+    processHeading: string;
+    step1Title: string;
+    step1Body: string;
+    step2Title: string;
+    step2Body: string;
+    step3Title: string;
+    step3Body: string;
+    step4Title: string;
+    step4Body: string;
+    catalogHeading: string;
+    catalogIntro: string;
+    france: string;
+    norway: string;
+    germany: string;
+    contactRequests: string;
+    entryDetails: string;
+    notYetLinked: string;
+    reviewedRef: string;
+    reviewedHeading: string;
+    noApprovedProofs: string;
+    requestOnly: string;
+    securityHeading: string;
+    securityBody: string;
+    existingPublicPdf: string;
+    noAutomaticApproval: string;
+  };
+  register: {
+    heading: string;
+    intro: string;
+    privateNotice: string;
+    france: string;
+    norway: string;
+    germany: string;
+    contactRequests: string;
+    complaintReported: string;
+    requestsReported: string;
+    pendingProof: string;
+    reviewedProof: string;
+    requestOnly: string;
+    requestHeading: string;
+    requestInstructions: string;
+    requestLink: string;
+    openRecord: string;
+    accessGuide: string;
+    disclaimer: string;
   };
   stats: {
     heading: string;
@@ -103,6 +159,7 @@ export function NreHero({ copy }: CopyProps) {
       <Badge variant="info">{copy.hero.eyebrow}</Badge>
       <h1 id="nre-heading">{copy.hero.title}</h1>
       <nav className={styles.quickNav} aria-label={copy.hero.navigation}>
+        <a href="#nre-register">{copy.hero.jumpRegister}</a>
         <a href="#nre-hours-heading">{copy.hero.jumpHours}</a>
         <a href="#timeline-heading">{copy.hero.jumpTimeline}</a>
         <a href="#table-heading">{copy.hero.jumpTable}</a>

@@ -47,6 +47,10 @@ export const SITE_PAGES = {
     category: "discoverability",
     seo: { priority: 0.7, changeFrequency: "monthly" },
   },
+  "evidence-access": {
+    category: "discoverability",
+    seo: { priority: 0.45, changeFrequency: "monthly" },
+  },
   link: {
     category: "discoverability",
     seo: { priority: 0.65, changeFrequency: "monthly" },

@@ -1,53 +1,52 @@
-# Roadmap active — Site Bababou
+# Roadmap active — Site Bababou (consolidée au 8 novembre 2026)
 
-**Consolidation : 31 octobre 2026.** Source de référence : `master@714adef448f398e270d4b0004a3214975b71ff8a`, inspectée dans GitHub. La [PR #253](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/253) est **fusionnée** ; la [PR #254](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/254) (dépendance `follow-redirects`) est ouverte et indépendante de cette roadmap. La compilation `READY` obtenue sur l'ancien SHA `624dc24f` n'est **pas** une recette de production du `master` courant.
+> État audité à partir de `master@b24338a` et de la PR Draft **#262**, ouverte après fusion de **#258**. Ne pas confondre source GitHub, tests d'exécution, Preview et production ; l'état de validation est lié à un SHA.
 
-## État réel et règles
+## P0 transversal — blocage Vercel et consommation CPU
 
-- **Production par défaut** : `/` est encore réécrite vers `public/index.html` par `proxy.ts` si le verrou `isHomeCutoverEnabled()` n'est pas approuvé. La présence du code React fusionné ne signifie pas que sa publication sur `/` a été autorisée.
-- **Deux parcours React de revue** : `/home-preview` (5 cartes, messages personnels) et `/abduction` (7 cartes, ressources pour parents, traduction, associations et notice). Versions préfixées `/en`, `/de` et `/no` ; français sans préfixe. Textes principaux natifs FR/EN/DE/NO dans `lib/homeAudienceCopy.mjs`.
-- **Protection déclarée dans le code** : `noindex, nofollow, nosnippet` et `private, no-store` pour les pages de revue ; les en-têtes et les redirections doivent encore être vérifiés par HTTP réel sur le SHA candidat.
-- **Confidentialité** : aucun nouveau numéro d'identité d'enfant, document d'identité, lien de localisation précise ou accusation nominative ne doit être copié depuis la homepage historique dans les nouvelles pages sans analyse de publication et décision explicite. La page historique reste propriétaire de ses exceptions ; voir `.agents/skills/protect-family-privacy/SKILL.md`.
-- **Méthode** : `justfile` est l'entrée canonique. Tests locaux d'abord, PR Draft tant que les preuves requises manquent, aucune fusion automatique ; ne pas affaiblir les quality gates ni déclencher inutilement des workflows GitHub Actions.
+La dernière revue du dépôt signale **une suspension du projet Vercel Hobby avec réponses HTTP 402** depuis le 3 novembre 2026 ; la reprise annoncée au 3 décembre et la demande au support doivent être **revérifiées**, sans déduire d'un HTTP 402 une défaillance du code.
 
-## Travail restant — ordre P1 → P5
+- [PR #260](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/260) : **Draft ouverte** ; génération statique (SSG) NRE, autorités centrales et pages juridiques, `force-static` et audit `scripts/verify-next-prerender.mjs`. La clôture exige le manifeste Next `.next/prerender-manifest.json`, profil CPU et tests exact-SHA ; pas de preuve de bascule sans exécution.
+- [PR #261](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/261) : **Draft ouverte** ; qualification du HTTP 402 avant DAST/ZAP, sans transformer une absence de scan en succès de sécurité.
+- **PR #262** (présente branche) : page explicative d'accès, registre documentaire et politique Cloudflare Access à activation explicite ; **sans ouverture des pièces**.
+- Ne pas fusionner automatiquement les trois PR ni déclencher des CI coûteuses tant que la plateforme ne permet pas de produire une preuve exploitable. Préserver SAST/SCA/ZAP, la version Node 24 et le verrou de bascule exact-SHA.
 
-| Priorité | À faire | Condition de clôture |
+## État des migrations
+
+| Domaine | Situation vérifiée dans le code | Reste à faire pour clôturer |
 | --- | --- | --- |
-| **P1 — Parité et revue éditoriale** | Comparer les **5 cartes Home et 7 cartes Abduction**, textes, images non rognées, lettre « My Dear Daughter », « A long search », drapeaux, associations, ancres, liens, thème clair/sombre, mobile et impression avec le site historique. Arbitrer explicitement la demande de rétablissement des anciennes cartes liées à l'identité et à des lieux précis ; ne pas publier par défaut. | Recette visuelle des **8 parcours FR/EN/DE/NO**, images réellement chargées, écarts documentés et approbation éditoriale de la copie exacte. |
-| **P2 — Accessibilité WCAG 2.2 AA** | Exécuter Playwright + axe sur Chromium, Firefox et WebKit : navigation clavier, focus, contraste, reflow à 320 px, zoom 200 %, mouvement réduit, thèmes, lecture des `details`, parcours sur mobile et lecteur d'écran. | Aucune violation bloquante, cas résiduels enregistrés avec preuve et validation manuelle des parcours critiques. |
-| **P3 — i18n et pages historiques** | Contrôler le sélecteur FR/EN/DE/NO et les liens Home ↔ Abduction avant/après bascule ; relire humainement les quatre versions (juridique et texte personnel). Vérifier les destinations NRE, autorités centrales, `people-contacted.html`, `for-fathers.html`, les boutons Back/Home/Top et le « Print to PDF » de `/en/central-authorities`. | Aucune route cassée, contenu cible en bonne langue, fonctions héritées conservées ou écarts acceptés. |
-| **P4 — SEO, sécurité et confidentialité de publication** | Tester HTTP `200/307/404`, `lang`, canonical/hreflang, sitemap, robots, métadonnées OG/Twitter, cache et en-têtes `noindex` des deux revues ; auditer requêtes réseau, SPA, Service Workers/WebSockets et absence de télémétrie non prévue. Vérifier **le verrou de bascule exact-SHA au build et au runtime**, notamment son comportement avec le prérendu Next.js. | Rapport exact-SHA sans exposition involontaire, règles SEO cohérentes et bascule/rollback réellement démontrés en environnement de test autorisé. |
-| **P5 — Gates et dette technique** | Sur checkout complet : `just homepage-validation`, `just p0`, `just quality`, BetterLeaks, SAST/SCA, ZAP et publication selon la procédure du dépôt. Traiter séparément la PR dépendance #254 après vérification des impacts. Investiguer le warning npm `Unknown env config "cache-dir"` lorsque reproductible. | Quality gates exigées `PASS` ou dérogation explicitement approuvée ; SHA, environnement et preuves consignés. |
+| **NRE React / i18n** | Page React Next FR/EN/DE/NO, calendrier mensuel, filtres, registre public déclaratif, approche des heures de contact et référence juridique ; **#258 fusionnée** | Exécuter tests navigateurs et revue éditoriale exacte des pièces |
+| **Page explicative preuves** | Dans la **PR Draft #262** : `/evidence-access` (FR) et `/en`, `/de`, `/no` ; liens par identifiant public, référencement SEO, guide Cloudflare Access ; aucun téléchargement privé | Tests exact-SHA, déploiement et validation avant annonce de mise en ligne |
+| **Docling → OpenRAG** | Contrats, modèle probatoire, manuel et contrôles préparés uniquement ; aucun document privé connecté par cette PR | Inventaire privé et traitement sur TrueNAS, audit OpenRAG/OpenSearch, séparation des corpus |
+| **Cloudflare Access** | Terraform **désactivé par défaut**, application self-hosted, allowlist nominative, MFA et approbation temporaire préparés | Vérifier IdP, Tunnel, hostname, protection origine, appliquer avec autorisation, tests 401/403/révocation ; ne pas publier de lien privé avant GO |
+| **Homepage React** | Home/Abduction React et pages de revue existent ; la racine `/` reste intentionnellement sur `public/index.html` tant que `isHomeCutoverEnabled()` refuse la bascule | Parité visuelle/contenu et publication propriétaire approuvée : **pas de bascule automatique** |
+| **Contrôles communs** | Tests de contrat, lint, privacy et qualité définis dans package/justfile ; règles SAST/SCA/DAST conservées | Réaliser les quality gates sur le SHA final ; aucun statut CI `skipped` ne vaut PASS |
 
-**Décision de mise en ligne : NO-GO pour le remplacement de `/`**, tant que P1–P4 et les gates de publication nécessaires ne sont pas démontrés et approuvés. La fusion de #253 ne constitue pas cette approbation.
+### Priorités finales et critères d'achèvement
 
-## Preuves existantes — sans extrapolation
+**P0 — Empêcher toute fuite probatoire avant la migration.** Auditer l'ancien PDF de plainte déjà publié dans `public/assets/` : données de mineur, métadonnées, liens, CDN et historiques. **Ne pas modifier ou effacer silencieusement une pièce volontairement publique** ; soumettre un arbitrage de publication au propriétaire. Tester la sûreté du registre : champs inconnus rejetés, dates non inventées, 0 lien direct vers originaux.
 
-| Preuve | Portée |
-| --- | --- |
-| [PR #253 fusionnée](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/253) ; SHA de tête `624dc24f` | Modifications de migration et traduction intégrées dans `master`. |
-| Vercel Preview `dpl_BQq3gJ8vhpNgmci9LNwP7b3Faohp` : `READY` sur `624dc24f` | Compilation Next.js/TypeScript et déploiement de **ce SHA seulement**. |
-| 14 contrats ciblés Node `PASS` dans le sandbox du lot P1–P4 | Contrats de contenu/structure, **pas** toutes les suites, et **pas** exécution navigateur. |
-| Contrôles Playwright/axe multi-navigateurs, sécurité complète, HTTP post-merge, revue éditoriale | **NOT_RUN / NOT_VERIFIED ici** ; ne pas annoncer `PASS` sur la base du build Vercel. |
-| `master@714adef` examiné le 31/10 | Vérification du code et de la documentation, **pas** preuve d'exécution en production. |
+**P1 — Finaliser le parcours public React dans #262.** Vérifier `/nre` ↔ `/evidence-access` dans les quatre langues, navigation clavier, focus sur les ancres, états `pending`, impression, affichage mobile 320/375 px. S'assurer que les références `NRE-CLAIM-*` sont des identifiants internes, non des numéros de plainte. Garder la page d'accès **publique et informative**, sans endpoint de fichiers.
 
-Les anciens rapports de PR, leurs commits et leurs logs restent retrouvables dans Git. Ne pas les republier comme état actuel.
+**P2 — Intégrer le corpus privé hors Vercel.** Ingestion locale et isolée Docling, contrôle d'intégrité SHA-256, provenance page, recoupement humain ; OpenRAG/OpenSearch non accessible aux tiers, secrets hors Next. Aucun enrichissement automatique du site à partir des chunks et aucune conclusion juridique automatisée.
 
-## Exécution et transmission
+**P3 — Déployer l'accès individuel (GO conditionnel).** Terraform Cloudflare inerte par défaut. Après validation de la passerelle et de la sécurité d'origine, autoriser temporairement les emails pré-qualifiés ; MFA indépendante à chaque login, justification, approbation et durée de 15 min. Vérifier `iss/aud/exp/signature` des JWT, ACL par document, refus `401/403`, révocation, copies irréversiblement caviardées, absence de cache, logs minimisés. Activer uniquement après validation expresse et tests.
 
-Sur une branche non protégée et un checkout complet, sélectionner les vérifications correspondant au diff :
+**P4 — Migration React et accessibilité du site.** Revue P1 de la homepage historique (5 cartes Home/7 Abduction), illustrations et textes du propriétaire, écran 320 px, WCAG 2.2 AA (axe, Chromium/Firefox/WebKit), SEO, sitemap, PDF et tous les liens depuis NRE/autorités centrales. Conserver l'exception `public/index.html` tant que la décision de bascule de la homepage n'est pas approuvée ; ne pas prétendre que le code fusionné change `/`.
 
-```bash
-just offline-l1
-just offline-contracts
-just homepage-validation-list
-just homepage-validation
-just p0
-just quality
-```
+**P5 — Preuve de publication exact-SHA.** Sur checkout Node 24/npm 12 : `node --test unit-tests/nrePublicEvidence.test.mjs unit-tests/nreEvidenceAccessContract.test.mjs unit-tests/nreVisitLedger.test.mjs`, puis `just p0`, `npm run check`, Playwright/axe, BetterLeaks/SAST/SCA/ZAP si disponibles, revue du diff, Preview puis décision humaine. Les checks GH `skipped` sur Draft ne constituent pas une validation. Aucune PR mergée automatiquement.
 
-Ne lancer une recette navigateur que si les binaires et la cible autorisée sont disponibles. `NOT_RUN` ou `BLOCKED` ne signifie jamais `PASS`. Garder le handoff concis : **PR@SHA | blocage | fichiers | preuve | prochaine action**.
+## Livrables conservés comme sources de vérité
 
-**Documents pérennes** : [parité et écarts](homepage-migration-parity.md) · [GO/NO-GO et rollback](homepage-react-cutover.md) · [opérations et incidents](operations.md) · [confidentialité](publication-redaction.md) · [couverture sécurité](security-audit-coverage-ledger.md).
+- `docs/nre-evidence-openrag-access.md` : architecture, objets publics/privés, provenance, processus d'autorisation, audit du PDF déjà public et critères GO/NO-GO.
+- `infra/cloudflare/README.md` et `infra/cloudflare/nre-evidence-access.tf` : activation future de Cloudflare Access, avec politique **désactivée par défaut**.
+- `data/nre-evidence.public.json` + `lib/nrePublicEvidence.mjs` : registre public à validation restrictive ; **aucun document lié** par défaut.
+- `docs/nre-visit-ledger.md` : calcul et limites des heures déclarées, calendriers et explications légales.
+- `docs/homepage-migration-parity.md` et `docs/homepage-react-cutover.md` : parité, décision et rollback de la homepage.
+- GitHub PR #258 (fusionnée) et #262 (Draft), commits et logs : détails historiques, sans recopier des diagnostics déjà retrouvables dans Git.
 
+## État de validation à la consolidation
+
+Le lot initial #262 a fait l'objet de contrôles **structurels** via GitHub, pas d'un build local ni d'une preuve d'exécution sécurisée sur TrueNAS. L'extension Access/page explicative doit encore obtenir ses propres validations au SHA final. Aucun changement de politique, de DNS, de Tunnel ou d'OpenRAG n'est effectué par l'ajout des seuls fichiers de code et d'infrastructure inerte.
+
+**GO/NO-GO :** publication de la nouvelle page publique possible uniquement après tests et revue ; **NO-GO** sur le partage privé et la bascule de la homepage tant que les préconditions propres à ces deux périmètres ne sont pas remplies.

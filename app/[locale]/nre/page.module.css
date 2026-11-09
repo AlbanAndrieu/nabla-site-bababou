@@ -776,3 +776,227 @@
 @media print {
   .testimonyDetails:not([open]) > .testimonyBody { display: block !important; }
 }
+
+/* Public reference registry: no document previews, private URLs or unverified dates. */
+.registerHeader {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(12rem, 1fr);
+  gap: 1rem 1.6rem;
+  align-items: start;
+}
+.registerHeader p { line-height: 1.65; color: var(--ui-text-secondary); }
+.registerSecurity {
+  padding: 1rem;
+  margin: 0;
+  border: 1px solid var(--ui-border);
+  border-radius: 0.65rem;
+  background: var(--ui-surface-muted);
+  font-size: 0.92rem;
+}
+.registerCards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  list-style: none;
+  padding: 0;
+  margin: 1.1rem 0;
+  gap: 0.95rem;
+}
+.registerCard {
+  min-width: 0;
+  padding: clamp(1rem, 2vw, 1.35rem);
+  border: 1px solid var(--ui-border);
+  border-inline-start: 4px solid var(--ui-info-border);
+  border-radius: 0.75rem;
+  background: var(--ui-surface);
+}
+.registerCardHeading { display: flex; align-items: center; gap: 0.65rem; }
+.registerCardHeading > span { font-size: 1.5rem; }
+.registerCardHeading h3 { margin: 0; font-size: 1.05rem; }
+.registerCard p { line-height: 1.6; }
+.registerReference {
+  display: inline-block;
+  max-width: 100%;
+  margin: 0.9rem 0 0;
+  color: var(--ui-text-secondary);
+  overflow-wrap: anywhere;
+  font-size: 0.83rem;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+.registerStatus {
+  font-weight: 650;
+  font-size: 0.86rem;
+  color: var(--ui-text-secondary);
+}
+.registerProofs { padding-inline-start: 1.4rem; overflow-wrap: anywhere; }
+.registerFooter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.15rem;
+  background: var(--ui-surface-muted);
+  border: 1px solid var(--ui-border);
+  border-radius: 0.75rem;
+}
+.registerFooter > div { max-width: 72ch; }
+.registerFooter h3 { margin: 0; font-size: 1.08rem; }
+.registerFooter p { margin: 0.6rem 0; line-height: 1.55; }
+.registerFootnote { font-size: 0.85rem; color: var(--ui-text-secondary); }
+.registerRequestLink {
+  display: inline-flex;
+  min-height: 2.75rem;
+  padding: 0.65rem 1rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--ui-border);
+  border-radius: 0.55rem;
+  background: var(--ui-surface);
+  color: var(--ui-text-primary);
+  font-weight: 700;
+  text-align: center;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.registerRequestLink:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
+@media (max-width: 700px) {
+  .registerCards, .registerHeader { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .registerRequestLink { width: 100%; }
+}
+@media print {
+  .registerCard, .registerFooter { break-inside: avoid; }
+  .registerRequestLink { display: none !important; }
+}
+@media (forced-colors: active) {
+  .registerCard, .registerSecurity, .registerFooter { border: 1px solid CanvasText; }
+}
+
+/* Evidence access: public guide only. Never display raw files or live RAG previews. */
+.accessHero {
+  margin: 0 auto;
+  max-width: 72rem;
+  padding: clamp(1.4rem, 3.5vw, 3rem);
+  border: 1px solid var(--ui-border);
+  border-radius: 1rem;
+  background: var(--ui-surface-muted);
+}
+.accessEyebrow {
+  color: var(--ui-text-secondary);
+  font-weight: 750;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+.accessHero h1 {
+  margin: 0.8rem 0;
+  font-size: clamp(1.85rem, 4vw, 3rem);
+  line-height: 1.15;
+  text-wrap: balance;
+}
+.accessLead { max-width: 75ch; line-height: 1.7; font-size: 1.08rem; }
+.accessPending {
+  margin-block: 1rem;
+  padding: 0.9rem 1.1rem;
+  border-inline-start: 4px solid var(--ui-warning-border);
+  background: var(--ui-surface);
+  color: var(--ui-text-primary);
+  line-height: 1.6;
+  font-weight: 650;
+}
+.accessLinks, .registerActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+.accessLinks a, .registerGuideLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0.65rem 0.9rem;
+  border-radius: 0.55rem;
+  border: 1px solid var(--ui-border);
+  background: var(--ui-surface);
+  color: var(--ui-text-primary);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  font-weight: 700;
+}
+.accessLinks a:focus-visible, .registerGuideLink:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 3px;
+}
+.registerGuideLink { font-size: 0.86rem; margin: 0.45rem 0; }
+.accessSteps {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+  padding: 0;
+  list-style: none;
+}
+.accessStep {
+  display: flex;
+  align-items: start;
+  gap: 0.9rem;
+  padding: 1.15rem;
+  border: 1px solid var(--ui-border);
+  border-radius: 0.75rem;
+  background: var(--ui-surface);
+}
+.accessStepNumber {
+  flex: 0 0 2.25rem;
+  display: grid;
+  place-items: center;
+  min-height: 2.25rem;
+  border: 2px solid var(--ui-info-border);
+  border-radius: 50%;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+}
+.accessStep h3 { font-size: 1.05rem; margin: 0 0 0.45rem; }
+.accessStep p { line-height: 1.6; margin: 0; color: var(--ui-text-secondary); }
+.accessCatalog {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+  padding: 0;
+  list-style: none;
+}
+.accessEntry {
+  min-width: 0;
+  padding: 1.15rem;
+  background: var(--ui-surface);
+  border: 1px solid var(--ui-border);
+  border-radius: 0.75rem;
+  scroll-margin-block-start: 5rem;
+}
+.accessEntry:target { outline: 3px solid var(--ui-info-border); outline-offset: 2px; }
+.accessEntry h3, .accessEntry h4 { font-size: 1.05rem; margin: 0 0 0.65rem; }
+.accessEntry code {
+  font-size: 0.83rem;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+.accessEntry p { color: var(--ui-text-secondary); line-height: 1.6; }
+.accessCaution {
+  border-inline-start: 4px solid var(--ui-info-border);
+  padding: 0.85rem 1rem;
+  background: var(--ui-surface-muted);
+  line-height: 1.6;
+}
+@media (max-width: 650px) {
+  .accessSteps, .accessCatalog { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .accessHero { padding: 1.1rem; }
+  .accessLinks a, .registerActions, .registerActions a { width: 100%; }
+}
+@media print {
+  .accessHero, .accessStep, .accessEntry { break-inside: avoid; box-shadow: none; }
+  .accessLinks, .registerActions { display: none !important; }
+}
+@media (forced-colors: active) {
+  .accessHero, .accessStep, .accessEntry, .accessPending { border: 1px solid CanvasText; }
+}
