@@ -39,6 +39,20 @@ Les contrôles CI `skipped` n'établissent pas la qualité et des checks rouges 
   le registre des demandes effectivement reçues devra être privé,
   authentifié, tracé et distinct du site statique.
 
+## Suivi P0 — smoke Vercel public après #265
+
+- [x] Les contrôles CPU et la visualisation de références/demandes
+  publiques FR/EN/DE/NO sont fusionnés avec [#265](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/265).
+- [x] Le script `scripts/finops/vercel-public-smoke.mjs` et
+  `unit-tests/vercelPublicSmoke.test.mjs` sont copiés à l'identique
+  depuis [Site Alban #297](https://github.com/AlbanAndrieu/nabla-site-alban/pull/297).
+- [ ] Exécuter le smoke `--live --site bababou` seulement après
+  revue des effets de bord, puis l'analyse du JSON Vercel Usage :
+  **aucune baisse de CPU n'a été mesurée** par l'ajout de ces outils.
+- [ ] Confirmer Node24/npm12, TypeScript, Stylelint, privacy et AppSec
+  sur le SHA exact de la nouvelle PR avant publication. Aucun cron
+  Vercel n'est introduit dans le site.
+
 ## État des migrations
 
 | Domaine | Situation vérifiée dans le code | Reste à faire pour clôturer |
