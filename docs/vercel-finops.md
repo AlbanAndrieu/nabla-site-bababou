@@ -47,6 +47,29 @@ CPU quantifiable.
 Documentation : https://vercel.com/docs/cli/usage et
 https://vercel.com/docs/functions/usage-and-pricing.
 
+## Diagnostic de disponibilité (opt-in et faible impact)
+
+Le script `scripts/finops/vercel-public-smoke.mjs` est partagé avec
+Site Alban : il teste uniquement les pages publiques attendues, par
+requêtes `HEAD` séquentielles, délai maximal de 5 secondes par requête.
+Il n'exécute aucune requête sans l'option `--live` :
+
+```bash
+node --test unit-tests/vercelPublicSmoke.test.mjs
+node scripts/finops/vercel-public-smoke.mjs --live --site bababou
+# Également possible : --site alban
+```
+
+Le script teste actuellement `/`, `/nre`, `/en/nre`, `/de/nre`,
+`/no/nre` et `/evidence-access` ; aucun endpoint propriétaire,
+Stripe, OpenRAG ou Cloudflare privé n'est interrogé. Le code `402`
+produit `BLOCKED_PLATFORM`, jamais un PASS DAST. Les en-têtes
+`x-vercel-cache` ne sont pas équivalents au CPU facturé.
+
+**Ne pas** ajouter ce script à une boucle de polling ni publier les
+statistiques d'usage de l'équipe sur le site public. Exécuter les
+mesures CPU et invocations depuis le dashboard ou l'export CLI autorisé.
+
 ## Roadmap et confidentialité
 
 - Le build de production après #264 a confirmé `/fr/success`,
