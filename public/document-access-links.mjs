@@ -1,5 +1,5 @@
 /**
- * Global, non-authorizing request-a-copy affordance for document links.
+ * Global, non-authorizing source-document access requests for linked files.
  *
  * This script does not fetch document contents, expose source URLs in request
  * query strings, alter the original link, or grant access to anything.
@@ -12,13 +12,13 @@ const PUBLIC_DOCUMENT_PROVIDERS = new Set([
 ]);
 
 export const DOCUMENT_REQUEST_LABELS = Object.freeze({
-  fr: "Demander une copie",
-  en: "Request a copy",
-  de: "Kopie anfordern",
-  no: "Be om en kopi",
+  fr: "Demander l’accès au document source",
+  en: "Request access to the source document",
+  de: "Zugang zum Quelldokument beantragen",
+  no: "Be om tilgang til kildedokumentet",
 });
 
-export function documentLinkIdentity(rawHref, baseHref, archivedHtml = false) {
+export function documentLinkIdentity(rawHref, baseHref, _archivedHtml = false) {
   if (typeof rawHref !== "string" || !rawHref.trim() ||
       typeof baseHref !== "string") return null;
   let url;
@@ -47,12 +47,9 @@ export function documentLinkIdentity(rawHref, baseHref, archivedHtml = false) {
     /\/(?:document|spreadsheets|presentation|file)(?:\/u\/\d+)?\/d\/[^/]+/i.test(pathname) ||
     /^\/(?:s\/|scl\/fi\/)[^/]+/i.test(pathname)
   )) || Boolean(safeProviderId);
-  // Only controlled ca/ HTML archives are recognized, not arbitrary web pages.
-  const isArchivedHtml = (url.origin === page.origin &&
-    /^\/ca\/.+\.html$/i.test(pathname) && !/\/index\.html$/i.test(pathname)) ||
-    (archivedHtml && /\.html$/i.test(pathname));
-
-  if (!isFile && !isProvider && !isArchivedHtml) return null;
+  // Approved HTML pages (including /ca/ and data-document-entry) are public
+  // publications, NOT private source documents. Do not request them again.
+  if (!isFile && !isProvider) return null;
   // Queries might contain access tokens or personal data: NEVER propagate them.
   const publicOrigin = url.origin === page.origin || ["bababou.com", "www.bababou.com"].includes(url.hostname.toLowerCase())
     ? "https://bababou.com" : url.origin;
@@ -116,9 +113,13 @@ function enhanceDocumentLinks() {
     const href = documentRequestPath(identity, locale);
     if (!href) continue;
     const request = document.createElement("a");
-    request.className = "document-access-request";
+    request.className = "document-access-request document-source-request";
     request.href = href;
-    request.textContent = DOCUMENT_REQUEST_LABELS[locale];
+    const icon = document.createElement("span");
+    icon.className = "document-source-lock-icon";
+    icon.setAttribute("aria-hidden", "true");
+    icon.textContent = "🔒";
+    request.append(icon, document.createTextNode(DOCUMENT_REQUEST_LABELS[locale]));
     request.setAttribute("data-document-request-ref", ref);
     request.setAttribute("aria-label", `${DOCUMENT_REQUEST_LABELS[locale]} — ${ref}`);
     request.setAttribute("rel", "nofollow");
