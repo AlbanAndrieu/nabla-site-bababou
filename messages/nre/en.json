@@ -180,8 +180,8 @@
       "sitewideHeading": "Request access to the source document",
       "sitewideIntro": "Approved HTML pages remain directly accessible. Only cited source files (PDFs, office documents and external document providers) can trigger an access request. The lock identifies an approval request, not an existing technical restriction.",
       "sitewideReference": "Public reference of the requested document",
-      "sitewideInstructions": "Include this reference, the page where you found it, your role and the purpose of the request when contacting us. This is not an official case reference and does not guarantee that a private copy exists.",
-      "sitewideWithoutReference": "No specific reference was provided. Please identify the document title and the page where you found it when making contact.",
+      "sitewideInstructions": "Provide the source-document reference, the page citing it, your role and the purpose of consultation. This reference does not guarantee that a private original exists or that access will be granted.",
+      "sitewideWithoutReference": "No source-document reference was supplied. Please indicate the title and the page citing it.",
       "sitewidePublicNotice": "An access request grants no automatic right to the source. Already published files remain accessible at their existing URLs until separately removed or protected. Confidential originals require review, redaction and approval."
     }
   }
