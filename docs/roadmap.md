@@ -81,7 +81,7 @@ Les contrôles CI `skipped` n'établissent pas la qualité et des checks rouges 
 
 ## Livrables conservés comme sources de vérité
 
-- `docs/sitewide-document-access.md` : comportement transversal de demande de copie et risques des assets publics.
+- `docs/sitewide-document-access.md` : accès aux sources référencées, pas aux pages HTML déjà publiées, et risques des assets publics.
 - `docs/nre-evidence-openrag-access.md` : architecture, objets publics/privés, provenance, processus d'autorisation, audit du PDF déjà public et critères GO/NO-GO.
 - `infra/cloudflare/README.md` et `infra/cloudflare/nre-evidence-access.tf` : activation future de Cloudflare Access, avec politique **désactivée par défaut**.
 - `data/nre-evidence.public.json` + `lib/nrePublicEvidence.mjs` : registre public à validation restrictive ; **aucun document lié** par défaut.
@@ -102,12 +102,12 @@ Le lot initial #262 a fait l'objet de contrôles **structurels** via GitHub, pas
 | Priorité | Statut préparé | Validation restante |
 | --- | --- | --- |
 | **P0 — audit de publication** | Liens d'archives et fichiers documentaires publics identifiés comme catégorie de risque, sans suppression. | Classification juridique, audit PDF/Office et métadonnées, éventuelle décision de retrait/caviardage, purge CDN. |
-| **P1 — CTA transversal** | Détection sélective des documents PDF/Office, archives HTML `/ca/` et liens de fournisseurs reconnus ; doublon « Demander une copie » ajouté sans remplacer l'original. | Vérifier les cas de documents sans extension et les exceptions explicitement marquées, en FR/EN/DE/NO. |
+| **P1 — CTA transversal** | Détection sélective des documents PDF/Office et liens de fournisseurs reconnus ; demande d’accès au document source, sans doublon pour les pages HTML `/ca/` approuvées. | Vérifier les cas de documents sans extension et les exceptions explicitement marquées, en FR/EN/DE/NO. |
 | **P2 — guide et traçabilité** | Guide `/evidence-access?doc=SITE-DOC-*#request-documents`, référence opaque, recours au Contact et résolveur local. | Tester que la référence suffit à identifier le lien public sans divulguer URL, query secrets ou pièce privée ; revue RGPD. |
 | **P3 — sécurité réelle** | La configuration Cloudflare Access issue de #262 reste **désactivée**. | Installer puis tester Tunnel, MFA, approbation temporaire, passerelle ACL par document, copies caviardées et révocation ; ne pas annoncer portail actif avant GO. |
 | **P4 — qualité et migration** | Convergence des pages Next et HTML historiques par le même module JS, sans modifier la homepage 404 protégée. | Node 24/npm 12, typecheck, lint, privacy gates, Playwright/axe multi-navigateurs, qualité de pré-rendu et tests exact-SHA sur Preview accessible. |
 
-**Ne pas confondre** demande de copie et accès effectif à un document. La diffusion actuelle de fichiers sous `public/` reste indépendante de Cloudflare Access. La bascule de la homepage dispose de la validation éditoriale du propriétaire ; restent les critères techniques et l'activation de production vérifiée.
+**Ne pas confondre** demande d’accès à une source et accès effectif à celle-ci. La diffusion actuelle de fichiers sous `public/` reste indépendante de Cloudflare Access. La bascule de la homepage dispose de la validation éditoriale du propriétaire ; restent les critères techniques et l'activation de production vérifiée.
 
 ## Bilan de la PR #264 — critères exact-SHA
 
