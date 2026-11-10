@@ -18,7 +18,7 @@ export const DOCUMENT_REQUEST_LABELS = Object.freeze({
   no: "Be om tilgang til kildedokumentet",
 });
 
-export function documentLinkIdentity(rawHref, baseHref, _archivedHtml = false) {
+export function documentLinkIdentity(rawHref, baseHref) {
   if (typeof rawHref !== "string" || !rawHref.trim() ||
       typeof baseHref !== "string") return null;
   let url;
@@ -97,7 +97,6 @@ function enhanceDocumentLinks() {
     if (shouldSkipLink(link)) continue;
     const identity = documentLinkIdentity(
       link.getAttribute("href"), window.location.href,
-      link.hasAttribute("data-document-entry"),
     );
     const ref = identity ? publicDocumentLocator(identity) : null;
     const existing = link.nextElementSibling?.classList.contains("document-access-request")
