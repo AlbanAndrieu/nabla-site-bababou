@@ -137,8 +137,8 @@
       "accessGuide": "Comprendre l'accès sécurisé aux preuves"
     },
     "access": {
-      "metaTitle": "Accès aux documents et preuves — demande de copie",
-      "metaDescription": "Demander une copie de documents liés sur Bababou ou consulter les références probatoires NRE, sous réserve de vérification, caviardage et autorisation temporaire MFA.",
+      "metaTitle": "Accès aux documents — demande d’accès aux sources",
+      "metaDescription": "Accès au document source cité sur Bababou, sous réserve d’autorisation et de caviardage.",
       "eyebrow": "Dossier documentaire · confidentialité",
       "heading": "Demander l'accès à un document ou à une preuve",
       "intro": "Ce guide concerne tous les documents référencés sur Bababou, y compris les archives des autorités centrales et les pièces mentionnées dans le registre NRE. Les copies privées font l'objet d'une décision de communication individuelle.",
@@ -177,12 +177,12 @@
       "overviewPending": "Entrées sans pièce publique vérifiée",
       "overviewProofs": "Références de pièces examinées",
       "overviewContact": "Entrées regroupant les demandes de contact",
-      "sitewideHeading": "Demander une copie d’un document du site",
-      "sitewideIntro": "Ce parcours s’applique aux documents cités ou liés sur l’ensemble du site : PDF, fichiers bureautiques, archives documentaires et documents hébergés par des plateformes externes. Les ressources déjà publiques restent consultables à leur adresse d’origine.",
+      "sitewideHeading": "Demander l’accès au document source",
+      "sitewideIntro": "Les pages HTML approuvées sont librement consultables. Seuls les fichiers sources cités sur le site (PDF, documents bureautiques et fournisseurs documentaires externes) peuvent faire l’objet d’une demande. Le cadenas indique une demande d’autorisation, pas une protection technique déjà active.",
       "sitewideReference": "Référence publique du document demandé",
       "sitewideInstructions": "Indiquez cette référence, la page sur laquelle vous l’avez trouvée, votre qualité et l’objectif de votre demande lors de votre prise de contact. Cette référence n’est pas un numéro de dossier officiel et ne garantit pas qu’une copie privée soit disponible.",
       "sitewideWithoutReference": "Aucune référence précise n’a été transmise. Lors de votre prise de contact, mentionnez le titre du document et la page où vous l’avez trouvé.",
-      "sitewidePublicNotice": "Une demande de copie ne crée aucun droit d’accès automatique. Les documents déjà accessibles publiquement restent publics tant qu’une décision distincte de restriction n’a pas été appliquée. Les originaux privés restent soumis à vérification, caviardage et approbation."
+      "sitewidePublicNotice": "La demande ne donne pas automatiquement accès au document source. Les fichiers déjà publiés restent accessibles à leur adresse actuelle jusqu’à retrait ou protection distincte ; l’accès aux originaux confidentiels reste soumis à examen, caviardage et approbation."
     }
   }
 }
