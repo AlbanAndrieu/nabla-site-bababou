@@ -59,7 +59,9 @@ function titleFromHtml(html: string, relativePath: string) {
     html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i)?.[1] ??
     path.basename(relativePath, ".html").replace(/[-_]+/g, " ");
 
-  return pseudonymizeProtectedChildIdentity(\n    decodeHtmlText(rawTitle).replace(/\s*\|\s*Bababou\s*$/i, ""),\n  );
+  return pseudonymizeProtectedChildIdentity(
+    decodeHtmlText(rawTitle).replace(/\s*\|\s*Bababou\s*$/i, ""),
+  );
 }
 
 function publicHref(relativePath: string) {
