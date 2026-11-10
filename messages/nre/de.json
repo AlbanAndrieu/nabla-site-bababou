@@ -180,8 +180,8 @@
       "sitewideHeading": "Zugang zum Quelldokument beantragen",
       "sitewideIntro": "Freigegebene HTML-Seiten sind direkt zugänglich. Nur referenzierte Quelldateien (PDF, Office und externe Dokumentendienste) erhalten einen Anfragelink. Das Schloss bezeichnet die Genehmigungsanfrage, keinen bereits bestehenden technischen Schutz.",
       "sitewideReference": "Öffentliche Kennung des angefragten Dokuments",
-      "sitewideInstructions": "Bitte geben Sie bei der Kontaktaufnahme diese Kennung, die Fundseite, Ihre Rolle und den Zweck der Anfrage an. Die Kennung ist kein amtliches Aktenzeichen und garantiert nicht, dass eine private Kopie vorliegt.",
-      "sitewideWithoutReference": "Es wurde keine bestimmte Kennung übermittelt. Bitte nennen Sie den Dokumenttitel und die Fundseite bei Ihrer Kontaktaufnahme.",
+      "sitewideInstructions": "Bitte nennen Sie die Referenz des Quelldokuments, die zitierende Seite, Ihre Rolle und den Zugriffsgrund. Die Kennung garantiert weder die Existenz eines privaten Originals noch eine Freigabe.",
+      "sitewideWithoutReference": "Keine Referenz eines Quelldokuments übermittelt. Bitte nennen Sie Titel und zitierende Seite.",
       "sitewidePublicNotice": "Eine Anfrage berechtigt nicht automatisch zum Zugriff. Bereits veröffentlichte Dateien bleiben unter bisherigen URLs erreichbar, bis sie gesondert entfernt oder geschützt werden. Vertrauliche Originale müssen geprüft, geschwärzt und freigegeben werden."
     }
   }
