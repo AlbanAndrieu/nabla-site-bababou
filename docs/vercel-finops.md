@@ -79,3 +79,9 @@ restent à lire dans Vercel Usage.
 - [nabla-openclaw](https://github.com/AlbanAndrieu/nabla-openclaw) pourra
   lire un **résumé expurgé** généré manuellement par la même logique de
   budget. Aucune automatisation live n'est activée dans Bababou.
+
+## Extension du 10 novembre 2026 — intégration OpenClaw
+
+Le parseur `analyzeUsage(document, { asOf })` accepte désormais une date de référence pour les collecteurs automatiques : il retourne **`STALE_USAGE`** si la dernière date de l'export dépasse 48 h (ou se trouve trop loin dans le futur). Il conserve la lecture historique sans `asOf`, sans réinterpréter les coûts comme des CPU-heures. Test unitaire dédié ajouté ; exécution de la gate exacte à confirmer.
+
+Le dépôt [nabla-openclaw](https://github.com/AlbanAndrieu/nabla-openclaw) prépare `scripts/finops/check-vercel-team.mjs` : collecte **uniquement sur lancement explicite** (`--live`) ou lecture de fichier (`--input`), sortie expurgée, sans secrets et sans tâche planifiée. Il ne faut pas ajouter de token Vercel, d'API FinOps ni de rapport de facturation brut sur une page publique. Le quota est partagé entre les **quatre projets** Vercel ; des pages publiques SSG ne suffisent pas à le mesurer.

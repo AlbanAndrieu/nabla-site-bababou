@@ -72,6 +72,16 @@ export default async function EvidenceAccessPage({ params }: PageProps<"/[locale
     { id: "contact", value: entries.filter(entry => entry.kind === "contact-request").length, label: t.overviewContact },
   ];
 
+  const byJurisdiction = (["FR", "NO", "DE", "MULTI"] as const).map(jurisdiction => {
+    const items = entries.filter(entry => entry.jurisdiction === jurisdiction);
+    return {
+      jurisdiction,
+      label: regions[jurisdiction],
+      entries: items.length,
+      unlinked: items.filter(entry => entry.evidenceStatus === "unlinked").length,
+    };
+  });
+
   return (
     <>
       <TopAnchor />
@@ -100,6 +110,17 @@ export default async function EvidenceAccessPage({ params }: PageProps<"/[locale
                 <li key={item.id} className={styles.accessOverviewCard}>
                   <strong className={styles.accessOverviewValue}>{item.value}</strong>
                   <span>{item.label}</span>
+                </li>
+              ))}
+            </ul>
+            <h3>{t.catalogHeading}</h3>
+            <p className={styles.accessCaution}>{t.overviewIntro}</p>
+            <ul className={styles.accessOverviewCards} data-testid="evidence-jurisdiction-overview">
+              {byJurisdiction.map(group => (
+                <li className={styles.accessOverviewCard} key={group.jurisdiction}>
+                  <strong>{group.label}</strong>
+                  <span>{group.entries} — {t.overviewEntries}</span>
+                  <span>{group.unlinked} — {t.overviewPending}</span>
                 </li>
               ))}
             </ul>

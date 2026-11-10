@@ -97,3 +97,11 @@ Aucune donnée de mineur n'est extraite d'un original ni importée dans le nouve
 - **GO** de la seule page de demande après tests exact-SHA et revue éditoriale ; **NO-GO** de tout accès aux pièces privées tant que Cloudflare Access, Tunnel, passerelle documentaire, autorisation, révocation et caviardage ne sont pas effectifs.
 
 Voir aussi `docs/nre-evidence-openrag-access.md` et `infra/cloudflare/README.md`.
+
+## Amélioration du 10 novembre — visualisation et demandes
+
+La page `/evidence-access` (FR/EN/DE/NO) propose désormais, en plus du total, **une ventilation des entrées publiques par juridiction** (France, Norvège, Allemagne, multi-pays) avec le nombre d'entrées déclaratives et le nombre de références sans pièce publique liée. Ce calcul est réalisé **au build SSG**, depuis le seul registre public validé ; aucun accès OpenRAG, base de demandes, serveur Vercel ou suivi de personnes n'est effectué.
+
+Lorsqu'un visiteur suit un lien `SITE-DOC-*`, la carte de sélection propose **« Copier la référence »** dans les quatre langues, avec état accessible `aria-live` seulement après écriture réussie dans le presse-papiers. Aucune URL d'origine, aucun chemin privé, aucun identifiant de demandeur n'est copié automatiquement. La demande réelle reste un échange via la page Contact : **le site ne peut pas en compter les soumissions tant qu'il n'existe pas de registre privé distinct**.
+
+**Tests à valider** : `node --test unit-tests/evidenceRequestVisualization.test.mjs unit-tests/vercelUsageBudget.test.mjs`, navigation clavier, clipboard sur HTTPS avec et sans autorisation, routes FR/EN/DE/NO, et manifest SSG exact SHA. Le flux Cloudflare Access reste inactif ; les pièces privées ne sont pas introduites dans Vercel.
