@@ -137,8 +137,8 @@
       "accessGuide": "How protected evidence access works"
     },
     "access": {
-      "metaTitle": "Access to documents and evidence — request a copy",
-      "metaDescription": "Request a copy of linked Bababou documents or review NRE evidence references, subject to verification, redaction and temporary MFA authorization.",
+      "metaTitle": "Document access — request access to sources",
+      "metaDescription": "Request access to source files cited on Bababou, subject to approval and redaction.",
       "eyebrow": "Documentary record · privacy",
       "heading": "Request access to a document or evidence",
       "intro": "This guide covers documents linked throughout Bababou, including central authority archives and evidence referenced in the NRE register. Private copies require individual disclosure approval.",
@@ -177,12 +177,12 @@
       "overviewPending": "Entries without reviewed public evidence",
       "overviewProofs": "Reviewed public document references",
       "overviewContact": "Entries grouping contact requests",
-      "sitewideHeading": "Request a copy of a document linked on this site",
-      "sitewideIntro": "This process covers documents cited or linked throughout the website: PDFs, office files, document archives and files hosted on third-party document services. Already public resources remain accessible at their existing addresses.",
+      "sitewideHeading": "Request access to the source document",
+      "sitewideIntro": "Approved HTML pages remain directly accessible. Only cited source files (PDFs, office documents and external document providers) can trigger an access request. The lock identifies an approval request, not an existing technical restriction.",
       "sitewideReference": "Public reference of the requested document",
       "sitewideInstructions": "Include this reference, the page where you found it, your role and the purpose of the request when contacting us. This is not an official case reference and does not guarantee that a private copy exists.",
       "sitewideWithoutReference": "No specific reference was provided. Please identify the document title and the page where you found it when making contact.",
-      "sitewidePublicNotice": "Requesting a copy does not grant automatic access. Files already published remain public unless a separate access restriction is implemented. Private originals require verification, redaction and approval."
+      "sitewidePublicNotice": "An access request grants no automatic right to the source. Already published files remain accessible at their existing URLs until separately removed or protected. Confidential originals require review, redaction and approval."
     }
   }
 }
