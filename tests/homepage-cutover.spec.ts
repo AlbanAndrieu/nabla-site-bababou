@@ -10,6 +10,13 @@ const locales = [
   { locale: "no", path: "/no" },
 ] as const;
 
+// A direct release-specific browser run must fail rather than quietly skip
+// the actual cutover tests when approval flags are missing.
+test("required homepage release E2E cannot silently skip its approval gate", () => {
+  test.skip(process.env.BABABOU_HOME_REQUIRE_E2E !== "true", "Only for explicit release validation");
+  expect(isHomeCutoverEnabled()).toBe(true);
+});
+
 // These tests must not mistake an editorial-only approval for a deployed GO.
 // Run only against an exact-SHA approved deployment with browser gates enabled.
 test.describe("Approved homepage cutover, four locales", () => {

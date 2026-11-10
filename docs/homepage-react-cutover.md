@@ -60,6 +60,16 @@ Les quatre premières variables **ne doivent pas être définies pour les besoin
 
 L'ancien build Preview `624dc24f` était `READY` ; des contrats Node ciblés ont été exécutés sur cette version. Ce sont des preuves **historiques de compilation et de structure**, pas une attestation d'activation sur le `master` courant. L'approbation éditoriale a été confirmée le 9 novembre 2026 ; les recettes HTTP, navigateur et sécurité complètes restent non confirmées. Voir [roadmap.md](roadmap.md) pour les seuls résiduels actifs.
 
+### Commande locale de vérification avant GO
+
+Sur un checkout `Node 24 / npm 12`, après `npm ci` et un **build de l'exact SHA en mode approuvé**, utiliser :
+
+```bash
+just home-cutover-verify
+```
+
+Cette recette refuse immédiatement une approbation incomplète ou un manifeste Next sans les quatre homepages statiques. Elle lance ensuite les contrôles Playwright Chromium/Firefox/WebKit sur le serveur `next start` (et non `next dev`), sans déclencher de GitHub Actions. `BABABOU_HOME_REQUIRE_E2E=true` empêche une fausse réussite liée à des tests de release ignorés. Conserver dans le dossier de release le SHA, la configuration non sensible, le manifeste, les rapports de tests et le résultat de `just p0` / `just quality`.
+
 ## Préparation technique consolidée — 10 novembre 2026
 
 **Rebase** : PR #266 reconstruite sur `master@d259a912484717935665f95bcb85e1bfd90f311c`, sans écraser les changements Vercel FinOps et NRE des deux derniers commits master.

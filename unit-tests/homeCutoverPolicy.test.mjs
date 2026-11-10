@@ -129,3 +129,13 @@ test("legacy index gets conditional noindex only after SHA-approved homepage rel
   assert.match(config, /value: "noindex, follow"/);
   assert.match(config, /env changes require redeploy/);
 });
+
+test("local release recipe verifies static build before demanding browser checks", () => {
+  const recipes = read("justfile");
+  const e2e = read("tests/homepage-cutover.spec.ts");
+  assert.match(recipes, /home-cutover-verify:/);
+  assert.match(recipes, /node scripts\/verify-home-cutover\.mjs/);
+  assert.match(recipes, /BABABOU_HOME_REQUIRE_E2E=true/);
+  assert.match(recipes, /playwright test tests\/homepage-cutover\.spec\.ts/);
+  assert.match(e2e, /required homepage release E2E cannot silently skip/);
+});
