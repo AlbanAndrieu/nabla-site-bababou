@@ -23,7 +23,7 @@ Les contrôles CI `skipped` n'établissent pas la qualité et des checks rouges 
   quatre indicateurs sans original ni nombre de demandes réellement reçues,
   liens vers les entrées et le formulaire de contact. Traductions
   FR/EN/DE/NO et CSS responsive/print/forced-colors inclus.
-- [x] **Conserver les demandes de copie** `SITE-DOC-*` issues du site
+- [x] **Conserver les demandes d’accès aux documents sources** `SITE-DOC-*` issues du site
   entier et le résolveur local strict ; ne pas les transformer en
   autorisations ni en liste publique de demandeurs.
 - [x] **Importer les checks FinOps** de [Site Alban #295](https://github.com/AlbanAndrieu/nabla-site-alban/pull/295) :
@@ -59,7 +59,7 @@ Les contrôles CI `skipped` n'établissent pas la qualité et des checks rouges 
 | --- | --- | --- |
 | **NRE React / i18n** | Page React Next FR/EN/DE/NO, calendrier mensuel, filtres, registre public déclaratif, approche des heures de contact et référence juridique ; **#258 fusionnée** | Exécuter tests navigateurs et revue éditoriale exacte des pièces |
 | **Page explicative preuves** | Sur **master après fusion #262** : `/evidence-access` (FR) et `/en`, `/de`, `/no` ; liens par identifiant public, référencement SEO, guide Cloudflare Access ; aucun téléchargement privé | Tests exact-SHA, déploiement et validation avant annonce de mise en ligne |
-| **Demandes sur tous les documents liés** | Fusion #263 : script commun Next + HTML historique, références `SITE-DOC-*`, guide public et résolveur local sans fuite de lien source | Tests Node/Playwright, revue a11y, inventaire des documents externes non reconnus et vérification de toutes les pages |
+| **Demandes sur les fichiers sources** | Fusion #263 initiale : script commun Next + HTML historique, références `SITE-DOC-*`, guide public et résolveur local ; correction sur branche du 10/11 pour exclure les HTML publiés | Tests Node/Playwright, revue a11y, inventaire des documents externes non reconnus et vérification de toutes les pages |
 | **Docling → OpenRAG** | Contrats, modèle probatoire, manuel et contrôles préparés uniquement ; aucun document privé connecté par cette PR | Inventaire privé et traitement sur TrueNAS, audit OpenRAG/OpenSearch, séparation des corpus |
 | **Cloudflare Access** | Terraform **désactivé par défaut**, application self-hosted, allowlist nominative, MFA et approbation temporaire préparés | Vérifier IdP, Tunnel, hostname, protection origine, appliquer avec autorisation, tests 401/403/révocation ; ne pas publier de lien privé avant GO |
 | **Homepage React** | Contenu éditorial de la nouvelle homepage **validé par le propriétaire** ; nouvelle page FR/EN/DE/NO en préparation dans **PR #266**, SSG sous verrou exact-SHA ; l'ancien `public/index.html` reste disponible pour rollback | Rebase et CI locale, tests navigateur/a11y/SEO, audit du manifeste, décision distincte d'activation Vercel ; **aucune bascule automatique** |
@@ -128,4 +128,15 @@ Le lot initial #262 a fait l'objet de contrôles **structurels** via GitHub, pas
 - **NO-GO actuel sur production** : aucune modification de variables Vercel, DNS ou de la route `/` en production par cette PR ; aucun merge automatique. Le cutover est une opération distincte, réversible, après preuve.
 
 Voir [homepage-react-cutover.md](homepage-react-cutover.md) pour la procédure, les variables et le rollback.
+
+
+
+## Correction ciblée — accès aux sources documentaires (10 novembre 2026)
+
+- [x] Séparer les pages HTML approuvées des documents sources : ne plus ajouter « Request a copy » à `/en/central-authorities-documents` vers les pages `/ca/*.html`.
+- [x] Supprimer le suffixe `| Bababou` des libellés de ces pages dans le catalogue, sans réécrire les documents historiques.
+- [x] Renommer l’action commune « Demander l’accès au document source » en FR, EN, DE, NO ; ajouter une icône de cadenas accessible et conserver les références `SITE-DOC-*` sans URL source dans le paramètre.
+- [ ] Exécuter sur le SHA exact : `node --test unit-tests/sitewideDocumentAccess.test.mjs`, Playwright `tests/nre.spec.ts` et `tests/central-authorities-documents.spec.ts`, contrôles de confidentialité, lint et build SSG.
+- [ ] **P0 conformité de publication** : inventorier les PDF/Office sous `public/` et les liens tiers déjà accessibles ; arbitrer leur maintien, leur caviardage et leur éventuel retrait **avant** de qualifier un document de confidentiel. Ni icône 🔒 ni demande d’accès ne protègent un fichier encore public.
+- [ ] **P3 technique** : activation ultérieure Cloudflare Access/MFA, approbation temporaire, ACL documentaires, révocation et intégration Docling/OpenRAG hors Vercel.
 
