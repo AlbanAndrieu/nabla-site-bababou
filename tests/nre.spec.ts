@@ -38,13 +38,15 @@ const themeLabels = {
   }
 } as const;
 
-test.describe("Site-wide document copy requests", () => {
+test.describe("Site-wide source-document requests", () => {
   test("keeps public PDF available and prepares a safe request reference", async ({ page }) => {
     await page.goto("/nre");
     const original = page.locator('section[aria-labelledby="reference-heading"] a[href$=".pdf"]');
     await expect(original).toHaveCount(1);
     const copy = page.locator('section[aria-labelledby="reference-heading"] a[href$=".pdf"] + a.document-access-request');
     await expect(copy).toHaveCount(1);
+    await expect(copy).toContainText("Demander l’accès au document source");
+    await expect(copy.locator(".document-source-lock-icon")).toHaveAttribute("aria-hidden", "true");
     await expect(copy).toHaveAttribute("href", /^\/evidence-access\?doc=SITE-DOC-[0-9a-f]{16}#request-documents$/);
     const originalHref = await original.getAttribute("href");
     expect(originalHref).toMatch(/\.pdf$/);
@@ -54,11 +56,27 @@ test.describe("Site-wide document copy requests", () => {
     await expect(page.locator('a[href*="openrag"], a[href*="r2.cloudflarestorage.com"]')).toHaveCount(0);
   });
 
-  test("legacy archives also offer request-a-copy without removing their originals", async ({ page }) => {
+  test("legacy archives retain their public links and offer source-document access", async ({ page }) => {
     await page.goto("/abduction-norway.html");
     await expect.poll(() => page.locator("a.document-access-request").count()).toBeGreaterThan(0);
     const link = page.locator("a.document-access-request").first();
     await expect(link).toHaveAttribute("href", /\/evidence-access\?doc=SITE-DOC-[0-9a-f]{16}#request-documents$/);
+  });
+  test("public CA HTML needs no approval, while its PDF source is requestable", async ({ page }) => {
+    await page.goto("/en/central-authorities-documents");
+    const published = page.locator('a[data-document-entry][href$="demande-explications-autorites-competentes-fr.html"]');
+    await expect(published).toHaveCount(1);
+    await expect(published).not.toContainText("| Bababou");
+    await expect(published.locator("xpath=following-sibling::a[contains(@class, 'document-access-request')]")).toHaveCount(0);
+
+    await page.goto("/ca/demande-explications-autorites-competentes-fr.html");
+    const pdf = page.locator('a[href*="Gmail%20-%20Demande"][href$=".pdf"]');
+    await expect(pdf).toHaveCount(1);
+    const request = page.locator('a[href*="Gmail%20-%20Demande"][href$=".pdf"] + a.document-access-request');
+    await expect(request).toHaveCount(1);
+    await expect(request).toContainText("Demander l’accès au document source");
+    await expect(request.locator(".document-source-lock-icon")).toHaveCount(1);
+    await expect(request).toHaveAttribute("href", /^\/evidence-access\?doc=SITE-DOC-[0-9a-f]{16}#request-documents$/);
   });
 });
 

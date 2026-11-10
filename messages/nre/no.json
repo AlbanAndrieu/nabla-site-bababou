@@ -137,8 +137,8 @@
       "accessGuide": "Hvordan sikker tilgang til dokumentasjon fungerer"
     },
     "access": {
-      "metaTitle": "Tilgang til dokumenter og bevis — be om kopi",
-      "metaDescription": "Be om kopier av dokumenter som er lenket fra Bababou eller NRE-referanser, etter kontroll, sladding og midlertidig MFA-godkjenning.",
+      "metaTitle": "Dokumenttilgang — be om kildedokumenter",
+      "metaDescription": "Be om tilgang til kildefiler på Bababou etter godkjenning og sladding.",
       "eyebrow": "Dokumentasjon · personvern",
       "heading": "Be om tilgang til dokumenter eller bevis",
       "intro": "Denne veiledningen gjelder dokumenter på hele Bababou-nettstedet, inkludert sentralmyndighetenes arkiver og bevisreferanser i NRE-registeret. Private kopier krever individuell utleveringsgodkjenning.",
@@ -177,12 +177,12 @@
       "overviewPending": "Oppføringer uten kontrollert offentlig bevis",
       "overviewProofs": "Kontrollerte offentlige dokumentreferanser",
       "overviewContact": "Oppføringer om kontaktforespørsler",
-      "sitewideHeading": "Be om kopi av et dokument som er lenket fra nettstedet",
-      "sitewideIntro": "Ordningen gjelder dokumenter lenket fra hele nettstedet: PDF-er, kontorfiler, dokumentarkiv og filer hos eksterne dokumenttjenester. Allerede offentlige kilder er fortsatt tilgjengelige på sine opprinnelige adresser.",
+      "sitewideHeading": "Be om tilgang til kildedokumentet",
+      "sitewideIntro": "Godkjente HTML-sider er direkte tilgjengelige. Bare kildefiler det henvises til (PDF-er, kontordokumenter og eksterne dokumenttjenester) får en forespørselslenke. Låsen viser en godkjenningsforespørsel, ikke at filen allerede er teknisk beskyttet.",
       "sitewideReference": "Offentlig referanse for dokumentet det bes om",
-      "sitewideInstructions": "Oppgi referansen, siden du fant dokumentet på, rollen din og formålet med forespørselen ved kontakt. Dette er ikke et offisielt saksnummer og garanterer ikke at en privat kopi finnes.",
-      "sitewideWithoutReference": "Ingen bestemt referanse ble oppgitt. Oppgi dokumenttittelen og siden der dokumentet ble funnet når du tar kontakt.",
-      "sitewidePublicNotice": "Å be om en kopi gir ikke automatisk tilgang. Filer som allerede er publisert, forblir offentlige inntil en særskilt tilgangsbegrensning er innført. Private originaler krever kontroll, sladding og godkjenning."
+      "sitewideInstructions": "Oppgi referansen til kildedokumentet, siden som viser til det, din rolle og formålet. Referansen garanterer verken at en privat original finnes eller at tilgang blir gitt.",
+      "sitewideWithoutReference": "Ingen referanse til kildedokumentet ble oppgitt. Oppgi tittel og siden som viser til det.",
+      "sitewidePublicNotice": "En forespørsel gir ikke automatisk tilgang. Filer som allerede er publisert, er fortsatt tilgjengelige på sine nåværende adresser til de fjernes eller sikres separat. Fortrolige originaler krever vurdering, sladding og godkjenning."
     }
   }
 }

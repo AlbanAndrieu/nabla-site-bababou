@@ -137,8 +137,8 @@
       "accessGuide": "Geschützten Zugang zu Belegen verstehen"
     },
     "access": {
-      "metaTitle": "Zugang zu Dokumenten und Belegen — Kopie anfordern",
-      "metaDescription": "Kopie von auf Bababou verlinkten Dokumenten oder NRE-Belegreferenzen anfragen, vorbehaltlich Prüfung, Schwärzung und vorübergehender MFA-Autorisierung.",
+      "metaTitle": "Dokumentenzugang — Zugang zu Quelldokumenten",
+      "metaDescription": "Zugang zu referenzierten Quelldateien auf Bababou nach Freigabe und Schwärzung beantragen.",
       "eyebrow": "Dokumentation · Datenschutz",
       "heading": "Zugang zu Dokumenten oder Belegen beantragen",
       "intro": "Dieser Leitfaden gilt für Dokumente auf der gesamten Bababou-Website, einschließlich der Archive der Zentralen Behörden und der NRE-Belegreferenzen. Private Kopien erfordern eine individuelle Freigabe.",
@@ -177,12 +177,12 @@
       "overviewPending": "Einträge ohne geprüften öffentlichen Beleg",
       "overviewProofs": "Geprüfte öffentliche Dokumentreferenzen",
       "overviewContact": "Einträge zu Kontaktanfragen",
-      "sitewideHeading": "Kopie eines auf dieser Website verlinkten Dokuments anfordern",
-      "sitewideIntro": "Das Verfahren gilt für Dokumente auf der gesamten Website: PDF, Office-Dateien, Dokumentarchive und Dateien externer Dokumentdienste. Bereits öffentlich verfügbare Quellen bleiben über ihre bisherigen Adressen zugänglich.",
+      "sitewideHeading": "Zugang zum Quelldokument beantragen",
+      "sitewideIntro": "Freigegebene HTML-Seiten sind direkt zugänglich. Nur referenzierte Quelldateien (PDF, Office und externe Dokumentendienste) erhalten einen Anfragelink. Das Schloss bezeichnet die Genehmigungsanfrage, keinen bereits bestehenden technischen Schutz.",
       "sitewideReference": "Öffentliche Kennung des angefragten Dokuments",
-      "sitewideInstructions": "Bitte geben Sie bei der Kontaktaufnahme diese Kennung, die Fundseite, Ihre Rolle und den Zweck der Anfrage an. Die Kennung ist kein amtliches Aktenzeichen und garantiert nicht, dass eine private Kopie vorliegt.",
-      "sitewideWithoutReference": "Es wurde keine bestimmte Kennung übermittelt. Bitte nennen Sie den Dokumenttitel und die Fundseite bei Ihrer Kontaktaufnahme.",
-      "sitewidePublicNotice": "Eine Kopie anzufordern begründet kein automatisches Zugangsrecht. Bereits veröffentlichte Dateien bleiben öffentlich, bis gesonderte Zugriffsbeschränkungen umgesetzt werden. Private Originale erfordern Prüfung, Schwärzung und Genehmigung."
+      "sitewideInstructions": "Bitte nennen Sie die Referenz des Quelldokuments, die zitierende Seite, Ihre Rolle und den Zugriffsgrund. Die Kennung garantiert weder die Existenz eines privaten Originals noch eine Freigabe.",
+      "sitewideWithoutReference": "Keine Referenz eines Quelldokuments übermittelt. Bitte nennen Sie Titel und zitierende Seite.",
+      "sitewidePublicNotice": "Eine Anfrage berechtigt nicht automatisch zum Zugriff. Bereits veröffentlichte Dateien bleiben unter bisherigen URLs erreichbar, bis sie gesondert entfernt oder geschützt werden. Vertrauliche Originale müssen geprüft, geschwärzt und freigegeben werden."
     }
   }
 }

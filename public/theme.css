@@ -1403,6 +1403,14 @@ a.document-access-request {
   overflow-wrap: anywhere;
 }
 a.document-access-request:hover { text-decoration: underline; }
+a.document-access-request .document-source-lock-icon {
+  display: inline-block;
+  margin-inline-end: 0.4rem;
+  flex-shrink: 0;
+  font-size: 1rem;
+  line-height: 1;
+}
+/* The lock identifies an access-approval request, not HTTP protection of a public asset. */
 a.document-access-request:focus-visible {
   outline: 3px solid var(--ui-focus-ring, currentColor);
   outline-offset: 3px;

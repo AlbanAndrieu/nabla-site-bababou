@@ -14,7 +14,10 @@ test.describe("Central Authority document hub migration", () => {
 
       await expect(page.locator("html")).toHaveAttribute("lang", localeCase.lang);
       await expect(page.locator("main h1")).toBeVisible();
-      await expect(page.locator("[data-document-entry]").first()).toBeVisible();
+      const publishedEntry = page.locator("[data-document-entry]").first();
+      await expect(publishedEntry).toBeVisible();
+      await expect(publishedEntry).not.toContainText("| Bababou");
+      await expect(page.locator("[data-document-entry] + a.document-access-request")).toHaveCount(0);
       await expect(page.locator("#route-header-locale")).toHaveValue(localeCase.lang);
       await expect(page.locator('link[href*="bootstrap"]')).toHaveCount(0);
       await expect(page.locator('script[src*="bootstrap"]')).toHaveCount(0);

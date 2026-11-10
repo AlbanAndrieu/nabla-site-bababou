@@ -19,11 +19,9 @@ test("site-wide document detection is precise and preserves existing public sour
     "https://bababou.com/private/case.docx");
   assert.equal(documentLinkIdentity("https://docs.google.com/document/d/123456789/edit", home),
     "https://docs.google.com/document/d/123456789/edit");
-  assert.equal(documentLinkIdentity("/ca/demande-explications-autorites-competentes-fr.html", home),
-    "https://bababou.com/ca/demande-explications-autorites-competentes-fr.html");
+  assert.equal(documentLinkIdentity("/ca/demande-explications-autorites-competentes-fr.html", home), null);
   assert.equal(documentLinkIdentity("https://example.org/report.html", home), null);
-  assert.equal(documentLinkIdentity("https://example.org/report.html", home, true),
-    "https://example.org/report.html");
+  assert.equal(documentLinkIdentity("https://example.org/report.html", home, true), null);
   assert.equal(documentLinkIdentity("https://example.org/about", home), null);
   assert.equal(documentLinkIdentity("javascript:alert(1)", home), null);
   assert.equal(documentLinkIdentity("data:text/plain,secret", home), null);
@@ -57,6 +55,8 @@ test("client enhancer and the public guide have zero direct private backend depe
   assert.match(script, /MutationObserver/);
   assert.match(script, /data-document-access-ref/);
   assert.match(script, /documentRequestPath/);
+  assert.match(script, /document-source-lock-icon/);
+  assert.match(script, /if \(!isFile && !isProvider\) return null/);
   assert.match(page, /<DocumentRequestSelection /);
   assert.match(selection, /PUBLIC_DOCUMENT_REF/);
   assert.doesNotMatch(script + selection, /OPENRAG_API_KEY|NEXT_PUBLIC_.*KEY|privateObjectKey|\bfetche?\(/i);
@@ -64,6 +64,13 @@ test("client enhancer and the public guide have zero direct private backend depe
 
 test("request labels exist for each supported locale and do not imply automatic approval", () => {
   assert.deepEqual(Object.keys(DOCUMENT_REQUEST_LABELS).sort(), ["de", "en", "fr", "no"]);
+  for (const label of Object.values(DOCUMENT_REQUEST_LABELS)) {
+    assert.match(label, /document|Dokument|dokument/i);
+    assert.doesNotMatch(label, /copy|copie|Kopie|kopi/i);
+  }
+  const titleGenerator = read("lib/centralAuthorityDocuments.ts");
+  assert.match(titleGenerator, /Bababou/);
+  assert.match(titleGenerator, /replace\(/);
   for (const locale of ["fr", "en", "de", "no"]) {
     const messages = JSON.parse(read(`messages/nre/${locale}.json`)).nrePage.access;
     for (const field of ["sitewideHeading", "sitewideIntro", "sitewideReference",

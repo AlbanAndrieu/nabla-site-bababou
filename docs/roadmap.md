@@ -23,7 +23,7 @@ Les contrôles CI `skipped` n'établissent pas la qualité et des checks rouges 
   quatre indicateurs sans original ni nombre de demandes réellement reçues,
   liens vers les entrées et le formulaire de contact. Traductions
   FR/EN/DE/NO et CSS responsive/print/forced-colors inclus.
-- [x] **Conserver les demandes de copie** `SITE-DOC-*` issues du site
+- [x] **Conserver les demandes d’accès aux documents sources** `SITE-DOC-*` issues du site
   entier et le résolveur local strict ; ne pas les transformer en
   autorisations ni en liste publique de demandeurs.
 - [x] **Importer les checks FinOps** de [Site Alban #295](https://github.com/AlbanAndrieu/nabla-site-alban/pull/295) :
@@ -59,7 +59,7 @@ Les contrôles CI `skipped` n'établissent pas la qualité et des checks rouges 
 | --- | --- | --- |
 | **NRE React / i18n** | Page React Next FR/EN/DE/NO, calendrier mensuel, filtres, registre public déclaratif, approche des heures de contact et référence juridique ; **#258 fusionnée** | Exécuter tests navigateurs et revue éditoriale exacte des pièces |
 | **Page explicative preuves** | Sur **master après fusion #262** : `/evidence-access` (FR) et `/en`, `/de`, `/no` ; liens par identifiant public, référencement SEO, guide Cloudflare Access ; aucun téléchargement privé | Tests exact-SHA, déploiement et validation avant annonce de mise en ligne |
-| **Demandes sur tous les documents liés** | Fusion #263 : script commun Next + HTML historique, références `SITE-DOC-*`, guide public et résolveur local sans fuite de lien source | Tests Node/Playwright, revue a11y, inventaire des documents externes non reconnus et vérification de toutes les pages |
+| **Demandes sur les fichiers sources** | Fusion #263 initiale : script commun Next + HTML historique, références `SITE-DOC-*`, guide public et résolveur local ; correction sur branche du 10/11 pour exclure les HTML publiés | Tests Node/Playwright, revue a11y, inventaire des documents externes non reconnus et vérification de toutes les pages |
 | **Docling → OpenRAG** | Contrats, modèle probatoire, manuel et contrôles préparés uniquement ; aucun document privé connecté par cette PR | Inventaire privé et traitement sur TrueNAS, audit OpenRAG/OpenSearch, séparation des corpus |
 | **Cloudflare Access** | Terraform **désactivé par défaut**, application self-hosted, allowlist nominative, MFA et approbation temporaire préparés | Vérifier IdP, Tunnel, hostname, protection origine, appliquer avec autorisation, tests 401/403/révocation ; ne pas publier de lien privé avant GO |
 | **Homepage React** | Contenu éditorial de la nouvelle homepage **validé par le propriétaire** ; nouvelle page FR/EN/DE/NO en préparation dans **PR #266**, SSG sous verrou exact-SHA ; l'ancien `public/index.html` reste disponible pour rollback | Rebase et CI locale, tests navigateur/a11y/SEO, audit du manifeste, décision distincte d'activation Vercel ; **aucune bascule automatique** |
@@ -81,7 +81,7 @@ Les contrôles CI `skipped` n'établissent pas la qualité et des checks rouges 
 
 ## Livrables conservés comme sources de vérité
 
-- `docs/sitewide-document-access.md` : comportement transversal de demande de copie et risques des assets publics.
+- `docs/sitewide-document-access.md` : accès aux sources référencées, pas aux pages HTML déjà publiées, et risques des assets publics.
 - `docs/nre-evidence-openrag-access.md` : architecture, objets publics/privés, provenance, processus d'autorisation, audit du PDF déjà public et critères GO/NO-GO.
 - `infra/cloudflare/README.md` et `infra/cloudflare/nre-evidence-access.tf` : activation future de Cloudflare Access, avec politique **désactivée par défaut**.
 - `data/nre-evidence.public.json` + `lib/nrePublicEvidence.mjs` : registre public à validation restrictive ; **aucun document lié** par défaut.
@@ -102,12 +102,12 @@ Le lot initial #262 a fait l'objet de contrôles **structurels** via GitHub, pas
 | Priorité | Statut préparé | Validation restante |
 | --- | --- | --- |
 | **P0 — audit de publication** | Liens d'archives et fichiers documentaires publics identifiés comme catégorie de risque, sans suppression. | Classification juridique, audit PDF/Office et métadonnées, éventuelle décision de retrait/caviardage, purge CDN. |
-| **P1 — CTA transversal** | Détection sélective des documents PDF/Office, archives HTML `/ca/` et liens de fournisseurs reconnus ; doublon « Demander une copie » ajouté sans remplacer l'original. | Vérifier les cas de documents sans extension et les exceptions explicitement marquées, en FR/EN/DE/NO. |
+| **P1 — CTA transversal** | Détection sélective des documents PDF/Office et liens de fournisseurs reconnus ; demande d’accès au document source, sans doublon pour les pages HTML `/ca/` approuvées. | Vérifier les cas de documents sans extension et les exceptions explicitement marquées, en FR/EN/DE/NO. |
 | **P2 — guide et traçabilité** | Guide `/evidence-access?doc=SITE-DOC-*#request-documents`, référence opaque, recours au Contact et résolveur local. | Tester que la référence suffit à identifier le lien public sans divulguer URL, query secrets ou pièce privée ; revue RGPD. |
 | **P3 — sécurité réelle** | La configuration Cloudflare Access issue de #262 reste **désactivée**. | Installer puis tester Tunnel, MFA, approbation temporaire, passerelle ACL par document, copies caviardées et révocation ; ne pas annoncer portail actif avant GO. |
 | **P4 — qualité et migration** | Convergence des pages Next et HTML historiques par le même module JS, sans modifier la homepage 404 protégée. | Node 24/npm 12, typecheck, lint, privacy gates, Playwright/axe multi-navigateurs, qualité de pré-rendu et tests exact-SHA sur Preview accessible. |
 
-**Ne pas confondre** demande de copie et accès effectif à un document. La diffusion actuelle de fichiers sous `public/` reste indépendante de Cloudflare Access. La bascule de la homepage dispose de la validation éditoriale du propriétaire ; restent les critères techniques et l'activation de production vérifiée.
+**Ne pas confondre** demande d’accès à une source et accès effectif à celle-ci. La diffusion actuelle de fichiers sous `public/` reste indépendante de Cloudflare Access. La bascule de la homepage dispose de la validation éditoriale du propriétaire ; restent les critères techniques et l'activation de production vérifiée.
 
 ## Bilan de la PR #264 — critères exact-SHA
 
@@ -128,4 +128,15 @@ Le lot initial #262 a fait l'objet de contrôles **structurels** via GitHub, pas
 - **NO-GO actuel sur production** : aucune modification de variables Vercel, DNS ou de la route `/` en production par cette PR ; aucun merge automatique. Le cutover est une opération distincte, réversible, après preuve.
 
 Voir [homepage-react-cutover.md](homepage-react-cutover.md) pour la procédure, les variables et le rollback.
+
+
+
+## Correction ciblée — accès aux sources documentaires (10 novembre 2026)
+
+- [x] Séparer les pages HTML approuvées des documents sources : ne plus ajouter « Request a copy » à `/en/central-authorities-documents` vers les pages `/ca/*.html`.
+- [x] Supprimer le suffixe `| Bababou` des libellés de ces pages dans le catalogue, sans réécrire les documents historiques.
+- [x] Renommer l’action commune « Demander l’accès au document source » en FR, EN, DE, NO ; ajouter une icône de cadenas accessible et conserver les références `SITE-DOC-*` sans URL source dans le paramètre.
+- [ ] Exécuter sur le SHA exact : `node --test unit-tests/sitewideDocumentAccess.test.mjs`, Playwright `tests/nre.spec.ts` et `tests/central-authorities-documents.spec.ts`, contrôles de confidentialité, lint et build SSG.
+- [ ] **P0 conformité de publication** : inventorier les PDF/Office sous `public/` et les liens tiers déjà accessibles ; arbitrer leur maintien, leur caviardage et leur éventuel retrait **avant** de qualifier un document de confidentiel. Ni icône 🔒 ni demande d’accès ne protègent un fichier encore public.
+- [ ] **P3 technique** : activation ultérieure Cloudflare Access/MFA, approbation temporaire, ACL documentaires, révocation et intégration Docling/OpenRAG hors Vercel.
 
