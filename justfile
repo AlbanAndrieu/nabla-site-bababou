@@ -39,6 +39,13 @@ homepage-validation:
 homepage-validation-list:
     npm exec --no -- playwright test --list tests/home-preview.spec.ts tests/home-preview-analytics-network.spec.ts tests/next-seo.spec.ts tests/accessibility-axe.spec.ts tests/accessibility-keyboard.spec.ts tests/accessibility-responsive.spec.ts
 
+# Explicit local release gate; never spends GitHub Actions minutes.
+# Requires a SHA-approved Next build already in .next/ and preinstalled browsers.
+# CI=1 makes Playwright serve that production build via npm run start:test.
+home-cutover-verify:
+    node scripts/verify-home-cutover.mjs .next/prerender-manifest.json
+    CI=1 BABABOU_HOME_REQUIRE_E2E=true npm exec --no -- playwright test tests/homepage-cutover.spec.ts --project=chromium --project=firefox --project=webkit
+
 dev:
     npm run dev
 

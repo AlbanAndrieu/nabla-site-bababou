@@ -62,7 +62,7 @@ Les contrôles CI `skipped` n'établissent pas la qualité et des checks rouges 
 | **Demandes sur tous les documents liés** | Fusion #263 : script commun Next + HTML historique, références `SITE-DOC-*`, guide public et résolveur local sans fuite de lien source | Tests Node/Playwright, revue a11y, inventaire des documents externes non reconnus et vérification de toutes les pages |
 | **Docling → OpenRAG** | Contrats, modèle probatoire, manuel et contrôles préparés uniquement ; aucun document privé connecté par cette PR | Inventaire privé et traitement sur TrueNAS, audit OpenRAG/OpenSearch, séparation des corpus |
 | **Cloudflare Access** | Terraform **désactivé par défaut**, application self-hosted, allowlist nominative, MFA et approbation temporaire préparés | Vérifier IdP, Tunnel, hostname, protection origine, appliquer avec autorisation, tests 401/403/révocation ; ne pas publier de lien privé avant GO |
-| **Homepage React** | Home/Abduction React et pages de revue existent ; la racine `/` reste intentionnellement sur `public/index.html` tant que `isHomeCutoverEnabled()` refuse la bascule | Parité visuelle/contenu et publication propriétaire approuvée : **pas de bascule automatique** |
+| **Homepage React** | Contenu éditorial de la nouvelle homepage **validé par le propriétaire** ; nouvelle page FR/EN/DE/NO en préparation dans **PR #266**, SSG sous verrou exact-SHA ; l'ancien `public/index.html` reste disponible pour rollback | Rebase et CI locale, tests navigateur/a11y/SEO, audit du manifeste, décision distincte d'activation Vercel ; **aucune bascule automatique** |
 | **Contrôles communs** | Tests de contrat, lint, privacy et qualité définis dans package/justfile ; règles SAST/SCA/DAST conservées | Réaliser les quality gates sur le SHA final ; aucun statut CI `skipped` ne vaut PASS |
 
 ### Priorités finales et critères d'achèvement
@@ -75,7 +75,7 @@ Les contrôles CI `skipped` n'établissent pas la qualité et des checks rouges 
 
 **P3 — Déployer l'accès individuel (GO conditionnel).** Terraform Cloudflare inerte par défaut. Après validation de la passerelle et de la sécurité d'origine, autoriser temporairement les emails pré-qualifiés ; MFA indépendante à chaque login, justification, approbation et durée de 15 min. Vérifier `iss/aud/exp/signature` des JWT, ACL par document, refus `401/403`, révocation, copies irréversiblement caviardées, absence de cache, logs minimisés. Activer uniquement après validation expresse et tests.
 
-**P4 — Migration React et accessibilité du site.** Revue P1 de la homepage historique (5 cartes Home/7 Abduction), illustrations et textes du propriétaire, écran 320 px, WCAG 2.2 AA (axe, Chromium/Firefox/WebKit), SEO, sitemap, PDF et tous les liens depuis NRE/autorités centrales. Conserver l'exception `public/index.html` tant que la décision de bascule de la homepage n'est pas approuvée ; ne pas prétendre que le code fusionné change `/`.
+**P4 — Migration React et accessibilité du site.** Revue P1 de la homepage historique (5 cartes Home/7 Abduction), illustrations et textes du propriétaire, écran 320 px, WCAG 2.2 AA (axe, Chromium/Firefox/WebKit), SEO, sitemap, PDF et tous les liens depuis NRE/autorités centrales. La validation éditoriale est acquise : préserver l'exception `public/index.html` pour rollback, ne pas activer `/` avant tests d'accessibilité, contrôles de sécurité et exact-SHA.
 
 **P5 — Preuve de publication exact-SHA.** Sur checkout Node 24/npm 12 : `node --test unit-tests/nrePublicEvidence.test.mjs unit-tests/nreEvidenceAccessContract.test.mjs unit-tests/nreVisitLedger.test.mjs`, puis `just p0`, `npm run check`, Playwright/axe, BetterLeaks/SAST/SCA/ZAP si disponibles, revue du diff, Preview puis décision humaine. Les checks GH `skipped` sur Draft ne constituent pas une validation. Aucune PR mergée automatiquement.
 
@@ -107,7 +107,7 @@ Le lot initial #262 a fait l'objet de contrôles **structurels** via GitHub, pas
 | **P3 — sécurité réelle** | La configuration Cloudflare Access issue de #262 reste **désactivée**. | Installer puis tester Tunnel, MFA, approbation temporaire, passerelle ACL par document, copies caviardées et révocation ; ne pas annoncer portail actif avant GO. |
 | **P4 — qualité et migration** | Convergence des pages Next et HTML historiques par le même module JS, sans modifier la homepage 404 protégée. | Node 24/npm 12, typecheck, lint, privacy gates, Playwright/axe multi-navigateurs, qualité de pré-rendu et tests exact-SHA sur Preview accessible. |
 
-**Ne pas confondre** demande de copie et accès effectif à un document. La diffusion actuelle de fichiers sous `public/` reste indépendante de Cloudflare Access. La bascule complète de la homepage demeure un périmètre distinct soumis à la décision du propriétaire.
+**Ne pas confondre** demande de copie et accès effectif à un document. La diffusion actuelle de fichiers sous `public/` reste indépendante de Cloudflare Access. La bascule de la homepage dispose de la validation éditoriale du propriétaire ; restent les critères techniques et l'activation de production vérifiée.
 
 ## Bilan de la PR #264 — critères exact-SHA
 
@@ -116,3 +116,16 @@ Le lot initial #262 a fait l'objet de contrôles **structurels** via GitHub, pas
 - Test navigateur multi-langue : référence masquée en absence du paramètre, affichée après hydratation et limitée à 200 caractères, balises `robots: noindex` et `referrer: no-referrer`. Ne pas inférer un paiement effectif de cette référence purement affichée.
 - **Fusion déjà réalisée** : les contrôles qualité Node24 et le post-merge exact-SHA restent à remédier et à exécuter ; ne pas déduire une validation de sécurité d'un build Vercel READY. Aucune modification de paiement Stripe, d'abonnement ou des certificats.
 - **Périmètre distinct** : bascule React de la homepage, audit des originaux familiaux dans `public/`, approbations Cloudflare et ACL OpenRAG ; tous restent ouverts et ne doivent pas être déclarés terminés par la seule #264.
+
+## PR #266 — préparation de la nouvelle homepage principale (10 novembre 2026)
+
+- **Décision éditoriale : approuvée** par le propriétaire. Pas d'autorisation de copier les identifiants familiaux de l'ancien index vers d'autres surfaces ou d'étendre les exceptions de la politique de confidentialité.
+- **Rebase :** changements de la PR #266 réappliqués sur `master@d259a912484717935665f95bcb85e1bfd90f311c` ; les évolutions de #265 et de Vercel FinOps restent conservées dans `package.json`, `docs/roadmap.md`, les scripts et tests.
+- **P1.1 (navigation localisée/SEO)** : après activation SHA-bound, liens du footer vers l'accueil de la bonne langue, politiques avec chemins localisés, chemin historique `/index.html` conservé mais `noindex` pour éviter un duplicata indexable.
+- **P1 (homepage)** : rendu React SSG `app/[locale]/page.tsx` et 4 locales. Verrou `BABABOU_HOME_CUTOVER` + `BABABOU_HOME_EDITORIAL_APPROVED` + `BABABOU_HOME_BROWSER_GATES_APPROVED` + SHA exact, non activé par défaut. Préserver `public/index.html` et `/home-preview`.
+- **P2 (release contract)** : `scripts/verify-home-cutover.mjs`, commande `npm run audit:home-cutover`, tests de refus (pas d'autorisation, mauvais SHA, SSG absent/ISR, entrée malformée), test Playwright en 4 langues conditionnel et test rollback.
+- **GO technique restant** : build Next sur Node 24/npm 12 du SHA de la future livraison, validation d'un `.next/prerender-manifest.json` **réel**, tests multi-navigateurs/axe et vérification des liens/SEO FR/EN/DE/NO, quality gate, privacy-gate, SAST/SCA/ZAP. Vérifier la Preview exacte et l'absence de régression CPU dans Vercel ; une CI `skipped` ne vaut pas `PASS`.
+- **NO-GO actuel sur production** : aucune modification de variables Vercel, DNS ou de la route `/` en production par cette PR ; aucun merge automatique. Le cutover est une opération distincte, réversible, après preuve.
+
+Voir [homepage-react-cutover.md](homepage-react-cutover.md) pour la procédure, les variables et le rollback.
+
