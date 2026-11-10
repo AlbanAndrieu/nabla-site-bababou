@@ -54,9 +54,10 @@ test.describe("Approved homepage cutover, four locales", () => {
     });
   }
 
-  test("legacy archive remains retrievable for rollback", async ({ request }) => {
+  test("legacy archive remains available but is excluded from duplicate indexing", async ({ request }) => {
     const result = await request.get("/index.html");
     expect(result.status()).toBe(200);
     expect(await result.text()).toContain("<html");
+    expect(result.headers()["x-robots-tag"] ?? "").toMatch(/noindex/);
   });
 });
