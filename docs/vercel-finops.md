@@ -47,6 +47,26 @@ CPU quantifiable.
 Documentation : https://vercel.com/docs/cli/usage et
 https://vercel.com/docs/functions/usage-and-pricing.
 
+## Smoke HTTP public, faible impact
+
+Le script `scripts/finops/vercel-public-smoke.mjs` est identique à celui
+de [Site Alban #297](https://github.com/AlbanAndrieu/nabla-site-alban/pull/297).
+Il lance uniquement **6 requêtes HEAD séquentielles** vers des pages
+publiques de `www.bababou.com` si `--live` est explicitement fourni.
+Le test partagé couvre également 5 pages publiques du Site Alban.
+
+```bash
+node --test unit-tests/vercelPublicSmoke.test.mjs
+node scripts/finops/vercel-public-smoke.mjs --live --site bababou
+```
+
+La liste est fermée (`/`, `/nre`, variantes EN/DE/NO et
+`/evidence-access`) et les API privées/Stripe/OpenRAG sont exclues.
+Le script retourne `BLOCKED_PLATFORM` si HTTP 402, sinon `PASS`
+uniquement si toutes les routes sont HTTP 2xx. Un cache `HIT` ou
+`MISS` n'est **pas** une mesure Fluid Active CPU ; les données réelles
+restent à lire dans Vercel Usage.
+
 ## Roadmap et confidentialité
 
 - Le build de production après #264 a confirmé `/fr/success`,
