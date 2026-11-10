@@ -12,6 +12,23 @@ export default function DocumentRequestSelection({
   copy,
 }: { locale: AppLocale; copy: NrePageCopy["access"] }) {
   const [reference, setReference] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+  const actions: Record<AppLocale, { copy: string; copied: string }> = {
+    fr: { copy: "Copier la référence", copied: "Référence copiée" },
+    en: { copy: "Copy reference", copied: "Reference copied" },
+    de: { copy: "Referenz kopieren", copied: "Referenz kopiert" },
+    no: { copy: "Kopier referanse", copied: "Referanse kopiert" },
+  };
+  async function copyReference() {
+    if (!reference || !navigator.clipboard?.writeText) return;
+    try {
+      await navigator.clipboard.writeText(reference);
+      setCopied(true);
+    } catch {
+      // Clipboard permissions are browser-dependent: never claim success.
+      setCopied(false);
+    }
+  }
   useEffect(() => {
     // Public locator only, never a private URL or an authentication token.
     const candidate = new URLSearchParams(window.location.search).get("doc");
@@ -26,6 +43,10 @@ export default function DocumentRequestSelection({
         <div className={styles.accessSelection} data-testid="site-document-reference">
           <strong>{copy.sitewideReference}</strong>
           <code>{reference}</code>
+          <button type="button" className={styles.registerRequestLink} onClick={copyReference}>
+            {actions[locale].copy}
+          </button>
+          <span role="status" aria-live="polite">{copied ? actions[locale].copied : ""}</span>
           <p>{copy.sitewideInstructions}</p>
         </div>
       ) : <p>{copy.sitewideWithoutReference}</p>}
