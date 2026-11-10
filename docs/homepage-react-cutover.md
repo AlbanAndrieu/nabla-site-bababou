@@ -1,8 +1,20 @@
 # Bascule de la homepage React — GO/NO-GO et rollback
 
-**État vérifié dans le code au 31 octobre 2026 : NO-GO pour remplacer `/`.** La PR #253 est fusionnée, **mais le verrou de bascule n'est pas réputé approuvé**. `proxy.ts` continue par défaut de servir `public/index.html` ; ne pas confondre fusion du code, build Vercel `READY` et activation de la nouvelle homepage.
+**Décision du propriétaire, 9 novembre 2026 : page d'accueil validée sur le plan éditorial et visuel.** L'accord est enregistré pour la préparation de la migration React, mais **ne vaut pas à lui seul validation des contrôles navigateur/sécurité ni activation en production**. Le verrou de bascule conserve sa vérification stricte du SHA et des gates ; `proxy.ts` continue par défaut de servir `public/index.html` jusqu'au GO technique.
 
 La future Home propose **5 cartes** centrées sur les messages personnels ; la page distincte `/abduction` comporte **7 cartes** pour les parents, associations et traducteurs. Les deux parcours existent en FR/EN/DE/NO et doivent être vérifiés ensemble.
+
+## Décisions et éléments encore attendus
+
+| Condition | État au 9 novembre 2026 |
+| --- | --- |
+| Validation du propriétaire concernant la page d'accueil React | **APPROUVÉE** dans la conversation, sans modification supplémentaire des identités |
+| Parité visuelle et éditoriale FR/EN/DE/NO | Contenu approuvé ; **preuve navigateur exact-SHA à produire** |
+| Accessibilité, SEO, cache, liens et appareils | **NOT_VERIFIED** sur le futur déploiement |
+| Qualité, SAST/SCA/DAST, privacy gates | **NOT_VERIFIED** au SHA de la future PR |
+| Publication Vercel / activation du flag | **NON EFFECTUÉE** ; opération distincte et réversible |
+
+La validation de l'accueil ne constitue **pas** une autorisation de recopier les identifiants complets, photographies privées, lieux de résidence ou pièces sensibles de l'ancienne page dans des surfaces différentes. La politique `protect-family-privacy` reste applicable. Les quatre variables de garde restent inactives tant que les preuves techniques ne sont pas réunies.
 
 ## Conditions de GO — toutes obligatoires
 
@@ -28,7 +40,7 @@ Enregistrer **PASS / FAIL / NOT_RUN / BLOCKED**, SHA, environnement, date, preuv
 
 Les quatre premières variables **ne doivent pas être définies pour les besoins d'un test incomplet**. Le client ne peut activer le verrou via URL, cookie ou en-tête.
 
-**Après autorisation explicite du GO** :
+**Après contrôle complet des gates techniques (validation éditoriale déjà donnée)** :
 
 1. Construire et vérifier une Preview d'un **SHA exact** avec les conditions du futur déploiement. Confirmer le comportement réel du rendu, du cache et de la redirection, pas uniquement les variables.
 2. Obtenir la validation éditoriale et le contrôle des gates. Faire approuver séparément toute fusion ; **ne jamais merger automatiquement**.

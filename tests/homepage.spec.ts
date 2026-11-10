@@ -1,10 +1,24 @@
 import { expect, test } from "@playwright/test";
+import { isHomeCutoverEnabled } from "../lib/homeCutoverPolicy.mjs";
+import { homeAudienceCopy } from "../lib/homeAudienceCopy.mjs";
 
 test.describe("Homepage Tests", () => {
 	test("preserves the approved homepage content, metadata and chrome", async ({
 		page,
 	}) => {
 		await page.goto("/");
+
+    if (isHomeCutoverEnabled()) {
+      // Only an exact-SHA, technically approved deployment uses the native
+      // React homepage. The legacy assertions below remain for rollback mode.
+      await expect(page.locator("html")).toHaveAttribute("lang", "fr");
+      await expect(page.locator('html[data-nabla-app="next-intl"]')).toHaveCount(1);
+      await expect(page.locator("main#main-content h1")).toHaveText(homeAudienceCopy("fr").child.title);
+      await expect(page.locator("#preview-story-gallery li")).toHaveCount(5);
+      await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://bababou.com/");
+      await expect(page.locator('a.skip-to-main[href="#main-content"]')).toHaveCount(1);
+      return;
+    }
 
 		await test.step("loads the owner-approved identity and primary content", async () => {
 			// The homepage/index is an owner-controlled exception. Lock the currently

@@ -10,7 +10,13 @@ import { isHomeCutoverEnabled } from "@/lib/homeCutoverPolicy.mjs";
 import { localizedSiteMetadata } from "@/lib/siteSocialMetadata";
 import styles from "./home-preview/page.module.css";
 
-/** Public replacement dormant until release approvals and deployed SHA agree. */
+/**
+ * Owner-approved React content. Release remains SHA-bound and fail-closed.
+ * The homepage is built as static HTML; changing approval variables requires
+ * an explicit new build and verification on the exact deployment SHA.
+ */
+export const dynamic = "force-static";
+
 export async function generateMetadata({ params }: PageProps<"/[locale]">): Promise<Metadata> {
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale) || !isHomeCutoverEnabled()) {

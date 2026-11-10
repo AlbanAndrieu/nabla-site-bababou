@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 
 import { isHomeCutoverEnabled } from "../lib/homeCutoverPolicy.mjs";
+import { auditHomepageCutover, HOME_LOCALES } from "../scripts/verify-home-cutover.mjs";
 
 const sha = "a".repeat(40);
 const ready = {
@@ -77,4 +78,46 @@ test("released SEO URLs stay separate from the legacy and browser route catalog"
   assert.match(meta, /releasedHomepageAlternates\(locale\)/);
   assert.match(sitemap, /releasedHomepagePath\(locale\)/);
   assert.match(sitemap, /isHomeCutoverEnabled\(\) \? \[releasedHomepageSitemapEntry\(\)\]/);
+});
+
+test("approved homepage is generated statically for all four locales before release", () => {
+  assert.deepEqual([...HOME_LOCALES], ["fr", "en", "de", "no"]);
+  const publicHome = read("app/[locale]/page.tsx");
+  assert.match(publicHome, /export const dynamic = "force-static"/);
+  assert.match(publicHome, /isHomeCutoverEnabled\(\)/);
+  const routes = Object.fromEntries(
+    ["/", "/en", "/de", "/no"].map(route =>
+      [route, { initialRevalidateSeconds: false }]),
+  );
+  const result = auditHomepageCutover({ routes }, ready);
+  assert.equal(result.passed, true);
+  assert.equal(result.status, "STATIC_BUILD_VERIFIED");
+  assert.equal(result.checked.length, 4);
+});
+
+test("editorial approval does not bypass SHA or browser verification", () => {
+  const routes = Object.fromEntries(
+    ["/", "/en", "/de", "/no"].map(route =>
+      [route, { initialRevalidateSeconds: false }]),
+  );
+  for (const env of [
+    {},
+    { ...ready, BABABOU_HOME_BROWSER_GATES_APPROVED: "false" },
+    { ...ready, VERCEL_GIT_COMMIT_SHA: "c".repeat(40) },
+    { ...ready, BABABOU_HOME_CUTOVER_SHA: "xyz" },
+  ]) {
+    const denied = auditHomepageCutover({ routes }, env);
+    assert.equal(denied.passed, false);
+    assert.equal(denied.status, "APPROVAL_INCOMPLETE");
+  }
+  const missing = structuredClone(routes);
+  delete missing["/de"];
+  assert.deepEqual(auditHomepageCutover({ routes: missing }, ready).missing, ["de"]);
+  const dynamic = structuredClone(routes);
+  dynamic["/en"].initialRevalidateSeconds = 30;
+  assert.deepEqual(auditHomepageCutover({ routes: dynamic }, ready).notStatic, ["/en"]);
+  assert.equal(auditHomepageCutover(null, ready).status, "MANIFEST_MISSING");
+  const malformed = { ...routes, "/en": undefined };
+  assert.deepEqual(auditHomepageCutover({ routes: malformed }, ready).notStatic, ["/en"]);
+  assert.equal(auditHomepageCutover({ routes: malformed }, ready).passed, false);
 });
