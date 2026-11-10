@@ -2,7 +2,8 @@ import BackToTopButton from "@/components/BackToTopButton";
 import SiteDisplayControls from "@/components/SiteDisplayControls";
 import ActionLink, { actionClassName } from "@/components/ui/ActionLink";
 import type { AppLocale } from "@/i18n/routing";
-import { canonicalPagePath } from "@/lib/sitePageCatalog";
+import { isHomeCutoverEnabled } from "@/lib/homeCutoverPolicy.mjs";
+import { canonicalPagePath, releasedHomepagePath } from "@/lib/sitePageCatalog";
 import styles from "./Footer.module.css";
 
 type FooterProps = {
@@ -30,7 +31,10 @@ export default function Footer({
   locale,
   rssFeedAria,
 }: FooterProps) {
-  const homeHref = canonicalPagePath("index", locale);
+  // On the approved release, preserve the reader\'s locale when returning home.
+  const homeHref = isHomeCutoverEnabled()
+    ? releasedHomepagePath(locale)
+    : canonicalPagePath("index", locale);
   const contactHref = canonicalPagePath("contact", locale);
 
   return (

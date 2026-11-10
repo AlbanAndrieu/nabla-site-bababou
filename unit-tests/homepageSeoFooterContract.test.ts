@@ -41,3 +41,15 @@ test("P2 footer navigation name follows the active locale", async () => {
     );
   }
 });
+
+test("localized home release links do not force readers back to French", async () => {
+  const [footer, policySection, policyPaths] = await Promise.all([
+    read("app/components/Footer.tsx"),
+    read("components/home/LegacyFooterSection.tsx"),
+    read("lib/policyRoutePaths.ts"),
+  ]);
+  assert.match(footer, /isHomeCutoverEnabled\(\)/);
+  assert.match(footer, /releasedHomepagePath\(locale\)/);
+  assert.match(policySection, /localizedPolicyPath\(slug, locale\)/);
+  assert.match(policyPaths, /locale === routing\.defaultLocale/);
+});

@@ -26,6 +26,10 @@ test.describe("Approved homepage cutover, four locales", () => {
       );
       await expect(page.locator("#preview-story-gallery li")).toHaveCount(5);
       await expect(page.locator("#preview-story-gallery img")).toHaveCount(5);
+      const prefix = locale === "fr" ? "" : `/${locale}`;
+      await expect(page.locator(`#preview-footer a[href="${prefix}/policy/privacy_policy"]`)).toHaveCount(1);
+      await expect(page.locator(`footer a[href="${path}"]`).first()).toBeVisible();
+
       await expect(page.locator('a.skip-to-main[href="#main-content"]')).toHaveCount(1);
       await expect(page.locator("main#main-content")).not.toContainText(/14CV[0-9]+/);
       await expect(page.locator('meta[name="robots"]')).not.toHaveAttribute(
@@ -34,6 +38,12 @@ test.describe("Approved homepage cutover, four locales", () => {
       await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
         "href", locale === "fr" ? "https://bababou.com/" : `https://bababou.com/${locale}`,
       );
+      for (const candidate of ["fr", "en", "de", "no"]) {
+        const target = candidate === "fr" ? "/" : `/${candidate}`;
+        await expect(page.locator(`link[rel="alternate"][hreflang="${candidate}"]`))
+          .toHaveAttribute("href", `https://bababou.com${target}`);
+      }
+      await expect(page.locator('meta[name="robots"][content*="noindex"]')).toHaveCount(0);
       for (const width of [320, 375, 768, 1280]) {
         await page.setViewportSize({ width, height: 800 });
         const hasOverflow = await page.evaluate(() =>

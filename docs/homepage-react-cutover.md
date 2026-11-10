@@ -43,7 +43,7 @@ Les quatre premières variables **ne doivent pas être définies pour les besoin
 **Après contrôle complet des gates techniques (validation éditoriale déjà donnée)** :
 
 1. Construire et vérifier une Preview d'un **SHA exact** avec les conditions du futur déploiement. Confirmer le comportement réel du rendu, du cache et de la redirection, pas uniquement les variables.
-2. Obtenir la validation éditoriale et le contrôle des gates. Faire approuver séparément toute fusion ; **ne jamais merger automatiquement**.
+2. Conserver la validation éditoriale déjà donnée et produire les preuves des gates exact-SHA. Faire approuver séparément toute fusion ; **ne jamais merger automatiquement**.
 3. Vérifier le SHA final du commit de production : il peut différer de la tête de PR. Réévaluer toute preuve liée au SHA.
 4. Définir les variables d'autorisation **uniquement pour Production**, avec le SHA réellement déployé, puis **redéployer**. Vérifier que le verrou est évalué dans le contexte du build et du runtime Next.js.
 5. Vérifier `/`, `/en`, `/de`, `/no`, `/index.html`, les huit parcours de revue, ressources, sitemap/robots, SEO, headers, routes historiques, console et logs Vercel.
@@ -58,5 +58,18 @@ Les quatre premières variables **ne doivent pas être définies pour les besoin
 
 ## Preuves et statut
 
-L'ancien build Preview `624dc24f` était `READY` ; des contrats Node ciblés ont été exécutés sur cette version. Ce sont des preuves **historiques de compilation et de structure**, pas une attestation d'activation sur le `master` courant. Les recettes HTTP, navigateur, sécurité complètes et approbation éditoriale n'ont pas été confirmées ici. Voir [roadmap.md](roadmap.md) pour les seuls résiduels actifs.
+L'ancien build Preview `624dc24f` était `READY` ; des contrats Node ciblés ont été exécutés sur cette version. Ce sont des preuves **historiques de compilation et de structure**, pas une attestation d'activation sur le `master` courant. L'approbation éditoriale a été confirmée le 9 novembre 2026 ; les recettes HTTP, navigateur et sécurité complètes restent non confirmées. Voir [roadmap.md](roadmap.md) pour les seuls résiduels actifs.
+
+## Préparation technique consolidée — 10 novembre 2026
+
+**Rebase** : PR #266 reconstruite sur `master@d259a912484717935665f95bcb85e1bfd90f311c`, sans écraser les changements Vercel FinOps et NRE des deux derniers commits master.
+
+- **Performance** : `app/[locale]/page.tsx` utilise `dynamic = "force-static"`; le parent `app/[locale]/layout.tsx` génère les 4 locales. Le marqueur ne prouve pas à lui seul un build SSG. `npm run audit:home-cutover` exige à la fois les approbations SHA-borne et les quatre routes du manifeste Next ; un manifeste manquant ou contenant une route ISR/incorrecte échoue sans accepter l'activation.
+- **SEO après GO** : `next.config.mjs` ajoute `X-Robots-Tag: noindex, follow` à l'ancien chemin physique `/index.html` **uniquement quand le verrou de publication est actif lors du build**. L'archive reste consultable et conserve sa fonction de rollback, sans rivaliser avec le canonical React. Vérifier le header HTTP réel sur la Preview SHA approuvée.
+- **Langues** : le lien « Retour à l'accueil » du footer commun passe à `/`, `/en`, `/de`, `/no` seulement après GO ; les politiques du pied de page spécifique à l'accueil sont liées à leurs chemins localisés, sans prétendre que leur texte source historique est entièrement traduit.
+- **Recette** : Playwright des quatre routes en GO : `lang`, 5 cartes, image, canonical, 4 hreflang, absence de `noindex` sur la nouvelle homepage, `noindex` sur `/index.html`, liens légaux et footer, responsive 320/375/768/1280. En mode NO-GO, les tests historiques de `/` restent applicables. Les tests de GO **sont volontairement sautés** sans toutes les variables de validation ; dans ce cas l'état est NOT_RUN, pas PASS.
+- **Politique de vie privée** : aucun nom complet de mineur, lieu actuel ou document familial privé n'est transféré depuis l'archive vers une route Next. Le propriétaire a approuvé la nouvelle Home, non une extension de l'exception de publication de `public/index.html`.
+- **Déploiement** : les variables de contrôle sont évaluées à la génération statique. Ne pas activer une variable au runtime sur un HTML déjà construit avec le verrou fermé : **redéployer l'exact SHA validé**. Après fusion (SHA potentiellement modifié), reprendre les preuves associées au nouveau SHA avant GO.
+
+**État : préparation terminée en code, activation de production NON EFFECTUÉE.** Node 24/npm 12, tests complets, scans de sécurité, manifeste réel et Preview exacte restent les preuves manquantes ; aucun échec de CI ne doit être contourné.
 

@@ -1,14 +1,15 @@
 import type { AppLocale } from "@/i18n/routing";
-import { POLICY_PAGES } from "@/lib/policyPages";
+import type { PolicyPageSlug } from "@/lib/policyPages";
+import { localizedPolicyPath } from "@/lib/policyRoutePaths";
 import styles from "./LegacyFooterSection.module.css";
 
-const policyLinks = [
-  { slug: "service_terms", href: POLICY_PAGES.service_terms.canonicalPath },
-  { slug: "privacy_policy", href: POLICY_PAGES.privacy_policy.canonicalPath },
-  { slug: "impressum", href: POLICY_PAGES.impressum.canonicalPath },
-  { slug: "accessibility_statement", href: POLICY_PAGES.accessibility_statement.canonicalPath },
-  { slug: "cookie_policy", href: POLICY_PAGES.cookie_policy.canonicalPath },
-] as const;
+const policySlugs = [
+  "service_terms",
+  "privacy_policy",
+  "impressum",
+  "accessibility_statement",
+  "cookie_policy",
+] as const satisfies readonly PolicyPageSlug[];
 
 const labels = {
   fr: {
@@ -41,8 +42,8 @@ export default function LegacyFooterSection({ locale = "en" }: { locale?: AppLoc
       <h2 id="preview-policies-heading">{t.title}</h2>
       <nav aria-label={t.nav}>
         <ul className={styles.links}>
-          {policyLinks.map(({ slug, href }, index) => (
-            <li key={slug}><a href={href}>{t.links[index]}</a></li>
+          {policySlugs.map((slug, index) => (
+            <li key={slug}><a href={localizedPolicyPath(slug, locale)}>{t.links[index]}</a></li>
           ))}
         </ul>
       </nav>

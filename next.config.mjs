@@ -2,6 +2,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import createNextIntlPlugin from "next-intl/plugin";
+import { isHomeCutoverEnabled } from "./lib/homeCutoverPolicy.mjs";
 import { LEGACY_HTML_REDIRECT_SLUGS, POLICY_ROUTE_SLUGS } from "./lib/mainContentRoute.mjs";
 
 const projectRoot = path.dirname(fileURLToPath(import.meta.url));
@@ -69,6 +70,13 @@ const nextConfig = {
         source: "/:path*",
         headers: securityHeaders,
       },
+      // Keep the old physical HTML for rollback, but exclude the duplicate
+      // /index.html URL from search only once the SHA-approved React home ships.
+      // This decision is evaluated at build time; env changes require redeploy.
+      ...(isHomeCutoverEnabled() ? [{
+        source: "/index.html",
+        headers: [{ key: "X-Robots-Tag", value: "noindex, follow" }],
+      }] : []),
       // The review page can be opened by a human but must not be indexed.
       ...["/home-preview", "/:locale/home-preview", "/abduction", "/:locale/abduction"].map((source) => ({
         source,

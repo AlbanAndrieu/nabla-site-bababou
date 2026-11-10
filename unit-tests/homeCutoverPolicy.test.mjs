@@ -121,3 +121,11 @@ test("editorial approval does not bypass SHA or browser verification", () => {
   assert.deepEqual(auditHomepageCutover({ routes: malformed }, ready).notStatic, ["/en"]);
   assert.equal(auditHomepageCutover({ routes: malformed }, ready).passed, false);
 });
+
+test("legacy index gets conditional noindex only after SHA-approved homepage release", () => {
+  const config = read("next.config.mjs");
+  assert.match(config, /isHomeCutoverEnabled\(\) \? \[\{/);
+  assert.match(config, /source: "\/index\.html"/);
+  assert.match(config, /value: "noindex, follow"/);
+  assert.match(config, /env changes require redeploy/);
+});
