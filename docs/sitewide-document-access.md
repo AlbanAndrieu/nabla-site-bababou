@@ -1,19 +1,19 @@
-# Demande de copie documentaire — comportement commun du site Bababou
+# Accès aux documents sources — comportement commun du site Bababou
 
 **Portée au 9 novembre 2026 : parcours public de demande préparé, sans activation d'un portail documentaire privé.**
 
 ## Objectif
 
-Étendre à l'ensemble des documents **liés depuis le site** le parcours déjà préparé pour les références NRE, sans détruire les liens d'archives volontairement publiés et sans faire croire que Cloudflare Access protège des fichiers hébergés dans `public/`.
+Distinguer les **pages HTML publiques approuvées** des **documents sources** (PDF, fichiers bureautiques, documents de fournisseurs). Seuls les fichiers sources référencés depuis le site reçoivent une action d'accès, sans faire croire que Cloudflare Access protège des fichiers déjà hébergés dans `public/`.
 
-- Lorsqu'une page du site contient un lien vers un **PDF, DOC/DOCX, ODT/RTF, tableur XLS/XLSX/ODS, présentation PPT/PPTX/ODP**, ou vers un document connu sur Google Docs/Drive, Dropbox ou OneDrive à URL reconnaissable, une **seconde action** apparaît : « Demander une copie » (FR/EN/DE/NO).
-- Les documents HTML de l'archive **`/ca/`**, et d'autres HTML explicitement marqués `data-document-entry`, reçoivent aussi l'action.
+- Lorsqu'une page du site contient un lien vers un **PDF, DOC/DOCX, ODT/RTF, tableur XLS/XLSX/ODS, présentation PPT/PPTX/ODP**, ou vers un document connu sur Google Docs/Drive, Dropbox ou OneDrive à URL reconnaissable, une **seconde action** apparaît : « Demander l’accès au document source » (libellé traduit en FR/EN/DE/NO et accompagné d’un cadenas).
+- Les pages HTML de l’archive **`/ca/`** et les autres publications HTML approuvées (y compris `data-document-entry`) restent **directement consultables, sans demande d’accès ni doublon**. Le suffixe éditorial `| Bababou` est retiré des titres des cartes du catalogue, sans changer le titre de la page source.
 - Un lien vers une page web ordinaire, un site institutionnel, une loi ou le portail OpenRAG **ne devient pas automatiquement une preuve à demander**. Les références juridiques ordinaires restent des liens directs ; seules les URLs répondant aux critères ci-dessus sont augmentées.
 - Le lien public **d'origine reste intact**. On ne supprime pas et on ne prétend pas protéger une ressource publique par un simple changement d'interface.
 
 ## Route et référence publique
 
-Un clic sur « Demander une copie » mène vers :
+Un clic sur « Demander l’accès au document source » mène vers :
 
 ```text
 /français : /evidence-access?doc=SITE-DOC-<16hex>#request-documents
@@ -22,7 +22,7 @@ Un clic sur « Demander une copie » mène vers :
 /norvégien: /no/evidence-access?doc=SITE-DOC-<16hex>#request-documents
 ```
 
-Le site affiche un **identifiant de localisation public**, puis invite à transmettre via Contact cet identifiant, le contexte et la finalité de la demande. Aucune URL d'origine, query string, jeton, nom de fichier ou extrait documentaire n'est copié dans les paramètres. Si la requête ne contient pas d'identifiant valide, les instructions génériques restent disponibles.
+Le site affiche un **identifiant de localisation du document source**, puis invite à transmettre via Contact cet identifiant, le contexte et la finalité de la demande. Aucune URL d'origine, query string, jeton, nom de fichier ou extrait documentaire n'est copié dans les paramètres. Si la requête ne contient pas d'identifiant valide, les instructions génériques restent disponibles.
 
 Un `SITE-DOC-*` n'est **ni un identifiant officiel de procédure, ni une pièce validée, ni une garantie d'accès, ni une preuve cryptographique**. Le code calcule une empreinte locale déterministe **FNV-1a 64 bits**, non adaptée aux usages de sécurité. Le calcul ne sert qu'à retrouver une URL publiquement liée dans le code ; aucune autorisation n'en dépend. Les paramètres généraux de l'URL (notamment jetons, signatures, traçage) sont exclus ; seuls certains identifiants de documents des fournisseurs publics peuvent être intégrés **au calcul local du hash**, jamais à la requête de consultation.
 
@@ -47,7 +47,7 @@ Les références `NRE-CLAIM-*` et `NRE-PROOF-*` du registre probatoire sont **di
 | HTML historique sans widgets | Script module explicite dans Contact, Legal, Privacy et Service Terms | Extension préventive aux 4 pages restantes ; **404 non modifiée** conformément à l'exception de confidentialité/migration |
 | Médias non documentaires / pages externes ordinaires | Aucun ajout de lien | Pas d'éléments inutiles, pas de fausse demande |
 
-Les liens sont augmentés **côté client** sans changer leur destination. `MutationObserver` observe les nouveaux liens lors d'une navigation côté client. Le module vérifie les protocoles HTTP(S), ignore mailto/data/javascript et n'envoie aucune requête à OpenRAG. Le script est auto-idempotent et le CSS site utilise un focus clavier visible, des cibles tactiles d'au moins 44 px et masque l'action complémentaire à l'impression.
+Les liens **vers des fichiers sources** sont augmentés **côté client** sans changer leur destination. Le cadenas indique que la communication d’un original privé nécessite un examen, **pas** qu’un fichier déjà public est protégé. `MutationObserver` observe les nouveaux liens lors d'une navigation côté client. Le module vérifie les protocoles HTTP(S), ignore mailto/data/javascript et n'envoie aucune requête à OpenRAG. Le script est auto-idempotent et le CSS site utilise un focus clavier visible, des cibles tactiles d'au moins 44 px et masque l'action complémentaire à l'impression.
 
 ## Visualisation des références sur /evidence-access (9 novembre 2026)
 
@@ -92,7 +92,7 @@ Aucune donnée de mineur n'est extraite d'un original ni importée dans le nouve
 ## Contrôles
 
 - Tests unitaires `unit-tests/sitewideDocumentAccess.test.mjs` : classification, rejet des URL non documentaires/malveillantes, stabilité des identifiants, absence de query secrets, navigation FR/EN/DE/NO, présence sur Next et HTML historiques.
-- Test navigateur ajouté à `tests/nre.spec.ts` : le PDF NRE historique conserve son URL et reçoit une seconde action menant au guide avec référence `SITE-DOC` ; même principe sur une archive HTML.
+- Test navigateur ajouté à `tests/nre.spec.ts` : le PDF NRE historique conserve son URL et reçoit une seconde action menant au guide avec référence `SITE-DOC` ; l’archive HTML reste accessible sans action et son PDF source reçoit seul la demande.
 - **Non testé dans cette session** : rendu Playwright / axe, Node 24/npm12, CSS visuel, CGI/SSR, empreintes réelles du CDN, déploiement Vercel, accès TrueNAS/OpenRAG/Cloudflare, sécurité de l'origine. Les contrôles statiques ne prouvent pas l'exécution.
 - **GO** de la seule page de demande après tests exact-SHA et revue éditoriale ; **NO-GO** de tout accès aux pièces privées tant que Cloudflare Access, Tunnel, passerelle documentaire, autorisation, révocation et caviardage ne sont pas effectifs.
 
@@ -105,3 +105,12 @@ La page `/evidence-access` (FR/EN/DE/NO) propose désormais, en plus du total, *
 Lorsqu'un visiteur suit un lien `SITE-DOC-*`, la carte de sélection propose **« Copier la référence »** dans les quatre langues, avec état accessible `aria-live` seulement après écriture réussie dans le presse-papiers. Aucune URL d'origine, aucun chemin privé, aucun identifiant de demandeur n'est copié automatiquement. La demande réelle reste un échange via la page Contact : **le site ne peut pas en compter les soumissions tant qu'il n'existe pas de registre privé distinct**.
 
 **Tests à valider** : `node --test unit-tests/evidenceRequestVisualization.test.mjs unit-tests/vercelUsageBudget.test.mjs`, navigation clavier, clipboard sur HTTPS avec et sans autorisation, routes FR/EN/DE/NO, et manifest SSG exact SHA. Le flux Cloudflare Access reste inactif ; les pièces privées ne sont pas introduites dans Vercel.
+
+
+## Décision éditoriale du 10 novembre 2026 — source ≠ publication
+
+- **Page HTML publique approuvée** : lien direct, titre épuré du suffixe « | Bababou », **aucune demande de copie**. Exemple : `/ca/demande-explications-autorites-competentes-fr.html`.
+- **PDF/document source référencé** : lien de référence conservé et action « 🔒 Demander l’accès au document source », via `SITE-DOC-*` ; aucune pièce ni URL privée transmise dans la demande. Exemple : le PDF Gmail cité à la fin de cette page HTML.
+- **Confidentialité réelle** : une icône de cadenas ne modifie pas l’accessibilité d’une URL. Avant de présenter un original comme confidentiel, vérifier puis, si nécessaire et après arbitrage de publication, supprimer le fichier public et sécuriser l’origine, le CDN et les archives ; seuls la passerelle privée et les ACL peuvent ensuite garantir un accès conditionnel.
+- **Périmètre** : même classification dans le script commun Next.js et HTML hérités. Les références aux lois, aux pages institutionnelles et aux contenus HTML publiés ne deviennent pas des demandes de pièces.
+- **Recette à faire** : tests Node, Playwright FR/EN/DE/NO, audit des liens morts et révision des documents déjà publics sur le SHA exact de la PR ; ne pas considérer le changement de texte comme une validation Cloudflare Access.
