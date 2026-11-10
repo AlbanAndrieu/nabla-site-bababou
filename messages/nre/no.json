@@ -180,8 +180,8 @@
       "sitewideHeading": "Be om tilgang til kildedokumentet",
       "sitewideIntro": "Godkjente HTML-sider er direkte tilgjengelige. Bare kildefiler det henvises til (PDF-er, kontordokumenter og eksterne dokumenttjenester) får en forespørselslenke. Låsen viser en godkjenningsforespørsel, ikke at filen allerede er teknisk beskyttet.",
       "sitewideReference": "Offentlig referanse for dokumentet det bes om",
-      "sitewideInstructions": "Oppgi referansen, siden du fant dokumentet på, rollen din og formålet med forespørselen ved kontakt. Dette er ikke et offisielt saksnummer og garanterer ikke at en privat kopi finnes.",
-      "sitewideWithoutReference": "Ingen bestemt referanse ble oppgitt. Oppgi dokumenttittelen og siden der dokumentet ble funnet når du tar kontakt.",
+      "sitewideInstructions": "Oppgi referansen til kildedokumentet, siden som viser til det, din rolle og formålet. Referansen garanterer verken at en privat original finnes eller at tilgang blir gitt.",
+      "sitewideWithoutReference": "Ingen referanse til kildedokumentet ble oppgitt. Oppgi tittel og siden som viser til det.",
       "sitewidePublicNotice": "En forespørsel gir ikke automatisk tilgang. Filer som allerede er publisert, er fortsatt tilgjengelige på sine nåværende adresser til de fjernes eller sikres separat. Fortrolige originaler krever vurdering, sladding og godkjenning."
     }
   }
