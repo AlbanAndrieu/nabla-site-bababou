@@ -13,10 +13,8 @@ type FooterProps = {
   contactLabel: string;
   navigationAriaLabel: string;
   copyright: string;
-  eleonoreRssFeedAria: string;
   legalNotices: string;
   locale: AppLocale;
-  rssFeedAria: string;
 };
 
 export default function Footer({
@@ -26,10 +24,8 @@ export default function Footer({
   contactLabel,
   navigationAriaLabel,
   copyright,
-  eleonoreRssFeedAria,
   legalNotices,
   locale,
-  rssFeedAria,
 }: FooterProps) {
   // On the approved release, preserve the reader\'s locale when returning home.
   const homeHref = isHomeCutoverEnabled()
@@ -47,22 +43,6 @@ export default function Footer({
         >
           <i className="fas fa-envelope" aria-hidden="true" />
           <span className={styles.screenReaderOnly}>{contactLabel}</span>
-        </a>
-        <a
-          href="/feed.xml"
-          className={`${styles.socialLink} social-link`}
-          aria-label={rssFeedAria}
-        >
-          <i className="fa fa-rss" aria-hidden="true" />
-          <span className={styles.screenReaderOnly}>{rssFeedAria}</span>
-        </a>
-        <a
-          href="/eleonore-feed.xml"
-          className={`${styles.socialLink} social-link`}
-          aria-label={eleonoreRssFeedAria}
-        >
-          <i className="fa fa-rss" aria-hidden="true" />
-          <span className={styles.screenReaderOnly}>{eleonoreRssFeedAria}</span>
         </a>
       </div>
       <div className={`${styles.links} footer-links`}>

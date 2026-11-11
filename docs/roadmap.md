@@ -140,3 +140,13 @@ Voir [homepage-react-cutover.md](homepage-react-cutover.md) pour la procédure, 
 - [ ] **P0 conformité de publication** : inventorier les PDF/Office sous `public/` et les liens tiers déjà accessibles ; arbitrer leur maintien, leur caviardage et leur éventuel retrait **avant** de qualifier un document de confidentiel. Ni icône 🔒 ni demande d’accès ne protègent un fichier encore public.
 - [ ] **P3 technique** : activation ultérieure Cloudflare Access/MFA, approbation temporaire, ACL documentaires, révocation et intégration Docling/OpenRAG hors Vercel.
 
+
+## Accueil et personnes contactées — revue graphique du 11 novembre 2026
+
+- **Illustration approuvée :** une carte symbolique des démarches à travers l'Europe, centrée sur France, Norvège et Allemagne, et montrant tribunaux, police, administrations, autorités centrales, consulats, écoles, associations, traducteurs, avocats et services sociaux. Le Royaume-Uni reste une piste **incertaine**, non un déplacement établi. Les points graphiques ne valent ni géolocalisation, ni preuve individuelle de contact.
+- **Asset local :** `/assets/people-contacted-europe.avif` (1672×941, environ 48 Ko), aucune dépendance au service externe d'image ni passage par le proxy d'optimisation Vercel. Affichage sur la page historique `/people-contacted.html`, la section « Personnes contactées » de l'accueil React et sa carte correspondante, FR/EN/DE/NO. Texte alternatif et légende adaptés aux langues ; source consultable en pleine résolution sur la page historique.
+- **Nettoyage demandé :** phrases « Personnes contactées » raccourcies ; retrait des sections « Nouvelles du site » et « Mentions et politiques du site » en doublon ; disparition des deux liens RSS du pied de page visible. Les endpoints RSS et leur découverte automatique restent disponibles pour les abonnements existants, la mention légale demeure dans le footer partagé.
+- **Carte d'identité :** une sixième carte est restaurée dans l'accueil, liée à `#preview-identity` et aux explications de vérification privée. **Ne pas exposer le numéro de passeport complet d'une personne mineure** ni republier un document d'identité : les anciennes archives publiques constituent un risque distinct à revoir avec le propriétaire.
+- **Recette :** contrôle du fichier AVIF et de sa taille, contrats de 6 cartes et de liens valides, tests Playwright de la page historique et de la Preview, responsive, 4 langues. `NOT_RUN` tant que Node24/npm12, build et Preview exact-SHA ne sont pas exécutés. Ne pas compter des jobs GitHub Draft `skipped` comme PASS.
+
+Statut : **code prêt pour revue**, aucune fusion ni mise en ligne de production implicite.

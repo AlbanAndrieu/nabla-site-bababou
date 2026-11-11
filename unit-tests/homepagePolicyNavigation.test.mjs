@@ -1,39 +1,32 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-const read = (path) => readFileSync(new URL("../"+path, import.meta.url),"utf8");
+const read = (path) => readFileSync(new URL("../" + path, import.meta.url), "utf8");
 
-test("approved policy hrefs still come from one canonical registry", () => {
-  const src=read("components/home/LegacyFooterSection.tsx");
-  for(const slug of ["service_terms","privacy_policy","impressum","accessibility_statement","cookie_policy"]) {
-    assert.ok(src.includes(`POLICY_PAGES.${slug}.canonicalPath`),slug);
+test("one shared legal footer replaces duplicate homepage policy section", () => {
+  const shared = read("app/components/Footer.tsx");
+  const layout = read("app/[locale]/layout.tsx");
+  assert.match(layout, /<Footer/);
+  assert.match(shared, /href="\/policy\/legal"/);
+  for (const p of ["app/[locale]/page.tsx", "app/[locale]/home-preview/page.tsx"]) {
+    const page = read(p);
+    assert.doesNotMatch(page, /LegacyFooterSection|preview-policies-heading|preview-footer/);
+    assert.doesNotMatch(page, /href="\/(?:eleonore-)?feed\.xml"|preview-resources/);
   }
-  assert.equal((src.match(/href: POLICY_PAGES\./g)||[]).length,5);
 });
 
-test("shared policy navigation has one named section and one shared footer", () => {
-  const src=read("components/home/LegacyFooterSection.tsx");
-  assert.match(src, /<section id="preview-footer"/);
-  assert.match(src, /aria-labelledby="preview-policies-heading"/);
-  assert.match(src, /<nav aria-label=\{t\.nav\}>/);
-  assert.doesNotMatch(src, /<footer\b/);
+test("RSS endpoints remain available to existing subscribers, without duplicate homepage UI", () => {
+  const footer = read("app/components/Footer.tsx");
+  assert.doesNotMatch(footer, /href="\/(?:eleonore-)?feed\.xml"/);
+  const layout = read("app/[locale]/layout.tsx");
+  assert.match(layout, /title="Bababou — RSS"/);
+  assert.match(layout, /href="\/eleonore-feed\.xml"/);
+});
+
+test("legacy policy component is no longer rendered by either React homepage", () => {
+  const legacy = read("components/home/LegacyFooterSection.tsx");
+  assert.match(legacy, /localizedPolicyPath\(slug, locale\)/);
   assert.match(read("app/components/Footer.tsx"), /<BackToTopButton/);
-});
-
-test("FR EN DE NO policy labels are native and accessible", () => {
-  const src=read("components/home/LegacyFooterSection.tsx");
-  for(const word of ["Mentions et politiques","Site Policies","Rechtliche Hinweise","Nettstedets retningslinjer",
-    "Conditions d’utilisation","Terms of Use","Nutzungsbedingungen","Bruksvilkår"]) {
-    assert.ok(src.includes(word),word);
-  }
-  assert.match(src,/lang=\{locale\}/);
-  assert.match(src,/aria-label=\{t\.nav\}/);
-});
-
-test("responsive policy links have keyboard focus and touch targets", () => {
-  const css=read("components/home/LegacyFooterSection.module.css");
-  assert.match(css,/flex-wrap: wrap/);
-  assert.match(css,/min-height: 2\.75rem/);
-  assert.match(css,/:focus-visible/);
-  assert.match(css,/touch-action: manipulation/);
+  assert.doesNotMatch(read("app/[locale]/page.tsx"), /LegacyFooterSection/);
+  assert.doesNotMatch(read("app/[locale]/home-preview/page.tsx"), /LegacyFooterSection/);
 });

@@ -86,7 +86,6 @@ test("new gallery illustrations are local, static and free of remote references"
   const expected = [
     "/assets/home-card-contact.svg",
     "/assets/home-card-documents.svg",
-    "/assets/home-card-people.svg",
     "/assets/home-card-message.svg",
   ];
   for (const filename of expected) {
@@ -96,4 +95,17 @@ test("new gallery illustrations are local, static and free of remote references"
     assert.doesNotMatch(svg, /<script\b|<foreignObject\b|<image\b|\b(?:xlink:)?href=/i);
     assert.doesNotMatch(svg, /(?:<text\b|<metadata\b)/i);
   }
+});
+
+test("European contacts gallery visual is shared with the historic people page", () => {
+  const asset = "/assets/people-contacted-europe.avif";
+  assert.ok(HOME_GALLERY_CARDS.some(({ image }) => image === asset));
+  const file = new URL("../public" + asset, import.meta.url);
+  assert.ok(existsSync(file));
+  const bytes = readFileSync(file);
+  assert.equal(bytes.subarray(4, 12).toString("ascii"), "ftypavif");
+  assert.ok(bytes.length > 10_000 && bytes.length < 200_000, "artwork has a compact payload");
+  assert.match(read("public/people-contacted.html"), /src="\/assets\/people-contacted-europe\.avif"/);
+  assert.match(read("components/home/ChildHomeSections.tsx"), /people-contacted-europe\.avif/);
+  assert.match(read("components/home/GalleryCardMedia.tsx"), /people-contacted-europe\./);
 });

@@ -38,7 +38,7 @@ test("explicit French preview alias keeps its canonical redirect", async ({reque
 });
 
 for(const {code,home,fathers} of locales){
-  test(`${code} child homepage: native copy, five safe cards, valid anchors`,async({page})=>{
+  test(`${code} child homepage: native copy, six safe cards, valid anchors`,async({page})=>{
     const r=await page.goto(home);
     expect(r?.status()).toBe(200);
     const c=homeAudienceCopy(code).child;
@@ -47,8 +47,14 @@ for(const {code,home,fathers} of locales){
     await expect(page.locator("#preview-opening h3")).toHaveText(c.greeting);
     await expect(page.locator("#preview-hope")).toContainText(c.hopeText);
     await expect(page.locator("#preview-journey")).toContainText(c.journeyText);
-    await expect(page.locator("#preview-story-gallery li")).toHaveCount(5);
-    await expect(page.locator("#preview-story-gallery img")).toHaveCount(5);
+    await expect(page.locator("#preview-people")).toContainText(c.peopleText);
+    await expect(page.locator('#preview-people img[src="/assets/people-contacted-europe.avif"]')).toHaveAttribute("alt", c.peopleMapAlt);
+    await expect(page.locator("#preview-people figcaption")).toHaveText(c.peopleMapCaption);
+    await expect(page.locator("#preview-identity")).toContainText(c.identityTitle);
+    await expect(page.locator("#preview-footer, #preview-resources")).toHaveCount(0);
+    await expect(page.locator('main a[href$="feed.xml"]')).toHaveCount(0);
+    await expect(page.locator("#preview-story-gallery li")).toHaveCount(6);
+    await expect(page.locator("#preview-story-gallery img")).toHaveCount(6);
     await expect(page.locator(`a[href="${fathers}"]`).first()).toBeVisible();
     await expect(page.locator('a[href="mailto:aa@bababou.com"]')).toHaveCount(1);
     await expect(page.locator('a[href="/people-contacted.html"]')).toHaveCount(1);

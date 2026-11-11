@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { AppLocale } from "@/i18n/routing";
 import { homeAudienceCards, homeAudienceCopy, fathersAudiencePath } from "@/lib/homeAudienceCopy.mjs";
 import GalleryCardMedia from "./GalleryCardMedia";
@@ -40,9 +41,26 @@ export default function ChildHomeSections({ locale }: { locale: AppLocale }) {
       <section className={peopleStyles.section} id="preview-people" aria-labelledby="preview-people-heading">
         <h2 id="preview-people-heading">{c.peopleTitle}</h2>
         <p>{c.peopleText}</p>
+        <figure className={peopleStyles.mapFigure}>
+          <Image
+            src="/assets/people-contacted-europe.avif"
+            alt={c.peopleMapAlt}
+            width={1672}
+            height={941}
+            sizes="(max-width: 76rem) 100vw, 76rem"
+            loading="lazy"
+            unoptimized
+            className={peopleStyles.mapImage}
+          />
+          <figcaption className={peopleStyles.mapCaption}>{c.peopleMapCaption}</figcaption>
+        </figure>
         <ul className={peopleStyles.resources}>
           <li><a href="/people-contacted.html">{c.peopleLink}</a></li>
         </ul>
+      </section>
+      <section className={sectionStyles.section} id="preview-identity" aria-labelledby="preview-identity-heading">
+        <h2 id="preview-identity-heading">{c.identityTitle}</h2>
+        <p>{c.identityText}</p>
       </section>
       <section className={sectionStyles.section} id="preview-contact" aria-labelledby="preview-contact-heading">
         <h2 id="preview-contact-heading">{c.contactTitle}</h2>
