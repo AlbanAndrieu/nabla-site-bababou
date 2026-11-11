@@ -1,4 +1,3 @@
-import Image from "next/image";
 import type { AppLocale } from "@/i18n/routing";
 import { homeAudienceCards, homeAudienceCopy, fathersAudiencePath } from "@/lib/homeAudienceCopy.mjs";
 import GalleryCardMedia from "./GalleryCardMedia";
@@ -6,7 +5,6 @@ import styles from "./LegacyStoryGallerySection.module.css";
 import sectionStyles from "./LegacyOpeningSection.module.css";
 import messageStyles from "./LegacyMessageSection.module.css";
 import homeStyles from "./ChildHomeSections.module.css";
-import peopleStyles from "./LegacyPeopleSection.module.css";
 
 /**
  * Personal messages for Éléonore. Safe for a public review: no minor's ID,
@@ -37,26 +35,6 @@ export default function ChildHomeSections({ locale }: { locale: AppLocale }) {
       <section className={sectionStyles.section} id="preview-journey" aria-labelledby="preview-journey-heading">
         <h2 id="preview-journey-heading">{c.journeyTitle}</h2>
         <p>{c.journeyText}</p>
-      </section>
-      <section className={peopleStyles.section} id="preview-people" aria-labelledby="preview-people-heading">
-        <h2 id="preview-people-heading">{c.peopleTitle}</h2>
-        <p>{c.peopleText}</p>
-        <figure className={peopleStyles.mapFigure}>
-          <Image
-            src="/assets/people-contacted-europe.avif"
-            alt={c.peopleMapAlt}
-            width={1672}
-            height={941}
-            sizes="(max-width: 76rem) 100vw, 76rem"
-            loading="lazy"
-            unoptimized
-            className={peopleStyles.mapImage}
-          />
-          <figcaption className={peopleStyles.mapCaption}>{c.peopleMapCaption}</figcaption>
-        </figure>
-        <ul className={peopleStyles.resources}>
-          <li><a href="/people-contacted.html">{c.peopleLink}</a></li>
-        </ul>
       </section>
       <section className={sectionStyles.section} id="preview-identity" aria-labelledby="preview-identity-heading">
         <h2 id="preview-identity-heading">{c.identityTitle}</h2>

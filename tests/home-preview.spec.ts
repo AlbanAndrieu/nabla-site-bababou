@@ -47,9 +47,9 @@ for(const {code,home,fathers} of locales){
     await expect(page.locator("#preview-opening h3")).toHaveText(c.greeting);
     await expect(page.locator("#preview-hope")).toContainText(c.hopeText);
     await expect(page.locator("#preview-journey")).toContainText(c.journeyText);
-    await expect(page.locator("#preview-people")).toContainText(c.peopleText);
-    await expect(page.locator('#preview-people img[src="/assets/people-contacted-europe.avif"]')).toHaveAttribute("alt", c.peopleMapAlt);
-    await expect(page.locator("#preview-people figcaption")).toHaveText(c.peopleMapCaption);
+    await expect(page.locator("#preview-people, a[href='#preview-people']")).toHaveCount(0);
+    await expect(page.locator('#preview-story-gallery a[href="/people-contacted.html"]')).toHaveCount(1);
+    await expect(page.locator('#preview-story-gallery img[src="/assets/people-contacted-europe.avif"]')).toHaveCount(1);
     await expect(page.locator("#preview-identity")).toContainText(c.identityTitle);
     await expect(page.locator("#preview-footer, #preview-resources")).toHaveCount(0);
     await expect(page.locator('main a[href$="feed.xml"]')).toHaveCount(0);
@@ -90,8 +90,8 @@ for(const {code,home,fathers} of locales){
   });
 }
 
-test("five child illustrations and seven parent illustrations load from local assets",async({page})=>{
-  for(const [url,container,count] of [["/home-preview","#preview-story-gallery",5],["/abduction","#abduction-cards",7]] as const){
+test("six child illustrations and seven parent illustrations load from local assets",async({page})=>{
+  for(const [url,container,count] of [["/home-preview","#preview-story-gallery",6],["/abduction","#abduction-cards",7]] as const){
     await page.goto(url);
     const images=page.locator(container+" img");
     await expect(images).toHaveCount(count);

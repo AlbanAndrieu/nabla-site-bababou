@@ -34,7 +34,7 @@ test("French child page keeps the journey and parents page carries private ident
   assert.match(child.journeyTitle, /longue recherche/);
   assert.match(child.letter[2], /plus qu’hier et moins que demain/);
   assert.deepEqual(homeAudienceCards("fr", "child").map(c => c.href),[
-    "#preview-opening","#preview-hope","#preview-journey","#preview-letter","#preview-people"
+    "#preview-opening","#preview-hope","#preview-journey","#preview-letter","/people-contacted.html","#preview-identity"
   ]);
   assert.doesNotMatch(JSON.stringify(child), /14CV[0-9]+/);
 });

@@ -53,23 +53,3 @@
 @media (prefers-reduced-motion: reduce) {
   .resources * { animation: none; transition: none; }
 }
-
-/* The illustration is symbolic: full labels must remain visible on mobile. */
-.mapFigure {
-  width: 100%;
-  max-width: 76rem;
-  margin: 1.5rem 0;
-  border: 1px solid var(--ui-border, #d1d5db);
-  border-radius: var(--ui-radius-card, 0.75rem);
-  overflow: hidden;
-  background: var(--ui-surface-card, #fff);
-}
-.mapImage { display: block; width: 100%; height: auto; object-fit: contain; }
-.mapCaption {
-  padding: 0.75rem 1rem;
-  font-size: 0.9rem;
-  line-height: 1.5;
-  color: var(--ui-text-secondary, #475569);
-  overflow-wrap: anywhere;
-}
-@media print { .mapFigure { break-inside: avoid; } }

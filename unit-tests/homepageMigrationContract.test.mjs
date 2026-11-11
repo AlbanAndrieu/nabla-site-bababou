@@ -56,11 +56,12 @@ test("approved English messages remain in the archive for parity, not in the new
 
 test("homepage content remains about Éléonore and references only child-safe cards", () => {
   const section = read("components/home/ChildHomeSections.tsx");
-  for (const id of ["preview-opening","preview-letter","preview-hope","preview-identity","preview-people","preview-contact","preview-story-gallery"]) {
+  for (const id of ["preview-opening","preview-letter","preview-hope","preview-identity","preview-contact","preview-story-gallery"]) {
     assert.ok(section.includes(`id="${id}"`), id);
   }
   assert.match(section, /mailto:aa@bababou\.com/);
-  assert.match(section, /people-contacted\.html/);
+  assert.doesNotMatch(section, /id="preview-people"/);
+  assert.match(read("lib/homeAudienceCopy.mjs"), /"\/people-contacted\.html"/);
   assert.doesNotMatch(section, /14CV[0-9]+|passport/i);
 });
 

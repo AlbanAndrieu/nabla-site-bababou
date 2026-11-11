@@ -44,7 +44,6 @@ export default async function HomePreview({ params }: PageProps<"/[locale]/home-
         <a href="#preview-opening">{c.letterTitle}</a>
         <a href="#preview-hope">{c.hopeTitle}</a>
         <a href="#preview-journey">{c.journeyTitle}</a>
-        <a href="#preview-people">{c.peopleTitle}</a>
         <a href="#preview-contact">{c.contactTitle}</a>
       </nav>
       <ChildHomeSections locale={locale} />

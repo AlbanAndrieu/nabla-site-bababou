@@ -33,7 +33,7 @@ test("both pages have native, complete content in four languages", () => {
 });
 
 test("child-facing cards preserve six reviewed media and safe anchors", () => {
-  const expected = ["#preview-opening", "#preview-hope", "#preview-journey", "#preview-letter", "#preview-people", "#preview-identity"];
+  const expected = ["#preview-opening", "#preview-hope", "#preview-journey", "#preview-letter", "/people-contacted.html", "#preview-identity"];
   for (const locale of locales) {
     const cards = homeAudienceCards(locale, "child");
     assert.deepEqual(cards.map((c) => c.href), expected);
@@ -119,9 +119,12 @@ test("people infographic and identity card have native translations and private 
     const { child } = homeAudienceCopy(locale);
     assert.equal(homeAudienceCards(locale, "child")[4].image, "/assets/people-contacted-europe.avif");
     assert.equal(homeAudienceCards(locale, "child")[5].href, "#preview-identity");
-    assert.match(child.peopleMapAlt, /.{45,}/);
-    assert.match(child.peopleMapCaption, /.{45,}/);
-    assert.doesNotMatch(child.peopleText, /dossiers personnels|personal records|persönliche Unterlagen|personlige dokumenter/i);
+    assert.equal(homeAudienceCards(locale, "child")[4].href, "/people-contacted.html");
+    assert.equal(child.peopleTitle, undefined);
+    assert.equal(child.peopleText, undefined);
+    assert.equal(child.peopleMapAlt, undefined);
+    assert.equal(child.peopleMapCaption, undefined);
   }
   assert.match(read("components/home/ChildHomeSections.tsx"), /id="preview-identity"/);
+  assert.doesNotMatch(read("components/home/ChildHomeSections.tsx"), /id="preview-people"/);
 });

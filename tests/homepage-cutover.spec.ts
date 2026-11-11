@@ -36,7 +36,9 @@ test.describe("Approved homepage cutover, four locales", () => {
       await expect(page.locator("#preview-footer, #preview-resources")).toHaveCount(0);
       await expect(page.locator('main a[href$="feed.xml"]')).toHaveCount(0);
       await expect(page.locator("#preview-identity")).toContainText(homeAudienceCopy(locale).child.identityTitle);
-      await expect(page.locator('#preview-people img[src="/assets/people-contacted-europe.avif"]')).toHaveCount(1);
+      await expect(page.locator("#preview-people, a[href='#preview-people']")).toHaveCount(0);
+      await expect(page.locator('#preview-story-gallery a[href="/people-contacted.html"]')).toHaveCount(1);
+      await expect(page.locator('#preview-story-gallery img[src="/assets/people-contacted-europe.avif"]')).toHaveCount(1);
       await expect(page.locator('footer a[href="/policy/legal"]')).toHaveCount(1);
       await expect(page.locator(`footer a[href="${path}"]`).first()).toBeVisible();
 
