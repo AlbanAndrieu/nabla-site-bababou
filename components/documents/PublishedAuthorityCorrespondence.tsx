@@ -20,7 +20,7 @@ export default function PublishedAuthorityCorrespondence() {
 					>).
 				</p>
 
-				
+
 				<div className="email-thread">
 					<section className="py-3" aria-labelledby="email-2026-02-11-besnard">
 						<h2 id="email-2026-02-11-besnard" className="h5 visually-hidden">11 février 2026 — Autorité centrale</h2>
