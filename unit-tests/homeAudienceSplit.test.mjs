@@ -33,7 +33,7 @@ test("both pages have native, complete content in four languages", () => {
 });
 
 test("child-facing cards preserve six reviewed media and safe anchors", () => {
-  const expected = ["#preview-opening", "#preview-hope", "#preview-journey", "#preview-letter", "/people-contacted.html", "#preview-identity"];
+  const expected = ["#preview-opening", "#preview-hope", "#preview-journey", "#preview-letter", locale === "fr" ? "/people-contacted" : `/${locale}/people-contacted`, "#preview-identity"];
   for (const locale of locales) {
     const cards = homeAudienceCards(locale, "child");
     assert.deepEqual(cards.map((c) => c.href), expected);
@@ -119,7 +119,7 @@ test("people infographic and identity card have native translations and private 
     const { child } = homeAudienceCopy(locale);
     assert.equal(homeAudienceCards(locale, "child")[4].image, "/assets/people-contacted-europe.avif");
     assert.equal(homeAudienceCards(locale, "child")[5].href, "#preview-identity");
-    assert.equal(homeAudienceCards(locale, "child")[4].href, "/people-contacted.html");
+    assert.equal(homeAudienceCards(locale, "child")[4].href, locale === "fr" ? "/people-contacted" : `/${locale}/people-contacted`);
     assert.equal(child.peopleTitle, undefined);
     assert.equal(child.peopleText, undefined);
     assert.equal(child.peopleMapAlt, undefined);

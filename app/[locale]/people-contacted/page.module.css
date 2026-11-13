@@ -1,0 +1,26 @@
+.page { padding: clamp(1.5rem, 4vw, 3rem) 0 4rem; line-height: 1.6; }
+.header { max-width: 72rem; }
+.header h1 { font-size: clamp(1.75rem, 4vw, 2.65rem); line-height: 1.2; }
+.header p { max-width: 72ch; }
+.figure { margin: 1.5rem 0; width: 100%; }
+.figure img { display: block; width: 100%; height: auto; border: 1px solid var(--ui-border); border-radius: .75rem; }
+.figure figcaption { color: var(--ui-text-secondary, #475569); font-size: .9rem; margin-top: .5rem; }
+.section { margin-top: 2.5rem; }
+.section h2, .note h2 { font-size: clamp(1.25rem, 2.5vw, 1.6rem); }
+.note { border-inline-start: 4px solid var(--ui-border); padding: .8rem 1.25rem; margin: 1.5rem 0; background: var(--ui-surface-muted, transparent); }
+.tree, .tree ul, .cards { list-style: none; padding: 0; }
+.tree > li { margin: .65rem 0; }
+.branch { border: 1px solid var(--ui-border); border-radius: .6rem; padding: .35rem .75rem; margin: .4rem 0; }
+.branch summary { padding: .5rem; cursor: pointer; font-weight: 650; }
+.branch > ul { border-inline-start: 2px solid var(--ui-border); margin-inline-start: .65rem; padding-inline-start: .75rem; }
+.leaf { padding: .35rem .3rem; overflow-wrap: anywhere; }
+.country { margin-top: 1.5rem; }
+.country h3 { font-size: 1.1rem; }
+.cards { display: grid; gap: .75rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); }
+.card { min-width: 0; border: 1px solid var(--ui-border); background: var(--ui-surface-card, transparent); border-radius: .75rem; padding: 1rem; overflow-wrap: anywhere; }
+.card h4 { margin: 0 0 .5rem; font-size: 1.02rem; }
+.card p { font-size: .91rem; margin: .25rem 0; }
+.archive { margin-top: 2rem; font-size: .88rem; }
+.page a { text-underline-offset: .2rem; overflow-wrap: anywhere; }
+.page a:focus-visible, .branch summary:focus-visible { outline: 3px solid var(--ui-focus-ring, currentColor); outline-offset: 3px; }
+@media print { .branch { break-inside: avoid; } .cards { display: block; } .card { break-inside: avoid; margin: .5rem 0; } }

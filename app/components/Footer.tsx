@@ -44,6 +44,26 @@ export default function Footer({
           <i className="fas fa-envelope" aria-hidden="true" />
           <span className={styles.screenReaderOnly}>{contactLabel}</span>
         </a>
+        <a
+          href="https://calendly.com/alban-andrieu"
+          className={`${styles.socialLink} social-link`}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Calendly"
+        >
+          <i className="fas fa-calendar-plus" aria-hidden="true" />
+          <span className={styles.screenReaderOnly}>Calendly</span>
+        </a>
+        <a
+          href="https://github.com/AlbanAndrieu/nabla-site-bababou"
+          className={`${styles.socialLink} social-link`}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="GitHub"
+        >
+          <i className="fab fa-github" aria-hidden="true" />
+          <span className={styles.screenReaderOnly}>GitHub</span>
+        </a>
       </div>
       <div className={`${styles.links} footer-links`}>
         <a href="/policy/legal">{legalNotices}</a>

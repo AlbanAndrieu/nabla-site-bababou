@@ -51,6 +51,9 @@ export const SITE_PAGES = {
     category: "discoverability",
     seo: { priority: 0.45, changeFrequency: "monthly" },
   },
+  // New React directory is reviewable but not added to sitemap before
+  // the legacy HTML redirect and accessibility/SEO approval.
+  "people-contacted": { category: "discoverability" },
   link: {
     category: "discoverability",
     seo: { priority: 0.65, changeFrequency: "monthly" },

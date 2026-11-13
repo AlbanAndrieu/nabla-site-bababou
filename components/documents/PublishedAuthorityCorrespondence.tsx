@@ -1,0 +1,974 @@
+/**
+ * React transcription of an already published HTML archive. This source
+ * is reviewed public material, not an OpenRAG private document.
+ * Keep the 13 dated anchors and exact correspondence text.
+ * Source of truth before editorial approval of a new version:
+ * public/ca/demande-explications-autorites-competentes-fr.html
+ */
+export default function PublishedAuthorityCorrespondence() {
+  return (
+    <div lang="fr" data-document-original-locale="fr">
+<div className="ca-archive-body">
+			<div className="container">
+				<h1 id="doc-heading" className="display-6 mb-4">Demande d'explications écrites des autorités compétentes</h1>
+				<p className="lead text-muted mb-4">
+					Fil d'échanges avec l'Autorité centrale française (<a
+						href="https://www.hcch.net/fr/instruments/conventions/full-text/?cid=24"
+						target="_blank"
+						rel="noopener noreferrer"
+						>Convention de La Haye du 25 octobre 1980</a
+					>).
+				</p>
+
+				<!-- Chronological order: oldest first -->
+				<div className="email-thread">
+					<section className="py-3" aria-labelledby="email-2026-02-11-besnard">
+						<h2 id="email-2026-02-11-besnard" className="h5 visually-hidden">11 février 2026 — Autorité centrale</h2>
+						<div className="email-block email-block--authority">
+							<div className="email-header">
+								<span className="email-from" aria-label="De"
+									><i className="fas fa-building" aria-hidden="true"></i> BESNARD Maud</span
+								>
+								<span className="email-reply-hint"><i className="fas fa-reply" aria-hidden="true"></i> En réponse à </span>
+								<span className="email-to" aria-label="À"><i className="fas fa-arrow-right" aria-hidden="true"></i> M. A.</span>
+								<span className="email-date">11 févr. 2026, 15:17</span>
+							</div>
+							<div className="email-subject">
+								Objet : Réponse de l'autorité centrale allemande (transmission de la demande de retour,
+								<a
+									href="https://www.hcch.net/fr/instruments/conventions/full-text/?cid=24"
+									target="_blank"
+									rel="noopener noreferrer"
+									>Convention de La Haye 1980</a
+								>)
+							</div>
+							<div className="email-body">
+								<p>Monsieur,</p>
+								<p>
+									Je vous prie de bien vouloir trouver la réponse de l'autorité centrale allemande suite à la
+									transmission de votre demande de retour sur le fondement de la
+									<a
+										href="https://www.hcch.net/fr/instruments/conventions/full-text/?cid=24"
+										target="_blank"
+										rel="noopener noreferrer"
+										>Convention de La Haye de 1980</a
+									>:
+								</p>
+								<p>
+									La référence du dossier au sein de l'Autorité centrale allemande est la suivante : II3 - SR - G - F2 -
+									E - 51/26.
+								</p>
+								<p>
+									Dès lors que des procédures sont actuellement en cours devant le Tribunal de Francfort-sur-le-Main,
+									sur le fondement de
+									<a
+										href="https://www.hcch.net/fr/instruments/conventions/full-text/?cid=24"
+										target="_blank"
+										rel="noopener noreferrer"
+										>l'article 21</a
+									>
+									de la convention de La Haye de 1980 sur la protection des droits de visite transfrontière, la demande
+									de retour formée par M. A. apparaît contradictoire avec la demande de droits de visites
+									transfrontières. Un parent ne peut pas former à la fois une demande de retour et une demande de droits
+									de visites transfrontières.
+								</p>
+								<p>
+									Par ailleurs, le délai d'un an prévu par
+									<a
+										href="https://www.hcch.net/fr/instruments/conventions/full-text/?cid=24"
+										target="_blank"
+										rel="noopener noreferrer"
+										>l'article 12</a
+									>
+									de la convention et après lequel le juge doit examiner l'intégration de l'enfant dans son nouveau
+									milieu est désormais écoulé. De ce fait, les chances de succès de la demande de retour de M. A.
+									apparaissent très limitées, puisque la mineure vit en Allemagne depuis plusieurs années et qu'il
+									apparaît hautement probable que la juridiction qui serait saisie du retour considère que la mineure a
+									désormais sa résidence habituelle en Allemagne.
+								</p>
+								<p>
+									Si M. A. souhaite le retour de la mineure en France chez lui, il est suggéré qu'il initie une
+									procédure sur le droit de garde devant le Tribunal de Francfort et sollicite la fixation de la
+									résidence de sa fille à son domicile en France.
+								</p>
+								<p>
+									Pour les raisons détaillées ci-dessus, il est demandé à M. A. de retirer sa demande de retour, afin
+									que la procédure relative au droit de visite puisse se poursuivre devant le Tribunal de Francfort.
+								</p>
+								<p>Bien cordialement,</p>
+								<p className="signature">
+									Maud BESNARD Rédactrice Département de l'entraide, du droit international privé et européen| Autorité
+									centrale française Direction des affaires civiles et du sceau Ministère de la Justice, 13 place
+									Vendôme, 75001 PARIS
+								</p>
+							</div>
+						</div>
+					</section>
+
+					<section className="py-3" aria-labelledby="email-2026-02-11-father">
+						<h2 id="email-2026-02-11-father" className="h5 visually-hidden">11 février 2026 — Le père</h2>
+						<div className="email-block email-block--father">
+							<div className="email-header">
+								<span className="email-from" aria-label="De"><i className="fas fa-user" aria-hidden="true"></i> M. A.</span>
+								<span className="email-reply-hint"><i className="fas fa-reply" aria-hidden="true"></i> En réponse à </span>
+								<span className="email-to" aria-label="À"
+									><i className="fas fa-building" aria-hidden="true"></i> BESNARD Maud</span
+								>
+								<span className="email-date">11 févr. 2026, 15:54</span>
+							</div>
+							<div className="email-subject">
+								Objet : Re: Transmission de mon dossier et rappels juridiques – Demande de retour
+							</div>
+							<div className="email-body">
+								<p>Bonjour,</p>
+								<p>Je confirme ne pas retirer ma demande.</p>
+								<p>
+									Pour rappel, ma demande date de 2022 et de plus les tribunaux allemands refusent toujours de prendre
+									en considération mes demandes. Je n'ai d'ailleurs toujours pas de nouvelles des autorités allemandes.
+								</p>
+								<p>
+									Pour finir, c'est à l'Allemagne de statuer sur la résidence habituelle de ma fille. Ce n'est pas une
+									décision que je peux prendre.
+								</p>
+								<p>Je souhaite aussi que l'Allemagne me transmette les preuves de l'enlèvement de ma fille.</p>
+								<p>Cordialement,</p>
+								<p>M. A.</p>
+							</div>
+						</div>
+					</section>
+
+					<section className="py-3" aria-labelledby="email-2026-02-12-besnard">
+						<h2 id="email-2026-02-12-besnard" className="h5 visually-hidden">12 février 2026 — Autorité centrale</h2>
+						<div className="email-block email-block--authority">
+							<div className="email-header">
+								<span className="email-from" aria-label="De"
+									><i className="fas fa-building" aria-hidden="true"></i> BESNARD Maud</span
+								>
+								<span className="email-reply-hint"><i className="fas fa-reply" aria-hidden="true"></i> En réponse à </span>
+								<span className="email-to" aria-label="À"><i className="fas fa-user" aria-hidden="true"></i> M. A.</span>
+								<span className="email-date">12 févr. 2026, 10:23</span>
+							</div>
+							<div className="email-subject">Objet : Re: Demande d'explications écrites</div>
+							<div className="email-body">
+								<p>Bonjour Monsieur,</p>
+								<p>
+									Je note que vous voulez maintenir votre demande de retour. Il convient de noter que cela pourrait
+									avoir des incidences sur le dossier en cours concernant vos droits de visite.
+								</p>
+								<p>
+									S'agissant d'une instance visant à statuer sur les modalités d'autorité parentale concernant votre
+									enfant, il s'agit d'une demande différente de la demande de retour dont vous nous avez saisi. Si vous
+									voulez saisir les autorités judiciaires allemandes d'une telle demande, il convient de vous rapprocher
+									d'un avocat en Allemagne afin de savoir comment il convient de procéder. Je peux aussi demander à
+									l'autorité centrale allemande si la saisine peut être faite sans avocat si vous le souhaitez.
+								</p>
+								<p>Bien cordialement,</p>
+								<p>Maud BESNARD</p>
+							</div>
+						</div>
+					</section>
+
+					<section className="py-3" aria-labelledby="email-2026-02-12-father">
+						<h2 id="email-2026-02-12-father" className="h5 visually-hidden">12 février 2026 — Demande écrite</h2>
+						<div className="email-block email-block--father">
+							<div className="email-header">
+								<span className="email-from" aria-label="De"><i className="fas fa-user" aria-hidden="true"></i> M. A.</span>
+								<span className="email-reply-hint"><i className="fas fa-reply" aria-hidden="true"></i> En réponse à </span>
+								<span className="email-to" aria-label="À"
+									><i className="fas fa-building" aria-hidden="true"></i> BESNARD Maud</span
+								>
+								<span className="email-date">12 févr. 2026, 10:42</span>
+							</div>
+							<div className="email-subject">
+								Objet : Demande d'explications écrites des autorités compétentes (Cc : POULARD Morgane)
+							</div>
+							<div className="email-body">
+								<p>Bonjour Madame,</p>
+								<p>
+									Depuis douze années, les autorités françaises, norvégiennes et allemandes m'empêchent d'exercer mes
+									droits parentaux et d'entretenir toute relation avec ma fille.
+								</p>
+								<p>
+									Mes démarches en vue d'obtenir l'accès à la justice, l'exécution des décisions existantes, ainsi que
+									l'examen de mes demandes de retour sont restées sans réponse effective. À ce jour, je ne dispose
+									d'aucune information claire concernant la situation actuelle de mon enfant, ni sur les mesures prises
+									pour garantir sa sécurité et son intérêt supérieur.
+								</p>
+								<p>De quelles incidences parlez-vous exactement ?</p>
+								<p>
+									Je vous prie de bien vouloir solliciter une confirmation écrite des autorités allemandes et françaises
+									précisant les motifs pour lesquels :
+								</p>
+								<ul>
+									<li>ma demande de retour de 2022 demeure sans suite,</li>
+									<li>l'exequatur du jugement norvégien n'a pas été exécuté,</li>
+									<li>
+										l'accès aux juridictions pénales m'est refusé concernant mes plaintes pour abus, enlèvement,
+										violences, non-représentation d'enfant et arrestation abusive.
+									</li>
+								</ul>
+								<p>Je sollicite une réponse motivée et écrite sur chacun de ces points.</p>
+								<p>Je vous prie d'agréer, Madame, l'expression de ma considération distinguée.</p>
+								<p>M. A.</p>
+							</div>
+						</div>
+					</section>
+
+					<section className="py-3" aria-labelledby="email-2026-02-16-besnard">
+						<h2 id="email-2026-02-16-besnard" className="h5 visually-hidden">16 février 2026 — Autorité centrale</h2>
+						<div className="email-block email-block--authority">
+							<div className="email-header">
+								<span className="email-from" aria-label="De"
+									><i className="fas fa-building" aria-hidden="true"></i> BESNARD Maud</span
+								>
+								<span className="email-reply-hint"><i className="fas fa-reply" aria-hidden="true"></i> En réponse à </span>
+								<span className="email-to" aria-label="À"><i className="fas fa-user" aria-hidden="true"></i> M. A.</span>
+								<span className="email-date">16 févr. 2026, 14:46</span>
+							</div>
+							<div className="email-body">
+								<p>Bonjour Monsieur,</p>
+								<p>
+									L'autorité centrale allemande n'a pas trace d'une demande de retour formulée par vos soins en 2022.
+									Vous nous aviez communiqué un document par lequel vous aviez saisi le tribunal allemand, mais il
+									s'agissait d'une demande au fond et non d'une demande de retour sur le fondement de la
+									<a
+										href="https://www.hcch.net/fr/instruments/conventions/full-text/?cid=24"
+										target="_blank"
+										rel="noopener noreferrer"
+										>convention de La Haye de 1980</a
+									>.
+								</p>
+								<p>
+									S'agissant de l'exequatur du jugement norvégien, comme déjà souligné dans de précédents courriels, il
+									vous appartient de saisir le Tribunal (Amtsgericht) de Francfort-sur-le-Main de cette demande
+									distincte pour obtenir la reconnaissance et l'exécution de la décision norvégienne, conformément à la
+									<a
+										href="https://www.hcch.net/fr/instruments/conventions/full-text/?cid=70"
+										target="_blank"
+										rel="noopener noreferrer"
+										>convention de La Haye de 1996</a
+									>. Les autorités centrales n'apportent en revanche pas d'assistance dans le cadre de ces procédures.
+								</p>
+								<p>Enfin, notre département n'est pas compétent concernant le volet pénal de votre affaire.</p>
+								<p>Bien cordialement,</p>
+								<p>Maud BESNARD</p>
+							</div>
+						</div>
+					</section>
+
+					<section className="py-3" aria-labelledby="email-2026-02-25-father">
+						<h2 id="email-2026-02-25-father" className="h5 visually-hidden">25 février 2026 — Courte réponse</h2>
+						<div className="email-block email-block--father">
+							<div className="email-header">
+								<span className="email-from" aria-label="De"><i className="fas fa-user" aria-hidden="true"></i> M. A.</span>
+								<span className="email-reply-hint"><i className="fas fa-reply" aria-hidden="true"></i> En réponse à </span>
+								<span className="email-to" aria-label="À"
+									><i className="fas fa-building" aria-hidden="true"></i> BESNARD Maud</span
+								>
+								<span className="email-date">25 févr. 2026, 17:35</span>
+							</div>
+							<div className="email-subject">Objet : Re: Demande d'explications écrites</div>
+							<div className="email-body">
+								<p>Re Bonjour,</p>
+								<p>Pour faire court.</p>
+								<p>
+									Comme rappelé : en droit français, le principe est que l'autorité parentale est exercée conjointement
+									par les deux parents, même en cas de séparation (<a
+										href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006387313"
+										target="_blank"
+										rel="noopener noreferrer"
+										>article 372 du Code civil</a
+									>), sauf situation particulière (danger pour l'enfant, retrait d'autorité, etc.). C'est la loi
+									française, et le droit européen le stipule : l'autorité parentale du père ne peut être enlevée au père
+									que par un juge (pareil en Allemagne depuis peu). Or ce n'est pas le cas.
+								</p>
+								<p>
+									Vous êtes à même de confirmer aux Allemands et Norvégiens les lois françaises et européennes. Ma fille
+									est française, ni norvégienne, ni allemande.
+								</p>
+								<p>
+									En outre, la Norvège n'a jamais informé le père que la mère a « la garde exclusive de l'enfant en
+									vertu du droit norvégien et français ». S'il y a eu procès et que ces sujets ont été abordés, ils
+									l'ont été sans moi (sans avocat) et sans mon consentement.
+								</p>
+								<p>
+									La mère n'a jamais informé le père des déplacements de sa fille et du changement de résidence
+									habituelle. Encore un mensonge. Merci de demander à l'autorité centrale allemande et à la partie
+									adverse de fournir le détail et les preuves de leurs allégations.
+								</p>
+								<p>
+									Moi, j'ai prouvé que la mère de ma fille avait inscrit celle-ci à la crèche en France en 2015. La mère
+									n'a jamais fourni de preuve qu'elle avait un logement et un travail en Norvège lors du premier
+									enlèvement. Je résidais aussi en Norvège, car j'étais là durant la naissance. Et il n'est pas légal
+									pour une mère de s'enregistrer avec la garde exclusive en Norvège sans l'accord du père. Donc, non,
+									même en Norvège la mère ne peut dire qu'elle a la garde de ma fille sans qu'un juge le décide et le
+									confirme.
+								</p>
+								<p>
+									Le père n'a jamais explicitement ou implicitement voulu obtenir des visites pouvant remettre en cause
+									ses droits. D'où ses nombreuses relances (d'accès aux tribunaux) pour statuer sur la résidence
+									habituelle et le besoin d'un procès (demande de retour). D'ailleurs la demande de retour empêche que
+									la mère puisse tenter de faire modifier la garde et l'autorité parentale.
+								</p>
+								<p>
+									Le père a toujours confirmé avoir et vouloir conserver son droit de garde et son autorité parentale. A
+									toujours demandé la garde de sa fille, et aussi un accès au pénal pour juger de l'enlèvement de sa
+									fille par sa mère en France (ainsi que les abus, NRE, maltraitance).
+								</p>
+								<p>
+									C'est à la mère de prouver qu'elle a la garde exclusive et qu'elle a fait retirer les droits du père.
+									Sans passer par un tribunal, la mère a fait un enlèvement et un abandon de famille.
+								</p>
+								<p>
+									L'inversion de la charge de la preuve stipule que c'est à la mère de prouver : un parent demande la
+									garde exclusive → il doit prouver que la résidence alternée ou la garde chez l'autre parent est
+									contraire à l'intérêt de l'enfant ; que le déplacement de l'enfant était légal et en accord avec le
+									père, etc.
+								</p>
+								<p>
+									Et, oui j'ai demandé en 2022 un retour de ma fille après l'Allemagne, la preuve vous a déjà été
+									fournie. J'ai aussi contesté que la mère avait la garde exclusive selon le droit allemand (et
+									norvégien d'ailleurs). Un juge allemand doit le confirmer.
+								</p>
+								<p>
+									Je vous fournirai plus de détails prochainement. Mais je conteste nombre des allégations décrites
+									ci-dessous.
+								</p>
+								<p>Merci d'envoyer les documents prouvant que la mère a la garde exclusive.</p>
+								<p>Cordialement,</p>
+								<p>M. A.</p>
+							</div>
+						</div>
+					</section>
+
+					<section className="py-3" aria-labelledby="email-2026-02-25-father2">
+						<h2 id="email-2026-02-25-father2" className="h5 visually-hidden">25 février 2026 — Preuve principe</h2>
+						<div className="email-block email-block--father">
+							<div className="email-header">
+								<span className="email-from" aria-label="De"><i className="fas fa-user" aria-hidden="true"></i> M. A.</span>
+								<span className="email-reply-hint"><i className="fas fa-reply" aria-hidden="true"></i> En réponse à </span>
+								<span className="email-to" aria-label="À"
+									><i className="fas fa-building" aria-hidden="true"></i> BESNARD Maud</span
+								>
+								<span className="email-date">25 févr. 2026, 17:55</span>
+							</div>
+							<div className="email-subject">Objet : Re: Demande d'explications écrites</div>
+							<div className="email-body">
+								<p>
+									La preuve de principe est le fait que j'ai reconnu ma fille, cf. acte de naissance français, passeport
+									ci-joint.
+								</p>
+								<p>Quels sont les documents fournis par la mère ?</p>
+								<p>
+									Pour faire plus court encore, demander à un avocat : Est-ce au père de prouver qu'il a la garde et
+									l'autorité parentale de son enfant ? La réponse dépend du point précis dont on parle, mais en principe
+									non : un père n'a pas à « prouver » qu'il a l'autorité parentale, car elle est automatique dans la
+									plupart des cas.
+								</p>
+								<p>
+									En France : si les parents sont mariés → autorité parentale conjointe automatique ; si les parents ne
+									sont pas mariés → elle est conjointe si le père a reconnu l'enfant. Donc le père n'a pas à prouver
+									qu'il a l'autorité parentale. Elle découle de la filiation (reconnaissance ou mariage). Il devra
+									simplement justifier sa qualité de père (acte de naissance).
+								</p>
+								<p>
+									L'« autorité parentale » ≠ la « résidence ». La résidence peut être alternée ou fixée chez un seul
+									parent. Si un parent demande une résidence alternée ou la résidence principale chez lui, alors oui,
+									c'est à lui de démontrer que c'est conforme à l'intérêt de l'enfant.
+								</p>
+								<p>
+									Le père doit prouver uniquement s'il : demande un changement de résidence ; conteste une décision
+									existante ; est accusé de faits graves (violence, mise en danger). Sinon, il n'a pas à prouver qu'il
+									est parent : c'est un droit égal à celui de la mère.
+								</p>
+								<p>
+									<strong>Résumé :</strong> Autorité parentale → automatique (sauf décision contraire). Résidence →
+									celui qui demande un changement doit convaincre le juge. Égalité père / mère devant la loi.
+								</p>
+								<p>
+									Rappel des documents fournis en 2015 prouvant que ma fille vivait en France avec moi (lien dans
+									l'original). Et que ce n'était pas des vacances, un voyage.
+								</p>
+								<p>M. A.</p>
+							</div>
+						</div>
+					</section>
+
+					<section className="py-3" aria-labelledby="email-2026-02-26-besnard">
+						<h2 id="email-2026-02-26-besnard" className="h5 visually-hidden">26 février 2026 — Article 16</h2>
+						<div className="email-block email-block--authority">
+							<div className="email-header">
+								<span className="email-from" aria-label="De"
+									><i className="fas fa-building" aria-hidden="true"></i> BESNARD Maud</span
+								>
+								<span className="email-reply-hint"><i className="fas fa-reply" aria-hidden="true"></i> En réponse à </span>
+								<span className="email-to" aria-label="À"><i className="fas fa-user" aria-hidden="true"></i> M. A.</span>
+								<span className="email-date">26 févr. 2026, 14:06</span>
+							</div>
+							<div className="email-body">
+								<p>Bonjour Monsieur,</p>
+								<p>
+									En retour, je me permets de vous rappeler les dispositions de
+									<a
+										href="https://www.hcch.net/fr/instruments/conventions/full-text/?cid=70"
+										target="_blank"
+										rel="noopener noreferrer"
+										>l'article 16 de la Convention de La Haye de 1996</a
+									>
+									:
+								</p>
+								<blockquote
+									className="border-start border-3 ps-3 my-3"
+									cite="https://www.hcch.net/fr/instruments/conventions/full-text/?cid=70"
+								>
+									<p><strong>Article 16</strong></p>
+									<p>
+										1. L'attribution ou l'extinction de plein droit d'une responsabilité parentale, sans intervention
+										d'une autorité judiciaire ou administrative, est régie par la loi de l'État de la résidence
+										habituelle de l'enfant.
+									</p>
+									<p>
+										2. L'attribution ou l'extinction d'une responsabilité parentale par un accord ou un acte unilatéral,
+										sans intervention d'une autorité judiciaire ou administrative, est régie par la loi de l'État de la
+										résidence habituelle de l'enfant au moment où l'accord ou l'acte unilatéral prend effet.
+									</p>
+									<p>
+										3. La responsabilité parentale existant selon la loi de l'État de la résidence habituelle de
+										l'enfant subsiste après le changement de cette résidence habituelle dans un autre État.
+									</p>
+									<p>
+										4. En cas de changement de la résidence habituelle de l'enfant, l'attribution de plein droit de la
+										responsabilité parentale à une personne qui n'est pas déjà investie de cette responsabilité est
+										régie par la loi de l'État de la nouvelle résidence habituelle.
+									</p>
+								</blockquote>
+								<p>
+									En l'espèce et comme le souligne l'autorité centrale allemande dans son courriel, cet article est
+									applicable à la situation de votre fille et dès lors que la France, l'Allemagne et la Norvège sont
+									membres de la convention, il doit être utilisé pour déterminer la responsabilité parentale concernant
+									votre fille. Ce n'est pas parce que votre enfant a la nationalité française que le droit français doit
+									être appliqué. Le droit à appliquer est celui de la résidence habituelle de l'enfant. Or il ressort
+									des décisions norvégiennes que les autorités judiciaires norvégiennes ont considéré que la résidence
+									habituelle de votre enfant était en Norvège.
+								</p>
+								<p>Bien cordialement,</p>
+								<p>Maud BESNARD</p>
+							</div>
+						</div>
+					</section>
+
+					<section className="py-3" aria-labelledby="email-2026-02-26-father">
+						<h2 id="email-2026-02-26-father" className="h5 visually-hidden">26 février 2026 — Réponse détaillée</h2>
+						<div className="email-block email-block--father">
+							<div className="email-header">
+								<span className="email-from" aria-label="De"><i className="fas fa-user" aria-hidden="true"></i> M. A.</span>
+								<span className="email-reply-hint"><i className="fas fa-reply" aria-hidden="true"></i> En réponse à </span>
+								<span className="email-to" aria-label="À"
+									><i className="fas fa-building" aria-hidden="true"></i> BESNARD Maud</span
+								>
+								<span className="email-date">26 févr. 2026, 21:18</span>
+							</div>
+							<div className="email-subject">
+								Objet : Re: Demande d'explications écrites (Cc : POULARD Morgane, Dr. ANDRIEU-SPITZ)
+							</div>
+							<div className="email-body">
+								<p>Bonjour,</p>
+								<p>
+									Tout d'abord, merci pour avoir enfin réussi à contacter l'autorité centrale allemande (depuis 2022) et
+									de bien vouloir me répondre. Excusez-moi d'avance pour les fautes et les erreurs.
+								</p>
+								<p>
+									Je voulais vraiment que vous saisissiez mes arguments et que vous réalisiez que la plaidoirie de
+									l'autorité centrale ou de la mère (on ne sait pas trop) ne cadre pas avec la nature de la demande de
+									retour et l'enlèvement. Au lieu de vous focaliser sur les droits supposés exclusifs de la mère,
+									demandez-leur de se focaliser sur la stabilité et le bien-être de ma fille si la demande de retour est
+									rejetée.
+								</p>
+								<p>
+									La résidence habituelle signifie un cadre épanouissant et de bien-être pour l'enfant, respectant ses
+									droits et l'ensemble de ses besoins, assurant sa sécurité. Selon vos dires la résidence habituelle
+									doit être statuée par le pays où la mère déplace l'enfant, même si ce déplacement est illégal. Je suis
+									au courant et c'est ce qui est demandé à l'Allemagne. L'Allemagne considère-t-elle le transfert de la
+									résidence habituelle effective ? Je ne pense pas que son opposition aille à l'encontre du droit et du
+									bien-être de l'enfant. Même si elle n'a pas voulu statuer dans les temps.
+								</p>
+								<p>
+									Cependant les autorités centrales norvégienne et allemande n'ont pas l'autorité de décider et changer
+									la garde et l'autorité parentale. En 2016, ce n'est pas un jugement, c'est une demande de retour. Même
+									si la Norvège a refusé le retour pour des raisons arbitraires que j'ai contestées (demande d'appel),
+									cela ne donne pas à la mère tous les droits. Or il semble que l'autorité centrale allemande semble
+									elle aussi vouloir décider d'octroyer l'ensemble des droits à la mère, afin de légitimer le
+									déplacement. Ce n'est toujours pas leur rôle à ce stade.
+								</p>
+								<p>
+									Or à ce jour, ni la Norvège ni l'Allemagne n'ont jugé que la mère avait la garde et l'autorité
+									parentale exclusive. Pour rappel, j'en ai fait la demande en Norvège et le jugement de 2017 (il n'y en
+									a pas d'autre) ne porte ni sur la garde ni sur l'autorité parentale, alors que j'avais demandé de
+									statuer sur ce point. Point rappelé à mon avocat la semaine avant le procès. J'ai ensuite durant
+									plusieurs années refait la demande en Norvège. C'est pour cela que je demande et attends toujours
+									l'accès aux tribunaux norvégien et allemand.
+								</p>
+								<p>
+									En outre, l'Allemagne doit acter que la nouvelle résidence habituelle de ma fille est en Allemagne
+									maintenant et motiver ses décisions sur la base de faits, preuves et lois. C'est très important d'être
+									précis sur les décisions et les justifications qui seront prises. Merci de leur demander les preuves
+									que la mère a les droits exclusifs et de justifier de leur validité (due diligence).
+								</p>
+								<p>
+									Tout comme la Norvège, l'Allemagne refuse de statuer sur l'état actuel de mes droits de père. Nous
+									pourrons en conclure, outre le déni de justice, que ni l'une ni l'autre ne contestent mon autorité
+									parentale et mon droit de garde. Pourquoi alors les contester aujourd'hui ?
+								</p>
+								<p>
+									[Suite du message avec reformulation juridique, situation en France, déplacement unilatéral, résidence
+									habituelle, article 16 §3, déplacements successifs, principe de non-acquisition d'un droit par un acte
+									illicite, schéma synthétique, conclusion juridique, et références aux conventions et jurisprudences —
+									voir PDF source pour les détails complets.]
+								</p>
+								<p>Cordialement,</p>
+								<p>M. A.</p>
+								<p>
+									<strong>PS :</strong> Merci de fournir un document officiel des autorités allemandes, que l'on sache
+									si les propos sont tenus par la mère, étayés et vérifiés ou juste rapportés par un stagiaire de
+									l'autorité centrale allemande.
+								</p>
+							</div>
+						</div>
+					</section>
+
+					<section className="py-3" aria-labelledby="email-2026-02-27-besnard">
+						<h2 id="email-2026-02-27-besnard" className="h5 visually-hidden">27 février 2026 — Autorité centrale</h2>
+						<div className="email-block email-block--authority">
+							<div className="email-header">
+								<span className="email-from" aria-label="De"
+									><i className="fas fa-building" aria-hidden="true"></i> BESNARD Maud</span
+								>
+								<span className="email-reply-hint"><i className="fas fa-reply" aria-hidden="true"></i> En réponse à </span>
+								<span className="email-to" aria-label="À"><i className="fas fa-user" aria-hidden="true"></i> M. A.</span>
+								<span className="email-date">27 févr. 2026, 11:51</span>
+							</div>
+							<div className="email-body">
+								<p>Bonjour Monsieur,</p>
+								<p>
+									L'article 16 ne fixe pas les règles pour la fixation de la résidence habituelle mais pour la fixation
+									de la responsabilité parentale. Cette notion est ensuite utilisée pour déterminer si un parent a un
+									droit de garde au sens de la Convention de La Haye de 1980.
+								</p>
+								<p>
+									En l'espèce, l'autorité centrale allemande considère que vous n'aviez pas le droit de garde au sens de
+									la Convention de 1980 lors du déplacement depuis la Norvège vers l'Allemagne, car les juridictions
+									norvégiennes ont considéré dans plusieurs décisions que la résidence habituelle de votre enfant était
+									en Norvège et non en France, et que la garde exclusive a été confiée à Mme B.
+								</p>
+								<p>Deux options s'offrent donc à vous :</p>
+								<ol>
+									<li>
+										Me transmettre des pièces démontrant que vous aviez une garde partagée avec la mère au moment du
+										déplacement de la Norvège vers l'Allemagne ;
+									</li>
+									<li>
+										À défaut de produire ces pièces, l'autorité centrale allemande ne va pas pouvoir donner suite à
+										votre demande et il conviendra que vous saisissiez vous-même les juridictions allemandes de votre
+										demande de retour sur le fondement de l'<a
+											href="https://www.hcch.net/fr/instruments/conventions/full-text/?cid=24"
+											target="_blank"
+											rel="noopener noreferrer"
+											>article 29</a
+										>
+										de la convention de La Haye de 1980, avec l'aide d'un conseil allemand.
+									</li>
+								</ol>
+								<p>Bien cordialement,</p>
+								<p>Maud BESNARD</p>
+							</div>
+						</div>
+					</section>
+
+					<section className="py-3" aria-labelledby="email-2026-02-27-father">
+						<h2 id="email-2026-02-27-father" className="h5 visually-hidden">27 février 2026 — Réponse étayée</h2>
+						<div className="email-block email-block--father">
+							<div className="email-header">
+								<span className="email-from" aria-label="De"><i className="fas fa-user" aria-hidden="true"></i> M. A.</span>
+								<span className="email-reply-hint"><i className="fas fa-reply" aria-hidden="true"></i> En réponse à </span>
+								<span className="email-to" aria-label="À"
+									><i className="fas fa-building" aria-hidden="true"></i> BESNARD Maud</span
+								>
+								<span className="email-date">27 févr. 2026, 16:58</span>
+							</div>
+							<div className="email-subject">Objet : Re: Demande d'explications écrites</div>
+							<div className="email-body">
+								<p>Re Bonjour,</p>
+								<p>
+									Votre réponse a été rapide, je vais essayer de l'être aussi, mais je vais étayer mes propos. Vous ne
+									semblez pas avoir objecté à mes arguments. De mon côté, j'attends toujours les documents et preuves de
+									la partie adverse. Pouvez-vous les relancer ?
+								</p>
+								<p>
+									Oui, l'article 16 ne fixe pas les règles pour la fixation de la résidence habituelle (je vous ai fait
+									une demande d'accès à la base de données de La Haye à ce propos), pas non plus pour la garde, mais
+									pour la fixation de la responsabilité parentale. Elle ne décide pas de changer l'autorité parentale ou
+									de l'enlever au père non plus. Ce qui est l'objet de vos propos !
+								</p>
+								<p>
+									D'ailleurs même si la mère avait obtenu dans n'importe quel autre pays tous les droits, un juge
+									allemand se devrait de ne pas en tenir compte, car il n'y a jamais eu consentement du père (cf. 13a et
+									13b discutés ci-dessous).
+								</p>
+								<p>
+									Oui les juridictions norvégiennes ont considéré dans une décision (demande de retour, qui n'est pas un
+									jugement) en 2016 que la résidence habituelle de ma fille était en Norvège. Non, elles n'ont jamais
+									décidé que la mère avait la garde et l'autorité exclusive ! La décision norvégienne de fixer la
+									résidence habituelle n'est plus à propos. La mère a déplacé ma fille en Allemagne, c'est à l'Allemagne
+									de statuer maintenant. Dans mon courrier d'hier, cela vous a été expliqué, article de loi et
+									jurisprudence à l'appui. Y a-t-il un point particulier que vous réfutez ?
+								</p>
+								<p>
+									Vous avez déjà reçu tous les éléments prouvant que j'ai la garde et l'autorité partagée : acte de
+									naissance, reconnaissance, passeport, droits français, norvégien, allemand et international et même
+									droit de visite. L'autorité allemande n'a en elle apporté aucune preuve que la mère avait les droits
+									exclusifs. Quelle est leur réponse ? Il faut que les documents et sources de la partie adverse me
+									soient transmis afin de considérer la procédure recevable.
+								</p>
+								<p>
+									Ces documents, s'ils existent, sont importants pour la suite, car ils démontreront que la mère a
+									sciemment caché le père à l'administration afin de produire des faux et d'abuser du système. La mère a
+									la garde de fait, du fait de l'enlèvement, mais ce n'est pas pour autant légitime et légal.
+								</p>
+								<p>
+									En outre la responsabilité parentale est un terme juridique distinct, comme vous le mentionnez encore
+									aujourd'hui dans l'article 16. Même s'il est d'usage en Europe d'enlever la garde au père (pour des
+									raisons de discrimination qui me dépassent), lorsque la mère le demande à un juge (prétextant
+									l'intérêt supérieur de l'enfant), il est moins d'usage d'enlever l'autorité parentale au père sous ces
+									mêmes prétextes.
+								</p>
+								<p>
+									L'autorité allemande, quelles que soient ses réponses, doit se justifier et motiver ses décisions, y
+									apporter des preuves. Merci de leur demander plus de rigueur. En l'état actuel, j'espère que comme moi
+									vous constatez un manque de rigueur. Surtout après 4 ans d'attente.
+								</p>
+								<p>
+									Vous ne pouvez conclure via un ultimatum avec des demandes qui ne sont pas respectueuses des droits.
+									Cela s'apparente même à une manœuvre répétée afin de propager des propos erronés, voire mensongers.
+									Assurez-vous s'il vous plaît que les manœuvres et manquements des institutions soient reportés aux
+									instances supérieures et ne puissent être considérés comme une complicité, déni de justice ou
+									obstruction. Je conteste donc toujours les allégations fournies par l'autorité centrale, demande
+									d'appels de leurs décisions.
+								</p>
+								<p>
+									[Question reformulée sur la charge de la preuve ; synthèse comparative France / Allemagne / UE / La
+									Haye 1996 ; conclusion juridique ; vérification des affirmations de l'autorité centrale allemande ;
+									Convention de La Haye 1996 art. 16 §3 ; analyse ; droit allemand §1626a BGB ; jurisprudence
+									constitutionnelle ; CEDH Zaunegger ; conclusion juridique — voir PDF source.]
+								</p>
+								<p>Cordialement,</p>
+								<p>M. A.</p>
+							</div>
+						</div>
+					</section>
+
+					<section className="py-3" aria-labelledby="email-2026-03-02-besnard">
+						<h2 id="email-2026-03-02-besnard" className="h5 visually-hidden">2 mars 2026 — Autorité centrale</h2>
+						<div className="email-block email-block--authority">
+							<div className="email-header">
+								<span className="email-from" aria-label="De"
+									><i className="fas fa-building" aria-hidden="true"></i> BESNARD Maud</span
+								>
+								<span className="email-reply-hint"><i className="fas fa-reply" aria-hidden="true"></i> En réponse à </span>
+								<span className="email-to" aria-label="À"><i className="fas fa-user" aria-hidden="true"></i> M. A.</span>
+								<span className="email-date">2 mars 2026, 15:15</span>
+							</div>
+							<div className="email-body">
+								<p>Bonjour Monsieur,</p>
+								<p>
+									Comme déjà souligné, l'autorité centrale allemande considère que ce n'est pas le droit français qui
+									doit être appliqué pour déterminer si vous aviez la responsabilité parentale sur votre fille au moment
+									du déplacement, mais le droit norvégien, dès lors que le juge norvégien avait considéré dans le
+									jugement de 2017 que votre fille avait sa résidence habituelle en Norvège et qu'elle n'avait jamais eu
+									de résidence habituelle en France.
+								</p>
+								<p>
+									L'autorité centrale allemande souligne donc que c'est le droit norvégien de la responsabilité
+									parentale qui s'applique et vous demande donc de prouver que d'après le droit norvégien vous aviez une
+									autorité parentale conjointe sur votre enfant avec sa mère.
+								</p>
+								<p>
+									L'autorité centrale allemande n'a pas à fournir de documents ni à apporter des preuves, dès lors que
+									nous sommes encore au stade de l'examen de votre demande et que la procédure judiciaire n'a pas été
+									initiée. Dans le cadre de cet examen préalable de votre demande par l'autorité centrale allemande, ils
+									ont sollicité que vous fournissiez les éléments complémentaires prouvant que selon le droit norvégien
+									vous aviez une autorité parentale conjointe sur votre enfant.
+								</p>
+								<p>
+									Si vous ne souhaitez pas produire ces pièces complémentaires, je vous rappelle que vous pouvez aussi
+									saisir directement les juridictions allemandes de votre demande de retour sans passer par
+									l'intermédiaire de l'autorité centrale allemande.
+								</p>
+								<p>Bien cordialement,</p>
+								<p>Maud BESNARD</p>
+							</div>
+						</div>
+					</section>
+
+					<section className="py-3" aria-labelledby="email-2026-03-02-father">
+						<h2 id="email-2026-03-02-father" className="h5 visually-hidden">2 mars 2026 — Réponse longue</h2>
+						<div className="email-block email-block--father">
+							<div className="email-header">
+								<span className="email-from" aria-label="De"><i className="fas fa-user" aria-hidden="true"></i> M. A.</span>
+								<span className="email-reply-hint"><i className="fas fa-reply" aria-hidden="true"></i> En réponse à </span>
+								<span className="email-to" aria-label="À"
+									><i className="fas fa-building" aria-hidden="true"></i> BESNARD Maud</span
+								>
+								<span className="email-date">2 mars 2026, 18:08</span>
+							</div>
+							<div className="email-subject">
+								Objet : Re: Demande d'explications écrites (Cc : POULARD Morgane, Dr. ANDRIEU-SPITZ)
+							</div>
+							<div className="email-body">
+								<p>Bonjour Madame,</p>
+								<p>
+									Je ne comprends pas pourquoi, et sous quel « prétexte légal », le droit norvégien primerait sur le
+									droit français, ni pourquoi il devrait s'appliquer plutôt que le droit français (d'autant plus que je
+									vous ai démontré que l'autorité centrale allemande ne pouvait pas se baser sur ce fondement pour
+									statuer).
+								</p>
+								<p>
+									1.
+									<strong
+										>Refus administratif (<a
+											href="https://www.hcch.net/fr/instruments/conventions/full-text/?cid=24"
+											target="_blank"
+											rel="noopener noreferrer"
+											>Article 27</a
+										>) :</strong
+									>
+									décidé par l'Autorité centrale avant toute saisine du juge. 2.
+									<strong>Refus judiciaire (Article 13) :</strong> décidé par un tribunal (danger grave, intégration de
+									l'enfant, opposition de l'enfant, etc.).
+								</p>
+								<p>
+									<strong>Compétence et limites de l'Autorité centrale</strong> — En vertu de l'<a
+										href="https://www.hcch.net/fr/instruments/conventions/full-text/?cid=24"
+										target="_blank"
+										rel="noopener noreferrer"
+										>article 27</a
+									>
+									de la Convention de La Haye du 25 octobre 1980, l'Autorité centrale ne peut refuser d'accepter ou de
+									transmettre une demande de retour que lorsqu'il apparaît manifestement que les conditions
+									d'application de la Convention ne sont pas réunies ou que la demande est manifestement infondée. Ce
+									pouvoir de refus est strictement encadré et de nature exceptionnelle. L'Autorité centrale n'a ni
+									compétence juridictionnelle ni pouvoir d'appréciation au fond de la situation parentale. Elle ne peut
+									pas statuer sur l'existence ou l'étendue de l'autorité parentale, ni apprécier les exceptions prévues
+									à l'article 13 de la Convention. Ces questions relèvent exclusivement de la compétence des
+									juridictions saisies.
+								</p>
+								<p>
+									Ainsi, sauf inapplicabilité manifeste de la Convention (par exemple : enfant âgé de plus de 16 ans,
+									absence d'État contractant concerné, absence manifeste de droit de garde au sens de la Convention),
+									l'Autorité centrale est tenue de transmettre la demande à l'autorité judiciaire compétente. Un refus
+									fondé sur une appréciation substantielle des droits parentaux ou sur une analyse approfondie des faits
+									excéderait les compétences qui lui sont attribuées par la Convention et constituerait une
+									méconnaissance de l'article 27 précité (voir
+									<a
+										href="https://www.hcch.net/fr/instruments/conventions/full-text/?cid=24"
+										target="_blank"
+										rel="noopener noreferrer"
+										>texte de la Convention</a
+									>).
+								</p>
+								<p>
+									Le terme « manifeste » (article 27) signifie : évident, indiscutable, sans analyse complexe. Exemples
+									d'absence manifeste : une décision judiciaire définitive vous a retiré toute autorité parentale ; vous
+									n'avez jamais reconnu l'enfant et aucun droit ne vous est attribué ; le droit applicable ne vous
+									confère aucun pouvoir décisionnel ; vous n'avez qu'un simple droit de visite sans droit d'opposition
+									au changement de résidence. En revanche, il n'y a pas absence manifeste lorsque : il existe une
+									contestation juridique ; le droit applicable est débattu ; l'autorité parentale est conjointe ; aucun
+									jugement ne vous a retiré vos droits. Dans ces cas, l'Autorité centrale ne peut pas refuser : seul un
+									juge peut trancher.
+								</p>
+								<p>
+									Je vous remercie d'avoir corrigé votre précédente affirmation, qui laissait entendre qu'un jugement
+									norvégien établissait que la mère disposait de l'autorité parentale exclusive, alors que cela n'était
+									pas exact.
+								</p>
+								<p>
+									Les preuves que ma fille résidait avec moi en France sont toujours disponibles (cf.
+									<a href="/ca/abduction/oslo/baba-home-france-notes-V1.pdf" target="_blank" rel="noopener noreferrer"
+										>baba-home-france-notes</a
+									>). Ce n'est pas parce que la Norvège a refusé le retour de ma fille que cela confirme que ma fille ne
+									résidait pas en France chez moi. La Norvège a considéré que la mère était en voyage, mais ma fille
+									résidait chez moi légalement. La Norvège a confondu la résidence de la mère et de l'enfant dans le but
+									d'empêcher son retour et de nuire au bien-être de ma fille. La résidence habituelle doit maintenant
+									être réévaluée par l'Allemagne en considérant l'ensemble des preuves en fonction de ses propres
+									règles, sans tenir compte de la décision de la Norvège.
+								</p>
+								<p>
+									Pour rappel, les demandes de retour ne constituent pas un jugement. La Convention de La Haye de 1980
+									ne crée pas automatiquement un jugement : elle vise à assurer le retour rapide d'un enfant déplacé
+									illicitement, mais la demande de retour elle-même n'est pas un jugement, ni ne détermine le fond des
+									droits de garde ou de résidence de l'enfant. L'article 8 prévoit que la personne qui prétend qu'un
+									enfant a été déplacé illicitement peut saisir l'autorité centrale ou une juridiction en vue d'obtenir
+									le retour. L'article 12 impose une obligation d'ordonner le retour, mais cela résulte d'une décision
+									du juge ou de l'autorité judiciaire, pas de la seule requête. L'article 19 clarifie qu'une décision de
+									retour n'entraîne pas automatiquement un jugement sur la garde ou les droits parentaux ; elle vise
+									essentiellement à restaurer la situation de résidence habituelle.
+								</p>
+								<p>
+									Par ailleurs, je n'ai toujours pas à prouver que j'exerce l'autorité parentale conjointe : il
+									appartient à la mère de démontrer que l'autorité parentale m'a été retirée. Je vous ai prouvé avoir
+									l'autorité parentale conjointe, ce que les autres pays considèrent ; il faut demander à l'un de leurs
+									juges en passant par leurs tribunaux.
+								</p>
+								<p>
+									Enfin, je vous ai transmis les éléments du droit norvégien établissant que je résidais en Norvège au
+									moment de la naissance avec la mère, que j'ai reconnu ma fille et que celle-ci ne pouvait pas
+									s'enregistrer avec la responsabilité parentale exclusive sans mon consentement. Contestez-vous ces
+									éléments ?
+								</p>
+								<p>
+									Ni ma fille ni moi ne sommes norvégiens ; je ne peux donc pas contraindre les autorités norvégiennes à
+									me fournir des documents. Je ne peux pas non plus contraindre la France ou l'Allemagne à coopérer.
+									Pour rappel, j'ai tenté pendant des années d'obtenir des informations auprès des autorités
+									norvégiennes. Leur dernière réponse (cf. document joint «
+									answer-national-population-registry-23-06-2025.pdf ») confirme que ma fille n'est pas enregistrée en
+									Norvège et que la responsabilité parentale dépend du pays où elle réside. Donc, pas ou plus de la
+									Norvège.
+								</p>
+								<p>
+									Dans l'hypothèse où ma fille aurait été enregistrée en Norvège, j'ai déposé suffisamment de plaintes
+									(cf.
+									<a
+										href="/ca/abduction/franckfurt/complaint-norwegian-national-population-registry-%236-01-09-2022.pdf"
+										target="_blank"
+										rel="noopener noreferrer"
+										>complaint-norwegian-national-population-registry-#6-01-09-2022.pdf</a
+									>) pour que l'autorité centrale allemande constate que je n'ai jamais donné mon consentement. J'ai en
+									outre durant plusieurs années demandé (cf.
+									<a
+										href="/ca/abduction/franckfurt/request-parental-responsability-trial-%231-09-09-2022.pdf"
+										target="_blank"
+										rel="noopener noreferrer"
+										>request-parental-responsability-trial-#1-09-09-2022.pdf</a
+									>) aux tribunaux norvégiens de statuer et d'en obtenir la garde « exclusive ». Jamais ils n'ont remis
+									en cause mon droit de garde et mon autorité parentale. Demande aussi transmise aux tribunaux allemands
+									(cf.<a
+										href="/ca/abduction/franckfurt/refere-devant-le-tgi-nanterre-francfort-%234.pdf"
+										target="_blank"
+										rel="noopener noreferrer"
+										>refere-devant-le-tgi-nanterre-francfort-#4.pdf</a
+									>).
+								</p>
+								<p>
+									En outre, comme indiqué précédemment et confirmé par le registre de la ville de Francfort, ma fille
+									n'a pas été enregistrée en Allemagne par sa mère. Où vit-elle ? Personne ne le sait réellement, du
+									moins officiellement. Pourtant, les autorités centrales ont le devoir de localiser ma fille, pourtant
+									elles ont toujours refusé. Avez-vous des explications à me fournir, ou la manœuvre est-elle juste de
+									pouvoir éluder les manquements graves dont elles font l'objet ?
+								</p>
+								<p>En conclusion il n'y a pas d'absence manifeste de droit de garde au sens de la Convention.</p>
+								<p>
+									<strong>PS :</strong> Jurisprudence internationale (<a
+										href="https://supreme.justia.com/cases/federal/us/560/1/"
+										target="_blank"
+										rel="noopener noreferrer"
+										>Abbott v. Abbott</a
+									>, Re D,
+									<a
+										href="https://curia.europa.eu/juris/document/document.jsf?docid=79823"
+										target="_blank"
+										rel="noopener noreferrer"
+										>C‑400/10 PPU McB.</a
+									>, Thomson v. Thomson) renforçant l'interprétation large du « droit de garde » au sens de la
+									Convention de La Haye du 25 octobre 1980 ;
+									<a href="https://hudoc.echr.coe.int/fre?i=001-96409" target="_blank" rel="noopener noreferrer"
+										>CEDH Zaunegger c. Allemagne</a
+									>
+									(responsabilité parentale). Cependant, merci de ne pas oublier que ces manœuvres ont aussi pour but de
+									cacher les maltraitances de la mère sur ma fille et que sa sécurité doit être prise en compte.
+									Veuillez noter que l'ensemble de ces échanges seront rendus publics prochainement, lors de mon retour
+									de congés.
+								</p>
+								<p>Cordialement,</p>
+								<p>M. A.</p>
+							</div>
+						</div>
+					</section>
+				</div>
+
+				<section className="py-4" aria-labelledby="recipients-heading">
+					<h2 id="recipients-heading" className="h5 mb-3">Destinataires impliqués</h2>
+					<div className="row g-3 recipients-cards">
+						<div className="col-md-6">
+							<div className="card h-100">
+								<div className="card-body d-flex align-items-start gap-3">
+									<span
+										className="flex-shrink-0 rounded-circle d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary"
+										style={{ width: "3rem", height: "3rem" }}
+										aria-hidden="true"
+										><i className="fas fa-building"></i
+									></span>
+									<div>
+										<h3 className="h6 card-title mb-1">Maud BESNARD</h3>
+										<p className="card-text text-muted small mb-0">
+											Rédactrice, Département de l'entraide, du droit international privé et européen — Autorité
+											centrale française (Convention de La Haye 1980). Direction des affaires civiles et du sceau,
+											Ministère de la Justice, Paris.
+										</p>
+										<p className="card-text small mt-1 mb-0">
+											<i className="fas fa-envelope me-1" aria-hidden="true"></i> maud.besnard@justice.gouv.fr
+										</p>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div className="col-md-6">
+							<div className="card h-100">
+								<div className="card-body d-flex align-items-start gap-3">
+									<span
+										className="flex-shrink-0 rounded-circle d-flex align-items-center justify-content-center bg-secondary bg-opacity-10 text-secondary"
+										style={{ width: "3rem", height: "3rem" }}
+										aria-hidden="true"
+										><i className="fas fa-user"></i
+									></span>
+									<div>
+										<h3 className="h6 card-title mb-1">Morgane POULARD</h3>
+										<p className="card-text text-muted small mb-0">
+											En copie sur plusieurs messages de ce fil. Autorité centrale française (Convention de La Haye
+											1980).
+										</p>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div className="row g-3 recipients-cards">
+							<div className="col-md-6">
+								<div className="card h-100">
+									<div className="card-body d-flex align-items-start gap-3">
+										<span
+											className="flex-shrink-0 rounded-circle d-flex align-items-center justify-content-center bg-secondary bg-opacity-10 text-secondary"
+											style={{ width: "3rem", height: "3rem" }}
+											aria-hidden="true"
+											><i className="fas fa-user"></i
+										></span>
+										<div>
+											<h3 className="h6 card-title mb-1">M. A.</h3>
+											<p className="card-text text-muted small mb-0">Le Papa.</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<p className="mt-4 text-muted small">
+					Document source :
+					<a href="/ca/Gmail%20-%20Demande%20d'explications%20%C3%A9crites%20des%20autorit%C3%A9s%20comp%C3%A9tentes.pdf"
+						>PDF Gmail – Demande d'explications écrites des autorités compétentes</a
+					>. Voir aussi <a href="/central-authorities.html">central-authorities.html</a> et
+					<a href="/abduction-germany.html">abduction-germany.html</a>.
+				</p>
+			</div>
+		</div>
+    </div>
+  );
+}

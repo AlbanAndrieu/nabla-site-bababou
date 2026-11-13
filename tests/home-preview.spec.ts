@@ -48,7 +48,7 @@ for(const {code,home,fathers} of locales){
     await expect(page.locator("#preview-hope")).toContainText(c.hopeText);
     await expect(page.locator("#preview-journey")).toContainText(c.journeyText);
     await expect(page.locator("#preview-people, a[href='#preview-people']")).toHaveCount(0);
-    await expect(page.locator('#preview-story-gallery a[href="/people-contacted.html"]')).toHaveCount(1);
+    await expect(page.locator(`#preview-story-gallery a[href="${code === "fr" ? "" : "/" + code}/people-contacted"]`)).toHaveCount(1);
     await expect(page.locator('#preview-story-gallery img[src="/assets/people-contacted-europe.avif"]')).toHaveCount(1);
     await expect(page.locator("#preview-identity")).toContainText(c.identityTitle);
     await expect(page.locator("#preview-footer, #preview-resources")).toHaveCount(0);
@@ -57,7 +57,7 @@ for(const {code,home,fathers} of locales){
     await expect(page.locator("#preview-story-gallery img")).toHaveCount(6);
     await expect(page.locator(`a[href="${fathers}"]`).first()).toBeVisible();
     await expect(page.locator('a[href="mailto:aa@bababou.com"]')).toHaveCount(1);
-    await expect(page.locator('a[href="/people-contacted.html"]')).toHaveCount(1);
+    await expect(page.locator(`main a[href="${code === "fr" ? "" : "/" + code}/people-contacted"]`)).toHaveCount(1);
     await expect(page.locator("main#main-content")).not.toContainText(/14CV[0-9]+/);
     const broken=await page.locator("main [aria-labelledby]").evaluateAll(nodes=>nodes.flatMap(node=>
       (node.getAttribute("aria-labelledby")??"").split(/\s+/).filter(id=>id&&!document.getElementById(id))

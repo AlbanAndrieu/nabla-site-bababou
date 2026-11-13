@@ -12,6 +12,8 @@ const pages = [
   ["contact", ["contact"]],
   ["email", ["email"]],
   ["evidence-access", ["evidence-access"]],
+  ["people-contacted", ["people-contacted"]],
+  ["ca/demande-explications-autorites-competentes-fr", ["ca", "demande-explications-autorites-competentes-fr"]],
   ["link", ["link"]],
   ["nre", ["nre"]],
   ["policy/[policy]", ["policy", "privacy_policy"]],
