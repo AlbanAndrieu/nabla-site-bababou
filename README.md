@@ -2,7 +2,7 @@
 
 Le site `bababou.com` utilise **Next.js App Router** et `next-intl` (FR/EN/DE/NO), tout en préservant les pages historiques de `public/`.
 
-**État au 31 octobre 2026 :** la [PR #253](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/253) de migration React est fusionnée. Elle ne vaut **pas autorisation de basculer** la homepage publique : `/` reste servie depuis `public/index.html` tant que le verrou serveur n'est pas approuvé.
+**État au 13 novembre 2026 :** les PR #266 (préparation de la bascule React) et #269 (documents sources) sont fusionnées sur `master`. La [PR #270](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/270) reste **Draft**, avec une sixième carte sur sa branche ; les cinq cartes indiquées ci-dessous restent celles de `master`. La validation éditoriale ne vaut pas activation de `/` : l'accueil public historique reste servi tant que les gates exact-SHA ne sont pas approuvées.
 
 Deux pages React principales sont disponibles pour revue, **non indexables par configuration** :
 
@@ -37,7 +37,9 @@ Les contrats hors ligne ne remplacent ni le build, ni Playwright/axe, ni BetterL
 
 | Besoin | Document |
 | --- | --- |
-| **Ce qu'il reste à faire** | [Roadmap active](docs/roadmap.md) |
+| **Décisions et priorités ouvertes** | [Roadmap générale](docs/roadmap.md) |
+| Critères techniques, dépendances et vérifications | [Roadmap d’ingénierie](docs/engineering-roadmap.md) |
+| Scripts, alias et commandes canoniques | [Répertoire de scripts](docs/script-ownership.md) |
 | Parité fonctionnelle, catalogue des pages et écarts | [Parité Home / Abduction](docs/homepage-migration-parity.md) |
 | Activation de `/`, conditions GO et rollback | [Procédure de bascule](docs/homepage-react-cutover.md) |
 | Exploitation, CI et diagnostics non reconstruisibles | [Runbook opérationnel](docs/operations.md) |
