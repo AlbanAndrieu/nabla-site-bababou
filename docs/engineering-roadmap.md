@@ -12,12 +12,13 @@ Sur un checkout Git complet, isolé et en branche non protégée : `just toolcha
 | BB-02 | Vérifier l'exact SHA, précommit, Node 24/npm 12, build, privacy, sécurité, DAST/Playwright accessibles ; diagnostiquer uniquement la première étape en erreur | Journal `PASS/FAIL/BLOCKED/NOT_RUN` par contrôle et SHA, aucune gate obligatoire ignorée |
 | BB-03 | Réviser #270 sur sa propre branche : galerie six cartes, AVIF locale, textes FR/EN/DE/NO, footer, liens et protections de publication | Preview exacte validée visuellement et via tests navigateur/a11y, décision de fusion séparée |
 | BB-04 | Après BB-03, vérifier `lib/homeCutoverPolicy.mjs`, manifest réel SSG, 4 locales, HTTP/SEO, protection des Previews et repli legacy ; ne pas régler les variables Production avant GO | `just home-cutover-verify` sur le bon SHA, budget Vercel, validation propriétaire, smoke Production et rollback observé |
-| BB-05 | Parité HTML/JS ARF et cartes `people-contacted`, équivalents React, routage ancien et i18n ; ne pas réécrire les faits ou coordonnées sans accord | Liens historiques fonctionnels, contenu et actions comparés en navigateur, axe + captures mobiles, tests régressifs |
+| BB-05 | Recetter `/people-contacted` React issu de #270 : arbre ARF natif `<details>`, cartes pays/institutions, URLs HTTP(S), liens localisés ; ne pas supprimer les anciens scripts sans inventaire | Source ARF inchangée, liens et interactions comparés sur Playwright/axe/mobile ; ancienne URL préservée jusqu’au GO de redirection |
 | BB-06 | Croiser `data/nre-evidence.public.json`, `docs/nre-visit-ledger.md`, références `SITE-DOC-*` et 4 langues ; tester les PDF sources vs les HTML approuvés | Dates/heures documentées sans transformer une déclaration en fait judiciaire, tests NRE et autorités, impressions et focus contrôlés |
 | BB-07 | Après BB-01, séparer corpus privé TrueNAS/Docling/OpenRAG et public Vercel ; tunnel, Access/MFA, ACL par pièce, revue humaine, durée courte et révocation | Tests refus sans session, signature JWT/iss/aud/exp, 401/403, absence de cache/lien public, caviardage irréversible, GO explicite |
 | BB-08 | Lire `vercel usage` ou tableau de bord Usage (équipe entière), CPU actif/mémoire/invocations par fenêtre comparable ; réexécuter smoke borné | Valeurs réelles datées, seuils 50/75/90 % documentés, tendance et action correctrice ; ne pas déduire le CPU de SSG |
 | BB-09 | Axe/Playwright Chromium–Firefox–WebKit, WCAG 2.2 AA, zoom, clavier, SEO/canonical/hreflang, français et 3 traductions | Rapport exact-SHA par route/localisation avec défauts corrigés ou dérogations approuvées |
 | BB-10 | Inventaire des entrypoints `just`, disparition des duplications sûres, scripts de référence partagés avec Site Alban, diagnostics déterministes et coût CI | `just docs-audit` + tests locaux concernés, aucune régression de scopes/gates, écarts inter-repos explicités |
+| BB-11 | Contrôle de la transcription JSX de la page approuvée `ca/demande-explications-autorites-competentes-fr.html` : 13 IDs, texte strictement identique, destinataires et liens PDF ; footer Contact/Calendly/GitHub | Contrat de parité textuelle, Playwright/axe/impression, contrôle des anciennes URL puis décision humaine avant redirection ou retrait d’archive |
 
 ## Séquences techniques par lot
 
@@ -29,9 +30,9 @@ Lire [publication-redaction.md](publication-redaction.md), [sitewide-document-ac
 
 Réaliser les contrôles ciblés avant L3 ; pour les incidents CI suivre `workflow → job → step → première erreur`. Les indicateurs `skipped`, un déploiement `READY`, un test de structure et un log sans erreur ne sont pas interchangeables. Rejouer les vérifications après rebase/merge si le SHA change.
 
-### BB-03 / BB-04 / BB-05 — parcours React
+### BB-03 / BB-04 / BB-05 / BB-11 — parcours React
 
-#270 reste Draft : la carte courte est intégrée sur la branche mais la page HTML de contacts est conservée. La bascule `/` est une **décision distincte** ; son protocole exhaustif vit uniquement dans [homepage-react-cutover.md](homepage-react-cutover.md), et la matrice de fonctionnalités dans [homepage-migration-parity.md](homepage-migration-parity.md). Ne pas recopier ici la procédure de GO ni supprimer `public/index.html`.
+#270 reste Draft : la carte courte, les 3 liens du footer et deux nouvelles pages React sont préparées, tandis que les archives `.html` restent publiées. Les 13 messages français sont repris sans traduction ni modification du texte. La bascule `/` est une **décision distincte** ; son protocole exhaustif vit uniquement dans [homepage-react-cutover.md](homepage-react-cutover.md), et la matrice de fonctionnalités dans [homepage-migration-parity.md](homepage-migration-parity.md). Ne pas recopier ici la procédure de GO ni supprimer `public/index.html`.
 
 ### BB-06 / BB-07 — preuves et accès
 
