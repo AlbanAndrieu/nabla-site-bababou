@@ -1,5 +1,5 @@
 /* Native Next.js transcription styles, derived from the approved email thread. */
-@import url("/ca/email-style.css");
+@import "../../../../public/ca/email-style.css";
 
 /* Avoid Bootstrap CDN and full-viewport fixed widths on the new React page. */
 .ca-archive-body { width: 100%; max-width: 100%; }
