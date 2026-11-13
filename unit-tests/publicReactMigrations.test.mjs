@@ -30,7 +30,7 @@ test("people directory is native static React, using the existing public ARF dat
   assert.deepEqual(tree.children.slice(0, 4).map(x => x.name), ["Norway", "France", "Germany", "International"]);
   assert.match(source, /export const dynamic = "force-static"/);
   assert.match(source, /listPublicContacts\(\)/);
-  assert.match(source, /<details open=\{depth === 0\}/);
+  assert.match(source, /<details open=\{depth === 0\} className=/);
   assert.match(source, /data-testid="people-react-tree"/);
   assert.match(model, /publicContactUrl/);
   assert.match(model, /publicContactEmail/);

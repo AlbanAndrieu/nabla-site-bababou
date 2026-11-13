@@ -20,6 +20,7 @@ Les deux routes sont des pages Next `force-static`, sans requêtes à OpenRAG/Tr
 ### Demande d'explications : fidélité probatoire
 
 - `components/documents/PublishedAuthorityCorrespondence.tsx` est une **transcription JSX native**, produite depuis le contenu central du fichier HTML publié ; elle conserve exactement les textes, 13 identifiants `email-2026-*`, le tableau des destinataires et les documents/législations référencés. Les chemins relatifs des PDF ont été convertis en chemins publics absolus sous `/ca/`. Aucun `dangerouslySetInnerHTML` ni `iframe`.
+- La feuille de style de l'archive est réutilisée depuis `/ca/email-style.css` (same-origin), afin d'éviter une seconde copie divergente des styles de courriels.
 - Le composant doit rester une photographie fidèle de la source approuvée. Les corrections éditoriales ou la publication de nouvelles pièces passent d'abord par une revue humaine ; ne pas modifier un témoignage ou un échange pour obtenir un meilleur rendu.
 - Les originaux PDF référencés sont déjà publics. **Migrer leur page de présentation ne les rend pas privés** ; voir `publication-redaction.md` et `sitewide-document-access.md`.
 

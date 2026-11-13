@@ -16,7 +16,6 @@ const PORTFOLIO_FREE_NEXT_FILES = [
 
 const COPIED_PORTFOLIO_PATTERNS = [
   /DevSecOps/i,
-  /Calendly/i,
   /LinkedIn/i,
   /Jus\s*Mundi/i,
   /nabla-site-alban/i,
@@ -36,6 +35,8 @@ test("non-contact Next surfaces stay free of copied portfolio chrome", async () 
     for (const pattern of COPIED_PORTFOLIO_PATTERNS) {
       assert.doesNotMatch(source, pattern);
     }
+    // Calendly is approved only for the shared Bababou footer.
+    if (source !== sources[2]) assert.doesNotMatch(source, /Calendly/i);
   }
 });
 
