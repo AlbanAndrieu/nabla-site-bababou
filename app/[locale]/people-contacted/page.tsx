@@ -8,7 +8,6 @@ import { setRequestLocale } from "next-intl/server";
 import TopAnchor from "@/components/TopAnchor";
 import Container from "@/components/ui/Container";
 import { routing, type AppLocale } from "@/i18n/routing";
-import { canonicalPagePath } from "@/lib/sitePageCatalog";
 import { listPublicContacts, publicContactTree, type ContactNode } from "@/lib/peopleContactedPublic";
 import { localizedPageMetadata } from "@/lib/siteSocialMetadata";
 import styles from "./page.module.css";
