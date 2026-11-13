@@ -15,11 +15,25 @@ test("React correspondence includes every previously published email without rew
   const newBegin = component.indexOf('<div className="ca-archive-body">');
   const newEnd = component.lastIndexOf("\n    </div>\n  );");
   assert.ok(begin > 0 && end > begin && newBegin > 0 && newEnd > newBegin);
-  const nativeMain = component.slice(newBegin, newEnd);
+  let nativeMain = component.slice(newBegin, newEnd);
+  // Resolve generated static JSX subcomponents in the original chronological
+  // order before asserting strict text / anchor parity with the approved HTML.
+  for (const batch of ["One", "Two", "Three", "Four"]) {
+    const file = `components/documents/emails/PublishedEmailBatch${batch}.tsx`;
+    const source = read(file);
+    const start = source.indexOf("<>");
+    const end = source.lastIndexOf("</>");
+    assert.ok(start !== -1 && end > start, file);
+    nativeMain = nativeMain.replace(
+      `<PublishedEmailBatch${batch} />`,
+      source.slice(start + 2, end),
+    );
+  }
+  assert.doesNotMatch(nativeMain, /<PublishedEmailBatch/);
   assert.deepEqual([...nativeMain.matchAll(EMAIL_ID)].map(x => x[1]), [...oldMain.matchAll(EMAIL_ID)].map(x => x[1]));
   assert.equal([...nativeMain.matchAll(EMAIL_ID)].length, 13);
   assert.equal(strip(nativeMain), strip(oldMain), "Published correspondence text must remain identical");
-  assert.doesNotMatch(component, /dangerouslySetInnerHTML|<script\b|\bfetche?\(/i);
+  assert.doesNotMatch(component + nativeMain, /dangerouslySetInnerHTML|<script\\b|\\bfetche?\\(/i);
 });
 
 test("people directory is native static React, using the existing public ARF dataset", () => {
