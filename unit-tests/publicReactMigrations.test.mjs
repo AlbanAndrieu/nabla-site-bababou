@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import test from "node:test";
 
 const read = (path) => readFileSync(new URL("../" + path, import.meta.url), "utf8");
@@ -79,4 +80,17 @@ test("legacy HTML and private document protections remain intact until exact-SHA
   assert.match(router, /"demande-explications-autorites-competentes-fr"/);
   assert.match(ca, /robots: \{ index: false, follow: true \}/);
   assert.match(people, /localizedPageMetadata\("people-contacted"/);
+});
+
+test("React authority CSS imports the approved local source for Turbopack", () => {
+  const path = "app/[locale]/ca/demande-explications-autorites-competentes-fr/page.css";
+  const css = read(path);
+  const importMatch = css.match(/^\s*@import\s+(?:url\()?["']([^"']+)["']\)?\s*;/m);
+  assert.ok(importMatch, "Missing import of the approved email stylesheet");
+  const importPath = importMatch[1];
+  assert.ok(importPath.startsWith("."), "CSS build imports must be relative, not public URLs");
+  const imported = new URL(importPath, new URL("../" + path, import.meta.url));
+  const approved = new URL("../public/ca/email-style.css", import.meta.url);
+  assert.equal(fileURLToPath(imported), fileURLToPath(approved));
+  assert.ok(existsSync(imported), "Imported stylesheet is missing");
 });

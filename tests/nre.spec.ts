@@ -267,7 +267,7 @@ test.describe("NRE React migration", () => {
 
   test("public evidence access page is localized, indexed and never discloses private links", async ({ page }) => {
     for (const { path, lang } of localeCases) {
-      const accessPath = path.replace(/\\/nre$/, "/evidence-access");
+      const accessPath = path.replace(/\/nre$/, "/evidence-access");
       await page.goto(accessPath);
       await expect(page.locator("html")).toHaveAttribute("lang", lang);
       await expect(page.locator("main#main-content h1")).toBeVisible();
@@ -325,7 +325,7 @@ test.describe("NRE React migration", () => {
     for (const {path} of localeCases) {
       await page.goto(path);
       const main=page.locator("main#main-content");
-      await expect(main).not.toContainText(/61\\s*(?:days|jours|Tage|dagene)/i);
+      await expect(main).not.toContainText(/61\s*(?:days|jours|Tage|dagene)/i);
       await expect(main.locator('nav a[href="#timeline-heading"]')).toBeVisible();
       const panel=main.locator('section[aria-labelledby="nre-hours-heading"]');
       await expect(main.locator('header[aria-labelledby="nre-heading"] p')).toHaveCount(0);
@@ -338,7 +338,7 @@ test.describe("NRE React migration", () => {
       await expect(methodology).toHaveAttribute("open","");
       const currentYear=main.locator("article details[open]");
       await expect(currentYear.first().locator("ol li").first()).toBeVisible();
-      await expect(main.locator("article details ol li").first()).toContainText(/\\d/);
+      await expect(main.locator("article details ol li").first()).toContainText(/\d/);
       const overview=main.getByTestId("nre-year-overview").first();
       await expect(overview.locator("[data-month-status]")).toHaveCount(12);
       const firstStrip=main.getByTestId("nre-month-calendar").first();
