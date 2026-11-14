@@ -4,6 +4,17 @@ set shell := ["bash", "-euo", "pipefail", "-c"]
 default:
     @just --list
 
+# Plan local en lecture seule, sans téléchargement.
+agent-plan:
+    node scripts/agent/capability-plan.mjs --json
+
+agent-isolated-plan:
+    node scripts/agent/capability-plan.mjs --mode isolated --json
+
+# Exécution seulement si checkout complet et outils réellement accessibles.
+agent-verify tier="p0":
+    node scripts/agent/capability-plan.mjs --mode workstation --tier "{{tier}}" --run
+
 hooks:
     mise run hooks
 

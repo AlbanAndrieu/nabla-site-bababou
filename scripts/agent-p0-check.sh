@@ -53,6 +53,7 @@ P0_TESTS=(
     "unit-tests/ciScopeBehavior.test.ts"
     "unit-tests/agentOfflineContract.test.ts"
     "unit-tests/agentOfflineBase.test.mjs"
+    "unit-tests/agentCapabilityPlan.test.mjs"
     "unit-tests/vercelNode24Layout.test.mjs"
     "unit-tests/vercelIgnoredBuildSafety.test.mjs"
     "unit-tests/publicAssetScopeParity.test.mjs"

@@ -1,4 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
+import { availableParallelism } from "node:os";
 
 const requestedPort = Number(process.env.PLAYWRIGHT_PORT || 3000);
 const testPort =
@@ -15,6 +16,10 @@ const vercelTrustedOidcToken = process.env.VERCEL_TRUSTED_OIDC_TOKEN?.trim();
 const vercelAuthMode = process.env.VERCEL_AUTH_MODE?.trim();
 const protectedVercelPreview =
   process.env.VERCEL_PREVIEW_PROTECTED === "true";
+const requestedWorkers = Number(process.env.PLAYWRIGHT_WORKERS);
+const localWorkers = Number.isInteger(requestedWorkers) && requestedWorkers >= 1 && requestedWorkers <= 16
+  ? Math.min(requestedWorkers, Math.max(1, availableParallelism()))
+  : Math.max(1, Math.min(4, availableParallelism() - 2));
 const reuseExistingServer =
   process.env.PLAYWRIGHT_REUSE_SERVER !== "false";
 
@@ -52,7 +57,7 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  workers: process.env.CI ? 1 : localWorkers,
   reporter: [
     ["html", { outputFolder: "playwright-report" }],
     ["list"],
