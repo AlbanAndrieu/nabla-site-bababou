@@ -308,7 +308,7 @@
   font-size: 0.82rem; font-weight: 700;
 }
 .liveIndicator span { inline-size: 0.55rem; block-size: 0.55rem; border-radius: 50%; background: var(--ui-success-text); }
-.hoursNumbers { grid-template-columns: 1.2fr 1fr 1fr; margin-top: 1.5rem; }
+.hoursNumbers { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); margin-top: 1.5rem; }
 .hoursItem {
   align-content: start;
   min-width: 0;
@@ -321,6 +321,20 @@
 .hoursLabel { color: var(--ui-text-secondary); font-weight: 650; font-size: 0.93rem; line-height: 1.45; }
 .hoursFigure { display: block; margin-top: 0.65rem; font-size: clamp(1.35rem, 2.7vw, 2.4rem); letter-spacing: -0.025em; }
 .hoursPrimary .hoursFigure { font-size: clamp(2.15rem, 4vw, 3.4rem); }
+.refusalRate {
+  display: grid;
+  gap: 0.35rem;
+  margin-block-start: 0.85rem;
+  padding-block-start: 1rem;
+  border-block-start: 1px solid var(--ui-border);
+}
+.refusalRateFigure {
+  color: var(--ui-danger-text);
+  font-size: clamp(2rem, 4vw, 3.1rem);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
 .hoursFigure small { font-size: 0.47em; }
 .hoursDetail { color: var(--ui-text-secondary); font-size: 0.85rem; line-height: 1.5; margin-top: 0.4rem; }
 .hoursForm {
@@ -378,8 +392,8 @@
 .weekendStatus { display: inline-flex; align-items: flex-start; gap: 0.4rem; line-height: 1.4; font-size: 0.79rem; overflow-wrap: anywhere; }
 .weekendStatus span { font-size: 1.05rem; }
 @media (max-width: 850px) {
-  .hoursNumbers { grid-template-columns: 1fr 1fr; }
-  .hoursPrimary { grid-column: 1 / -1; }
+  .hoursNumbers { grid-template-columns: 1fr; }
+  .hoursPrimary { grid-column: auto; }
   .hoursForm { grid-template-columns: 1fr; }
 }
 @media (max-width: 600px) {
