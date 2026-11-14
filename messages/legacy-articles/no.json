@@ -1,0 +1,92 @@
+{
+  "legacyArticlesPage": {
+    "reviewNotice": "React-versjon til gjennomgang — fullstendig innhold ikke kontrollert",
+    "originalPage": "Les hele den historiske siden",
+    "originalHint": "Dette er en redaksjonell forhåndsvisning. Fullstendige beskrivelser, dokumenter og personlige påstander finnes fortsatt i det historiske arkivet. Ingen nye rettslige konklusjoner hevdes.",
+    "legalHeading": "Offisielle rettskilder",
+    "relatedHeading": "Les videre",
+    "references": {
+      "hague1980": "Haagkonvensjonen av 1980 om barnebortføring",
+      "hague1996": "Haagkonvensjonen av 1996 om barnebeskyttelse",
+      "echr": "Den europeiske menneskerettskonvensjonen",
+      "hudoc": "Rettspraksis fra EMD (HUDOC)",
+      "childRights": "FNs barnekonvensjon"
+    },
+    "related": {
+      "central-authorities": "Sentralmyndigheter",
+      "central-authorities-failures": "Rapporterte problemer med myndighetene",
+      "nre": "Kalender for kontakt og samvær",
+      "people-contacted": "Kontaktede personer og institusjoner"
+    },
+    "fathers": {
+      "title": "Foreldre som ikke får opprettholde kontakt med barnet sitt",
+      "description": "Grensekryssende familiehistorie og informasjon om samværsrettigheter.",
+      "intro": "Nettstedet beskriver en forelders opplevelser i Frankrike, Norge og Tyskland, forsøkene på å bevare familiebånd og vanskelighetene med å gjennomføre kontakt med barnet.",
+      "sections": {
+        "context": {
+          "heading": "En historie fra tre land",
+          "body": "Den historiske beretningen beskriver en atskillelse i 2015 og en senere flytting i 2022. Hendelser og rettssaker må skilles fra nettstedseierens personlige vurderinger og påstander."
+        },
+        "rights": {
+          "heading": "Barnets rettigheter og familieliv",
+          "body": "Relevante kilder er artikkel 8 i EMK, Haagkonvensjonene av 1980 og 1996 og FNs barnekonvensjon. Anvendelsen avhenger av faktum og gjeldende avgjørelser."
+        },
+        "obstacles": {
+          "heading": "Vansker med samvær",
+          "body": "Nettstedet omtaler utfordringer med samarbeid mellom myndigheter, tilgang til opplysninger om barnet og gjennomføring av samvær. Dette er opplysninger som må dokumenteres, ikke selvstendige rettslige konklusjoner."
+        },
+        "support": {
+          "heading": "Informasjon og gjensidig støtte",
+          "body": "Målet er å gjøre prosesser forståelige, dele etterprøvbare kilder og knytte sammen berørte foreldre og andre som kan hjelpe, samtidig som barnets personvern ivaretas."
+        }
+      }
+    },
+    "norway": {
+      "title": "Norge — tilbakeføringssak og avslagsgrunner",
+      "description": "Gjennomgang av den norske saken og aktuelle konvensjonsbestemmelser.",
+      "intro": "Denne React-siden gir en oversikt over rettssaken i Oslo og Haagkonvensjonens artikler i den historiske teksten. Hele dommen og omfattende personlige dokumenter er ikke gjengitt.",
+      "sections": {
+        "scope": {
+          "heading": "Sakens tema",
+          "body": "Den historiske teksten omtaler et krav om tilbakeføring av et barn og begrunnelsen i en norsk rettssak i 2016, slik kildene på nettstedet beskriver det."
+        },
+        "law": {
+          "heading": "Konvensjonsgrunnlaget",
+          "body": "Artiklene 3, 12, 13 og 20 i Haagkonvensjonen av 1980 omhandler ulovlig bortføring, tilbakeføring og særskilte avslagsgrunner. Virkningen må vurderes mot den faktiske dommen."
+        },
+        "decision": {
+          "heading": "Avgjørelsen fra Oslo",
+          "body": "Vurderingen av vanlig bosted og de konkrete avslagsgrunnene krever sammenhold med originalavgjørelsen. Dette er ikke en autorisert oversettelse eller en uavhengig rettslig vurdering."
+        },
+        "documents": {
+          "heading": "Saksdokumenter og personvern",
+          "body": "Den historiske HTML-siden viser dokumenter fra partene, inkludert allerede offentlig tilgjengelig personmateriale. Dokumentene kopieres ikke hit; personvern og publisering må vurderes før full migrering."
+        }
+      }
+    },
+    "germany": {
+      "title": "Tyskland — tilbakeføringskrav og myndighetssamarbeid",
+      "description": "Oversikt over den tyske prosessen og sentralmyndighetenes roller.",
+      "intro": "Denne React-versjonen viser spørsmål som er tatt opp i korrespondanse med franske, norske og tyske myndigheter. Originaldokumenter finnes fortsatt på den historiske siden.",
+      "sections": {
+        "scope": {
+          "heading": "Formålet med kravet",
+          "body": "Saken gjelder blant annet behandling av et krav om tilbakeføring til Frankrike og samarbeid mellom sentralmyndigheter, slik den publiserte korrespondansen beskriver."
+        },
+        "article27": {
+          "heading": "Sentralmyndighetenes rolle",
+          "body": "Artikkel 27 i Haagkonvensjonen av 1980 regulerer enkelte avslag på åpenbart ubegrunnede begjæringer. Bestemmelsen og den faktiske korrespondansen må leses sammen."
+        },
+        "residence": {
+          "heading": "Vanlig bosted",
+          "body": "Fastsettelse av vanlig bosted og betydningen av en senere flytting til Tyskland er omstridte rettsspørsmål. Oversikten hevder ikke at en domstol har avgjort alle spørsmål i forfatterens favør."
+        },
+        "documents": {
+          "heading": "Original korrespondanse",
+          "body": "Den historiske siden beholder lenker til offentliggjorte brev og kilder. Ingen flere PDF-dokumenter, beskyttede identiteter eller upublisert materiale kopieres til denne forhåndsvisningen."
+        }
+      }
+    },
+    "reviewNavigation": "Tre historiske artikler — React-versjoner til gjennomgang"
+  }
+}

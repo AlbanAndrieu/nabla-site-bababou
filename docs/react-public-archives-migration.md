@@ -57,3 +57,44 @@ Après GO explicite et un déploiement Preview du SHA exact :
 4. Archiver les fichiers HTML originaux hors `public/` après accord éditorial et vérification des caches/indexations ; ne jamais supprimer ni modifier silencieusement une pièce probatoire.
 
 **Statut : PREPARED, pas DONE.** Des tests statiques ou une build `READY` ne suffisent pas à valider la parité de rendu.
+
+
+## Nouvelles routes React en revue — lot des trois articles historiques
+
+Les contenus de `public/for-fathers.html`, `public/abduction-norway.html`
+et `public/abduction-germany.html` sont proposés sous forme de **synthèses
+React structurées**, **pas de transcriptions intégrales** :
+
+| Archive historique maintenue | Routes de revue Next.js FR / EN / DE / NO |
+| --- | --- |
+| `/for-fathers.html` | `/for-fathers`, `/en/for-fathers`, `/de/for-fathers`, `/no/for-fathers` |
+| `/abduction-norway.html` | `/abduction-norway` et variantes localisées |
+| `/abduction-germany.html` | `/abduction-germany` et variantes localisées |
+
+Pour `for-fathers`, les liens et illustrations des trois associations déjà approuvées sont réutilisés par le composant commun `LegacyAssociationsSection` : aucun duplicata éditorial des URLs ou ressources n'est créé.
+
+Les pages de revue utilisent `force-static`, les catalogues
+`messages/legacy-articles/{fr,en,de,no}.json`, des sections natives
+accessibles, des liens vers les textes officiels et les pages Next existantes.
+Elles sont accessibles depuis la route de revue `/abduction`.
+
+**Protection avant GO :** `robots: noindex, nofollow`, header
+`X-Robots-Tag: noindex, nofollow, nosnippet` et `Cache-Control: private,
+no-store`, aucune entrée dans `NEXT_CANONICAL_SLUGS` ni le sitemap,
+**aucune redirection des archives**. Les URL historiques et leurs originaux
+restent inchangés. Une archive accessible sous `public/` reste publique.
+
+**Parité non atteinte :** les transcriptions légales complètes, les pièces
+listées dans les dossiers Norvège et Allemagne et les passages d'opinion de
+l'article pour les parents ne sont pas automatiquement transposés ou
+retraduits. La synthèse attribue les déclarations au propriétaire et évite
+toute nouvelle conclusion judiciaire. Ne pas annoncer une migration
+finalisée, retirer un document, ni activer une redirection avant l'inventaire
+de l'ensemble du contenu, la vérification des droits de publication et
+l'accord éditorial explicite.
+
+Contrôles à effectuer sur le SHA final : test `routeRegistryContract.test.mjs`,
+test navigateur `tests/legacy-article-review.spec.ts` FR/EN/DE/NO,
+`npm run typecheck`, `npm run build`, privacy, axe, impression,
+comparaison de contenu et de liens des trois archives, puis gate
+`just publish`. En cas d'absence de checkout/outils, état **NOT_RUN**.

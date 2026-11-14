@@ -1,0 +1,92 @@
+{
+  "legacyArticlesPage": {
+    "reviewNotice": "React-Prüffassung — inhaltliche Parität noch offen",
+    "originalPage": "Vollständige historische Seite lesen",
+    "originalHint": "Dies ist eine redaktionelle Vorschau. Vollständige Darstellungen, Dokumente und persönliche Aussagen verbleiben im historischen Archiv. Es werden keine neuen gerichtlichen Feststellungen behauptet.",
+    "legalHeading": "Offizielle Rechtsquellen",
+    "relatedHeading": "Weiterlesen",
+    "references": {
+      "hague1980": "Haager Kindesentführungsübereinkommen von 1980",
+      "hague1996": "Haager Kinderschutzübereinkommen von 1996",
+      "echr": "Europäische Menschenrechtskonvention",
+      "hudoc": "Rechtsprechung des EGMR (HUDOC)",
+      "childRights": "UN-Kinderrechtskonvention"
+    },
+    "related": {
+      "central-authorities": "Zentrale Behörden",
+      "central-authorities-failures": "Berichtete Schwierigkeiten mit Behörden",
+      "nre": "Kontakt- und Umgangskalender",
+      "people-contacted": "Kontaktierte Personen und Institutionen"
+    },
+    "fathers": {
+      "title": "Eltern ohne regelmäßigen Kontakt zu ihrem Kind",
+      "description": "Grenzüberschreitender Familienbericht und Informationen zum Umgangsrecht.",
+      "intro": "Die Website beschreibt die Erfahrungen eines Elternteils in Frankreich, Norwegen und Deutschland sowie Bemühungen, familiäre Bindungen und den Kontakt zum Kind zu erhalten.",
+      "sections": {
+        "context": {
+          "heading": "Ein Weg durch drei Länder",
+          "body": "Der historische Bericht schildert eine Trennung im Jahr 2015 und einen weiteren Umzug im Jahr 2022. Ereignisse und Verfahren sind von persönlichen Bewertungen und Behauptungen zu unterscheiden."
+        },
+        "rights": {
+          "heading": "Kinderrechte und Familienleben",
+          "body": "Wichtige Grundlagen sind Artikel 8 der Europäischen Menschenrechtskonvention, die Haager Übereinkommen von 1980 und 1996 sowie die UN-Kinderrechtskonvention. Ihre Anwendung hängt von den tatsächlichen Umständen und Entscheidungen ab."
+        },
+        "obstacles": {
+          "heading": "Schwierigkeiten beim Umgang",
+          "body": "Beschrieben werden Probleme bei der Zusammenarbeit von Behörden, beim Zugang zu Informationen über das Kind und bei der Durchführung von Kontakten. Diese Berichte sind keine eigenständigen gerichtlichen Feststellungen."
+        },
+        "support": {
+          "heading": "Information und gegenseitige Hilfe",
+          "body": "Ziel ist es, Verfahren verständlich zu machen, überprüfbare Quellen bereitzustellen und betroffene Eltern unter Wahrung der Privatsphäre des Kindes zu vernetzen."
+        }
+      }
+    },
+    "norway": {
+      "title": "Norwegen — Rückführungsverfahren und Ablehnungsgründe",
+      "description": "Prüfübersicht zum norwegischen Verfahren und den einschlägigen Übereinkommen.",
+      "intro": "Diese Vorschau ordnet das Verfahren in Oslo und die im historischen Dokument behandelten Vorschriften ein. Das vollständige Urteil und umfangreiche persönliche Akten werden nicht übernommen.",
+      "sections": {
+        "scope": {
+          "heading": "Gegenstand des Verfahrens",
+          "body": "Das historische Dokument behandelt einen Antrag auf Rückführung eines Kindes und die Begründung in einem norwegischen Gerichtsverfahren im Jahr 2016."
+        },
+        "law": {
+          "heading": "Rechtlicher Rahmen",
+          "body": "Artikel 3, 12, 13 und 20 des Haager Übereinkommens von 1980 betreffen widerrechtliche Verbringung, Rückführung und bestimmte Ablehnungsgründe. Die Anwendung ist am Originalurteil zu prüfen."
+        },
+        "decision": {
+          "heading": "Gerichtliche Entscheidung in Oslo",
+          "body": "Der gewöhnliche Aufenthalt und die genauen Ablehnungsgründe sind anhand der Originalentscheidung zu überprüfen. Diese Seite ist weder eine beglaubigte Übersetzung noch eine unabhängige Feststellung."
+        },
+        "documents": {
+          "heading": "Akten und Datenschutz",
+          "body": "Die historische HTML-Seite verlinkt auch bereits erreichbare persönliche Dokumente. Diese werden in der React-Vorschau nicht erneut veröffentlicht; vor einer vollständigen Migration ist eine Datenschutzprüfung erforderlich."
+        }
+      }
+    },
+    "germany": {
+      "title": "Deutschland — Rückführungsantrag und Behördenkooperation",
+      "description": "Prüfübersicht über das deutsche Verfahren und die Zuständigkeit Zentraler Behörden.",
+      "intro": "Diese React-Fassung fasst Fragen aus dem Schriftverkehr mit französischen, norwegischen und deutschen Behörden zusammen. Originalunterlagen verbleiben in der bereits veröffentlichten historischen Fassung.",
+      "sections": {
+        "scope": {
+          "heading": "Gegenstand des Antrags",
+          "body": "Der Fall betrifft unter anderem die Prüfung eines Rückführungsantrags nach Frankreich und die Zusammenarbeit Zentraler Behörden gemäß dem veröffentlichten Schriftverkehr."
+        },
+        "article27": {
+          "heading": "Aufgaben Zentraler Behörden",
+          "body": "Artikel 27 des Haager Übereinkommens von 1980 regelt begrenzte Ablehnungsmöglichkeiten bei offensichtlich unbegründeten Anträgen. Vorschrift und tatsächlicher Schriftverkehr müssen gemeinsam betrachtet werden."
+        },
+        "residence": {
+          "heading": "Gewöhnlicher Aufenthalt",
+          "body": "Die Bestimmung des gewöhnlichen Aufenthalts und die Folgen des späteren Umzugs nach Deutschland sind umstrittene Rechtsfragen. Eine gerichtliche Klärung aller Punkte zugunsten des Autors wird nicht behauptet."
+        },
+        "documents": {
+          "heading": "Ursprünglicher Schriftverkehr",
+          "body": "Die historische Seite enthält die veröffentlichten Briefe und Nachweise. Zusätzliche PDF-Dateien, geschützte Identitäten oder unveröffentlichte Dokumente werden nicht in diese Vorschau übernommen."
+        }
+      }
+    },
+    "reviewNavigation": "Drei historische Artikel — React-Prüffassungen"
+  }
+}

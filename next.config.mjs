@@ -78,7 +78,8 @@ const nextConfig = {
         headers: [{ key: "X-Robots-Tag", value: "noindex, follow" }],
       }] : []),
       // The review page can be opened by a human but must not be indexed.
-      ...["/home-preview", "/:locale/home-preview", "/abduction", "/:locale/abduction"].map((source) => ({
+      ...["home-preview", "abduction", "for-fathers", "abduction-norway", "abduction-germany"]
+        .flatMap((slug) => ["/" + slug, "/:locale/" + slug]).map((source) => ({
         source,
         headers: [
           { key: "X-Robots-Tag", value: "noindex, nofollow, nosnippet" },

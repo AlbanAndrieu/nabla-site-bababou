@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { hasLocale } from "next-intl";
-import { setRequestLocale } from "next-intl/server";
+import { getMessages, setRequestLocale } from "next-intl/server";
 import AbductionResources from "@/components/home/AbductionResources";
 import LegacyFooterSection from "@/components/home/LegacyFooterSection";
 import { routing } from "@/i18n/routing";
@@ -27,6 +28,13 @@ export default async function AbductionPage({ params }: PageProps<"/[locale]/abd
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
   const c = homeAudienceCopy(locale).fathers;
+  const catalog = (await getMessages({ locale })).legacyArticlesPage as {
+    reviewNavigation: string;
+    fathers: { title: string };
+    norway: { title: string };
+    germany: { title: string };
+  };
+  const prefix = locale === "fr" ? "" : "/" + locale;
   return (
     <main id="main-content" tabIndex={-1} className={styles.main}>
       <section className={styles.hero} aria-labelledby="abduction-title">
@@ -43,6 +51,12 @@ export default async function AbductionPage({ params }: PageProps<"/[locale]/abd
         <a href="#translators">{c.navTranslators}</a>
         <a href="#preview-associations">{c.navAssociations}</a>
         <a href="#documents-notice">{c.navDocuments}</a>
+      </nav>
+      <nav className={styles.sectionNav} aria-label={catalog.reviewNavigation}>
+        <span>{catalog.reviewNavigation}</span>
+        <Link href={prefix + "/for-fathers"}>{catalog.fathers.title}</Link>
+        <Link href={prefix + "/abduction-norway"}>{catalog.norway.title}</Link>
+        <Link href={prefix + "/abduction-germany"}>{catalog.germany.title}</Link>
       </nav>
       <AbductionResources locale={locale} />
       <LegacyFooterSection locale={locale} />
