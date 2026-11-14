@@ -306,6 +306,8 @@ test.describe("NRE React migration", () => {
       const select=page.locator("main select").filter({has:page.locator("option[value='all']")});
       await expect(select).toHaveValue("all");
       await select.selectOption("2026");
+      await expect(page.locator('tr#nre-2026-11')).toHaveAttribute("data-nre","true");
+      await expect(page.locator('main table tbody tr[data-review="true"]')).toHaveCount(0);
       await expect(page.locator('section[aria-labelledby="timeline-heading"] article')).toHaveCount(1);
       await expect(page.locator('section[aria-labelledby="timeline-heading"] article details')).toHaveAttribute("open", "");
       await expect.poll(()=>rows.count()).toBeGreaterThanOrEqual(10);
@@ -370,11 +372,22 @@ test.describe("NRE React migration", () => {
       const panel = page.locator('section[aria-labelledby="nre-hours-heading"]');
       await expect(panel.locator('[class*="hoursItem"]')).toHaveCount(2);
       const summary = panel.getByTestId("nre-missed-summary");
-      await expect(summary.getByTestId("nre-reported-refusal-percent")).toHaveText(
-        lang === "en" ? "94.4 %" : "94,4 %",
-      );
-      await expect(summary).toContainText("101 / 107");
+      await expect(page.locator('tr#nre-2026-11')).toHaveAttribute("data-nre","true");
+      const reported = await page.locator('main table tbody tr[data-nre="true"]').count();
+      const exceptions = await page.locator('main table tbody tr[data-exception="true"]').count();
+      const percent = Math.round(reported / (reported + exceptions) * 1000) / 10;
+      const numberLocale = lang === "en" ? "en-GB" : lang === "fr" ? "fr-FR"
+        : lang === "de" ? "de-DE" : "nb-NO";
+      const label = new Intl.NumberFormat(numberLocale, {
+        minimumFractionDigits: 1, maximumFractionDigits: 1,
+      }).format(percent) + " %";
+      await expect(summary.getByTestId("nre-reported-refusal-percent")).toHaveText(label);
+      await expect(summary).toContainText(`${reported} / ${reported + exceptions}`);
       await expect(summary.getByTestId("nre-net-time")).toContainText(":");
+      await expect(page.locator('tr#nre-2026-11')).toContainText(
+        lang === "fr" ? "selon le père" : lang === "en" ? "according to the father"
+          : lang === "de" ? "nach Angaben des Vaters" : "ifølge faren",
+      );
       await expect(summary.getByTestId("nre-net-time")).not.toContainText("—");
     }
   });

@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import {
  firstWeekend,nreWeekendStrip,nreMonthCalendar,completeNreInventory,nreInventoryStats,
- elapsedSeparationSeconds,estimateReportedContactHours,reportedMissedVisitShare,NRE_REPORTED_CONTACT,NRE_REPORTED_ORDER,NRE_REPORTED_SUSPENSION,
+ elapsedSeparationSeconds,estimateReportedContactHours,reportedMissedVisitShare,NRE_REPORTED_CONTACT,NRE_REPORTED_ORDER,NRE_REPORTED_SUSPENSION,NRE_REPORTED_2026_REFUSALS,
 } from "../lib/nreVisitLedger.mjs";
 
 const locales=["fr","en","de","no"];
@@ -29,24 +29,25 @@ test("first weekend obeys UTC calendar including leap years",()=>{
  assert.throws(()=>firstWeekend(2026,13),RangeError);
 });
 
-test("as of 31 October 2026: 108 archive rows, 8 new review dates, never auto NRE",()=>{
+test("31 October 2026: owner reports all eight completed 2026 visits refused",()=>{
  const base=legacyFixture();assert.equal(base.length,108);
  const rows=completeNreInventory(base,new Date("2026-10-31T12:00:00Z"));
  assert.equal(rows.length,116);
  const stats=nreInventoryStats(rows);
- assert.deepEqual(stats,{total:116,recordedMissed:101,partialOrHonored:6,unverified:8,beforeOrder:1,theoreticalScheduledHours:1010});
+ assert.deepEqual(stats,{total:116,recordedMissed:109,partialOrHonored:6,unverified:0,beforeOrder:1,theoreticalScheduledHours:1090});
  assert.equal(rows[0].status,"beforeOrder");
- assert.equal(rows.at(-1).status,"review");
+ assert.equal(rows.at(-1).status,"nre");
  assert.deepEqual([rows.at(-1).year,rows.at(-1).month,rows.at(-1).startDay,rows.at(-1).endDay],[2026,10,3,4]);
  const newer=rows.filter(r=>r.year===2026&&r.month>=3);
- assert.ok(newer.every(r=>r.status==="review"));
+ assert.ok(newer.every(r=>r.status==="nre" && r.statusDetail.includes("father")));
  assert.equal(NRE_REPORTED_ORDER.monthlyWeekendHours,10);
  assert.equal(NRE_REPORTED_SUSPENSION.verified,false);
+ assert.equal(NRE_REPORTED_2026_REFUSALS.judicialFinding,false);
 });
 
 test("missed-visit percentage uses only classified owner-reported dates", () => {
  const rows=completeNreInventory(legacyFixture(),new Date("2026-11-09T12:00:00Z"));
- assert.deepEqual(reportedMissedVisitShare(rows),{recordedMissed:101,classified:107,percentage:94.4});
+ assert.deepEqual(reportedMissedVisitShare(rows),{recordedMissed:110,classified:116,percentage:94.8});
  assert.deepEqual(reportedMissedVisitShare([
   {status:"nre"},{status:"exception"},{status:"review"},{status:"beforeOrder"},
  ]),{recordedMissed:1,classified:2,percentage:50});
@@ -60,8 +61,26 @@ test("the ledger follows future Paris dates but never predicts offenses",()=>{
  assert.equal(beforeNovember.length,116); // November weekend has not ended
  const afterNovember=completeNreInventory(base,new Date("2026-11-09T12:00:00Z"));
  assert.equal(afterNovember.length,117);
- assert.equal(afterNovember.at(-1).status,"review");
+ assert.equal(afterNovember.at(-1).status,"nre");
+ assert.deepEqual(reportedMissedVisitShare(afterNovember),{recordedMissed:110,classified:116,percentage:94.8});
  assert.equal(completeNreInventory(afterNovember,new Date("2026-11-09T12:00:00Z")).length,117);
+});
+
+test("2026 reports never predict future dates, preserve exceptions, and end in 2026",()=> {
+ const base=legacyFixture();
+ const now=completeNreInventory(base,new Date("2026-11-14T12:00:00Z"));
+ assert.equal(now.find(r=>r.year===2026&&r.month===11).status,"nre");
+ assert.ok(!now.some(r=>r.year===2026&&r.month===12));
+ const later=completeNreInventory(base,new Date("2027-01-11T12:00:00Z"));
+ assert.equal(later.find(r=>r.year===2026&&r.month===12).status,"nre");
+ assert.equal(later.find(r=>r.year===2027&&r.month===1).status,"review");
+ const may=firstWeekend(2026,5);
+ const exception=completeNreInventory([...base,{...may,status:"exception",statusDetail:"A verified exception"}],new Date("2026-11-14T12:00:00Z"));
+ assert.equal(exception.find(r=>r.year===2026&&r.month===5).status,"exception");
+ const old=[...base,{...firstWeekend(2026,3),status:"review",statusDetail:"Old placeholder"}];
+ const reconciled=completeNreInventory(old,new Date("2026-11-14T12:00:00Z"));
+ assert.equal(reconciled.filter(r=>r.year===2026&&r.month===3).length,1);
+ assert.equal(reconciled.find(r=>r.year===2026&&r.month===3).status,"nre");
 });
 
 test("Sunday is not complete until Monday in Europe/Paris (winter and summer time)",()=> {

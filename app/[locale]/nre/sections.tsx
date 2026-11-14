@@ -121,6 +121,7 @@ export type NrePageCopy = {
     weekend: string;
     status: string;
     nre: string;
+    nreReported2026: string;
     exception: string;
     review: string;
     beforeOrder: string;
@@ -159,7 +160,11 @@ function weekend(row: NreRow, locale: AppLocale) {
 }
 
 function displayStatus(row: NreRow, copy: NrePageCopy) {
-  if (row.status === "nre") return copy.table.nre;
+  if (row.status === "nre") {
+    return row.year === 2026 && row.month >= 3
+      ? copy.table.nreReported2026
+      : copy.table.nre;
+  }
   if (row.status === "review") return copy.table.review;
   if (row.status === "beforeOrder") return copy.table.beforeOrder;
   return copy.table.exception;

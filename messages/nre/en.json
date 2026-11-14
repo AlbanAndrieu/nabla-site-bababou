@@ -16,7 +16,7 @@
     "stats": {
       "heading": "Summary statistics",
       "total": "Listed weekend dates",
-      "nre": "Recorded NRE (historical claims)",
+      "nre": "Owner-reported missed visits",
       "exceptions": "Honored or partial visits"
     },
     "reference": {
@@ -36,7 +36,7 @@
     },
     "timeline": {
       "heading": "Timeline by year",
-      "lead": "Each year shows first weekends of the month. ✗ = recorded historical NRE claim, ✓ = honored or partial, ? = unverified date. Later dates are not automatically criminal findings.",
+      "lead": "✗ = visit refused or missed according to the father's account; ✓ = honored or partial contact; ? = to review. The father reports that the mother refused every requested visit in 2026 apart from the rare exceptions already listed. Completed 2026 dates reflect that statement, not a judicial finding of unlawful conduct.",
       "norway": "Norway, Oslo",
       "germany": "Germany, Frankfurt",
       "viewDetails": "View date in the table",
@@ -53,7 +53,7 @@
     },
     "table": {
       "heading": "First weekends of each month",
-      "lead": "Historic inventory is published through February 2026. From March 2026, dates are generated automatically but their status requires checking the reported German court decision.",
+      "lead": "The original inventory covers dates through February 2026. Completed weekends from March through December 2026 are marked as refused according to the father's express account; enforceability of any visitation order is a separate question. Dates in 2027 remain under review.",
       "month": "Month",
       "weekend": "Weekend (Sat – Sun)",
       "status": "Status",
@@ -66,7 +66,8 @@
       "filterStatus": "Weekend status",
       "filterAllStatuses": "All statuses",
       "resultsCount": "Dates shown",
-      "resetFilters": "Clear filters"
+      "resetFilters": "Clear filters",
+      "nreReported2026": "Visit refused according to the father (2026; reported, not judicially established)"
     },
     "exceptions": {
       "heading": "Reported honored or partial visits",
@@ -81,7 +82,7 @@
       "scope": "In France, two stays of 7 days and one of 28 days are converted to 24 hours per day of presence; exact dates are not yet matched to the calendar.",
       "source": "In Germany, a meeting of around 1 h and a later weekend of about 24 h are reported. In Norway, about three one-hour meetings are reported; their dates remain unknown, so they are included only once in the overall estimate, not assigned to calendar cards.",
       "refresh": "The timer updates each second. The month inventory is recalculated from the local Paris date.",
-      "suspension": "A German contact suspension was reported from 26 February 2026 through 25 February 2027; the operative court order has not been verified here. Later dates are not labeled NRE.",
+      "suspension": "A German contact suspension is reported from 26 February 2026 to 25 February 2027; the operative order is not verified here. Refused contact in 2026 is recorded as the father's testimony, without assuming breach of an enforceable court order.",
       "beforeOrder": "The March 2017 row predates the cited 31 March 2017 decision and needs review.",
       "intro": "According to my account, the scheduled 10 hours per weekend were never respected; rare meetings lasted around one hour.",
       "live": "Updating live",
@@ -94,7 +95,7 @@
       "germanyLabel": "Germany",
       "norwayLabel": "Norway (≈ 3 × 1 h)",
       "refusalRate": "Reported missed visits — refusals attributed to the mother in my account",
-      "refusalRateHint": "dates reported missed / classified dates. Unverified and pre-order dates excluded; personal attribution, not a judicial finding."
+      "refusalRateHint": "dates reported missed / classified dates, including the refusals reported for 2026. Unclassified and pre-order dates excluded; personal attribution, not a judicial finding."
     },
     "advocacy": {
       "eyebrow": "Personal account · efforts since 2017",
