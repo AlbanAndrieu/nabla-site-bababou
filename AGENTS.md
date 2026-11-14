@@ -1,180 +1,33 @@
-# Repository agent policy
+# Repository agent policy — Bababou
 
-## GitHub Actions credit-saving PR lifecycle
+**Canonical et court.** `docs/roadmap.md` décide des priorités BB-xx, `docs/engineering-roadmap.md` des conditions de sortie et `docs/agent-execution-modes.md` de l'utilisation de la workstation. Ne jamais charger toutes les roadmaps, tous les skills ni les journaux complets pour une seule tâche.
 
-- Agents should create and retain pull requests as **Draft** while iterating, and run the targeted local `just`/quality-gate checks before requesting review.
-- Do **not** put `[skip ci]`, `[ci skip]`, or `skip-checks: true` in commits: these can leave required checks pending, and can suppress the authoritative review gate.
-- `ready_for_review` must start the required CI; subsequent non-draft pushes run it again. Do not weaken SAST, SCA, DAST, secret scanning, or required branch protection to save minutes.
-- Never mark a PR Ready automatically merely to burn credits. Only do so after explicit user direction or the repository's documented publication gate, and never merge without authorization.
-- Keep generated PDFs (when uploaded) for at most **1 day**. Prefer no uploads on successful routine PR jobs and short-lived failure diagnostics.
+## Invariants de sécurité et publication
 
-## Fast path — minimum useful context
+- Branche dédiée et PR Draft durant les modifications (**Keep the PR draft**). Ne jamais modifier `master`, fusionner automatiquement, activer Vercel/Cloudflare, détruire ou rediriger un ancien document sans autorisation spécifique. Keep pull-request descriptions in French.
+- Pas de `[skip ci]`, `[ci skip]`, `skip-checks: true` ni `git push --no-verify`. Conserver BetterLeaks, pre-commit, privacy, SAST/SCA/DAST, Playwright/axe, règles des branches et contrôles exact-SHA. Le `justfile` est l'interface locale canonique ; pas de seconde quality gate.
+- Contenu familial, juridique, identités, lieux et pièces : charger **à la demande** `.agents/skills/protect-family-privacy/SKILL.md` ; préserver les exceptions de publication approuvées, `public/index.html`, `public/404.html`, les archives HTML et les règles de parité/rollback. Un original public ne devient pas privé par un cadenas.
+- Ne jamais transmettre `.private-publication-source/**`, `.redaction-work/**`, secrets, données d'authentification ni originaux privés à GitHub, Context7, Dagger, Vercel ou un autre service tiers.
+- **Never claim a check passed unless it was actually executed** sur le SHA indiqué. `READY`, `skipped`, `steps=null`, une lecture API ou une PR fusionnée ne démontrent pas un PASS. Signaler `NOT_RUN`, `MISSING_TOOL` et `BLOCKED_NETWORK` lorsque nécessaire.
+- Lorsqu'un bot suit un échec post-merge, ne clore qu'après les deux derniers runs Quality `master` effectivement verts et ne jamais modifier une issue ayant reçu une intervention humaine.
 
-- Start from the **current PR HEAD, base, CI failing step and scoped diff**. Read only matching files and **one relevant skill**; never preload all of `docs/roadmap.md`, all Next docs, all skills or full CI logs. This reduces input tokens without reducing validation.
-- When the GitHub Actions budget is exhausted, **keep the PR Draft** and run `node --test unit-tests/releaseTagBridge.test.mjs unit-tests/workflowDraftBudget.test.mjs` plus `node scripts/ci/check-draft-workflows.mjs` (or `just offline-contracts` if Just is installed). These are dependency-free targeted contracts, never a substitute for `just p0`, BetterLeaks/SAST/SCA or deployed Playwright/ZAP. Do not mark Ready, request a rerun, or imply runner-backed validation.
-- Maintain a five-field handoff: `PR@SHA | blocker | changed files | evidence | next`. Reuse previously fetched identical content; fetch new material only after a changed SHA, status or hypothesis.
-- Diagnose `workflow → job → failed step → narrow log excerpt` once. Avoid loops polling the same in-progress job; resume verification only when action is possible or the run has changed.
-- Batch coherent edits into a single atomic commit, then run the **scope-selected** tests and CI. Prefer local tests and exact formatter patches, not GitHub Actions as an editor. Never weaken BetterLeaks, SAST, SCA, DAST, privacy or protected legacy gates.
-- Preserve the current checkout and all failing evidence. If only GitHub API is available, classify local execution `NOT_RUN`; do not invent local proof. Never merge automatically.
+## Exécution selon les capacités réellement observées
 
-
-Keep context small, changes scoped, and publication deterministic.
-
-## Repository bootstrap
-
-Git hooks are versioned but are not installed automatically after clone. On every new checkout, run:
-
-```bash
-mise run hooks
-```
-
-This installs the configured `pre-commit` and canonical `pre-push` quality-gate hooks. Hook revision upgrades are an explicit maintenance operation via `mise run hooks-update`; they must not run implicitly during normal commits.
-
-## Before editing
-
-1. Inspect `git status --short`, the task, and only relevant files.
-2. Prefer targeted search (`rg`, `git diff`, `git ls-files`) over recursive repository reads.
-3. Reuse existing formatters, linters, generators, privacy/security checks, and CI conventions. Do not create a parallel implementation of the same validation.
-4. For family/legal/publication content, follow `.agents/skills/protect-family-privacy/SKILL.md` and its `references/private-rules.md` before editing.
+- **Claude Code sur workstation** : avec checkout Git et outils disponibles, exploiter CPU/RAM/caches **locaux**. `just agent-plan` est en lecture seule ; `just agent-verify offline`, `p0`, `publish` ou `browser` lancent les contrôles locaux correspondant aux ressources. `AGENT_WORKERS` peut réduire le nombre de workers ; aucun téléchargement implicite.
+- **Codex avec checkout réel** : mêmes commandes uniquement si exécutables, sans supposer SSH, navigateur, accès homelab, secrets ou mémoire/caches de la workstation.
+- **Codex/API sans checkout** : GitHub connector ciblé, PR/base/HEAD, diff, premier job/step échoué puis extrait pertinent. Préparer un commit atomique via l'API ; déclarer local L3, navigateur, build et scanners **NOT_RUN**. Pas de répétition d'essais réseau équivalents ni de prétendue utilisation de workstation.
+- Si l'outillage manque, poursuivre ce qui est faisable sans accès et noter le blocage réel. Aucun contournement des gates pour économiser des tokens ou crédits CI. Voir `docs/agent-execution-modes.md`.
 
 ## OpenCode / small-model execution protocol
 
-OpenCode may run this repository with a smaller model such as GPT-4.1 mini. Do not rely on the model to infer repository workflow from conventions. For every non-trivial repository task, follow this sequence literally:
+1. Lire la PR courante, `git status --short`, HEAD et diff limité ; **une** section BB-xx et **un** skill correspondant. Passation en une ligne : `PR@SHA | échec | fichiers | preuve | action`.
+2. Workstation uniquement : `node scripts/agent/capability-plan.mjs --json` puis `bash scripts/agent-quality-gate.sh --preflight` pour le scope. Aucun préflight shell présumé possible en mode API.
+3. Skills : `roadmap-local-first` pour plan/CI ; `quality-follow-up` pour échec et clôture ; `protect-family-privacy` avant publication familiale ; `next-migrate-locale-pages` avant migration ; `next-dev-loop` / `agent-browser` si serveur/navigateur réellement disponibles.
+4. Patch court puis test ciblé ; `bash scripts/agent-p0-check.sh` pour outillage agent. Converger les formateurs avec `bash scripts/agent-quality-gate.sh --fix`, examiner le diff, committer ; exécuter **une fois** `bash scripts/agent-publish.sh`, puis `bash scripts/agent-publish.sh --status`. Ne pas exécuter `just quality` suivi de `publish` sans besoin concret.
+5. `QG_AUTOFIX_REQUIRED` : corriger les mutations déterministes ; `QG_BASE_STALE` : inspecter/rebaser ; `QG_PUBLISH_PROOF_STALE` : refaire la preuve ; `QG_PUBLISH_PROTECTED_BRANCH` : arrêter. Si `steps=null`, investiguer runner/quota sans interpréter un code d'erreur inexistant.
+6. Résumé final : SHA, modifications, preuves réellement exécutées et résiduels dans la roadmap. **Never merge unless explicitly asked.**
 
-1. Confirm the current branch is not `master`, then inspect `git status --short`, `git diff --stat`, and the current task/PR objective.
-2. Run `bash scripts/agent-quality-gate.sh --preflight` before editing. Use its worktree scope as the source of truth for whether build, SAST, dependency or Preview work is actually required.
-3. Read only the relevant unchecked subsection of `docs/roadmap.md`; do not load the entire repository to rediscover priorities.
-4. Load the smallest matching skill with OpenCode's `skill` tool before editing:
-   - `roadmap-local-first` for roadmap/PR/quality work;
-   - `local-first-quality` for exact-HEAD L0–L3 evidence, offline recovery and validation before publication;
-   - `quality-follow-up` for failed or incomplete quality evidence;
-   - `protect-family-privacy` before family, legal, publication or privacy edits;
-   - `next-migrate-locale-pages` for legacy-to-Next route migration;
-   - `next-dev-loop` for runtime verification;
-   - `agent-browser` when browser interaction is required.
-5. For multi-step work, maintain a short todo list. Complete one coherent, finishable roadmap item at a time instead of widening the PR.
-6. Apply the smallest safe patch and run the closest targeted test first. Then run `bash scripts/agent-quality-gate.sh --fix`, review every mutation, and commit only the converged intended diff.
-7. Before publication, run `bash scripts/agent-publish.sh` on the committed tree. Never claim this proof, a browser check, a build, CI, or a security scan passed unless it was actually executed on the reported SHA.
-8. Keep the PR draft while iterating. Never merge the PR or mutate `master` unless the user explicitly requests that action.
-
-When GitHub Actions credits/runners are unavailable, do **not** manually rerun workflows to obtain evidence. A job with `steps=null` or no allocated runner is infrastructure evidence, not a code failure. Maximize local validation, keep runner-backed proof listed as unavailable, and continue only with checks that can run locally.
-
-For this repository, keep pull-request descriptions in French unless the user asks for another language. Describe only checks actually executed and keep every unresolved item represented in `docs/roadmap.md`.
-
-OpenCode discovers project skills under `.agents/skills/*/SKILL.md`; load them on demand rather than copying all skill contents into the permanent prompt.
-
-The project OpenCode configuration selects the repository-local primary agent `bababou` by default without pinning a model. That agent inherits the workstation model selection and delegates an independent read-only review to `bababou-reviewer` through `/review-local`. Use the reviewer before publication for any non-trivial batch; it must report findings but must not edit files.
-
-For a concise mapping between repository tasks, available skills, local scripts and optional external tools, read `.agents/skills/roadmap-local-first/references/opencode-playbook.md` only when orchestration is needed.
-
-After pulling changes to OpenCode configuration, run `opencode agent list` once on the workstation and confirm that both `bababou` and `bababou-reviewer` are discovered before relying on repository-specific commands.
-
-## Disconnected checkout: L1 fallback
-
-When GitHub, registries or hook downloads are inaccessible, start with `just offline-l1` (or `bash scripts/agent-offline-check.sh`). It uses only local Git, Bash and Python when Python files are present. If the comparison base is missing, it checks **all** tracked and untracked local files, not an arbitrary first 200. `AGENT_OFFLINE_MAX_PATHS=0` disables the optional scope ceiling; any explicit ceiling exceeded fails rather than silently dropping files. Git command failures are blocking.
-
-L1 proves only shell/Python syntax and tracked/staged whitespace. Its `NOT_RUN` line means P0, pre-commit, Betterleaks, Next build, Vercel Preview and CI are **not** validated. Once the runtime is present, use `just p0`; when tools and caches permit, use `just quality-fix` and the canonical publication gate. Never bypass or weaken those gates because a network is blocked.
-
-## Offline-first and bounded agent context
-
-When github.com, PyPI, Docker Hub or other endpoints are blocked, distinguish network failure from a code defect. Never repeat a failed network request without a changed prerequisite; never pretend a skipped check passed.
-
-1. Use the existing checkout and tracked Git objects first. Inspect `git status --short`, `git rev-parse HEAD`, `git merge-base` and only the changed paths; do not clone or fetch merely to run P0.
-2. Run `bash scripts/agent-p0-check.sh` using the supported installed Node runtime; it includes Semgrep CI contracts and must not need `node_modules` or any external endpoint. If Node is unavailable, run `bash scripts/agent-quality-gate.sh --preflight` and report P0 as unavailable.
-3. Use existing `node_modules`, package caches, installed tools, or a previously verified local archive only when their version and provenance are known. Do not download arbitrary substitutes or weaken a quality gate.
-4. Classify blocked checks precisely: `PASS` (executed), `FAIL` (code or rule), `BLOCKED_NETWORK`, `MISSING_TOOL`, `NOT_RUN`. Network/tool failures never count as green.
-5. Keep responses to the HEAD, changed files, failed invariant, minimal fix, tests actually run and remaining blockers. Limit normal diagnostics to the first relevant failure and a short tail; expand to complete logs only when necessary. Do not paste whole CI logs, tool schemas, unchanged files or verbose test success output into the agent context.
-6. Prefer one scoped patch followed by targeted offline regression tests and a local fix/convergence pass. Never push merely to exercise a formatter or discover a syntax error.
-
-Default diagnostic output is bounded to 12 lines (`QUALITY_LOG_TAIL`, `P0_LOG_TAIL`), 36 autofix-diff lines (`QUALITY_DIFF_LINES`), and 20 lines in CI preflight. Escalate a single failing command with `QUALITY_LOG_TAIL=80`, `P0_LOG_TAIL=80`, or `QUALITY_DIFF_LINES=0`; use `bash scripts/agent-p0-check.sh --verbose` for the complete Node test output. Production HTTP smoke emits a one-line success summary unless `PRODUCTION_SMOKE_VERBOSE=1`. Never silence failure messages, warnings, security findings or a failing exit status to save tokens.
-
-## Tool and context efficiency
-
-GitHub, Vercel and Playwright remain first-class tools. Prefer targeted connector discovery and previously fetched exact-SHA evidence. Inspect workflow/status → failing job → failing step → relevant logs; request full logs/artifacts only for unresolved failures. Never repeatedly poll unchanged CI/Preview or create one commit per API file edit. Respect `scripts/ci-scope.sh` and the existing local-first proof before publication; Dagger remains opt-in only, never an unreviewed replacement of the canonical gate.
-
-Context7 is an optional documentation MCP. Prefer repository-local/versioned documentation first, especially Next.js docs shipped in `node_modules`. Its availability must remain fully usable offline without it: P0, quality and publication gates must remain fully usable offline without it. Do not transfer `.private-publication-source/**`, `.redaction-work/**`, secrets or private legal/family material to Context7, Dagger or public services.
-
-## Validation
-
-Le `justfile` est le **point d’entrée canonique** pour le développement local :
-`just preflight`, `just p0`, `just quality-fix`, `just publish`,
-`just workflow-audit` et `just secrets-staged`. Il délègue aux scripts Bash,
-à npm et à pre-commit, sans réduire leurs contrôles ; le `Makefile` historique
-reste disponible via `just legacy-help`. Une commande non exécutée ne
-constitue jamais une preuve de validation.
-
-For a focused change, run the closest relevant formatter or linter first. After an editing batch, use the repository-specific local workflow:
-
-```bash
-just quality-fix
-# Review deterministic formatter/linter changes and commit them.
-just publish
-```
-
-`--fix` first converges pre-commit mutations, then applies scoped ESLint/Stylelint fixes when dependencies are available, and converges pre-commit once more. The strict agent gate owns deterministic pre-build checks; `scripts/agent-publish.sh` adds the scope-aware production build and built-output privacy validation only when the change is deploy-relevant.
-
-A successful `scripts/agent-publish.sh` run records an exact proof keyed to the committed
-`HEAD`, comparison base, toolchain and installed dependency lock. Audit it without rerunning
-the gate with `bash scripts/agent-publish.sh --status`. The publisher refuses the repository
-default branch and detached HEAD. The canonical pre-push hook reuses a valid unchanged proof;
-use `QUALITY_FORCE_PUBLISH=1 bash scripts/agent-publish.sh` only for a deliberate full rerun.
-
-The default strict command remains available for diagnostics:
-
-```bash
-bash scripts/agent-quality-gate.sh
-```
-
-It is a pre-build diagnostic gate and does not write the publication proof. Do not routinely run it immediately before the publisher: use the single `scripts/agent-publish.sh` path for normal publication.
-
-The agent gate adds cheap branch-freshness, destructive-diff and executable-script checks before dependency-heavy work and delegates formatter/linter/security policy to the canonical cross-Nabla `scripts/quality-gate.sh`. Keep `scripts/quality-gate.sh` byte-for-byte aligned with sibling repositories rather than duplicating or moving its policy logic.
-
-Prefer the compact local agent gate output over remote CI logs. If CI still fails, inspect the failing workflow, job and step first, then widen to complete logs or artifacts only when needed.
-
-The Git-only preflight is available without dependencies:
-
-```bash
-bash scripts/agent-quality-gate.sh --preflight
-```
-
-For agent/quality changes, use the **local P0 checkpoint** with the repository Node runtime. It keeps the Git-only preflight separate internally, then runs only Node built-in regression contracts:
-
-```bash
-bash scripts/agent-p0-check.sh
-```
-
-This checkpoint first enforces the repository Node range (`>=24.11 <27`), then exercises CI scope, preflight behavior, OpenCode, Renovate/Dependabot and migration/documentation contracts without `node_modules`, a Next build, a browser or network access. The strict gate also classifies `scripts/agent-p0-check.sh` as agent shell tooling for shfmt, shell lint and bashate. It complements `--preflight`; it does not replace `--fix` or the exact publication proof.
-
-CI uses the preflight before Node/npm setup so stale branches, suspicious large truncations, whitespace errors in any regular untracked file and missing executable bits fail before dependency installation and any scanner/build work.
-
-Keep iterative agent pull requests in **draft** while they are still being edited. Draft PR CI runs only the Git preflight. Once the local `--publish` gate is green, mark the PR ready for review so the `ready_for_review` event performs the authoritative remote gate appropriate to the classified change scope. An API-only agent that cannot run the local gate may mark an atomic draft PR ready after the draft preflight succeeds in order to obtain authoritative CI, while still disclosing that no local publication gate ran.
-
-## Mandatory agent publish policy
-
-Agents must never publish changes immediately after editing files.
-
-Before every `git push` or equivalent remote publication from a checkout:
-
-1. Run `mise run hooks` once for a new checkout.
-2. Run `bash scripts/agent-quality-gate.sh --fix` after editing and review every deterministic formatter/linter mutation.
-3. Commit the reviewed change set.
-4. Run `bash scripts/agent-publish.sh` once and fix every reached failure.
-5. Audit the exact proof with `bash scripts/agent-publish.sh --status`.
-6. Push normally; pre-push reuses the exact proof or reruns the publisher when it is stale.
-
-Never use `git push --no-verify`, and never weaken validation rules merely to make a push or CI pass. Set `QUALITY_ALLOW_LARGE_DELETION=1` only after explicitly reviewing an intentional large truncation or deletion.
-
-Do not put GitHub-recognized CI bypass directives in pull-request commit messages. In particular, do not use bracketed CI/action skip markers or a `skip-checks: true` trailer to save runner time. Documentation-only and maintenance PRs must rely on repository scope classification instead of suppressing the workflow itself.
-
-Dependency PRs are owned by Renovate, including vulnerability fixes sourced from GitHub Dependabot Alerts. Keep `.github/dependabot.yml` absent and GitHub Dependabot Security Updates disabled so Dependabot remains signal-only and cannot open competing dependency PRs. Security Renovate PRs carry the additional `security` label, bypass the routine npm release-age delay, and are capped to one concurrent vulnerability-fix PR. Do not push manual commits to `renovate/*` branches: Renovate stops normal branch updates after user edits; fix the policy/source branch instead or request Renovate to regenerate/rebase the bot branch.
-
-An API-only agent must not silently use remote writes to pretend local hooks ran. If its runtime cannot obtain or execute a checkout, it must state that limitation, perform the closest deterministic checks available, keep the PR draft while iterating, and inspect resulting CI immediately. It must never claim that the local quality gate passed when it was not executed.
-
-When an API-only change touches multiple files, assemble the final patch as one atomic Git tree/commit and update the branch once whenever the connector supports it. Do not create one Contents-API commit per file on Vercel-connected branches: that fans out Preview deployments, consumes build quota, and obscures the review history. If atomic writes are unavailable, minimize remote writes and squash the branch before final CI/Preview validation.
-
-## Completion
-
-Report what changed, checks actually executed, and any unresolved failure or risk.
+**Compléments :** agent `bababou` et relecteur `bababou-reviewer` indépendant en lecture seule ; `scripts/quality-gate.sh` est le contrôle commun. **Context7 is an optional documentation MCP** : **Prefer repository-local/versioned documentation first** ; P0/quality/publication **must remain fully usable offline without it**. Charger un seul passage de documentation Next réellement utile. Les hooks de Git s'installent avec `mise run hooks` lors du bootstrap d'un vrai checkout ; ne jamais les installer depuis un agent isolé.
 
 <!-- BEGIN:nextjs-agent-rules -->
 
