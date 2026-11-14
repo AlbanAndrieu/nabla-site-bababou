@@ -13,3 +13,8 @@
 **Sans checkout ou outils** : même sous Claude, passer en mode isolé ; ne pas forcer Docker, DNS, SSH, installation npm, accès TrueNAS ou navigateur. Une lecture distante est L0, pas un build. Reporter `SHA | changement | PASS/FAIL/NOT_RUN | blocage | prochaine action`.
 
 **Architecture** : Next App Router FR/EN/DE/NO sous `app/`, documents historiques sous `public/`, `proxy.ts` et `lib/homeCutoverPolicy.mjs` pour le verrou de l'accueil, procédures GO/rollback dans `docs/homepage-react-cutover.md`. WCAG 2.2 AA, SEO, privacy, BetterLeaks, SAST/SCA/DAST et parité historique restent obligatoires selon le scope.
+
+**Gestion des PR :** réutiliser la PR compatible, rebaser et résoudre ses
+conflits **avant** modification, éviter les commits minuscules publiés
+séparément. Un seul lot après les tests ; exception corrective urgente
+Production ou migration multi-services terminée. Ne jamais fusionner sans GO.

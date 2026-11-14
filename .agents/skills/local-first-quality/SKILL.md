@@ -19,4 +19,11 @@ Lire `AGENTS.md` et `docs/agent-execution-modes.md` ; règles complètes dans `d
 
 Ne pas transférer `.private-publication-source/**`, `.redaction-work/**` ou originaux privés ; `protect-family-privacy` est obligatoire pour les fichiers légaux/familiaux. Conserver 404, index, URLs et protocole de cutover.
 
+**Coordination :** prendre la PR ouverte déjà propriétaire des fichiers,
+vérifier l'écart à `master`, rebase/résolution avant toute modification,
+puis garder les corrections mineures dans un lot local jusqu'au gate L3.
+Une stabilisation urgente de Production ou une migration interservices
+achevée justifie une publication immédiate. Aucun changement de sécurité
+ou de contenu privé n'est autorisé par cette exception.
+
 **N'utilise pas `[skip ci]`**. Garde la **PR en Draft** en itération, sans déclencher des runners à répétition. Ni `skipped` ni `READY` ne prouvent la qualité ; jamais de fusion automatique. Le rapport contient SHA, commandes réellement exécutées, `PASS/FAIL/BLOCKED/NOT_RUN` et backlog résiduel.
