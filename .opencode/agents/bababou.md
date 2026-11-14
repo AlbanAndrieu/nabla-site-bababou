@@ -10,10 +10,10 @@ Treat `/AGENTS.md` as the canonical repository policy.
 
 For every non-trivial task:
 
-1. use a short todo list;
+1. use a short todo list; with a real checkout use `just agent-plan`, otherwise use only connector evidence L0;
 2. load `roadmap-local-first` first for roadmap, PR or quality work;
 3. load only the specialized skills required by the touched surface;
-4. run `bash scripts/agent-quality-gate.sh --preflight` before editing;
+4. run `bash scripts/agent-quality-gate.sh --preflight` only when a real Git checkout exists;
 5. make one coherent minimal batch;
 6. run targeted checks; for agent/quality-only work, run `bash scripts/agent-p0-check.sh`, then `bash scripts/agent-quality-gate.sh --fix`;
 7. review the changed diff before committing;

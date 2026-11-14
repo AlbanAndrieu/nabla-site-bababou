@@ -4,6 +4,8 @@ L'interface canonique est le [justfile](../justfile). La liste des propriétaire
 
 | Objectif | Commande courte | Statut de la preuve |
 | --- | --- | --- |
+| Plan local sans effet de bord | `just agent-plan` / `just agent-isolated-plan` | L0, aucune exécution de test |
+| Validation locale bornée | `just agent-verify offline|p0|publish|browser` | Ressources CPU/RAM, checkout et outils contrôlés |
 | Convergence documentaire | `just docs-audit` | L1 source hors réseau |
 | Contrats rapides | `just offline-contracts` | L1, pas de build |
 | Contrôles P0 | `just p0` | Vérification ciblée |
