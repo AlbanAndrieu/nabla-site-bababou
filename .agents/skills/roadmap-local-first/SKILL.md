@@ -14,7 +14,7 @@ This skill complements `/AGENTS.md`. It never weakens privacy, security, legacy-
 
 ## Bounded agent workflow (low-token default)
 
-On each turn keep an **in-memory one-line ledger**: `PR@HEAD / failed CI step / intended patch / verified checks / remaining blockers`. Do not repeat this ledger in several files or messages. Open `docs/roadmap.md` only at the active unchecked section; `docs/operations.md` only for the matching incident signature; load **exactly one** specialized skill unless two domains are truly involved.
+On each turn keep an **in-memory one-line ledger**: `PR@HEAD / failed CI step / intended patch / verified checks / remaining blockers`. Do not repeat this ledger in several files or messages. Open `docs/roadmap.md` only for the chosen `BB-xx` decision and `docs/engineering-roadmap.md` only for the matching acceptance row; `docs/operations.md` only for the matching incident signature; load **exactly one** specialized skill unless two domains are truly involved.
 
 Use `GET PR + exact-HEAD runs` as one initial discovery batch. If red, fetch **one failing job** and **one failing step** before reading logs. Read the shortest actionable excerpt, then reproduce/fix locally (when a real checkout exists). Do not poll identical in-progress statuses in a tight loop or fan out commits to discover formatting. For API-only edits, apply the exact CI formatter patch with one atomic tree commit and verify a single final SHA.
 

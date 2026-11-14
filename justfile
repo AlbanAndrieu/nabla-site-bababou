@@ -62,11 +62,9 @@ agent-local-build:
     node scripts/quality/agent-local-build-preflight.mjs
     npm run check
 
-test-unit:
-    npm run test:unit
+alias test-unit := unit
 
-test-a11y:
-    npm run test:a11y
+alias test-a11y := a11y
 
 preflight:
     bash scripts/agent-quality-gate.sh --preflight
@@ -83,8 +81,7 @@ quality:
 publish:
     bash scripts/agent-publish.sh
 
-publish-check:
-    bash scripts/agent-publish.sh
+alias publish-check := publish
 
 publish-status:
     bash scripts/agent-publish.sh --status
@@ -146,6 +143,17 @@ loop:
     just precommit-config-test
     just offline-contracts
 
+# Dependency-free documentation, script-entrypoint and roadmap parity audit.
+docs-audit:
+    node scripts/quality/docs-roadmap-consistency.mjs
+
+# Read-only SSG/ISR/Function audit, adapted from nabla-site-alban; no API or CPU estimate.
+vercel-runtime-audit:
+    node scripts/audit-vercel-runtime.mjs
+
+vercel-runtime-test:
+    node --test unit-tests/vercelRuntimeAudit.test.mjs
+
 # Validate pre-commit structural integrity without fetching or executing hooks.
 # Uses PyYAML already supplied by the local pre-commit Python installation.
 precommit-config-test:
@@ -174,6 +182,7 @@ offline-contracts:
     node scripts/quality/homepage-runtime-parity.mjs
     node scripts/quality/homepage-preview-links.mjs
     node scripts/ci/check-draft-workflows.mjs
+    just docs-audit
 
 # TypeScript parser requires npm ci; not part of dependency-free offline-l1.
 source-check:
