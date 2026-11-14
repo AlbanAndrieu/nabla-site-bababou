@@ -128,7 +128,7 @@ export type NrePageCopy = {
     filterAll: string; filterStatus: string; filterAllStatuses: string; resultsCount: string; resetFilters: string;
   };
   exceptions: { heading: string; lead: string; genericDetail: string; extendedStay: string; otherWeekend: string };
-  hours: { heading: string; intro: string; live: string; gross: string; contactEstimate: string; contactEstimateHint: string; countriesLabel: string; franceLabel: string; germanyLabel: string; norwayLabel: string; net: string; netHint: string; methodology: string; scope: string; source: string; refresh: string; suspension: string; beforeOrder: string };
+  hours: { heading: string; intro: string; live: string; contactEstimate: string; contactEstimateHint: string; countriesLabel: string; franceLabel: string; germanyLabel: string; norwayLabel: string; net: string; netHint: string; refusalRate: string; refusalRateHint: string; methodology: string; scope: string; source: string; refresh: string; suspension: string; beforeOrder: string };
 };
 
 type CopyProps = { copy: NrePageCopy };

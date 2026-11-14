@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { AppLocale } from "@/i18n/routing";
-import { elapsedSeparationSeconds, estimateReportedContactHours } from "@/lib/nreVisitLedger.mjs";
+import { elapsedSeparationSeconds, estimateReportedContactHours, reportedMissedVisitShare } from "@/lib/nreVisitLedger.mjs";
 import type { NreRow } from "@/lib/nreLegacyData";
 import type { NrePageCopy } from "./sections";
 import styles from "./page.module.css";
@@ -39,6 +39,12 @@ export default function NreLiveHours({
   const report = estimateReportedContactHours(rows);
   const subtotal = new Intl.NumberFormat(NUMBER_LOCALE[locale]).format(report.subtotalHours);
   const elapsed = now === null ? null : elapsedSeparationSeconds(now, report.subtotalHours);
+  const share = reportedMissedVisitShare(rows);
+  const percentage = share.percentage === null
+    ? "—"
+    : `${new Intl.NumberFormat(NUMBER_LOCALE[locale], {
+        minimumFractionDigits: 1, maximumFractionDigits: 1,
+      }).format(share.percentage)} %`;
 
   return (
     <section className={styles.section} aria-labelledby="nre-hours-heading">
@@ -61,17 +67,20 @@ export default function NreLiveHours({
             </ul>
             <p className={styles.hoursDetail}>{copy.hours.contactEstimateHint}</p>
           </div>
-          <div className={styles.hoursItem}>
-            <span className={styles.hoursLabel}>{copy.hours.gross}</span>
-            <strong className={styles.hoursFigure} aria-live="off">
-              {elapsed ? clockString(elapsed.elapsed, locale) : "—"}
-            </strong>
-          </div>
-          <div className={styles.hoursItem}>
+          <div className={styles.hoursItem} data-testid="nre-missed-summary">
             <span className={styles.hoursLabel}>{copy.hours.net}</span>
-            <strong className={styles.hoursFigure} aria-live="off">
+            <strong className={styles.hoursFigure} data-testid="nre-net-time" aria-live="off">
               {elapsed?.net == null ? "—" : clockString(elapsed.net, locale)}
             </strong>
+            <div className={styles.refusalRate}>
+              <span className={styles.hoursLabel}>{copy.hours.refusalRate}</span>
+              <strong className={styles.refusalRateFigure} data-testid="nre-reported-refusal-percent">
+                {percentage}
+              </strong>
+              <p className={styles.hoursDetail}>
+                {share.recordedMissed} / {share.classified} · {copy.hours.refusalRateHint}
+              </p>
+            </div>
             <p className={styles.hoursDetail}>{copy.hours.netHint}</p>
           </div>
         </div>

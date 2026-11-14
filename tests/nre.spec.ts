@@ -364,6 +364,21 @@ test.describe("NRE React migration", () => {
     }
   });
 
+  test("the merged NRE card shows net time and the qualified reported missed-visit rate", async ({ page }) => {
+    for (const { path, lang } of localeCases) {
+      await page.goto(path);
+      const panel = page.locator('section[aria-labelledby="nre-hours-heading"]');
+      await expect(panel.locator('[class*="hoursItem"]')).toHaveCount(2);
+      const summary = panel.getByTestId("nre-missed-summary");
+      await expect(summary.getByTestId("nre-reported-refusal-percent")).toHaveText(
+        lang === "en" ? "94.4 %" : "94,4 %",
+      );
+      await expect(summary).toContainText("101 / 107");
+      await expect(summary.getByTestId("nre-net-time")).toContainText(":");
+      await expect(summary.getByTestId("nre-net-time")).not.toContainText("—");
+    }
+  });
+
   test("reported hours are calculated without an editable input", async ({ page }) => {
     await page.goto("/en/nre");
     const panel=page.locator('section[aria-labelledby="nre-hours-heading"]');

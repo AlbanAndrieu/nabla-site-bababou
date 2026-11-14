@@ -77,8 +77,7 @@
     },
     "hours": {
       "heading": "Gemeinsame Zeit — Schätzung aus gemeldeten Zeiträumen",
-      "gross": "Vergangene Zeit seit dem 6. Juni 2015 (historischer Bezug)",
-      "net": "Vergangene Zeit abzüglich der geschätzten Aufenthaltsdauer",
+      "net": "Vergangene Zeit abzüglich gemeldeter Anwesenheit (Schätzung)",
       "scope": "In Frankreich werden zwei Aufenthalte von je sieben Tagen und einer von 28 Tagen mit 24 Stunden pro Anwesenheitstag angesetzt. Genaue Daten fehlen noch.",
       "source": "In Deutschland wurden ein Wiedersehen von etwa einer Stunde und ein späteres Wochenende von etwa 24 Stunden gemeldet. In Norwegen werden ungefähr drei einstündige Treffen berichtet; ihre Daten sind unbekannt, daher werden sie nur einmal in der Gesamtschätzung und nicht einzelnen Kalenderkarten zugeordnet.",
       "refresh": "Die Uhr aktualisiert sich jede Sekunde; die Terminliste folgt dem aktuellen Pariser Datum.",
@@ -86,14 +85,16 @@
       "beforeOrder": "Der Eintrag März 2017 liegt vor der Entscheidung vom 31. März 2017 und muss geprüft werden.",
       "intro": "Nach meiner Darstellung wurden die vorgesehenen zehn Stunden pro Wochenende nie eingehalten; seltene Treffen dauerten etwa eine Stunde.",
       "live": "Live-Aktualisierung",
-      "netHint": "Unvollständige Schätzung: Die 42 französischen Urlaubstage sind kalendarische Anwesenheit, keine gemessene aktive Kontaktzeit. Drei undatierte norwegische Treffen sind enthalten.",
+      "netHint": "Kalenderzeit seit dem 6. Juni 2015 abzüglich ungefähr 1.036 Stunden gemeldeter Anwesenheit (einschließlich Urlaub). Keine Messung tatsächlicher Kontaktzeit oder rechtlich geschuldeter Umgangsstunden.",
       "methodology": "Berechnungsmethode und Überschneidungen prüfen",
       "contactEstimate": "Zwischensumme der gemeldeten Anwesenheit (ungefähr)",
       "contactEstimateHint": "Frankreich: 42 Urlaubstage mit je 24 Kalenderstunden (1.008 Std.). Deutschland: etwa 1 Std. Wiedersehen und ein Wochenende mit 24 Std. (25 Std.). Norwegen: ungefähr drei Treffen von je einer Stunde (3 Std.), genaue Daten unbekannt.",
       "countriesLabel": "Aufteilung der gemeldeten Stunden",
       "franceLabel": "Urlaub in Frankreich",
       "germanyLabel": "Deutschland",
-      "norwayLabel": "Norwegen (≈ 3 × 1 Std.)"
+      "norwayLabel": "Norwegen (≈ 3 × 1 Std.)",
+      "refusalRate": "Als ausgefallen gemeldete Besuche — nach meinem Bericht der Mutter zugeschriebene Verweigerungen",
+      "refusalRateHint": "als ausgefallen gemeldete Termine / klassifizierte Termine. Ungeprüfte und vor der Entscheidung liegende Termine ausgeschlossen; persönliche Zuschreibung, keine gerichtliche Feststellung."
     },
     "advocacy": {
       "eyebrow": "Persönlicher Bericht · Bemühungen seit 2017",

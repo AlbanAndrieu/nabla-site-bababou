@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import {
  firstWeekend,nreWeekendStrip,nreMonthCalendar,completeNreInventory,nreInventoryStats,
- elapsedSeparationSeconds,estimateReportedContactHours,NRE_REPORTED_CONTACT,NRE_REPORTED_ORDER,NRE_REPORTED_SUSPENSION,
+ elapsedSeparationSeconds,estimateReportedContactHours,reportedMissedVisitShare,NRE_REPORTED_CONTACT,NRE_REPORTED_ORDER,NRE_REPORTED_SUSPENSION,
 } from "../lib/nreVisitLedger.mjs";
 
 const locales=["fr","en","de","no"];
@@ -42,6 +42,16 @@ test("as of 31 October 2026: 108 archive rows, 8 new review dates, never auto NR
  assert.ok(newer.every(r=>r.status==="review"));
  assert.equal(NRE_REPORTED_ORDER.monthlyWeekendHours,10);
  assert.equal(NRE_REPORTED_SUSPENSION.verified,false);
+});
+
+test("missed-visit percentage uses only classified owner-reported dates", () => {
+ const rows=completeNreInventory(legacyFixture(),new Date("2026-11-09T12:00:00Z"));
+ assert.deepEqual(reportedMissedVisitShare(rows),{recordedMissed:101,classified:107,percentage:94.4});
+ assert.deepEqual(reportedMissedVisitShare([
+  {status:"nre"},{status:"exception"},{status:"review"},{status:"beforeOrder"},
+ ]),{recordedMissed:1,classified:2,percentage:50});
+ assert.deepEqual(reportedMissedVisitShare([{status:"review"}]),{recordedMissed:0,classified:0,percentage:null});
+ assert.throws(()=>reportedMissedVisitShare(null),TypeError);
 });
 
 test("the ledger follows future Paris dates but never predicts offenses",()=>{
@@ -141,6 +151,8 @@ test("all four native languages have complete dashboard/status/filter copy",()=>
  assert.equal(objects[0].hero.lead,undefined);
  assert.equal(objects[0].hours.elapsedHint,undefined);
  assert.ok(objects.every(c=>c.hours.contactEstimate&&c.hours.contactEstimateHint));
+ assert.ok(objects.every(c=>c.hours.refusalRate&&c.hours.refusalRateHint));
+ assert.ok(objects.every(c=>c.hours.gross===undefined));
  assert.ok(objects.every(c=>c.hours.countriesLabel&&c.hours.franceLabel&&c.hours.germanyLabel&&c.hours.norwayLabel));
  assert.ok(objects.every(c=>c.table.filterYear&&c.table.review&&c.table.filterStatus&&c.table.filterAllStatuses&&c.table.resultsCount&&c.table.resetFilters&&c.timeline.viewDetails&&c.timeline.empty&&c.hours.contactEstimateHint));
  assert.ok(objects.every(c=>c.reference.prefix.includes("2017")&&c.exceptions.extendedStay));
@@ -172,6 +184,10 @@ test("the public page uses live client recomputation and retains legal source",(
  assert.match(hours,/1000/);
  assert.doesNotMatch(hours,/type="number"|setContactHours|hoursForm/);
  assert.match(hours,/estimateReportedContactHours/);
+ assert.match(hours,/reportedMissedVisitShare/);
+ assert.match(hours,/data-testid="nre-missed-summary"/);
+ assert.match(hours,/data-testid="nre-reported-refusal-percent"/);
+ assert.doesNotMatch(hours,/copy.hours.gross/);
  assert.match(hours,/report.subtotalHours/);
  assert.match(hours,/report.norwayApproxHours/);
  const calendar=read("app/[locale]/nre/sections.tsx");
