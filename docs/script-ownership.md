@@ -1,6 +1,6 @@
 # Scripts et commandes canoniques — Site Bababou
 
-**Répertoire opérationnel, 13 novembre 2026.** Le point d'entrée utilisateur est `justfile`, pas une seconde liste de pipelines shell. `Makefile` conserve les anciennes commandes compatibles. Les scripts ci-dessous sont des implémentations, **pas** des chemins alternatifs équivalents vers une quality gate.
+**Répertoire opérationnel, 14 novembre 2026.** Le point d'entrée utilisateur est `justfile`, pas une seconde liste de pipelines shell. `Makefile` conserve les anciennes commandes compatibles. Les scripts ci-dessous sont des implémentations, **pas** des chemins alternatifs équivalents vers une quality gate.
 
 | Besoin | Commande canonique | Implémentation / distinction |
 | --- | --- | --- |
@@ -31,3 +31,18 @@ Les optimisations des wrappers doivent rester locales au dépôt et **ne pas dé
 L'[index de proximité des scripts](../scripts/README.md) renvoie au présent répertoire canonique : **pas de deuxième inventaire de responsabilités**. Site Alban [#303](https://github.com/AlbanAndrieu/nabla-site-alban/pull/303) fournit le modèle d'index et de garde destructive ; dans Bababou, `scripts/agent-quality-gate.sh` dispose **déjà** de `QG_LARGE_DELETION`, de la vérification des modes exécutables et de l'inventaire des modifications. **Ne pas recopier** le guard Alban, ses exceptions homelab, ni son catalogue privé.
 
 Les éléments terminés restent consultables via les PR et les archives ; les sources publiques `public/*.html`, PDF et pièces du dossier ne sont jamais supprimées sur simple état `CODE_MERGED`. Les contrôles `NODE24`, SAST/SCA, confidentialité et exact-SHA restent indépendants des raccourcis hors ligne.
+
+## État de convergence avec nabla-site-alban — 14 novembre 2026
+
+Comparaison des **arbres Git de la branche Bababou #271 et de la branche Alban #303**, sans supposer que le code commun doit devenir byte-identique :
+
+| Périmètre | Identiques | Partagés mais différents | Propres à Alban | Propres à Bababou |
+| --- | ---: | ---: | ---: | ---: |
+| `scripts/` | 4 | 20 | 34 | 29 |
+| `.github/` | 1 | 17 | 11 | 7 |
+
+**Repris dans #271 :** l'index de proximité `scripts/README.md` et l'audit des artefacts Vercel SSG/ISR/fonctions, avec les invariants FR/EN/DE/NO de Bababou. **Déjà présent côté Bababou :** garde anti-suppression massive, contrôle des modes exécutables, analyse bornée du scope Git, `justfile`, publication exact-SHA et FinOps hors du runtime Next.
+
+**À rapprocher, mais sans import aveugle :** `scripts/quality-gate.sh`, `scripts/agent-publish.sh`, `scripts/vercel-ignore-build.sh`, `.github/workflows/ci.yml` et `.github/workflows/vercel-preview.yml`. Les différences doivent être analysées en comportement et en coût, puis corrigées par lots testés. La source Alban #303 est encore Draft et ne constitue pas une release de politique commune.
+
+**Hors périmètre Bababou :** catalogue homelab Backstage V2, outils OWNER/SERVICE, diagnostics TrueNAS et ses règles d'ACL ; conserver les éléments correspondants dans Site Alban / FastAPI / Compose. À l'inverse, conserver en Bababou les gates de confidentialité familiale et la conservation des archives HTML/PDF déjà publiques.

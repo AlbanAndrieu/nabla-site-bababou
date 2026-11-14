@@ -1,6 +1,6 @@
 # Roadmap d'ingénierie — Site Bababou
 
-**Réconciliée le 13 novembre 2026.** Complément d'exécution de la [roadmap générale](roadmap.md) : **mêmes identifiants `BB-xx`, aucun second backlog**. Priorités et arbitrages sont exclusivement dans `docs/roadmap.md`. La référence de lecture initiale est `master@2ebb293691d1` ; toute validation de livraison doit être liée à son **SHA exact**, pas à cette référence historique.
+**Réconciliée le 14 novembre 2026.** Complément d'exécution de la [roadmap générale](roadmap.md) : **mêmes identifiants `BB-xx`, aucun second backlog**. Priorités et arbitrages sont exclusivement dans `docs/roadmap.md`. La référence de lecture initiale est `master@2ebb293691d1` ; toute validation de livraison doit être liée à son **SHA exact**, pas à cette référence historique.
 
 ## Protocole commun de livraison
 

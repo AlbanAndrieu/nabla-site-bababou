@@ -1,6 +1,6 @@
 # Roadmap générale — Site Bababou
 
-**Réconciliation du 13 novembre 2026 — référence : `master@2ebb293691d1`.** Ce document contient **seulement les décisions et livrables ouverts**. La [roadmap d’ingénierie](engineering-roadmap.md) décrit les critères techniques, les commandes et les dépendances des mêmes identifiants `BB-xx` ; elle n'a pas son propre ordre de priorité. [Historique conservé](archive/roadmap-through-2026-11-13.md).
+**Réconciliation du 14 novembre 2026 — référence : `master@2ebb293691d1`.** Ce document contient **seulement les décisions et livrables ouverts**. La [roadmap d’ingénierie](engineering-roadmap.md) décrit les critères techniques, les commandes et les dépendances des mêmes identifiants `BB-xx` ; elle n'a pas son propre ordre de priorité. [Historique conservé](archive/roadmap-through-2026-11-13.md).
 
 ## État attesté et limites
 

@@ -2,7 +2,7 @@
 
 Le site `bababou.com` utilise **Next.js App Router** et `next-intl` (FR/EN/DE/NO), tout en préservant les pages historiques de `public/`.
 
-**État au 13 novembre 2026 :** les PR #266 (préparation de la bascule React) et #269 (documents sources) sont fusionnées sur `master`. La [PR #270](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/270) reste **ouverte, Ready for review**, avec une sixième carte sur sa branche ; les cinq cartes indiquées ci-dessous restent celles de `master`. La validation éditoriale ne vaut pas activation de `/` : l'accueil public historique reste servi tant que les gates exact-SHA ne sont pas approuvées.
+**État au 14 novembre 2026 :** les PR #266 (préparation de la bascule React) et #269 (documents sources) sont fusionnées sur `master`. La [PR #270](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/270) reste **ouverte, Ready for review**, avec une sixième carte sur sa branche ; les cinq cartes indiquées ci-dessous restent celles de `master`. La validation éditoriale ne vaut pas activation de `/` : l'accueil public historique reste servi tant que les gates exact-SHA ne sont pas approuvées.
 
 Deux pages React principales sont disponibles pour revue, **non indexables par configuration** :
 
