@@ -41,6 +41,9 @@ if (errors.length === 0) {
   for (const id of engineeringIds) {
     if (!unique.has(id)) errors.push(`Backlog technique orphelin : ${id}`);
   }
+  if (ids.join("|") !== engineeringIds.join("|")) {
+    errors.push("Ordre BB-xx différent entre roadmaps");
+  }
   if (!roadmap.includes("(engineering-roadmap.md)") || !engineering.includes("(roadmap.md)")) {
     errors.push("Liens réciproques des deux roadmaps manquants");
   }
