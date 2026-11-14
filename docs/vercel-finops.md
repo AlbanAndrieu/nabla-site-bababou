@@ -85,3 +85,15 @@ restent à lire dans Vercel Usage.
 Le parseur `analyzeUsage(document, { asOf })` accepte désormais une date de référence pour les collecteurs automatiques : il retourne **`STALE_USAGE`** si la dernière date de l'export dépasse 48 h (ou se trouve trop loin dans le futur). Il conserve la lecture historique sans `asOf`, sans réinterpréter les coûts comme des CPU-heures. Test unitaire dédié ajouté ; exécution de la gate exacte à confirmer.
 
 Le dépôt [nabla-openclaw](https://github.com/AlbanAndrieu/nabla-openclaw) prépare `scripts/finops/check-vercel-team.mjs` : collecte **uniquement sur lancement explicite** (`--live`) ou lecture de fichier (`--input`), sortie expurgée, sans secrets et sans tâche planifiée. Il ne faut pas ajouter de token Vercel, d'API FinOps ni de rapport de facturation brut sur une page publique. Le quota est partagé entre les **quatre projets** Vercel ; des pages publiques SSG ne suffisent pas à le mesurer.
+
+## Audit des artefacts de build — reprise du Site Alban (14 novembre 2026)
+
+Le script [`scripts/audit-vercel-runtime.mjs`](../scripts/audit-vercel-runtime.mjs) adapte l'audit SSG/ISR/fonctions [Site Alban #293](https://github.com/AlbanAndrieu/nabla-site-alban/pull/293) aux **quatre locales Bababou**. Contrairement à un inventaire recopié, il réutilise la liste et les règles de `scripts/verify-next-prerender.mjs`, déjà vérifiées par les tests SSG.
+
+```bash
+just vercel-runtime-test  # Contrats hors réseau
+npm run build             # Produit un manifeste Next au SHA local
+just vercel-runtime-audit # Lecture des artefacts seulement, aucun appel Vercel
+```
+
+L'audit retourne `NOT_RUN` sans build Next, `WARN` lorsque des routes ne sont pas SSG, que de l'ISR/fonction public est détecté ou que l'inventaire des fonctions `.vercel/output/functions` manque, et `FAIL` si une route API privée figure dans le manifeste de prérendu. Le mode `--strict` rend `WARN` bloquant. Le champ `cpuMeasured` reste toujours `false` : seuls les exports de facturation autorisés fournissent le CPU réel.

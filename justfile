@@ -147,6 +147,13 @@ loop:
 docs-audit:
     node scripts/quality/docs-roadmap-consistency.mjs
 
+# Read-only SSG/ISR/Function audit, adapted from nabla-site-alban; no API or CPU estimate.
+vercel-runtime-audit:
+    node scripts/audit-vercel-runtime.mjs
+
+vercel-runtime-test:
+    node --test unit-tests/vercelRuntimeAudit.test.mjs
+
 # Validate pre-commit structural integrity without fetching or executing hooks.
 # Uses PyYAML already supplied by the local pre-commit Python installation.
 precommit-config-test:

@@ -39,25 +39,26 @@ test("canonical docs keep resolvable internal Markdown links", () => {
   }
 });
 
-test("roadmap tracks only active P1–P5 work and links each canonical runbook", () => {
+test("roadmap and engineering reference the same active BB items and canonical runbooks", () => {
   const read = (name) => readFileSync(resolve(root, name), "utf8");
   const roadmap = read("docs/roadmap.md");
+  const engineering = read("docs/engineering-roadmap.md");
   const readme = read("README.md");
-
-  assert.match(roadmap, /## Travail restant — ordre P1 → P5/);
-  for (const priority of ["P1", "P2", "P3", "P4", "P5"]) {
-    assert.ok(roadmap.includes("**" + priority + " —"), priority);
-  }
+  const roadmapIds = [...roadmap.matchAll(/^\| \*\*(BB-\d{2})\*\* \|/gm)].map((match) => match[1]);
+  const engineeringIds = [...engineering.matchAll(/^\| (BB-\d{2}) \|/gm)].map((match) => match[1]);
+  assert.equal(roadmapIds.length, 11, "Canonical backlog must contain eleven decisions");
+  assert.equal(new Set(roadmapIds).size, roadmapIds.length);
+  assert.deepEqual(engineeringIds, roadmapIds);
   assert.match(roadmap, /NO-GO/);
   assert.match(roadmap, /publication-redaction\.md/);
-  assert.match(roadmap, /Playwright \+ axe|Playwright\/axe/);
-  assert.match(roadmap, /BetterLeaks/);
-  assert.match(roadmap, /\[opérations et incidents\]\(operations\.md\)/);
-  assert.match(readme, /\[Roadmap active\]\(docs\/roadmap\.md\)/);
+  assert.match(roadmap, /Playwright/);
+  assert.match(roadmap, /AppSec|SAST/);
+  assert.match(roadmap, /operations\.md/);
+  assert.match(readme, /\[Roadmap générale\]\(docs\/roadmap\.md\)/);
+  assert.match(readme, /\[Roadmap d.ingénierie\]\(docs\/engineering-roadmap\.md\)/);
   assert.match(readme, /\[Runbook opérationnel\]\(docs\/operations\.md\)/);
   assert.match(readme, /\[Procédure de bascule\]\(docs\/homepage-react-cutover\.md\)/);
-  assert.doesNotMatch(roadmap, /\*\*PR #253\*\* Draft|10 cartes \*\*toutes illustrées\*\*/);
-  assert.doesNotMatch(roadmap, /- \[x\] /);
+  assert.doesNotMatch(roadmap, /## Travail restant — ordre P1 → P5|- \[x\] /);
 });
 
 test("cutover and parity reflect five child cards and seven parent cards", () => {

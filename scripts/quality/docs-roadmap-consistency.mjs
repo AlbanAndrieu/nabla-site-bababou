@@ -12,6 +12,8 @@ const files = [
   "docs/roadmap.md",
   "docs/engineering-roadmap.md",
   "docs/script-ownership.md",
+  "scripts/README.md",
+  "scripts/audit-vercel-runtime.mjs",
   "docs/archive/roadmap-through-2026-11-13.md",
 ];
 const errors = [];
@@ -25,6 +27,8 @@ if (errors.length === 0) {
   const scripts = read("docs/script-ownership.md");
   const readme = read("README.md");
   const operations = read("docs/operations.md");
+  const scriptIndex = read("scripts/README.md");
+  const just = read("justfile");
 
   const ids = [...roadmap.matchAll(/^\| \*\*(BB-\d{2})\*\* \|/gm)].map((m) => m[1]);
   const engineeringIds = [...engineering.matchAll(/^\| (BB-\d{2}) \|/gm)].map((m) => m[1]);
@@ -45,6 +49,13 @@ if (errors.length === 0) {
   }
   if (!operations.includes("engineering-roadmap.md") || !operations.includes("script-ownership.md")) {
     errors.push("Runbook opérations non relié aux références canoniques");
+  }
+  if (!scriptIndex.includes("../docs/script-ownership.md") ||
+      !scriptIndex.includes("scripts/audit-vercel-runtime.mjs")) {
+    errors.push("Index scripts non relié à la documentation canonique et à l’audit runtime");
+  }
+  if (!just.includes("vercel-runtime-audit:") || !just.includes("vercel-runtime-test:")) {
+    errors.push("Recipes canoniques Vercel runtime manquantes dans justfile");
   }
   const mentioned = [...scripts.matchAll(/`(scripts\/[A-Za-z0-9_.\/-]+)`/g)].map((m) => m[1]);
   for (const path of new Set(mentioned)) {
