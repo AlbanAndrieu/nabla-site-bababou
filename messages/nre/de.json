@@ -16,7 +16,7 @@
     "stats": {
       "heading": "Zusammenfassung",
       "total": "Erfasste Wochenende",
-      "nre": "Gemeldete NRE (historisch)",
+      "nre": "Vom Vater als ausgefallen gemeldete Besuche",
       "exceptions": "Gewährter oder teilweiser Umgang"
     },
     "reference": {
@@ -36,7 +36,7 @@
     },
     "timeline": {
       "heading": "Zeitleiste nach Jahr",
-      "lead": "Jedes Jahr zeigt die ersten Monatswochenenden. ✗ = historische NRE-Angabe, ✓ = gewährt oder teilweise, ? = ungeprüft. Spätere Termine werden nicht automatisch als Straftat eingeordnet.",
+      "lead": "✗ = nach Angaben des Vaters verweigerter oder ausgefallener Besuch; ✓ = vollständiger oder teilweiser Kontakt; ? = ungeprüft. Der Vater erklärt, die Mutter habe sämtliche für 2026 beantragten Besuche bis auf die aufgeführten Ausnahmen abgelehnt. Abgeschlossene Termine sind so gekennzeichnet, ohne gerichtliche Feststellung.",
       "norway": "Norwegen, Oslo",
       "germany": "Deutschland, Frankfurt",
       "viewDetails": "Datum in der Tabelle ansehen",
@@ -53,7 +53,7 @@
     },
     "table": {
       "heading": "Erste Wochenenden jedes Monats",
-      "lead": "Der historische Nachweis reicht bis Februar 2026. Ab März 2026 werden Daten automatisch ergänzt; der Status hängt von der noch zu prüfenden deutschen Gerichtsentscheidung ab.",
+      "lead": "Das ursprüngliche Verzeichnis reicht bis Februar 2026. Von März bis Dezember 2026 werden abgeschlossene Wochenenden nach der ausdrücklichen Erklärung des Vaters als verweigert gekennzeichnet; die rechtliche Durchsetzbarkeit ist gesondert zu prüfen. Die Termine 2027 bleiben offen.",
       "month": "Monat",
       "weekend": "Wochenende (Sa – So)",
       "status": "Status",
@@ -66,7 +66,8 @@
       "filterStatus": "Wochenendstatus",
       "filterAllStatuses": "Alle Status",
       "resultsCount": "Angezeigte Termine",
-      "resetFilters": "Filter zurücksetzen"
+      "resetFilters": "Filter zurücksetzen",
+      "nreReported2026": "Besuch nach Angaben des Vaters verweigert (2026, keine gerichtliche Feststellung)"
     },
     "exceptions": {
       "heading": "Gemeldeter gewährter oder teilweiser Umgang",
@@ -81,7 +82,7 @@
       "scope": "In Frankreich werden zwei Aufenthalte von je sieben Tagen und einer von 28 Tagen mit 24 Stunden pro Anwesenheitstag angesetzt. Genaue Daten fehlen noch.",
       "source": "In Deutschland wurden ein Wiedersehen von etwa einer Stunde und ein späteres Wochenende von etwa 24 Stunden gemeldet. In Norwegen werden ungefähr drei einstündige Treffen berichtet; ihre Daten sind unbekannt, daher werden sie nur einmal in der Gesamtschätzung und nicht einzelnen Kalenderkarten zugeordnet.",
       "refresh": "Die Uhr aktualisiert sich jede Sekunde; die Terminliste folgt dem aktuellen Pariser Datum.",
-      "suspension": "Eine Aussetzung des Umgangs in Deutschland vom 26. Februar 2026 bis 25. Februar 2027 wurde berichtet; der genaue Beschluss ist hier nicht geprüft. Spätere Termine gelten nicht automatisch als NRE.",
+      "suspension": "Eine Aussetzung des Umgangs in Deutschland vom 26. Februar 2026 bis 25. Februar 2027 wurde berichtet, ohne überprüfte Originalentscheidung. Die Verweigerungen 2026 beruhen auf den Angaben des Vaters, nicht auf einem Nachweis der Missachtung eines vollstreckbaren Beschlusses.",
       "beforeOrder": "Der Eintrag März 2017 liegt vor der Entscheidung vom 31. März 2017 und muss geprüft werden.",
       "intro": "Nach meiner Darstellung wurden die vorgesehenen zehn Stunden pro Wochenende nie eingehalten; seltene Treffen dauerten etwa eine Stunde.",
       "live": "Live-Aktualisierung",
@@ -94,7 +95,7 @@
       "germanyLabel": "Deutschland",
       "norwayLabel": "Norwegen (≈ 3 × 1 Std.)",
       "refusalRate": "Als ausgefallen gemeldete Besuche — nach meinem Bericht der Mutter zugeschriebene Verweigerungen",
-      "refusalRateHint": "als ausgefallen gemeldete Termine / klassifizierte Termine. Ungeprüfte und vor der Entscheidung liegende Termine ausgeschlossen; persönliche Zuschreibung, keine gerichtliche Feststellung."
+      "refusalRateHint": "gemeldete ausgefallene / klassifizierte Termine einschließlich der Verweigerungen 2026. Ungeklärte und vor der Entscheidung liegende Termine ausgeschlossen; persönliche Angabe, keine gerichtliche Feststellung."
     },
     "advocacy": {
       "eyebrow": "Persönlicher Bericht · Bemühungen seit 2017",

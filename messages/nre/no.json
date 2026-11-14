@@ -16,7 +16,7 @@
     "stats": {
       "heading": "Nøkkeltall",
       "total": "Registrerte helgedatoer",
-      "nre": "Rapporterte NRE (historisk)",
+      "nre": "Samvær meldt uteblitt av faren",
       "exceptions": "Gjennomført eller delvis samvær"
     },
     "reference": {
@@ -36,7 +36,7 @@
     },
     "timeline": {
       "heading": "Tidslinje etter år",
-      "lead": "Hvert år viser første helg i måneden. ✗ = historisk NRE-oppføring, ✓ = gjennomført eller delvis samvær, ? = ikke bekreftet. Nye datoer klassifiseres ikke automatisk som lovbrudd.",
+      "lead": "✗ = avslått eller uteblitt samvær ifølge faren; ✓ = gjennomført eller delvis samvær; ? = ikke kontrollert. Faren opplyser at moren avslo alle samværsforespørsler i 2026 bortsett fra de få unntakene som allerede er oppført. Avsluttede datoer viser denne opplysningen, ikke en rettslig konklusjon.",
       "norway": "Norge, Oslo",
       "germany": "Tyskland, Frankfurt",
       "viewDetails": "Vis dato i tabellen",
@@ -53,7 +53,7 @@
     },
     "table": {
       "heading": "Første helg i hver måned",
-      "lead": "Den historiske oversikten går til februar 2026. Fra mars 2026 opprettes datoene automatisk, men status må vurderes mot den rapporterte tyske avgjørelsen.",
+      "lead": "Den opprinnelige oversikten går til februar 2026. Fullførte helger fra mars til desember 2026 merkes som avslått etter farens uttrykkelige beretning, uten å forutsette at samvær var rettslig håndhevbart. Datoer i 2027 må fortsatt undersøkes.",
       "month": "Måned",
       "weekend": "Helg (lør – søn)",
       "status": "Status",
@@ -66,7 +66,8 @@
       "filterStatus": "Helgestatus",
       "filterAllStatuses": "Alle statuser",
       "resultsCount": "Viste datoer",
-      "resetFilters": "Nullstill filtre"
+      "resetFilters": "Nullstill filtre",
+      "nreReported2026": "Samvær avslått ifølge faren (2026; rapportert, ikke rettslig fastslått)"
     },
     "exceptions": {
       "heading": "Rapporterte gjennomførte eller delvise samvær",
@@ -81,7 +82,7 @@
       "scope": "I Frankrike regnes to opphold på sju dager og ett på 28 dager med 24 timer per oppholdsdag. Nøyaktige datoer er ikke knyttet til kalenderen ennå.",
       "source": "I Tyskland oppgis et møte på omtrent én time og en senere helg på omtrent 24 timer. I Norge er det rapportert om omtrent tre møter på én time hver; datoene er ukjente, så de tas med én gang i anslaget, men ikke knyttet til kalenderkort.",
       "refresh": "Klokken oppdateres hvert sekund. Terminoversikten følger gjeldende dato i Paris.",
-      "suspension": "En tysk avgjørelse om stans i samvær fra 26. februar 2026 til 25. februar 2027 er omtalt, men selve avgjørelsen er ikke kontrollert her. Senere datoer merkes ikke NRE.",
+      "suspension": "En tysk avgjørelse om stans i samvær fra 26. februar 2026 til 25. februar 2027 er omtalt, men originalavgjørelsen er ikke kontrollert. Avslagene for 2026 gjengis som farens opplysninger, ikke som påvist brudd på et rettslig pålegg.",
       "beforeOrder": "Oppføringen for mars 2017 er før avgjørelsen 31. mars 2017 og må undersøkes.",
       "intro": "Ifølge min beskrivelse ble de planlagte ti timene per helg aldri overholdt; sjeldne møter varte omtrent én time.",
       "live": "Oppdateres fortløpende",
@@ -94,7 +95,7 @@
       "germanyLabel": "Tyskland",
       "norwayLabel": "Norge (≈ 3 × 1 t)",
       "refusalRate": "Rapporterte uteblitte samvær — avslag tilskrevet moren i min beretning",
-      "refusalRateHint": "rapporterte uteblitte datoer / klassifiserte datoer. Uavklarte og før-avgjørelsen datoer er utelatt; personlig vurdering, ikke en rettslig fastslått konklusjon."
+      "refusalRateHint": "rapporterte uteblitte / klassifiserte datoer, inkludert avslagene meldt for 2026. Uavklarte datoer og datoer før avgjørelsen er utelatt; personlig opplysning, ikke rettslig konklusjon."
     },
     "advocacy": {
       "eyebrow": "Personlig beretning · innsats siden 2017",

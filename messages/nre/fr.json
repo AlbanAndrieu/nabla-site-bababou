@@ -16,7 +16,7 @@
     "stats": {
       "heading": "Synthèse chiffrée",
       "total": "Dates inventoriées",
-      "nre": "NRE signalées (historique)",
+      "nre": "Visites manquées selon le témoignage",
       "exceptions": "Visites honorées ou partielles"
     },
     "reference": {
@@ -36,7 +36,7 @@
     },
     "timeline": {
       "heading": "Chronologie par année",
-      "lead": "Chaque année présente les premiers week-ends mensuels. ✗ = NRE déclarée dans les archives, ✓ = visite honorée ou partielle, ? = date sans statut vérifié. Les mois nouveaux ne sont pas automatiquement qualifiés de NRE.",
+      "lead": "✗ = visite refusée ou manquée selon le récit du père ; ✓ = rencontre complète ou partielle ; ? = à vérifier. Pour 2026, le père déclare que la mère a refusé toutes les demandes de visite, hormis les rares exceptions déjà recensées. Les dates de 2026 terminées reprennent cette déclaration, sans constat judiciaire d'illégalité.",
       "norway": "Norvège, Oslo",
       "germany": "Allemagne, Frankfurt",
       "viewDetails": "Voir la date détaillée",
@@ -53,7 +53,7 @@
     },
     "table": {
       "heading": "Calendrier des premiers week-ends du mois",
-      "lead": "Source historique : inventaire publié jusqu’en février 2026. À compter de mars 2026, dates calculées automatiquement et statut à vérifier au regard de la décision allemande signalée.",
+      "lead": "Le calendrier d'origine couvre les dates jusqu'en février 2026. De mars à décembre 2026, les week-ends terminés sont indiqués comme refusés selon la déclaration expresse du père ; cela ne présume pas de l'exigibilité juridique du droit de visite. Les dates de 2027 restent à vérifier.",
       "month": "Mois",
       "weekend": "Week-end (samedi – dimanche)",
       "status": "Statut",
@@ -66,7 +66,8 @@
       "filterStatus": "Statut des week-ends",
       "filterAllStatuses": "Tous les statuts",
       "resultsCount": "Dates affichées",
-      "resetFilters": "Effacer les filtres"
+      "resetFilters": "Effacer les filtres",
+      "nreReported2026": "Visite refusée selon le père (2026, déclaration non judiciairement constatée)"
     },
     "exceptions": {
       "heading": "Visites honorées ou partielles déclarées",
@@ -81,7 +82,7 @@
       "scope": "Pour la France, deux séjours de 7 jours et un séjour de 28 jours sont convertis à 24 h par jour de présence ; les dates exactes ne sont pas encore identifiées dans le calendrier.",
       "source": "En Allemagne, une rencontre d'environ 1 h et un week-end ultérieur d'environ 24 h sont signalés. En Norvège, environ trois rencontres d'une heure sont déclarées ; leur mois exact reste inconnu, elles sont incluses une seule fois dans le total et non attribuées aux cartes du calendrier.",
       "refresh": "Le compteur se met à jour chaque seconde ; le calendrier est recalculé automatiquement selon la date locale de Paris.",
-      "suspension": "Suspension des visites en Allemagne signalée à partir du 26 février 2026 jusqu’au 25 février 2027 ; dispositif judiciaire original non vérifié ici. Les dates ultérieures ne sont pas classées NRE.",
+      "suspension": "Une suspension des visites en Allemagne est signalée du 26 février 2026 au 25 février 2027, sans dispositif original vérifié ici. Les refus de contact en 2026 sont consignés selon la déclaration du père, sans en déduire une violation d'une décision exécutoire.",
       "beforeOrder": "La ligne de mars 2017 précède la décision citée du 31 mars 2017 et est classée à vérifier.",
       "intro": "Les 10 heures de visite prévues par week-end n’ont jamais été respectées selon mon récit ; de rares rencontres ont duré environ une heure.",
       "live": "Actualisation en direct",
@@ -94,7 +95,7 @@
       "germanyLabel": "Allemagne",
       "norwayLabel": "Norvège (≈ 3 × 1 h)",
       "refusalRate": "Visites non honorées — refus attribués à la mère selon mon récit",
-      "refusalRateHint": "dates classées manquées / dates classées. Dates à vérifier et avant la décision exclues ; attribution personnelle, non constat judiciaire."
+      "refusalRateHint": "dates déclarées manquées / dates classées, incluant les refus signalés pour 2026. Dates non classées et antérieures à la décision exclues ; attribution personnelle, non constat judiciaire."
     },
     "advocacy": {
       "eyebrow": "Témoignage personnel · démarches depuis 2017",
