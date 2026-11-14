@@ -42,10 +42,8 @@ export default async function LocaleLayout({
     backToTop: string;
     backToTopAria: string;
     copyright: string;
-    eleonoreRssFeedAria: string;
     legalNotices: string;
     footerNavigationAria: string;
-    rssFeedAria: string;
   };
   const contactPage = messages.contactPage as {
     information: { title: string };
@@ -102,10 +100,8 @@ export default async function LocaleLayout({
             contactLabel={contactPage.information.title}
             navigationAriaLabel={site.footerNavigationAria}
             copyright={copyright}
-            eleonoreRssFeedAria={site.eleonoreRssFeedAria}
             legalNotices={site.legalNotices}
             locale={locale}
-            rssFeedAria={site.rssFeedAria}
           />
         </NextIntlClientProvider>
         <Script

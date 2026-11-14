@@ -49,18 +49,33 @@
 				padding: 0.75rem 0;
 			}
 			.people-hero {
-				display: flex;
-				flex-wrap: wrap;
-				align-items: center;
-				gap: 2rem;
-				padding: 2rem 0;
+				display: grid;
+				grid-template-columns: minmax(0, 1fr);
+				gap: 1.25rem;
+				padding: 1.5rem 0;
 			}
 			.people-hero__image {
-				flex: 0 0 auto;
+				width: 100%;
+				min-width: 0;
+				margin: 0;
 			}
-			.people-hero__content {
-				flex: 1 1 18rem;
+			.people-hero__image img {
+				width: 100%;
+				height: auto;
+				border-radius: 0.75rem;
+				border: 1px solid var(--border-color, #e5e7eb);
 			}
+			.people-hero__image figcaption {
+				margin-top: 0.7rem;
+				color: var(--muted-color, #475569);
+				line-height: 1.5;
+			}
+			.people-hero__image figcaption a { text-underline-offset: 0.2em; }
+			.people-hero__image figcaption a:focus-visible {
+				outline: 3px solid currentColor;
+				outline-offset: 3px;
+			}
+			.people-hero__content { min-width: 0; }
 			.people-card-flag {
 				font-size: 1.25rem;
 				line-height: 1;
@@ -105,15 +120,21 @@
 					<h1 id="people-heading" class="display-6 mb-4">People I contacted</h1>
 
 					<div class="people-hero">
-						<div class="people-hero__image">
+						<figure class="people-hero__image">
 							<img
 								class="img-fluid d-block"
-								src="assets/logo-labyrinth-simple.png"
-								alt="Labyrinth illustration representing the difficult journey"
-								width="160"
-								height="160"
+								src="/assets/people-contacted-europe.avif"
+								alt="Illustrated network of contacts across Europe, with France, Norway and Germany highlighted alongside courts, central authorities, NGOs, schools, translators and social services"
+								width="1672"
+								height="941"
+								loading="eager"
+								decoding="async"
 							/>
-						</div>
+							<figcaption>
+								A symbolic illustration of outreach across Europe, not a verified map or count of individual contacts.
+								<a href="/assets/people-contacted-europe.avif" target="_blank" rel="noopener noreferrer">View full-size illustration</a>.
+							</figcaption>
+						</figure>
 						<div class="people-hero__content">
 							<div class="card border-0 shadow-sm bg-light">
 								<div class="card-body p-4">

@@ -27,7 +27,7 @@ test("P2 footer navigation name follows the active locale", async () => {
   ]);
   assert.match(footer, /aria-label=\{navigationAriaLabel\}/);
   assert.match(footer, /screenReaderOnly/);
-  assert.match(footer, /\{eleonoreRssFeedAria\}<\/span>/);
+  assert.doesNotMatch(footer, /href="\/(?:eleonore-)?feed\.xml"/);
   assert.match(layout, /navigationAriaLabel=\{site\.footerNavigationAria\}/);
   for (const [locale, content] of [
     ["fr", french],
@@ -51,5 +51,11 @@ test("localized home release links do not force readers back to French", async (
   assert.match(footer, /isHomeCutoverEnabled\(\)/);
   assert.match(footer, /releasedHomepagePath\(locale\)/);
   assert.match(policySection, /localizedPolicyPath\(slug, locale\)/);
+  for (const p of ["app/[locale]/page.tsx", "app/[locale]/home-preview/page.tsx"]) {
+    const page = await read(p);
+    assert.doesNotMatch(page, /<LegacyFooterSection|id="preview-resources"|href="\/feed\.xml"/);
+  }
+  assert.match(footer, /href="\/policy\/legal"/);
+
   assert.match(policyPaths, /locale === routing\.defaultLocale/);
 });

@@ -156,3 +156,24 @@ test.describe("People Contacted Cards", () => {
   });
 
 });
+
+test("reviewed Europe artwork is responsive, local and does not imply verified contact counts", async ({ page, request }) => {
+  const asset = await request.get("/assets/people-contacted-europe.avif");
+  expect(asset.status()).toBe(200);
+  expect(asset.headers()["content-type"]).toMatch(/image\/avif/);
+  const body = await asset.body();
+  expect(body.length).toBeLessThan(200_000);
+
+  await page.goto("/people-contacted.html");
+  const figure = page.locator(".people-hero__image");
+  const graphic = figure.locator('img[src="/assets/people-contacted-europe.avif"]');
+  await expect(graphic).toHaveCount(1);
+  await expect(graphic).toHaveAttribute("alt", /France, Norway and Germany/);
+  await expect(figure.locator("figcaption")).toContainText(/symbolic illustration/i);
+  await expect(figure.locator('a[href="/assets/people-contacted-europe.avif"]')).toHaveCount(1);
+  expect(await graphic.evaluate((img: HTMLImageElement) => img.complete && img.naturalWidth > 0)).toBe(true);
+  await page.setViewportSize({ width: 320, height: 720 });
+  const imageBounds = await graphic.boundingBox();
+  expect(imageBounds).not.toBeNull();
+  expect(imageBounds!.width).toBeLessThanOrEqual(320);
+});

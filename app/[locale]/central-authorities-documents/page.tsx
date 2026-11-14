@@ -105,6 +105,15 @@ export default async function CentralAuthorityDocumentsPage({
                       >
                         {document.title}
                       </a>
+                      {document.filename === "demande-explications-autorites-competentes-fr.html" ? (
+                        <p>
+                          <Link href={`${locale === "fr" ? "" : `/${locale}`}/ca/demande-explications-autorites-competentes-fr`}>
+                            {locale === "fr" ? "Version React en revue" : locale === "de"
+                              ? "React-Fassung zur Prüfung" : locale === "no"
+                                ? "React-versjon til gjennomgang" : "Review React version"}
+                          </Link>
+                        </p>
+                      ) : null}
                       <div className={styles.documentMeta}>
                         <span>
                           {languageLabels[document.sourceLocale ?? "unknown"]}

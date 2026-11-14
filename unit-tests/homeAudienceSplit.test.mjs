@@ -27,17 +27,17 @@ test("both pages have native, complete content in four languages", () => {
       }
     }
     assert.equal(child.letter.length, 3);
-    assert.equal(child.cards.length, 5);
+    assert.equal(child.cards.length, 6);
     assert.equal(fathers.cards.length, 7);
   }
 });
 
-test("child-facing cards preserve exactly five reviewed media and safe anchors", () => {
-  const expected = ["#preview-opening", "#preview-hope", "#preview-journey", "#preview-letter", "#preview-people"];
+test("child-facing cards preserve six reviewed media and safe anchors", () => {
+  const expected = ["#preview-opening", "#preview-hope", "#preview-journey", "#preview-letter", locale === "fr" ? "/people-contacted" : `/${locale}/people-contacted`, "#preview-identity"];
   for (const locale of locales) {
     const cards = homeAudienceCards(locale, "child");
     assert.deepEqual(cards.map((c) => c.href), expected);
-    assert.equal(cards.length, 5);
+    assert.equal(cards.length, 6);
     for (const c of cards) {
       assert.ok(c.image.startsWith("/assets/"));
       assert.ok(existsSync(new URL("../public" + c.image, import.meta.url)), c.image);
@@ -112,4 +112,19 @@ test("navigational paths are locale-specific and do not rely on Google Translate
     read("components/home/AbductionResources.tsx"),
     read("app/[locale]/home-preview/page.tsx"),
   ]) assert.doesNotMatch(source, /google\.translate|<Script|<iframe/i);
+});
+
+test("people infographic and identity card have native translations and private identifiers stay redacted", () => {
+  for (const locale of locales) {
+    const { child } = homeAudienceCopy(locale);
+    assert.equal(homeAudienceCards(locale, "child")[4].image, "/assets/people-contacted-europe.avif");
+    assert.equal(homeAudienceCards(locale, "child")[5].href, "#preview-identity");
+    assert.equal(homeAudienceCards(locale, "child")[4].href, locale === "fr" ? "/people-contacted" : `/${locale}/people-contacted`);
+    assert.equal(child.peopleTitle, undefined);
+    assert.equal(child.peopleText, undefined);
+    assert.equal(child.peopleMapAlt, undefined);
+    assert.equal(child.peopleMapCaption, undefined);
+  }
+  assert.match(read("components/home/ChildHomeSections.tsx"), /id="preview-identity"/);
+  assert.doesNotMatch(read("components/home/ChildHomeSections.tsx"), /id="preview-people"/);
 });

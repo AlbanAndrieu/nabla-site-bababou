@@ -13,10 +13,8 @@ type FooterProps = {
   contactLabel: string;
   navigationAriaLabel: string;
   copyright: string;
-  eleonoreRssFeedAria: string;
   legalNotices: string;
   locale: AppLocale;
-  rssFeedAria: string;
 };
 
 export default function Footer({
@@ -26,10 +24,8 @@ export default function Footer({
   contactLabel,
   navigationAriaLabel,
   copyright,
-  eleonoreRssFeedAria,
   legalNotices,
   locale,
-  rssFeedAria,
 }: FooterProps) {
   // On the approved release, preserve the reader\'s locale when returning home.
   const homeHref = isHomeCutoverEnabled()
@@ -49,20 +45,24 @@ export default function Footer({
           <span className={styles.screenReaderOnly}>{contactLabel}</span>
         </a>
         <a
-          href="/feed.xml"
+          href="https://calendly.com/alban-andrieu"
           className={`${styles.socialLink} social-link`}
-          aria-label={rssFeedAria}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Calendly"
         >
-          <i className="fa fa-rss" aria-hidden="true" />
-          <span className={styles.screenReaderOnly}>{rssFeedAria}</span>
+          <i className="fas fa-calendar-plus" aria-hidden="true" />
+          <span className={styles.screenReaderOnly}>Calendly</span>
         </a>
         <a
-          href="/eleonore-feed.xml"
+          href="https://github.com/AlbanAndrieu/nabla-site-bababou"
           className={`${styles.socialLink} social-link`}
-          aria-label={eleonoreRssFeedAria}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="GitHub"
         >
-          <i className="fa fa-rss" aria-hidden="true" />
-          <span className={styles.screenReaderOnly}>{eleonoreRssFeedAria}</span>
+          <i className="fab fa-github" aria-hidden="true" />
+          <span className={styles.screenReaderOnly}>GitHub</span>
         </a>
       </div>
       <div className={`${styles.links} footer-links`}>

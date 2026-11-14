@@ -159,3 +159,10 @@
   .card { border: 1px solid CanvasText; box-shadow: none; }
   .media[data-gallery-variant="translator"] { background: Canvas; }
 }
+
+/* Keep every label in the reviewed Europe infographic visible in the card. */
+.media[data-gallery-variant="contacts"] {
+  padding: 0.25rem;
+  background: #e9f2f8;
+}
+.media[data-gallery-variant="contacts"] .image { object-fit: contain; }

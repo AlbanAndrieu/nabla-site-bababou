@@ -1,0 +1,21 @@
+/* Native Next.js transcription styles, derived from the approved email thread. */
+@import "../../../../public/ca/email-style.css";
+
+/* Avoid Bootstrap CDN and full-viewport fixed widths on the new React page. */
+.ca-archive-body { width: 100%; max-width: 100%; }
+.ca-archive-body .container { width: 100%; max-width: 100%; padding: 0; }
+.ca-archive-body h1 { font-size: clamp(1.55rem, 3vw, 2.25rem); line-height: 1.25; }
+.ca-archive-body .email-thread { margin: 1.5rem 0; }
+.ca-archive-body .email-block { background: var(--ui-surface-card, #fff); }
+.ca-archive-body .email-block--authority { border-inline-start: 4px solid var(--ui-primary-bg, #4b6e9d); }
+.ca-archive-body .email-body { overflow-wrap: anywhere; }
+.ca-archive-body .email-body ul,
+.ca-archive-body .email-body ol { padding-inline-start: 1.5rem; }
+.ca-archive-body .email-body blockquote { border-inline-start: 3px solid var(--ui-border); margin-inline: .5rem; padding-inline: 1rem; }
+.ca-archive-body .card { border: 1px solid var(--ui-border); border-radius: .7rem; background: var(--ui-surface-card, transparent); }
+.ca-archive-body .row { display: flex; flex-wrap: wrap; gap: .85rem; margin: 1rem 0; }
+.ca-archive-body .row > div { flex: 1 1 min(100%, 18rem); min-width: 0; }
+.ca-archive-body .card-body { padding: 1rem; }
+.ca-archive-body a { overflow-wrap: anywhere; }
+.ca-archive-body .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+@media print { .ca-archive-body .email-block { break-inside: avoid; } }

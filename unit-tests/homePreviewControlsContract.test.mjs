@@ -45,7 +45,7 @@ test("Next's shared footer retains one back-to-top control; avoid duplicate widg
   assert.match(footer, /<BackToTopButton/);
   assert.match(footer, /<SiteDisplayControls/);
   assert.doesNotMatch(page, /data-home-back-to-top/);
-  assert.doesNotMatch(read("components/home/LegacyFooterSection.tsx"), /href="#main-content"/);
+  assert.doesNotMatch(page, /LegacyFooterSection/);
 });
 
 test("native theme chooser floats in the upper-right and header clears it", () => {

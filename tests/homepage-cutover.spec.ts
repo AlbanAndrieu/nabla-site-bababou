@@ -31,10 +31,15 @@ test.describe("Approved homepage cutover, four locales", () => {
       await expect(page.locator("main#main-content h1")).toHaveText(
         homeAudienceCopy(locale).child.title,
       );
-      await expect(page.locator("#preview-story-gallery li")).toHaveCount(5);
-      await expect(page.locator("#preview-story-gallery img")).toHaveCount(5);
-      const prefix = locale === "fr" ? "" : `/${locale}`;
-      await expect(page.locator(`#preview-footer a[href="${prefix}/policy/privacy_policy"]`)).toHaveCount(1);
+      await expect(page.locator("#preview-story-gallery li")).toHaveCount(6);
+      await expect(page.locator("#preview-story-gallery img")).toHaveCount(6);
+      await expect(page.locator("#preview-footer, #preview-resources")).toHaveCount(0);
+      await expect(page.locator('main a[href$="feed.xml"]')).toHaveCount(0);
+      await expect(page.locator("#preview-identity")).toContainText(homeAudienceCopy(locale).child.identityTitle);
+      await expect(page.locator("#preview-people, a[href='#preview-people']")).toHaveCount(0);
+      await expect(page.locator(`#preview-story-gallery a[href="${locale === "fr" ? "" : "/" + locale}/people-contacted"]`)).toHaveCount(1);
+      await expect(page.locator('#preview-story-gallery img[src="/assets/people-contacted-europe.avif"]')).toHaveCount(1);
+      await expect(page.locator('footer a[href="/policy/legal"]')).toHaveCount(1);
       await expect(page.locator(`footer a[href="${path}"]`).first()).toBeVisible();
 
       await expect(page.locator('a.skip-to-main[href="#main-content"]')).toHaveCount(1);

@@ -15,6 +15,7 @@ export default function GalleryCardMedia({ image }: { image: string | null }) {
   const [failed, setFailed] = useState(false);
   // Preserve the original quote proportions and the complete translator flags.
   const variant = image?.includes("miss-and-love-you-quote") ? "quote"
+    : image?.includes("people-contacted-europe.") ? "contacts"
     : image?.includes("flag-french-") ? "translator"
     : "standard";
   return (

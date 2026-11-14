@@ -38,7 +38,7 @@ test("explicit French preview alias keeps its canonical redirect", async ({reque
 });
 
 for(const {code,home,fathers} of locales){
-  test(`${code} child homepage: native copy, five safe cards, valid anchors`,async({page})=>{
+  test(`${code} child homepage: native copy, six safe cards, valid anchors`,async({page})=>{
     const r=await page.goto(home);
     expect(r?.status()).toBe(200);
     const c=homeAudienceCopy(code).child;
@@ -47,11 +47,17 @@ for(const {code,home,fathers} of locales){
     await expect(page.locator("#preview-opening h3")).toHaveText(c.greeting);
     await expect(page.locator("#preview-hope")).toContainText(c.hopeText);
     await expect(page.locator("#preview-journey")).toContainText(c.journeyText);
-    await expect(page.locator("#preview-story-gallery li")).toHaveCount(5);
-    await expect(page.locator("#preview-story-gallery img")).toHaveCount(5);
+    await expect(page.locator("#preview-people, a[href='#preview-people']")).toHaveCount(0);
+    await expect(page.locator(`#preview-story-gallery a[href="${code === "fr" ? "" : "/" + code}/people-contacted"]`)).toHaveCount(1);
+    await expect(page.locator('#preview-story-gallery img[src="/assets/people-contacted-europe.avif"]')).toHaveCount(1);
+    await expect(page.locator("#preview-identity")).toContainText(c.identityTitle);
+    await expect(page.locator("#preview-footer, #preview-resources")).toHaveCount(0);
+    await expect(page.locator('main a[href$="feed.xml"]')).toHaveCount(0);
+    await expect(page.locator("#preview-story-gallery li")).toHaveCount(6);
+    await expect(page.locator("#preview-story-gallery img")).toHaveCount(6);
     await expect(page.locator(`a[href="${fathers}"]`).first()).toBeVisible();
     await expect(page.locator('a[href="mailto:aa@bababou.com"]')).toHaveCount(1);
-    await expect(page.locator('a[href="/people-contacted.html"]')).toHaveCount(1);
+    await expect(page.locator(`main a[href="${code === "fr" ? "" : "/" + code}/people-contacted"]`)).toHaveCount(1);
     await expect(page.locator("main#main-content")).not.toContainText(/14CV[0-9]+/);
     const broken=await page.locator("main [aria-labelledby]").evaluateAll(nodes=>nodes.flatMap(node=>
       (node.getAttribute("aria-labelledby")??"").split(/\s+/).filter(id=>id&&!document.getElementById(id))
@@ -84,8 +90,8 @@ for(const {code,home,fathers} of locales){
   });
 }
 
-test("five child illustrations and seven parent illustrations load from local assets",async({page})=>{
-  for(const [url,container,count] of [["/home-preview","#preview-story-gallery",5],["/abduction","#abduction-cards",7]] as const){
+test("six child illustrations and seven parent illustrations load from local assets",async({page})=>{
+  for(const [url,container,count] of [["/home-preview","#preview-story-gallery",6],["/abduction","#abduction-cards",7]] as const){
     await page.goto(url);
     const images=page.locator(container+" img");
     await expect(images).toHaveCount(count);

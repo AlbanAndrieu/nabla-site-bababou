@@ -35,8 +35,11 @@ test("P3: the restored journey and private notice have native FR EN DE NO copy",
   const home=read("components/home/ChildHomeSections.tsx");
   const parents=read("components/home/AbductionResources.tsx");
   assert.match(home,/id="preview-journey"/);
-  assert.doesNotMatch(home,/id="preview-identity"/);
+  assert.match(home,/id="preview-identity"/);
   assert.match(parents,/id="identity-notice"/);
+  assert.doesNotMatch(home, /id="preview-people"|peopleStyles\.mapFigure/);
+  assert.match(read("lib/homeAudienceCopy.mjs"), /people-contacted-europe\.avif/);
+  assert.equal(homeAudienceCards("fr","child")[4].href,"/people-contacted");
   assert.match(parents,/childAudiencePath\(locale, !isHomeCutoverEnabled\(\)\)/);
   assert.match(read("app/[locale]/abduction/page.tsx"),/childAudiencePath\(locale, !isHomeCutoverEnabled\(\)\)/);
   for(const locale of locales){

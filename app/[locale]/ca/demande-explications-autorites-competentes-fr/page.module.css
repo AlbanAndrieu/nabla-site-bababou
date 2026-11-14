@@ -1,0 +1,7 @@
+.page { padding: clamp(1.25rem, 3vw, 2.5rem) 0 4rem; line-height: 1.6; }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: .65rem 1rem; margin-bottom: 1.25rem; }
+.actions a { padding: .6rem .8rem; border: 1px solid var(--ui-border); border-radius: .55rem; text-underline-offset: .2em; }
+.actions a:focus-visible, .document a:focus-visible { outline: 3px solid var(--ui-focus-ring, currentColor); outline-offset: 3px; }
+.notice { padding: .8rem 1rem; border-inline-start: 4px solid var(--ui-border); background: var(--ui-surface-muted, transparent); color: var(--ui-text-secondary, inherit); }
+.document { min-width: 0; overflow-wrap: anywhere; }
+@media print { .actions { display: none; } .page { padding: 0; } }

@@ -3,7 +3,6 @@ import { notFound, redirect } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import ChildHomeSections from "@/components/home/ChildHomeSections";
-import LegacyFooterSection from "@/components/home/LegacyFooterSection";
 import { routing } from "@/i18n/routing";
 import { homeAudienceCopy, fathersAudiencePath } from "@/lib/homeAudienceCopy.mjs";
 import { isHomeCutoverEnabled } from "@/lib/homeCutoverPolicy.mjs";
@@ -49,18 +48,10 @@ export default async function PublicHomepage({ params }: PageProps<"/[locale]">)
         <a href="#preview-opening">{c.letterTitle}</a>
         <a href="#preview-hope">{c.hopeTitle}</a>
         <a href="#preview-journey">{c.journeyTitle}</a>
-        <a href="#preview-people">{c.peopleTitle}</a>
         <a href="#preview-contact">{c.contactTitle}</a>
       </nav>
       <ChildHomeSections locale={locale} />
-      <section className={styles.resources} aria-labelledby="preview-resources">
-        <h2 id="preview-resources">{c.rssTitle}</h2>
-        <ul>
-          <li><a href="/feed.xml">{t("rss")}</a></li>
-          <li><a href="/eleonore-feed.xml">{t("rss")} — Éléonore</a></li>
-        </ul>
-      </section>
-      <LegacyFooterSection locale={locale} />
+
     </main>
   );
 }

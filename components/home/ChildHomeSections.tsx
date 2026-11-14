@@ -5,7 +5,6 @@ import styles from "./LegacyStoryGallerySection.module.css";
 import sectionStyles from "./LegacyOpeningSection.module.css";
 import messageStyles from "./LegacyMessageSection.module.css";
 import homeStyles from "./ChildHomeSections.module.css";
-import peopleStyles from "./LegacyPeopleSection.module.css";
 
 /**
  * Personal messages for Éléonore. Safe for a public review: no minor's ID,
@@ -37,12 +36,9 @@ export default function ChildHomeSections({ locale }: { locale: AppLocale }) {
         <h2 id="preview-journey-heading">{c.journeyTitle}</h2>
         <p>{c.journeyText}</p>
       </section>
-      <section className={peopleStyles.section} id="preview-people" aria-labelledby="preview-people-heading">
-        <h2 id="preview-people-heading">{c.peopleTitle}</h2>
-        <p>{c.peopleText}</p>
-        <ul className={peopleStyles.resources}>
-          <li><a href="/people-contacted.html">{c.peopleLink}</a></li>
-        </ul>
+      <section className={sectionStyles.section} id="preview-identity" aria-labelledby="preview-identity-heading">
+        <h2 id="preview-identity-heading">{c.identityTitle}</h2>
+        <p>{c.identityText}</p>
       </section>
       <section className={sectionStyles.section} id="preview-contact" aria-labelledby="preview-contact-heading">
         <h2 id="preview-contact-heading">{c.contactTitle}</h2>
