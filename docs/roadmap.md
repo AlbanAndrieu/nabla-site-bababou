@@ -25,7 +25,7 @@
 | **BB-01** | P0 · publication | Inventorier et classifier les PDF/Office et données sensibles déjà publics ; arbitrer caviardage, maintien ou retrait | **Ouvert** · décision humaine obligatoire avant tout retrait |
 | **BB-06** | P1 · preuves | Revoir NRE (dates, contacts effectifs, heures), pages sources et `SITE-DOC-*` dans les quatre langues | **Implémentation partielle fusionnée** · vérification probatoire/UX restante |
 | **BB-07** | P2 · accès privé | Construire ingestion privée Docling/OpenRAG et contrôle Cloudflare Access/MFA, ACL par pièce, approbation, révocation | **Non activé** · GO de sécurité et de publication requis |
-| **BB-10** | P2 · dette d’ingénierie | Converger CI, scripts et diagnostics avec Site Alban ; mesurer le volume de code avant/après refactorings, sans assouplir les protections | **En cours** · audit Git local préparé (`just code-footprint`), preuves exact-SHA restantes |
+| **BB-10** | P2 · dette d’ingénierie | Comparer les volumes avec Site Alban ; refactorer l'accueil (`homeAudienceCopy.mjs`, 599 lignes), les politiques (`publicPolicies.ts`, 569 lignes), puis le CSS NRE (1 082 lignes, coordination BB-09), sans retoucher les énoncés approuvés ni les gates privacy | **En cours dans #278** · [audit et benchmark inter-sites](code-hotspots.md), tests de non-régression exact-SHA et recette BB-09 encore nécessaires |
 | **BB-11** | P1 · migration juridique | Vérifier la transcription React du fil « Demande d’explications » : 13 messages, texte identique, destinataires, PDF, footer 3 liens | **PREPARED dans #270** · archive approuvée maintenue ; navigateur, impression et GO de redirection en attente |
 
 ## Prochaines étapes — ordre approuvé (sans déploiement implicite)
@@ -42,6 +42,7 @@
 - [Parité React](homepage-migration-parity.md) et [GO/NO-GO](homepage-react-cutover.md) : seule procédure de bascule/rollback.
 - [Publication sûre](publication-redaction.md), [accès aux sources](sitewide-document-access.md), [preuve privée](nre-evidence-openrag-access.md) : frontières de confidentialité.
 - [NRE](nre-visit-ledger.md) et [FinOps](vercel-finops.md) : règles métier et mesures.
+- [Audit de volume et comparaison avec Site Alban](code-hotspots.md) : base chiffrée, hotspots, livrables BB-09/BB-10, coordination avec #279.
 - [Archive du backlog précédent](archive/roadmap-through-2026-11-13.md) : traces historiques, jamais autorité active.
 
 **Règle de clôture :** chaque `BB-xx` est marqué terminé seulement lorsque les changements existent dans la branche prévue, les contrôles applicables sont prouvés sur le SHA exact, et les validations éditoriales/de publication requises sont explicites. Conserver `FAIL`, `BLOCKED` et `NOT_RUN` comme tels. Pas de merge, d'activation ni de suppression automatique.
