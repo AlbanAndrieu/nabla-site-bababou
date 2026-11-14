@@ -1,6 +1,6 @@
 # Roadmap d'ingénierie — Site Bababou
 
-**Réconciliée le 14 novembre 2026.** Complément d'exécution de la [roadmap générale](roadmap.md) : **mêmes identifiants `BB-xx`, aucun second backlog**. Priorités et arbitrages sont exclusivement dans `docs/roadmap.md`. La référence de lecture initiale est `master@2ebb293691d1` ; toute validation de livraison doit être liée à son **SHA exact**, pas à cette référence historique.
+**Réconciliée le 14 novembre 2026.** Complément d'exécution de la [roadmap générale](roadmap.md) : **mêmes identifiants `BB-xx`, aucun second backlog**. Priorités et arbitrages sont exclusivement dans `docs/roadmap.md`. La référence post-fusion est `master@a5b7e2ad01ff` ; toute validation de livraison doit être liée à son **SHA exact**, pas à cette référence historique.
 
 ## Protocole commun de livraison
 
@@ -10,9 +10,9 @@ Sur un checkout Git complet, isolé et en branche non protégée : `just toolcha
 | --- | --- | --- |
 | BB-01 | Inventaire en lecture seule des médias PDF/Office sous `public/`, liens documentaires, métadonnées et exposition CDN ; soumettre les décisions de publication sans modifier d'originaux | Liste classifiée (autorisé public / à caviarder / privé), arbitrage explicite, absence de fuite après éventuel retrait et purge |
 | BB-02 | Vérifier l'exact SHA, précommit, Node 24/npm 12, build, privacy, sécurité, DAST/Playwright accessibles ; diagnostiquer uniquement la première étape en erreur | Journal `PASS/FAIL/BLOCKED/NOT_RUN` par contrôle et SHA, aucune gate obligatoire ignorée |
-| BB-03 | Réviser #270 sur sa propre branche : galerie six cartes, AVIF locale, textes FR/EN/DE/NO, footer, liens et protections de publication | Preview exacte validée visuellement et via tests navigateur/a11y, décision de fusion séparée |
+| BB-03 | Recetter après fusion #270 : galerie six cartes, AVIF locale, textes FR/EN/DE/NO, footer, liens et protections de publication | Preview exacte validée visuellement et via tests navigateur/a11y, décision de fusion séparée |
 | BB-04 | Après BB-03, vérifier `lib/homeCutoverPolicy.mjs`, manifest réel SSG, 4 locales, HTTP/SEO, protection des Previews et repli legacy ; ne pas régler les variables Production avant GO | `just home-cutover-verify` sur le bon SHA, budget Vercel, validation propriétaire, smoke Production et rollback observé |
-| BB-05 | Recetter `/people-contacted` React issu de #270 : arbre ARF natif `<details>`, cartes pays/institutions, URLs HTTP(S), liens localisés ; ne pas supprimer les anciens scripts sans inventaire | Source ARF inchangée, liens et interactions comparés sur Playwright/axe/mobile ; ancienne URL préservée jusqu’au GO de redirection |
+| BB-05 | Recetter `/people-contacted` React fusionné via #270 : arbre ARF natif `<details>`, cartes pays/institutions, URLs HTTP(S), liens localisés ; ne pas supprimer les anciens scripts sans inventaire | Source ARF inchangée, liens et interactions comparés sur Playwright/axe/mobile ; ancienne URL préservée jusqu’au GO de redirection |
 | BB-06 | Croiser `data/nre-evidence.public.json`, `docs/nre-visit-ledger.md`, références `SITE-DOC-*` et 4 langues ; tester les PDF sources vs les HTML approuvés | Dates/heures documentées sans transformer une déclaration en fait judiciaire, tests NRE et autorités, impressions et focus contrôlés |
 | BB-07 | Après BB-01, séparer corpus privé TrueNAS/Docling/OpenRAG et public Vercel ; tunnel, Access/MFA, ACL par pièce, revue humaine, durée courte et révocation | Tests refus sans session, signature JWT/iss/aud/exp, 401/403, absence de cache/lien public, caviardage irréversible, GO explicite |
 | BB-08 | Réutiliser l'audit Vercel de Site Alban adapté aux quatre locales via `just vercel-runtime-audit` (SSG/ISR, fonctions, API privées), puis lire `vercel usage` ou Usage équipe pour CPU actif/mémoire/invocations | Rapport artefacts au SHA exact + valeurs CPU réelles datées, seuils 50/75/90 % et tendance ; `cpuMeasured=false` tant qu'aucun export n'est fourni |
@@ -32,7 +32,7 @@ Réaliser les contrôles ciblés avant L3 ; pour les incidents CI suivre `workfl
 
 ### BB-03 / BB-04 / BB-05 / BB-11 — parcours React
 
-#270 reste ouverte (Ready for review, non fusionnée) : la carte courte, les 3 liens du footer et deux nouvelles pages React sont préparées, tandis que les archives `.html` restent publiées. Les 13 messages français sont repris sans traduction ni modification du texte. La bascule `/` est une **décision distincte** ; son protocole exhaustif vit uniquement dans [homepage-react-cutover.md](homepage-react-cutover.md), et la matrice de fonctionnalités dans [homepage-migration-parity.md](homepage-migration-parity.md). Ne pas recopier ici la procédure de GO ni supprimer `public/index.html`.
+#270 est fusionnée le 14 novembre 2026 : la carte courte, les 3 liens du footer et deux nouvelles pages React sont préparées, tandis que les archives `.html` restent publiées. Les 13 messages français sont repris sans traduction ni modification du texte. La bascule `/` est une **décision distincte** ; son protocole exhaustif vit uniquement dans [homepage-react-cutover.md](homepage-react-cutover.md), et la matrice de fonctionnalités dans [homepage-migration-parity.md](homepage-migration-parity.md). Ne pas recopier ici la procédure de GO ni supprimer `public/index.html`.
 
 ### BB-06 / BB-07 — preuves et accès
 
