@@ -2,21 +2,25 @@
 
 **Réconciliée le 14 novembre 2026.** Complément d'exécution de la [roadmap générale](roadmap.md) : **mêmes identifiants `BB-xx`, aucun second backlog**. Priorités et arbitrages sont exclusivement dans `docs/roadmap.md`. La référence post-fusion est `master@a5b7e2ad01ff` ; toute validation de livraison doit être liée à son **SHA exact**, pas à cette référence historique.
 
+## Ordre de travail approuvé
+
+**BB-02 → BB-03 → BB-04 → BB-05 → BB-08 → BB-09**, puis BB-01/06/07/10/11. Le GO BB-04 requiert les contrôles préalables des contenus publiés BB-01, du budget BB-08 et de l'accessibilité/SEO BB-09, même si leur chantier complet est programmé plus tard.
+
 ## Protocole commun de livraison
 
 Sur un checkout Git complet, isolé et en branche non protégée : `just toolchain-check`, `just docs-audit`, `just offline-l1`, `just offline-contracts`, puis les tests ciblés ; avant publication : `just p0`, `just quality-fix` si nécessaire, `just quality`, `just publish`, et enfin Preview, Playwright/axe, BetterLeaks, SAST/SCA/DAST suivant le scope. Ne jamais transformer une commande non exécutée en PASS. Voir [operations.md](operations.md) pour les niveaux L0–L3 et [script-ownership.md](script-ownership.md) pour le point d'entrée canonique.
 
 | ID | Dépendances / travaux à produire | Critère vérifiable de clôture |
 | --- | --- | --- |
+| BB-02 | Déboguer CI Quality 43586650345 (autofix), Post-merge 43586764349 (npm 11.17.0 obsolète), Production DAST 43586719741 (ZAP code 3 sans rapport), puis validations complètes | Logs et correctifs exact-SHA, quality, privacy, secrets, SAST/SCA/DAST et navigateur sans passe-droit |
+| BB-03 | #270 **fusionnée** : recetter six cartes, AVIF, footer et quatre locales sur le code intégré | Preview exact-SHA, Playwright/axe, mobile/liens et confidentialité ; PR corrective Draft si besoin |
+| BB-04 | Après BB-02/03, test verrou/SSG/SEO/rollback avec minimum BB-01, BB-08 et BB-09 ; ne pas activer Production | `just home-cutover-verify`, budget, a11y, accord GO explicite, smoke et rollback |
+| BB-05 | Parité `/people-contacted` React **déjà fusionné** vs HTML ARF, `<details>`, cartes/liens ; garder les scripts historiques avant audit | Parité navigateur/axe/mobiles, données ARF conservées, GO distinct avant redirection |
+| BB-08 | `just vercel-runtime-audit`, `just vercel-runtime-test`, CPU Fluid Active réel/mémoire/invocations dans Usage ; baseline minimale avant BB-04 | Mesures datées, écarts, seuils 50/75/90 %, sinon `NOT_MEASURED` |
+| BB-09 | Axe/Playwright Chromium–Firefox–WebKit, WCAG 2.2 AA, zoom, clavier, SEO/canonical/hreflang, français et 3 traductions | Rapport exact-SHA par route/localisation avec défauts corrigés ou dérogations approuvées |
 | BB-01 | Inventaire en lecture seule des médias PDF/Office sous `public/`, liens documentaires, métadonnées et exposition CDN ; soumettre les décisions de publication sans modifier d'originaux | Liste classifiée (autorisé public / à caviarder / privé), arbitrage explicite, absence de fuite après éventuel retrait et purge |
-| BB-02 | Vérifier l'exact SHA, précommit, Node 24/npm 12, build, privacy, sécurité, DAST/Playwright accessibles ; diagnostiquer uniquement la première étape en erreur | Journal `PASS/FAIL/BLOCKED/NOT_RUN` par contrôle et SHA, aucune gate obligatoire ignorée |
-| BB-03 | Recetter après fusion #270 : galerie six cartes, AVIF locale, textes FR/EN/DE/NO, footer, liens et protections de publication | Preview exacte validée visuellement et via tests navigateur/a11y, décision de fusion séparée |
-| BB-04 | Après BB-03, vérifier `lib/homeCutoverPolicy.mjs`, manifest réel SSG, 4 locales, HTTP/SEO, protection des Previews et repli legacy ; ne pas régler les variables Production avant GO | `just home-cutover-verify` sur le bon SHA, budget Vercel, validation propriétaire, smoke Production et rollback observé |
-| BB-05 | Recetter `/people-contacted` React fusionné via #270 : arbre ARF natif `<details>`, cartes pays/institutions, URLs HTTP(S), liens localisés ; ne pas supprimer les anciens scripts sans inventaire | Source ARF inchangée, liens et interactions comparés sur Playwright/axe/mobile ; ancienne URL préservée jusqu’au GO de redirection |
 | BB-06 | Croiser `data/nre-evidence.public.json`, `docs/nre-visit-ledger.md`, références `SITE-DOC-*` et 4 langues ; tester les PDF sources vs les HTML approuvés | Dates/heures documentées sans transformer une déclaration en fait judiciaire, tests NRE et autorités, impressions et focus contrôlés |
 | BB-07 | Après BB-01, séparer corpus privé TrueNAS/Docling/OpenRAG et public Vercel ; tunnel, Access/MFA, ACL par pièce, revue humaine, durée courte et révocation | Tests refus sans session, signature JWT/iss/aud/exp, 401/403, absence de cache/lien public, caviardage irréversible, GO explicite |
-| BB-08 | Réutiliser l'audit Vercel de Site Alban adapté aux quatre locales via `just vercel-runtime-audit` (SSG/ISR, fonctions, API privées), puis lire `vercel usage` ou Usage équipe pour CPU actif/mémoire/invocations | Rapport artefacts au SHA exact + valeurs CPU réelles datées, seuils 50/75/90 % et tendance ; `cpuMeasured=false` tant qu'aucun export n'est fourni |
-| BB-09 | Axe/Playwright Chromium–Firefox–WebKit, WCAG 2.2 AA, zoom, clavier, SEO/canonical/hreflang, français et 3 traductions | Rapport exact-SHA par route/localisation avec défauts corrigés ou dérogations approuvées |
 | BB-10 | Inventaire `scripts/README.md` relié à `script-ownership.md`, adaptation de l'audit Vercel Alban #293, garde destructive déjà présente ; conserver les niveaux de gates et scripts réellement distincts | `just docs-audit`, `just vercel-runtime-test`, tests locaux et aucune régression scopes/gates ; expliciter les écarts inter-repos |
 | BB-11 | Contrôle de la transcription JSX de la page approuvée `ca/demande-explications-autorites-competentes-fr.html` : 13 IDs, texte strictement identique, destinataires et liens PDF ; footer Contact/Calendly/GitHub | Contrat de parité textuelle, Playwright/axe/impression, contrôle des anciennes URL puis décision humaine avant redirection ou retrait d’archive |
 

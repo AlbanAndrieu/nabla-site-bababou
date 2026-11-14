@@ -12,23 +12,23 @@
 
 ## Sujets à prioriser
 
-Les niveaux ci-dessous sont des **propositions**, à confirmer par le propriétaire. Une tâche n'est achevée qu'avec la preuve et la décision décrites dans la roadmap d'ingénierie.
+**Ordre approuvé le 14 novembre 2026 : BB-02 → BB-03 → BB-04 → BB-05 → BB-08 → BB-09**, suivi de BB-01/06/07/10/11. L'ordre est maintenu sans abaisser les prérequis de confidentialité, d'accessibilité, de coût et de validation. Une tâche n'est achevée qu'avec la preuve et la décision décrites dans la roadmap d'ingénierie.
 
 | ID | Proposition | Livrable encore attendu | Situation / décision |
 | --- | --- | --- | --- |
+| **BB-02** | **Rang 1 · Qualité et sécurité** | Corriger les erreurs d'autofix, de test npm et de scanner ZAP, puis prouver toutes les gates au SHA final | **FAIL** sur le dernier master ; aucune gate désactivée |
+| **BB-03** | **Rang 2 · Recette PR #270** | Vérifier les six cartes, AVIF, footer, liens et traductions FR/EN/DE/NO | **CODE_MERGED** ; #270 fusionnée le 14/11, parcours navigateur/axe à valider sur SHA exact |
+| **BB-04** | **Rang 3 · Bascule React** | Tester verrou SHA, SSG, 4 langues, SEO, rollback et prérequis transverses | **NO-GO** avant BB-02/BB-03 et minimum BB-01/08/09 ; activation humaine séparée |
+| **BB-05** | **Rang 4 · Contacts React** | Recetter la parité React `/people-contacted` ↔ HTML historique, source ARF, liens/clavier | **CODE_MERGED** dans #270 ; archive conservée, redirection et archivage non autorisés |
+| **BB-08** | **Rang 5 · FinOps Vercel** | Audit SSG/ISR/fonctions puis mesures réelles CPU/mémoire/invocations et seuils 50/75/90 % | **NOT_MEASURED** pour CPU ; baseline minimale nécessaire avant BB-04 |
+| **BB-09** | **Rang 6 · Accessibilité et SEO** | WCAG 2.2 AA, navigateur/axe, liens et canonical/hreflang FR/EN/DE/NO | **NOT_VERIFIED** sur site complet ; a11y et SEO homepage exigés avant BB-04 |
 | **BB-01** | P0 · publication | Inventorier et classifier les PDF/Office et données sensibles déjà publics ; arbitrer caviardage, maintien ou retrait | **Ouvert** · décision humaine obligatoire avant tout retrait |
-| **BB-02** | P0 · intégrité | Revalider qualité, secrets, privacy, SAST/SCA, accessibilité et DAST sur le SHA candidat puis après fusion | **À vérifier** · anciennes gates rouges/ignorées ne prouvent pas l'état courant |
-| **BB-03** | P1 · expérience | Recetter la PR #270 : petite carte, AVIF, footer Contact/Calendly/GitHub et quatre langues | **CODE_MERGED** · #270 fusionnée ; recette navigateur et gates exact-SHA non attestées |
-| **BB-04** | P1 · décision de release | Préparer puis décider la bascule `/` React, avec verrou, SEO, rollback et budget Vercel | **NO-GO technique** · activation Production séparée |
-| **BB-05** | P1 · migration | Recetter la route React `/people-contacted` : ARF versionné, arbre clavier, cartes regroupées et liens localisés ; décider le traitement de l’ancienne URL | **CODE_MERGED** · #270 fusionnée ; statut URL historique et parité navigateur à vérifier |
 | **BB-06** | P1 · preuves | Revoir NRE (dates, contacts effectifs, heures), pages sources et `SITE-DOC-*` dans les quatre langues | **Implémentation partielle fusionnée** · vérification probatoire/UX restante |
 | **BB-07** | P2 · accès privé | Construire ingestion privée Docling/OpenRAG et contrôle Cloudflare Access/MFA, ACL par pièce, approbation, révocation | **Non activé** · GO de sécurité et de publication requis |
-| **BB-08** | P1 · FinOps | Auditer les artefacts SSG/ISR/fonctions Vercel en lecture seule, puis mesurer le CPU réellement facturé équipe/projet et les seuils | **Audit runtime fusionné dans #271** · consommation CPU `NOT_MEASURED` |
-| **BB-09** | P2 · homogénéité | Finaliser WCAG 2.2 AA, SEO/i18n FR/EN/DE/NO, liens cassés et contrôles multi-navigateurs sur les pages restantes | **À recetter** · preuves post-migration incomplètes |
-| **BB-10** | P2 · dette d’ingénierie | Converger CI, scripts et diagnostics avec Site Alban, sans assouplir les protections | **CODE_MERGED** · index scripts + audit SSG/ISR/fonctions repris dans #271 ; preuves d'exécution encore requises |
-| **BB-11** | P1 · migration juridique | Vérifier la transcription React du fil « Demande d’explications » : 13 messages, texte identique, destinataires, PDF, footer 3 liens | **CODE_MERGED** · #270 fusionnée ; archive approuvée maintenue ; navigateur, impression et GO de redirection en attente |
+| **BB-10** | P2 · dette d’ingénierie | Converger CI, scripts et diagnostics avec Site Alban, sans assouplir les protections | **En cours** · index scripts + audit SSG/ISR/fonctions repris de Site Alban #293/#303 dans #271 |
+| **BB-11** | P1 · migration juridique | Vérifier la transcription React du fil « Demande d’explications » : 13 messages, texte identique, destinataires, PDF, footer 3 liens | **PREPARED dans #270** · archive approuvée maintenue ; navigateur, impression et GO de redirection en attente |
 
-## Décisions à prendre avant l'exécution suivante
+## Prochaines étapes — ordre approuvé (sans déploiement implicite)
 
 1. **BB-01** : quel périmètre d'originaux publics peut être audité, puis éventuellement retiré ou caviardé ? Aucune pièce n'est retirée automatiquement.
 2. **BB-03 / BB-04 / BB-05 / BB-11** : recetter les 3 liens du footer et les 2 routes React fusionnées via #270, puis décider séparément les redirections et la bascule `/` après les gates complètes.
