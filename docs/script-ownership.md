@@ -18,6 +18,7 @@
 | Budget Vercel | Procédure [FinOps](vercel-finops.md) | `scripts/finops/vercel-usage-budget.mjs` ; export explicite et daté |
 | Audit SSG / ISR / fonctions | `just vercel-runtime-audit` / `just vercel-runtime-test` | `scripts/audit-vercel-runtime.mjs` ; reprend la méthode de Site Alban #293 mais réutilise `verify-next-prerender.mjs` et les 4 locales Bababou ; **aucune mesure CPU** |
 | Documentation et scripts | `just docs-audit` | `scripts/quality/docs-roadmap-consistency.mjs` ; liens et IDs, sans réseau |
+| Audit du volume du code | `just code-footprint` / `just code-footprint-test` | `scripts/quality/source-footprint.mjs` ; Git suivi uniquement, Ko et lignes, sujets ; tiers exclus par défaut, lecture seule |
 | Dagger (optionnel) | `just dagger-p0` | `scripts/dagger-ci.sh` ; POC sans parité sécurité complète |
 
 **Alias de compatibilité dans `justfile` :** `test-unit` → `unit`, `test-a11y` → `a11y`, `publish-check` → `publish`. Éviter de dupliquer les commandes dans des nouvelles recipes ; les alias ne doivent pas changer leur comportement.

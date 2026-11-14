@@ -12,6 +12,7 @@ L'interface canonique est le [justfile](../justfile). La liste des propriétaire
 | Build, sécurité et publication | `just quality` puis `just publish` | L3 sur HEAD exact uniquement |
 | Parité et activation accueil | `just home-cutover-verify` | Nécessite build + navigateurs + décision GO |
 | Audit SSG, ISR et fonctions | `just vercel-runtime-audit` / `just vercel-runtime-test` | Lecture artefacts ; CPU non mesuré |
+| Volume du code par domaine | `just code-footprint` | Sources Git suivies, Ko + lignes, sans réseau ; audit initial dans `docs/code-hotspots.md` |
 | CPU Vercel réel | `node scripts/finops/vercel-usage-budget.mjs --help` | Export Usage daté indispensable |
 
 ## Scripts conservés et archivation

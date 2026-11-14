@@ -154,6 +154,13 @@ loop:
     just precommit-config-test
     just offline-contracts
 
+# Local-only source footprint (Git-tracked files, KiB and line counts; no CI).
+code-footprint top="15":
+    node scripts/quality/source-footprint.mjs --top "{{top}}"
+
+code-footprint-test:
+    node --test unit-tests/sourceFootprint.test.mjs
+
 # Dependency-free documentation, script-entrypoint and roadmap parity audit.
 docs-audit:
     node scripts/quality/docs-roadmap-consistency.mjs
@@ -193,6 +200,7 @@ offline-contracts:
     node scripts/quality/homepage-runtime-parity.mjs
     node scripts/quality/homepage-preview-links.mjs
     node scripts/ci/check-draft-workflows.mjs
+    node --test unit-tests/sourceFootprint.test.mjs
     just docs-audit
 
 # TypeScript parser requires npm ci; not part of dependency-free offline-l1.

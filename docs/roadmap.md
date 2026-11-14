@@ -25,7 +25,7 @@
 | **BB-01** | P0 · publication | Inventorier et classifier les PDF/Office et données sensibles déjà publics ; arbitrer caviardage, maintien ou retrait | **Ouvert** · décision humaine obligatoire avant tout retrait |
 | **BB-06** | P1 · preuves | Revoir NRE (dates, contacts effectifs, heures), pages sources et `SITE-DOC-*` dans les quatre langues | **Implémentation partielle fusionnée** · vérification probatoire/UX restante |
 | **BB-07** | P2 · accès privé | Construire ingestion privée Docling/OpenRAG et contrôle Cloudflare Access/MFA, ACL par pièce, approbation, révocation | **Non activé** · GO de sécurité et de publication requis |
-| **BB-10** | P2 · dette d’ingénierie | Converger CI, scripts et diagnostics avec Site Alban, sans assouplir les protections | **En cours** · index scripts + audit SSG/ISR/fonctions repris de Site Alban #293/#303 dans #271 |
+| **BB-10** | P2 · dette d’ingénierie | Converger CI, scripts et diagnostics avec Site Alban ; mesurer le volume de code avant/après refactorings, sans assouplir les protections | **En cours** · audit Git local préparé (`just code-footprint`), preuves exact-SHA restantes |
 | **BB-11** | P1 · migration juridique | Vérifier la transcription React du fil « Demande d’explications » : 13 messages, texte identique, destinataires, PDF, footer 3 liens | **PREPARED dans #270** · archive approuvée maintenue ; navigateur, impression et GO de redirection en attente |
 
 ## Prochaines étapes — ordre approuvé (sans déploiement implicite)
