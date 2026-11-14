@@ -51,6 +51,13 @@ const CENTRAL_AUTHORITY_DOCUMENTS_LOADERS = {
   no: () => import("@/messages/central-authorities-documents/no.json"),
 } as const satisfies Record<AppLocale, CatalogLoader>;
 
+const LEGACY_ARTICLES_LOADERS = {
+  fr: () => import("@/messages/legacy-articles/fr.json"),
+  en: () => import("@/messages/legacy-articles/en.json"),
+  de: () => import("@/messages/legacy-articles/de.json"),
+  no: () => import("@/messages/legacy-articles/no.json"),
+} as const satisfies Record<AppLocale, CatalogLoader>;
+
 const NRE_LOADERS = {
   fr: () => import("@/messages/nre/fr.json"),
   en: () => import("@/messages/nre/en.json"),
@@ -114,6 +121,7 @@ export async function loadMessages(locale: AppLocale) {
     { default: centralAuthoritiesFailures },
     { default: centralAuthorityDocuments },
     { default: nre },
+    { default: legacyArticles },
     { default: email },
     { default: link },
     { default: checkout },
@@ -127,6 +135,7 @@ export async function loadMessages(locale: AppLocale) {
     CENTRAL_AUTHORITIES_FAILURES_LOADERS[locale](),
     CENTRAL_AUTHORITY_DOCUMENTS_LOADERS[locale](),
     NRE_LOADERS[locale](),
+    LEGACY_ARTICLES_LOADERS[locale](),
     EMAIL_LOADERS[locale](),
     LINK_LOADERS[locale](),
     CHECKOUT_LOADERS[locale](),
@@ -142,6 +151,7 @@ export async function loadMessages(locale: AppLocale) {
     centralAuthoritiesFailures,
     centralAuthorityDocuments,
     nre,
+    legacyArticles,
     email,
     link,
     checkout,

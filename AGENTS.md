@@ -18,6 +18,25 @@
 - **Codex/API sans checkout** : GitHub connector ciblé, PR/base/HEAD, diff, premier job/step échoué puis extrait pertinent. Préparer un commit atomique via l'API ; déclarer local L3, navigateur, build et scanners **NOT_RUN**. Pas de répétition d'essais réseau équivalents ni de prétendue utilisation de workstation.
 - Si l'outillage manque, poursuivre ce qui est faisable sans accès et noter le blocage réel. Aucun contournement des gates pour économiser des tokens ou crédits CI. Voir `docs/agent-execution-modes.md`.
 
+## Propriété des PR, rebase et cadence de publication
+
+- **PR existante en priorité :** examiner les PR ouvertes, leur base, HEAD
+  et fichiers en commun. Réutiliser la PR compatible, et désigner une seule
+  PR propriétaire par `AGENTS.md`, `CLAUDE.md`, skill ou roadmap. Si aucune
+  PR ne convient, regrouper une unité testable avant d'en créer une nouvelle.
+- **Avant toute édition :** synchroniser la branche avec `master`, faire le
+  rebase et résoudre les conflits dans une worktree dédiée ; contrôler SHA,
+  diff et tests. Pas de `git push --force` aveugle ni suppression d'un
+  changement concurrent ; un historique réécrit exige un lease SHA vérifié.
+- **Une publication par lot cohérent :** accumuler les petites corrections
+  dans la PR Draft jusqu'à ce qu'elles forment un ensemble testé et révisé.
+  Exceptions : correctif urgent de sécurité/stabilité en production à
+  déployer, ou migration importante achevée exigeant la mise à jour
+  coordonnée des autres services. Ni micro-push ni rerun CI de confort.
+- Les gates de confidentialité familiale, BetterLeaks, SAST/SCA, DAST,
+  Playwright/axe et L3 restent obligatoires. **Pas de `[skip ci]` dans
+  Bababou**, pas de fusion ou cutover automatique. `NOT_RUN` n'est pas PASS.
+
 ## OpenCode / small-model execution protocol
 
 1. Lire la PR courante, `git status --short`, HEAD et diff limité ; **une** section BB-xx et **un** skill correspondant. Passation en une ligne : `PR@SHA | échec | fichiers | preuve | action`.

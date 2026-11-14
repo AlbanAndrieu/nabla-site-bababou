@@ -1,0 +1,92 @@
+{
+  "legacyArticlesPage": {
+    "reviewNotice": "React review version — publication parity pending",
+    "originalPage": "Read the complete historical page",
+    "originalHint": "This is an editorial preview. Full accounts, documents and personal statements remain in the historical archive. No new judicial finding is asserted.",
+    "legalHeading": "Official legal references",
+    "relatedHeading": "Continue exploring",
+    "references": {
+      "hague1980": "1980 Hague Child Abduction Convention",
+      "hague1996": "1996 Hague Child Protection Convention",
+      "echr": "European Convention on Human Rights",
+      "hudoc": "European Court case law (HUDOC)",
+      "childRights": "UN Convention on the Rights of the Child"
+    },
+    "related": {
+      "central-authorities": "Central Authorities",
+      "central-authorities-failures": "Reported difficulties with authorities",
+      "nre": "Contact and visitation calendar",
+      "people-contacted": "People and institutions contacted"
+    },
+    "fathers": {
+      "title": "Parents unable to maintain contact with their child",
+      "description": "Cross-border family account and references to parental contact rights.",
+      "intro": "The site describes one parent's reported experience across France, Norway and Germany, the steps taken to preserve family ties and the difficulties encountered when seeking to exercise contact rights.",
+      "sections": {
+        "context": {
+          "heading": "A journey across three countries",
+          "body": "The historical account describes separation in 2015 and a further move in 2022. Events and court proceedings must be distinguished from the site owner's opinions and allegations."
+        },
+        "rights": {
+          "heading": "Children's rights and family life",
+          "body": "Relevant texts include Article 8 of the European Convention on Human Rights, the 1980 and 1996 Hague Conventions and the UN Convention on the Rights of the Child. Their application depends on the facts and operative orders."
+        },
+        "obstacles": {
+          "heading": "Difficulties maintaining contact",
+          "body": "The site reports obstacles involving cooperation between authorities, access to information concerning a child and the effective exercise of contact arrangements. These are matters to document, not judicial findings for every reported event."
+        },
+        "support": {
+          "heading": "Information and mutual assistance",
+          "body": "The aim is to make procedures easier to understand, share verifiable references and facilitate contact between affected parents and potential helpers while protecting the child's privacy."
+        }
+      }
+    },
+    "norway": {
+      "title": "Norway — return proceedings and grounds for refusal",
+      "description": "Review summary of the Norwegian case and applicable treaty provisions.",
+      "intro": "This review page introduces the proceedings in Oslo and Hague Convention articles discussed in the published historical page. It does not reproduce the complete ruling or the extensive personal case documents.",
+      "sections": {
+        "scope": {
+          "heading": "Scope of the proceedings",
+          "body": "The historical document concerns a child-return request and the reasoning in Norwegian court proceedings in 2016, as described in the sources already published on this site."
+        },
+        "law": {
+          "heading": "Convention framework",
+          "body": "Articles 3, 12, 13 and 20 of the 1980 Hague Convention address wrongful removal, return and specific grounds for refusal. Their effect must be assessed against the actual court decision."
+        },
+        "decision": {
+          "heading": "Oslo court decision",
+          "body": "The habitual-residence analysis and exact grounds of refusal require comparison with the original ruling. This page is not a certified translation or an independent judicial assessment."
+        },
+        "documents": {
+          "heading": "Case files and privacy",
+          "body": "The historic HTML lists documents submitted by the parties, including personal materials already publicly reachable. They are not reproduced in this React route; a publication and privacy review is required before full migration."
+        }
+      }
+    },
+    "germany": {
+      "title": "Germany — return application and authority cooperation",
+      "description": "Summary of the German proceedings and the role of Central Authorities.",
+      "intro": "This React review version outlines questions raised in correspondence with French, Norwegian and German authorities. The original exchanges and evidence remain available on the approved historical page.",
+      "sections": {
+        "scope": {
+          "heading": "Purpose of the request",
+          "body": "The case concerns, among other questions, consideration of a request for return to France and cooperation among Central Authorities, as reported in the published correspondence."
+        },
+        "article27": {
+          "heading": "Role of Central Authorities",
+          "body": "Article 27 of the 1980 Hague Convention addresses limited circumstances in which a manifestly unfounded application may be declined. The provision and actual correspondence should be considered together, without assuming a judicial outcome."
+        },
+        "residence": {
+          "heading": "Habitual residence",
+          "body": "Determining habitual residence and the implications of the later move to Germany are contested legal questions. This overview does not assert that a court resolved every issue in the author's favour."
+        },
+        "documents": {
+          "heading": "Original correspondence",
+          "body": "The historical article preserves links and explanatory context for the published letters. No additional PDF, protected identity or unpublished record is imported into the React preview."
+        }
+      }
+    },
+    "reviewNavigation": "Three historical articles — React review pages"
+  }
+}

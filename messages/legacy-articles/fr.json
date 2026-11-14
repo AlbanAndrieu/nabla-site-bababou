@@ -1,0 +1,92 @@
+{
+  "legacyArticlesPage": {
+    "reviewNotice": "Version React en cours de vérification",
+    "originalPage": "Lire la page historique complète",
+    "originalHint": "Cette synthèse est une prévisualisation. Les textes intégraux, les pièces et les éventuelles déclarations personnelles restent dans l’archive historique. Aucune conclusion judiciaire supplémentaire n’est formulée.",
+    "legalHeading": "Textes et ressources officiels",
+    "relatedHeading": "Poursuivre la lecture",
+    "references": {
+      "hague1980": "Convention de La Haye de 1980",
+      "hague1996": "Convention de La Haye de 1996",
+      "echr": "Convention européenne des droits de l’homme",
+      "hudoc": "Jurisprudence de la CEDH (HUDOC)",
+      "childRights": "Convention relative aux droits de l’enfant (ONU)"
+    },
+    "related": {
+      "central-authorities": "Autorités centrales",
+      "central-authorities-failures": "Difficultés signalées aux autorités",
+      "nre": "Calendrier des contacts et visites",
+      "people-contacted": "Personnes et institutions contactées"
+    },
+    "fathers": {
+      "title": "Parents privés de contact avec leur enfant",
+      "description": "Présentation du parcours et des droits invoqués dans un contexte familial transfrontalier.",
+      "intro": "Le site présente le parcours déclaré d’un parent entre la France, la Norvège et l’Allemagne, les démarches engagées pour conserver les liens familiaux et les difficultés rencontrées pour faire appliquer des décisions de visite.",
+      "sections": {
+        "context": {
+          "heading": "Un parcours entre trois pays",
+          "body": "Le récit historique décrit un éloignement intervenu en 2015, puis un déplacement ultérieur en 2022. Les faits, procédures et responsabilités doivent être distingués des appréciations personnelles de l’auteur."
+        },
+        "rights": {
+          "heading": "Droits de l’enfant et vie familiale",
+          "body": "Les textes de référence comprennent l’article 8 de la Convention européenne des droits de l’homme, les conventions de La Haye de 1980 et de 1996 et la Convention relative aux droits de l’enfant. Leur application dépend des faits et des décisions en vigueur."
+        },
+        "obstacles": {
+          "heading": "Obstacles à l’exercice des visites",
+          "body": "Le site relate des difficultés de coopération entre autorités, d’accès aux informations concernant l’enfant et d’effectivité des contacts. Ces difficultés sont exposées comme des déclarations à documenter, non comme des violations judiciairement établies pour chaque événement."
+        },
+        "support": {
+          "heading": "Informer et mettre en relation",
+          "body": "L’objectif est de rendre les démarches compréhensibles, de partager des références vérifiables et de faciliter l’entraide entre parents et personnes susceptibles de contribuer, dans le respect de la confidentialité de l’enfant."
+        }
+      }
+    },
+    "norway": {
+      "title": "Norvège — procédure de retour et motifs de refus",
+      "description": "Synthèse de navigation vers le dossier norvégien et les conventions pertinentes.",
+      "intro": "Cette page de revue situe la procédure menée à Oslo et les articles de la Convention de La Haye évoqués dans le document historique. Elle ne reproduit ni la décision intégrale ni les nombreuses pièces personnelles versées au dossier.",
+      "sections": {
+        "scope": {
+          "heading": "Objet du dossier",
+          "body": "Le document historique traite d’une demande de retour de l’enfant et du raisonnement retenu dans une procédure judiciaire norvégienne en 2016, selon les sources publiées sur le site."
+        },
+        "law": {
+          "heading": "Cadre conventionnel",
+          "body": "Les articles 3, 12, 13 et 20 de la Convention de La Haye de 1980 définissent le déplacement illicite, le retour et certains motifs limitatifs de refus. Leur portée doit être examinée à la lumière de la décision effectivement rendue."
+        },
+        "decision": {
+          "heading": "Décision d’Oslo",
+          "body": "La qualification de résidence habituelle et les motifs précis de refus sont à confronter au texte original de la décision. Cette présentation ne constitue pas une traduction certifiée ni un constat indépendant."
+        },
+        "documents": {
+          "heading": "Pièces et confidentialité",
+          "body": "La page HTML historique répertorie des pièces des parties, dont certains fichiers personnels déjà accessibles. Elles ne sont pas recopiées dans la route React ; une revue de publication et de confidentialité est requise avant une migration intégrale."
+        }
+      }
+    },
+    "germany": {
+      "title": "Allemagne — demande de retour et coopération des autorités",
+      "description": "Synthèse du parcours allemand et des questions de compétence des autorités centrales.",
+      "intro": "Cette version React présente les questions soulevées par la demande d’explications aux autorités françaises, norvégiennes et allemandes. Les échanges et pièces originaux restent sur la page historique approuvée.",
+      "sections": {
+        "scope": {
+          "heading": "Objet de la demande",
+          "body": "Le dossier porte notamment sur l’examen d’une demande de retour vers la France et la coordination entre autorités centrales, selon les correspondances publiées."
+        },
+        "article27": {
+          "heading": "Compétences des autorités centrales",
+          "body": "L’article 27 de la Convention de La Haye de 1980 encadre certains refus de transmission des demandes manifestement non fondées. Le texte et les échanges administratifs doivent être lus ensemble, sans présumer l’issue judiciaire."
+        },
+        "residence": {
+          "heading": "Résidence habituelle",
+          "body": "La détermination de la résidence habituelle et les conséquences du déplacement ultérieur vers l’Allemagne sont des questions juridiques débattues. Cette synthèse n’affirme pas qu’une juridiction a tranché chaque point dans le sens souhaité par l’auteur."
+        },
+        "documents": {
+          "heading": "Correspondances originales",
+          "body": "La version historique conserve la présentation des courriers et références documentaires. Aucune pièce PDF, identité protégée ni donnée privée supplémentaire n’est dupliquée dans cette prévisualisation React."
+        }
+      }
+    },
+    "reviewNavigation": "Trois articles historiques — versions React en revue"
+  }
+}
