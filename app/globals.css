@@ -1,6 +1,8 @@
 @import "./reset.css";
 @import "./accessibility.css";
-/* Reserved for app-level overrides; site styles load from /public via layout <link>. */
+@import "./native-theme.css";
+@import "./native-foundation.css";
+/* Native React foundations; remaining legacy styles are transitional. */
 
 .google-translate-widget {
   position: fixed;

@@ -98,3 +98,58 @@ test navigateur `tests/legacy-article-review.spec.ts` FR/EN/DE/NO,
 `npm run typecheck`, `npm run build`, privacy, axe, impression,
 comparaison de contenu et de liens des trois archives, puis gate
 `just publish`. En cas d'absence de checkout/outils, état **NOT_RUN**.
+
+## Isolation CSS des routes React (BB-09)
+
+**État préparé dans la PR #279, sous réserve des validations exact-SHA.**
+Le layout Next `app/[locale]/layout.tsx` ne charge plus les quatre
+feuilles historiques suivantes :
+
+| Ancienne feuille publique | Taille brute Git | Remplacement React |
+| --- | ---: | --- |
+| `wireframe.css` | 150 966 octets | `app/reset.css`, `app/native-foundation.css`, CSS Modules |
+| `landing-sections.css` | 11 434 octets | `app/[locale]/contact/page.module.css` et CSS Modules existants |
+| `style.css` | 9 921 octets | CSS Modules et composants Next existants |
+| `theme.css` | 30 540 octets | `app/native-theme.css` (palette uniquement), `app/design-tokens.css` |
+
+Ces tailles sont des octets de fichiers bruts, **pas des économies
+réseau, de CPU Vercel ou de bande passante démontrées**.
+
+### Architecture
+
+- Les quatre palettes (clair par défaut, sombre système, clair manuel,
+  sombre manuel) restent synchronisées avec les variables originales
+  de `public/theme.css` ; un contrat compare les définitions exactes.
+- La page React `/contact` dispose d'une grille, de cartes, de focus
+  et de styles imprimables dans son module CSS dédié ; les libellés
+  et les coordonnées publiées sont inchangés.
+- Le lien d'évitement clavier du chrome Next et les styles de
+  typographie/listes/liens sont dans `app/native-foundation.css`.
+- Les archives HTML, `public/index.html` et les quatre fichiers CSS
+  restent **inchangés et accessibles** pour les vérifications et le rollback.
+- `print.css`, `site-content-page.css`, `page-layouts.css` et les
+  fichiers Font Awesome sont encore chargés provisoirement par Next.
+  Leur retrait exige un audit séparé de parité et de rendu.
+
+### Critères de validation avant merge et publication
+
+`unit-tests/cssToolchain.test.ts` vérifie la parité des palettes et
+l'absence de liens vers les anciens CSS. `tests/native-react-css.spec.ts`
+contrôle les requêtes réseau, la typographie, les liens contact et les
+modes clair/sombre. Les tests de contraste, impressions, thèmes auto,
+accessibilité axe, 320 px et quatre langues restent requis :
+
+```bash
+node --import tsx --test unit-tests/cssToolchain.test.ts
+npm run lint:css
+npm run typecheck
+npm run build
+npm exec --no -- playwright test tests/native-react-css.spec.ts tests/priority-theme-visual.spec.ts
+just p0
+just quality
+just publish
+```
+
+**Pas de GO automatique pour la homepage** : les contrôles qualité,
+confidentialité, SEO, CPU Vercel et Preview exact-SHA doivent être
+attestés. État actuel de la validation d'exécution : `NOT_RUN`.

@@ -67,3 +67,84 @@ test("maintained CSS does not depend on Tailwind directives or generated layers"
 		assert.doesNotMatch(source, tailwindImport, `${file.pathname} must not import Tailwind CSS layers`);
 	}
 });
+
+
+test("native Next rendering never links the Pingendo wireframe stylesheet", async () => {
+  const [layout, globals, foundation, originalHome, wireframe] = await Promise.all([
+    readFile(new URL("../app/[locale]/layout.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+    readFile(new URL("../app/native-foundation.css", import.meta.url), "utf8"),
+    readFile(new URL("../public/index.html", import.meta.url), "utf8"),
+    readFile(new URL("../public/wireframe.css", import.meta.url), "utf8"),
+  ]);
+  assert.doesNotMatch(layout, /href=["']\/wireframe\.css["']/);
+  assert.match(globals, /^@import "\.\/native-foundation\.css";$/m);
+  assert.match(foundation, /html\[data-nabla-app="next-intl"\]/);
+  assert.match(foundation, /main h1[\s\S]*font-weight:\s*700/);
+  assert.match(foundation, /main ul[\s\S]*list-style-type:\s*disc/);
+  assert.match(foundation, /main ol[\s\S]*list-style-type:\s*decimal/);
+  assert.match(foundation, /:focus-visible/);
+  assert.match(foundation, /@media print/);
+  assert.match(originalHome, /href="wireframe\.css"/);
+  assert.match(wireframe, /Bootstrap v4\.1\.3/);
+
+  for (const root of [
+    new URL("../app/", import.meta.url),
+    new URL("../components/", import.meta.url),
+  ]) {
+    for (const file of await cssFiles(root)) {
+      const stylesheet = await readFile(file, "utf8");
+      assert.doesNotMatch(
+        stylesheet, /@import\s+(?:url\()?["']?\/?wireframe\.css/i,
+        String(file) + " should not depend on the legacy vendor bundle",
+      );
+    }
+  }
+});
+
+
+test("Next excludes landing and style bundles and owns contact CSS", async () => {
+  const [layout, contact, stylesheet, archive, foundation] = await Promise.all([
+    readFile(new URL("../app/[locale]/layout.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/[locale]/contact/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/[locale]/contact/page.module.css", import.meta.url), "utf8"),
+    readFile(new URL("../public/index.html", import.meta.url), "utf8"),
+    readFile(new URL("../app/native-foundation.css", import.meta.url), "utf8"),
+  ]);
+  for (const name of ["wireframe.css", "landing-sections.css", "style.css"]) {
+    assert.doesNotMatch(layout, new RegExp("href=[\"']/" + name.replace(".", "\\.") + "[\"']"));
+    assert.match(archive, new RegExp("href=[\"']" + name.replace(".", "\\.") + "[\"']"));
+  }
+  assert.match(contact, /import styles from "\.\/page\.module\.css"/);
+  for (const key of ["page","section","sectionTitle","sectionSubtitle","methods","method","icon","info","proof","location"]) {
+    assert.match(contact, new RegExp("styles\\." + key + "\\b"));
+    assert.match(stylesheet, new RegExp("\\." + key + "\\s*\\{"));
+  }
+  assert.doesNotMatch(contact, /className="(?:contact-methods|contact-method|section-title|section-subtitle)"/);
+  assert.match(stylesheet, /grid-template-columns:\s*repeat\(auto-fit/);
+  assert.match(stylesheet, /a\.method:focus-visible/);
+  assert.match(foundation, /html\[data-nabla-app="next-intl"\] \.skip-to-main:focus-visible/);
+});
+
+
+test("native palette replaces theme.css while matching its light/dark variables", async () => {
+  const [layout, globals, tokens, nativeTheme, originalTheme] = await Promise.all([
+    readFile(new URL("../app/[locale]/layout.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+    readFile(new URL("../app/design-tokens.css", import.meta.url), "utf8"),
+    readFile(new URL("../app/native-theme.css", import.meta.url), "utf8"),
+    readFile(new URL("../public/theme.css", import.meta.url), "utf8"),
+  ]);
+  assert.doesNotMatch(layout, /href=["']\/theme\.css["']/);
+  assert.match(globals, /^@import "\.\/native-theme\.css";$/m);
+  assert.match(tokens, /var\(--bg-primary/);
+  assert.match(tokens, /var\(--text-primary/);
+  const start = originalTheme.indexOf(":root {");
+  const end = originalTheme.indexOf("/* ============================================\n   Apply Theme Variables to Elements");
+  assert.ok(start >= 0 && end > start);
+  const historicPalette = originalTheme.slice(start, end).trim();
+  assert.equal(nativeTheme.slice(nativeTheme.indexOf(":root {")).trim(), historicPalette);
+  assert.match(nativeTheme, /@media \(prefers-color-scheme: dark\)/);
+  assert.match(nativeTheme, /html\[data-theme="light"\]/);
+  assert.match(nativeTheme, /html\[data-theme="dark"\]/);
+});
