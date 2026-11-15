@@ -64,10 +64,32 @@ Mesure **en octets de code source Git**, sans `public/`, documents, images, `nod
 Les tailles exactes dépendent du SHA et des exclusions. `just code-footprint` sur une workstation avec checkout fournit la mesure locale avant/après. Les tests L3 et navigateur restent `NOT_RUN` tant qu'aucun rapport exact-SHA n'a été produit.
 
 
-## Prochain gisement de poids CSS : Font Awesome (inventaire source au 15/11)
+## Font Awesome — migration React préparée dans #279
 
-Le layout Next de la branche #279 lie encore `fontawesome.css`, `brands.css` et `solid.css` ; les pages React et le chrome partagé rendent toujours des classes `fas`/`fab`. Le référentiel Git contient **104 945 octets** pour ces trois CSS et **214 376 octets** de deux polices WOFF2, soit **319 321 octets de fichiers source** potentiellement mobilisés. Il ne s'agit **ni** d'un total transféré par navigation **ni** d'une mesure de coût CPU Vercel (mise en cache, compression, sous-ensemble de polices et sélection des routes non mesurés).
+L'inventaire Git contient **104 945 octets** répartis entre
+`fontawesome.css`, `brands.css` et `solid.css`, et **214 376 octets**
+de WOFF2. Les **sept autres styles historiques** précédemment importés
+dans le layout totalisent **223 234 octets**. Le volume brut cumulé des
+**dix CSS désormais déliés du layout React** est donc **328 179 octets
+(320,5 Kio)**. Ce n'est ni un gain réseau mesuré ni une réduction de
+consommation CPU Vercel : cache, compression et CSS bundlé doivent être
+mesurés sur une Preview exact-SHA.
 
-**Optimisation proposée, après recette #279 :** inventorier tous les `i.fas`/`i.fab` des routes React et des composants partagés ; remplacer progressivement par des SVG locaux, décoratifs `aria-hidden` ou avec intitulé accessible ; conserver les trois feuilles tant qu'un seul consommateur existe. Au dernier consommateur supprimé, retirer les trois liens du layout et mesurer les requêtes/rendu LCP/CLS, clavier et responsive sur la Preview exact-SHA. Les archives `public/*.html` et leurs polices demeurent intactes.
+Dans la PR #279, le header, le footer, Contact, les liens, les pages
+de paiement et les **pictogrammes** des correspondances publiées ont
+été migrés vers `components/ui/Icon.tsx`, SVG locaux décoratifs.
+Les pages juridiques conservent exactement leurs textes et leurs
+pièces originales. Le layout React n'inclut plus les trois CSS
+Font Awesome. Le script client `SiteWidgetsScript` transmet
+`data-no-font-awesome`, une option déjà prise en charge par le
+`public/site-widgets.js` conservé, et les deux boutons flottants
+gardent un pictogramme natif de repli.
+
+**Avant merge :** exécuter Node24/npm12, Stylelint, typecheck,
+build, tests unitaires de non-réintroduction, Playwright FR/EN/DE/NO,
+clavier, contraste, 320 px, impression, privacy/security, et analyser
+les requêtes CSS/JS/WOFF2. Les HTML et ressources historiques
+`public/` restent **inchangés**, utilisables pour rollback.
+Statut d'exécution exact-SHA : **NOT_RUN**.
 
 Autre dépendance à isoler : `app/404.module.css` importe Google Fonts. Le garde d'import CSS l'autorise **uniquement pour cette page historique** en attendant une substitution locale avec comparaison visuelle de la 404 et de son contraste ; ne pas propager l'exception aux autres routes.
