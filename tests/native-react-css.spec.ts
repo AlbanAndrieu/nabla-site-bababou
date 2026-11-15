@@ -138,3 +138,14 @@ test("React footer, breadcrumb and widget keep icons without Font Awesome networ
   await expect(page.locator("script[src*='site-widgets.js'][data-no-font-awesome]")).toHaveCount(1);
   expect(unexpected).toEqual([]);
 });
+
+
+test("native link cards render an accessible grid without legacy CSS", async ({ page }) => {
+  await page.goto("/en/link");
+  const cards = page.locator("main a[href] > svg[aria-hidden='true']");
+  await expect(cards.first()).toBeVisible();
+  const grid = page.locator("main").locator("div").filter({
+    has: page.locator("main a[href] > svg[aria-hidden='true']"),
+  }).first();
+  await expect(grid).toBeVisible();
+});

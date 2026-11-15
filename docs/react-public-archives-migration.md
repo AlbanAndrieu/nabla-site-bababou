@@ -171,3 +171,5 @@ attestés. État actuel de la validation d'exécution : `NOT_RUN`.
 ### Pictogrammes SVG React
 
 Navigation, footer, Contact, liens, résultats de paiement et transcription des 13 courriels juridiques utilisent désormais un composant SVG typé. Les icônes sont purement décoratives : les liens et boutons conservent leur texte ou nom accessible. Le contrat source refuse la réintroduction de balises `<i>` Font Awesome dans les composants React et vérifie l'attribut désactivant la charge JS. Contrôler les icônes dans les 4 langues, clavier, contrastes et impression en Preview exacte avant merge. Le retrait des trois CSS de police ne change pas les archives HTML.
+
+La page `/link` utilise désormais un CSS Module de grille/cartes à la place des classes `tools-grid` et `tool-item` de `landing-sections.css`, avec focus clavier et mise en page d'impression.

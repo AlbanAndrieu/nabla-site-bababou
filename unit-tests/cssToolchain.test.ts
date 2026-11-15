@@ -264,3 +264,18 @@ test("React pictograms never require Font Awesome assets or accessible duplicate
     }
   }
 });
+
+
+test("native link cards have their own CSS grid and decorative SVG icons", async () => {
+  const [page, css] = await Promise.all([
+    readFile(new URL("../app/[locale]/link/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/[locale]/link/page.module.css", import.meta.url), "utf8"),
+  ]);
+  assert.match(page, /import styles from "\.\/page\.module\.css"/);
+  assert.match(page, /className=\{styles\.grid\}/);
+  assert.match(page, /className=\{styles\.cardLink\}/);
+  assert.match(page, /<Icon name=\{item\.icon\} className=\{styles\.icon\}/);
+  assert.doesNotMatch(page, /\btools-grid\b|\btool-item\b/);
+  assert.match(css, /grid-template-columns:\s*repeat\(auto-fit/);
+  assert.match(css, /\.cardLink:focus-visible/);
+});

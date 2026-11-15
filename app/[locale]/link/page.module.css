@@ -1,0 +1,64 @@
+/* Next-owned card grid; replaces legacy landing-sections.css tools-grid. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: clamp(1rem, 2.5vw, 2rem);
+}
+
+.card {
+  min-width: 0;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius-card);
+  background: var(--ui-surface-card);
+}
+
+.cardLink {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-height: 100%;
+  padding: clamp(1rem, 2.5vw, 1.75rem);
+  color: var(--ui-text-primary);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.icon {
+  width: 2rem;
+  height: 2rem;
+  color: var(--ui-link);
+}
+
+.cardLink h3 {
+  margin: 0;
+  font-size: clamp(1.1rem, 1.8vw, 1.35rem);
+  font-weight: 650;
+  line-height: 1.3;
+}
+
+.cardLink p {
+  margin: 0;
+  color: var(--ui-text-secondary);
+  line-height: 1.6;
+}
+
+.cardLink:hover {
+  color: var(--ui-link);
+  background: var(--ui-surface-muted);
+}
+
+.cardLink:focus-visible {
+  outline: 3px solid var(--ui-focus-ring);
+  outline-offset: 3px;
+}
+
+@media print {
+  .grid {
+    display: block;
+  }
+
+  .card {
+    margin-block-end: 1rem;
+    break-inside: avoid;
+  }
+}
