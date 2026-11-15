@@ -37,7 +37,7 @@ export default async function ContactPage({
       <TopAnchor />
       <main
         id="main-content"
-        className={"site-content-page page-contact page-dark " + styles.page}
+        className={styles.page}
       >
         <ContactHero
           contactCta={t("hero.contactCta")}

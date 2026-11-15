@@ -23,6 +23,7 @@ test("native React pages load no historical global CSS bundles", async ({ page }
     expect(result.size, route).toBeGreaterThan(20);
     expect(result.weight, route).toBeGreaterThanOrEqual(600);
     if (route === "/contact") {
+      await expect(page.locator('main#main-content')).not.toHaveClass(/\b(?:site-content-page|page-contact|page-dark)\b/);
       await expect(page.locator('main a[href^="mailto:"]')).toBeVisible();
       await expect(page.locator('main a[href^="https://calendly.com/"]')).toBeVisible();
     }

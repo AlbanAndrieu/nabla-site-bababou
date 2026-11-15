@@ -195,5 +195,28 @@ test("native print and layouts replace legacy global styles without breaking PDF
   assert.match(printStyles, /@media screen and \(max-width: 575\.98px\)/);
   assert.match(widgets, /PRINT_PDF_BTN_ID\s*=\s*"nabla-print-pdf-btn"/);
   assert.match(widgets, /btn\.className\s*=\s*"print-button"/);
-  assert.match(contact, /className=\{"site-content-page page-contact page-dark " \+ styles\.page\}/);
+  assert.match(contact, /className=\{styles\.page\}/);
+  assert.doesNotMatch(contact, /site-content-page|page-contact|page-dark/);
+});
+
+test("every Next-owned CSS @import resolves to an existing local file", async () => {
+  const roots = [new URL("../app/", import.meta.url), new URL("../components/", import.meta.url)];
+  const files = (await Promise.all(roots.map(cssFiles))).flat();
+  for (const file of files) {
+    const source = await readFile(file, "utf8");
+    // Resolve every import relative to its source, never by requesting /public CSS.
+    // A broken public URL caused a previous Vercel Turbopack build failure.
+    const directives = source.split(/\r?\n/).filter((line) => /^\s*@import\b/.test(line));
+    for (const directive of directives) {
+      const match = directive.match(/^\s*@import\s+(?:url\(\s*)?(["'])([^"']+)\1\s*\)?(?:\s+[^;]+)?\s*;/);
+      assert.ok(match, "Unsupported CSS @import: " + file.pathname + " " + directive);
+      const relative = match[2];
+      assert.match(relative, /^\.{1,2}\//, file.pathname + " imports a non-local stylesheet: " + relative);
+      const target = new URL(relative, file);
+      await assert.doesNotReject(
+        () => readFile(target, "utf8"),
+        file.pathname + " imports a missing stylesheet: " + relative,
+      );
+    }
+  }
 });
