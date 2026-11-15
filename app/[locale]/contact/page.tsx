@@ -118,7 +118,7 @@ export default async function ContactPage({
             itemType="https://schema.org/PostalAddress"
           >
             <h2 className={styles.sectionTitle}>{t("location.title")}</h2>
-            <p className="location-address">
+            <p className={"location-address " + styles.locationAddress}>
               <i className="fas fa-map-marker-alt" aria-hidden="true" />{" "}
               <span itemProp="streetAddress">{t("location.district")}</span> ·{" "}
               <span itemProp="postalCode">92800</span>{" "}
@@ -127,14 +127,14 @@ export default async function ContactPage({
               <span itemProp="addressCountry">France</span>
             </p>
             <p>{t("location.description")}</p>
-            <div className="map-container">
+            <div className={"map-container " + styles.mapContainer}>
               <iframe
                 title={t("location.mapTitle")}
                 src="https://www.openstreetmap.org/export/embed.html?bbox=2.135%2C48.845%2C2.285%2C48.93&layer=mapnik&marker=48.8919%2C2.238"
                 loading="lazy"
               />
             </div>
-            <p className="contact-map-caption">
+            <p className={"contact-map-caption " + styles.mapCaption}>
               {t("location.caption")}{" "}
               <a
                 href="https://www.openstreetmap.org/copyright"

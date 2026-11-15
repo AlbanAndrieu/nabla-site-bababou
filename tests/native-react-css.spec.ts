@@ -96,3 +96,27 @@ test("PDF button retains an accessible, styled native fallback", async ({ page }
   expect(values.minimum).toBeGreaterThanOrEqual(44);
   expect(values.background).not.toBe("rgba(0, 0, 0, 0)");
 });
+
+
+test("dark theme prints NRE content using light, legible paper tokens", async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem("site-theme-preference", "dark"));
+  await page.goto("/en/nre");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await page.emulateMedia({ media: "print" });
+  const appearance = await page.evaluate(() => ({
+    body: getComputedStyle(document.body).backgroundColor,
+    content: getComputedStyle(document.querySelector("main#main-content")!).color,
+    textToken: getComputedStyle(document.documentElement).getPropertyValue("--text-primary").trim(),
+  }));
+  expect(appearance.body).toBe("rgb(255, 255, 255)");
+  expect(appearance.content).toBe("rgb(17, 17, 17)");
+  expect(appearance.textToken).toBe("#111");
+});
+
+test("printing Contact preserves article hero while hiding shared navigation", async ({ page }) => {
+  await page.goto("/contact");
+  await page.emulateMedia({ media: "print" });
+  await expect(page.locator("body > header")).toBeHidden();
+  await expect(page.locator("main#main-content header")).toBeVisible();
+  await expect(page.locator("main#main-content .map-container iframe")).toBeVisible();
+});

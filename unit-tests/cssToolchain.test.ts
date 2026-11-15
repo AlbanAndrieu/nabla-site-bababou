@@ -187,6 +187,10 @@ test("native print and layouts replace legacy global styles without breaking PDF
   assert.match(printStyles, /body > footer/);
   assert.match(printStyles, /main :is\(img, tr, figure, blockquote\)/);
   assert.match(printStyles, /\.print-button:focus-visible/);
+  assert.match(printStyles, /html\[data-nabla-app="next-intl"\]:root/);
+  for (const variable of ["--bg-primary", "--text-primary", "--text-secondary", "--ui-danger-text", "--ui-warning-text", "--ui-success-text"]) {
+    assert.match(printStyles, new RegExp(variable + ":\\s*#[a-f0-9]+", "i"), variable + " must have a print-safe value");
+  }
   assert.match(printStyles, /\.print-button__label/);
   assert.match(printStyles, /@media screen and \(max-width: 575\.98px\)/);
   assert.match(widgets, /PRINT_PDF_BTN_ID\s*=\s*"nabla-print-pdf-btn"/);

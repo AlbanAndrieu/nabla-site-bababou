@@ -8,16 +8,18 @@ const paths = {
   footer: new URL("../app/components/Footer.module.css", import.meta.url),
   contactHero: new URL("../components/ContactHero.module.css", import.meta.url),
   globals: new URL("../app/globals.css", import.meta.url),
+  contact: new URL("../app/[locale]/contact/page.module.css", import.meta.url),
 };
 
 test("shared responsive chrome keeps the sibling-site layout contracts", async () => {
-  const [container, routeHeader, footer, contactHero, globals] =
+  const [container, routeHeader, footer, contactHero, globals, contact] =
     await Promise.all([
       readFile(paths.container, "utf8"),
       readFile(paths.routeHeader, "utf8"),
       readFile(paths.footer, "utf8"),
       readFile(paths.contactHero, "utf8"),
       readFile(paths.globals, "utf8"),
+      readFile(paths.contact, "utf8"),
     ]);
 
   assert.match(container, /padding-left:\s*max\(/);
@@ -46,9 +48,7 @@ test("shared responsive chrome keeps the sibling-site layout contracts", async (
     globals,
     /grid-template-columns:\s*repeat\(auto-fit, minmax\(min\(100%, 12rem\), 1fr\)\)/,
   );
-  assert.match(globals, /height:\s*clamp\(18rem, 45vw, 28\.125rem\)/);
-  assert.match(
-    globals,
-    /\.contact-github-badges iframe[\s\S]*max-width:\s*100%/,
-  );
+  assert.match(contact, /\.mapContainer iframe[\s\S]*height:\s*clamp\(18rem, 45vw, 28\.125rem\)/);
+  assert.match(contact, /\.mapContainer iframe[\s\S]*width:\s*100%/);
+  assert.doesNotMatch(globals, /\.page-contact\s+\.(?:map-container|location-address|contact-open-source)/);
 });

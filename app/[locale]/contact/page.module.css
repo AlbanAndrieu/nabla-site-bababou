@@ -116,6 +116,39 @@ a.method:focus-visible {
   overflow-wrap: anywhere;
 }
 
+/* Contact-only styles formerly emitted in the global Next bundle. */
+.locationAddress {
+  margin-bottom: 0.5rem;
+  color: var(--ui-text-secondary);
+  font-size: clamp(1rem, 0.4vw + 0.95rem, 1.05rem);
+  overflow-wrap: anywhere;
+}
+
+.mapContainer {
+  max-width: 800px;
+  margin: 1.5rem auto 0;
+  overflow: hidden;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius-card);
+  box-shadow: var(--ui-shadow-sm);
+}
+
+.mapContainer iframe {
+  display: block;
+  width: 100%;
+  height: clamp(18rem, 45vw, 28.125rem);
+  border: 0;
+}
+
+.mapCaption {
+  max-width: 44rem;
+  margin: 0.85rem auto 0;
+  color: var(--ui-text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
 @media (max-width: 575.98px) {
   .section,
   .proof {
@@ -124,6 +157,10 @@ a.method:focus-visible {
 
   .methods {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .mapContainer iframe {
+    height: 18rem;
   }
 }
 

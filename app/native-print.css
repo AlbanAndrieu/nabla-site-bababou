@@ -72,8 +72,29 @@
     margin: 1.5cm 1cm;
   }
 
-  html[data-nabla-app="next-intl"] {
+  /* A dark on-screen preference must not print pale text on white paper.
+   * :root raises specificity above manual-theme and system-theme tokens. */
+  html[data-nabla-app="next-intl"]:root {
     color-scheme: light;
+    --bg-primary: #fff;
+    --bg-secondary: #f8f9fa;
+    --bg-card: #fff;
+    --text-primary: #111;
+    --text-secondary: #333;
+    --text-muted: #555;
+    --border-color: #cbd5e1;
+    --link-color: #111;
+    --link-hover: #111;
+    --ui-info-surface: #fff;
+    --ui-info-text: #055160;
+    --ui-success-surface: #fff;
+    --ui-success-text: #155724;
+    --ui-warning-surface: #fff;
+    --ui-warning-text: #856404;
+    --ui-danger-surface: #fff;
+    --ui-danger-text: #842029;
+    --ui-chrome-surface: #fff;
+    --ui-chrome-text: #111;
   }
 
   html[data-nabla-app="next-intl"] body {
