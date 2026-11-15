@@ -164,7 +164,7 @@ test("native print and layouts replace legacy global styles without breaking PDF
     "print.css", "site-content-page.css", "page-layouts.css",
   ];
   for (const stylesheet of removed) {
-    assert.doesNotMatch(layout, new RegExp('href=["\\']/' + stylesheet.replace(".", "\\.") + '["\\']'));
+    assert.ok(!layout.includes('href="/' + stylesheet + '"'), stylesheet + " must not be linked");
   }
   assert.match(originalHome, /href="print\.css"/);
   assert.match(globals, /^@import "\.\/native-print\.css";$/m);
