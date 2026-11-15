@@ -59,7 +59,15 @@ Mesure **en octets de code source Git**, sans `public/`, documents, images, `nod
 3. **BB-01 / BB-10** : `lib/publicPolicies.ts` (**569 lignes**), `lib/legalPolicies.ts` (**497 lignes**) et `lib/privacyPolicy.ts` ; séparer structure et présentation **sans changer un seul énoncé juridiquement approuvé**. Vérifier les exports, les textes, l'indexation et la publication avant toute migration.
 4. **BB-02 / BB-10** : maintenir les tests de confidentialité, `scripts/privacy-gate.ts` et `scripts/agent-quality-gate.sh`; réduire les doublons seulement avec tests de comportement et vérification des consommateurs.
 
-**Coordination des PR ouvertes** : les PR [#278](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/278) (cartographie/roadmap) et [#279](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/279) (CSS React) modifient toutes deux `docs/roadmap.md` et `docs/engineering-roadmap.md`. Ne pas fusionner l'une sans rafraîchir et réconcilier les deux fichiers de l'autre ; travailler sur une branche/worktree isolé par agent, contrôler SHA et fichiers avant publication. **Aucun auto-merge**.
+**Coordination actualisée au 15 novembre 2026 :** la [PR #278](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/278) a été fusionnée le 14 novembre. La [PR #279](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/279) reste ouverte, en Draft, pour isoler CSS React et imprimer correctement en mode sombre. Recontrôler SHA/base et conflits avant fusion ; **aucun auto-merge**.
 
 Les tailles exactes dépendent du SHA et des exclusions. `just code-footprint` sur une workstation avec checkout fournit la mesure locale avant/après. Les tests L3 et navigateur restent `NOT_RUN` tant qu'aucun rapport exact-SHA n'a été produit.
 
+
+## Prochain gisement de poids CSS : Font Awesome (inventaire source au 15/11)
+
+Le layout Next de la branche #279 lie encore `fontawesome.css`, `brands.css` et `solid.css` ; les pages React et le chrome partagé rendent toujours des classes `fas`/`fab`. Le référentiel Git contient **104 945 octets** pour ces trois CSS et **214 376 octets** de deux polices WOFF2, soit **319 321 octets de fichiers source** potentiellement mobilisés. Il ne s'agit **ni** d'un total transféré par navigation **ni** d'une mesure de coût CPU Vercel (mise en cache, compression, sous-ensemble de polices et sélection des routes non mesurés).
+
+**Optimisation proposée, après recette #279 :** inventorier tous les `i.fas`/`i.fab` des routes React et des composants partagés ; remplacer progressivement par des SVG locaux, décoratifs `aria-hidden` ou avec intitulé accessible ; conserver les trois feuilles tant qu'un seul consommateur existe. Au dernier consommateur supprimé, retirer les trois liens du layout et mesurer les requêtes/rendu LCP/CLS, clavier et responsive sur la Preview exact-SHA. Les archives `public/*.html` et leurs polices demeurent intactes.
+
+Autre dépendance à isoler : `app/404.module.css` importe Google Fonts. Le garde d'import CSS l'autorise **uniquement pour cette page historique** en attendant une substitution locale avec comparaison visuelle de la 404 et de son contraste ; ne pas propager l'exception aux autres routes.
