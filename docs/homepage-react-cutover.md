@@ -82,4 +82,3 @@ Cette recette refuse immédiatement une approbation incomplète ou un manifeste 
 - **Déploiement** : les variables de contrôle sont évaluées à la génération statique. Ne pas activer une variable au runtime sur un HTML déjà construit avec le verrou fermé : **redéployer l'exact SHA validé**. Après fusion (SHA potentiellement modifié), reprendre les preuves associées au nouveau SHA avant GO.
 
 **État : préparation terminée en code, activation de production NON EFFECTUÉE.** Node 24/npm 12, tests complets, scans de sécurité, manifeste réel et Preview exacte restent les preuves manquantes ; aucun échec de CI ne doit être contourné.
-

@@ -12,7 +12,7 @@ Sur un checkout Git complet, isolé et en branche non protégée : `just toolcha
 
 | ID | Dépendances / travaux à produire | Critère vérifiable de clôture |
 | --- | --- | --- |
-| BB-02 | Déboguer CI Quality 43586650345 (autofix), Post-merge 43586764349 (npm 11.17.0 obsolète), Production DAST 43586719741 (ZAP code 3 sans rapport), puis validations complètes | Logs et correctifs exact-SHA, quality, privacy, secrets, SAST/SCA/DAST et navigateur sans passe-droit |
+| BB-02 | Déboguer CI Quality 43617606381 (QG_AUTOFIX_REQUIRED : saut de ligne final superflu dans `docs/code-hotspots.md`, normalisé dans #279), Post-merge 43617740843 (échec de vérification toolchain npm/Node), Production DAST 43617683573 (`PRODUCTION_ZAP_NO_REPORT`, exit 3 au démarrage) puis validations complètes | Logs et correctifs exact-SHA, quality, privacy, secrets, SAST/SCA/DAST et navigateur sans passe-droit |
 | BB-03 | #270 **fusionnée** : recetter six cartes, AVIF, footer et quatre locales sur le code intégré | Preview exact-SHA, Playwright/axe, mobile/liens et confidentialité ; PR corrective Draft si besoin |
 | BB-04 | Après BB-02/03, test verrou/SSG/SEO/rollback avec minimum BB-01, BB-08 et BB-09 ; ne pas activer Production | `just home-cutover-verify`, budget, a11y, accord GO explicite, smoke et rollback |
 | BB-05 | Parité `/people-contacted` React **déjà fusionné** vs HTML ARF, `<details>`, cartes/liens ; garder les scripts historiques avant audit | Parité navigateur/axe/mobiles, données ARF conservées, GO distinct avant redirection |
