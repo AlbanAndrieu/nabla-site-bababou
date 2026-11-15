@@ -1,3 +1,4 @@
+import Icon, { type IconName } from "@/components/ui/Icon";
 import type { ReactNode } from "react";
 import surface from "@/components/ui/Surface.module.css";
 import styles from "./CheckoutResultCard.module.css";
@@ -7,7 +8,7 @@ type CheckoutResultTone = "success" | "warning";
 type CheckoutResultCardProps = {
   actions: ReactNode;
   children: ReactNode;
-  iconClass: string;
+  icon: IconName;
   tone: CheckoutResultTone;
   title: string;
 };
@@ -15,7 +16,7 @@ type CheckoutResultCardProps = {
 export default function CheckoutResultCard({
   actions,
   children,
-  iconClass,
+  icon,
   tone,
   title,
 }: CheckoutResultCardProps) {
@@ -25,7 +26,7 @@ export default function CheckoutResultCard({
         className={`${styles.icon} ${styles[tone]}`}
         aria-hidden="true"
       >
-        <i className={iconClass} />
+        <Icon name={icon} />
       </div>
       <h1 className={styles.title}>{title}</h1>
       <div className={styles.copy}>{children}</div>

@@ -1,3 +1,4 @@
+import Icon from "@/components/ui/Icon";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
@@ -58,7 +59,7 @@ export default async function ContactPage({
               href="mailto:aa@bababou.com?Subject=DevSecOps%20Inquiry"
             >
               <div className={styles.icon}>
-                <i className="fas fa-envelope" aria-hidden="true" />
+                <Icon name="mail" />
               </div>
               <div className={styles.info}>
                 <h3>{t("methods.email.title")}</h3>
@@ -67,7 +68,7 @@ export default async function ContactPage({
             </a>
             <div className={styles.method}>
               <div className={styles.icon}>
-                <i className="fas fa-phone" aria-hidden="true" />
+                <Icon name="phone" />
               </div>
               <div className={styles.info}>
                 <h3>{t("methods.phone.title")}</h3>
@@ -81,7 +82,7 @@ export default async function ContactPage({
               rel="noopener noreferrer"
             >
               <div className={styles.icon}>
-                <i className="fas fa-calendar-plus" aria-hidden="true" />
+                <Icon name="calendar-plus" />
               </div>
               <div className={styles.info}>
                 <h3>{t("methods.calendar.title")}</h3>
@@ -119,7 +120,7 @@ export default async function ContactPage({
           >
             <h2 className={styles.sectionTitle}>{t("location.title")}</h2>
             <p className={"location-address " + styles.locationAddress}>
-              <i className="fas fa-map-marker-alt" aria-hidden="true" />{" "}
+              <Icon name="map-pin" />{" "}
               <span itemProp="streetAddress">{t("location.district")}</span> ·{" "}
               <span itemProp="postalCode">92800</span>{" "}
               <span itemProp="addressLocality">Puteaux</span> ·{" "}

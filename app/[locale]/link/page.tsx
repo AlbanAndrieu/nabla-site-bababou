@@ -1,3 +1,4 @@
+import Icon from "@/components/ui/Icon";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -37,23 +38,23 @@ export default async function LinkPage({
     {
       key: "home",
       href: canonicalPagePath("index", locale),
-      icon: "fas fa-home",
+      icon: "home",
     },
     {
       key: "contact",
       href: canonicalPagePath("contact", locale),
-      icon: "fas fa-envelope",
+      icon: "mail",
     },
     {
       key: "email",
       href: canonicalPagePath("email", locale),
-      icon: "fas fa-at",
+      icon: "at-sign",
     },
-    { key: "rss", href: "/feed.xml", icon: "fas fa-rss" },
+    { key: "rss", href: "/feed.xml", icon: "rss" },
     {
       key: "eleonoreRss",
       href: "/eleonore-feed.xml",
-      icon: "fas fa-rss",
+      icon: "rss",
     },
   ] as const;
 
@@ -75,7 +76,7 @@ export default async function LinkPage({
               {items.map((item) => (
                 <div className="tool-item" key={item.key}>
                   <Link href={item.href}>
-                    <i className={item.icon} aria-hidden="true" />
+                    <Icon name={item.icon} />
                     <h3>{t(`items.${item.key}.title`)}</h3>
                     <p>{t(`items.${item.key}.description`)}</p>
                   </Link>

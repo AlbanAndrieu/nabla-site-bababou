@@ -1,3 +1,4 @@
+import Icon from "@/components/ui/Icon";
 import Image from "next/image";
 import styles from "./ContactHero.module.css";
 
@@ -40,7 +41,7 @@ export default function ContactHero({
             className={`${styles.cta} ${styles.primaryCta}`}
             href={contactHref}
           >
-            <i className="fas fa-envelope" aria-hidden="true" />
+            <Icon name="mail" />
             <span>{contactCta}</span>
           </a>
         </div>

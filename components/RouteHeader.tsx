@@ -1,5 +1,7 @@
 "use client";
 
+import Icon from "@/components/ui/Icon";
+
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
@@ -92,7 +94,7 @@ export default function RouteHeader() {
               href={homeHref}
               aria-label={t("home")}
             >
-              <i className="fas fa-home" aria-hidden="true" />
+              <Icon name="home" />
               <span>{t("home")}</span>
             </Link>
             {parentHref && parentSegment ? (
@@ -101,7 +103,7 @@ export default function RouteHeader() {
                   /
                 </span>
                 <Link className={styles.parent} href={parentHref}>
-                  <i className="fas fa-arrow-left" aria-hidden="true" />
+                  <Icon name="arrow-left" />
                   <span>{parentLabel(parentSegment)}</span>
                 </Link>
               </>

@@ -63,7 +63,7 @@ export default async function SuccessPage({
       <main id="main-content" className={layout.main}>
         <Container>
           <CheckoutResultCard
-            iconClass="fa-solid fa-circle-check"
+            icon="circle-check"
             tone="success"
             title={t("title")}
             actions={

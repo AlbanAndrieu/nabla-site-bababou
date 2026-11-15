@@ -1,3 +1,4 @@
+import Icon from "@/components/ui/Icon";
 import BackToTopButton from "@/components/BackToTopButton";
 import SiteDisplayControls from "@/components/SiteDisplayControls";
 import ActionLink, { actionClassName } from "@/components/ui/ActionLink";
@@ -41,7 +42,7 @@ export default function Footer({
           className={`${styles.socialLink} social-link`}
           aria-label={contactLabel}
         >
-          <i className="fas fa-envelope" aria-hidden="true" />
+          <Icon name="mail" />
           <span className={styles.screenReaderOnly}>{contactLabel}</span>
         </a>
         <a
@@ -51,7 +52,7 @@ export default function Footer({
           rel="noopener noreferrer"
           aria-label="Calendly"
         >
-          <i className="fas fa-calendar-plus" aria-hidden="true" />
+          <Icon name="calendar-plus" />
           <span className={styles.screenReaderOnly}>Calendly</span>
         </a>
         <a
@@ -61,7 +62,7 @@ export default function Footer({
           rel="noopener noreferrer"
           aria-label="GitHub"
         >
-          <i className="fab fa-github" aria-hidden="true" />
+          <Icon name="github" />
           <span className={styles.screenReaderOnly}>GitHub</span>
         </a>
       </div>
@@ -70,7 +71,7 @@ export default function Footer({
       </div>
       <nav className={styles.actions} aria-label={navigationAriaLabel}>
         <ActionLink href={homeHref}>
-          <i className="fas fa-home" aria-hidden="true" />
+          <Icon name="home" />
           <span>{backHome}</span>
         </ActionLink>
         <BackToTopButton
