@@ -102,7 +102,7 @@ comparaison de contenu et de liens des trois archives, puis gate
 ## Isolation CSS des routes React (BB-09)
 
 **État préparé dans la PR #279, sous réserve des validations exact-SHA.**
-Le layout Next `app/[locale]/layout.tsx` ne charge plus les quatre
+Le layout Next `app/[locale]/layout.tsx` ne charge plus les sept
 feuilles historiques suivantes :
 
 | Ancienne feuille publique | Taille brute Git | Remplacement React |
@@ -110,9 +110,9 @@ feuilles historiques suivantes :
 | `wireframe.css` | 150 966 octets | `app/reset.css`, `app/native-foundation.css`, CSS Modules |
 | `landing-sections.css` | 11 434 octets | `app/[locale]/contact/page.module.css` et CSS Modules existants |
 | `style.css` | 9 921 octets | CSS Modules et composants Next existants |
-| `theme.css` | 30 534 octets | `app/native-theme.css` (palette uniquement), `app/design-tokens.css` |
-| `print.css` | 10 418 octets | `app/native-print.css` (A4, contrôle PDF, impression) |
-| `site-content-page.css` | 2 273 octets | CSS Modules et fondation native |
+| `theme.css` | 30 540 octets | `app/native-theme.css` (palette uniquement), `app/design-tokens.css` |
+| `print.css` | 10 420 octets | `app/native-print.css` (A4, contrôle PDF, impression) |
+| `site-content-page.css` | 2 275 octets | CSS Modules et fondation native |
 | `page-layouts.css` | 7 678 octets | CSS Module `/contact`, reset natif |
 
 Ces tailles sont des octets de fichiers bruts, **pas des économies
@@ -128,11 +128,11 @@ réseau, de CPU Vercel ou de bande passante démontrées**.
   et les coordonnées publiées sont inchangés.
 - Le lien d'évitement clavier du chrome Next et les styles de
   typographie/listes/liens sont dans `app/native-foundation.css`.
-- Les archives HTML, `public/index.html` et les quatre fichiers CSS
+- Les archives HTML, `public/index.html` et les sept fichiers CSS
   restent **inchangés et accessibles** pour les vérifications et le rollback.
 - `print.css`, `site-content-page.css` et `page-layouts.css`
-  ont été retirés du layout React. Les deux premiers CSS de mise en page
-  ne s'appliquaient pas à `body` des routes Next ; les classes React
+  ont été retirés du layout React. Les deux feuilles de mise en page
+  ciblaient `body.site-content-page`, absent des routes Next ; les classes React
   nécessaires restent dans des CSS Modules. `app/native-print.css`
   fournit A4, styles d'impression, masquage du chrome, et le bouton
   `print-button` injecté par `public/site-widgets.js` sur `/email`.

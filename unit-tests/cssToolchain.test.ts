@@ -166,6 +166,19 @@ test("native print and layouts replace legacy global styles without breaking PDF
   for (const stylesheet of removed) {
     assert.ok(!layout.includes('href="/' + stylesheet + '"'), stylesheet + " must not be linked");
   }
+  // Reject a later CSS @import of any removed legacy bundle.
+  for (const root of [new URL("../app/", import.meta.url), new URL("../components/", import.meta.url)]) {
+    for (const file of await cssFiles(root)) {
+      const imports = (await readFile(file, "utf8"))
+        .split(/\r?\n/)
+        .filter((line) => /^\s*@import\b/.test(line));
+      for (const statement of imports) {
+        for (const stylesheet of removed) {
+          assert.ok(!statement.includes(stylesheet), String(file.pathname) + " imports legacy " + stylesheet);
+        }
+      }
+    }
+  }
   assert.match(originalHome, /href="print\.css"/);
   assert.match(globals, /^@import "\.\/native-print\.css";$/m);
   assert.match(printStyles, /@media print/);
