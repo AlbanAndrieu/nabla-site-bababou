@@ -78,9 +78,6 @@ export default async function LocaleLayout({
           title="Bababou — dedicated contact RSS"
           href="/eleonore-feed.xml"
         />
-        <link rel="stylesheet" href="/print.css" />
-        <link rel="stylesheet" href="/site-content-page.css" />
-        <link rel="stylesheet" href="/page-layouts.css" />
         <link rel="stylesheet" href="/assets/fontawesome/css/fontawesome.css" />
         <link rel="stylesheet" href="/assets/fontawesome/css/brands.css" />
         <link rel="stylesheet" href="/assets/fontawesome/css/solid.css" />

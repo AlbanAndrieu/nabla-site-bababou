@@ -148,3 +148,35 @@ test("native palette replaces theme.css while matching its light/dark variables"
   assert.match(nativeTheme, /html\[data-theme="light"\]/);
   assert.match(nativeTheme, /html\[data-theme="dark"\]/);
 });
+
+
+test("native print and layouts replace legacy global styles without breaking PDF actions", async () => {
+  const [layout, globals, printStyles, originalHome, widgets, contact] = await Promise.all([
+    readFile(new URL("../app/[locale]/layout.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+    readFile(new URL("../app/native-print.css", import.meta.url), "utf8"),
+    readFile(new URL("../public/index.html", import.meta.url), "utf8"),
+    readFile(new URL("../public/site-widgets.js", import.meta.url), "utf8"),
+    readFile(new URL("../app/[locale]/contact/page.tsx", import.meta.url), "utf8"),
+  ]);
+  const removed = [
+    "wireframe.css", "landing-sections.css", "style.css", "theme.css",
+    "print.css", "site-content-page.css", "page-layouts.css",
+  ];
+  for (const stylesheet of removed) {
+    assert.doesNotMatch(layout, new RegExp('href=["\\']/' + stylesheet.replace(".", "\\.") + '["\\']'));
+  }
+  assert.match(originalHome, /href="print\.css"/);
+  assert.match(globals, /^@import "\.\/native-print\.css";$/m);
+  assert.match(printStyles, /@media print/);
+  assert.match(printStyles, /@page\s*\{[\s\S]*size:\s*A4/);
+  assert.match(printStyles, /body > header/);
+  assert.match(printStyles, /body > footer/);
+  assert.match(printStyles, /main :is\(img, tr, figure, blockquote\)/);
+  assert.match(printStyles, /\.print-button:focus-visible/);
+  assert.match(printStyles, /\.print-button__label/);
+  assert.match(printStyles, /@media screen and \(max-width: 575\.98px\)/);
+  assert.match(widgets, /PRINT_PDF_BTN_ID\s*=\s*"nabla-print-pdf-btn"/);
+  assert.match(widgets, /btn\.className\s*=\s*"print-button"/);
+  assert.match(contact, /className=\{"site-content-page page-contact page-dark " \+ styles\.page\}/);
+});
