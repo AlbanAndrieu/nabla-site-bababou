@@ -3,6 +3,7 @@
 @import "./native-theme.css";
 @import "./native-foundation.css";
 @import "./native-print.css";
+@import "./native-widgets.css";
 /* Native React foundations; remaining legacy styles are transitional. */
 
 .google-translate-widget {

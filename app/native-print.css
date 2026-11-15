@@ -108,6 +108,7 @@
   html[data-nabla-app="next-intl"] body > header,
   html[data-nabla-app="next-intl"] body > footer,
   html[data-nabla-app="next-intl"] .skip-to-main,
+  html[data-nabla-app="next-intl"] .back-to-top,
   html[data-nabla-app="next-intl"] .print-button,
   html[data-nabla-app="next-intl"] #coffee-fab,
   html[data-nabla-app="next-intl"] #coffeeModal {
