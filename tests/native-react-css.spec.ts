@@ -1,11 +1,11 @@
 import { expect, test } from "@playwright/test";
 
-const routes = ["/home-preview", "/en/nre", "/de/people-contacted", "/no/for-fathers", "/contact", "/en/ca/demande-explications-autorites-competentes-fr"] as const;
+const routes = ["/home-preview", "/en/nre", "/de/people-contacted", "/no/for-fathers", "/contact", "/en/ca/demande-explications-autorites-competentes-fr", "/en/link", "/central-authorities-failures", "/en/email", "/en/success", "/en/cancel"] as const;
 
 test("native React pages load no historical global CSS bundles", async ({ page }) => {
   const legacyRequests: string[] = [];
   page.on("request", (request) => {
-    if (/\/(?:wireframe|landing-sections|style|theme|print|site-content-page|page-layouts)\.css(?:\?|$)/.test(request.url())) legacyRequests.push(request.url());
+    if (/\/(?:wireframe|landing-sections|style|theme|print|site-content-page|page-layouts)\.css(?:\?|$)/.test(request.url()) || /\/assets\/fontawesome(?:-free-[^/]+\/js|\/css)\//.test(request.url())) legacyRequests.push(request.url());
   });
   for (const route of routes) {
     const response = await page.goto(route);
@@ -14,6 +14,8 @@ test("native React pages load no historical global CSS bundles", async ({ page }
     for (const name of ["wireframe.css", "landing-sections.css", "style.css", "theme.css", "print.css", "site-content-page.css", "page-layouts.css"]) {
       await expect(page.locator('link[rel="stylesheet"][href*="' + name + '"]')).toHaveCount(0);
     }
+    await expect(page.locator('link[href*="/assets/fontawesome/css/"]')).toHaveCount(0);
+    await expect(page.locator("main i[class*=fa-]")).toHaveCount(0);
     const heading = page.locator("main#main-content h1");
     await expect(heading).toBeVisible();
     const result = await heading.evaluate((node) => {
@@ -120,4 +122,19 @@ test("printing Contact preserves article hero while hiding shared navigation", a
   await expect(page.locator("body > header")).toBeHidden();
   await expect(page.locator("main#main-content header")).toBeVisible();
   await expect(page.locator("main#main-content .map-container iframe")).toBeVisible();
+});
+
+
+test("React footer, breadcrumb and widget keep icons without Font Awesome network", async ({ page }) => {
+  const unexpected: string[] = [];
+  page.on("request", request => {
+    if (/\/assets\/fontawesome(?:-free-[^/]+\/js|\/css)\//.test(request.url())) {
+      unexpected.push(request.url());
+    }
+  });
+  await page.goto("/en/email");
+  await expect(page.locator("footer a[aria-label='GitHub'] svg[aria-hidden='true']")).toHaveCount(1);
+  await expect(page.locator("header a[aria-label] svg[aria-hidden='true']").first()).toBeVisible();
+  await expect(page.locator("script[src*='site-widgets.js'][data-no-font-awesome]")).toHaveCount(1);
+  expect(unexpected).toEqual([]);
 });

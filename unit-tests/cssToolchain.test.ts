@@ -226,3 +226,41 @@ test("every Next-owned CSS @import resolves to an existing local file", async ()
     }
   }
 });
+
+
+test("React pictograms never require Font Awesome assets or accessible duplicate labels", async () => {
+  const [layout, widgets, script, native, icon, archive] = await Promise.all([
+    readFile(new URL("../app/[locale]/layout.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/SiteWidgetsScript.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../public/site-widgets.js", import.meta.url), "utf8"),
+    readFile(new URL("../app/native-widgets.css", import.meta.url), "utf8"),
+    readFile(new URL("../components/ui/Icon.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../public/index.html", import.meta.url), "utf8"),
+  ]);
+  assert.doesNotMatch(layout, /\/assets\/fontawesome\/css\//);
+  assert.match(widgets, /data-no-font-awesome=""/);
+  assert.match(script, /hasAttribute\("data-no-font-awesome"\)/);
+  assert.match(native, /#coffee-fab \.fa-mug-hot::before/);
+  assert.match(native, /\.back-to-top \.fa-arrow-up::before/);
+  assert.match(icon, /aria-hidden="true"/);
+  assert.match(icon, /focusable="false"/);
+  assert.match(archive, /\/assets\/fontawesome\/css\/solid\.css/);
+
+  async function walk(dir: URL): Promise<URL[]> {
+    const entries = await readdir(dir, { withFileTypes: true });
+    const results = await Promise.all(entries.map(async (entry) => {
+      const url = new URL(entry.isDirectory() ? entry.name + "/" : entry.name, dir);
+      if (entry.isDirectory()) return walk(url);
+      return entry.isFile() && entry.name.endsWith(".tsx") ? [url] : [];
+    }));
+    return results.flat();
+  }
+  for (const root of [new URL("../app/", import.meta.url), new URL("../components/", import.meta.url)]) {
+    for (const file of await walk(root)) {
+      const source = await readFile(file, "utf8");
+      assert.doesNotMatch(source, /<i\s+className=/, file.pathname);
+      assert.doesNotMatch(source, /\biconClass\s*=/, file.pathname);
+      assert.doesNotMatch(source, /className=["'](?:fas|fab|fa-solid)\b/, file.pathname);
+    }
+  }
+});

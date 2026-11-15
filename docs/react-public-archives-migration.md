@@ -136,9 +136,14 @@ réseau, de CPU Vercel ou de bande passante démontrées**.
   nécessaires restent dans des CSS Modules. `app/native-print.css`
   fournit A4, styles d'impression, masquage du chrome, et le bouton
   `print-button` injecté par `public/site-widgets.js` sur `/email`.
-- Seuls les trois CSS **Font Awesome** restent chargés par le layout Next ;
-  les archives HTML continuent d'utiliser leurs feuilles et leur JS historiques.
-  Leur retrait exige une migration des icônes et une recette visuelle.
+- Les trois CSS **Font Awesome** sont retirés du layout Next : les composants
+  React utilisent `components/ui/Icon.tsx` et ses SVG décoratifs natifs.
+  `SiteWidgetsScript` passe `data-no-font-awesome` au script public
+  existant, qui empêche alors la charge dynamique des JS Font Awesome.
+- Les deux commandes flottantes injectées par `site-widgets.js` reçoivent
+  un pictogramme de repli (sans fonte) via `app/native-widgets.css`,
+  ainsi qu'un focus et une taille de cible adaptés. Le contenu des archives
+  HTML et l'implémentation publique de `site-widgets.js` restent inchangés.
 
 ### Critères de validation avant merge et publication
 
@@ -162,3 +167,7 @@ just publish
 **Pas de GO automatique pour la homepage** : les contrôles qualité,
 confidentialité, SEO, CPU Vercel et Preview exact-SHA doivent être
 attestés. État actuel de la validation d'exécution : `NOT_RUN`.
+
+### Pictogrammes SVG React
+
+Navigation, footer, Contact, liens, résultats de paiement et transcription des 13 courriels juridiques utilisent désormais un composant SVG typé. Les icônes sont purement décoratives : les liens et boutons conservent leur texte ou nom accessible. Le contrat source refuse la réintroduction de balises `<i>` Font Awesome dans les composants React et vérifie l'attribut désactivant la charge JS. Contrôler les icônes dans les 4 langues, clavier, contrastes et impression en Preview exacte avant merge. Le retrait des trois CSS de police ne change pas les archives HTML.
