@@ -1,3 +1,4 @@
+import Icon from "@/components/ui/Icon";
 /**
  * Publicly published correspondence, segment Three.
  * Part of a faithful JSX migration of the approved 13-message HTML archive.
@@ -10,10 +11,10 @@ export default function PublishedEmailBatchThree() {
 						<h2 id="email-2026-02-26-father" className="h5 visually-hidden">26 février 2026 — Réponse détaillée</h2>
 						<div className="email-block email-block--father">
 							<div className="email-header">
-								<span className="email-from" aria-label="De"><i className="fas fa-user" aria-hidden="true"></i> M. A.</span>
-								<span className="email-reply-hint"><i className="fas fa-reply" aria-hidden="true"></i> En réponse à </span>
+								<span className="email-from" aria-label="De"><Icon name="user" /> M. A.</span>
+								<span className="email-reply-hint"><Icon name="reply" /> En réponse à </span>
 								<span className="email-to" aria-label="À"
-									><i className="fas fa-building" aria-hidden="true"></i> BESNARD Maud</span
+									><Icon name="building" /> BESNARD Maud</span
 								>
 								<span className="email-date">26 févr. 2026, 21:18</span>
 							</div>
@@ -90,10 +91,10 @@ export default function PublishedEmailBatchThree() {
 						<div className="email-block email-block--authority">
 							<div className="email-header">
 								<span className="email-from" aria-label="De"
-									><i className="fas fa-building" aria-hidden="true"></i> BESNARD Maud</span
+									><Icon name="building" /> BESNARD Maud</span
 								>
-								<span className="email-reply-hint"><i className="fas fa-reply" aria-hidden="true"></i> En réponse à </span>
-								<span className="email-to" aria-label="À"><i className="fas fa-user" aria-hidden="true"></i> M. A.</span>
+								<span className="email-reply-hint"><Icon name="reply" /> En réponse à </span>
+								<span className="email-to" aria-label="À"><Icon name="user" /> M. A.</span>
 								<span className="email-date">27 févr. 2026, 11:51</span>
 							</div>
 							<div className="email-body">
@@ -137,10 +138,10 @@ export default function PublishedEmailBatchThree() {
 						<h2 id="email-2026-02-27-father" className="h5 visually-hidden">27 février 2026 — Réponse étayée</h2>
 						<div className="email-block email-block--father">
 							<div className="email-header">
-								<span className="email-from" aria-label="De"><i className="fas fa-user" aria-hidden="true"></i> M. A.</span>
-								<span className="email-reply-hint"><i className="fas fa-reply" aria-hidden="true"></i> En réponse à </span>
+								<span className="email-from" aria-label="De"><Icon name="user" /> M. A.</span>
+								<span className="email-reply-hint"><Icon name="reply" /> En réponse à </span>
 								<span className="email-to" aria-label="À"
-									><i className="fas fa-building" aria-hidden="true"></i> BESNARD Maud</span
+									><Icon name="building" /> BESNARD Maud</span
 								>
 								<span className="email-date">27 févr. 2026, 16:58</span>
 							</div>

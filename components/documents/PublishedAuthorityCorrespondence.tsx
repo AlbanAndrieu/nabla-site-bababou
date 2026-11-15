@@ -1,3 +1,4 @@
+import Icon from "@/components/ui/Icon";
 import PublishedEmailBatchOne from "./emails/PublishedEmailBatchOne";
 import PublishedEmailBatchTwo from "./emails/PublishedEmailBatchTwo";
 import PublishedEmailBatchThree from "./emails/PublishedEmailBatchThree";
@@ -43,8 +44,7 @@ export default function PublishedAuthorityCorrespondence() {
 										className="flex-shrink-0 rounded-circle d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary"
 										style={{ width: "3rem", height: "3rem" }}
 										aria-hidden="true"
-										><i className="fas fa-building"></i
-									></span>
+										><Icon name="building" /></span>
 									<div>
 										<h3 className="h6 card-title mb-1">Maud BESNARD</h3>
 										<p className="card-text text-muted small mb-0">
@@ -53,7 +53,7 @@ export default function PublishedAuthorityCorrespondence() {
 											Ministère de la Justice, Paris.
 										</p>
 										<p className="card-text small mt-1 mb-0">
-											<i className="fas fa-envelope me-1" aria-hidden="true"></i> maud.besnard@justice.gouv.fr
+											<Icon name="mail" /> maud.besnard@justice.gouv.fr
 										</p>
 									</div>
 								</div>
@@ -66,8 +66,7 @@ export default function PublishedAuthorityCorrespondence() {
 										className="flex-shrink-0 rounded-circle d-flex align-items-center justify-content-center bg-secondary bg-opacity-10 text-secondary"
 										style={{ width: "3rem", height: "3rem" }}
 										aria-hidden="true"
-										><i className="fas fa-user"></i
-									></span>
+										><Icon name="user" /></span>
 									<div>
 										<h3 className="h6 card-title mb-1">Morgane POULARD</h3>
 										<p className="card-text text-muted small mb-0">
@@ -86,8 +85,7 @@ export default function PublishedAuthorityCorrespondence() {
 											className="flex-shrink-0 rounded-circle d-flex align-items-center justify-content-center bg-secondary bg-opacity-10 text-secondary"
 											style={{ width: "3rem", height: "3rem" }}
 											aria-hidden="true"
-											><i className="fas fa-user"></i
-										></span>
+											><Icon name="user" /></span>
 										<div>
 											<h3 className="h6 card-title mb-1">M. A.</h3>
 											<p className="card-text text-muted small mb-0">Le Papa.</p>

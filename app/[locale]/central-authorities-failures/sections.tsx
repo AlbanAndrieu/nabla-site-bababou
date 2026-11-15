@@ -1,3 +1,4 @@
+import Icon from "@/components/ui/Icon";
 import ActionLink from "@/components/ui/ActionLink";
 import Badge from "@/components/ui/Badge";
 import Card, { CardBody } from "@/components/ui/Card";
@@ -67,7 +68,7 @@ type CopyProps = {
 const countryDefinitions = [
   {
     key: "france",
-    icon: "fa-landmark",
+    icon: "landmark",
     tone: styles.france,
     // Relative route keeps the active locale while avoiding the retained
     // legacy .html redirect (e.g. /de/... -> /de/central-authorities).
@@ -75,13 +76,13 @@ const countryDefinitions = [
   },
   {
     key: "norway",
-    icon: "fa-gavel",
+    icon: "gavel",
     tone: styles.norway,
     href: "/abduction-norway.html",
   },
   {
     key: "germany",
-    icon: "fa-ban",
+    icon: "ban",
     tone: styles.germany,
     href: "/abduction-germany.html",
   },
@@ -154,7 +155,7 @@ export function CountryFailures({ copy }: CopyProps) {
                     className={`${styles.countryIcon} ${definition.tone}`}
                     aria-hidden="true"
                   >
-                    <i className={`fa-solid ${definition.icon}`} />
+                    <Icon name={definition.icon} />
                   </span>
                   <h3>{country.name}</h3>
                 </div>
@@ -169,10 +170,7 @@ export function CountryFailures({ copy }: CopyProps) {
                   size="compact"
                 >
                   {country.cta}{" "}
-                  <i
-                    className="fa-solid fa-arrow-right"
-                    aria-hidden="true"
-                  />
+                  <Icon name="arrow-right" />
                 </ActionLink>
               </CardBody>
             </Card>
@@ -219,17 +217,17 @@ export function ReadMore({ copy }: CopyProps) {
     {
       href: "central-authorities",
       label: copy.readMore.centralAuthorities,
-      icon: "fa-envelope-open-text",
+      icon: "mail-open",
     },
     {
       href: "/abduction-norway.html",
       label: copy.readMore.norway,
-      icon: "fa-gavel",
+      icon: "gavel",
     },
     {
       href: "/abduction-germany.html",
       label: copy.readMore.germany,
-      icon: "fa-file-lines",
+      icon: "file-text",
     },
   ] as const;
 
@@ -241,7 +239,7 @@ export function ReadMore({ copy }: CopyProps) {
           <Card key={link.href}>
             <CardBody className={styles.readMoreBody}>
               <ActionLink href={link.href} variant="outline">
-                <i className={`fa-solid ${link.icon}`} aria-hidden="true" />{" "}
+                <Icon name={link.icon} />{" "}
                 {link.label}
               </ActionLink>
             </CardBody>
