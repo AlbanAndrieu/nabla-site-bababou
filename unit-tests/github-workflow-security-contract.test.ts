@@ -66,3 +66,23 @@ test("shell steps do not directly interpolate untrusted PR text", async () => {
 		}
 	}
 });
+
+
+test("CodeQL can read its workflow metadata without granting unrelated jobs Actions access", async () => {
+  const workflow = await readFile(
+    new URL("../.github/workflows/security-deep.yml", import.meta.url),
+    "utf8",
+  );
+  const codeqlJob = workflow.split("\n  codeql:\n")[1]?.split("\n  semgrep-full:\n")[0];
+  assert.ok(codeqlJob, "CodeQL job must exist");
+  assert.match(codeqlJob, /\n    permissions:\n      contents: read\n      actions: read\b/);
+  assert.match(codeqlJob, /\n      security-events: write\n/);
+  assert.match(codeqlJob, /upload: never/);
+  assert.match(codeqlJob, /upload-database: "false"/);
+  assert.match(workflow, /^permissions:\n  contents: read\n/m);
+  assert.doesNotMatch(
+    workflow.split("\n  trivy-repository:\n")[1]?.split("\n  codeql:\n")[0] ?? "",
+    /\n      actions: read\b/,
+    "Trivy should retain least-privilege read-only repository access",
+  );
+});
