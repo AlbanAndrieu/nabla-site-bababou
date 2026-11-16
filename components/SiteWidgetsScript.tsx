@@ -54,6 +54,7 @@ export default function SiteWidgetsScript({
     <Script
       src={`/site-widgets.js?config=${configuration || "default"}`}
       strategy="afterInteractive"
+      data-no-font-awesome=""
       data-axeptio={axeptio ? "" : undefined}
       data-coffee-fab={coffeeFab ? "" : undefined}
       data-no-coffee-fab={noCoffeeFab ? "" : undefined}

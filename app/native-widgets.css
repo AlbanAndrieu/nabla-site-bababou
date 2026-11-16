@@ -1,0 +1,87 @@
+/*
+ * Native fallbacks for the small floating controls injected by the retained
+ * public/site-widgets.js on Next pages only. The legacy HTML remains unchanged.
+ */
+@media screen {
+  html[data-nabla-app="next-intl"] .back-to-top,
+  html[data-nabla-app="next-intl"] #coffee-fab {
+    position: fixed;
+    right: calc(1.25rem + env(safe-area-inset-right, 0px));
+    z-index: 1040;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    padding: 0;
+    border: 1px solid var(--ui-border);
+    border-radius: 50%;
+    background: var(--site-fab-bg, var(--ui-primary-bg));
+    color: var(--site-fab-fg, var(--ui-primary-text));
+    box-shadow: var(--site-fab-shadow, 0 4px 12px rgb(0 0 0 / 20%));
+    text-decoration: none;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  html[data-nabla-app="next-intl"] .back-to-top {
+    bottom: calc(5.75rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  html[data-nabla-app="next-intl"] #coffee-fab {
+    bottom: calc(9.5rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  html[data-nabla-app="next-intl"] :is(.back-to-top, #coffee-fab):hover {
+    background: var(--site-fab-hover-bg, var(--ui-primary-bg-hover));
+    color: var(--site-fab-hover-fg, var(--ui-primary-text));
+  }
+
+  html[data-nabla-app="next-intl"] :is(.back-to-top, #coffee-fab):focus-visible {
+    outline: 3px solid var(--ui-focus-ring);
+    outline-offset: 3px;
+  }
+
+  /* Only two legacy injected <i> nodes remain; no icon font is loaded. */
+  html[data-nabla-app="next-intl"] .back-to-top .fa-arrow-up,
+  html[data-nabla-app="next-intl"] #coffee-fab .fa-mug-hot {
+    font-size: 0;
+    font-style: normal;
+  }
+
+  html[data-nabla-app="next-intl"] .back-to-top .fa-arrow-up::before {
+    content: "↑";
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  html[data-nabla-app="next-intl"] #coffee-fab .fa-mug-hot::before {
+    content: "☕";
+    font-size: 1.4rem;
+    line-height: 1;
+  }
+
+  html[data-nabla-app="next-intl"] #coffee-fab .steam {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 575.98px) {
+  html[data-nabla-app="next-intl"] .back-to-top,
+  html[data-nabla-app="next-intl"] #coffee-fab {
+    right: calc(0.75rem + env(safe-area-inset-right, 0px));
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  html[data-nabla-app="next-intl"] .back-to-top {
+    bottom: calc(4.75rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  html[data-nabla-app="next-intl"] #coffee-fab {
+    bottom: calc(8.5rem + env(safe-area-inset-bottom, 0px));
+  }
+}

@@ -1,0 +1,147 @@
+/*
+ * Next-only print and "Print / Save as PDF" controls.
+ * The archived HTML pages retain public/print.css unchanged.
+ */
+@media screen {
+  html[data-nabla-app="next-intl"] .print-button {
+    position: fixed;
+    right: calc(1.25rem + env(safe-area-inset-right, 0px));
+    bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
+    z-index: 1000;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    max-width: calc(100vw - 2rem);
+    min-height: var(--ui-control-min-height);
+    padding: 0.75rem 1.25rem;
+    border: 1px solid var(--ui-border);
+    border-radius: var(--ui-radius-control);
+    background: var(--site-fab-bg, var(--ui-primary-bg));
+    color: var(--site-fab-fg, var(--ui-primary-text));
+    font: inherit;
+    font-weight: 600;
+    line-height: 1.2;
+    box-shadow: var(--site-fab-shadow, var(--ui-shadow-sm));
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  html[data-nabla-app="next-intl"] .print-button__icon {
+    flex: none;
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  html[data-nabla-app="next-intl"] .print-button:hover {
+    background: var(--site-fab-hover-bg, var(--ui-primary-bg-hover));
+    color: var(--site-fab-hover-fg, var(--ui-primary-text));
+  }
+
+  html[data-nabla-app="next-intl"] .print-button:focus-visible {
+    outline: 3px solid var(--ui-focus-ring);
+    outline-offset: 3px;
+  }
+}
+
+@media screen and (max-width: 575.98px) {
+  html[data-nabla-app="next-intl"] .print-button {
+    right: calc(0.75rem + env(safe-area-inset-right, 0px));
+    bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    border-radius: 50%;
+  }
+
+  html[data-nabla-app="next-intl"] .print-button__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 1.5cm 1cm;
+  }
+
+  /* A dark on-screen preference must not print pale text on white paper.
+   * :root raises specificity above manual-theme and system-theme tokens. */
+  html[data-nabla-app="next-intl"]:root {
+    color-scheme: light;
+    --bg-primary: #fff;
+    --bg-secondary: #f8f9fa;
+    --bg-card: #fff;
+    --text-primary: #111;
+    --text-secondary: #333;
+    --text-muted: #555;
+    --border-color: #cbd5e1;
+    --link-color: #111;
+    --link-hover: #111;
+    --ui-info-surface: #fff;
+    --ui-info-text: #055160;
+    --ui-success-surface: #fff;
+    --ui-success-text: #155724;
+    --ui-warning-surface: #fff;
+    --ui-warning-text: #856404;
+    --ui-danger-surface: #fff;
+    --ui-danger-text: #842029;
+    --ui-chrome-surface: #fff;
+    --ui-chrome-text: #111;
+  }
+
+  html[data-nabla-app="next-intl"] body {
+    width: 100%;
+    background: #fff;
+    color: #111;
+    font-size: 12pt;
+    line-height: 1.45;
+  }
+
+  html[data-nabla-app="next-intl"] body > header,
+  html[data-nabla-app="next-intl"] body > footer,
+  html[data-nabla-app="next-intl"] .skip-to-main,
+  html[data-nabla-app="next-intl"] .back-to-top,
+  html[data-nabla-app="next-intl"] .print-button,
+  html[data-nabla-app="next-intl"] #coffee-fab,
+  html[data-nabla-app="next-intl"] #coffeeModal {
+    display: none;
+  }
+
+  html[data-nabla-app="next-intl"] main {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+  }
+
+  html[data-nabla-app="next-intl"] main :is(h1, h2, h3, h4, h5, h6, figure, blockquote) {
+    break-after: avoid-page;
+  }
+
+  html[data-nabla-app="next-intl"] main :is(img, tr, figure, blockquote) {
+    break-inside: avoid-page;
+  }
+
+  html[data-nabla-app="next-intl"] main :is(img, table) {
+    max-width: 100%;
+  }
+
+  html[data-nabla-app="next-intl"] main a {
+    color: #111;
+    text-decoration: underline;
+  }
+
+  html[data-nabla-app="next-intl"] main table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+}

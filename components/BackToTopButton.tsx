@@ -1,5 +1,7 @@
 "use client";
 
+import Icon from "@/components/ui/Icon";
+
 type BackToTopButtonProps = {
   label: string;
   ariaLabel: string;
@@ -28,7 +30,7 @@ export default function BackToTopButton({
       aria-label={ariaLabel}
       onClick={handleClick}
     >
-      <i className="fas fa-arrow-up" aria-hidden="true"></i>
+      <Icon name="arrow-up" />
       <span>{label}</span>
     </button>
   );

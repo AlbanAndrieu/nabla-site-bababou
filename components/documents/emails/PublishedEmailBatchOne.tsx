@@ -1,3 +1,4 @@
+import Icon from "@/components/ui/Icon";
 /**
  * Publicly published correspondence, segment One.
  * Part of a faithful JSX migration of the approved 13-message HTML archive.
@@ -11,10 +12,10 @@ export default function PublishedEmailBatchOne() {
 						<div className="email-block email-block--authority">
 							<div className="email-header">
 								<span className="email-from" aria-label="De"
-									><i className="fas fa-building" aria-hidden="true"></i> BESNARD Maud</span
+									><Icon name="building" /> BESNARD Maud</span
 								>
-								<span className="email-reply-hint"><i className="fas fa-reply" aria-hidden="true"></i> En réponse à </span>
-								<span className="email-to" aria-label="À"><i className="fas fa-arrow-right" aria-hidden="true"></i> M. A.</span>
+								<span className="email-reply-hint"><Icon name="reply" /> En réponse à </span>
+								<span className="email-to" aria-label="À"><Icon name="arrow-right" /> M. A.</span>
 								<span className="email-date">11 févr. 2026, 15:17</span>
 							</div>
 							<div className="email-subject">
@@ -93,10 +94,10 @@ export default function PublishedEmailBatchOne() {
 						<h2 id="email-2026-02-11-father" className="h5 visually-hidden">11 février 2026 — Le père</h2>
 						<div className="email-block email-block--father">
 							<div className="email-header">
-								<span className="email-from" aria-label="De"><i className="fas fa-user" aria-hidden="true"></i> M. A.</span>
-								<span className="email-reply-hint"><i className="fas fa-reply" aria-hidden="true"></i> En réponse à </span>
+								<span className="email-from" aria-label="De"><Icon name="user" /> M. A.</span>
+								<span className="email-reply-hint"><Icon name="reply" /> En réponse à </span>
 								<span className="email-to" aria-label="À"
-									><i className="fas fa-building" aria-hidden="true"></i> BESNARD Maud</span
+									><Icon name="building" /> BESNARD Maud</span
 								>
 								<span className="email-date">11 févr. 2026, 15:54</span>
 							</div>
@@ -126,10 +127,10 @@ export default function PublishedEmailBatchOne() {
 						<div className="email-block email-block--authority">
 							<div className="email-header">
 								<span className="email-from" aria-label="De"
-									><i className="fas fa-building" aria-hidden="true"></i> BESNARD Maud</span
+									><Icon name="building" /> BESNARD Maud</span
 								>
-								<span className="email-reply-hint"><i className="fas fa-reply" aria-hidden="true"></i> En réponse à </span>
-								<span className="email-to" aria-label="À"><i className="fas fa-user" aria-hidden="true"></i> M. A.</span>
+								<span className="email-reply-hint"><Icon name="reply" /> En réponse à </span>
+								<span className="email-to" aria-label="À"><Icon name="user" /> M. A.</span>
 								<span className="email-date">12 févr. 2026, 10:23</span>
 							</div>
 							<div className="email-subject">Objet : Re: Demande d'explications écrites</div>
@@ -156,10 +157,10 @@ export default function PublishedEmailBatchOne() {
 						<h2 id="email-2026-02-12-father" className="h5 visually-hidden">12 février 2026 — Demande écrite</h2>
 						<div className="email-block email-block--father">
 							<div className="email-header">
-								<span className="email-from" aria-label="De"><i className="fas fa-user" aria-hidden="true"></i> M. A.</span>
-								<span className="email-reply-hint"><i className="fas fa-reply" aria-hidden="true"></i> En réponse à </span>
+								<span className="email-from" aria-label="De"><Icon name="user" /> M. A.</span>
+								<span className="email-reply-hint"><Icon name="reply" /> En réponse à </span>
 								<span className="email-to" aria-label="À"
-									><i className="fas fa-building" aria-hidden="true"></i> BESNARD Maud</span
+									><Icon name="building" /> BESNARD Maud</span
 								>
 								<span className="email-date">12 févr. 2026, 10:42</span>
 							</div>

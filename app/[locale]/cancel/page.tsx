@@ -55,7 +55,7 @@ export default async function CancelPage({
       <main id="main-content" className={layout.main}>
         <Container>
           <CheckoutResultCard
-            iconClass="fa-solid fa-circle-xmark"
+            icon="circle-x"
             tone="warning"
             title={t("title")}
             actions={

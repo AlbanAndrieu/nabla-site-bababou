@@ -1,0 +1,200 @@
+/* App-owned palette: exact light/dark variable blocks from public/theme.css. */
+/* Contract test prevents silent drift while legacy HTML retains its source. */
+:root {
+  /* Light Mode Colors */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-card: #ffffff;
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --border-color: #dee2e6;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --shadow-hover: rgba(0, 0, 0, 0.15);
+
+  /* Interactive Elements */
+  --link-color: #0b5ed7;
+  --link-hover: #0056b3;
+  --button-bg: #0b5ed7;
+  --button-hover: #0056b3;
+  --button-text: #ffffff;
+
+  /* Alert/Card Backgrounds */
+  --alert-info-bg: #d1ecf1;
+  --alert-info-border: #bee5eb;
+  --alert-info-text: #0c5460;
+  --alert-success-bg: #d4edda;
+  --alert-success-border: #c3e6cb;
+  --alert-success-text: #155724;
+  --alert-warning-bg: #fff3cd;
+  --alert-warning-border: #ffeaa7;
+  --alert-warning-text: #856404;
+
+  /* Navigation */
+  --nav-bg: #343a40;
+  --nav-text: #ffffff;
+
+  /* Theme Toggle (segmented control) */
+  --toggle-bg: #343a40;
+  --toggle-text: #ffffff;
+  --toggle-border: #ced4da;
+  --toggle-track-bg: #e9ecef;
+  --toggle-segment-muted: #495057;
+
+  /* Landing / section accents (landing-sections, special-message, contact card) */
+  --primary-color: #2563eb;
+  --secondary-color: #1e40af;
+  --accent-color: #f59e0b;
+
+  /* Fixed FABs: opaque WCAG AA pair for text and icons. */
+  --site-fab-bg: #0b5ed7;
+  --site-fab-fg: #ffffff;
+  --site-fab-hover-bg: #2563eb;
+  --site-fab-hover-fg: #ffffff;
+  --site-fab-border: 1px solid rgba(37, 99, 235, 0.35);
+  --site-fab-shadow: 0 4px 14px rgba(37, 99, 235, 0.28);
+  --site-fab-steam: rgba(15, 23, 42, 0.35);
+}
+
+/* ============================================
+   Dark Mode Colors (User Preference)
+   ============================================ */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2d2d2d;
+    --bg-card: #252525;
+    --text-primary: #e4e4e4;
+    --text-secondary: #b8b8b8;
+    --text-muted: #8e8e8e;
+    --border-color: #404040;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+    --shadow-hover: rgba(0, 0, 0, 0.5);
+
+    --link-color: #66b3ff;
+    --link-hover: #99ccff;
+    --button-bg: #0d6efd;
+    --button-hover: #0a58ca;
+    --button-text: #ffffff;
+
+    --alert-info-bg: #1a3a47;
+    --alert-info-border: #2c5f75;
+    --alert-info-text: #9cd9f0;
+    --alert-success-bg: #1a3d2e;
+    --alert-success-border: #2d5f47;
+    --alert-success-text: #9ce0bd;
+    --alert-warning-bg: #4d3d1a;
+    --alert-warning-border: #6b5423;
+    --alert-warning-text: #f4d58d;
+
+    --nav-bg: #1a1a1a;
+    --nav-text: #e4e4e4;
+
+    --toggle-bg: #e4e4e4;
+    --toggle-text: #1a1a1a;
+    --toggle-border: #495057;
+    --toggle-track-bg: #2d3339;
+    --toggle-segment-muted: #adb5bd;
+
+    --site-fab-bg: var(--button-bg);
+    --site-fab-fg: var(--button-text);
+    --site-fab-hover-bg: var(--button-hover);
+    --site-fab-hover-fg: var(--button-text);
+    --site-fab-border: none;
+    --site-fab-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+    --site-fab-steam: rgba(255, 255, 255, 0.5);
+  }
+}
+
+/* ============================================
+   Manual Theme Override Classes
+   ============================================ */
+html[data-theme="light"] {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-card: #ffffff;
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --border-color: #dee2e6;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --shadow-hover: rgba(0, 0, 0, 0.15);
+
+  --link-color: #0b5ed7;
+  --link-hover: #0056b3;
+  --button-bg: #0b5ed7;
+  --button-hover: #0056b3;
+  --button-text: #ffffff;
+
+  --alert-info-bg: #d1ecf1;
+  --alert-info-border: #bee5eb;
+  --alert-info-text: #0c5460;
+  --alert-success-bg: #d4edda;
+  --alert-success-border: #c3e6cb;
+  --alert-success-text: #155724;
+  --alert-warning-bg: #fff3cd;
+  --alert-warning-border: #ffeaa7;
+  --alert-warning-text: #856404;
+
+  --nav-bg: #343a40;
+  --nav-text: #ffffff;
+
+  --toggle-bg: #343a40;
+  --toggle-text: #ffffff;
+  --toggle-border: #ced4da;
+  --toggle-track-bg: #e9ecef;
+  --toggle-segment-muted: #495057;
+
+  --site-fab-bg: #0b5ed7;
+  --site-fab-fg: #ffffff;
+  --site-fab-hover-bg: #2563eb;
+  --site-fab-hover-fg: #ffffff;
+  --site-fab-border: 1px solid rgba(37, 99, 235, 0.35);
+  --site-fab-shadow: 0 4px 14px rgba(37, 99, 235, 0.28);
+  --site-fab-steam: rgba(15, 23, 42, 0.35);
+}
+
+html[data-theme="dark"] {
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #2d2d2d;
+  --bg-card: #252525;
+  --text-primary: #e4e4e4;
+  --text-secondary: #b8b8b8;
+  --text-muted: #8e8e8e;
+  --border-color: #404040;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --shadow-hover: rgba(0, 0, 0, 0.5);
+
+  --link-color: #66b3ff;
+  --link-hover: #99ccff;
+  --button-bg: #0d6efd;
+  --button-hover: #0a58ca;
+  --button-text: #ffffff;
+
+  --alert-info-bg: #1a3a47;
+  --alert-info-border: #2c5f75;
+  --alert-info-text: #9cd9f0;
+  --alert-success-bg: #1a3d2e;
+  --alert-success-border: #2d5f47;
+  --alert-success-text: #9ce0bd;
+  --alert-warning-bg: #4d3d1a;
+  --alert-warning-border: #6b5423;
+  --alert-warning-text: #f4d58d;
+
+  --nav-bg: #1a1a1a;
+  --nav-text: #e4e4e4;
+
+  --toggle-bg: #e4e4e4;
+  --toggle-text: #1a1a1a;
+  --toggle-border: #495057;
+  --toggle-track-bg: #2d3339;
+  --toggle-segment-muted: #adb5bd;
+
+  --site-fab-bg: var(--button-bg);
+  --site-fab-fg: var(--button-text);
+  --site-fab-hover-bg: var(--button-hover);
+  --site-fab-hover-fg: var(--button-text);
+  --site-fab-border: none;
+  --site-fab-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  --site-fab-steam: rgba(255, 255, 255, 0.5);
+}

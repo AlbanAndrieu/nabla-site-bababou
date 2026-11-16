@@ -1,0 +1,182 @@
+/* Native contact cards, without landing-sections.css or Bootstrap. */
+.page {
+  max-width: 78rem;
+  min-width: 0;
+  margin-inline: auto;
+  padding-block-end: clamp(2rem, 5vw, 4rem);
+  color: var(--ui-text-primary);
+}
+
+.section,
+.proof {
+  min-width: 0;
+  padding: clamp(1.75rem, 5vw, 3.5rem) clamp(1rem, 4vw, 2rem);
+}
+
+.sectionTitle {
+  margin-block: 0 0.7rem;
+  color: var(--ui-text-primary);
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: center;
+}
+
+.sectionSubtitle {
+  max-width: 58ch;
+  margin: 0 auto 1.5rem;
+  color: var(--ui-text-secondary);
+  font-size: clamp(1rem, 1.4vw, 1.15rem);
+  line-height: 1.65;
+  text-align: center;
+}
+
+.methods {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: clamp(0.8rem, 2vw, 1.5rem);
+  margin-top: 1.5rem;
+}
+
+.method {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+  min-height: 5rem;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius-card);
+  background: var(--ui-surface-muted);
+  color: var(--ui-text-primary);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+
+a.method:hover {
+  border-color: var(--ui-link);
+  background: var(--ui-surface-card);
+  color: var(--ui-link);
+}
+
+a.method:focus-visible {
+  outline: 3px solid var(--ui-focus-ring);
+  outline-offset: 3px;
+}
+
+.icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  min-height: 2.5rem;
+  color: var(--ui-link);
+  font-size: 1.65rem;
+}
+
+.info {
+  flex: 1;
+  min-width: 0;
+}
+
+.info h3 {
+  margin-block: 0 0.3rem;
+  font-size: 1.1rem;
+  font-weight: 650;
+}
+
+.info p {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.proof {
+  text-align: center;
+  border-block: 1px solid var(--ui-border);
+}
+
+.cvLinks {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.7rem;
+  margin-top: 1.25rem;
+}
+
+.location {
+  max-width: 56rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.location p {
+  overflow-wrap: anywhere;
+}
+
+/* Contact-only styles formerly emitted in the global Next bundle. */
+.locationAddress {
+  margin-bottom: 0.5rem;
+  color: var(--ui-text-secondary);
+  font-size: clamp(1rem, 0.4vw + 0.95rem, 1.05rem);
+  overflow-wrap: anywhere;
+}
+
+.mapContainer {
+  max-width: 800px;
+  margin: 1.5rem auto 0;
+  overflow: hidden;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius-card);
+  box-shadow: var(--ui-shadow-sm);
+}
+
+.mapContainer iframe {
+  display: block;
+  width: 100%;
+  height: clamp(18rem, 45vw, 28.125rem);
+  border: 0;
+}
+
+.mapCaption {
+  max-width: 44rem;
+  margin: 0.85rem auto 0;
+  color: var(--ui-text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 575.98px) {
+  .section,
+  .proof {
+    padding-inline: var(--ui-space-md);
+  }
+
+  .methods {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .mapContainer iframe {
+    height: 18rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .method {
+    transition: none;
+  }
+}
+
+@media print {
+  .section,
+  .proof {
+    padding-block: 1.5rem;
+  }
+
+  .method {
+    break-inside: avoid;
+  }
+}

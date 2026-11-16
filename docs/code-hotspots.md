@@ -59,7 +59,37 @@ Mesure **en octets de code source Git**, sans `public/`, documents, images, `nod
 3. **BB-01 / BB-10** : `lib/publicPolicies.ts` (**569 lignes**), `lib/legalPolicies.ts` (**497 lignes**) et `lib/privacyPolicy.ts` ; séparer structure et présentation **sans changer un seul énoncé juridiquement approuvé**. Vérifier les exports, les textes, l'indexation et la publication avant toute migration.
 4. **BB-02 / BB-10** : maintenir les tests de confidentialité, `scripts/privacy-gate.ts` et `scripts/agent-quality-gate.sh`; réduire les doublons seulement avec tests de comportement et vérification des consommateurs.
 
-**Coordination des PR ouvertes** : les PR [#278](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/278) (cartographie/roadmap) et [#279](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/279) (CSS React) modifient toutes deux `docs/roadmap.md` et `docs/engineering-roadmap.md`. Ne pas fusionner l'une sans rafraîchir et réconcilier les deux fichiers de l'autre ; travailler sur une branche/worktree isolé par agent, contrôler SHA et fichiers avant publication. **Aucun auto-merge**.
+**Coordination actualisée au 15 novembre 2026 :** la [PR #278](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/278) a été fusionnée le 14 novembre. La [PR #279](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/279) reste ouverte, en Draft, pour isoler CSS React et imprimer correctement en mode sombre. Recontrôler SHA/base et conflits avant fusion ; **aucun auto-merge**.
 
 Les tailles exactes dépendent du SHA et des exclusions. `just code-footprint` sur une workstation avec checkout fournit la mesure locale avant/après. Les tests L3 et navigateur restent `NOT_RUN` tant qu'aucun rapport exact-SHA n'a été produit.
 
+
+## Font Awesome — migration React préparée dans #279
+
+L'inventaire Git contient **104 945 octets** répartis entre
+`fontawesome.css`, `brands.css` et `solid.css`, et **214 376 octets**
+de WOFF2. Les **sept autres styles historiques** précédemment importés
+dans le layout totalisent **223 234 octets**. Le volume brut cumulé des
+**dix CSS désormais déliés du layout React** est donc **328 179 octets
+(320,5 Kio)**. Ce n'est ni un gain réseau mesuré ni une réduction de
+consommation CPU Vercel : cache, compression et CSS bundlé doivent être
+mesurés sur une Preview exact-SHA.
+
+Dans la PR #279, le header, le footer, Contact, les liens, les pages
+de paiement et les **pictogrammes** des correspondances publiées ont
+été migrés vers `components/ui/Icon.tsx`, SVG locaux décoratifs.
+Les pages juridiques conservent exactement leurs textes et leurs
+pièces originales. Le layout React n'inclut plus les trois CSS
+Font Awesome. Le script client `SiteWidgetsScript` transmet
+`data-no-font-awesome`, une option déjà prise en charge par le
+`public/site-widgets.js` conservé, et les deux boutons flottants
+gardent un pictogramme natif de repli.
+
+**Avant merge :** exécuter Node24/npm12, Stylelint, typecheck,
+build, tests unitaires de non-réintroduction, Playwright FR/EN/DE/NO,
+clavier, contraste, 320 px, impression, privacy/security, et analyser
+les requêtes CSS/JS/WOFF2. Les HTML et ressources historiques
+`public/` restent **inchangés**, utilisables pour rollback.
+Statut d'exécution exact-SHA : **NOT_RUN**.
+
+Autre dépendance à isoler : `app/404.module.css` importe Google Fonts. Le garde d'import CSS l'autorise **uniquement pour cette page historique** en attendant une substitution locale avec comparaison visuelle de la 404 et de son contraste ; ne pas propager l'exception aux autres routes.

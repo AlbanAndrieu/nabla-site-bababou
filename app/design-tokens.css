@@ -1,6 +1,6 @@
 :root {
-  /* Semantic theme aliases. Keep these mapped to the existing theme.css contract
-   * so Next.js components can migrate without creating a parallel theme system. */
+  /* Semantic aliases derive from the Next-owned native-theme.css palette.
+   * The historical public/theme.css remains exclusive to legacy HTML. */
   --ui-surface: var(--bg-primary, #fff);
   --ui-surface-muted: var(--bg-secondary, #f8f9fa);
   --ui-surface-card: var(--bg-card, #fff);
@@ -49,7 +49,7 @@
   --ui-inverted-text: #fff;
   --ui-inverted-bg-hover: #fff;
   --ui-inverted-text-hover: #1f2937;
-  /* High-contrast focus on both light and dark surfaces; see theme.css. */
+  /* High-contrast focus in both modes; see app/native-theme.css. */
   --ui-focus-ring: var(--ui-text-primary, #1e293b);
 }
 

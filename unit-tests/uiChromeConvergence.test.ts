@@ -14,6 +14,7 @@ test("shared Next chrome uses semantic tokens and scoped styles", async () => {
     contentLayout,
     globals,
     accessibility,
+    contactPageStyles,
   ] = await Promise.all([
     readFile(new URL("../app/design-tokens.css", import.meta.url), "utf8"),
     readFile(new URL("../components/RouteHeader.tsx", import.meta.url), "utf8"),
@@ -37,6 +38,7 @@ test("shared Next chrome uses semantic tokens and scoped styles", async () => {
     ),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
     readFile(new URL("../app/accessibility.css", import.meta.url), "utf8"),
+    readFile(new URL("../app/[locale]/contact/page.module.css", import.meta.url), "utf8"),
   ]);
 
   for (const token of [
@@ -100,7 +102,9 @@ test("shared Next chrome uses semantic tokens and scoped styles", async () => {
     globals,
     /grid-template-columns:\s*repeat\(auto-fit, minmax\(min\(100%, 12rem\), 1fr\)\)/,
   );
-  assert.match(globals, /height:\s*clamp\(18rem, 45vw, 28\.125rem\)/);
+  assert.match(contactPageStyles, /height:\s*clamp\(18rem, 45vw, 28\.125rem\)/);
+  assert.match(contactPageStyles, /\.mapContainer iframe/);
+  assert.doesNotMatch(globals, /\.page-contact\s+\.(?:map-container|contact-open-source)/);
   assert.match(globals, /@import\s+"\.\/accessibility\.css"/);
   assert.match(accessibility, /@media \(prefers-reduced-motion:\s*reduce\)/);
   assert.match(accessibility, /animation-duration:\s*0\.01ms\s*!important/);

@@ -1,3 +1,4 @@
+import Icon from "@/components/ui/Icon";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
@@ -7,6 +8,7 @@ import TopAnchor from "@/components/TopAnchor";
 import ActionLink from "@/components/ui/ActionLink";
 import { routing } from "@/i18n/routing";
 import { localizedPageMetadata } from "@/lib/siteSocialMetadata";
+import styles from "./page.module.css";
 
 export async function generateMetadata({
   params,
@@ -36,7 +38,7 @@ export default async function ContactPage({
       <TopAnchor />
       <main
         id="main-content"
-        className="site-content-page page-contact page-dark"
+        className={styles.page}
       >
         <ContactHero
           contactCta={t("hero.contactCta")}
@@ -48,41 +50,41 @@ export default async function ContactPage({
           role={t("role")}
         />
 
-        <section className="contact-section container" id="contact-details">
-          <h2 className="section-title">{t("information.title")}</h2>
-          <p className="section-subtitle">{t("information.subtitle")}</p>
-          <div className="contact-methods">
+        <section className={styles.section} id="contact-details">
+          <h2 className={styles.sectionTitle}>{t("information.title")}</h2>
+          <p className={styles.sectionSubtitle}>{t("information.subtitle")}</p>
+          <div className={styles.methods}>
             <a
-              className="contact-method"
+              className={styles.method}
               href="mailto:aa@bababou.com?Subject=DevSecOps%20Inquiry"
             >
-              <div className="contact-icon">
-                <i className="fas fa-envelope" aria-hidden="true" />
+              <div className={styles.icon}>
+                <Icon name="mail" />
               </div>
-              <div className="contact-info">
+              <div className={styles.info}>
                 <h3>{t("methods.email.title")}</h3>
                 <p>{t("methods.email.value")}</p>
               </div>
             </a>
-            <div className="contact-method">
-              <div className="contact-icon">
-                <i className="fas fa-phone" aria-hidden="true" />
+            <div className={styles.method}>
+              <div className={styles.icon}>
+                <Icon name="phone" />
               </div>
-              <div className="contact-info">
+              <div className={styles.info}>
                 <h3>{t("methods.phone.title")}</h3>
                 <p>{t("methods.phone.value")}</p>
               </div>
             </div>
             <a
-              className="contact-method"
+              className={styles.method}
               href="https://calendly.com/alban-andrieu"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <div className="contact-icon">
-                <i className="fas fa-calendar-plus" aria-hidden="true" />
+              <div className={styles.icon}>
+                <Icon name="calendar-plus" />
               </div>
-              <div className="contact-info">
+              <div className={styles.info}>
                 <h3>{t("methods.calendar.title")}</h3>
                 <p>{t("methods.calendar.value")}</p>
               </div>
@@ -90,10 +92,10 @@ export default async function ContactPage({
           </div>
         </section>
 
-        <section className="proof-section container">
-          <h2 className="section-title">{t("cv.title")}</h2>
+        <section className={styles.proof}>
+          <h2 className={styles.sectionTitle}>{t("cv.title")}</h2>
           <p>{t("cv.description")}</p>
-          <div className="cv-page-links">
+          <div className={"cv-page-links " + styles.cvLinks}>
             {["full", "medium", "small"].map((size) => (
               <ActionLink
                 href={`/cv/cv-${size}-${locale}.html`}
@@ -109,16 +111,16 @@ export default async function ContactPage({
           </div>
         </section>
 
-        <section className="contact-section container">
+        <section className={styles.section}>
           <article
-            className="location-section"
+            className={styles.location}
             id="location"
             itemScope
             itemType="https://schema.org/PostalAddress"
           >
-            <h2 className="section-title">{t("location.title")}</h2>
-            <p className="location-address">
-              <i className="fas fa-map-marker-alt" aria-hidden="true" />{" "}
+            <h2 className={styles.sectionTitle}>{t("location.title")}</h2>
+            <p className={"location-address " + styles.locationAddress}>
+              <Icon name="map-pin" />{" "}
               <span itemProp="streetAddress">{t("location.district")}</span> ·{" "}
               <span itemProp="postalCode">92800</span>{" "}
               <span itemProp="addressLocality">Puteaux</span> ·{" "}
@@ -126,14 +128,14 @@ export default async function ContactPage({
               <span itemProp="addressCountry">France</span>
             </p>
             <p>{t("location.description")}</p>
-            <div className="map-container">
+            <div className={"map-container " + styles.mapContainer}>
               <iframe
                 title={t("location.mapTitle")}
                 src="https://www.openstreetmap.org/export/embed.html?bbox=2.135%2C48.845%2C2.285%2C48.93&layer=mapnik&marker=48.8919%2C2.238"
                 loading="lazy"
               />
             </div>
-            <p className="contact-map-caption">
+            <p className={"contact-map-caption " + styles.mapCaption}>
               {t("location.caption")}{" "}
               <a
                 href="https://www.openstreetmap.org/copyright"

@@ -1,6 +1,10 @@
 @import "./reset.css";
 @import "./accessibility.css";
-/* Reserved for app-level overrides; site styles load from /public via layout <link>. */
+@import "./native-theme.css";
+@import "./native-foundation.css";
+@import "./native-print.css";
+@import "./native-widgets.css";
+/* Native React foundations; remaining legacy styles are transitional. */
 
 .google-translate-widget {
   position: fixed;
@@ -63,86 +67,6 @@
 
   .cv-page-links {
     justify-content: center;
-  }
-}
-
-.page-contact .location-section,
-.page-contact .contact-open-source {
-  margin: clamp(2rem, 6vw, 3rem) 0;
-  text-align: center;
-}
-.page-contact .proof-section {
-  text-align: center;
-}
-.page-contact .proof-section > p,
-.page-contact .contact-open-source > p {
-  margin-inline: auto;
-}
-.page-contact .proof-section .cv-page-links,
-.page-contact .contact-open-source .cv-page-links {
-  justify-content: center;
-}
-.page-contact .proof-section .cv-page-qr {
-  margin-inline: auto;
-}
-.page-contact .location-address {
-  margin-bottom: 0.5rem;
-  color: var(--ui-text-secondary);
-  font-size: clamp(1rem, 0.4vw + 0.95rem, 1.05rem);
-  overflow-wrap: anywhere;
-}
-.page-contact .map-container {
-  max-width: 800px;
-  margin: 1.5rem auto 0;
-  overflow: hidden;
-  border: 1px solid var(--ui-border);
-  border-radius: var(--ui-radius-card);
-  box-shadow: var(--ui-shadow-sm);
-}
-.page-contact .map-container iframe {
-  display: block;
-  width: 100%;
-  height: clamp(18rem, 45vw, 28.125rem);
-  border: 0;
-}
-.page-contact .contact-map-caption {
-  max-width: 44rem;
-  margin: 0.85rem auto 0;
-  color: var(--ui-text-secondary);
-  font-size: 0.9rem;
-  line-height: 1.5;
-  overflow-wrap: anywhere;
-}
-.page-contact .contact-open-source {
-  padding: clamp(1.5rem, 5vw, 2.5rem) clamp(1rem, 4vw, 1.5rem);
-  border: 1px solid var(--ui-border);
-  border-radius: var(--ui-radius-card);
-  background: var(--ui-surface-card);
-}
-.page-contact .contact-github-badges {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-.page-contact .contact-github-badges iframe {
-  max-width: 100%;
-  border: 0;
-}
-.page-contact .contact-stack-badge {
-  display: inline-block;
-  max-width: 100%;
-  margin-top: 2.5rem;
-}
-@media (max-width: 575.98px) {
-  .page-contact .map-container iframe {
-    height: 18rem;
-  }
-
-  .page-contact .contact-open-source {
-    padding-inline: var(--ui-space-md);
   }
 }
 

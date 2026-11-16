@@ -98,3 +98,78 @@ test navigateur `tests/legacy-article-review.spec.ts` FR/EN/DE/NO,
 `npm run typecheck`, `npm run build`, privacy, axe, impression,
 comparaison de contenu et de liens des trois archives, puis gate
 `just publish`. En cas d'absence de checkout/outils, état **NOT_RUN**.
+
+## Isolation CSS des routes React (BB-09)
+
+**État préparé dans la PR #279, sous réserve des validations exact-SHA.**
+Le layout Next `app/[locale]/layout.tsx` ne charge plus les sept
+feuilles historiques suivantes :
+
+| Ancienne feuille publique | Taille brute Git | Remplacement React |
+| --- | ---: | --- |
+| `wireframe.css` | 150 966 octets | `app/reset.css`, `app/native-foundation.css`, CSS Modules |
+| `landing-sections.css` | 11 434 octets | `app/[locale]/contact/page.module.css` et CSS Modules existants |
+| `style.css` | 9 921 octets | CSS Modules et composants Next existants |
+| `theme.css` | 30 540 octets | `app/native-theme.css` (palette uniquement), `app/design-tokens.css` |
+| `print.css` | 10 420 octets | `app/native-print.css` (A4, contrôle PDF, impression) |
+| `site-content-page.css` | 2 275 octets | CSS Modules et fondation native |
+| `page-layouts.css` | 7 678 octets | CSS Module `/contact`, reset natif |
+
+Ces tailles sont des octets de fichiers bruts, **pas des économies
+réseau, de CPU Vercel ou de bande passante démontrées**.
+
+### Architecture
+
+- Les quatre palettes (clair par défaut, sombre système, clair manuel,
+  sombre manuel) restent synchronisées avec les variables originales
+  de `public/theme.css` ; un contrat compare les définitions exactes.
+- La page React `/contact` dispose d'une grille, de cartes, de focus
+  et de styles imprimables dans son module CSS dédié ; les libellés
+  et les coordonnées publiées sont inchangés.
+- Le lien d'évitement clavier du chrome Next et les styles de
+  typographie/listes/liens sont dans `app/native-foundation.css`.
+- Les archives HTML, `public/index.html` et les sept fichiers CSS
+  restent **inchangés et accessibles** pour les vérifications et le rollback.
+- `print.css`, `site-content-page.css` et `page-layouts.css`
+  ont été retirés du layout React. Les deux feuilles de mise en page
+  ciblaient `body.site-content-page`, absent des routes Next ; les classes React
+  nécessaires restent dans des CSS Modules. `app/native-print.css`
+  fournit A4, styles d'impression, masquage du chrome, et le bouton
+  `print-button` injecté par `public/site-widgets.js` sur `/email`.
+- Les trois CSS **Font Awesome** sont retirés du layout Next : les composants
+  React utilisent `components/ui/Icon.tsx` et ses SVG décoratifs natifs.
+  `SiteWidgetsScript` passe `data-no-font-awesome` au script public
+  existant, qui empêche alors la charge dynamique des JS Font Awesome.
+- Les deux commandes flottantes injectées par `site-widgets.js` reçoivent
+  un pictogramme de repli (sans fonte) via `app/native-widgets.css`,
+  ainsi qu'un focus et une taille de cible adaptés. Le contenu des archives
+  HTML et l'implémentation publique de `site-widgets.js` restent inchangés.
+
+### Critères de validation avant merge et publication
+
+`unit-tests/cssToolchain.test.ts` vérifie la parité des palettes et
+l'absence de liens vers les anciens CSS. `tests/native-react-css.spec.ts`
+contrôle les requêtes réseau, la typographie, les liens contact,
+les modes clair/sombre et l'impression. Les tests de contraste, impressions, thèmes auto,
+accessibilité axe, 320 px et quatre langues restent requis :
+
+```bash
+node --import tsx --test unit-tests/cssToolchain.test.ts
+npm run lint:css
+npm run typecheck
+npm run build
+npm exec --no -- playwright test tests/native-react-css.spec.ts tests/priority-theme-visual.spec.ts
+just p0
+just quality
+just publish
+```
+
+**Pas de GO automatique pour la homepage** : les contrôles qualité,
+confidentialité, SEO, CPU Vercel et Preview exact-SHA doivent être
+attestés. État actuel de la validation d'exécution : `NOT_RUN`.
+
+### Pictogrammes SVG React
+
+Navigation, footer, Contact, liens, résultats de paiement et transcription des 13 courriels juridiques utilisent désormais un composant SVG typé. Les icônes sont purement décoratives : les liens et boutons conservent leur texte ou nom accessible. Le contrat source refuse la réintroduction de balises `<i>` Font Awesome dans les composants React et vérifie l'attribut désactivant la charge JS. Contrôler les icônes dans les 4 langues, clavier, contrastes et impression en Preview exacte avant merge. Le retrait des trois CSS de police ne change pas les archives HTML.
+
+La page `/link` utilise désormais un CSS Module de grille/cartes à la place des classes `tools-grid` et `tool-item` de `landing-sections.css`, avec focus clavier et mise en page d'impression.

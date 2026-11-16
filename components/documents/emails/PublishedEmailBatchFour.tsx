@@ -1,3 +1,4 @@
+import Icon from "@/components/ui/Icon";
 /**
  * Publicly published correspondence, segment Four.
  * Part of a faithful JSX migration of the approved 13-message HTML archive.
@@ -11,10 +12,10 @@ export default function PublishedEmailBatchFour() {
 						<div className="email-block email-block--authority">
 							<div className="email-header">
 								<span className="email-from" aria-label="De"
-									><i className="fas fa-building" aria-hidden="true"></i> BESNARD Maud</span
+									><Icon name="building" /> BESNARD Maud</span
 								>
-								<span className="email-reply-hint"><i className="fas fa-reply" aria-hidden="true"></i> En réponse à </span>
-								<span className="email-to" aria-label="À"><i className="fas fa-user" aria-hidden="true"></i> M. A.</span>
+								<span className="email-reply-hint"><Icon name="reply" /> En réponse à </span>
+								<span className="email-to" aria-label="À"><Icon name="user" /> M. A.</span>
 								<span className="email-date">2 mars 2026, 15:15</span>
 							</div>
 							<div className="email-body">
@@ -53,10 +54,10 @@ export default function PublishedEmailBatchFour() {
 						<h2 id="email-2026-03-02-father" className="h5 visually-hidden">2 mars 2026 — Réponse longue</h2>
 						<div className="email-block email-block--father">
 							<div className="email-header">
-								<span className="email-from" aria-label="De"><i className="fas fa-user" aria-hidden="true"></i> M. A.</span>
-								<span className="email-reply-hint"><i className="fas fa-reply" aria-hidden="true"></i> En réponse à </span>
+								<span className="email-from" aria-label="De"><Icon name="user" /> M. A.</span>
+								<span className="email-reply-hint"><Icon name="reply" /> En réponse à </span>
 								<span className="email-to" aria-label="À"
-									><i className="fas fa-building" aria-hidden="true"></i> BESNARD Maud</span
+									><Icon name="building" /> BESNARD Maud</span
 								>
 								<span className="email-date">2 mars 2026, 18:08</span>
 							</div>
