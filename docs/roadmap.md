@@ -16,7 +16,7 @@
 
 | ID | Proposition | Livrable encore attendu | Situation / décision |
 | --- | --- | --- | --- |
-| **BB-02** | **Rang 1 · Qualité et sécurité** | Corriger le job CodeQL (permissions de lecture Actions), les erreurs d'autofix, de test npm et de scanner ZAP, puis prouver toutes les gates au SHA final | **FAIL vérifié le 16/11/2026** · CodeQL configuration GitHub et ZAP démarrage ; correction CodeQL préparée, preuve de rerun requise ; aucune gate désactivée |
+| **BB-02** | **Rang 1 · Qualité et sécurité** | Corriger le job CodeQL (permissions de lecture Actions), les erreurs d'autofix, de test npm et de scanner ZAP, puis prouver toutes les gates au SHA final | **FAIL vérifié le 16/11/2026** · ZAP exit 3 sans rapport sur les runs 43828120463 et 43943032647 ; correction du runtime Docker ZAP uid=1000/HOME/permissions préparée (test exact-SHA requis). CodeQL : refus d'accès Actions antérieur, permission corrigée dans master mais rerun absent ; aucune gate désactivée |
 | **BB-03** | **Rang 2 · Recette PR #270** | Vérifier les six cartes, AVIF, footer, liens et traductions FR/EN/DE/NO | **CODE_MERGED** ; #270 fusionnée le 14/11, parcours navigateur/axe à valider sur SHA exact |
 | **BB-04** | **Rang 3 · Bascule React** | Tester verrou SHA, SSG, 4 langues, SEO, rollback et prérequis transverses | **NO-GO** avant BB-02/BB-03 et minimum BB-01/08/09 ; activation humaine séparée |
 | **BB-05** | **Rang 4 · Contacts React** | Recetter la parité React `/people-contacted` ↔ HTML historique, source ARF, liens/clavier | **CODE_MERGED** dans #270 ; archive conservée, redirection et archivage non autorisés |
