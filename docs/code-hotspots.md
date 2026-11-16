@@ -54,17 +54,17 @@ Mesure **en octets de code source Git**, sans `public/`, documents, images, `nod
 
 **Candidats de refactoring sur Bababou, sans modifier les pièces publiées** :
 
-1. **BB-09 / PR #279** : `app/[locale]/nre/page.module.css` (**1 082 lignes**) ; segmenter par responsabilités (calendrier NRE, cartes, adaptation mobile, impression), après captures Playwright FR/EN/DE/NO, axe, RTL éventuel et comparaison CSS. La PR #279 retire d'abord Pingendo des seules routes React : ne pas mélanger ces changements avant sa recette.
+1. **BB-09 / PR #279** : `app/[locale]/nre/page.module.css` (**1 082 lignes**) ; segmenter par responsabilités (calendrier NRE, cartes, adaptation mobile, impression), après captures Playwright FR/EN/DE/NO, axe, RTL éventuel et comparaison CSS. La PR #279 est fusionnée : poursuivre la segmentation CSS NRE dans un lot séparé, uniquement après la recette React.
 2. **BB-10** : `lib/homeAudienceCopy.mjs` (**599 lignes**) ; séparer données de rédaction, variants i18n et sélecteurs de composants, avec invariants sur les titres, liens et traduction sans toucher aux dossiers privés.
 3. **BB-01 / BB-10** : `lib/publicPolicies.ts` (**569 lignes**), `lib/legalPolicies.ts` (**497 lignes**) et `lib/privacyPolicy.ts` ; séparer structure et présentation **sans changer un seul énoncé juridiquement approuvé**. Vérifier les exports, les textes, l'indexation et la publication avant toute migration.
 4. **BB-02 / BB-10** : maintenir les tests de confidentialité, `scripts/privacy-gate.ts` et `scripts/agent-quality-gate.sh`; réduire les doublons seulement avec tests de comportement et vérification des consommateurs.
 
-**Coordination actualisée au 15 novembre 2026 :** la [PR #278](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/278) a été fusionnée le 14 novembre. La [PR #279](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/279) reste ouverte, en Draft, pour isoler CSS React et imprimer correctement en mode sombre. Recontrôler SHA/base et conflits avant fusion ; **aucun auto-merge**.
+**État vérifié le 16 novembre 2026 :** [#278](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/278) fusionnée le 14/11, [#279](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/279) fusionnée le 16/11 (CSS natif et icônes React), [#281](https://github.com/AlbanAndrieu/nabla-site-bababou/pull/281) fusionnée le 16/11 (404 sans polices externes). Les économies HTTP et les contrôles exact-SHA restent **NOT_MEASURED / NOT_RUN**. Ne pas recréer les PR fusionnées.
 
 Les tailles exactes dépendent du SHA et des exclusions. `just code-footprint` sur une workstation avec checkout fournit la mesure locale avant/après. Les tests L3 et navigateur restent `NOT_RUN` tant qu'aucun rapport exact-SHA n'a été produit.
 
 
-## Font Awesome — migration React préparée dans #279
+## Font Awesome — migration React fusionnée dans #279
 
 L'inventaire Git contient **104 945 octets** répartis entre
 `fontawesome.css`, `brands.css` et `solid.css`, et **214 376 octets**
@@ -75,7 +75,7 @@ dans le layout totalisent **223 234 octets**. Le volume brut cumulé des
 consommation CPU Vercel : cache, compression et CSS bundlé doivent être
 mesurés sur une Preview exact-SHA.
 
-Dans la PR #279, le header, le footer, Contact, les liens, les pages
+Depuis la fusion de #279, le header, le footer, Contact, les liens, les pages
 de paiement et les **pictogrammes** des correspondances publiées ont
 été migrés vers `components/ui/Icon.tsx`, SVG locaux décoratifs.
 Les pages juridiques conservent exactement leurs textes et leurs
@@ -92,4 +92,4 @@ les requêtes CSS/JS/WOFF2. Les HTML et ressources historiques
 `public/` restent **inchangés**, utilisables pour rollback.
 Statut d'exécution exact-SHA : **NOT_RUN**.
 
-**404 hors ligne :** `app/404.module.css` n'avait plus de consommateur ; la source unique reste `public/404.html` pour Next et le fallback HTML. La 404 utilise désormais des polices système, un pictogramme SVG local et l'option `data-no-font-awesome` déjà supportée par le script historique. Le titre, le contenu, le statut 404, le lien d'accueil et les animations restent conservés. Une recette visuelle est requise avant fusion.
+**404 hors ligne :** `app/404.module.css` n'avait plus de consommateur ; la source unique reste `public/404.html` pour Next et le fallback HTML. La 404 fusionnée dans #281 utilise désormais des polices système, un pictogramme SVG local et l'option `data-no-font-awesome` déjà supportée par le script historique. Le titre, le contenu, le statut 404, le lien d'accueil et les animations restent conservés. Une recette visuelle reste requise pour qualifier le SHA publié.
