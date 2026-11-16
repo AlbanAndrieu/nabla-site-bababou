@@ -208,12 +208,6 @@ test("every Next-owned CSS @import resolves to an existing local file", async ()
     // A broken public URL caused a previous Vercel Turbopack build failure.
     const directives = source.split(/\r?\n/).filter((line) => /^\s*@import\b/.test(line));
     for (const directive of directives) {
-      // The preserved 404 layout deliberately retains one legacy font import;
-      // keep this exception exact-path scoped until 404 visual parity is approved.
-      if (file.pathname.endsWith("/app/404.module.css") &&
-          /^\s*@import\s+url\("https:\/\/fonts\.googleapis\.com\/css2\?/.test(directive)) {
-        continue;
-      }
       const match = directive.match(/^\s*@import\s+(?:url\(\s*)?(["'])([^"']+)\1\s*\)?(?:\s+[^;]+)?\s*;/);
       assert.ok(match, "Unsupported CSS @import: " + file.pathname + " " + directive);
       const relative = match[2];

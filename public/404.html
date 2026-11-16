@@ -12,7 +12,7 @@
 	</head>
 	<body class="page-dark">
 		<style>
-			@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@800&family=Roboto:wght@100;300&display=swap");
+			/* System fonts: no third-party request for an HTTP 404. */
 			:root {
 				--button: #b3b3b3;
 				--button-color: #0a0a0a;
@@ -40,7 +40,7 @@
 			body {
 				min-height: 100vh;
 				display: flex;
-				font-family: "Roboto", sans-serif;
+				font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
 				flex-direction: column;
 				align-items: center;
 				justify-content: center;
@@ -59,13 +59,14 @@
 				letter-spacing: 0.05rem;
 			}
 			p {
-				font-weight: 100;
+				font-weight: 300;
 			}
 			h1 {
 				-webkit-animation: swing var(--speed) infinite alternate ease-in-out;
 				animation: swing var(--speed) infinite alternate ease-in-out;
 				font-size: clamp(5rem, 40vmin, 20rem);
-				font-family: "Open Sans", sans-serif;
+				font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+				font-weight: 800;
 				margin: 0;
 				margin-bottom: 1rem;
 				letter-spacing: 1rem;
@@ -116,6 +117,7 @@
 				line-height: 1.5;
 				max-width: clamp(16rem, 90vmin, 25rem);
 			}
+			.home-icon { vertical-align: -0.125em; margin-inline-end: 0.35em; }
 			.info > p {
 				margin-bottom: 3rem;
 			}
@@ -159,9 +161,9 @@
 				We're fairly sure that page used to be here, but seems to have gone missing. We do apologise on it's behalf.
 			</p>
 			<a href="/" class="text-decoration-none" rel="noreferrer noopener"
-				><i class="fas fa-home" aria-hidden="true"></i> Back to home</a
+				><svg class="home-icon" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 10.5 12 3l9 7.5V21h-6v-7H9v7H3z"/></svg> Back to home</a
 			>
 		</div>
-		<script src="site-widgets.js" defer data-minimal-chrome></script>
+		<script src="site-widgets.js" defer data-minimal-chrome data-no-font-awesome></script>
 	</body>
 </html>

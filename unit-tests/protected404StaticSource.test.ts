@@ -41,3 +41,20 @@ test("global 404 remains a protected static-source exception", async () => {
   assert.doesNotMatch(static404, /bootstrap\/5\.2\.1/);
   assert.doesNotMatch(static404, /bootstrap-icons\/1\.9\.1/);
 });
+
+test("404 uses local system fonts, a decorative SVG and no Font Awesome loader", async () => {
+  const [notFound, static404, widgets] = await Promise.all([
+    source("app/global-not-found.tsx"),
+    source("public/404.html"),
+    source("public/site-widgets.js"),
+  ]);
+  assert.doesNotMatch(static404, /fonts\.(?:googleapis|gstatic)\.com/);
+  assert.doesNotMatch(static404, /@import\s+url\(\s*["\x27]?https?:/);
+  assert.match(static404, /font-family:\s*system-ui/);
+  assert.match(static404, /class="home-icon"/);
+  assert.match(static404, /<svg[^>]*aria-hidden="true"/);
+  assert.doesNotMatch(static404, /<i[^>]*class="(?:fas|fab|fa-solid)/);
+  assert.match(static404, /data-minimal-chrome data-no-font-awesome/);
+  assert.match(notFound, /data-no-font-awesome=""/);
+  assert.match(widgets, /hasAttribute\("data-no-font-awesome"\)/);
+});

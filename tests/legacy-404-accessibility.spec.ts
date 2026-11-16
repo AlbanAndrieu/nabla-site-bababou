@@ -5,6 +5,10 @@ import { expect, test } from "@playwright/test";
 test("legacy missing HTML stays an accessible 404 on desktop and mobile", async ({
   page,
 }, testInfo) => {
+  const unwanted: string[] = [];
+  page.on("request", (request) => {
+    if (/fonts\.(?:googleapis|gstatic)\.com|\/assets\/fontawesome(?:-free-[^/]+\/js|\/css)\//.test(request.url())) unwanted.push(request.url());
+  });
   const response = await page.goto(
     "/__missing-legacy-a11y-check-20261017__.html",
     { waitUntil: "domcontentloaded" },
@@ -12,6 +16,8 @@ test("legacy missing HTML stays an accessible 404 on desktop and mobile", async 
   expect(response?.status()).toBe(404);
   await expect(page.locator("h1")).toHaveText("404");
   const home = page.getByRole("link", { name: /back to home/i });
+  await expect(home.locator("svg.home-icon[aria-hidden=true]")).toHaveCount(1);
+  await expect(page.locator("script[src$='site-widgets.js'][data-no-font-awesome]")).toHaveCount(1);
   await expect(home).toHaveAttribute("href", "/");
 
   // A programmatic .focus() is not proof that keyboard users can reach it.
@@ -33,6 +39,7 @@ test("legacy missing HTML stays an accessible 404 on desktop and mobile", async 
         rect.bottom > 0,
     };
   });
+  expect(unwanted, "404 must not request third-party fonts or Font Awesome").toEqual([]);
   expect(focusEvidence.keyboardFocusVisible).toBe(true);
   expect(focusEvidence.visibleFocusStyle).toBe(true);
   expect(
