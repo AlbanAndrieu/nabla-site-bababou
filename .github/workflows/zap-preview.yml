@@ -200,12 +200,27 @@ jobs:
           scan_dir="$(mktemp -d "${RUNNER_TEMP}/zap-preview.XXXXXX")"
           echo "ZAP_SCAN_DIR=$scan_dir" >> "$GITHUB_ENV"
           cp .zap/rules.tsv "$scan_dir/rules.tsv"
+          # The pinned ZAP image runs as uid/gid 1000 with HOME=/home/zap.
+          # Grant only its group access to this runner-owned private workspace;
+          # never chmod 777 or replace the image user/HOME.
+          sudo chgrp 1000 "$scan_dir"
+          chmod 0770 "$scan_dir"
+          chmod 0644 "$scan_dir/rules.tsv"
+          # Verify filesystem and HOME separately before sending auth headers.
+          # A missing report remains a hard DAST failure, never a passing scan.
+          if ! docker run --rm \
+            --volume "$scan_dir:/zap/wrk:rw" \
+            ghcr.io/zaproxy/zaproxy:2.17.0 \
+            sh -c 'test "$(id -u)" -eq 1000 && test -w "$HOME" && test -w /zap/wrk && touch /zap/wrk/.zap-workspace-check && rm /zap/wrk/.zap-workspace-check' \
+            > "$scan_dir/runtime-check.log" 2>&1; then
+            echo "ZAP_SCAN_EXIT_CODE=3" >> "$GITHUB_ENV"
+            echo "::error::ZAP_RUNTIME_PREFLIGHT_FAILED: uid/home/private mounted workspace; runner-local diagnostics withheld"
+            exit 1
+          fi
           # Raw HTTP traffic and console output remain runner-local only.
           # A scanner may return a blocking exit code with a valid JSON report.
           zap_exit=0
           docker run --rm \
-            --user "$(id -u):$(id -g)" \
-            --env HOME=/tmp \
             --env ZAP_AUTH_HEADER --env ZAP_AUTH_HEADER_VALUE --env ZAP_AUTH_HEADER_SITE \
             --volume "$scan_dir:/zap/wrk:rw" \
             ghcr.io/zaproxy/zaproxy:2.17.0 \

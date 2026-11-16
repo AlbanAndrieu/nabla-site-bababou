@@ -74,7 +74,12 @@ test("ZAP baseline is isolated and never uploads raw scan evidence", async () =>
   assert.doesNotMatch(workflow, /artifact_name:/);
   assert.match(workflow, /ghcr\.io\/zaproxy\/zaproxy:2\.17\.0/);
   assert.match(workflow, /docker run --rm/);
-  assert.match(workflow, /--user "\$\(id -u\):\$\(id -g\)"/);
+  assert.doesNotMatch(workflow, /--user "\$\(id -u\):\$\(id -g\)"/);
+  assert.doesNotMatch(workflow, /--env HOME=\/tmp/);
+  assert.match(workflow, /sudo chgrp 1000 "\$scan_dir"/);
+  assert.match(workflow, /chmod 0770 "\$scan_dir"/);
+  assert.match(workflow, /ZAP_RUNTIME_PREFLIGHT_FAILED/);
+
   assert.match(workflow, /--env ZAP_AUTH_HEADER --env ZAP_AUTH_HEADER_VALUE --env ZAP_AUTH_HEADER_SITE/);
   assert.match(workflow, /zap-baseline\.py -t "\$PREVIEW_BASE_URL" -c rules\.tsv/);
   assert.match(workflow, /-J report_json\.json -I -T 5 -s/);
@@ -121,4 +126,22 @@ test("Production ZAP distinguishes scanner failure from policy findings and requ
   assert.match(workflow, /zap-production-safe\.sarif/);
   assert.doesNotMatch(workflow, /zaproxy\/action-baseline/);
   assert.doesNotMatch(workflow, /cat "\$scan_dir\/console\.log"/);
+});
+
+test("production and Preview ZAP use the pinned image non-root identity without exposing private scan files", async () => {
+  for (const workflowPath of ["production-dast.yml", "zap-preview.yml"]) {
+    const workflow = await readFile(new URL("../.github/workflows/" + workflowPath, import.meta.url), "utf8");
+    assert.match(workflow, /ghcr\.io\/zaproxy\/zaproxy:2\.17\.0/);
+    assert.match(workflow, /sudo chgrp 1000 "\$scan_dir"/);
+    assert.match(workflow, /chmod 0770 "\$scan_dir"/);
+    assert.match(workflow, /chmod 0644 "\$scan_dir\/rules\.tsv"/);
+    assert.match(workflow, /test -w "\$HOME" && test -w \/zap\/wrk/);
+    assert.match(workflow, /ZAP_RUNTIME_PREFLIGHT_FAILED/);
+    assert.doesNotMatch(workflow, /--user "\$\(id -u\):\$\(id -g\)"/);
+    assert.doesNotMatch(workflow, /--env HOME=\/tmp/);
+    assert.doesNotMatch(workflow, /chmod (?:0777|777)/);
+    assert.doesNotMatch(workflow, /cat "\$scan_dir\/console\.log"/);
+    assert.match(workflow, /-J report_json\.json -I -T 5 -s/);
+    assert.match(workflow, /--env ZAP_AUTH_HEADER --env ZAP_AUTH_HEADER_VALUE --env ZAP_AUTH_HEADER_SITE/);
+  }
 });
