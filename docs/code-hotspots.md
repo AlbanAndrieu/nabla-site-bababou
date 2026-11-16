@@ -92,4 +92,4 @@ les requêtes CSS/JS/WOFF2. Les HTML et ressources historiques
 `public/` restent **inchangés**, utilisables pour rollback.
 Statut d'exécution exact-SHA : **NOT_RUN**.
 
-Autre dépendance à isoler : `app/404.module.css` importe Google Fonts. Le garde d'import CSS l'autorise **uniquement pour cette page historique** en attendant une substitution locale avec comparaison visuelle de la 404 et de son contraste ; ne pas propager l'exception aux autres routes.
+**404 hors ligne :** `app/404.module.css` n'avait plus de consommateur ; la source unique reste `public/404.html` pour Next et le fallback HTML. La 404 utilise désormais des polices système, un pictogramme SVG local et l'option `data-no-font-awesome` déjà supportée par le script historique. Le titre, le contenu, le statut 404, le lien d'accueil et les animations restent conservés. Une recette visuelle est requise avant fusion.

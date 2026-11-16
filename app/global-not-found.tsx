@@ -36,7 +36,7 @@ export default async function GlobalNotFound() {
           dangerouslySetInnerHTML={{ __html: staticMarkup }}
         />
         <script src="/site-analytics.js" data-analytics-mode="vercel" defer />
-        <script src="/site-widgets.js" data-minimal-chrome="" defer />
+        <script src="/site-widgets.js" data-minimal-chrome="" data-no-font-awesome="" defer />
       </body>
     </html>
   );
