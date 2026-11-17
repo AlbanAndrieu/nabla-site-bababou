@@ -62,7 +62,7 @@ export async function auditApprovedHtml() {
   let dynamicExceptions = 0;
   let reviewed = 0;
   for (const file of REVIEWED_DOCUMENTS) {
-    const markup = await readFile(new URL("../" + file, import.meta.url), "utf8");
+    const markup = await readFile(new URL("../../" + file, import.meta.url), "utf8");
     const result = inspectMarkup(markup);
     if (result.findings.length) {
       throw new Error(file + ": external resource classification/SRI failed (" + result.findings.length + " findings)");
