@@ -18,11 +18,15 @@ def zap_started(zap, target):
         host.endswith(".vercel.app") and host != "vercel.app"
     ):
         raise RuntimeError("ZAP_THROTTLE_OUT_OF_SCOPE")
+    # Production may 308/301 from www to the apex. One shared rule prevents
+    # redirected requests from escaping the rate budget.
+    is_production = host == "www.bababou.com"
+    matchstring = r"^(?:www\\.)?bababou\\.com$" if is_production else host
     response = zap.network.add_rate_limit_rule(
         description="bababou-ci-1rps",
         enabled="true",
-        matchregex="false",
-        matchstring=host,
+        matchregex="true" if is_production else "false",
+        matchstring=matchstring,
         requestspersecond=MAX_RPS,
         groupby="rule",
     )
