@@ -142,6 +142,9 @@ test("ZAP suppresses only deterministic informational noise while keeping securi
     .map(([id]) => id)
     .sort();
   assert.deepEqual(ignored, ["10049", "10050", "10109"]);
+  for (const id of ["10003", "10054", "10055"]) {
+    assert.equal(policy.get(id)?.action, "WARN", id + " is a tracked signal");
+  }
 
   for (const id of ["10020", "10021", "10033", "10035"]) {
     assert.equal(policy.get(id)?.action, "FAIL", `${id} must remain blocking`);

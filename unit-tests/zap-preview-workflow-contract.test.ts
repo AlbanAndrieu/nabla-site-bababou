@@ -145,3 +145,23 @@ test("production and Preview ZAP use the pinned image non-root identity without 
     assert.match(workflow, /--env ZAP_AUTH_HEADER --env ZAP_AUTH_HEADER_VALUE --env ZAP_AUTH_HEADER_SITE/);
   }
 });
+
+test("ZAP has a fail-closed one-request-per-second throttle on approved hosts", async () => {
+  const hook = await readFile(new URL("../scripts/security/zap-rate-limit-hook.py", import.meta.url), "utf8");
+  assert.match(hook, /def zap_started\(zap, target\):/);
+  assert.match(hook, /MAX_RPS = "1"/);
+  assert.match(hook, /host != "www\.bababou\.com"/);
+  assert.match(hook, /host\.endswith\("\.vercel\.app"\)/);
+  assert.match(hook, /zap\.network\.add_rate_limit_rule/);
+  assert.match(hook, /groupby="rule"/);
+  assert.match(hook, /ZAP_THROTTLE_NOT_ENABLED/);
+  for (const name of ["production-dast.yml", "zap-preview.yml"]) {
+    const workflow = await readFile(new URL("../.github/workflows/" + name, import.meta.url), "utf8");
+    assert.match(workflow, /scripts\/security\/zap-rate-limit-hook\.py/);
+    assert.match(workflow, /--hook=\/zap\/wrk\/rate-limit-hook\.py/);
+    assert.match(workflow, /-m 2/);
+    assert.match(workflow, /ZAP_WAF_RATE_LIMIT_OR_CHALLENGE/);
+    assert.match(workflow, /ZAP_WAF_PREFLIGHT_BLOCK/);
+    assert.match(workflow, /ZAP_SCAN_EXIT_CODE/);
+  }
+});
