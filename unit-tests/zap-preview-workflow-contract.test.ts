@@ -63,7 +63,7 @@ test("ZAP negotiates Vercel Automation Bypass or OIDC and scopes the selected he
   );
   assert.match(workflow, /ZAP_AUTH_HEADER_SITE=/);
   assert.match(workflow, /x-vercel-mitigated/);
-  assert.match(workflow, /Vercel Security Checkpoint/);
+  assert.match(workflow, /ZAP_WAF_PREFLIGHT_BLOCK/);
 });
 
 test("ZAP baseline is isolated and never uploads raw scan evidence", async () => {
