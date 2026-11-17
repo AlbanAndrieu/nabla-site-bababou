@@ -21,7 +21,7 @@ def zap_started(zap, target):
     # Production may 308/301 from www to the apex. One shared rule prevents
     # redirected requests from escaping the rate budget.
     is_production = host == "www.bababou.com"
-    matchstring = r"^(?:www\\.)?bababou\\.com$" if is_production else host
+    matchstring = r"^(?:www\.)?bababou\.com$" if is_production else host
     response = zap.network.add_rate_limit_rule(
         description="bababou-ci-1rps",
         enabled="true",
