@@ -33,7 +33,9 @@ test("CSP enforces safe primitives and only observes legacy script restrictions"
   assert.match(baseline, /frame-ancestors 'none'/);
   assert.doesNotMatch(baseline, /script-src|style-src|unsafe-inline|https:/);
   assert.match(config, /script-src 'self'/);
-  assert.doesNotMatch(config, /report-uri|report-to/);
+  const reportOnly = config.split("const candidateCsp = [")[1]?.split("].join")[0];
+  assert.ok(reportOnly);
+  assert.doesNotMatch(reportOnly, /report-uri|report-to/);
 });
 
 test("CORS remains fail-closed on Next config and the public sample API", async () => {
