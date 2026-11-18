@@ -22,11 +22,30 @@ test("Next applies baseline response hardening to native and legacy routes", asy
   assert.match(config, /camera=\(\), microphone=\(\), geolocation=\(\)/);
 });
 
-test("baseline headers do not prematurely introduce a legacy-breaking CSP", async () => {
+test("CSP enforces safe primitives and only observes legacy script restrictions", async () => {
   const config = await readFile(configUrl, "utf8");
+  assert.match(config, /key: "Content-Security-Policy", value: baselineCsp/);
+  assert.match(config, /key: "Content-Security-Policy-Report-Only", value: candidateCsp/);
+  const baseline = config.split("const baselineCsp = [")[1]?.split("].join")[0];
+  assert.ok(baseline);
+  assert.match(baseline, /object-src 'none'/);
+  assert.match(baseline, /base-uri 'self'/);
+  assert.match(baseline, /frame-ancestors 'none'/);
+  assert.doesNotMatch(baseline, /script-src|style-src|unsafe-inline|https:/);
+  assert.match(config, /script-src 'self'/);
+  const reportOnly = config.split("const candidateCsp = [")[1]?.split("].join")[0];
+  assert.ok(reportOnly);
+  assert.doesNotMatch(reportOnly, /report-uri|report-to/);
+});
 
-  // CSP needs a dedicated inventory of native and legacy external dependencies,
-  // including the retained Google Translate fallback. Keep it explicit rather
-  // than accidentally shipping a policy that breaks those approved surfaces.
-  assert.doesNotMatch(config, /Content-Security-Policy/);
+test("CORS remains fail-closed on Next config and the public sample API", async () => {
+  const [config, api, notFound] = await Promise.all([
+    readFile(configUrl, "utf8"),
+    readFile(new URL("../api/hello.js", import.meta.url), "utf8"),
+    readFile(new URL("../app/__legacy-html-not-found__/route.ts", import.meta.url), "utf8"),
+  ]);
+  for (const source of [config, api, notFound]) {
+    assert.doesNotMatch(source, /Access-Control-Allow-Origin/i);
+    assert.doesNotMatch(source, /Access-Control-Allow-Credentials/i);
+  }
 });

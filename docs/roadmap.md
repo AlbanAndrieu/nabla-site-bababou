@@ -17,7 +17,7 @@
 
 | ID | Proposition | Livrable encore attendu | Situation / décision |
 | --- | --- | --- | --- |
-| **BB-02** | **Rang 1 · Qualité et sécurité** | Corriger le job CodeQL (permissions de lecture Actions), les erreurs d'autofix, de test npm et de scanner ZAP, puis prouver toutes les gates au SHA final | **FAIL vérifié le 16/11/2026** · ZAP exit 3 sans rapport sur les runs 43828120463 et 43943032647 ; correction du runtime Docker ZAP uid=1000/HOME/permissions préparée (test exact-SHA requis). CodeQL : refus d'accès Actions antérieur, permission corrigée dans master mais rerun absent ; aucune gate désactivée |
+| **BB-02** | **Rang 1 · Qualité et sécurité** | Corriger le job CodeQL (permissions de lecture Actions), les erreurs d'autofix, de test npm et de scanner ZAP, puis prouver toutes les gates au SHA final | **PASS TECHNIQUE ZAP / 4 WARN MOYENS (17/11)** · runs 44080102456 et 44163310324 exit 0, SARIF H0 M4 L4 I5 ; #282 fusionnée, causes de 4 règles encore à qualifier ; prochain lot CSP minimale / couverture ZAP bornée / budget WAF sans configuration active. CodeQL : rerun réussi non attesté ; aucune gate désactivée |
 | **BB-03** | **Rang 2 · Recette PR #270** | Vérifier les six cartes, AVIF, footer, liens et traductions FR/EN/DE/NO | **CODE_MERGED** ; #270 fusionnée le 14/11, smoke production 43943032584 PASS sur SHA c1bdb433 ; Playwright Preview SKIPPED, parcours/axe exact-SHA non attestés |
 | **BB-04** | **Rang 3 · Bascule React** | Tester verrou SHA, SSG, 4 langues, SEO, rollback et prérequis transverses | **NO-GO** avant BB-02/BB-03 et minimum BB-01/08/09 ; activation humaine séparée |
 | **BB-05** | **Rang 4 · Contacts React** | Recetter la parité React `/people-contacted` ↔ HTML historique, source ARF, liens/clavier | **CODE_MERGED** dans #270 ; archive conservée, redirection et archivage non autorisés |
@@ -31,7 +31,7 @@
 
 ## Prochaines étapes — ordre approuvé (sans déploiement implicite)
 
-1. **BB-02** : valider le runtime ZAP en PR Draft #282, obtenir un rapport JSON et un SARIF minimisé valides et un statut DAST bloquant ; confirmer le rerun CodeQL avec le droit `actions: read`, puis preuves de quality/security sans bypass.
+1. **BB-02** : #282 fusionnée ; DAST passif valide sur 2 SHAs le 17/11, **4 alertes moyennes non closes**. Recetter CSP partielle, CORS réel, origine des alertes 10099/SRI et le nouveau plafond ZAP 1 req/s avant renforcement des FAIL. Confirmer aussi CodeQL (rerun) et la lecture des règles WAF sans bypass.
 2. **BB-03 / BB-05 / BB-11** : rejouer Playwright/axe exact-SHA (quatre langues, cartes, footer, liens Contact et 13 messages juridiques) ; le smoke production réussi ne vaut pas la recette Preview.
 3. **BB-01 / BB-08 / BB-09** : auditer en lecture seule les originaux déjà publics, mesurer la consommation CPU Vercel réelle et recetter les styles/404/contrastes/impression avant toute bascule.
 4. **BB-04** : conserver `NO-GO` jusqu'à validation des prérequis et décision humaine sur la homepage et les redirections.
@@ -44,6 +44,7 @@
 - [Parité React](homepage-migration-parity.md) et [GO/NO-GO](homepage-react-cutover.md) : seule procédure de bascule/rollback.
 - [Publication sûre](publication-redaction.md), [accès aux sources](sitewide-document-access.md), [preuve privée](nre-evidence-openrag-access.md) : frontières de confidentialité.
 - [NRE](nre-visit-ledger.md) et [FinOps](vercel-finops.md) : règles métier et mesures.
+- [Plan de remédiation ZAP / Vercel WAF](security-zap-waf-remediation.md) : règles historiques, limites de couverture, compteur et seuil WAF non appliqué.
 - [Audit de volume et comparaison avec Site Alban](code-hotspots.md) : base chiffrée, hotspots, livrables BB-09/BB-10, coordination avec #279.
 - [Archive du backlog précédent](archive/roadmap-through-2026-11-13.md) : traces historiques, jamais autorité active.
 
