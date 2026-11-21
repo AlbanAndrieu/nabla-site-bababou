@@ -31,14 +31,28 @@ Un précontrôle détecte HTTP `429` et `x-vercel-mitigated: challenge`, et le s
 
 Lecture de configuration `active` du projet `nabla-site-bababou` (`prj_9eUAYmWQtHFIRKIOBYsumhU3QLU0`) : `firewallEnabled=true`, `managedRules.bot_protection={active:true,action:challenge}`, CRS `gen`, `sqli`, `xss`, `rce` actifs avec action **`log` uniquement** ; `rules=[]`, `ips=[]`. Les autres catégories CRS retournées sont inactives. Le `updatedAt` rapporté est le **4 août 2026** : lecture actuelle de la configuration active, et non preuve d'événements WAF récents. **Aucune règle SQLi/XSS/RCE n'est attestée en `deny`, et aucune règle personnalisée de rate limiting n'est présente.** Ne pas confondre détection et blocage.
 
-Avant activation : récupérer les événements Firewall Observability (période, actions, catégories, 429/challenge), exclure les faux positifs, vérifier les impacts sur scanners/robots/utilisateurs légitimes, préparer une version Terraform dans `nabla-compose` avec `import` et `plan` sans remplacement ou réinitialisation des règles existantes. Conserver un snapshot exploitable pour rollback et un journal de décision ; revue des capacités et coûts du plan courant. Échelonner `log → deny` pour les CRS SQLi/XSS/RCE seulement après validation ciblée, puis observer le rate limiting en journalisation avant toute réponse 429. Le mode `log` n'est pas un contrôle bloquant. Aucune règle de production n'a été changée par cette revue.
+Avant activation : récupérer les événements Firewall Observability (période, actions, catégories, 429/challenge), exclure les faux positifs, vérifier les impacts sur scanners/robots/utilisateurs légitimes, utiliser le module Terraform **déjà fusionné** dans `nabla-compose` via la [PR #433](https://github.com/AlbanAndrieu/nabla-compose/pull/433) ; son `import` Garage, son `plan` et son `apply` restent **NOT_RUN** d'après la roadmap Compose. Ne jamais créer un second WAF ni remplacer des règles existantes. Conserver un snapshot exploitable pour rollback et un journal de décision ; revue des capacités et coûts du plan courant. Le HCL existant demande `deny` pour SQLi/XSS/RCE et une règle de débit `deny` 300/60 s/IP : **c'est l'état cible du code et non une configuration appliquée**. Toute expérimentation préalable en journalisation ou activation partielle exige un `plan` HCL explicite et une revue des différences. Le mode `log` n'est pas un contrôle bloquant. Aucune règle de production n'a été changée par cette revue.
 
-### Règle WAF proposée pour le plan Vercel Hobby (non appliquée)
+### IaC et validation sans duplication — BB-02 / Compose H04
 
-1. Dans **Vercel → nabla-site-bababou → Firewall → Configure → New Rule**, créer une unique règle pour `www.bababou.com` : **fixed window, par IP, 300 requêtes/60 s**, action `Log` initiale. Éviter de compter uniquement sur `User-Agent` ou un header contrôlable par le client pour autoriser ZAP.
-2. Analyser les événements de déclenchement, les utilisateurs derrière NAT, les robots légitimes, les erreurs `429`, les scans CI et le coût réel du service. Ensuite seulement envisager l'action `429` et ajuster le seuil à la charge mesurée. En Hobby : **une règle WAF Rate Limiting par projet**, facteur de décision important. Les tarifs/limitations doivent être examinés dans le tableau de bord.
-3. Si un challenge ou `429` apparaît pendant un scan, **ne pas contourner globalement le WAF**. Examiner la règle, le budget de scan et l'éventuel chevauchement de jobs ; conserver la protection DDoS. Les runners GitHub n'ont pas d'adresse IP stable à supposer dans une allowlist.
-4. L'ancienne erreur `404 not_found / access denied` n'est plus reproductible lors de la lecture du 21/11 ; configuration `active` récupérée en lecture seule. **Cela n'atteste pas que les droits de modification ou l'accès aux événements soient disponibles**. Vérifier ces droits avant toute proposition de changement actif.
+**Autorité unique :** [`nabla-compose/terraform/vercel-waf/main.tf`](https://github.com/AlbanAndrieu/nabla-compose/blob/master/terraform/vercel-waf/main.tf) et [runbook d'import/apply](https://github.com/AlbanAndrieu/nabla-compose/blob/master/terraform/vercel-waf/README.md). La [PR Compose #433](https://github.com/AlbanAndrieu/nabla-compose/pull/433) a été fusionnée : **CODED, NOT_APPLIED**. Le module vise SQLi/XSS/RCE en `deny`, `gen` en `log`, anti-bot en `challenge` et **une seule règle de rate limit** sur `www.bababou.com`, `bababou.com` et `bababou.albandrieu.com`, jamais `*.vercel.app`.
+
+**Licence :** la [documentation Vercel des managed rulesets](https://vercel.com/docs/vercel-firewall/vercel-waf/managed-rulesets) indique que les règles OWASP gérées nécessitent **Enterprise**, tandis que le [rate limiting](https://vercel.com/docs/vercel-firewall/vercel-waf/rate-limiting) est disponible sur tous les plans, dans les limites du forfait. La réponse `get_team` du 21/11 ne divulgue pas le forfait ni l'éligibilité à OWASP : **ENTITLEMENT_UNVERIFIED**. Ne pas provoquer d'upgrade payant ni promettre que les actions `deny` seront acceptées. Si l'offre ne permet pas les managed rulesets, décider d'une protection alternative après étude, sans pseudo-règles regex non vérifiées.
+
+**Recette applicative locale (sans API, sans CI supplémentaire) :**
+
+```bash
+umask 077
+# Capturer le JSON WAF active uniquement sur une workstation autorisée,
+# dans un fichier temporaire privé hors dépôt : aucun log HTTP brut dans Git.
+just waf-snapshot-test
+just waf-snapshot-inventory /chemin/prive/waf-active.json
+just waf-snapshot-verify /chemin/prive/waf-active.json
+```
+
+`inventory` retourne 0 pour un JSON valide mais déclare `NOT_A_SECURITY_GATE`. `verify` retourne **2** tant que le blocage SQLi/XSS/RCE, le bot challenge, `gen=log` et le rate limit exact ne sont pas attestés ; **1** si le snapshot est absent ou mal formé. Les sorties sont réduites à des indicateurs : ni domaine individuel, ni expression de règle, ni données personnelles. Une structure API inconnue est **UNVERIFIED**, jamais convertie en PASS. Ces vérifications ne remplacent ni les tests navigateur ni la preuve d'événements WAF réels. L'appel `get_active_attack_status` du 21/11 a renvoyé `anomalies=[]` : ce n'est **pas** une preuve d'absence de faux positifs.
+
+**Séquence d'activation :** (1) droits et forfait, événements + faux positifs et budget ; (2) import de l'existant dans le Garage de Compose et `plan` sans destruction ; (3) approbation spécifique du diff ; (4) activation contrôlée, smoke FR/EN/DE/NO et vérification 403/429, ZAP ≤1 req/s et coûts ; (5) rollback IaC et relecture de la configuration active. Aucun bypass global des IP GitHub Actions, et aucun scan actif ZAP en production.
 
 ## Critères de GO
 
