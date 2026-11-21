@@ -1,6 +1,6 @@
 # ZAP, CSP, SRI et WAF — Bababou
 
-Révision du 17 novembre 2026. Cette page documente **les alertes encore visibles**, les corrections progressives et les risques de blocage WAF. Elle ne contient ni requête HTTP brute, ni cookie, ni URL de pièces familiales.
+Révision du 17 novembre 2026 ; état WAF Vercel relu le 21 novembre 2026. Cette page documente **les alertes encore visibles**, les corrections progressives et les risques de blocage WAF. Elle ne contient ni requête HTTP brute, ni cookie, ni URL de pièces familiales.
 
 ## Preuves exact-SHA
 
@@ -27,12 +27,18 @@ Un précontrôle détecte HTTP `429` et `x-vercel-mitigated: challenge`, et le s
 
 **Important :** le scan actif peut générer des requêtes dangereuses. Il reste séparé, uniquement sur une Preview explicitement autorisée, jamais en Production. Aucune augmentation du nombre d'appels actifs dans les workflows automatiques.
 
+### État réellement actif du WAF — lecture API du 21/11/2026
+
+Lecture de configuration `active` du projet `nabla-site-bababou` (`prj_9eUAYmWQtHFIRKIOBYsumhU3QLU0`) : `firewallEnabled=true`, `managedRules.bot_protection={active:true,action:challenge}`, CRS `gen`, `sqli`, `xss`, `rce` actifs avec action **`log` uniquement** ; `rules=[]`, `ips=[]`. Les autres catégories CRS retournées sont inactives. Le `updatedAt` rapporté est le **4 août 2026** : lecture actuelle de la configuration active, et non preuve d'événements WAF récents. **Aucune règle SQLi/XSS/RCE n'est attestée en `deny`, et aucune règle personnalisée de rate limiting n'est présente.** Ne pas confondre détection et blocage.
+
+Avant activation : récupérer les événements Firewall Observability (période, actions, catégories, 429/challenge), exclure les faux positifs, vérifier les impacts sur scanners/robots/utilisateurs légitimes, préparer une version Terraform dans `nabla-compose` avec `import` et `plan` sans remplacement ou réinitialisation des règles existantes. Conserver un snapshot exploitable pour rollback et un journal de décision ; revue des capacités et coûts du plan courant. Échelonner `log → deny` pour les CRS SQLi/XSS/RCE seulement après validation ciblée, puis observer le rate limiting en journalisation avant toute réponse 429. Le mode `log` n'est pas un contrôle bloquant. Aucune règle de production n'a été changée par cette revue.
+
 ### Règle WAF proposée pour le plan Vercel Hobby (non appliquée)
 
 1. Dans **Vercel → nabla-site-bababou → Firewall → Configure → New Rule**, créer une unique règle pour `www.bababou.com` : **fixed window, par IP, 300 requêtes/60 s**, action `Log` initiale. Éviter de compter uniquement sur `User-Agent` ou un header contrôlable par le client pour autoriser ZAP.
 2. Analyser les événements de déclenchement, les utilisateurs derrière NAT, les robots légitimes, les erreurs `429`, les scans CI et le coût réel du service. Ensuite seulement envisager l'action `429` et ajuster le seuil à la charge mesurée. En Hobby : **une règle WAF Rate Limiting par projet**, facteur de décision important. Les tarifs/limitations doivent être examinés dans le tableau de bord.
 3. Si un challenge ou `429` apparaît pendant un scan, **ne pas contourner globalement le WAF**. Examiner la règle, le budget de scan et l'éventuel chevauchement de jobs ; conserver la protection DDoS. Les runners GitHub n'ont pas d'adresse IP stable à supposer dans une allowlist.
-4. La lecture actuelle de la configuration active WAF par le connecteur Vercel a renvoyé `404 not_found / access denied` ; aucune règle n'a donc été créée ni modifiée. Vérifier les rôles/projet et reconnecter Vercel pour une revue en lecture seule avant tout changement actif.
+4. L'ancienne erreur `404 not_found / access denied` n'est plus reproductible lors de la lecture du 21/11 ; configuration `active` récupérée en lecture seule. **Cela n'atteste pas que les droits de modification ou l'accès aux événements soient disponibles**. Vérifier ces droits avant toute proposition de changement actif.
 
 ## Critères de GO
 
