@@ -1,6 +1,6 @@
 # Roadmap générale — Site Bababou
 
-**Réconciliation du 16 novembre 2026 — référence Git : `master@c1bdb4338bc1`.** Ce document contient **seulement les décisions et livrables ouverts**. La [roadmap d’ingénierie](engineering-roadmap.md) décrit les critères techniques, les commandes et les dépendances des mêmes identifiants `BB-xx` ; elle n'a pas son propre ordre de priorité. [Historique conservé](archive/roadmap-through-2026-11-13.md).
+**Réconciliation du 16 novembre 2026 (état WAF vérifié le 21 novembre) — référence Git : `master@c1bdb4338bc1`.** Ce document contient **seulement les décisions et livrables ouverts**. La [roadmap d’ingénierie](engineering-roadmap.md) décrit les critères techniques, les commandes et les dépendances des mêmes identifiants `BB-xx` ; elle n'a pas son propre ordre de priorité. [Historique conservé](archive/roadmap-through-2026-11-13.md).
 
 ## État attesté et limites
 
@@ -17,7 +17,7 @@
 
 | ID | Proposition | Livrable encore attendu | Situation / décision |
 | --- | --- | --- | --- |
-| **BB-02** | **Rang 1 · Qualité et sécurité** | Corriger le job CodeQL (permissions de lecture Actions), les erreurs d'autofix, de test npm et de scanner ZAP, puis prouver toutes les gates au SHA final | **PASS TECHNIQUE ZAP / 4 WARN MOYENS (17/11)** · runs 44080102456 et 44163310324 exit 0, SARIF H0 M4 L4 I5 ; #282 fusionnée, causes de 4 règles encore à qualifier ; prochain lot CSP minimale / couverture ZAP bornée / budget WAF sans configuration active. CodeQL : rerun réussi non attesté ; aucune gate désactivée |
+| **BB-02** | **Rang 1 · Qualité et sécurité** | Corriger le job CodeQL (permissions de lecture Actions), les erreurs d'autofix, de test npm et de scanner ZAP, puis prouver toutes les gates au SHA final | **PASS TECHNIQUE ZAP / 4 WARN MOYENS (17/11)** · runs 44080102456 et 44163310324 exit 0, SARIF H0 M4 L4 I5 ; #282 fusionnée, causes de 4 règles encore à qualifier ; prochain lot CSP minimale / couverture ZAP bornée / transition WAF `log → deny` contrôlée et rate limiting non encore configuré. Lecture API du 21/11 : Firewall activé, bots `challenge`, CRS `gen`, `sqli`, `xss`, `rce` actifs en `log`, `rules: []`. Aucune modification de production appliquée. CodeQL : rerun réussi non attesté ; aucune gate désactivée |
 | **BB-03** | **Rang 2 · Recette PR #270** | Vérifier les six cartes, AVIF, footer, liens et traductions FR/EN/DE/NO | **CODE_MERGED** ; #270 fusionnée le 14/11, smoke production 43943032584 PASS sur SHA c1bdb433 ; Playwright Preview SKIPPED, parcours/axe exact-SHA non attestés |
 | **BB-04** | **Rang 3 · Bascule React** | Tester verrou SHA, SSG, 4 langues, SEO, rollback et prérequis transverses | **NO-GO** avant BB-02/BB-03 et minimum BB-01/08/09 ; activation humaine séparée |
 | **BB-05** | **Rang 4 · Contacts React** | Recetter la parité React `/people-contacted` ↔ HTML historique, source ARF, liens/clavier | **CODE_MERGED** dans #270 ; archive conservée, redirection et archivage non autorisés |
@@ -31,7 +31,7 @@
 
 ## Prochaines étapes — ordre approuvé (sans déploiement implicite)
 
-1. **BB-02** : #282 fusionnée ; DAST passif valide sur 2 SHAs le 17/11, **4 alertes moyennes non closes**. Recetter CSP partielle, CORS réel, origine des alertes 10099/SRI et le nouveau plafond ZAP 1 req/s avant renforcement des FAIL. Confirmer aussi CodeQL (rerun) et la lecture des règles WAF sans bypass.
+1. **BB-02** : #282 fusionnée ; DAST passif valide sur 2 SHAs le 17/11, **4 alertes moyennes non closes**. Recetter CSP partielle, CORS réel, origine des alertes 10099/SRI et le nouveau plafond ZAP 1 req/s avant renforcement des FAIL. Confirmer aussi CodeQL (rerun). L'API Vercel est désormais lisible (21/11) : auditer les événements et le risque de faux positifs avant toute activation `deny`, puis préparer les règles reproductibles dans `nabla-compose` sans déclarer Terraform source de vérité tant que l'import/plan n'est pas validé.
 2. **BB-03 / BB-05 / BB-11** : rejouer Playwright/axe exact-SHA (quatre langues, cartes, footer, liens Contact et 13 messages juridiques) ; le smoke production réussi ne vaut pas la recette Preview.
 3. **BB-01 / BB-08 / BB-09** : auditer en lecture seule les originaux déjà publics, mesurer la consommation CPU Vercel réelle et recetter les styles/404/contrastes/impression avant toute bascule.
 4. **BB-04** : conserver `NO-GO` jusqu'à validation des prérequis et décision humaine sur la homepage et les redirections.
