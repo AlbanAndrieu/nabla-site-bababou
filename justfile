@@ -185,7 +185,7 @@ waf-snapshot-test:
 
 # Validate the bounded public ZAP SARIF producer without starting ZAP or CI.
 zap-report-privacy-test:
-    node --test unit-tests/zapSafeReportProducer.test.mjs unit-tests/productionDastHttp402.test.mjs unit-tests/zapSafeReportProducer.test.mjs
+    node --test unit-tests/zapSafeReportProducer.test.mjs unit-tests/productionDastHttp402.test.mjs unit-tests/vercelMitigationGates.test.mjs unit-tests/zapSafeReportProducer.test.mjs
 
 # Validate pre-commit structural integrity without fetching or executing hooks.
 # Uses PyYAML already supplied by the local pre-commit Python installation.
