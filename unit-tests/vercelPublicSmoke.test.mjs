@@ -23,7 +23,7 @@ test("route list uses bounded sequential HEAD only and sanitized cache labels", 
     assert.ok(url.startsWith("https://www.bababou.com/"));
     assert.equal(args.method, "HEAD");
     assert.equal(args.redirect, "manual");
-    return { status: 200, headers: { get: () => "HIT" } };
+    return { status: 200, headers: { get: (name) => name === "x-vercel-cache" ? "HIT" : null } };
   });
   assert.equal(calls, SITES.bababou.paths.length);
   assert.equal(reply.status, "PASS");
