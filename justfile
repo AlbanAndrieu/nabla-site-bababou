@@ -183,6 +183,10 @@ waf-snapshot-verify file:
 waf-snapshot-test:
     node --test unit-tests/vercelWafSnapshotAudit.test.mjs
 
+# Validate the bounded public ZAP SARIF producer without starting ZAP or CI.
+zap-report-privacy-test:
+    node --test unit-tests/zapSafeReportProducer.test.mjs unit-tests/zapSafeReportProducer.test.mjs
+
 # Validate pre-commit structural integrity without fetching or executing hooks.
 # Uses PyYAML already supplied by the local pre-commit Python installation.
 precommit-config-test:
