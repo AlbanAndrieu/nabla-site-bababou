@@ -151,6 +151,11 @@ jobs:
             location="$(awk 'BEGIN { IGNORECASE=1 } /^location:/ { sub(/^[^:]+:[[:space:]]*/, ""); sub(/\r$/, ""); print; exit }' "$response_headers")"
             mitigated="$(awk 'BEGIN { IGNORECASE=1 } /^x-vercel-mitigated:/ { sub(/^[^:]+:[[:space:]]*/, ""); sub(/\r$/, ""); print; exit }' "$response_headers")"
 
+            if [[ "$status" == "402" ]]; then
+              echo "::error::PLAYWRIGHT_VERCEL_HTTP_402: Preview blocked by platform quota/account; browser tests not executed."
+              rm -f "$response_headers"
+              exit 1
+            fi
             if [[ "$status" == "429" || ( -n "$mitigated" && "${mitigated,,}" != "none" ) ]]; then
               echo "$auth_name reached a Vercel mitigation or rate limit (HTTP $status)."
               rm -f "$response_headers"
