@@ -68,6 +68,31 @@ test("changes to bot protection, generic detection, or limits fail closed", () =
   }
 });
 
+test("a verified WAF policy also rejects surprise managed rules, CRS and IP overrides", () => {
+  const baseline = snapshot("deny", [desiredRule()]);
+  assert.equal(auditVercelWafSnapshot(baseline).status, "ENFORCED");
+
+  const unexpectedCrs = snapshot("deny", [desiredRule()]);
+  unexpectedCrs.result.crs.lfi = { active: true, action: "deny" };
+  assert.equal(auditVercelWafSnapshot(unexpectedCrs).checks.crsScope, false);
+
+  const unexpectedManaged = snapshot("deny", [desiredRule()]);
+  unexpectedManaged.result.managedRules.extra = { active: true, action: "challenge" };
+  assert.equal(auditVercelWafSnapshot(unexpectedManaged).checks.managedScope, false);
+
+  const unexpectedIp = snapshot("deny", [desiredRule()]);
+  unexpectedIp.result.ips.push({ value: "192.0.2.1", action: "allow" });
+  assert.equal(auditVercelWafSnapshot(unexpectedIp).checks.ipOverridesAbsent, false);
+
+  const missingIps = snapshot("deny", [desiredRule()]);
+  delete missingIps.result.ips;
+  assert.equal(auditVercelWafSnapshot(missingIps).status, "NOT_VERIFIED");
+
+  const inactiveCrs = snapshot("deny", [desiredRule()]);
+  inactiveCrs.result.crs.lfi = { active: false, action: "log" };
+  assert.equal(auditVercelWafSnapshot(inactiveCrs).status, "ENFORCED");
+});
+
 test("malformed or partial responses never pass", () => {
   for (const payload of [null, {}, { result: {} }, { result: { firewallEnabled: true, managedRules: {}, crs: {}, rules: {} } }]) {
     assert.throws(() => auditVercelWafSnapshot(payload), /WAF_SNAPSHOT_INVALID/);
