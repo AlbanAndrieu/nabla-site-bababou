@@ -30,6 +30,10 @@ Reprise ciblée de la minimisation fail-closed de [Site Alban #236](https://gith
 
 Le producteur ne traite que le DAST de **production** : une Preview Vercel dispose d'alias dynamiques et son contrôle exact-SHA demeure dans `.github/workflows/zap-preview.yml`. Aucun assouplissement du host-check Preview, de la politique `.zap/rules.tsv` ni des protections Vercel.
 
+**Hardening preflight du 22 novembre 2026 :** les workflows `production-dast.yml`, `zap-preview.yml` et `playwright.yml` reconnaissent désormais **toute mitigation explicite** `x-vercel-mitigated` (y compris `deny`) et HTTP 429 comme `COVERAGE_BLOCKED`, avant la branche « authentification échouée ». Les précontrôles Preview arrêtent les tentatives d'authentification si Vercel retourne HTTP 402 ; Playwright refuse également HTTP 4xx/5xx inattendus. Les en-têtes de mitigation ne sont jamais recopiés bruts dans les outputs GitHub ou les logs. Contrat source : `unit-tests/vercelMitigationGates.test.mjs` (suite Node 24 non exécutée). `scripts/security/vercel-waf-snapshot-audit.mjs` refuse un `ENFORCED` si d'autres CRS/managed rules sont actifs ou si des IP overrides sont présents. 
+
+**Validation locale ciblée :** 18 tests Node 22.16.0 réussis sur une copie strictement identique aux blobs GitHub (scripts WAF/ZAP/smoke et tests unitaires). Ni `just quality`, ni le DAST réel, ni le déploiement, ni la réception navigateur n'ont été exécutés. Les quatre alertes ZAP moyennes restent ouvertes.
+
 ## Protection de la pipeline ZAP contre le WAF
 
 Le hook `scripts/security/zap-rate-limit-hook.py` impose **1 requête/seconde** au niveau du réseau ZAP, uniquement sur `www.bababou.com` ou un hôte exact `*.vercel.app`. Le crawl passif est porté à **2 minutes** mais les scans restent limités à 5 minutes de démarrage/attente (`-T 5`) et 15/20 minutes par job. En cas de Rate Limit add-on manquant, la pipeline **échoue sans scanner**.
