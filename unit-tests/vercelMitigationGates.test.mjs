@@ -42,7 +42,7 @@ test("Playwright Preview rejects quota, WAF interception and 5xx before browser 
 test("Production live smoke explicitly classifies Vercel 402 and all mitigations", () => {
   assert.match(smoke, /PROD_LIVE_PLATFORM_BLOCKED/);
   assert.match(smoke, /PROD_LIVE_CHECKPOINT/);
-  assert.match(smoke, /"\$status" == "429"/);
+  assert.match(smoke, /"\$\{status\}" == "429"/);
   assert.match(smoke, /"\$\{mitigated,,\}" != "none"/);
   assert.doesNotMatch(smoke, /x-vercel-mitigated=\$\{mitigated/);
 });
