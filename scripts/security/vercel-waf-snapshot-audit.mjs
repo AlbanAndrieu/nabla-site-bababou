@@ -13,6 +13,7 @@ const desiredHosts = [
   "www.bababou.com",
 ];
 const attackRules = ["sqli", "xss", "rce"];
+const approvedCrs = new Set(["gen", ...attackRules]);
 
 function isObject(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value);
@@ -62,6 +63,13 @@ export function auditVercelWafSnapshot(payload) {
     xssDeny: managedRule(config.crs, "xss", "deny"),
     rceDeny: managedRule(config.crs, "rce", "deny"),
     rateLimit: config.rules.length === 1 && rateLimitRule(config.rules[0]),
+    // Unexpected active CRS groups, managed rules or IP overrides can change
+    // the behavior of the production site even when SQLi/XSS/RCE are correct.
+    crsScope: Object.entries(config.crs).every(([name, rule]) =>
+      approvedCrs.has(name) || (isObject(rule) && rule.active === false)),
+    managedScope: Object.entries(config.managedRules).every(([name, rule]) =>
+      name === "bot_protection" || (isObject(rule) && rule.active === false)),
+    ipOverridesAbsent: Array.isArray(config.ips) && config.ips.length === 0,
   };
   const logOnly = attackRules.every((name) => managedRule(config.crs, name, "log"));
   const ready = Object.values(checks).every(Boolean);
