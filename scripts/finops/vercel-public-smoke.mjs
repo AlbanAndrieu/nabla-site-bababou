@@ -27,15 +27,24 @@ export async function inspect(site, request = fetch) {
       const code = response.status;
       const cacheRaw = response.headers?.get("x-vercel-cache")?.toUpperCase() ?? "NONE";
       const cache = CACHE.has(cacheRaw) ? cacheRaw : "UNKNOWN";
-      const state = code === 402 ? "PLATFORM_BLOCKED" : code >= 200 && code < 300 ? "PASS"
+      // Stop on explicit Vercel mitigation rather than probing every public route.
+      // Never print the (untrusted) mitigation header or make an automated retry.
+      const mitigation = response.headers?.get("x-vercel-mitigated")?.trim();
+      const intercepted = Boolean(mitigation && mitigation.toLowerCase() !== "none");
+      const state = code === 402 ? "PLATFORM_BLOCKED"
+        : code === 429 || intercepted ? "SECURITY_BLOCKED"
+        : code >= 200 && code < 300 ? "PASS"
         : code >= 300 && code < 400 ? "REDIRECT" : "HTTP_ERROR";
       results.push({ path, state, http: code, cache });
+      if (state === "PLATFORM_BLOCKED" || state === "SECURITY_BLOCKED") break;
     } catch {
       results.push({ path, state: "UNREACHABLE", http: null, cache: "UNKNOWN" });
     }
   }
-  const blocked = results.some(x => x.state === "PLATFORM_BLOCKED");
-  const status = blocked ? "BLOCKED_PLATFORM" : results.every(x => x.state === "PASS") ? "PASS" : "WARN";
+  const blockedPlatform = results.some(x => x.state === "PLATFORM_BLOCKED");
+  const blockedSecurity = results.some(x => x.state === "SECURITY_BLOCKED");
+  const status = blockedPlatform ? "BLOCKED_PLATFORM" : blockedSecurity ? "BLOCKED_SECURITY"
+    : results.every(x => x.state === "PASS") ? "PASS" : "WARN";
   return { status, site, checked: results.length, results, cpuMeasured: false };
 }
 
@@ -47,7 +56,8 @@ export async function run(argv, request = fetch) {
   }
   const report = await inspect(site, request);
   console.log(JSON.stringify(report));
-  return report.status === "PASS" ? 0 : report.status === "BLOCKED_PLATFORM" ? 2 : 1;
+  return report.status === "PASS" ? 0
+    : ["BLOCKED_PLATFORM", "BLOCKED_SECURITY"].includes(report.status) ? 2 : 1;
 }
 if (process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url) {
   process.exitCode = await run(process.argv.slice(2));
