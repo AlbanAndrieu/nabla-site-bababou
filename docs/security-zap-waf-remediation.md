@@ -19,6 +19,17 @@ Révision du 17 novembre 2026 ; état WAF Vercel relu le 21 novembre 2026. Cette
 
 Les règles `10038/10098/10099/90003` restent `WARN` jusqu'à vérification des occurrences exactes; **aucune** n'est mise à `IGNORE`. ZAP signale en plus les bibliothèques vulnérables (`10003`), cookies SameSite (`10054`) et faiblesses CSP (`10055`) si les add-ons disponibles produisent ces alertes. Leur absence n'est pas la preuve qu'un contrôle a eu lieu.
 
+### Convergence du producteur SARIF depuis Site Alban — 22/11/2026
+
+Reprise ciblée de la minimisation fail-closed de [Site Alban #236](https://github.com/AlbanAndrieu/nabla-site-alban/pull/236) dans `scripts/security/zap-safe-report.mjs`, **sans copier le producteur HIGH-only** : Bababou conserve les identifiants de règles **HIGH et MEDIUM** (les quatre `WARN` encore ouverts doivent rester visibles).
+
+- JSON source borné à **8 Mo**, **1 à 20 sites**, **2 000 alertes par site** ; sortie SARIF bornée à **1 Mo**, créée exclusivement en `0600` sans écraser un artefact préexistant.
+- Chaque site doit correspondre à une origine HTTPS publique approuvée (`www.bababou.com`, `bababou.com` ou `bababou.albandrieu.com`), sans chemin, requête, identifiant ou port non HTTPS ; tout écart échoue **avant la création de l'artefact**.
+- Les identifiants de règles MEDIUM/HIGH sont exclusivement numériques. L'export conserve leurs identifiants et niveaux, mais jamais les URLs d'instances, corps/headers HTTP, messages libres ou pièces familiales. **Pas d'upload brut**.
+- `node --test unit-tests/zapSafeReportProducer.test.mjs unit-tests/productionDastHttp402.test.mjs` couvre filtrage, schéma, confidentialité, permission des fichiers, HTTP 402 et blocage WAF. Un échec de validation est une **erreur de producteur**, pas « 0 vulnérabilité ».
+
+Le producteur ne traite que le DAST de **production** : une Preview Vercel dispose d'alias dynamiques et son contrôle exact-SHA demeure dans `.github/workflows/zap-preview.yml`. Aucun assouplissement du host-check Preview, de la politique `.zap/rules.tsv` ni des protections Vercel.
+
 ## Protection de la pipeline ZAP contre le WAF
 
 Le hook `scripts/security/zap-rate-limit-hook.py` impose **1 requête/seconde** au niveau du réseau ZAP, uniquement sur `www.bababou.com` ou un hôte exact `*.vercel.app`. Le crawl passif est porté à **2 minutes** mais les scans restent limités à 5 minutes de démarrage/attente (`-T 5`) et 15/20 minutes par job. En cas de Rate Limit add-on manquant, la pipeline **échoue sans scanner**.
