@@ -171,8 +171,12 @@ jobs:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           persist-credentials: false
-      - name: Install pinned Nuclei with checksum verification (Site Alban parity)
+
+      - name: Install pinned Nuclei and verify real templates (Alban #338 parity)
         shell: bash
+        env:
+          # GitHub token is for template updater API quota only; never sent to scan targets.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           archive="${RUNNER_TEMP}/nuclei.zip"
@@ -181,24 +185,80 @@ jobs:
           printf '%s  %s\n' 'ea63d4ae232808cd7c6bc00d0142428e231fab59dae01042246097d195835ab6' "$archive" | sha256sum --check --status
           unzip -p "$archive" nuclei > "${RUNNER_TEMP}/nuclei"
           chmod 700 "${RUNNER_TEMP}/nuclei"
+          "${RUNNER_TEMP}/nuclei" -version
+          templates_dir="${HOME}/nuclei-templates"
           "${RUNNER_TEMP}/nuclei" -ut
-          test -d "${HOME}/nuclei-templates"
+          if [[ ! -d "$templates_dir" ]]; then
+            echo "::error::NUCLEI_TEMPLATES_UNAVAILABLE: no template directory"
+            exit 1
+          fi
+          first_template="$(find "$templates_dir" -type f \( -name '*.yaml' -o -name '*.yml' \) -print -quit)"
+          if [[ -z "$first_template" ]]; then
+            echo "::error::NUCLEI_TEMPLATES_UNAVAILABLE: no usable YAML template; scan NOT_RUN"
+            exit 1
+          fi
+          echo "NUCLEI_TEMPLATE_DIR=$templates_dir" >> "$GITHUB_ENV"
+
       - name: Scan fixed canonical public origin (rate 2/s, no OAST)
+        id: nuclei
         shell: bash
         env:
           NUCLEI_DISABLE_UPDATE_CHECK: "true"
           NUCLEI_NO_COLOR: "true"
         run: |
           set -euo pipefail
+          umask 077
+          scan_dir="$(mktemp -d "${RUNNER_TEMP}/nuclei-bababou.XXXXXX")"
+          echo "NUCLEI_SCAN_DIR=$scan_dir" >> "$GITHUB_ENV"
+          set +e
           "${RUNNER_TEMP}/nuclei" -u https://www.bababou.com \
+            -t "$NUCLEI_TEMPLATE_DIR" \
             -pt http -ni -duc -tags cve,misconfig,exposure \
             -severity medium,high,critical -etags dos,fuzz,bruteforce,intrusive \
             -rl 2 -c 1 -timeout 5 -retries 0 \
-            -jsonl -o "${RUNNER_TEMP}/nuclei.jsonl"
-          test -e "${RUNNER_TEMP}/nuclei.jsonl" || : > "${RUNNER_TEMP}/nuclei.jsonl"
-          # Do not archive JSONL: it can contain request, response, cookies and URLs.
-          node scripts/security/nuclei-safe-report.mjs "${RUNNER_TEMP}/nuclei.jsonl" nuclei-master.sarif
-      - name: Private sanitized Nuclei summary (no raw requests)
+            -jsonl -o "$scan_dir/nuclei.raw.jsonl" \
+            > "$scan_dir/scan.log" 2>&1
+          scan_exit=$?
+          set -e
+          # Never publish raw scan logs. A WAF checkpoint invalidates coverage.
+          if grep -Eiq 'no templates provided for scan|no templates found|no templates loaded|no templates to run' "$scan_dir/scan.log"; then
+            echo "::error::NUCLEI_TEMPLATES_UNAVAILABLE: scan did not load templates"
+            exit 1
+          fi
+          if grep -Eiq 'too many requests|security checkpoint|x-vercel-mitigated|HTTP[ /]+429|HTTP[ /]+402|response[^[:cntrl:]]{0,30}429' "$scan_dir/scan.log"; then
+            echo "::error::NUCLEI_COVERAGE_BLOCKED: WAF or platform denied requests; raw log withheld"
+            exit 1
+          fi
+          if (( scan_exit != 0 )); then
+            echo "::error::NUCLEI_SCAN_INCOMPLETE: scanner error; raw log withheld"
+            exit 1
+          fi
+          test -e "$scan_dir/nuclei.raw.jsonl" || : > "$scan_dir/nuclei.raw.jsonl"
+          node scripts/security/nuclei-safe-report.mjs "$scan_dir/nuclei.raw.jsonl" nuclei-master.sarif
+
+      - name: Summarize Nuclei only after a complete sanitized scan
+        if: always()
+        shell: bash
+        env:
+          SCAN_OUTCOME: ${{ steps.nuclei.outcome }}
+        run: |
+          if [[ "$SCAN_OUTCOME" != "success" ]]; then
+            echo "## Nuclei Bababou — INCOMPLETE / NOT_RUN" >> "$GITHUB_STEP_SUMMARY"
+            echo "No reliable count: scanner or template bootstrap failed, or WAF blocked coverage." >> "$GITHUB_STEP_SUMMARY"
+          else
+            node -e 'const fs=require("node:fs");const r=JSON.parse(fs.readFileSync("nuclei-master.sarif","utf8"));const a=r.runs[0].results;console.log("## Nuclei Bababou — COMPLETE");console.log("Sanitized medium/high/critical matches: "+a.length+"; not verified vulnerabilities. Raw URLs and HTTP withheld.")' >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Erase runner-local raw Nuclei evidence
+        if: always()
+        shell: bash
+        run: |
+          if [[ -n "${NUCLEI_SCAN_DIR:-}" && "$NUCLEI_SCAN_DIR" == "$RUNNER_TEMP"/nuclei-bababou.* ]]; then
+            rm -rf -- "$NUCLEI_SCAN_DIR"
+          fi
+
+      - name: Upload only sanitized Nuclei SARIF (3 days)
+        if: steps.nuclei.outcome == 'success'
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: nuclei-master-${{ github.run_id }}
