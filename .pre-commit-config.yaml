@@ -159,7 +159,7 @@ repos:
         name: "🔒 security · Detect private keys"
 
 -   repo: https://github.com/pre-commit/pre-commit.git
-    rev: v4.7.0
+    rev: v4.6.2
     hooks:
     -   id: validate_manifest
         name: "🤖 manifest · Validate manifest scripts"
@@ -354,7 +354,7 @@ repos:
         name: "🧩 github-actions · Lint workflows with actionlint"
 
 -   repo: https://github.com/zizmorcore/zizmor-pre-commit
-    rev: v1.31.1
+    rev: v1.30.1
     hooks:
     -   id: zizmor
         name: "🔒 github-actions · Audit workflows with zizmor"
@@ -363,7 +363,7 @@ repos:
 
     ### Deployment Tools ###
 -   repo: https://github.com/hadolint/hadolint
-    rev: v2.15.1
+    rev: v2.15.0
     hooks:
     -   id: hadolint-docker
         name: "🐳 hadolint · Validate Dockerfile"
