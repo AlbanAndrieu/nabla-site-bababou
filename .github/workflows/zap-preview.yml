@@ -210,7 +210,7 @@ jobs:
           cp scripts/security/zap-rate-limit-hook.py "$scan_dir/rate-limit-hook.py"
           # The pinned ZAP image runs as uid/gid 1000 with HOME=/home/zap.
           # Grant only its group access to this runner-owned private workspace;
-          # never chmod 777 or replace the image user/HOME.
+          # never make it world-writable or replace the image user/HOME.
           sudo chgrp 1000 "$scan_dir"
           chmod 0770 "$scan_dir"
           chmod 0644 "$scan_dir/rules.tsv" "$scan_dir/rate-limit-hook.py"
