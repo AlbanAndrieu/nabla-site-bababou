@@ -151,8 +151,13 @@ jobs:
             location="$(awk 'BEGIN { IGNORECASE=1 } /^location:/ { sub(/^[^:]+:[[:space:]]*/, ""); sub(/\r$/, ""); print; exit }' "$response_headers")"
             mitigated="$(awk 'BEGIN { IGNORECASE=1 } /^x-vercel-mitigated:/ { sub(/^[^:]+:[[:space:]]*/, ""); sub(/\r$/, ""); print; exit }' "$response_headers")"
 
-            if [[ "$status" == "429" || "${mitigated,,}" == "challenge" ]]; then
-              echo "$auth_name reached the Vercel Security Checkpoint (HTTP $status, x-vercel-mitigated=${mitigated:-unknown})."
+            if [[ "$status" == "402" ]]; then
+              echo "::error::PLAYWRIGHT_VERCEL_HTTP_402: Preview blocked by platform quota/account; browser tests not executed."
+              rm -f "$response_headers"
+              exit 1
+            fi
+            if [[ "$status" == "429" || ( -n "$mitigated" && "${mitigated,,}" != "none" ) ]]; then
+              echo "$auth_name reached a Vercel mitigation or rate limit (HTTP $status)."
               rm -f "$response_headers"
               return 1
             fi
@@ -167,6 +172,11 @@ jobs:
               return 1
             fi
 
+            if [[ ! "$status" =~ ^[23][0-9][0-9]$ ]]; then
+              echo "$auth_name returned unexpected HTTP $status; Preview unavailable."
+              rm -f "$response_headers"
+              return 1
+            fi
             echo "Vercel Preview access accepted with $auth_name (HTTP $status)."
             rm -f "$response_headers"
             return 0
@@ -209,7 +219,7 @@ jobs:
           elif [[ "$bypass_configured" == "false" ]]; then
             echo "::error::GitHub Actions secret VERCEL_AUTOMATION_BYPASS_SECRET is not configured."
           fi
-          echo "::error::GitHub Actions OIDC was also not accepted as a Vercel Trusted Source. HTTP 429 or x-vercel-mitigated: challenge indicates the Vercel Security Checkpoint, not an application success."
+          echo "::error::GitHub Actions OIDC was also not accepted as a Vercel Trusted Source. HTTP 429 or any x-vercel-mitigated response indicates Vercel protection, not an application success."
           exit 1
 
       - name: Run Playwright against deployed preview
@@ -353,7 +363,7 @@ jobs:
             mitigated="$(awk 'BEGIN { IGNORECASE=1 } /^x-vercel-mitigated:/ { sub(/^[^:]+:[[:space:]]*/, ""); sub(/\r$/, ""); print; exit }' "$headers")"
             location="$(awk 'BEGIN { IGNORECASE=1 } /^location:/ { sub(/^[^:]+:[[:space:]]*/, ""); sub(/\r$/, ""); print; exit }' "$headers")"
 
-            if [[ "$status" == "429" || "${mitigated,,}" == "challenge" ]]; then
+            if [[ "$status" == "429" || ( -n "$mitigated" && "${mitigated,,}" != "none" ) ]]; then
               echo "$label reached the Vercel Security Checkpoint (HTTP $status)."
               rm -f "$headers" "$body"
               return 2

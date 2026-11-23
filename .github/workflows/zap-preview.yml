@@ -137,11 +137,16 @@ jobs:
             mitigated="$(awk 'BEGIN { IGNORECASE=1 } /^x-vercel-mitigated:/ { sub(/^[^:]+:[[:space:]]*/, ""); sub(/\r$/, ""); print; exit }' "$headers")"
 
             echo "http_status=$status" >> "$GITHUB_OUTPUT"
-            echo "mitigated=${mitigated:-none}" >> "$GITHUB_OUTPUT"
+            echo "mitigated=$([[ -n "$mitigated" && "${mitigated,,}" != "none" ]] && echo detected || echo none)" >> "$GITHUB_OUTPUT"
 
-            if [[ "$status" == "429" || "${mitigated,,}" == "challenge" ]]; then
+            if [[ "$status" == "402" ]]; then
+              echo "::error::ZAP_VERCEL_HTTP_402: Preview unavailable due to platform quota/account; no additional bypass attempts."
+              rm -f "$headers"
+              exit 1
+            fi
+            if [[ "$status" == "429" || ( -n "$mitigated" && "${mitigated,,}" != "none" ) ]]; then
               echo "ZAP_WAF_BLOCKED=true" >> "$GITHUB_ENV"
-              echo "::error::ZAP_WAF_PREFLIGHT_BLOCK: Vercel challenge/rate limit; scan must not proceed"
+              echo "::error::ZAP_WAF_PREFLIGHT_BLOCK: Vercel mitigation/rate limit; scan must not proceed"
               rm -f "$headers"
               exit 1
             fi

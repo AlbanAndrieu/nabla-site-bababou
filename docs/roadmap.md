@@ -1,6 +1,6 @@
 # Roadmap générale — Site Bababou
 
-**Réconciliation du 16 novembre 2026 — référence Git : `master@c1bdb4338bc1`.** Ce document contient **seulement les décisions et livrables ouverts**. La [roadmap d’ingénierie](engineering-roadmap.md) décrit les critères techniques, les commandes et les dépendances des mêmes identifiants `BB-xx` ; elle n'a pas son propre ordre de priorité. [Historique conservé](archive/roadmap-through-2026-11-13.md).
+**Réconciliation du 16 novembre 2026 (état WAF vérifié le 21 novembre) — référence Git : `master@c1bdb4338bc1`.** Ce document contient **seulement les décisions et livrables ouverts**. La [roadmap d’ingénierie](engineering-roadmap.md) décrit les critères techniques, les commandes et les dépendances des mêmes identifiants `BB-xx` ; elle n'a pas son propre ordre de priorité. [Historique conservé](archive/roadmap-through-2026-11-13.md).
 
 ## État attesté et limites
 
@@ -17,7 +17,7 @@
 
 | ID | Proposition | Livrable encore attendu | Situation / décision |
 | --- | --- | --- | --- |
-| **BB-02** | **Rang 1 · Qualité et sécurité** | Corriger le job CodeQL (permissions de lecture Actions), les erreurs d'autofix, de test npm et de scanner ZAP, puis prouver toutes les gates au SHA final | **PASS TECHNIQUE ZAP / 4 WARN MOYENS (17/11)** · runs 44080102456 et 44163310324 exit 0, SARIF H0 M4 L4 I5 ; #282 fusionnée, causes de 4 règles encore à qualifier ; prochain lot CSP minimale / couverture ZAP bornée / budget WAF sans configuration active. CodeQL : rerun réussi non attesté ; aucune gate désactivée |
+| **BB-02** | **Rang 1 · Qualité et sécurité** | Corriger le job CodeQL (permissions de lecture Actions), les erreurs d'autofix, de test npm et de scanner ZAP, puis prouver toutes les gates au SHA final | **PASS TECHNIQUE ZAP / 4 WARN MOYENS (17/11)** · runs 44080102456 et 44163310324 exit 0, SARIF H0 M4 L4 I5 ; #282 fusionnée, causes de 4 règles encore à qualifier ; prochain lot CSP minimale / couverture ZAP bornée / transition WAF `log → deny` contrôlée et rate limiting non encore configuré **en production** (`nabla-compose` #433 **CODED / NOT_APPLIED**, import et plan Garage à prouver). Lecture API du 21/11 : Firewall activé, bots `challenge`, CRS `gen`, `sqli`, `xss`, `rce` actifs en `log`, `rules: []`. Aucune modification de production appliquée ; forfait Vercel/éligibilité OWASP `UNVERIFIED` (Enterprise ou Pro + Priority Projects, nouvelle offre du 19/11 à 200 USD/projet/mois hors inspection). Contrat de contrôle local `vercel-waf-snapshot-audit.mjs` + tests (log ≠ deny), preuves runtime toujours manquantes. CodeQL : rerun réussi non attesté ; aucune gate désactivée |
 | **BB-03** | **Rang 2 · Recette PR #270** | Vérifier les six cartes, AVIF, footer, liens et traductions FR/EN/DE/NO | **CODE_MERGED** ; #270 fusionnée le 14/11, smoke production 43943032584 PASS sur SHA c1bdb433 ; Playwright Preview SKIPPED, parcours/axe exact-SHA non attestés |
 | **BB-04** | **Rang 3 · Bascule React** | Tester verrou SHA, SSG, 4 langues, SEO, rollback et prérequis transverses | **NO-GO** avant BB-02/BB-03 et minimum BB-01/08/09 ; activation humaine séparée |
 | **BB-05** | **Rang 4 · Contacts React** | Recetter la parité React `/people-contacted` ↔ HTML historique, source ARF, liens/clavier | **CODE_MERGED** dans #270 ; archive conservée, redirection et archivage non autorisés |
@@ -29,13 +29,16 @@
 | **BB-10** | P2 · dette d’ingénierie | Comparer les volumes avec Site Alban ; refactorer l'accueil (`homeAudienceCopy.mjs`, 599 lignes), les politiques (`publicPolicies.ts`, 569 lignes), puis le CSS NRE (1 082 lignes, coordination BB-09), sans retoucher les énoncés approuvés ni les gates privacy | **AUDIT_MERGED #278** · [audit et benchmark inter-sites](code-hotspots.md), refactorings éditoriaux CSS/NRE et tests exact-SHA restant à réaliser |
 | **BB-11** | P1 · migration juridique | Vérifier la transcription React du fil « Demande d’explications » : 13 messages, texte identique, destinataires, PDF, footer 3 liens | **PREPARED dans #270** · archive approuvée maintenue ; navigateur, impression et GO de redirection en attente |
 
+**Livraison sécurité du 22/11 — PR #286, Draft :** les précontrôles ZAP Production/Preview et Playwright détectent toute valeur explicite `x-vercel-mitigated`, pas seulement `challenge`; HTTP 402 en Preview arrête les tentatives de bypass, et un HTTP 5xx ne valide plus l'accès Playwright. Le contrôle WAF offline refuse également les classes CRS additionnelles actives, les règles managées inattendues et les overrides IP. **Validation locale partielle : 18/18 tests Node 22.16.0 PASS**, sur sept fichiers copiés dont les Git blob SHA correspondent exactement à la branche (#286, scripts WAF/ZAP/smoke + trois suites). **13/13 assertions de source PASS** pour les garde-fous ; tests workflow Node 24, tests de dépôt complets, CI Draft, DAST actif et métriques Vercel : **NOT_RUN/NOT_VERIFIED**. L'état WAF active relu le 22/11 reste `gen/sqli/xss/rce=log`, `rules=[]` ; aucun `apply`.
+
 ## Prochaines étapes — ordre approuvé (sans déploiement implicite)
 
-1. **BB-02** : #282 fusionnée ; DAST passif valide sur 2 SHAs le 17/11, **4 alertes moyennes non closes**. Recetter CSP partielle, CORS réel, origine des alertes 10099/SRI et le nouveau plafond ZAP 1 req/s avant renforcement des FAIL. Confirmer aussi CodeQL (rerun) et la lecture des règles WAF sans bypass.
+1. **BB-02** : #282 fusionnée ; DAST passif valide sur 2 SHAs le 17/11, **4 alertes moyennes non closes**. Portage du Site Alban #236/#291 : producteur SARIF ZAP durci (origines approuvées, 8 Mo source / 1 Mo sortie, `0600`, moyens + élevés conservés) et contrats HTTP 402 ; tests de production encore à exécuter sur le HEAD. Recetter CSP partielle, CORS réel, origine des alertes 10099/SRI et le nouveau plafond ZAP 1 req/s avant renforcement des FAIL. Confirmer aussi CodeQL (rerun). L'API Vercel est désormais lisible (21/11) : auditer les événements et le risque de faux positifs avant toute activation `deny`, puis utiliser le module Terraform **déjà fusionné** dans [Compose #433](https://github.com/AlbanAndrieu/nabla-compose/pull/433), sans le réimplémenter ; aucune autorité sur l'existant avant `import` Garage + `plan` révisé. Exécuter `just waf-snapshot-test`, puis `just waf-snapshot-inventory` / `just waf-snapshot-verify` sur un JSON privé ; statut `LOG_ONLY_NOT_ENFORCED` attendu tant que le blocage et le débit ne sont pas réellement activés. Vérifier le droit OWASP (Enterprise ou Pro + Priority selon l'annonce du 19/11) et le coût, sans changement de forfait implicite.
 2. **BB-03 / BB-05 / BB-11** : rejouer Playwright/axe exact-SHA (quatre langues, cartes, footer, liens Contact et 13 messages juridiques) ; le smoke production réussi ne vaut pas la recette Preview.
 3. **BB-01 / BB-08 / BB-09** : auditer en lecture seule les originaux déjà publics, mesurer la consommation CPU Vercel réelle et recetter les styles/404/contrastes/impression avant toute bascule.
 4. **BB-04** : conserver `NO-GO` jusqu'à validation des prérequis et décision humaine sur la homepage et les redirections.
-5. **BB-07 / BB-10** : poursuivre l'architecture d'accès privé et les refactorings techniques sans rééditer les textes validés ni rouvrir les PR fusionnées.
+5. **BB-08 — convergence FinOps Site Alban #324** : smoke public arrêté au premier HTTP 402/429 ou `x-vercel-mitigated` ; revalidation des tests et métriques Vercel officielles toujours nécessaires.
+6. **BB-07 / BB-10** : poursuivre l'architecture d'accès privé et les refactorings techniques sans rééditer les textes validés ni rouvrir les PR fusionnées.
 
 ## Documents canoniques, sans duplication
 
@@ -44,7 +47,7 @@
 - [Parité React](homepage-migration-parity.md) et [GO/NO-GO](homepage-react-cutover.md) : seule procédure de bascule/rollback.
 - [Publication sûre](publication-redaction.md), [accès aux sources](sitewide-document-access.md), [preuve privée](nre-evidence-openrag-access.md) : frontières de confidentialité.
 - [NRE](nre-visit-ledger.md) et [FinOps](vercel-finops.md) : règles métier et mesures.
-- [Plan de remédiation ZAP / Vercel WAF](security-zap-waf-remediation.md) : règles historiques, limites de couverture, compteur et seuil WAF non appliqué.
+- [Plan de remédiation ZAP / Vercel WAF](security-zap-waf-remediation.md) : alertes, tests d'acceptation WAF, limite forfait et réception ; la **configuration Terraform** vit exclusivement dans [Compose H04](https://github.com/AlbanAndrieu/nabla-compose/tree/master/terraform/vercel-waf).
 - [Audit de volume et comparaison avec Site Alban](code-hotspots.md) : base chiffrée, hotspots, livrables BB-09/BB-10, coordination avec #279.
 - [Archive du backlog précédent](archive/roadmap-through-2026-11-13.md) : traces historiques, jamais autorité active.
 

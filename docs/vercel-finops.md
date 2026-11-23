@@ -49,9 +49,11 @@ https://vercel.com/docs/functions/usage-and-pricing.
 
 ## Smoke HTTP public, faible impact
 
-Le script `scripts/finops/vercel-public-smoke.mjs` est identique à celui
-de [Site Alban #297](https://github.com/AlbanAndrieu/nabla-site-alban/pull/297).
-Il lance uniquement **6 requêtes HEAD séquentielles** vers des pages
+Le script `scripts/finops/vercel-public-smoke.mjs` reprend les garanties de
+[Site Alban #297](https://github.com/AlbanAndrieu/nabla-site-alban/pull/297),
+complétées par l'arrêt anticipé sur mitigation du
+[Site Alban #324](https://github.com/AlbanAndrieu/nabla-site-alban/pull/324).
+Il lance **au maximum 6 requêtes HEAD séquentielles** vers des pages
 publiques de `www.bababou.com` si `--live` est explicitement fourni.
 Le test partagé couvre également 5 pages publiques du Site Alban.
 
@@ -62,8 +64,12 @@ node scripts/finops/vercel-public-smoke.mjs --live --site bababou
 
 La liste est fermée (`/`, `/nre`, variantes EN/DE/NO et
 `/evidence-access`) et les API privées/Stripe/OpenRAG sont exclues.
-Le script retourne `BLOCKED_PLATFORM` si HTTP 402, sinon `PASS`
-uniquement si toutes les routes sont HTTP 2xx. Un cache `HIT` ou
+Le script retourne `BLOCKED_PLATFORM` dès le premier HTTP 402 et
+`BLOCKED_SECURITY` dès le premier HTTP 429 ou en-tête `x-vercel-mitigated`.
+Dans ces cas, **une seule requête est émise si la première route est bloquée** :
+les routes restantes ne sont pas relancées. Ce résultat est une **couverture bloquée**,
+non un finding ZAP ni un test réussi. Le rapport ne publie aucune valeur de
+l'en-tête de mitigation. `PASS` exige que toutes les routes aient répondu HTTP 2xx. Un cache `HIT` ou
 `MISS` n'est **pas** une mesure Fluid Active CPU ; les données réelles
 restent à lire dans Vercel Usage.
 

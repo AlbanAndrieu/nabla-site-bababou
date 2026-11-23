@@ -108,9 +108,9 @@ jobs:
               rm -f "$headers"
               exit 1
             fi
-            if [[ "$status" == "429" || "${mitigated,,}" == "challenge" ]]; then
+            if [[ "$status" == "429" || ( -n "$mitigated" && "${mitigated,,}" != "none" ) ]]; then
               echo "DAST_BLOCKER=vercel-waf-challenge" >> "$GITHUB_ENV"
-              echo "::error::ZAP_WAF_PREFLIGHT_BLOCK: Vercel challenge/rate limit; not a vulnerability finding"
+              echo "::error::ZAP_WAF_PREFLIGHT_BLOCK: Vercel mitigation/rate limit; not a vulnerability finding"
               rm -f "$headers"
               exit 1
             fi
@@ -134,7 +134,7 @@ jobs:
             {
               echo "auth_mode=$auth_name"
               echo "http_status=$status"
-              echo "mitigated=${mitigated:-none}"
+              echo "mitigated=none"
             } >> "$GITHUB_OUTPUT"
             rm -f "$headers"
             return 0

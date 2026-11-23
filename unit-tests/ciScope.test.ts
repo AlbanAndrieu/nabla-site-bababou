@@ -227,8 +227,17 @@ test("production baseline and live smoke run before dependency installation", as
   for (const path of ["/", "/index.html", "/test", "/contact", "/policy"]) {
     assert.ok(live.includes(`probe "${path}"`));
   }
+  assertMatches(live, /PROD_LIVE_PLATFORM_BLOCKED/);
   assertMatches(live, /PROD_LIVE_CHECKPOINT/);
   assertMatches(live, /x-vercel-mitigated/);
+  assert.ok(
+    live.indexOf("PROD_LIVE_PLATFORM_BLOCKED") < live.indexOf("PROD_LIVE_AUTH:"),
+    "Vercel quota/mitigation must be classified before application auth",
+  );
+  assert.ok(
+    live.includes('&& "${mitigated,,}" != "none"'),
+    "all explicit WAF mitigations must be coverage blockers, not just challenges",
+  );
   assert.ok(
     live.includes("vercel\\.com/(login|sso-api)"),
     "production live check must detect Vercel login/SSO redirects",

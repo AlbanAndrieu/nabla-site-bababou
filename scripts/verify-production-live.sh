@@ -37,7 +37,13 @@ probe() {
 	mitigated="$(awk 'BEGIN { IGNORECASE=1 } /^x-vercel-mitigated:/ { sub(/^[^:]+:[[:space:]]*/, ""); sub(/\r$/, ""); print; exit }' "${headers}")"
 	location="$(awk 'BEGIN { IGNORECASE=1 } /^location:/ { sub(/^[^:]+:[[:space:]]*/, ""); sub(/\r$/, ""); print; exit }' "${headers}")"
 
-	if [[ "${status}" == "429" || "${mitigated,,}" == "challenge" ]]; then
+	if [[ "${status}" == "402" ]]; then
+		printf '❌ PROD_LIVE_PLATFORM_BLOCKED: Vercel returned HTTP 402; check team usage/quota before any additional scan\n' >&2
+		return 1
+	fi
+	# An explicit Vercel mitigation is a security coverage blocker, not failed login.
+	# Never echo the (untrusted) x-vercel-mitigated value or retry this probe.
+	if [[ "${status}" == "429" || ( -n "${mitigated}" && "${mitigated,,}" != "none" ) ]]; then
 		printf '❌ PROD_LIVE_CHECKPOINT: %s%s hit the Vercel Security Checkpoint (HTTP %s)\n' \
 			"${BASE_URL}" "${path}" "${status}" >&2
 		return 1
