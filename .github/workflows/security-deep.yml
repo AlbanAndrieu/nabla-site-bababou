@@ -210,6 +210,22 @@ jobs:
           umask 077
           scan_dir="$(mktemp -d "${RUNNER_TEMP}/nuclei-bababou.XXXXXX")"
           echo "NUCLEI_SCAN_DIR=$scan_dir" >> "$GITHUB_ENV"
+          # Reviewed per-template exceptions, never arbitrary tags or paths.
+          excludes=()
+          while IFS= read -r template_id || [[ -n "$template_id" ]]; do
+            [[ -z "$template_id" || "$template_id" == \#* ]] && continue
+            if [[ ! "$template_id" =~ ^[A-Za-z0-9_-]+$ ]]; then
+              echo "::error::NUCLEI_EXCLUSION_INVALID: non-allowlisted template ID"
+              exit 1
+            fi
+            excludes+=("$template_id")
+          done < .nuclei/ignore-templates.txt
+          exclusion_args=()
+          if (( ${#excludes[@]} )); then
+            joined="$(IFS=,; echo "${excludes[*]}")"
+            exclusion_args=(-eid "$joined")
+          fi
+          echo "NUCLEI_EXCLUSION_COUNT=${#excludes[@]}" >> "$GITHUB_ENV"
           set +e
           "${RUNNER_TEMP}/nuclei" -u https://www.bababou.com \
             -t "$NUCLEI_TEMPLATE_DIR" \
@@ -217,6 +233,7 @@ jobs:
             -severity medium,high,critical -etags dos,fuzz,bruteforce,intrusive \
             -rl 2 -c 1 -timeout 5 -retries 0 \
             -jsonl -o "$scan_dir/nuclei.raw.jsonl" \
+            "${exclusion_args[@]}" \
             > "$scan_dir/scan.log" 2>&1
           scan_exit=$?
           set -e
@@ -247,6 +264,7 @@ jobs:
             echo "No reliable count: scanner or template bootstrap failed, or WAF blocked coverage." >> "$GITHUB_STEP_SUMMARY"
           else
             node -e 'const fs=require("node:fs");const r=JSON.parse(fs.readFileSync("nuclei-master.sarif","utf8"));const a=r.runs[0].results;console.log("## Nuclei Bababou — COMPLETE");console.log("Sanitized medium/high/critical matches: "+a.length+"; not verified vulnerabilities. Raw URLs and HTTP withheld.")' >> "$GITHUB_STEP_SUMMARY"
+            echo "Reviewed template exclusions: ${NUCLEI_EXCLUSION_COUNT:-0}" >> "$GITHUB_STEP_SUMMARY"
           fi
 
       - name: Erase runner-local raw Nuclei evidence
