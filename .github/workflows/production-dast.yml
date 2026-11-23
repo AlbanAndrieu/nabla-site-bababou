@@ -65,6 +65,7 @@ jobs:
             scripts/security/zap-rate-limit-hook.py
             scripts/security/defectdojo-report-sanitizers.mjs
             scripts/security/zap-safe-report.mjs
+            scripts/security/render-zap-safe-report.mjs
           sparse-checkout-cone-mode: false
 
       - name: Request GitHub OIDC token for Vercel
@@ -249,6 +250,8 @@ jobs:
           test -s "$ZAP_SCAN_DIR/report_json.json"
           node scripts/security/zap-safe-report.mjs "$ZAP_SCAN_DIR/report_json.json" zap-production-safe.sarif
           jq -e '.version == "2.1.0" and .runs[0].tool.driver.name == "ZAP" and (.runs[0].results | type == "array")' zap-production-safe.sarif >/dev/null
+          # Offline HTML and summary are derived only from producer-minimized SARIF.
+          node scripts/security/render-zap-safe-report.mjs zap-production-safe.sarif zap-production-safe.html zap-production-summary.md
 
       - name: Preserve minimized ZAP findings privately
         id: safe-upload
@@ -256,7 +259,10 @@ jobs:
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: zap-production-safe-${{ github.run_id }}
-          path: zap-production-safe.sarif
+          path: |
+            zap-production-safe.sarif
+            zap-production-safe.html
+            zap-production-summary.md
           retention-days: 3
           if-no-files-found: error
 
@@ -303,15 +309,18 @@ jobs:
             echo "- Preflight blocker: ${DAST_BLOCKER:-none}"
             echo "- Policy: \`.zap/rules.tsv\`"
             echo "- Alerts: **H$high M$medium L$low I$informational**"
-            echo "- Raw report: **runner-local only**; only minimized SARIF is uploaded"
+            echo "- Raw report: **runner-local only**; only sanitized SARIF / HTML / summary are uploaded"
           } >> "$GITHUB_STEP_SUMMARY"
+          if [[ "$SAFE_REPORT_OUTCOME" == "success" && -s zap-production-summary.md ]]; then
+            cat zap-production-summary.md >> "$GITHUB_STEP_SUMMARY"
+          fi
 
       - name: Clean ZAP production workspace
         if: always()
         shell: bash
         run: |
           if [[ -n "${ZAP_SCAN_DIR:-}" ]]; then rm -rf -- "$ZAP_SCAN_DIR"; fi
-          rm -f zap-production-safe.sarif
+          rm -f zap-production-safe.sarif zap-production-safe.html zap-production-summary.md
 
       - name: Enforce production DAST policy
         if: always() && (steps.preflight.outcome != 'success' || steps.zap.outcome != 'success' || steps.safe-report.outcome != 'success' || steps.safe-upload.outcome != 'success')

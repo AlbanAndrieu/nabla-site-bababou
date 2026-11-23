@@ -52,3 +52,11 @@
 - [Archive du backlog précédent](archive/roadmap-through-2026-11-13.md) : traces historiques, jamais autorité active.
 
 **Règle de clôture :** chaque `BB-xx` est marqué terminé seulement lorsque les changements existent dans la branche prévue, les contrôles applicables sont prouvés sur le SHA exact, et les validations éditoriales/de publication requises sont explicites. Conserver `FAIL`, `BLOCKED` et `NOT_RUN` comme tels. Pas de merge, d'activation ni de suppression automatique.
+
+### BB-02 — Alignement des scans avec Site Alban #338 (23/11/2026)
+
+**Codé dans la branche `fix/bb02-nuclei-zap-parity-20261123`, non fusionné et non exécuté en production.** Nuclei utilisait déjà le job hebdomadaire de `security-deep.yml` (ne pas ajouter un deuxième pipeline) : correction du cas où la mise à jour des templates réussit sans YAML, passage explicite de `-t`, token GitHub temporaire pour l'API, sortie `INCOMPLETE` sur erreur ou mitigation WAF et effacement des traces brutes. La cible reste `https://www.bababou.com`, seulement les templates HTTP non intrusifs, avec **2 req/s** et zéro retry.
+
+Le producteur Nuclei ne publie désormais que **ID et sévérité** (MEDIUM/HIGH/CRITICAL), jamais de texte libre, URL, cookie, corps HTTP ni détail familial. ZAP Production garde son comportement exact-SHA et **1 req/s** ; son artefact déjà minimisé est enrichi d'une vue HTML et d'un résumé expurgés issus exclusivement du SARIF. Les noms d'artefacts et le collecteur privé DefectDojo sont inchangés. Commandes locales : `just nuclei-zap-parity-test`, `just zap-report-privacy-test` puis `just quality`. Exécution CI et analyse runtime : **NOT_RUN** ; ne pas assimiler une suite Draft `skipped` à PASS. [Runbook](security-zap-waf-remediation.md) et [étapes d'ingénierie](engineering-roadmap.md).
+
+Le portage comprend la liste des exclusions `.nuclei/ignore-templates.txt` **sans exclusion par défaut** : validation de l'ID, pas de masque global ni de dérogation aux alertes historiques. La validation des contrats source sur le dernier commit donne **4/4 PASS** ; suite Node24 et scan réel toujours NOT_RUN.
