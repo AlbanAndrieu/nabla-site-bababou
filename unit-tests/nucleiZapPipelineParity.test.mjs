@@ -6,6 +6,7 @@ const load = path => readFileSync(new URL("../" + path, import.meta.url), "utf8"
 const deep = load(".github/workflows/security-deep.yml");
 const production = load(".github/workflows/production-dast.yml");
 const preview = load(".github/workflows/zap-preview.yml");
+const reviewedExclusions = load(".nuclei/ignore-templates.txt");
 
 test("Bababou reuses the single master-only weekly Nuclei job (no duplicate schedules)", () => {
   assert.equal(deep.match(/^  nuclei-public:/gm)?.length, 1);
@@ -24,6 +25,10 @@ test("Nuclei bootstrap fails when updater creates an empty template directory", 
   assert.match(deep, /-rl 2 -c 1 -timeout 5 -retries 0/);
   assert.match(deep, /-pt http -ni -duc/);
   assert.match(deep, /-etags dos,fuzz,bruteforce,intrusive/);
+  assert.match(deep, /-eid "\$joined"/);
+  assert.match(deep, /done < \.nuclei\/ignore-templates\.txt/);
+  assert.match(deep, /NUCLEI_EXCLUSION_INVALID/);
+  assert.equal(reviewedExclusions.split(/\r?\n/).filter(s => s.trim() && !s.startsWith("#")).length, 0, "No silent exclusions allowed by default");
 });
 
 test("Nuclei cannot report PASS or upload raw results on WAF or scanner failures", () => {
