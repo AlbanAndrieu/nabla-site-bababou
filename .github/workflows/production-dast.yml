@@ -65,6 +65,7 @@ jobs:
             scripts/security/zap-rate-limit-hook.py
             scripts/security/defectdojo-report-sanitizers.mjs
             scripts/security/zap-safe-report.mjs
+            scripts/security/render-zap-safe-report.mjs
           sparse-checkout-cone-mode: false
 
       - name: Request GitHub OIDC token for Vercel
@@ -177,6 +178,7 @@ jobs:
           # Verify filesystem and HOME separately before sending auth headers.
           # A missing report remains a hard DAST failure, never a passing scan.
           if ! docker run --rm \
+             --env PYTHONDONTWRITEBYTECODE=1 \
             --volume "$scan_dir:/zap/wrk:rw" \
             ghcr.io/zaproxy/zaproxy:2.17.0 \
             sh -c 'test "$(id -u)" -eq 1000 && test -w "$HOME" && test -w /zap/wrk && touch /zap/wrk/.zap-workspace-check && rm /zap/wrk/.zap-workspace-check' \
@@ -188,6 +190,7 @@ jobs:
           # Preserve the exit code: 1/2 means findings, 3 means scanner failure.
           zap_exit=0
           docker run --rm \
+            --env PYTHONDONTWRITEBYTECODE=1 \
             --env ZAP_AUTH_HEADER --env ZAP_AUTH_HEADER_VALUE --env ZAP_AUTH_HEADER_SITE \
             --volume "$scan_dir:/zap/wrk:rw" \
             ghcr.io/zaproxy/zaproxy:2.17.0 \
@@ -249,6 +252,8 @@ jobs:
           test -s "$ZAP_SCAN_DIR/report_json.json"
           node scripts/security/zap-safe-report.mjs "$ZAP_SCAN_DIR/report_json.json" zap-production-safe.sarif
           jq -e '.version == "2.1.0" and .runs[0].tool.driver.name == "ZAP" and (.runs[0].results | type == "array")' zap-production-safe.sarif >/dev/null
+          # Offline HTML and summary are derived only from producer-minimized SARIF.
+          node scripts/security/render-zap-safe-report.mjs zap-production-safe.sarif zap-production-safe.html zap-production-summary.md
 
       - name: Preserve minimized ZAP findings privately
         id: safe-upload
@@ -256,7 +261,10 @@ jobs:
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: zap-production-safe-${{ github.run_id }}
-          path: zap-production-safe.sarif
+          path: |
+            zap-production-safe.sarif
+            zap-production-safe.html
+            zap-production-summary.md
           retention-days: 3
           if-no-files-found: error
 
@@ -303,18 +311,22 @@ jobs:
             echo "- Preflight blocker: ${DAST_BLOCKER:-none}"
             echo "- Policy: \`.zap/rules.tsv\`"
             echo "- Alerts: **H$high M$medium L$low I$informational**"
-            echo "- Raw report: **runner-local only**; only minimized SARIF is uploaded"
+            echo "- Raw report: **runner-local only**; only sanitized SARIF / HTML / summary are uploaded"
           } >> "$GITHUB_STEP_SUMMARY"
+          if [[ "$SAFE_REPORT_OUTCOME" == "success" && -s zap-production-summary.md ]]; then
+            cat zap-production-summary.md >> "$GITHUB_STEP_SUMMARY"
+          fi
 
       - name: Clean ZAP production workspace
+        id: cleanup
         if: always()
         shell: bash
         run: |
           if [[ -n "${ZAP_SCAN_DIR:-}" ]]; then rm -rf -- "$ZAP_SCAN_DIR"; fi
-          rm -f zap-production-safe.sarif
+          rm -f zap-production-safe.sarif zap-production-safe.html zap-production-summary.md
 
       - name: Enforce production DAST policy
-        if: always() && (steps.preflight.outcome != 'success' || steps.zap.outcome != 'success' || steps.safe-report.outcome != 'success' || steps.safe-upload.outcome != 'success')
+        if: always() && (steps.preflight.outcome != 'success' || steps.zap.outcome != 'success' || steps.safe-report.outcome != 'success' || steps.safe-upload.outcome != 'success' || steps.cleanup.outcome != 'success')
         shell: bash
         run: |
           echo "::error::Production DAST preflight, scanner, safe SARIF, or artifact upload failed. Review the job summary and minimized SARIF artifact only."
@@ -332,6 +344,7 @@ jobs:
           REPORT_AVAILABLE: ${{ steps.summary.outputs.report_available }}
           SAFE_REPORT_OUTCOME: ${{ steps.safe-report.outcome }}
           SAFE_UPLOAD_OUTCOME: ${{ steps.safe-upload.outcome }}
+          CLEANUP_OUTCOME: ${{ steps.cleanup.outcome }}
           HIGH: ${{ steps.summary.outputs.high }}
           MEDIUM: ${{ steps.summary.outputs.medium }}
           LOW: ${{ steps.summary.outputs.low }}
@@ -347,6 +360,9 @@ jobs:
           elif [[ "$PREFLIGHT_OUTCOME" != "success" ]]; then
             STATE=failure
             DESCRIPTION="Production ZAP preflight failed"
+          elif [[ "$CLEANUP_OUTCOME" != "success" ]]; then
+            STATE=error
+            DESCRIPTION="Production ZAP private evidence cleanup failed"
           elif [[ "$ZAP_OUTCOME" == "success" && "$SAFE_REPORT_OUTCOME" == "success" && "$SAFE_UPLOAD_OUTCOME" == "success" ]]; then
             STATE=success
             DESCRIPTION="Production ZAP passed $counts"

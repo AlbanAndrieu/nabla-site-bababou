@@ -43,3 +43,9 @@ Le collecteur canonique cible est **`nabla-compose` PR #263**, avec GitHub App �
 Le ZAP original `zap-production-report` reste un artefact de diagnostic privé créé par l'action ZAP, **non autorisé pour le collecteur**. Aucun scan additionnel n'est ajouté : la conversion intervient après le ZAP de production existant. L'import et le parseur de DefectDojo ne sont pas attestés tant que le collecteur TrueNAS n'a pas été testé sur un engagement de test ; l'upload d'un artefact SARIF n'est pas une preuve de finding valide.
 
 **Décision du 19 octobre** : suppression du collecteur Node Bababou redondant. `scripts/security/defectdojo-report-sanitizers.mjs` exporte uniquement les fonctions de projection testables sans jeton. `nabla-compose` est la source de vérité pour un collecteur multi-dépôts.
+
+## Actualisation — 23 novembre 2026 : Nuclei et ZAP (Site Alban #338)
+
+Le job `nuclei-public` reste **dans `security-deep.yml`** et publie l'artefact déjà attendu `nuclei-master-<run_id>`, uniquement en **SARIF expurgé**. Contrairement aux anciennes descriptions, le titre libre d'une règle n'est plus exporté : **ID et sévérité seulement**. MEDIUM est conservé pour le suivi Bababou ; tout URL, nom, chemin, cookie et corps de réponse Nuclei reste éphémère. L'absence de templates YAML, l'échec du scanner et une mitigation WAF produisent `INCOMPLETE` et non une preuve « zéro finding ».
+
+`production-dast.yml` enrichit désormais le même artefact `zap-production-safe-<run_id>` d'une vue HTML et d'un résumé Markdown calculés à partir du **SARIF déjà minimisé**, sans nouvelle sonde, sans rapport brut ni modification du type de scan de DefectDojo. Les chemins d'ingestion SARIF et l'allowlist des noms d'artefacts restent inchangés. **Exécution et import DefectDojo réels NOT_RUN** ; le collecteur et ses droits restent uniquement dans `nabla-compose`.

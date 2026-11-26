@@ -1,0 +1,3 @@
+# Nuclei template IDs excluded only after a documented human review.
+# One approved ID per line; no blanket exclusions or unvalidated templates.
+# Record each exception and its expiry in docs/security-zap-waf-remediation.md.

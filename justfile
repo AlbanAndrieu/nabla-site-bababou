@@ -185,7 +185,11 @@ waf-snapshot-test:
 
 # Validate the bounded public ZAP SARIF producer without starting ZAP or CI.
 zap-report-privacy-test:
-    node --test unit-tests/zapSafeReportProducer.test.mjs unit-tests/productionDastHttp402.test.mjs unit-tests/vercelMitigationGates.test.mjs unit-tests/zapSafeReportProducer.test.mjs
+    node --test unit-tests/zapSafeReportProducer.test.mjs unit-tests/productionDastHttp402.test.mjs unit-tests/vercelMitigationGates.test.mjs unit-tests/zapSafePresentation.test.mjs
+
+# Dependency-free parity checks; no scanner, Vercel API, network or GitHub Actions.
+nuclei-zap-parity-test:
+    node --test unit-tests/nucleiSafeReport.test.mjs unit-tests/zapSafePresentation.test.mjs unit-tests/nucleiZapPipelineParity.test.mjs
 
 # Validate pre-commit structural integrity without fetching or executing hooks.
 # Uses PyYAML already supplied by the local pre-commit Python installation.
@@ -211,7 +215,7 @@ offline-draft-policy:
     node scripts/ci/check-draft-workflows.mjs
 
 offline-contracts:
-    node --test unit-tests/releaseTagBridge.test.mjs unit-tests/workflowDraftBudget.test.mjs unit-tests/agentOfflineBase.test.mjs unit-tests/vercelNode24Layout.test.mjs unit-tests/vercelIgnoredBuildSafety.test.mjs unit-tests/publicAssetScopeParity.test.mjs unit-tests/publicAssetRenameSafety.test.mjs unit-tests/ciScopeNullPaths.test.mjs unit-tests/gitPathDelimiterSafety.test.mjs unit-tests/agentUntrackedWhitespace.test.mjs unit-tests/agentScopeNullPaths.test.mjs unit-tests/gitScopeFailClosed.test.mjs unit-tests/homepageMigrationContract.test.mjs unit-tests/homepagePolicyNavigation.test.mjs unit-tests/siteUiConvergenceContract.test.mjs unit-tests/homepageRuntimeParity.test.mjs unit-tests/homepagePreviewLinks.test.mjs unit-tests/backToTopMotionContract.test.mjs unit-tests/homepageAssociationsParity.test.mjs unit-tests/mainContentRoute.test.mjs unit-tests/routeRegistryContract.test.mjs unit-tests/policyIndexTranslations.test.mjs unit-tests/policyRouteOwnership.test.mjs unit-tests/homePreviewControlsContract.test.mjs unit-tests/publicHomeReviewContract.test.mjs unit-tests/homepageGalleryParity.test.mjs unit-tests/agentLocalBuildPreflight.test.mjs unit-tests/analyticsLocalHost.test.mjs unit-tests/documentationNavigation.test.mjs unit-tests/vercelWafSnapshotAudit.test.mjs
+    node --test unit-tests/releaseTagBridge.test.mjs unit-tests/workflowDraftBudget.test.mjs unit-tests/agentOfflineBase.test.mjs unit-tests/vercelNode24Layout.test.mjs unit-tests/vercelIgnoredBuildSafety.test.mjs unit-tests/publicAssetScopeParity.test.mjs unit-tests/publicAssetRenameSafety.test.mjs unit-tests/ciScopeNullPaths.test.mjs unit-tests/gitPathDelimiterSafety.test.mjs unit-tests/agentUntrackedWhitespace.test.mjs unit-tests/agentScopeNullPaths.test.mjs unit-tests/gitScopeFailClosed.test.mjs unit-tests/homepageMigrationContract.test.mjs unit-tests/homepagePolicyNavigation.test.mjs unit-tests/siteUiConvergenceContract.test.mjs unit-tests/homepageRuntimeParity.test.mjs unit-tests/homepagePreviewLinks.test.mjs unit-tests/backToTopMotionContract.test.mjs unit-tests/homepageAssociationsParity.test.mjs unit-tests/mainContentRoute.test.mjs unit-tests/routeRegistryContract.test.mjs unit-tests/policyIndexTranslations.test.mjs unit-tests/policyRouteOwnership.test.mjs unit-tests/homePreviewControlsContract.test.mjs unit-tests/publicHomeReviewContract.test.mjs unit-tests/homepageGalleryParity.test.mjs unit-tests/agentLocalBuildPreflight.test.mjs unit-tests/analyticsLocalHost.test.mjs unit-tests/documentationNavigation.test.mjs unit-tests/vercelWafSnapshotAudit.test.mjs unit-tests/nucleiSafeReport.test.mjs unit-tests/zapSafePresentation.test.mjs unit-tests/nucleiZapPipelineParity.test.mjs
     node scripts/quality/homepage-runtime-parity.mjs
     node scripts/quality/homepage-preview-links.mjs
     node scripts/ci/check-draft-workflows.mjs
