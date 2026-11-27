@@ -20,13 +20,14 @@ function leafPaths(value: Record<string, unknown>, prefix = ""): string[] {
 
 test("central authorities owns structurally aligned native locale catalogs", async () => {
   const catalogs = await Promise.all(
-    locales.map(async (locale) =>
-      JSON.parse(
-        await readFile(
-          new URL(`messages/central-authorities/${locale}.json`, root),
-          "utf8",
-        ),
-      ) as Record<string, unknown>,
+    locales.map(
+      async (locale) =>
+        JSON.parse(
+          await readFile(
+            new URL(`messages/central-authorities/${locale}.json`, root),
+            "utf8",
+          ),
+        ) as Record<string, unknown>,
     ),
   );
 
@@ -55,7 +56,11 @@ test("English central authorities copy remains anchored to the reviewed static s
         october192015: { date: string };
         today2026: { date: string };
       };
-      legal: { title: string; article3Title: string; interpretationTitle: string };
+      legal: {
+        title: string;
+        article3Title: string;
+        interpretationTitle: string;
+      };
       documents: { title: string };
       contacts: { title: string };
     };
@@ -85,8 +90,14 @@ test("English central authorities copy remains anchored to the reviewed static s
 
 test("central authorities React route is sectioned and keeps its static source file", async () => {
   const [page, sections, config, loader, legacy] = await Promise.all([
-    readFile(new URL("app/[locale]/central-authorities/page.tsx", root), "utf8"),
-    readFile(new URL("app/[locale]/central-authorities/sections.tsx", root), "utf8"),
+    readFile(
+      new URL("app/[locale]/central-authorities/page.tsx", root),
+      "utf8",
+    ),
+    readFile(
+      new URL("app/[locale]/central-authorities/sections.tsx", root),
+      "utf8",
+    ),
     readFile(new URL("next.config.mjs", root), "utf8"),
     readFile(new URL("i18n/messages.ts", root), "utf8"),
     readFile(new URL("public/central-authorities.html", root), "utf8"),
@@ -107,7 +118,15 @@ test("central authorities React route is sectioned and keeps its static source f
   assert.match(page, /localizedPageMetadata/);
   assert.match(page, /centralAuthoritiesPage/);
   assert.match(loader, /CENTRAL_AUTHORITIES_LOADERS/);
-  assert.match(config, /"central-authorities"/);
+  assert.match(config, /LEGACY_HTML_REDIRECT_SLUGS/);
+  const { default: nextConfig } = await import("../next.config.mjs");
+  assert.ok(
+    (await nextConfig.redirects()).some(
+      (r: { source: string; destination: string }) =>
+        r.source === "/central-authorities.html" &&
+        r.destination === "/en/central-authorities",
+    ),
+  );
   assert.doesNotMatch(`${page}\n${sections}`, /site-widgets|bootstrap/i);
 
   await access(new URL("public/central-authorities.html", root));

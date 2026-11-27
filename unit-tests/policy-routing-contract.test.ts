@@ -1,9 +1,8 @@
 import assert from "node:assert/strict";
-import { readFile, readdir } from "node:fs/promises";
+import { readdir, readFile } from "node:fs/promises";
 import test from "node:test";
-
-import { POLICY_PAGES, POLICY_PAGE_SLUGS } from "../lib/policyPages.ts";
 import { POLICY_ROUTE_SLUGS } from "../lib/mainContentRoute.mjs";
+import { POLICY_PAGE_SLUGS, POLICY_PAGES } from "../lib/policyPages.ts";
 
 test("all reviewed policy pages are owned by the native registry", async () => {
   const config = await readFile(
@@ -21,8 +20,14 @@ test("all reviewed policy pages are owned by the native registry", async () => {
 
   assert.doesNotMatch(config, /policyRewrites/);
   assert.doesNotMatch(config, /localizedPolicyRewrites/);
-  assert.match(config, /const migratedPolicyRedirects = POLICY_ROUTE_SLUGS\.map/);
-  assert.deepEqual([...POLICY_ROUTE_SLUGS].sort(), [...POLICY_PAGE_SLUGS].sort());
+  assert.match(
+    config,
+    /const migratedPolicyRedirects = POLICY_ROUTE_SLUGS\.map/,
+  );
+  assert.deepEqual(
+    [...POLICY_ROUTE_SLUGS].sort(),
+    [...POLICY_PAGE_SLUGS].sort(),
+  );
   assert.match(route, /POLICY_PAGE_SLUGS/);
   assert.match(route, /generateStaticParams/);
   assert.match(route, /getPolicyPage/);
@@ -148,7 +153,10 @@ test("localized policies own native content instead of the legacy HTML bridge", 
     /satisfies Record<\s*LegalPolicySlug,\s*Record<AppLocale, LegalPolicyCopy>\s*>/,
   );
 
-  assert.match(route, /<PublicPolicyContent locale=\{locale\} policy=\{policy\} \/>/);
+  assert.match(
+    route,
+    /<PublicPolicyContent locale=\{locale\} policy=\{policy\} \/>/,
+  );
   assert.match(copyProvider, /getPublicPolicyCopy/);
   assert.match(publicContent, /getPublicPolicyCopy/);
   assert.match(
@@ -172,11 +180,12 @@ test("policy-specific route copies collapse into the generic registry route", as
 });
 
 test("policy migration does not touch the protected homepage routing contract", async () => {
-  const config = await readFile(
-    new URL("../next.config.mjs", import.meta.url),
-    "utf8",
+  // /index.html may only receive a gated noindex header, never a redirect.
+  const { default: nextConfig } = await import("../next.config.mjs");
+  const sources = (await nextConfig.redirects()).map(
+    (r: { source: string }) => r.source,
   );
 
-  assert.doesNotMatch(config, /source:\s*["']\/index\.html["']/);
-  assert.doesNotMatch(config, /source:\s*["']\/404\.html["']/);
+  assert.ok(!sources.includes("/index.html"));
+  assert.ok(!sources.includes("/404.html"));
 });

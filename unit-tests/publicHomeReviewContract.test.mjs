@@ -3,7 +3,8 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import { isHomePreviewPath } from "../lib/homePreviewSeoPolicy.mjs";
 
-const read = (path) => readFileSync(new URL("../" + path, import.meta.url), "utf8");
+const read = (path) =>
+  readFileSync(new URL("../" + path, import.meta.url), "utf8");
 
 test("public React review is visible without runtime env opt-in, while / remains legacy", () => {
   const preview = read("app/[locale]/home-preview/page.tsx");
@@ -17,22 +18,28 @@ test("public React review is visible without runtime env opt-in, while / remains
   assert.match(proxy, /new URL\("\/home-preview", request\.url\), 307/);
 });
 
-test("review route has explicit noindex and no-store response headers", () => {
-  const config = read("next.config.mjs");
-  assert.match(config, /"\/home-preview"/);
-  assert.match(config, /"\/:locale\/home-preview"/);
-  assert.match(config, /"X-Robots-Tag", value: "noindex, nofollow, nosnippet"/);
-  assert.match(config, /"Cache-Control", value: "private, no-store"/);
+test("review route has explicit noindex and no-store response headers", async () => {
+  const { default: nextConfig } = await import("../next.config.mjs");
+  const headers = await nextConfig.headers();
+  for (const source of ["/home-preview", "/:locale/home-preview"]) {
+    const rule = headers.find((h) => h.source === source);
+    assert.ok(rule, source);
+    assert.deepEqual(rule.headers, [
+      { key: "X-Robots-Tag", value: "noindex, nofollow, nosnippet" },
+      { key: "Cache-Control", value: "private, no-store" },
+    ]);
+  }
 });
 
 test("personal cards and parent translator resources are split without leaking private data", () => {
-  const home=read("app/[locale]/home-preview/page.tsx");
-  const fathers=read("app/[locale]/abduction/page.tsx");
-  const child=read("components/home/ChildHomeSections.tsx");
-  const copy=read("lib/homeAudienceCopy.mjs");
+  const home = read("app/[locale]/home-preview/page.tsx");
+  const fathers = read("app/[locale]/abduction/page.tsx");
+  const child = read("components/home/ChildHomeSections.tsx");
+  const copy = read("lib/homeAudienceCopy.mjs");
   assert.match(home, /<ChildHomeSections locale=\{locale\} \/>/);
   assert.match(fathers, /<AbductionResources locale=\{locale\} \/>/);
-  assert.match(child, /people-contacted\.html/);
+  assert.match(child, /homeAudienceCards\(locale, "child"\)/);
+  assert.match(copy, /"\/people-contacted\.html"/);
   assert.match(copy, /norwegianTitle/);
   assert.match(copy, /germanTitle/);
   assert.doesNotMatch(copy, /14CV[0-9]+|passport-fr-bababou|currentLocation/i);
@@ -40,18 +47,30 @@ test("personal cards and parent translator resources are split without leaking p
 
 test("review-only locale routes and aliases are excluded from legacy sitemap import", () => {
   for (const path of [
-    "/home-preview", "/home-preview/", "/fr/home-preview",
-    "/en/home-preview", "/de/home-preview", "/no/home-preview",
+    "/home-preview",
+    "/home-preview/",
+    "/fr/home-preview",
+    "/en/home-preview",
+    "/de/home-preview",
+    "/no/home-preview",
     "/no/home-preview/",
-    "/%68ome-preview", "/en/%68ome-preview", "/en%2Fhome-preview",
+    "/%68ome-preview",
+    "/en/%68ome-preview",
+    "/en%2Fhome-preview",
     "/de/home-preview%2F",
   ]) {
     assert.equal(isHomePreviewPath(path), true, path);
   }
   for (const path of [
-    "/", "/contact", "/fr/contact", "/home-preview-old",
-    "/preview/home-preview", "/en/home-preview/other", "/home-preview.jpg",
-    "/%ZZome-preview", "/en%2Fcontact",
+    "/",
+    "/contact",
+    "/fr/contact",
+    "/home-preview-old",
+    "/preview/home-preview",
+    "/en/home-preview/other",
+    "/home-preview.jpg",
+    "/%ZZome-preview",
+    "/en%2Fcontact",
   ]) {
     assert.equal(isHomePreviewPath(path), false, path);
   }

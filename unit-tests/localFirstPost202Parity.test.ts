@@ -1,12 +1,21 @@
 import assert from "node:assert/strict";
 import { execFileSync, spawnSync } from "node:child_process";
-import { chmod, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import {
+  chmod,
+  mkdir,
+  mkdtemp,
+  readFile,
+  rm,
+  writeFile,
+} from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { fileURLToPath } from "node:url";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 
-const scopePath = fileURLToPath(new URL("../scripts/ci-scope.sh", import.meta.url));
+const scopePath = fileURLToPath(
+  new URL("../scripts/ci-scope.sh", import.meta.url),
+);
 
 function git(cwd: string, ...args: string[]) {
   return execFileSync("git", args, {
@@ -20,19 +29,30 @@ test("post-202 local-first policies compose without forcing a Preview", async ()
   const [scope, ci, onDemand, agentGate] = await Promise.all([
     readFile(scopePath, "utf8"),
     readFile(new URL("../.github/workflows/ci.yml", import.meta.url), "utf8"),
-    readFile(new URL("../.github/workflows/vercel-preview.yml", import.meta.url), "utf8"),
-    readFile(new URL("../scripts/agent-quality-gate.sh", import.meta.url), "utf8"),
+    readFile(
+      new URL("../.github/workflows/vercel-preview.yml", import.meta.url),
+      "utf8",
+    ),
+    readFile(
+      new URL("../scripts/agent-quality-gate.sh", import.meta.url),
+      "utf8",
+    ),
   ]);
 
   const classifierPath = "scripts/lib/production-baseline-classification.sh";
   const maintenanceStart = scope.indexOf("is_maintenance_only_path() {");
   const previewStart = scope.indexOf("is_preview_safe_path() {");
-  const changedFilesStart = scope.indexOf("mapfile -t CHANGED_FILES");
+  // Changed paths are read NUL-delimited since filenames may contain newlines.
+  const changedFilesStart = scope.indexOf('mapfile -d "" -t CHANGED_FILES');
 
   assert.ok(maintenanceStart >= 0 && previewStart > maintenanceStart);
   assert.ok(changedFilesStart > previewStart);
-  assert.ok(!scope.slice(maintenanceStart, previewStart).includes(classifierPath));
-  assert.ok(scope.slice(previewStart, changedFilesStart).includes(classifierPath));
+  assert.ok(
+    !scope.slice(maintenanceStart, previewStart).includes(classifierPath),
+  );
+  assert.ok(
+    scope.slice(previewStart, changedFilesStart).includes(classifierPath),
+  );
 
   assert.match(ci, /needs\.quality\.outputs\.preview_required == 'true'/);
   assert.match(ci, /needs\.quality\.outputs\.zap_bootstrap/);
@@ -55,7 +75,10 @@ test("baseline classifier change is policy-only and Preview-safe", async (t) => 
   t.after(async () => rm(cwd, { recursive: true, force: true }));
 
   await mkdir(join(cwd, "scripts", "lib"), { recursive: true });
-  await writeFile(join(cwd, "scripts", "ci-scope.sh"), await readFile(scopePath, "utf8"));
+  await writeFile(
+    join(cwd, "scripts", "ci-scope.sh"),
+    await readFile(scopePath, "utf8"),
+  );
   await chmod(join(cwd, "scripts", "ci-scope.sh"), 0o755);
 
   git(cwd, "init", "--quiet");

@@ -9,10 +9,7 @@ function normalize(value: string) {
   return value.replace(/\s+/g, " ").trim();
 }
 
-function leafPaths(
-  value: Record<string, unknown>,
-  prefix = "",
-): string[] {
+function leafPaths(value: Record<string, unknown>, prefix = ""): string[] {
   return Object.entries(value).flatMap(([key, child]) => {
     const path = prefix ? `${prefix}.${key}` : key;
     return child && typeof child === "object" && !Array.isArray(child)
@@ -23,16 +20,17 @@ function leafPaths(
 
 test("central authorities failures owns structurally aligned first-class locale catalogs", async () => {
   const catalogs = await Promise.all(
-    locales.map(async (locale) =>
-      JSON.parse(
-        await readFile(
-          new URL(
-            `messages/central-authorities-failures/${locale}.json`,
-            root,
+    locales.map(
+      async (locale) =>
+        JSON.parse(
+          await readFile(
+            new URL(
+              `messages/central-authorities-failures/${locale}.json`,
+              root,
+            ),
+            "utf8",
           ),
-          "utf8",
-        ),
-      ) as Record<string, unknown>,
+        ) as Record<string, unknown>,
     ),
   );
 
@@ -124,15 +122,28 @@ test("React migration is sectioned, localized and free of legacy page runtime", 
   assert.match(sections, /from "@\/components\/ui\/Badge"/);
   assert.match(sections, /from "@\/components\/ui\/Card"/);
   assert.match(sections, /from "@\/components\/ui\/ActionLink"/);
-  assert.doesNotMatch(`${page}\n${sections}`, /CopyPageLinkButton|site-widgets|bootstrap/i);
-  assert.doesNotMatch(`${page}\n${sections}`, /className="(?:row|col-|card|btn)/);
+  assert.doesNotMatch(
+    `${page}\n${sections}`,
+    /CopyPageLinkButton|site-widgets|bootstrap/i,
+  );
+  assert.doesNotMatch(
+    `${page}\n${sections}`,
+    /className="(?:row|col-|card|btn)/,
+  );
 
   assert.match(messageLoader, /CENTRAL_AUTHORITIES_FAILURES_LOADERS/);
-  assert.match(
-    config,
-    /"central-authorities-failures"[\s\S]*destination: `\/en\/\$\{slug\}`/,
+  assert.match(config, /LEGACY_HTML_REDIRECT_SLUGS/);
+  const { default: nextConfig } = await import("../next.config.mjs");
+  assert.ok(
+    (await nextConfig.redirects()).some(
+      (r: { source: string; destination: string }) =>
+        r.source === "/central-authorities-failures.html" &&
+        r.destination === "/en/central-authorities-failures",
+    ),
   );
 
   await access(new URL("public/central-authorities-failures.html", root));
-  await assert.rejects(access(new URL("components/CopyPageLinkButton.tsx", root)));
+  await assert.rejects(
+    access(new URL("components/CopyPageLinkButton.tsx", root)),
+  );
 });
