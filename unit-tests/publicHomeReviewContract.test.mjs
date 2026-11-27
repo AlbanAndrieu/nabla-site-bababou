@@ -18,7 +18,7 @@ test("public React review is visible without runtime env opt-in, while / remains
   // Regression: next-intl's internal /fr rewrite must not hit the user redirect (307 loop).
   assert.match(
     proxy,
-    /pathname === "\/fr\/home-preview" && !request\.headers\.has\("x-next-intl-locale"\)/,
+    /pathname === "\/fr\/home-preview" &&\s*!request\.headers\.has\("x-next-intl-locale"\)/,
   );
   assert.match(proxy, /new URL\("\/home-preview", request\.url\), 307/);
 });
