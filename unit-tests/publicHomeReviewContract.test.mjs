@@ -15,6 +15,11 @@ test("public React review is visible without runtime env opt-in, while / remains
   assert.match(preview, /alternates: \{ canonical: "\/" \}/);
   assert.match(proxy, /NextResponse\.rewrite\(new URL\("\/index\.html"/);
   assert.match(proxy, /pathname === "\/fr\/home-preview"/);
+  // Regression: next-intl's internal /fr rewrite must not hit the user redirect (307 loop).
+  assert.match(
+    proxy,
+    /pathname === "\/fr\/home-preview" && !request\.headers\.has\("x-next-intl-locale"\)/,
+  );
   assert.match(proxy, /new URL\("\/home-preview", request\.url\), 307/);
 });
 
