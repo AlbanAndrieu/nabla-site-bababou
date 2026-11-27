@@ -31,4 +31,6 @@ Branche : `fix/precommit-autoupdate-20261123` (PR #288, non fusionnée). Base : 
 3. **BB-04** : GO de bascule de la homepage React.
 4. **BB-01** : classification et décision de publication des PDF/Office déjà publics.
 5. **BB-05 / BB-11** : GO de redirection des archives HTML vers les routes React.
-6. **Fusion de #288** : à faire par le propriétaire, après CI verte.
+6. **Confidentialité (`protect-family-privacy`)** : `npm run privacy:check:build` signale `protected-child-identity` (REWRITE) dans la copie React de l'accueil (`lib/homeAudienceCopy.mjs`, issue de #270, identique sur `master`). La règle n'autorise ce nom que sur l'index historique et le RSS : approuver explicitement les routes de revue `/home-preview` (allowlist revue) **ou** réécrire la copie. Bloque `just publish` sur tout HEAD.
+7. **SCA** : GitHub signale 62 alertes Dependabot sur `master` (5 critiques, 37 hautes) au 27/11 ; tri à planifier sous BB-02.
+8. **Fusion de #288** : à faire par le propriétaire, après CI verte.
