@@ -83,7 +83,7 @@ test("legacy root is preserved until the cutover gate is true", () => {
   assert.match(proxy, /NextResponse\.rewrite\(new URL\("\/index\.html"/);
   assert.match(
     proxy,
-    /localeRootRedirects\.has\(request\.nextUrl\.pathname\) && !isHomeCutoverEnabled\(\)/,
+    /localeRootRedirects\.has\(request\.nextUrl\.pathname\) &&\s*!isHomeCutoverEnabled\(\)/,
   );
   assert.match(home, /if \(!isHomeCutoverEnabled\(\)\) redirect\("\/"\)/);
   assert.match(home, /localizedSiteMetadata\(locale\)/);
