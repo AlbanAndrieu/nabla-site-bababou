@@ -6,18 +6,23 @@ Branche : `fix/precommit-autoupdate-20261123` (PR #288, non fusionnée). Base : 
 
 | Passe | Date | Résultat |
 | --- | --- | --- |
-| 1 | 27/11/2026 | Gate CI débloquée (espace final, ESLint), 35 tests unitaires réparés, preuves CodeQL/Semgrep/Trivy relevées, BB-08 revérifié |
+| 1 | 27/11/2026 | Gate CI débloquée (espace final, ESLint), 35 tests unitaires réparés, preuves CodeQL/Semgrep/Trivy relevées, BB-08 revérifié ; Playwright local 168/168 après correctifs boucle `/home-preview` et reflow WCAG 1.4.10 |
 
 ## Éléments par ID
 
 | ID | État après passe 1 | Preuve / prochaine action |
 | --- | --- | --- |
 | BB-02 | CodeQL `PASS` ; DAST production `FAIL` sur `master` (nettoyage) ; correctif `TESTED` local | Run 45195552723 ; run DAST 46001696342 ; rejouer DAST après fusion de #288 |
-| BB-03 / BB-05 / BB-11 | `CODE_MERGED`, Playwright Preview `skipped` | Smoke production 45274527699 `success` ; recette navigateur exact-SHA à produire |
+| BB-03 / BB-05 / BB-11 | `TESTED` local (build de production, 3 navigateurs, 168/168) ; Preview Vercel `NOT_RUN` | Smoke production 45274527699 `success` ; rejouer Playwright Preview sur le HEAD de #288 |
 | BB-04 | `NO-GO` | Décision humaine |
 | BB-08 | `BLOCKED` | CLI Hobby : pas de données de facturation sur 30 jours |
-| BB-09 / BB-10 | `CODE_MERGED`, contrats unitaires réalignés | Recette visuelle/axe à faire |
+| BB-09 / BB-10 | axe/clavier/reflow `TESTED` local ; contrats unitaires réalignés | Recette visuelle impression/thèmes encore à faire |
 | BB-01 / BB-06 / BB-07 | Inchangés | Arbitrages de publication et GO sécurité |
+
+## Environnement workstation (constats)
+
+- `next dev` (Turbopack 16.4.6) démarre mais ne répond à aucune requête : utiliser `npm run build` puis `CI=1 just homepage-validation` (serveur `start:test`).
+- Navigateurs Playwright à réinstaller après montée de version : `npx playwright install chromium chromium-headless-shell firefox webkit`.
 
 ## Questions en attente (propriétaire)
 
