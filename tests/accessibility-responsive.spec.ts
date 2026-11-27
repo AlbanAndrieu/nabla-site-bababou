@@ -29,9 +29,17 @@ test.describe("Accessible responsive reflow", () => {
     await page.emulateMedia({ reducedMotion: "reduce" });
 
     for (const path of paths) {
-      await page.goto(path, { waitUntil: "domcontentloaded" });
+      // Wait for hydration: React may reset <html> inline style if enlarged earlier.
+      await page.goto(path, { waitUntil: "networkidle" });
       await expect(page.locator("body")).toBeVisible();
       const baselineFontSize = await enlargeTextBy200Percent(page);
+      // Late hydration of <html> can drop the inline style in Firefox/WebKit:
+      // re-apply until it holds, then measure reflow (not style persistence).
+      await expect.poll(() => page.evaluate((size) => {
+        const root = document.documentElement;
+        root.style.setProperty("font-size", `${size}px`, "important");
+        return Number.parseFloat(getComputedStyle(root).fontSize);
+      }, baselineFontSize * 2)).toBeGreaterThanOrEqual(baselineFontSize * 1.99);
 
       const metrics = await page.evaluate(() => {
         const maxCssTimeMs = (value: string): number =>

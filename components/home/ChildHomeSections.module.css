@@ -21,6 +21,8 @@
 .opening h3 {
   color: var(--ui-text-primary, #1e293b);
   display: flex;
+  /* Let the greeting drop under the icon at 320px / 200% text (WCAG 1.4.10). */
+  flex-wrap: wrap;
   align-items: center;
   gap: 0.65rem;
   font-size: clamp(1.25rem, 3vw, 1.7rem);
@@ -51,10 +53,18 @@
 }
 
 @media (max-width: 40rem) {
-  .opening { border-inline-start-width: 4px; border-radius: 0.5rem; }
+  .opening {
+    border-inline-start-width: 4px;
+    border-radius: 0.5rem;
+  }
 }
 
 @media (forced-colors: active) {
-  .opening { border: 2px solid CanvasText; }
-  .opening h3::before { background: Highlight; color: HighlightText; }
+  .opening {
+    border: 2px solid CanvasText;
+  }
+  .opening h3::before {
+    background: Highlight;
+    color: HighlightText;
+  }
 }
