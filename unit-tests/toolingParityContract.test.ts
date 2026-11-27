@@ -17,7 +17,7 @@ test("shared runtime and test toolchain versions remain internally aligned", asy
   assert.equal(pkg.engines.npm, ">=12.2.0 <13");
 
   for (const [name, version] of Object.entries({
-    next: "16.4.2",
+    next: "16.4.6",
     "next-intl": "^4.9.2",
     react: "^19.2.4",
     "react-dom": "^19.2.4",
@@ -72,7 +72,7 @@ test("Bababou-specific tooling divergences stay explicit while parity work remai
   assert.equal(pkg.devDependencies.eslint, "^9.39.1");
   assert.equal(pkg.devDependencies.tsx, "^4.23.13");
   assert.equal(pkg.devDependencies["@types/node"], "^24.13.3");
-  assert.equal(pkg.devDependencies["typescript-eslint"], "^8.47.0");
+  assert.equal(pkg.devDependencies["typescript-eslint"], "^8.73.0");
   assert.equal(pkg.devDependencies["postcss-selector-parser"], "^7.1.6");
 });
 

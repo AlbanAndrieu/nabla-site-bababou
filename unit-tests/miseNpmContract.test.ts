@@ -73,7 +73,13 @@ test("all GitHub npm setup paths use the canonical mise npm verifier", async () 
   }
 
   const mise = await readFile(new URL("../mise.toml", import.meta.url), "utf8");
-  assert.match(mise, /npm = "12\.2\.0"/);
-  const justfile = await readFile(new URL("../justfile", import.meta.url), "utf8");
-  assert.match(justfile, /toolchain-check:\n    bash scripts\/verify-mise-npm\.sh/);
+  assert.match(mise, /npm = "12\.2\.1"/);
+  const justfile = await readFile(
+    new URL("../justfile", import.meta.url),
+    "utf8",
+  );
+  assert.match(
+    justfile,
+    /toolchain-check:\n {4}bash scripts\/verify-mise-npm\.sh/,
+  );
 });
