@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
-import { readFileSync, existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const read = (path) => readFileSync(join(root, path), "utf8");
@@ -56,13 +56,17 @@ test("public legal and NRE pages prerender without disabling browser counters", 
     assert.match(page, /setRequestLocale/, path);
   }
   assert.match(read("app/[locale]/nre/NreLiveHours.tsx"), /window.setInterval/);
-  assert.match(read("app/[locale]/policy/[policy]/page.tsx"), /export const dynamicParams = false/);
+  assert.match(
+    read("app/[locale]/policy/[policy]/page.tsx"),
+    /export const dynamicParams = false/,
+  );
 
-  // Protect review/cutover and private routes from being made static or public.
+  // The cutover homepage is SSG by design (#266, docs/homepage-react-cutover.md):
+  // its lock is evaluated at build time, so it must stay gated and proxy-protected.
   const root = read("app/[locale]/page.tsx");
   const proxy = read("proxy.ts");
-  assert.doesNotMatch(root, /export const dynamic = "force-static"/);
-  assert.match(root, /isHomeCutoverEnabled/);
+  assert.match(root, /export const dynamic = "force-static"/);
+  assert.match(root, /if \(!isHomeCutoverEnabled\(\)\) redirect\("\/"\)/);
   assert.match(proxy, /isTrustedHomelabIpv4/);
   assert.match(proxy, /!isHomeCutoverEnabled/);
 });
@@ -97,7 +101,10 @@ test("Vercel installs the same pinned npm 12 as mise before npm ci", () => {
     vercel.installCommand,
     `npm install --global npm@${pinnedNpm} --no-audit --no-fund && npm --version && npm ci --no-audit --no-fund`,
   );
-  assert.match(JSON.parse(read("package.json")).engines.npm, /^>=12\.2\.0 <13$/);
+  assert.match(
+    JSON.parse(read("package.json")).engines.npm,
+    /^>=12\.2\.0 <13$/,
+  );
 });
 
 test("production prerender manifest audit detects missing or ISR legal routes", async () => {

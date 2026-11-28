@@ -14,7 +14,11 @@ test("P1/P3/P4 do not advertise phantom localized homepage URLs", async () => {
   assert.match(catalog, /if \(slug === "index"\) return "\/"/);
   assert.match(metadata, /canonicalPagePath\("index", locale\)/);
   assert.doesNotMatch(metadata, /localizedHomePath/);
-  assert.match(metadata, /alternates: \{ canonical \}/);
+  // Until the SHA-bound cutover, alternates stay a single canonical "/".
+  assert.match(
+    metadata,
+    /alternates: released\s*\?\s*releasedHomepageAlternates\(locale\)\s*:\s*\{ canonical \}/,
+  );
   assert.match(homepage, /redirect\("\/"\)/);
 });
 
@@ -51,9 +55,15 @@ test("localized home release links do not force readers back to French", async (
   assert.match(footer, /isHomeCutoverEnabled\(\)/);
   assert.match(footer, /releasedHomepagePath\(locale\)/);
   assert.match(policySection, /localizedPolicyPath\(slug, locale\)/);
-  for (const p of ["app/[locale]/page.tsx", "app/[locale]/home-preview/page.tsx"]) {
+  for (const p of [
+    "app/[locale]/page.tsx",
+    "app/[locale]/home-preview/page.tsx",
+  ]) {
     const page = await read(p);
-    assert.doesNotMatch(page, /<LegacyFooterSection|id="preview-resources"|href="\/feed\.xml"/);
+    assert.doesNotMatch(
+      page,
+      /<LegacyFooterSection|id="preview-resources"|href="\/feed\.xml"/,
+    );
   }
   assert.match(footer, /href="\/policy\/legal"/);
 

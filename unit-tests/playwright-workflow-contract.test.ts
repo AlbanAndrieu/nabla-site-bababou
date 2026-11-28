@@ -143,7 +143,9 @@ test("Playwright Preview rejects Vercel Security Checkpoint responses", async ()
 
   assert.match(accessCheck, /x-vercel-mitigated/);
   assert.match(accessCheck, /status" == "429"/);
-  assert.match(accessCheck, /Vercel Security Checkpoint/);
+  // #286 generalised the Checkpoint branch to any explicit mitigation.
+  assert.match(accessCheck, /reached a Vercel mitigation or rate limit/);
+  assert.match(accessCheck, /PLAYWRIGHT_VERCEL_HTTP_402/);
   assert.match(accessCheck, /return 1/);
 });
 

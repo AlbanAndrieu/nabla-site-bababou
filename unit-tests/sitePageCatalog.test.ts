@@ -154,6 +154,8 @@ test("the Next sitemap indexes only stable localized Next surfaces", () => {
     "central-authorities-failures",
     "central-authorities-documents",
     "nre",
+    // Public request guide from #262/#263, explicitly indexable.
+    "evidence-access",
     "link",
     "email",
   ]);

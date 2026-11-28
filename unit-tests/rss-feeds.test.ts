@@ -24,18 +24,27 @@ test("dedicated Éléonore RSS feed carries a contact message", async () => {
 });
 
 test("RSS discovery copy keeps the child identity scoped to the dedicated feed", async () => {
-  const [layout, siteFr, siteEn, siteDe, siteNo, linkFr, linkEn, linkDe, linkNo] =
-    await Promise.all([
-      read("../app/[locale]/layout.tsx"),
-      read("../messages/site/fr.json"),
-      read("../messages/site/en.json"),
-      read("../messages/site/de.json"),
-      read("../messages/site/no.json"),
-      read("../messages/link/fr.json"),
-      read("../messages/link/en.json"),
-      read("../messages/link/de.json"),
-      read("../messages/link/no.json"),
-    ]);
+  const [
+    layout,
+    siteFr,
+    siteEn,
+    siteDe,
+    siteNo,
+    linkFr,
+    linkEn,
+    linkDe,
+    linkNo,
+  ] = await Promise.all([
+    read("../app/[locale]/layout.tsx"),
+    read("../messages/site/fr.json"),
+    read("../messages/site/en.json"),
+    read("../messages/site/de.json"),
+    read("../messages/site/no.json"),
+    read("../messages/link/fr.json"),
+    read("../messages/link/en.json"),
+    read("../messages/link/de.json"),
+    read("../messages/link/no.json"),
+  ]);
 
   assert.doesNotMatch(layout, /Éléonore/);
   for (const source of [
@@ -53,13 +62,13 @@ test("RSS discovery copy keeps the child identity scoped to the dedicated feed",
 });
 
 test("Next surfaces expose both RSS feeds", async () => {
-  const [footer, layout, linkPage] = await Promise.all([
-    read("../app/components/Footer.tsx"),
+  // The three-link footer from #270 intentionally drops visible RSS links.
+  const [layout, linkPage] = await Promise.all([
     read("../app/[locale]/layout.tsx"),
     read("../app/[locale]/link/page.tsx"),
   ]);
 
-  for (const source of [footer, layout, linkPage]) {
+  for (const source of [layout, linkPage]) {
     assert.match(source, /\/feed\.xml/);
     assert.match(source, /\/eleonore-feed\.xml/);
   }

@@ -210,13 +210,14 @@ jobs:
           cp scripts/security/zap-rate-limit-hook.py "$scan_dir/rate-limit-hook.py"
           # The pinned ZAP image runs as uid/gid 1000 with HOME=/home/zap.
           # Grant only its group access to this runner-owned private workspace;
-          # never chmod 777 or replace the image user/HOME.
+          # never make it world-writable or replace the image user/HOME.
           sudo chgrp 1000 "$scan_dir"
           chmod 0770 "$scan_dir"
           chmod 0644 "$scan_dir/rules.tsv" "$scan_dir/rate-limit-hook.py"
           # Verify filesystem and HOME separately before sending auth headers.
           # A missing report remains a hard DAST failure, never a passing scan.
           if ! docker run --rm \
+             --env PYTHONDONTWRITEBYTECODE=1 \
             --volume "$scan_dir:/zap/wrk:rw" \
             ghcr.io/zaproxy/zaproxy:2.17.0 \
             sh -c 'test "$(id -u)" -eq 1000 && test -w "$HOME" && test -w /zap/wrk && touch /zap/wrk/.zap-workspace-check && rm /zap/wrk/.zap-workspace-check' \
@@ -229,6 +230,7 @@ jobs:
           # A scanner may return a blocking exit code with a valid JSON report.
           zap_exit=0
           docker run --rm \
+            --env PYTHONDONTWRITEBYTECODE=1 \
             --env ZAP_AUTH_HEADER --env ZAP_AUTH_HEADER_VALUE --env ZAP_AUTH_HEADER_SITE \
             --volume "$scan_dir:/zap/wrk:rw" \
             ghcr.io/zaproxy/zaproxy:2.17.0 \
@@ -348,18 +350,24 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       - name: Clean ZAP Preview workspace
+        id: cleanup
         if: always()
         shell: bash
         run: |
           if [[ -n "${ZAP_SCAN_DIR:-}" ]]; then rm -rf -- "$ZAP_SCAN_DIR"; fi
 
       - name: Enforce ZAP Preview policy
-        if: steps.preflight.outcome == 'success' && steps.zap.outcome != 'success'
+        if: always() && (steps.cleanup.outcome != 'success' || (steps.preflight.outcome == 'success' && steps.zap.outcome != 'success'))
         env:
           REPORT_AVAILABLE: ${{ steps.summary.outputs.report_available }}
           SCAN_EXIT_CODE: ${{ env.ZAP_SCAN_EXIT_CODE }}
+          CLEANUP_OUTCOME: ${{ steps.cleanup.outcome }}
         shell: bash
         run: |
+          if [[ "$CLEANUP_OUTCOME" != "success" ]]; then
+            echo "::error::ZAP_PRIVATE_CLEANUP_FAILED: private runner evidence was not erased"
+            exit 1
+          fi
           if [[ "$REPORT_AVAILABLE" != "true" ]]; then
             echo "::error::OWASP ZAP Preview failed before producing a report; this is a scanner/configuration error, not a security finding."
           elif [[ "${SCAN_EXIT_CODE:-}" == "3" ]]; then
@@ -376,6 +384,7 @@ jobs:
           STATUS_SHA: ${{ env.DEPLOYED_SHA }}
           PREFLIGHT_OUTCOME: ${{ steps.preflight.outcome }}
           ZAP_OUTCOME: ${{ steps.zap.outcome }}
+          CLEANUP_OUTCOME: ${{ steps.cleanup.outcome }}
           REPORT_AVAILABLE: ${{ steps.summary.outputs.report_available }}
           SCAN_EXIT_CODE: ${{ env.ZAP_SCAN_EXIT_CODE }}
           ZAP_HIGH: ${{ steps.summary.outputs.high }}
@@ -390,6 +399,9 @@ jobs:
           if [[ "$PREFLIGHT_OUTCOME" != "success" ]]; then
             STATE=failure
             DESCRIPTION='ZAP Preview access preflight failed'
+          elif [[ "$CLEANUP_OUTCOME" != "success" ]]; then
+            STATE=error
+            DESCRIPTION='ZAP Preview private evidence cleanup failed'
           elif [[ "$ZAP_OUTCOME" == "success" ]]; then
             STATE=success
             DESCRIPTION="ZAP Preview passed $counts"

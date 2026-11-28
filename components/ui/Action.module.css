@@ -3,7 +3,8 @@
   align-items: center;
   justify-content: center;
   gap: var(--ui-space-xs);
-  min-width: var(--ui-action-min-width);
+  /* WCAG 1.4.10: never wider than the container at 200% text / 320px. */
+  min-width: min(var(--ui-action-min-width), 100%);
   max-width: 100%;
   min-height: var(--ui-control-min-height);
   padding: 0.625rem var(--ui-space-md);

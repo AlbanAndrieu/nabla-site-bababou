@@ -52,7 +52,7 @@ is_maintenance_only_path() {
         return 0
     fi
     case "$1" in
-        docs/* | unit-tests/* | tests/* | \
+        docs/* | unit-tests/* | tests/* | .opencode/* | \
             .pre-commit-config.yaml | .pre-commit-pre-push.yaml | .python-version | \
             Makefile | justfile | .mega-linter.yml | .betterleaks.toml | \
             mise.toml | opencode.json | renovate.json | eslint.config.js | stylelint.config.cjs | commitlint.config.* | playwright.config.* | \
@@ -94,10 +94,11 @@ trap 'rm -f "$scope_file"' EXIT
 if [[ "${HEAD_REF}" == "WORKTREE" ]]; then
     # Each Git command must be checked separately. A successful last command
     # may otherwise conceal a failed earlier diff inside a command group.
-    if [[ "${BASE_REF}" != "HEAD" ]] &&
-        ! git diff --no-renames --name-only -z --diff-filter=ACMRD "${BASE_REF}...HEAD" >>"${scope_file}"; then
-        echo '❌ CI_SCOPE_GIT_FAILED: cannot enumerate committed changes' >&2
-        exit 2
+    if [[ "${BASE_REF}" != "HEAD" ]]; then
+        if ! git diff --no-renames --name-only -z --diff-filter=ACMRD "${BASE_REF}...HEAD" >>"${scope_file}"; then
+            echo '❌ CI_SCOPE_GIT_FAILED: cannot enumerate committed changes' >&2
+            exit 2
+        fi
     fi
     if ! git diff --no-renames --name-only -z --diff-filter=ACMRD >>"${scope_file}" ||
         ! git diff --no-renames --cached --name-only -z --diff-filter=ACMRD >>"${scope_file}" ||
@@ -115,7 +116,7 @@ if ! LC_ALL=C sort -zu -o "${scope_file}" "${scope_file}"; then
     echo '❌ CI_SCOPE_GIT_FAILED: unable to sort changed paths' >&2
     exit 2
 fi
-mapfile -d "" -t CHANGED_FILES <"$scope_file"
+mapfile -d "" -t CHANGED_FILES <"${scope_file}"
 
 maintenance_only=true
 application=false

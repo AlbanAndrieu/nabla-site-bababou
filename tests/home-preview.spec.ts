@@ -49,7 +49,7 @@ for(const {code,home,fathers} of locales){
     await expect(page.locator("#preview-journey")).toContainText(c.journeyText);
     await expect(page.locator("#preview-people, a[href='#preview-people']")).toHaveCount(0);
     await expect(page.locator(`#preview-story-gallery a[href="${code === "fr" ? "" : "/" + code}/people-contacted"]`)).toHaveCount(1);
-    await expect(page.locator('#preview-story-gallery img[src="/assets/people-contacted-europe.avif"]')).toHaveCount(1);
+    await expect(page.locator('#preview-story-gallery img[src$="/assets/people-contacted-europe.avif"]')).toHaveCount(1);
     await expect(page.locator("#preview-identity")).toContainText(c.identityTitle);
     await expect(page.locator("#preview-footer, #preview-resources")).toHaveCount(0);
     await expect(page.locator('main a[href$="feed.xml"]')).toHaveCount(0);
@@ -96,7 +96,7 @@ test("six child illustrations and seven parent illustrations load from local ass
     const images=page.locator(container+" img");
     await expect(images).toHaveCount(count);
     for(const img of await images.all()){
-      await expect(img).toHaveAttribute("src",/^\/assets\/[a-z0-9._-]+\.(?:svg|png|jpe?g|webp)$/i);
+      await expect(img).toHaveAttribute("src",/^(?:http:\/\/127\.0\.0\.1:\d+)?\/assets\/[a-z0-9._-]+\.(?:svg|png|jpe?g|webp|avif)$/i);
       await img.scrollIntoViewIfNeeded();
       await expect.poll(()=>img.evaluate(node=>node instanceof HTMLImageElement && node.complete && node.naturalWidth>0)).toBe(true);
     }

@@ -15,6 +15,12 @@
   display: block;
 }
 
+/* WCAG 1.4.10: long FR/DE words must wrap at 320px with 200% text. */
+:where(html[data-nabla-app="next-intl"]) main :is(h1, h2, h3, h4, p) {
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
 :where(html[data-nabla-app="next-intl"]) main h1 {
   margin-block: 0 1rem;
   font-size: clamp(1.8rem, 3.5vw, 2.5rem);
@@ -62,7 +68,9 @@
   color: var(--ui-link-hover);
 }
 
-:where(html[data-nabla-app="next-intl"]) main :is(a, button, input, select, textarea):focus-visible {
+:where(html[data-nabla-app="next-intl"])
+  main
+  :is(a, button, input, select, textarea):focus-visible {
   outline: 3px solid var(--ui-focus-ring);
   outline-offset: 3px;
 }
@@ -72,7 +80,6 @@
     break-after: avoid-page;
   }
 }
-
 
 /* Native Next-only skip link, independent of theme.css utility rules. */
 html[data-nabla-app="next-intl"] .skip-to-main {

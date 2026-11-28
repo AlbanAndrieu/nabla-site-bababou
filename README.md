@@ -31,7 +31,7 @@ just p0
 just quality
 ```
 
-Les contrats hors ligne ne remplacent ni le build, ni Playwright/axe, ni BetterLeaks/SAST/SCA/ZAP. Ne déclencher aucun GitHub Actions simplement pour obtenir une preuve lorsque les crédits sont indisponibles ; ne pas contourner les gates. Les nouvelles PR documentaires restent Draft en absence de preuve complète ; la PR #270 est Ready for review mais ses contrôles GitHub ne sont pas tous verts. Aucune fusion automatique.
+Les contrats hors ligne ne remplacent ni le build, ni Playwright/axe, ni Betterleaks/SAST/SCA/ZAP. Ne déclencher aucun GitHub Actions simplement pour obtenir une preuve lorsque les crédits sont indisponibles ; ne pas contourner les gates. Les nouvelles PR documentaires restent Draft en absence de preuve complète ; la PR #270 est Ready for review mais ses contrôles GitHub ne sont pas tous verts. Aucune fusion automatique.
 
 ## Documentation — une autorité par sujet
 
@@ -48,4 +48,3 @@ Les contrats hors ligne ne remplacent ni le build, ni Playwright/axe, ni BetterL
 | Consignes agents, contributions | [AGENTS.md](AGENTS.md), [CLAUDE.md](CLAUDE.md), [CONTRIBUTING.md](CONTRIBUTING.md) |
 
 Les anciennes PR, listes de commits et validations datées ne sont pas des instructions de reprise. Pour un état exact, lire le HEAD courant et la roadmap.
-

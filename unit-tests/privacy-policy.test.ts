@@ -43,7 +43,9 @@ test("privacy policy route renders the native locale-aware component", async () 
 
   assert.match(route, /policy === "privacy_policy"/);
   assert.match(route, /<PrivacyPolicyContent locale=\{locale\} \/>/);
-  assert.match(route, /getPrivacyPolicyCopy/);
+  // Metadata goes through the shared native policy catalog.
+  assert.match(route, /getNativePolicyCopy\(policy, locale\)/);
+  assert.match(content, /getPrivacyPolicyCopy\(locale\)/);
   assert.match(content, /mailto:\$\{PRIVACY_POLICY_EMAIL\}/);
   assert.match(content, /https:\/\/www\.cnil\.fr\//);
 });

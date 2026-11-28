@@ -3,7 +3,8 @@ import { existsSync, readFileSync } from "node:fs";
 import test from "node:test";
 import { HOME_GALLERY_CARDS } from "../lib/homeGalleryCatalog.mjs";
 
-const read = (path) => readFileSync(new URL("../" + path, import.meta.url), "utf8");
+const read = (path) =>
+  readFileSync(new URL("../" + path, import.meta.url), "utf8");
 
 test("the safe React gallery retains the original ten-card layout", () => {
   const page = read("app/[locale]/home-preview/page.tsx");
@@ -16,8 +17,14 @@ test("the safe React gallery retains the original ten-card layout", () => {
   assert.match(gallery, /grid/);
   assert.ok(titles.includes("Looking for Norwegian Translator"));
   assert.ok(titles.includes("Looking for German Translator"));
-  assert.match(read("components/home/LegacyJourneySection.tsx"), /France, Norway and Germany/);
-  assert.match(read("components/home/LegacyFamilyFactsSection.tsx"), /Important Information You Should Know/);
+  assert.match(
+    read("components/home/LegacyJourneySection.tsx"),
+    /France, Norway and Germany/,
+  );
+  assert.match(
+    read("components/home/LegacyFamilyFactsSection.tsx"),
+    /Important Information You Should Know/,
+  );
   const about = read("components/home/LegacySiteAboutSection.tsx");
   assert.match(about, /<details>/);
   assert.match(about, /https:\/\/calendly\.com\/alban-andrieu/);
@@ -26,7 +33,6 @@ test("the safe React gallery retains the original ten-card layout", () => {
 });
 
 test("all ten gallery cards use existing local artwork, excluding identity and location proof", () => {
-  const gallery = read("components/home/LegacyStoryGallerySection.tsx");
   const images = HOME_GALLERY_CARDS.map(({ image }) => image).filter(Boolean);
   assert.equal(images.length, 10);
   for (const image of images) {
@@ -38,7 +44,10 @@ test("all ten gallery cards use existing local artwork, excluding identity and l
 test("the visual layout is responsive and does not depend on third-party JavaScript", () => {
   const gallery = read("components/home/LegacyStoryGallerySection.tsx");
   const styles = read("components/home/LegacyStoryGallerySection.module.css");
-  assert.doesNotMatch(gallery, /<Script\b|<iframe|sendBeacon|fetch\(|dangerouslySetInnerHTML/);
+  assert.doesNotMatch(
+    gallery,
+    /<Script\b|<iframe|sendBeacon|fetch\(|dangerouslySetInnerHTML/,
+  );
   assert.match(styles, /grid-template-columns: repeat\(3, minmax\(0, 1fr\)\)/);
   assert.match(styles, /@media \(max-width: 60rem\)/);
   assert.match(styles, /@media \(max-width: 40rem\)/);
@@ -55,20 +64,29 @@ test("new React blocks do not duplicate historical sensitive identifiers", () =>
   ];
   for (const path of sources) {
     const value = read(path);
-    assert.doesNotMatch(value, /\b14CV\d{5}\b|tortberg\.kanvas|goo\.gl\/maps|passport-fr-bababou/i);
-    assert.doesNotMatch(value, /she changed your|kept prisoner|escape justice/i);
+    assert.doesNotMatch(
+      value,
+      /\b14CV\d{5}\b|tortberg\.kanvas|goo\.gl\/maps|passport-fr-bababou/i,
+    );
+    assert.doesNotMatch(
+      value,
+      /she changed your|kept prisoner|escape justice/i,
+    );
   }
 });
 
 test("each gallery card has a safe local fragment and readable link text", () => {
   for (const card of HOME_GALLERY_CARDS) {
-    assert.ok(/^#preview-[a-z-]+$/.test(card.href) || card.href === "/people-contacted.html", card.href);
+    assert.ok(
+      /^#preview-[a-z-]+$/.test(card.href) ||
+        card.href === "/people-contacted.html",
+      card.href,
+    );
     for (const field of [card.title, card.description, card.link]) {
       assert.ok(typeof field === "string" && field.trim().length > 0);
     }
   }
 });
-
 
 test("gallery images have an accessible, network-free rendering fallback", () => {
   const gallery = read("components/home/LegacyStoryGallerySection.tsx");
@@ -89,10 +107,19 @@ test("new gallery illustrations are local, static and free of remote references"
     "/assets/home-card-message.svg",
   ];
   for (const filename of expected) {
-    assert.ok(HOME_GALLERY_CARDS.some(({ image }) => image === filename), filename);
+    assert.ok(
+      HOME_GALLERY_CARDS.some(({ image }) => image === filename),
+      filename,
+    );
     const svg = read("public" + filename);
-    assert.ok(svg.startsWith('<svg xmlns="http://www.w3.org/2000/svg"'), filename);
-    assert.doesNotMatch(svg, /<script\b|<foreignObject\b|<image\b|\b(?:xlink:)?href=/i);
+    assert.ok(
+      svg.startsWith('<svg xmlns="http://www.w3.org/2000/svg"'),
+      filename,
+    );
+    assert.doesNotMatch(
+      svg,
+      /<script\b|<foreignObject\b|<image\b|\b(?:xlink:)?href=/i,
+    );
     assert.doesNotMatch(svg, /(?:<text\b|<metadata\b)/i);
   }
 });
@@ -104,10 +131,28 @@ test("European contacts gallery visual is shared with the historic people page",
   assert.ok(existsSync(file));
   const bytes = readFileSync(file);
   assert.equal(bytes.subarray(4, 12).toString("ascii"), "ftypavif");
-  assert.ok(bytes.length > 10_000 && bytes.length < 200_000, "artwork has a compact payload");
-  assert.match(read("public/people-contacted.html"), /src="\/assets\/people-contacted-europe\.avif"/);
-  assert.match(read("lib/homeAudienceCopy.mjs"), /people-contacted-europe\.avif/);
-  assert.match(read("lib/homeGalleryCatalog.mjs"), /href: "\/people-contacted\.html"/);
-  assert.doesNotMatch(read("components/home/ChildHomeSections.tsx"), /id="preview-people"/);
-  assert.match(read("components/home/GalleryCardMedia.tsx"), /people-contacted-europe\./);
+  assert.ok(
+    bytes.length > 10_000 && bytes.length < 200_000,
+    "artwork has a compact payload",
+  );
+  assert.match(
+    read("public/people-contacted.html"),
+    /src="\/assets\/people-contacted-europe\.avif"/,
+  );
+  assert.match(
+    read("lib/homeAudienceCopy.mjs"),
+    /people-contacted-europe\.avif/,
+  );
+  assert.match(
+    read("lib/homeGalleryCatalog.mjs"),
+    /href: "\/people-contacted\.html"/,
+  );
+  assert.doesNotMatch(
+    read("components/home/ChildHomeSections.tsx"),
+    /id="preview-people"/,
+  );
+  assert.match(
+    read("components/home/GalleryCardMedia.tsx"),
+    /people-contacted-europe\./,
+  );
 });

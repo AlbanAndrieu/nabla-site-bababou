@@ -15,13 +15,13 @@ test("preferred text scaling uses browser opt-in without double CSS scaling", as
   assert.match(reset, /font-size: 100%/);
   assert.doesNotMatch(reset, /font-size:[^;]*env\(preferred-text-scale/);
   assert.match(layout, /<meta name="text-scale" content="scale" \/>/);
-  assert.match(e2e, /newCDPSession\(page\)/);
-  assert.match(e2e, /Emulation\.setEmulatedOSTextScale/);
-  assert.match(e2e, /scale: 2/);
-  assert.match(e2e, /browserName !== "chromium"/);
-  assert.doesNotMatch(e2e, /page\.addStyleTag/);
-  assert.doesNotMatch(
+  // #252: CDP text scale is unreliable on desktop Chrome and absent in
+  // Firefox/WebKit; the spec doubles the root size and says it is not native zoom.
+  assert.match(
     e2e,
-    /documentElement\.style\.setProperty\(\s*"font-size"/,
+    /root\.style\.setProperty\("font-size", `\$\{baseline \* 2\}px`, "important"\)/,
   );
+  assert.match(e2e, /toBeGreaterThanOrEqual\(baselineFontSize \* 1\.99\)/);
+  assert.match(e2e, /NOT a claim of validating native browser zoom/);
+  assert.doesNotMatch(e2e, /page\.addStyleTag/);
 });

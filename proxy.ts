@@ -3,8 +3,8 @@ import { NextResponse } from "next/server";
 import createMiddleware from "next-intl/middleware";
 
 import { routing } from "@/i18n/routing";
-import { isTrustedHomelabIpv4 } from "@/lib/homelabTrustedCidrs.mjs";
 import { isHomeCutoverEnabled } from "@/lib/homeCutoverPolicy.mjs";
+import { isTrustedHomelabIpv4 } from "@/lib/homelabTrustedCidrs.mjs";
 
 const intlMiddleware = createMiddleware(routing);
 const defaultLocalePrefix = `/${routing.defaultLocale}`;
@@ -52,8 +52,13 @@ export default function proxy(request: NextRequest) {
   }
 
   // French is the unprefixed default. Keep the user's explicit /fr URL
-  // working as a temporary redirect to the canonical review route.
-  if (pathname === "/fr/home-preview") {
+  // working as a temporary redirect to the canonical review route. Skip
+  // next-intl's internal /fr rewrite (it sets x-next-intl-locale), which would
+  // otherwise redirect back to /home-preview in a loop.
+  if (
+    pathname === "/fr/home-preview" &&
+    !request.headers.has("x-next-intl-locale")
+  ) {
     return NextResponse.redirect(new URL("/home-preview", request.url), 307);
   }
 
@@ -68,7 +73,10 @@ export default function proxy(request: NextRequest) {
    * the approved legacy root, but emit the redirect directly instead of asking
    * next-intl to render a full response body before redirecting it.
    */
-  if (localeRootRedirects.has(request.nextUrl.pathname) && !isHomeCutoverEnabled()) {
+  if (
+    localeRootRedirects.has(request.nextUrl.pathname) &&
+    !isHomeCutoverEnabled()
+  ) {
     return NextResponse.redirect(new URL("/", request.url), 307);
   }
 

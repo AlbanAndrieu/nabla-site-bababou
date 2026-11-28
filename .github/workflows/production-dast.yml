@@ -171,13 +171,14 @@ jobs:
           cp scripts/security/zap-rate-limit-hook.py "$scan_dir/rate-limit-hook.py"
           # The pinned ZAP image runs as uid/gid 1000 with HOME=/home/zap.
           # Grant only its group access to this runner-owned private workspace;
-          # never chmod 777 or replace the image user/HOME.
+          # never make it world-writable or replace the image user/HOME.
           sudo chgrp 1000 "$scan_dir"
           chmod 0770 "$scan_dir"
           chmod 0644 "$scan_dir/rules.tsv" "$scan_dir/rate-limit-hook.py"
           # Verify filesystem and HOME separately before sending auth headers.
           # A missing report remains a hard DAST failure, never a passing scan.
           if ! docker run --rm \
+             --env PYTHONDONTWRITEBYTECODE=1 \
             --volume "$scan_dir:/zap/wrk:rw" \
             ghcr.io/zaproxy/zaproxy:2.17.0 \
             sh -c 'test "$(id -u)" -eq 1000 && test -w "$HOME" && test -w /zap/wrk && touch /zap/wrk/.zap-workspace-check && rm /zap/wrk/.zap-workspace-check' \
@@ -189,6 +190,7 @@ jobs:
           # Preserve the exit code: 1/2 means findings, 3 means scanner failure.
           zap_exit=0
           docker run --rm \
+            --env PYTHONDONTWRITEBYTECODE=1 \
             --env ZAP_AUTH_HEADER --env ZAP_AUTH_HEADER_VALUE --env ZAP_AUTH_HEADER_SITE \
             --volume "$scan_dir:/zap/wrk:rw" \
             ghcr.io/zaproxy/zaproxy:2.17.0 \
@@ -316,6 +318,7 @@ jobs:
           fi
 
       - name: Clean ZAP production workspace
+        id: cleanup
         if: always()
         shell: bash
         run: |
@@ -323,7 +326,7 @@ jobs:
           rm -f zap-production-safe.sarif zap-production-safe.html zap-production-summary.md
 
       - name: Enforce production DAST policy
-        if: always() && (steps.preflight.outcome != 'success' || steps.zap.outcome != 'success' || steps.safe-report.outcome != 'success' || steps.safe-upload.outcome != 'success')
+        if: always() && (steps.preflight.outcome != 'success' || steps.zap.outcome != 'success' || steps.safe-report.outcome != 'success' || steps.safe-upload.outcome != 'success' || steps.cleanup.outcome != 'success')
         shell: bash
         run: |
           echo "::error::Production DAST preflight, scanner, safe SARIF, or artifact upload failed. Review the job summary and minimized SARIF artifact only."
@@ -341,6 +344,7 @@ jobs:
           REPORT_AVAILABLE: ${{ steps.summary.outputs.report_available }}
           SAFE_REPORT_OUTCOME: ${{ steps.safe-report.outcome }}
           SAFE_UPLOAD_OUTCOME: ${{ steps.safe-upload.outcome }}
+          CLEANUP_OUTCOME: ${{ steps.cleanup.outcome }}
           HIGH: ${{ steps.summary.outputs.high }}
           MEDIUM: ${{ steps.summary.outputs.medium }}
           LOW: ${{ steps.summary.outputs.low }}
@@ -356,6 +360,9 @@ jobs:
           elif [[ "$PREFLIGHT_OUTCOME" != "success" ]]; then
             STATE=failure
             DESCRIPTION="Production ZAP preflight failed"
+          elif [[ "$CLEANUP_OUTCOME" != "success" ]]; then
+            STATE=error
+            DESCRIPTION="Production ZAP private evidence cleanup failed"
           elif [[ "$ZAP_OUTCOME" == "success" && "$SAFE_REPORT_OUTCOME" == "success" && "$SAFE_UPLOAD_OUTCOME" == "success" ]]; then
             STATE=success
             DESCRIPTION="Production ZAP passed $counts"

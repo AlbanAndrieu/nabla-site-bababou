@@ -20,7 +20,12 @@ test("payment result routes are native localized noindex surfaces", async () => 
     assert.doesNotMatch(source, /alban(?:d)?rieu\.com/i);
   }
 
-  assert.match(success, /slice\(0, 200\)/);
+  // The session reference is read client-side so the route stays static.
+  assert.match(success, /CheckoutSessionReference/);
+  assert.match(
+    await read("components/CheckoutSessionReference.tsx"),
+    /slice\(0, 200\)/,
+  );
   assert.doesNotMatch(success, /dangerouslySetInnerHTML/);
 });
 
