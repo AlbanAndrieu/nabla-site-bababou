@@ -66,6 +66,7 @@ jobs:
             scripts/security/defectdojo-report-sanitizers.mjs
             scripts/security/zap-safe-report.mjs
             scripts/security/render-zap-safe-report.mjs
+            scripts/security/zap-rule-triage.mjs
           sparse-checkout-cone-mode: false
 
       - name: Request GitHub OIDC token for Vercel
@@ -254,6 +255,9 @@ jobs:
           jq -e '.version == "2.1.0" and .runs[0].tool.driver.name == "ZAP" and (.runs[0].results | type == "array")' zap-production-safe.sarif >/dev/null
           # Offline HTML and summary are derived only from producer-minimized SARIF.
           node scripts/security/render-zap-safe-report.mjs zap-production-safe.sarif zap-production-safe.html zap-production-summary.md
+          # Only numeric ZAP subalert IDs (e.g. 10055-13) enter Step Summary.
+          # The raw response and URL evidence remain in ephemeral runner storage.
+          node scripts/security/zap-rule-triage.mjs "$ZAP_SCAN_DIR/report_json.json" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Preserve minimized ZAP findings privately
         id: safe-upload
