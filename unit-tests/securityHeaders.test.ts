@@ -38,6 +38,25 @@ test("CSP enforces safe primitives and only observes legacy script restrictions"
   assert.doesNotMatch(reportOnly, /report-uri|report-to/);
 });
 
+test("ZAP 10055: report-only candidate never approves unsafe-inline or wildcard schemes", async () => {
+  const config = await readFile(configUrl, "utf8");
+  const baseline = config.split("const baselineCsp = [")[1]?.split("].join")[0] ?? "";
+  const candidate = config.split("const candidateCsp = [")[1]?.split("].join")[0] ?? "";
+  assert.ok(candidate);
+  assert.match(config, /Content-Security-Policy-Report-Only/);
+  assert.match(baseline, /object-src 'none'/);
+  // Even the enforced baseline must remain safe for legacy JS/CSS during migration.
+  assert.doesNotMatch(baseline, /script-src|style-src|default-src/);
+  assert.match(candidate, /default-src 'self'/);
+  assert.match(candidate, /form-action 'self'/);
+  assert.match(candidate, /connect-src 'self'/);
+  assert.match(candidate, /img-src 'self' data:/);
+  assert.doesNotMatch(candidate, /unsafe-inline|unsafe-eval|unsafe-hashes/);
+  assert.doesNotMatch(candidate, /https:\\?:|http:\\?:/);
+  assert.doesNotMatch(candidate, /https:("|'|\s|$)/);
+  assert.doesNotMatch(candidate, /report-uri|report-to/);
+});
+
 test("CORS remains fail-closed on Next config and the public sample API", async () => {
   const [config, api, notFound] = await Promise.all([
     readFile(configUrl, "utf8"),
