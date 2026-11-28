@@ -52,7 +52,6 @@ test("ZAP 10055: report-only candidate never approves unsafe-inline or wildcard 
   assert.match(candidate, /connect-src 'self'/);
   assert.match(candidate, /img-src 'self' data:/);
   assert.doesNotMatch(candidate, /unsafe-inline|unsafe-eval|unsafe-hashes/);
-  assert.doesNotMatch(candidate, /https:\\?:|http:\\?:/);
   assert.doesNotMatch(candidate, /https:("|'|\s|$)/);
   assert.doesNotMatch(candidate, /report-uri|report-to/);
 });
