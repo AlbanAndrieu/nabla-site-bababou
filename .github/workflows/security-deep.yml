@@ -237,7 +237,7 @@ jobs:
             -t "$NUCLEI_TEMPLATE_DIR" \
             -pt http -ni -duc -tags cve,misconfig,exposure \
             -severity medium,high,critical -etags dos,fuzz,bruteforce,intrusive \
-            -rl 2 -c 1 -timeout 5 -retries 0 \
+            -rl 2 -c 1 -timeout 5 -retries 0 -stats -si 60 \
             -jsonl -o "$scan_dir/nuclei.raw.jsonl" \
             "${exclusion_args[@]}" \
             > "$scan_dir/scan.log" 2>&1
@@ -263,6 +263,13 @@ jobs:
             echo "::error::NUCLEI_SCAN_INCOMPLETE: scanner error; raw log withheld"
             exit 1
           fi
+          # A zero exit without loaded templates is NOT proof of coverage.
+          loaded="$(grep -Eo 'Templates loaded for current scan: [0-9]+' "$scan_dir/scan.log" | tail -n 1 | awk '{print $NF}' || true)"
+          if [[ ! "$loaded" =~ ^[0-9]+$ ]] || (( loaded == 0 )); then
+            echo "::error::NUCLEI_COVERAGE_UNVERIFIED: missing positive template-load evidence"
+            exit 1
+          fi
+          echo "NUCLEI_TEMPLATES_LOADED=$loaded" >> "$GITHUB_ENV"
           test -e "$scan_dir/nuclei.raw.jsonl" || : > "$scan_dir/nuclei.raw.jsonl"
           node scripts/security/nuclei-safe-report.mjs "$scan_dir/nuclei.raw.jsonl" nuclei-master.sarif
 
@@ -276,6 +283,7 @@ jobs:
             echo "## Nuclei Bababou — INCOMPLETE / NOT_RUN" >> "$GITHUB_STEP_SUMMARY"
             echo "No reliable count: scanner, template bootstrap, WAF or 55-minute scan deadline blocked coverage." >> "$GITHUB_STEP_SUMMARY"
             echo "Elapsed seconds: ${NUCLEI_SCAN_ELAPSED_SECONDS:-unknown}" >> "$GITHUB_STEP_SUMMARY"
+            echo "Templates loaded: ${NUCLEI_TEMPLATES_LOADED:-unknown}" >> "$GITHUB_STEP_SUMMARY"
             echo "Scanner timeout: ${NUCLEI_SCAN_TIMEOUT:-false}" >> "$GITHUB_STEP_SUMMARY"
           else
             node -e 'const fs=require("node:fs");const r=JSON.parse(fs.readFileSync("nuclei-master.sarif","utf8"));const a=r.runs[0].results;console.log("## Nuclei Bababou — COMPLETE");console.log("Sanitized medium/high/critical matches: "+a.length+"; not verified vulnerabilities. Raw URLs and HTTP withheld.")' >> "$GITHUB_STEP_SUMMARY"
