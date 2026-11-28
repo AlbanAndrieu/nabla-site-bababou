@@ -38,15 +38,14 @@ test("documents every approved legacy script without forcing unnecessary depende
   ]);
   assert.deepEqual(result.notRequiredInPreview, [
     "connection",
-    "turnstile",
     "jquery",
     "popper",
     "bootstrap",
   ]);
-  assert.equal(LEGACY_SCRIPTS.length, 15);
+  assert.equal(LEGACY_SCRIPTS.length, 14);
   assert.equal(
     result.retainedOnLegacy.length + result.notRequiredInPreview.length,
-    9,
+    8,
   );
   assert.ok(
     LEGACY_SCRIPTS.every(({ state }) =>

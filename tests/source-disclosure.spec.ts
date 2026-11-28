@@ -14,9 +14,15 @@ const privateSourcePaths = [
   "/pyproject.toml",
   "/scripts/prepare-security-audit-skill.sh",
   "/server.py",
+  // PHP is not part of this Next.js site; ZAP 10099 must not be a real 200.
+  "/index.php",
+  "/info.php",
+  "/wp-config.php",
+  "/composer.json",
+  "/vendor/composer/installed.json",
 ] as const;
 
-test("Preview does not serve repository internals or Python source", async ({
+test("Preview does not expose repository internals, Python or PHP sources", async ({
   request,
 }) => {
   for (const path of privateSourcePaths) {
@@ -25,5 +31,20 @@ test("Preview does not serve repository internals or Python source", async ({
       [403, 404],
       `Internal path ${path} returned HTTP ${response.status()}`,
     ).toContain(response.status());
+  }
+});
+
+test("ZAP 10098: public HTML never grants reflected or wildcard credentialed CORS", async ({ request }) => {
+  const maliciousOrigin = "https://untrusted.invalid";
+  for (const path of ["/", "/en", "/api/hello"]) {
+    const response = await request.get(path, {
+      headers: { Origin: maliciousOrigin },
+      maxRedirects: 0,
+    });
+    const origin = response.headers()["access-control-allow-origin"]?.trim();
+    const credentials = response.headers()["access-control-allow-credentials"]?.trim();
+    expect(origin, `CORS wildcard/reflection on ${path}`).not.toBe("*");
+    expect(origin, `CORS reflection on ${path}`).not.toBe(maliciousOrigin);
+    expect(credentials, `Credentialed CORS on ${path}`).not.toBe("true");
   }
 });

@@ -19,6 +19,19 @@ test("Bababou reuses the single master-only weekly Nuclei job (no duplicate sche
   assert.match(deep, /sha256sum --check --status/);
 });
 
+test("Nuclei keeps bounded traffic while allowing a complete weekly scan and safe timeout", () => {
+  const section = deep.slice(deep.indexOf("  nuclei-public:"));
+  assert.match(section, /timeout-minutes: 60/);
+  assert.match(section, /timeout --signal=TERM --kill-after=15s 3300s/);
+  assert.match(section, /NUCLEI_SCAN_TIMEOUT/);
+  assert.match(section, /scan_exit == 124/);
+  assert.match(section, /-rl 2 -c 1 -timeout 5 -retries 0 -stats -si 60/);
+  assert.match(section, /NUCLEI_COVERAGE_UNVERIFIED/);
+  assert.match(section, /NUCLEI_TEMPLATES_LOADED/);
+  assert.match(section, /NUCLEI_SCAN_ELAPSED_SECONDS/);
+  assert.doesNotMatch(section, /continue-on-error:\s*true/);
+});
+
 test("Nuclei bootstrap fails when updater creates an empty template directory", () => {
   assert.match(deep, /GITHUB_TOKEN: \$\{\{ secrets\.GITHUB_TOKEN \}\}/);
   assert.match(deep, /find "\$templates_dir" -type f/);
@@ -68,6 +81,13 @@ test("ZAP Production derives HTML solely from minimized SARIF and retains the pr
   assert.match(preview, /--hook=\/zap\/wrk\/rate-limit-hook\.py/);
   assert.match(production, /--hook=\/zap\/wrk\/rate-limit-hook\.py/);
   assert.doesNotMatch(production, /zaproxy\/action-baseline/);
+});
+
+test("Production triages CSP subalert variants without uploading raw HTTP evidence", () => {
+  assert.match(production, /scripts\/security\/zap-rule-triage\.mjs/);
+  assert.match(production, /node scripts\/security\/zap-rule-triage\.mjs "\$ZAP_SCAN_DIR\/report_json\.json" >> "\$GITHUB_STEP_SUMMARY"/);
+  assert.doesNotMatch(production, /path:.*zap-production-rule-triage/);
+  assert.match(production, /scripts\/security\/render-zap-safe-report\.mjs/);
 });
 
 test("ZAP Preview and Production disable Python hook bytecode in both Docker runs", () => {

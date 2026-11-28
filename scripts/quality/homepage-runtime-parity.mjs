@@ -28,13 +28,6 @@ export const LEGACY_SCRIPTS = Object.freeze([
     reason:
       "The shipped obs-connection.js is a placeholder with no runtime behavior.",
   },
-  {
-    src: "https://challenges.cloudflare.com/turnstile/v0/api.js",
-    feature: "turnstile",
-    state: "not-required",
-    reason:
-      "The React Preview has a mailto link, not a server-side form to protect.",
-  },
   { src: "theme-toggle.js", feature: "theme", state: "partial" },
   {
     src: "/site-google-translate.js",

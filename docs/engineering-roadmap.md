@@ -84,3 +84,13 @@ Contrôle d'exclusion Nuclei : la liste `.nuclei/ignore-templates.txt` est **vid
 
 
 **DAST ZAP / 24 novembre 2026 :** les runs Production 45274527831 et 45408977261 ont terminé ZAP et les artefacts minimisés, puis échoué en supprimant un `.pyc` appartenant à l'UID Docker. La PR #288 corrige la cause avec `PYTHONDONTWRITEBYTECODE=1` transmis aux deux `docker run` des workflows production et preview ; la publication du statut doit désormais être `error` si `cleanup` échoue. Il reste à recetter sur SHA exact et à valider la gate globale (échecs unitaires préexistants). Ne pas confondre scan complet et job validé.
+
+### BB-02 — stabilisation DAST, 28 novembre 2026
+
+[ZAP Production #46088592058](https://github.com/AlbanAndrieu/nabla-site-bababou/actions/runs/46088592058) **PASS au SHA `976576756a19`**, mais **7 MEDIUM** encore observées (10055×4, 10098, 10099, 90003), 0 HIGH. Ne pas confondre succès du scanner avec absence de dette. La présente branche porte CSP Report-Only stricte et allowlistée, suppression du Turnstile inutile sur l'ancienne home, tests de régression CORS et exposition PHP. Le script BetterStack dynamique demeure un risque SRI connu (pas de hash fixe fiable). Revalider les occurrences sur les réponses de l'environnement Preview/Production, hors GitHub public pour les preuves brutes.
+
+Nuclei [#45195552723](https://github.com/AlbanAndrieu/nabla-site-bababou/actions/runs/45195552723) a chargé 4 885 modèles mais a été annulé au bout de 15 minutes. **Job 60 minutes**, commande bornée à 55 minutes et contrôles `NUCLEI_SCAN_TIMEOUT` / `NUCLEI_COVERAGE_UNVERIFIED`, statistiques 60 s privées et comptage prouvé des templates. Conserver 2 req/s et l'unique job hebdomadaire ; surveiller la durée et les coûts. Un run réel réussi et sa couverture sont **NOT_RUN** sur ce nouveau code.
+
+**Reste prioritaire :** suites unitaires/just, tests Preview et Chrome + CSS NRE (20 règles Stylelint du 28/11), validation live CSP et ZAP, puis nouveau Nuclei master. Ne pas abaisser les quality gates.
+
+**Amélioration diagnostic de la PR #289 :** `scripts/security/zap-rule-triage.mjs` lit le JSON ZAP éphémère, vérifie l'origine publique approuvée puis produit uniquement une matrice `ruleId / alertRef numérique / nombre d'alertes / nombre d'instances` dans le GitHub Step Summary. Aucun corps, cookie, chemin de pièce, titre d'alerte ou réponse HTTP n'est conservé ; le pipeline SARIF/DefectDojo ne change pas. Un résultat `10055-4` (wildcard) ne se confond plus avec `10055-13` (directive sans fallback). La directive `form-action 'self'` est maintenant effectivement enforce dans la CSP minimale ; l'autre candidate reste Report-Only. **Validation dynamique sur nouveau SHA : NOT_RUN**.
