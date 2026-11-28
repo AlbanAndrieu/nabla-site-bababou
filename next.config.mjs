@@ -52,19 +52,23 @@ const baselineCsp = [
   "frame-ancestors 'none'",
 ].join("; ");
 
-// Diagnostics only: browser violations stay local (no report-uri endpoint and
-// no family-data-bearing violation reports sent to an external collector).
+// Strict candidate: explicitly allowlist third-party origins. Keeping this
+// REPORT-ONLY preserves legacy inline scripts/styles until Playwright verifies
+// nonce/hash migration; no remote CSP reporting or personal data disclosure.
+// This removes the wildcard schemes and unsafe-inline tokens previously
+// flagged by ZAP 10055 without falsely claiming the policy is enforced.
 const candidateCsp = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://translate.google.com https://www.googletagmanager.com https://cdnjs.cloudflare.com https://code.jquery.com https://stackpath.bootstrapcdn.com https://uptime.betterstack.com https://analytics.ahrefs.com",
-  "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com",
+  "script-src 'self' https://challenges.cloudflare.com https://translate.google.com https://www.googletagmanager.com https://cdnjs.cloudflare.com https://code.jquery.com https://stackpath.bootstrapcdn.com https://uptime.betterstack.com https://analytics.ahrefs.com",
+  "style-src 'self' https://cdnjs.cloudflare.com https://fonts.googleapis.com",
   "font-src 'self' data: https://cdnjs.cloudflare.com https://fonts.gstatic.com",
-  "img-src 'self' data: https:",
-  "connect-src 'self' https:",
+  "img-src 'self' data: https://avatars.githubusercontent.com https://github.com https://www.google.com https://www.gstatic.com",
+  "connect-src 'self' https://challenges.cloudflare.com https://translate.google.com https://www.google-analytics.com https://analytics.ahrefs.com https://uptime.betterstack.com",
   "frame-src 'self' https://challenges.cloudflare.com https://www.google.com",
   "object-src 'none'",
   "base-uri 'self'",
   "frame-ancestors 'none'",
+  "form-action 'self'",
 ].join("; ");
 
 const securityHeaders = [
