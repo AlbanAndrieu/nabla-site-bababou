@@ -83,6 +83,13 @@ test("ZAP Production derives HTML solely from minimized SARIF and retains the pr
   assert.doesNotMatch(production, /zaproxy\/action-baseline/);
 });
 
+test("Production triages CSP subalert variants without uploading raw HTTP evidence", () => {
+  assert.match(production, /scripts\/security\/zap-rule-triage\.mjs/);
+  assert.match(production, /node scripts\/security\/zap-rule-triage\.mjs "\$ZAP_SCAN_DIR\/report_json\.json" >> "\$GITHUB_STEP_SUMMARY"/);
+  assert.doesNotMatch(production, /path:.*zap-production-rule-triage/);
+  assert.match(production, /scripts\/security\/render-zap-safe-report\.mjs/);
+});
+
 test("ZAP Preview and Production disable Python hook bytecode in both Docker runs", () => {
   for (const workflow of [production, preview]) {
     assert.equal(
