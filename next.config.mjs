@@ -50,6 +50,7 @@ const baselineCsp = [
   "base-uri 'self'",
   "object-src 'none'",
   "frame-ancestors 'none'",
+  "form-action 'self'",
 ].join("; ");
 
 // Strict candidate: explicitly allowlist third-party origins. Keeping this
