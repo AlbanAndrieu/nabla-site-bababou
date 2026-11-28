@@ -31,6 +31,7 @@ test("CSP enforces safe primitives and only observes legacy script restrictions"
   assert.match(baseline, /object-src 'none'/);
   assert.match(baseline, /base-uri 'self'/);
   assert.match(baseline, /frame-ancestors 'none'/);
+  assert.match(baseline, /form-action 'self'/);
   assert.doesNotMatch(baseline, /script-src|style-src|unsafe-inline|https:/);
   assert.match(config, /script-src 'self'/);
   const reportOnly = config.split("const candidateCsp = [")[1]?.split("].join")[0];
