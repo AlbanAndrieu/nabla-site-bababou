@@ -64,7 +64,7 @@ Le portage comprend la liste des exclusions `.nuclei/ignore-templates.txt` **san
 
 ### BB-02 : incident de nettoyage ZAP (24 novembre 2026)
 
-Les runs [45274527831](https://github.com/AlbanAndrieu/nabla-site-bababou/actions/runs/45274527831) et [45408977261](https://github.com/AlbanAndrieu/nabla-site-bababou/actions/runs/45408977261) ont produit leurs rapports mais échoué à l'effacement du `__pycache__` Python généré par Docker (droits UID). Correctif dans la PR #288 : désactivation des bytecodes Python dans Production/Preview, étape cleanup contrôlée et statut de commit fail-closed. **Code réconcilié sur master ; validation runtime et L3 non attestées.** La PR #287 Nuclei/ZAP est bien fusionnée ; ne pas créer de second workflow.
+Les runs [45274527831](https://github.com/AlbanAndrieu/nabla-site-bababou/actions/runs/45274527831) et [45408977261](https://github.com/AlbanAndrieu/nabla-site-bababou/actions/runs/45408977261) ont produit leurs rapports mais échoué à l'effacement du `__pycache__` Python généré par Docker (droits UID). Correctif dans la PR #288 : désactivation des bytecodes Python dans Production/Preview, étape cleanup contrôlée et statut de commit fail-closed. **Validation effective le 28/11/2026** : [Production DAST #46088592058](https://github.com/AlbanAndrieu/nabla-site-bababou/actions/runs/46088592058) `success`, y compris l'étape `Clean ZAP production workspace`. Cela valide le nettoyage, mais **pas** la résolution des 7 MEDIUM. La PR #287 Nuclei/ZAP est bien fusionnée ; ne pas créer de second workflow.
 
 ### Passe roadmap 1 — 27 novembre 2026 (PR #288)
 
